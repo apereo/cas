@@ -15,7 +15,7 @@ to X.509 certificate authentication, but trust is instead placed on the client i
 The benefit of this approach is that transparent authentication is achieved within a large corporate
 network without the need to manage certificates.
 
-<div class="alert alert-danger"><strong>Be Careful</strong><p>Keep in mind that this authentication
+<div class="alert alert-danger">:red_circle: <strong>Be Careful</strong><p>Keep in mind that this authentication
 mechanism should only be enabled for internal network clients with relatively static IP addresses.</p></div>
 
 

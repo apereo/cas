@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @Tag("WebApp")
-public class CasTomcatBannerTests {
+class CasTomcatBannerTests {
     @Autowired
     private Environment environment;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val banner = new CasTomcatBanner();
         val writer = new StringWriter();
         val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);

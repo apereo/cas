@@ -2,18 +2,22 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
@@ -21,14 +25,9 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link X509SubjectAlternativeNameUPNPrincipalResolver}.
@@ -37,8 +36,19 @@ import static org.mockito.Mockito.when;
  * @since 3.0.0
  */
 @Tag("X509")
-public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
+class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
+    @Mock
+    private ServicesManager servicesManager;
+
+    @Mock
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @BeforeEach
+    public void before() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
+    }
+    
     /**
      * Gets the unit test parameters.
      *
@@ -88,6 +98,8 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
                                                final String requiredAttribute) throws Exception {
 
         val context = PrincipalResolutionContext.builder()
+            .attributeDefinitionStore(attributeDefinitionStore)
+            .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -122,8 +134,10 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     }
 
     @Test
-    public void verifyAlternate() throws Exception {
+    void verifyAlternate() throws Exception {
         val context = PrincipalResolutionContext.builder()
+            .attributeDefinitionStore(attributeDefinitionStore)
+            .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())

@@ -4,29 +4,30 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.RadiusConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
@@ -70,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -82,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.radius.id=mfa-dummy"
 })
 @Tag("Radius")
-public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
+class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     @Autowired
     @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
     private MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
@@ -91,7 +93,7 @@ public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyTriggerInactive() {
+    void verifyTriggerInactive() {
         assertTrue(multifactorAuthenticationTrigger.isActivated(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
             new MockHttpServletResponse(),
@@ -103,7 +105,7 @@ public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     }
 
     @Test
-    public void verifyTriggerActive() {
+    void verifyTriggerActive() {
         val authn = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap(Attr_ReplyMessage.NAME, "reply-message", Attr_State.NAME, "whatever")
         ));

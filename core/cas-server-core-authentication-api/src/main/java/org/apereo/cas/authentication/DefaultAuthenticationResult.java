@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 
@@ -21,6 +22,7 @@ import java.io.Serial;
 @Setter
 @Getter
 @RequiredArgsConstructor
+@SuperBuilder
 public class DefaultAuthenticationResult implements AuthenticationResult {
     @Serial
     private static final long serialVersionUID = 8454900425245262824L;

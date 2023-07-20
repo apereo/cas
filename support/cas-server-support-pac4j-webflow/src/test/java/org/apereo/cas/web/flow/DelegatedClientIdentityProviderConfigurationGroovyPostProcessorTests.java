@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-provider-post-processor.location=classpath:GroovyClientProviderProcessor.groovy")
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
+class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
@@ -43,7 +43,7 @@ public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTest
     private Clients builtClients;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -57,6 +57,6 @@ public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTest
         assertEquals("TestTitle", clientConfig.iterator().next().getTitle());
         delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertTrue(provider.getAutoRedirectType() == DelegationAutoRedirectTypes.CLIENT);
+        assertSame(DelegationAutoRedirectTypes.CLIENT, provider.getAutoRedirectType());
     }
 }

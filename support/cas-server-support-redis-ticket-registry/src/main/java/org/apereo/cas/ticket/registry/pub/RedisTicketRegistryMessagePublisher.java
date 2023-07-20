@@ -18,9 +18,9 @@ public interface RedisTicketRegistryMessagePublisher {
     /**
      * Send notification to delete ticket id.
      *
-     * @param id the id
+     * @param ticket the ticket
      */
-    void delete(String id);
+    void delete(Ticket ticket);
 
     /**
      * Send notification to add.

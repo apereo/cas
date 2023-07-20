@@ -26,14 +26,20 @@ The following settings are shared by all principal attribute repositories:
 | `mergingStrategy`          | Indicate the merging strategy when combining attributes from multiple sources. Accepted values are `MULTIVALUED`, `ADD`, `NONE`, `MULTIVALUED` |
 | `attributeRepositoryIds`   | A `Set` of attribute repository identifiers to consult for attribute resolution at release time.                                               |
 | `ignoreResolvedAttributes` | Ignore the collection of attributes that may have been resolved during the principal resolution phase, typically via attribute repositories.   |
+   
+The following caching strategies are offered by CAS:
 
-## Default
+{% tabs attrcachingstrategy %}
+
+{% tab attrcachingstrategy Default %}
 
 The default relationship between a CAS `Principal` and the underlying attribute
 repository source, such that principal attributes are kept as they are without
 any additional processes to evaluate and update them. This need not be configured explicitly.
 
-## Caching
+{% endtab %}
+
+{% tab attrcachingstrategy Caching %}
 
 The relationship between a CAS `Principal` and the underlying attribute
 repository source, that describes how and at what length the CAS `Principal` attributes should
@@ -47,7 +53,7 @@ those that are retrieved from repository source via a `mergingStrategy` property
 This is useful if you want to preserve the collection of attributes that are already
 available to the principal that were retrieved from a different place during the authentication event, etc.
 
-<div class="alert alert-info"><strong>Caching Upon Release</strong><p>Note
+<div class="alert alert-info">:information_source: <strong>Caching Upon Release</strong><p>Note
 that the policy is only consulted at release time, upon a service ticket validation event. If there are
 any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to
 receive an updated set of attributes, those components must consult the underlying source directory
@@ -73,12 +79,18 @@ Sample configuration follows:
 }
 ```
 
+{% endtab %}
+
+{% endtabs %}
+
 ## Merging Strategies
 
 By default, no merging strategy takes place, which means the principal attributes are always ignored and
 attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
+  
+{% tabs attrmergingstrategy %}
 
-### Merge
+{% tab attrmergingstrategy Merge %}
 
 Attributes with the same name are merged into multi-valued lists.
 
@@ -107,7 +119,9 @@ For example:
 }
 ```
 
-### Add
+{% endtab %}
+
+{% tab attrmergingstrategy Add %}
 
 Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
 
@@ -135,7 +149,9 @@ For example:
 }
 ```
 
-### Replace
+{% endtab %}
+
+{% tab attrmergingstrategy Replace %}
 
 Attributes are merged such that attributes from the source always replace principal attributes.
 
@@ -164,6 +180,9 @@ For example:
 }
 ```
 
+{% endtab %}
+
+{% endtabs %}
 
 ## Attribute Repository Filtering
 

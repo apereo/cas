@@ -36,7 +36,7 @@ The following parameters are expected for the Amazon S3 object metadata:
 |-------------|-------------------------------------------|
 | `signature` | The metadata signing certificate, if any. |
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>awss3://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>

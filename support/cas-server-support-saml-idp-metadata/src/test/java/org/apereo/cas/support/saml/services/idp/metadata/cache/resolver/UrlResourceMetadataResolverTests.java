@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml")
-public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String MDQ_URL = "https://mdq.incommon.org/entities/{0}";
     
     
     @Test
-    public void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Exception {
         try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
             webServer.start();
             val props = new SamlIdPProperties();
@@ -52,7 +52,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverFromBackup() throws Exception {
+    void verifyResolverFromBackup() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
@@ -92,7 +92,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Exception {
         try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
             webServer.start();
             val props = new SamlIdPProperties();
@@ -110,7 +110,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverResolvesFailsAccess() throws Exception {
+    void verifyResolverResolvesFailsAccess() throws Exception {
         try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
             webServer.start();
             val props = new SamlIdPProperties();
@@ -126,7 +126,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverUnknownUrl() throws Exception {
+    void verifyResolverUnknownUrl() throws Exception {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val service = new SamlRegisteredService();
@@ -138,7 +138,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverWithProtocol() throws Exception {
+    void verifyResolverWithProtocol() throws Exception {
         try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
             webServer.start();
             val props = new SamlIdPProperties();

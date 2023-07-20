@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcEchoingWebFingerUserInfoRepositoryTests {
+class OidcEchoingWebFingerUserInfoRepositoryTests {
     @Test
-    public void verifyFindByEmail() {
+    void verifyFindByEmail() {
         val repo = new OidcEchoingWebFingerUserInfoRepository();
         val results = repo.findByEmailAddress("cas@example.org");
         assertNotNull(results);
@@ -26,7 +26,7 @@ public class OidcEchoingWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    public void verifyFindByUsername() {
+    void verifyFindByUsername() {
         val repo = new OidcEchoingWebFingerUserInfoRepository();
         val results = repo.findByUsername("cas");
         assertNotNull(results);

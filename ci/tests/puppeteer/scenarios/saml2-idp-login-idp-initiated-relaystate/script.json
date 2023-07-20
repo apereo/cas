@@ -1,5 +1,6 @@
 {
   "dependencies": "saml-idp",
+
   "conditions": {
     "docker": "true"
   },
@@ -19,6 +20,8 @@
     "--cas.server.scope=example.net",
 
     "--logging.level.org.apereo.cas=info",
+
+    "--spring.main.lazy-initialization=false",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

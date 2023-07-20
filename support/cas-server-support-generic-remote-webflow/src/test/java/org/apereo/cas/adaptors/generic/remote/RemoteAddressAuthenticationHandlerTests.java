@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,
     properties = "cas.authn.remote-address.ip-address-range=192.168.1.0/255.255.255.0")
 @Tag("AuthenticationHandler")
-public class RemoteAddressAuthenticationHandlerTests {
+class RemoteAddressAuthenticationHandlerTests {
     @Autowired
     @Qualifier("remoteAddressAuthenticationHandler")
     private AuthenticationHandler remoteAddressAuthenticationHandler;
@@ -38,7 +38,7 @@ public class RemoteAddressAuthenticationHandlerTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyAccount() throws Exception {
+    void verifyAccount() throws Exception {
         val c = new RemoteAddressCredential("192.168.1.7");
         val result = remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);
@@ -46,13 +46,13 @@ public class RemoteAddressAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAccountFails() throws Exception {
+    void verifyAccountFails() throws Exception {
         val c = new RemoteAddressCredential("---");
         assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    public void verifyBadRange() throws Exception {
+    void verifyBadRange() throws Exception {
         val c = new RemoteAddressCredential("---");
         val handler = new RemoteAddressAuthenticationHandler("Handler1", servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.configureIpNetworkRange("abc/def");
@@ -60,7 +60,7 @@ public class RemoteAddressAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val c = new RemoteAddressCredential("172.217.12.206");
         assertTrue(remoteAddressAuthenticationHandler.supports(c));
         assertTrue(remoteAddressAuthenticationHandler.supports(c.getClass()));

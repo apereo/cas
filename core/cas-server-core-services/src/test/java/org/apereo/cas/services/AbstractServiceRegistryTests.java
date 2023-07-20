@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -108,14 +109,14 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         clearServiceRegistry();
         tearDownServiceRegistry();
     }
@@ -160,7 +161,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyNonExistingService() {
+    void verifyNonExistingService() {
         assertNull(serviceRegistry.findServiceById(9999991));
     }
 
@@ -183,8 +184,7 @@ public abstract class AbstractServiceRegistryTests {
         serviceRegistry.save(buildRegisteredServiceInstance(200, registeredServiceClass));
         val services = serviceRegistry.load();
         assertFalse(services.isEmpty());
-        val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.stream()
-            .findFirst().orElse(null).getId());
+        val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.iterator().next().getId());
         assertNotNull(rs, registeredServiceClass::getName);
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -309,8 +309,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void execSaveWithAuthnMethodPolicy(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val policy =
-            new DefaultRegisteredServiceMultifactorPolicy();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);
 
         val set = new HashSet<String>();
@@ -488,11 +487,10 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyServiceRemovals(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val list = new ArrayList<RegisteredService>(5);
-        IntStream.range(1, 5).forEach(i -> {
-            val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-            list.add(serviceRegistry.save(r));
-        });
+        val list = IntStream.range(1, 5)
+            .mapToObj(i -> buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass))
+            .map(r -> serviceRegistry.save(r))
+            .collect(Collectors.toCollection(() -> new ArrayList<>(5)));
 
         list.forEach(Unchecked.consumer(r2 -> {
             Thread.sleep(500);
@@ -636,15 +634,19 @@ public abstract class AbstractServiceRegistryTests {
     /**
      * Method to prepare the service registry for testing.
      * Implementing classes may override this if more is necessary.
+     *
+     * @throws Exception the exception
      */
-    protected void initializeServiceRegistry() {
+    protected void initializeServiceRegistry() throws Exception {
     }
 
     /**
      * Method to shut down the service registry after testing.
      * Implementing classes may override this if more is necessary.
+     *
+     * @throws Exception the exception
      */
-    protected void tearDownServiceRegistry() {
+    protected void tearDownServiceRegistry() throws Exception {
     }
 
     protected void clearServiceRegistry() {

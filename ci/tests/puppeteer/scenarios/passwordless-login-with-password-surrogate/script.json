@@ -1,5 +1,6 @@
 {
   "dependencies": "surrogate-webflow,passwordless-webflow",
+
   "properties": [
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.use-single-line=true",

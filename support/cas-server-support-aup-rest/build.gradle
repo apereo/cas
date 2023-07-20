@@ -1,4 +1,11 @@
 description = "Apereo CAS AUP REST Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via REST",
+            category: "Acceptable Usage Policy"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")

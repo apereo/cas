@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -9,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -16,24 +18,24 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreValidationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.authentication.support.SamlRestConfiguration;
-import org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.config.CasValidationConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.SamlRestConfiguration;
+import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
@@ -76,6 +78,10 @@ public abstract class AbstractOpenSamlTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
+
+    @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean configBean;
 
@@ -96,7 +102,7 @@ public abstract class AbstractOpenSamlTests {
     protected UnmarshallerFactory unmarshallerFactory;
 
     @Test
-    public void autowireApplicationContext() {
+    void autowireApplicationContext() {
         assertNotNull(this.applicationContext);
         assertNotNull(this.configBean);
         assertNotNull(this.parserPool);
@@ -107,7 +113,7 @@ public abstract class AbstractOpenSamlTests {
     }
 
     @Test
-    public void loadStaticContextFactories() {
+    void loadStaticContextFactories() {
         assertNotNull(XMLObjectProviderRegistrySupport.getParserPool());
         assertNotNull(XMLObjectProviderRegistrySupport.getBuilderFactory());
         assertNotNull(XMLObjectProviderRegistrySupport.getMarshallerFactory());
@@ -115,7 +121,7 @@ public abstract class AbstractOpenSamlTests {
     }
 
     @Test
-    public void ensureParserIsInitialized() throws Exception {
+    void ensureParserIsInitialized() throws Exception {
         assertNotNull(this.parserPool);
         assertNotNull(this.parserPool.getBuilder());
     }
@@ -156,6 +162,7 @@ public abstract class AbstractOpenSamlTests {
         CasCoreHttpConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCookieConfiguration.class,

@@ -3,10 +3,12 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--logging.level.org.apereo.cas=debug",
 

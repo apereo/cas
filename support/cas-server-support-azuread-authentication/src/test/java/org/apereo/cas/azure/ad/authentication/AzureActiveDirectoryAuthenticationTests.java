@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Azure")
-public class AzureActiveDirectoryAuthenticationTests {
+class AzureActiveDirectoryAuthenticationTests {
 
     @TestPropertySource(properties = {
         "cas.authn.azure-active-directory.client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
@@ -37,15 +37,15 @@ public class AzureActiveDirectoryAuthenticationTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnknownResourceTests extends BaseAzureActiveDirectoryTests {
+    class UnknownResourceTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperationFails() {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@onmicrosoft.com", "bf65hfg78 ");
+                "castest@onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
@@ -57,23 +57,23 @@ public class AzureActiveDirectoryAuthenticationTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class PublicClientTests extends BaseAzureActiveDirectoryTests {
+    class PublicClientTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@misaghmoayyedhotmail.onmicrosoft.com", "zVh86iUtwQLP");
+                "castest@misaghmoayyedhotmail.onmicrosoft.com", "Tuwa2565");
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
             assertNotNull(result);
         }
 
         @Test
-        public void verifyOperationFails() {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@onmicrosoft.com", "bf65hfg78 ");
+                "castest@onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
@@ -86,13 +86,13 @@ public class AzureActiveDirectoryAuthenticationTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ConfidentialClientTests extends BaseAzureActiveDirectoryTests {
+    class ConfidentialClientTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@misaghmoayyedhotmail.onmicrosoft.com", "zVh86iUtwQLP");
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
@@ -107,13 +107,13 @@ public class AzureActiveDirectoryAuthenticationTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class AttributeResolutionTests extends BaseAzureActiveDirectoryTests {
+    class AttributeResolutionTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
         protected List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val repository = microsoftAzureActiveDirectoryAttributeRepositories.get(0);
             val person = repository.getPerson("castest@misaghmoayyedhotmail.onmicrosoft.com");
             assertNotNull(person);

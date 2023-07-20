@@ -125,13 +125,12 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val urns = new HashMap<String, String>();
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()
-            .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
+            .filter(SamlIdPAttributeDefinition.class::isInstance)
             .map(SamlIdPAttributeDefinition.class::cast)
+            .filter(defn -> StringUtils.isNotBlank(defn.getUrn()))
             .forEach(defn -> {
-                if (StringUtils.isNotBlank(defn.getUrn())) {
-                    urns.put(defn.getKey(), defn.getUrn());
-                    urns.put(defn.getName(), defn.getUrn());
-                }
+                urns.put(defn.getKey(), defn.getUrn());
+                urns.put(defn.getName(), defn.getUrn());
             });
         LOGGER.debug("Attribute definitions tagged with URNs in the attribute definition store are [{}]", urns);
         LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);

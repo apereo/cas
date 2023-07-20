@@ -1,5 +1,6 @@
 {
   "dependencies": "yubikey",
+
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-yubikey",

@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
+class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OpenPolicyAgentRegisteredServiceAccessStrategy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val strategyWritten = new OpenPolicyAgentRegisteredServiceAccessStrategy();
         strategyWritten.setApiUrl("https://localhost:8080");
         strategyWritten.setDecision("example/authz/allow");
@@ -47,7 +47,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val strategy = new OpenPolicyAgentRegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");
         strategy.setDecision("example/authz/allow");

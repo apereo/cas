@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("OAuthToken")
-public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    public void verifyAccessTokenExpiryWhenTgtIsExpired() {
+    void verifyAccessTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         assertFalse(at.isExpired(), "Access token should not be expired");
@@ -31,7 +31,7 @@ public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20Expirati
     }
 
     @Test
-    public void verifyAccessTokenExpiredAfterSystemTime() {
+    void verifyAccessTokenExpiredAfterSystemTime() {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
         val exp = new OAuth20AccessTokenExpirationPolicy(100, 100);
@@ -39,7 +39,7 @@ public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20Expirati
     }
 
     @Test
-    public void verifyAccessTokenExpiredAfterTimeToKill() {
+    void verifyAccessTokenExpiredAfterTimeToKill() {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         when(ticket.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
@@ -48,7 +48,7 @@ public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20Expirati
     }
 
     @Test
-    public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Exception {
+    void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Exception {
         val policyWritten = new OAuth20AccessTokenExpirationPolicy(1234L, 5678L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, OAuth20AccessTokenExpirationPolicy.class);

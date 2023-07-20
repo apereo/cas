@@ -71,7 +71,7 @@ public interface AuthenticationTransaction extends Serializable {
      * @return the credentials of type
      */
     default <T extends Credential> Collection<T> getCredentialsOfType(final Class<T> type) {
-        return getCredentials().stream().filter(type::isInstance).map(c -> (T) c).collect(Collectors.toList());
+        return getCredentials().stream().filter(type::isInstance).map(credential -> (T) credential).collect(Collectors.toList());
     }
 }
 

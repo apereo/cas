@@ -2,10 +2,10 @@ package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
@@ -28,6 +28,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.StringWriter;
 
 /**

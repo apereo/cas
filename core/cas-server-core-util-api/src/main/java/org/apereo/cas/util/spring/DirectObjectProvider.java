@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 
 import jakarta.annotation.Nonnull;
+import java.util.stream.Stream;
 
 
 /**
@@ -33,5 +34,12 @@ public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
     @Override
     public T getIfUnique() throws BeansException {
         return object;
+    }
+
+    @Override
+    public Stream<T> stream() {
+        return object == null
+            ? Stream.empty()
+            : Stream.of(object);
     }
 }

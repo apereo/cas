@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.config.CasConfigurationModifiedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 
 /**
  * This is {@link DefaultServiceRegistryInitializerEventListener}.
@@ -19,13 +20,13 @@ public class DefaultServiceRegistryInitializerEventListener implements ServiceRe
     private final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer;
 
     @Override
-    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
-        LOGGER.trace("Received event [{}]", event);
+    public void handleRefreshScopeRefreshedEvent(final RefreshScopeRefreshedEvent event) {
+        LOGGER.info("Refreshing application context beans eagerly...");
         rebind();
     }
 
     @Override
-    public void handleRefreshEvent(final EnvironmentChangeEvent event) {
+    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
     }
@@ -36,7 +37,7 @@ public class DefaultServiceRegistryInitializerEventListener implements ServiceRe
             rebind();
         }
     }
-
+    
     private void rebind() {
         LOGGER.info("Refreshing CAS service registry configuration. Stand by...");
         serviceRegistryInitializer.getObject().initialize();

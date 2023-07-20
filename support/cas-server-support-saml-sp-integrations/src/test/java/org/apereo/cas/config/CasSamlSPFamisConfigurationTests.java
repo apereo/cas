@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.famis.name-id-attribute=cn",
     "cas.saml-sp.famis.name-id-format=transient"
 })
-public class CasSamlSPFamisConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPFamisConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

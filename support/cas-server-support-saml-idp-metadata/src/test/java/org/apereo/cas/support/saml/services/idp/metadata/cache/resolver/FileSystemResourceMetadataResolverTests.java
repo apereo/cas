@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static File METADATA_FILE;
 
     private SamlRegisteredServiceMetadataResolver resolver;
@@ -56,7 +56,7 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
     }
     
     @Test
-    public void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Exception {
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
         assertTrue(resolver.supports(service));
@@ -65,7 +65,7 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
     }
 
     @Test
-    public void verifyResolverWithBadSigningCert() throws Exception {
+    void verifyResolverWithBadSigningCert() throws Exception {
         val service = new SamlRegisteredService();
         service.setMetadataMaxValidity(30000);
         service.setMetadataCriteriaRoles(String.join(",", Set.of(
@@ -77,7 +77,7 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
     }
 
     @Test
-    public void verifyResolverWithDirectory() throws Exception {
+    void verifyResolverWithDirectory() throws Exception {
         val service = new SamlRegisteredService();
         val file = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
         service.setMetadataLocation(file);
@@ -93,7 +93,7 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
     }
 
     @Test
-    public void verifyDefaultImpl() {
+    void verifyDefaultImpl() {
         val mock = mock(SamlRegisteredServiceMetadataResolver.class);
         doCallRealMethod().when(mock).saveOrUpdate(any());
         assertThrows(NotImplementedException.class, () -> mock.saveOrUpdate(null));

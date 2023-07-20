@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
+class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
     private RequestContext context;
@@ -60,7 +60,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     }
 
     @Test
-    public void verifyUnauthz() {
+    void verifyUnauthz() {
         val ex = new InvalidProxyGrantingTicketForServiceTicketException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);
@@ -69,7 +69,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     }
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() {
         val ex = new UnrecognizableServiceForServiceTicketValidationException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);

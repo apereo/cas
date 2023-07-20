@@ -17,10 +17,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class NeverRegisteredServiceSingleSignOnParticipationPolicyTests {
+class NeverRegisteredServiceSingleSignOnParticipationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new NeverRegisteredServiceSingleSignOnParticipationPolicy();
         assertFalse(input.shouldParticipateInSso(mock(RegisteredService.class), mock(AuthenticationAwareTicket.class)));
     }

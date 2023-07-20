@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdentityProviderDiscoveryConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdentityProviderDiscoveryFeedControllerTests {
+class SamlIdentityProviderDiscoveryFeedControllerTests {
     @Autowired
     @Qualifier("identityProviderDiscoveryFeedController")
     private SamlIdentityProviderDiscoveryFeedController controller;
@@ -45,7 +45,7 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyFeed() {
+    void verifyFeed() {
         assertFalse(controller.getDiscoveryFeed().isEmpty());
         assertNotNull(controller.home());
         assertNotNull(controller.redirect("https://cas.example.org/idp",
@@ -63,8 +63,7 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
             val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
             service.setAccessStrategy(accessStrategy);
             servicesManager.save(service);
-            controller.redirect("https://cas.example.org/idp",
-                request, new MockHttpServletResponse());
+            controller.redirect("https://cas.example.org/idp", request, new MockHttpServletResponse());
         });
     }
 }

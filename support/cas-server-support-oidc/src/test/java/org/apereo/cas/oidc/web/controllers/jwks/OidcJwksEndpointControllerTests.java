@@ -14,6 +14,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -24,39 +26,39 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcJwksEndpointControllerTests extends AbstractOidcTests {
+class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwksController")
     protected OidcJwksEndpointController oidcJwksEndpointController;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
         val response = new MockHttpServletResponse();
 
         val result = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase());
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
         assertTrue(result.getStatusCode().is2xxSuccessful());
     }
 
     @Test
-    public void verifyBadEndpointRequest() {
+    void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase());
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
         val response = mock(HttpServletResponse.class);
         doThrow(new RuntimeException()).when(response).setContentType(anyString());
 
         val result = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase());
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
         assertTrue(result.getStatusCode().is4xxClientError());
     }
 }

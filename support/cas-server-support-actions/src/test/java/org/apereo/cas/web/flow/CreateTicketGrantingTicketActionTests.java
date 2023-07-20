@@ -40,13 +40,13 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
+class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     private Action action;
 
     @Test
-    public void verifySkipTgt() throws Exception {
+    void verifySkipTgt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ public class CreateTicketGrantingTicketActionTests extends AbstractWebflowAction
     }
 
     @Test
-    public void verifyCreateTgt() throws Exception {
+    void verifyCreateTgt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

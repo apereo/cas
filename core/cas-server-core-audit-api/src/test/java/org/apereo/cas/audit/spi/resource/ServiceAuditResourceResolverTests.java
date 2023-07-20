@@ -1,9 +1,9 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,12 +18,12 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-public class ServiceAuditResourceResolverTests {
+class ServiceAuditResourceResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
-        val resolver = new ServiceAuditResourceResolver();
+        val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties());
         var input = resolver.resolveFrom(jp, new Object());
         assertTrue(input.length > 0);
 
@@ -32,11 +32,10 @@ public class ServiceAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyJsonOperation() {
+    void verifyJsonOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
-        val resolver = new ServiceAuditResourceResolver();
-        resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
+        val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         var input = resolver.resolveFrom(jp, new Object());
         assertTrue(input.length > 0);
 

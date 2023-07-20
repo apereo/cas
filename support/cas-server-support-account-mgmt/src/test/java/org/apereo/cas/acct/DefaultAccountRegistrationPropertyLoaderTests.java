@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("FileSystem")
-public class DefaultAccountRegistrationPropertyLoaderTests {
+class DefaultAccountRegistrationPropertyLoaderTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val map = new HashMap<String, AccountRegistrationProperty>();
         map.put("username", AccountRegistrationProperty.builder()
             .name("username")

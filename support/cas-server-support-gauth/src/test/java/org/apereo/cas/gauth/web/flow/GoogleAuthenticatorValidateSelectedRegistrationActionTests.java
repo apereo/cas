@@ -31,10 +31,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
+class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));

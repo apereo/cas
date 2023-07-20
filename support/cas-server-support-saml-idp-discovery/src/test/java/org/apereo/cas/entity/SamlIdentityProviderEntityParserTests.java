@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("SAML2")
-public class SamlIdentityProviderEntityParserTests {
+class SamlIdentityProviderEntityParserTests {
     @Test
-    public void verifyResource() throws Exception {
+    void verifyResource() throws Exception {
         val parser = new SamlIdentityProviderEntityParser(new ClassPathResource("disco-feed.json"));
         assertFalse(parser.getIdentityProviders().isEmpty());
     }
 
     @Test
-    public void verifyFile() throws Exception {
+    void verifyFile() throws Exception {
         val file = File.createTempFile("feed", ".json");
         val content = IOUtils.toString(new ClassPathResource("disco-feed.json").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(file, content, StandardCharsets.UTF_8);
@@ -43,7 +43,7 @@ public class SamlIdentityProviderEntityParserTests {
     }
 
     @Test
-    public void verifyEntity() {
+    void verifyEntity() {
         val entity = new SamlIdentityProviderEntity();
         entity.setEntityID("org.example");
         val parser = new SamlIdentityProviderEntityParser(entity);

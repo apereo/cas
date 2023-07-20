@@ -1,5 +1,6 @@
 {
   "dependencies": "saml-mdui",
+
   "properties": [
     "--cas.saml-metadata-ui.resources=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata.xml::,https://mdq.incommon.org/entities/::",
 

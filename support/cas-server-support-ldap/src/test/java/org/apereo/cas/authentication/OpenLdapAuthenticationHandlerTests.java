@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -32,14 +31,15 @@ import java.util.UUID;
     "cas.authn.ldap[0].search-filter=cn={user}",
     "cas.authn.ldap[0].bind-dn=cn=admin,dc=example,dc=org",
     "cas.authn.ldap[0].bind-credential=P@ssw0rd",
+    "cas.authn.ldap[0].hostname-verifier=ANY",
     "cas.authn.ldap[0].principal-attribute-list=sn,cn,homePostalAddress:homePostalAddress;"
 })
 @Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
-public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
+class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     protected String getLdif(final String user) {
         val baseDn = casProperties.getAuthn().getLdap().get(0).getBaseDn();
         return String.format("dn: cn=%s,%s%n"
@@ -74,5 +74,4 @@ public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHa
         LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
         return uid;
     }
-
 }

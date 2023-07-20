@@ -26,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlMetadataTests {
+class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlMetadataTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyRestEndpointProducesMetadata() throws Exception {
+    void verifyRestEndpointProducesMetadata() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("SAML Wiki Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");

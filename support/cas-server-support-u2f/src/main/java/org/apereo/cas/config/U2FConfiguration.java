@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -133,6 +134,7 @@ public class U2FConfiguration {
     public static class U2FCleanerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Cleanable u2fDeviceRepositoryCleanerScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("u2fDeviceRepository")

@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApiAuthentication")
-public class RestfulPrincipalFactoryTests {
+class RestfulPrincipalFactoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val entity = MAPPER.writeValueAsString(CoreAuthenticationTestUtils.getPrincipal("casuser"));
         try (val webServer = new MockWebServer(9155,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -46,7 +46,7 @@ public class RestfulPrincipalFactoryTests {
     }
 
     @Test
-    public void verifyNullPrincipal() throws Exception {
+    void verifyNullPrincipal() throws Exception {
         val entity = MAPPER.writeValueAsString(CoreAuthenticationTestUtils.getPrincipal("casuser"));
         try (val webServer = new MockWebServer(9156,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.EXPECTATION_FAILED)) {
@@ -61,7 +61,7 @@ public class RestfulPrincipalFactoryTests {
     }
 
     @Test
-    public void verifyBadResponse() {
+    void verifyBadResponse() {
         try (val webServer = new MockWebServer(9157,
             new ByteArrayResource("abcde123456".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();

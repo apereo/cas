@@ -30,7 +30,8 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
     public boolean singleSignOnSessionAuthorizedForService(final RequestContext requestContext) {
         val resolvedService = resolveServiceFromRequestContext(requestContext);
         val authentication = getSingleSignOnAuthenticationFrom(requestContext);
-        val authorized = authentication.map(authn -> configurationContext.getDelegatedClientIdentityProviderAuthorizers()
+        val authorized = authentication
+            .map(authn -> configurationContext.getDelegatedClientIdentityProviderAuthorizers()
                 .stream()
                 .allMatch(authz -> authz.isDelegatedClientAuthorizedForAuthentication(authn, resolvedService, requestContext)))
             .orElse(Boolean.FALSE);

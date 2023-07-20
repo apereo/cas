@@ -1,0 +1,18 @@
+{
+  "casuser" : {
+    "message" : "We interrupted your login",
+    "links" : {
+      "Go to Google" : "https://www.google.com",
+      "Go to GitHub" : "https://www.github.com",
+      "CAS Application" : "https://localhost:8443/cas/login?service=https://apereo.github.io"
+    },
+    "ssoEnabled" : true,
+    "autoRedirect": true,
+    "autoRedirectAfterSeconds": 2,
+    "interrupt" : true,
+    "data" : {
+      "field1" : [ "value1", "value2" ],
+      "field2" : [ "value3", "value4" ]
+    }
+  }
+}

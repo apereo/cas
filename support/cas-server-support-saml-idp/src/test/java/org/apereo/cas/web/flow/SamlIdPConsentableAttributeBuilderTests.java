@@ -27,17 +27,17 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @Import(CasConsentCoreConfiguration.class)
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
-public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
+class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
     private static final String VALUE = UUID.randomUUID().toString();
     @Autowired
     @Qualifier("samlIdPConsentableAttributeBuilder")
     private ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder;
     @Test
-    public void verifyDefnWithSamlXSString() {
+    void verifyDefnWithSamlXSString() {
         val value = mock(XSString.class);
         when(value.getValue()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
@@ -48,7 +48,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyDefnWithObject() {
+    void verifyDefnWithObject() {
         val value = mock(Object.class);
         when(value.toString()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
@@ -59,7 +59,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyDefnWithSamlXSUri() {
+    void verifyDefnWithSamlXSUri() {
         val value = mock(XSURI.class);
         when(value.getURI()).thenReturn(VALUE);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
@@ -70,7 +70,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyDefnWithSerializable() {
+    void verifyDefnWithSerializable() {
         val value = mock(Serializable.class);
         val attribute = samlIdPConsentableAttributeBuilder.build(CasConsentableAttribute.builder()
             .name("unknown")
@@ -80,7 +80,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyOperationByName() {
+    void verifyOperationByName() {
         val attribute = samlIdPConsentableAttributeBuilder.build(
             CasConsentableAttribute.builder()
                 .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
@@ -90,7 +90,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyOperationByKey() {
+    void verifyOperationByKey() {
         val attribute = samlIdPConsentableAttributeBuilder.build(
             CasConsentableAttribute.builder()
                 .name("eduPersonPrincipalName")
@@ -100,7 +100,7 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
     }
 
     @Test
-    public void verifyOperationNotFound() {
+    void verifyOperationNotFound() {
         val attribute = samlIdPConsentableAttributeBuilder.build(
             CasConsentableAttribute.builder()
                 .name("not-found")

@@ -52,12 +52,12 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityPrepareWebLoginFormActionTests {
+class DuoSecurityPrepareWebLoginFormActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -87,7 +87,7 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
 
         WebUtils.putCredential(context, new DuoSecurityCredential(authentication.getPrincipal().getId(),
             UUID.randomUUID().toString(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
 

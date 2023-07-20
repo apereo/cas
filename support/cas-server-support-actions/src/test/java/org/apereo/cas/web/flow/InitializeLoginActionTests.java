@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@TestPropertySource(properties = "cas.sso.allow-missing-service-parameter=false")
+@TestPropertySource(properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("WebflowActions")
-public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
+class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     private Action action;
 
     @Test
-    public void disableFlowIfNoService() {
+    void disableFlowIfNoService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());

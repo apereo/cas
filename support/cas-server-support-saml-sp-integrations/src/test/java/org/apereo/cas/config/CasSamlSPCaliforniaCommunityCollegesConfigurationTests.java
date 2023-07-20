@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.cccco.name-id-attribute=cn",
     "cas.saml-sp.cccco.name-id-format=transient"
 })
-public class CasSamlSPCaliforniaCommunityCollegesConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPCaliforniaCommunityCollegesConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

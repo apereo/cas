@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ExpirationPolicy")
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTests {
+class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyTicketType() {
+    void verifyTicketType() {
         val builder = new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
        assertNotNull(builder.toTicketExpirationPolicy());
     }

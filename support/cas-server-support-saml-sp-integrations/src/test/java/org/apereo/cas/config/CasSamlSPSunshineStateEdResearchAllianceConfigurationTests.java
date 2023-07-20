@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.sserca.name-id-attribute=cn",
     "cas.saml-sp.sserca.name-id-format=transient"
 })
-public class CasSamlSPSunshineStateEdResearchAllianceConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPSunshineStateEdResearchAllianceConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

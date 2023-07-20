@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 25000)
 @Import({
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasAccountManagementWebflowConfiguration.class
@@ -55,17 +57,17 @@ import static org.mockito.Mockito.*;
     "cas.account-registration.sms.from=3477562310",
     "cas.account-registration.core.registration-properties.location=classpath:/custom-registration.json"
 })
-public class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
+class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
     private Action submitAccountRegistrationAction;
 
     @Test
-    public void verifySuccessOperation() throws Exception {
+    void verifySuccessOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val context = new MockRequestContext();
         request.addParameter("username", "casuser");
@@ -81,7 +83,7 @@ public class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerT
     }
 
     @Test
-    public void verifyFailingOperation() throws Exception {
+    void verifyFailingOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         

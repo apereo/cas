@@ -32,7 +32,7 @@ public class AmazonSimpleNotificationServiceSmsConfiguration {
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val sns = casProperties.getSmsProvider().getSns();
         val clientBuilder = SnsClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(clientBuilder,
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(clientBuilder,
             ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(), sns.getCredentialSecretKey(), sns.getProfilePath(), sns.getProfileName()), sns);
         return new AmazonSimpleNotificationServiceSmsSender(clientBuilder.build(), sns);
     }

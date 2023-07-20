@@ -1,4 +1,11 @@
 description = "Apereo CAS Core Events - Configuration Events"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Events"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
 

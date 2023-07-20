@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @BeforeEach
     public void beforeEach() {
@@ -30,7 +30,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -42,7 +42,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
     }
 
     @Test
-    public void verifyUnAuthOperation() throws Exception {
+    void verifyUnAuthOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -57,7 +57,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
     }
 
     @Test
-    public void verifyFailsToFind() {
+    void verifyFailsToFind() {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link EDIPIX509AttributeExtractor}.
@@ -20,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @since 6.4.0
  */
 @Tag("X509")
-public class EDIPIX509AttributeExtractorTests {
+class EDIPIX509AttributeExtractorTests {
 
     @SneakyThrows
     private X509Certificate getCertificate(final String certLocation) {
@@ -29,7 +27,7 @@ public class EDIPIX509AttributeExtractorTests {
     }
 
     @Test
-    public void verifyExtractedAttributes() {
+    void verifyExtractedAttributes() {
         val extractor = new EDIPIX509AttributeExtractor();
         val attributes = extractor.extractPersonAttributes(getCertificate("classpath:/x509-san-upn-resolver.crt"));
         assertNull(attributes.get("x509EDIPI"));

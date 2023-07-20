@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Simple")
-public class DistributedCacheObjectTests {
+class DistributedCacheObjectTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -39,7 +39,7 @@ public class DistributedCacheObjectTests {
 
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -55,7 +55,7 @@ public class DistributedCacheObjectTests {
     }
 
     @Test
-    public void verifyNullValue() {
+    void verifyNullValue() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())

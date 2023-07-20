@@ -18,7 +18,7 @@ requirements.
 
 CAS at its heart is a Java-based web application. Prior to deployment, you will need to have [JDK](https://openjdk.java.net/projects/jdk/17/) `17` installed.
 
-<div class="alert alert-danger"><strong>Oracle JDK License</strong><p>
+<div class="alert alert-danger">:red_circle: <strong>Oracle JDK License</strong><p>
 Oracle has updated the license terms on which Oracle JDK is offered. The new Oracle Technology Network License Agreement for Oracle Java SE is substantially different from the licenses under which previous versions of the JDK were offered. <b>Please review</b> the new terms carefully before downloading and using this product.</p></div>
   
 The key part of the license is as follows:
@@ -39,7 +39,7 @@ See [this guide](../installation/Configuring-Servlet-Container.html) for more in
 WAR overlays are [provided](../installation/WAR-Overlay-Installation.html) to allow for a straightforward and flexible 
 deployment solution. While it admittedly requires a high up-front cost in learning, it reaps numerous benefits in the long run. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>
+<div class="alert alert-info">:information_source: <strong>Do Less</strong><p>
 You <b>DO NOT</b> need to have Gradle installed prior to the installation. It is provided to you automatically.
 </p></div>
 

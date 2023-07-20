@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class ImmutableNativeJavaListSerializerTests {
+class ImmutableNativeJavaListSerializerTests {
     @Test
-    public void verifyTranscoderWorks() {
+    void verifyTranscoderWorks() {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);

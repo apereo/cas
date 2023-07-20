@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 
 import lombok.Getter;
 import lombok.val;
@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val accountView = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         assertEquals(1, accountView.getRenderActionList().size());

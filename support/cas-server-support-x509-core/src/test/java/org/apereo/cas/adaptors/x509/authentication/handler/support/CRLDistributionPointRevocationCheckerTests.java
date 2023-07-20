@@ -44,7 +44,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  */
 @Slf4j
 @Tag("X509")
-public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
+class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     /**
      * Answers requests for CRLs made to localhost:8085.

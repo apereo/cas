@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.gua.config.GraphicalUserAuthenticationConfiguration;
+import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(GraphicalUserAuthenticationConfiguration.class)
 @TestPropertySource(properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 @Tag("WebflowConfig")
-public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

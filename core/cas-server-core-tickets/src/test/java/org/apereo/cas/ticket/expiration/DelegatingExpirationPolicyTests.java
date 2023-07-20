@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class DelegatingExpirationPolicyTests {
+class DelegatingExpirationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new BaseDelegatingExpirationPolicy() {
             @Serial
             private static final long serialVersionUID = -5896270899735612574L;

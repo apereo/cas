@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class InternalTicketValidatorTests {
+class InternalTicketValidatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cas = mock(CentralAuthenticationService.class);
         val assertion = mock(Assertion.class);
-        when(assertion.primaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         when(cas.validateServiceTicket(anyString(), any(Service.class))).thenReturn(assertion);
 
         val servicesManager = mock(ServicesManager.class);

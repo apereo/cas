@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
+class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
     private static final String LOGOUT_URL_OK = "https://mocky.io/post";
     private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
     @Autowired
@@ -34,17 +34,17 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
     private SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler;
 
     @Test
-    public void verifyCreateLogoutRequestsFrontChannel() {
+    void verifyCreateLogoutRequestsFrontChannel() {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
-    public void verifyCreateLogoutRequestsBackChannel() {
+    void verifyCreateLogoutRequestsBackChannel() {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
-    public void verifyUnknownRequestsBackChannel() {
+    void verifyUnknownRequestsBackChannel() {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
     }
 

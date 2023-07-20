@@ -17,6 +17,7 @@ import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jee.context.JEEContext;
@@ -47,13 +48,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.oauth.code.time-to-kill-in-seconds=60"
 )
-public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
+class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwtClientProvider")
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
-    public void verifyBadAlgAction() throws Exception {
+    void verifyBadAlgAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -72,7 +73,7 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 
@@ -82,7 +83,7 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -103,12 +104,12 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyDisabledServiceAction() throws Exception {
+    void verifyDisabledServiceAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -130,12 +131,12 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyNoUserAction() throws Exception {
+    void verifyNoUserAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -144,12 +145,12 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, "unknown", "----", registeredService.getClientId());
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyBadJwt() throws Exception {
+    void verifyBadJwt() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -159,7 +160,7 @@ public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             "----", registeredService.getClientId());
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 

@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.yuja.name-id-attribute=cn",
     "cas.saml-sp.yuja.name-id-format=transient"
 })
-public class CasSamlSPYujaConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPYujaConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

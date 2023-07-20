@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.config.CasSupportActionsConfiguration;
 
 import org.springframework.context.annotation.Import;
 
@@ -12,5 +12,5 @@ import org.springframework.context.annotation.Import;
  * @since 6.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
-public class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
+public abstract class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
 }

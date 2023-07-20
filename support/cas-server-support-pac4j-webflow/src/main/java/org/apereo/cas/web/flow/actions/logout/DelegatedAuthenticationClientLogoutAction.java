@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.profile.ProfileManager;
@@ -74,14 +76,17 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             val client = clientResult.get();
             LOGGER.trace("Located client [{}]", client);
             val service = WebUtils.getService(requestContext);
-            val targetUrl = service != null ? service.getId() : null;
+            val targetUrl = Optional.ofNullable(service).map(Principal::getId).orElse(null);
             LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
-            val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
+            val callContext = new CallContext(context, sessionStore);
+            val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
             if (actionResult.isPresent()) {
                 val action = (HttpAction) actionResult.get();
-                val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder().status(action.getCode())
-                    .message(action.getMessage()).build();
+                val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder()
+                    .status(action.getCode())
+                    .message(action.getMessage())
+                    .build();
                 DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(requestContext, logoutAction);
                 LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                 JEEHttpActionAdapter.INSTANCE.adapt(action, context);

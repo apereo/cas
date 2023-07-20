@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.qualtrics.name-id-attribute=cn",
     "cas.saml-sp.qualtrics.name-id-format=transient"
 })
-public class CasSamlSPQualtricsConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPQualtricsConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

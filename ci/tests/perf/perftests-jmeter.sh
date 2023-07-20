@@ -13,10 +13,10 @@ function printgreen() {
   printf "${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.5
+jmeterVersion=5.6
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
 webAppServerType="$1"
 testCategory="${2:-cas}"
 
@@ -28,13 +28,15 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.authn.saml-idp.metadata.file-system.location=file://${PWD}/ci/tests/perf/saml/md"
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
     casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
-    casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true "
+    casProperties="${casProperties} --spring.main.lazy-initialization=false "
     jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
     casModules="saml-idp,reports"
     ;;
   oidc)
     casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
+    casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
+    casProperties="${casProperties} --spring.main.lazy-initialization=false "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
@@ -44,18 +46,15 @@ case "$testCategory" in
 esac
 
 retVal=0
-if [[ ! -f webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war ]]; then
-  echo -e "***********************************************"
-  echo -e "Build started at $(date)"
-  echo -e "***********************************************"
-  gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc
-  -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
-  tasks="$gradle $gradleBuildOptions $gradleBuild"
-  echo $tasks
-  echo -e "***************************************************************************************"
-  eval $tasks
-  retVal=$?
-fi
+echo -e "**********************************************************"
+echo -e "Build started at $(date) for test category ${testCategory}"
+echo -e "**********************************************************"
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+tasks="$gradle $gradleBuildOptions $gradleBuild"
+printgreen "$tasks"
+echo -e "***************************************************************************************"
+eval "$tasks"
+retVal=$?
 
 if [ $retVal == 0 ]; then
   printgreen "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
@@ -79,22 +78,32 @@ if [ $retVal == 0 ]; then
   printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}]"
   casOutput="/tmp/cas.log"
 
+  "${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
+  
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
   echo "Properties: ${casProperties}"
-  java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-      --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true \
-      --cas.server.name=https://localhost:8443 --cas.server.prefix=https://localhost:8443/cas \
-      --cas.audit.engine.enabled=true --spring.profiles.active=none \
+  java -Dlog.console.stacktraces=true \
+      -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
+      --server.ssl.key-store=${keystore} \
+      --cas.service-registry.core.init-from-json=true \
+      --cas.server.name=https://localhost:8443 \
+      --cas.server.prefix=https://localhost:8443/cas \
+      --cas.audit.engine.enabled=true \
+      --spring.profiles.active=none \
+      --cas.audit.slf4j.use-single-line=true \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
-      --logging.level.org.apereo.cas=warn ${casProperties} &
+      --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
-  printgreen "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
+  printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 2
   done
+#  curl -k -H "Content-Type:application/json" \
+#    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
+#    -d '{"configuredLevel": "DEBUG"}'
   printgreen "\n\nReady!"
 
   case "$testCategory" in
@@ -120,12 +129,16 @@ if [ $retVal == 0 ]; then
       unzip -q -d /tmp /tmp/apache-jmeter-${jmeterVersion}.zip
       printgreen "Unzipped /tmp/apache-jmeter-${jmeterVersion}.zip rc=$?"
       chmod +x /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter
+    echo "jmeter.save.saveservice.output_format=xml" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
+    echo "jmeter.save.saveservice.response_data=true" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
   fi
+
   clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
   export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"
-  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -n -t "${jmeterScript}" >results.log
+  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.xml -n -t "${jmeterScript}" >results.log
+  echo -n "JMeter results are written to " && ls /tmp/jmeter-results.xml
   echo -e "***************************************************************************************"
 
   java ci/tests/perf/EvalJMeterTestResults.java ./results.log

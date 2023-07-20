@@ -22,19 +22,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Tickets")
-public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
     @Autowired
     @Qualifier("restProtocolEndpointConfigurer")
     private ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
 
     @Test
-    public void verifyEndpoints() {
+    void verifyEndpoints() {
         assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
-    public void verifyServiceTicketAsDefault() {
+    void verifyServiceTicketAsDefault() {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val service = RegisteredServiceTestUtils.getService("test");
@@ -44,7 +44,7 @@ public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTick
     }
 
     @Test
-    public void verifyServiceTicketAsJwt() throws Exception {
+    void verifyServiceTicketAsJwt() throws Exception {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);

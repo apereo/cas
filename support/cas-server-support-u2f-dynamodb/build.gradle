@@ -2,6 +2,11 @@ description = "Apereo CAS U2F FIDO DynamoDb Support"
 
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "U2F Multifactor Authentication",
+            title: "U2F Support via DynamoDb"
+    ]
 }
 
 dependencies {

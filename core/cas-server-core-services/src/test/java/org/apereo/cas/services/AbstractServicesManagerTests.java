@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -19,6 +20,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -61,7 +63,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifySaveAndGet() {
+    void verifySaveAndGet() {
         val services = new CasRegisteredService();
         services.setId(1100);
         services.setName(TEST);
@@ -79,7 +81,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifySaveInRegistryAndGetById() {
+    void verifySaveInRegistryAndGetById() {
         val service = new CasRegisteredService();
         service.setId(2100);
         service.setName(TEST);
@@ -92,7 +94,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifySaveInRegistryAndGetByServiceId() {
+    void verifySaveInRegistryAndGetByServiceId() {
         val service = new CasRegisteredService();
         service.setId(3100);
         service.setName(TEST);
@@ -106,7 +108,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifyDelete() {
+    void verifyDelete() {
         val r = new CasRegisteredService();
         r.setId(1000);
         r.setName(TEST);
@@ -120,7 +122,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifyExpiredNotify() {
+    void verifyExpiredNotify() {
         val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(TEST);
@@ -134,7 +136,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    public void verifyExpiredNotifyAndDelete() {
+    void verifyExpiredNotifyAndDelete() {
         val r = new CasRegisteredService();
         r.setId(2001);
         r.setName(TEST);
@@ -157,7 +159,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
      * @throws Exception in case threads cannot be started or joined.
      */
     @Test
-    public void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Exception {
+    void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Exception {
         val service = new CasRegisteredService();
         service.setId(RandomUtils.nextLong());
         service.setName(UUID.randomUUID().toString());
@@ -194,6 +196,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         applicationContext.refresh();
         return ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
@@ -210,6 +213,6 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     protected boolean isServiceInCache(final String serviceId, final long id) {
         return servicesManager.getAllServices()
             .stream()
-            .anyMatch(r -> serviceId != null ? r.getServiceId().equals(serviceId) : r.getId() == id);
+            .anyMatch(r -> Optional.ofNullable(serviceId).map(s -> r.getServiceId().equals(s)).orElseGet(() -> r.getId() == id));
     }
 }

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.gauthCredentialRepository.enabled=true")
 @Getter
 @Tag("MFAProvider")
-public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
+class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("googleAuthenticatorTokenCredentialRepositoryEndpoint")
     private GoogleAuthenticatorTokenCredentialRepositoryEndpoint endpoint;
@@ -41,7 +41,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
     private OneTimeTokenCredentialRepository registry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
@@ -64,7 +64,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
     }
 
     @Test
-    public void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Exception {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
@@ -76,6 +76,6 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
         val request = new MockHttpServletRequest();
         val content = new GoogleAuthenticatorAccountSerializer().toString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
     }
 }

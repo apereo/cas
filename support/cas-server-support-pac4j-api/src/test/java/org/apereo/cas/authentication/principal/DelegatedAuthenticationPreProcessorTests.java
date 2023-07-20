@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Delegation")
-public class DelegatedAuthenticationPreProcessorTests {
+class DelegatedAuthenticationPreProcessorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(DelegatedAuthenticationPreProcessor.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, policy.getOrder());

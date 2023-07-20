@@ -15,7 +15,7 @@ and inject their own *internal triggers* into the CAS application runtime in ord
 translate protocol-specific authentication requests (such as those presented by 
 SAML2 or OpenID Connect) into multifactor authentication flows.
 
-<div class="alert alert-info"><strong>Service Requirement</strong><p>Most multifactor authentication 
+<div class="alert alert-info">:information_source: <strong>Service Requirement</strong><p>Most multifactor authentication 
 triggers require that the original authentication request submitted to CAS contain 
 a <code>service</code> parameter. Failure to do so will result in an initial successful 
 authentication attempt where subsequent requests that carry the relevant parameter 

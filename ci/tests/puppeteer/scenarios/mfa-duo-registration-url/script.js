@@ -12,7 +12,7 @@ const assert = require('assert');
     await cas.screenshot(page);
     let url = await page.url();
     console.log(url);
-    assert(url.startsWith("https://httpbin.org/anything/1"));
+    assert(url.startsWith("https://localhost:9859/anything/1"));
 
     let content = await cas.textContent(page, "body pre");
     let payload = JSON.parse(content);
@@ -25,7 +25,7 @@ const assert = require('assert');
         complete: false
     });
     assert(decoded.sub === "unknown");
-    assert(decoded.aud === "httpbin.org");
+    assert(decoded.aud === "localhost");
     assert(decoded.iss === "https://localhost:8443");
     await browser.close();
 

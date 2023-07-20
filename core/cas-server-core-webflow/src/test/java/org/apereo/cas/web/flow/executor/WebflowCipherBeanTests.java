@@ -23,14 +23,14 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class WebflowCipherBeanTests extends BaseWebflowConfigurerTests {
+class WebflowCipherBeanTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor webflowCipherExecutor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new WebflowCipherBean(webflowCipherExecutor);
         assertThrows(IllegalArgumentException.class,
             () -> input.encrypt(mock(InputStream.class), mock(OutputStream.class)));

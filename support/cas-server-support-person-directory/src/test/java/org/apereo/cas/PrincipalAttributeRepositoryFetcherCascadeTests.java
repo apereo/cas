@@ -35,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
 @Tag("Attributes")
-public class PrincipalAttributeRepositoryFetcherCascadeTests {
+class PrincipalAttributeRepositoryFetcherCascadeTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")

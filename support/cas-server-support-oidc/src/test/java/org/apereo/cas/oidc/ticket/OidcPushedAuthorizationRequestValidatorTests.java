@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcPushedAuthorizationRequestValidatorTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestValidatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationRequestValidator")
     private OAuth20AuthorizationRequestValidator oidcPushedAuthorizationRequestValidator;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");

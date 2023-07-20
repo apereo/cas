@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
+class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
         properties = {
@@ -48,7 +48,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Nested
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
-    public class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
+    class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
         @Autowired
@@ -64,7 +64,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             request.setRemoteAddr("223.456.789.000");
             request.setLocalAddr("123.456.789.000");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -76,7 +76,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyRegisterDevice() throws Exception {
+        void verifyRegisterDevice() throws Exception {
             val bean = new MultifactorAuthenticationTrustBean();
             WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
             assertNull(bean.getDeviceName());
@@ -90,7 +90,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Nested
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
+    class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
         @Autowired
@@ -106,7 +106,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             request.setRemoteAddr("123.456.789.000");
             request.setLocalAddr("123.456.789.000");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -128,13 +128,13 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyRegisterDevice() throws Exception {
+        void verifyRegisterDevice() throws Exception {
             assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER,
                 mfaPrepareTrustDeviceViewAction.execute(context).getId());
         }
 
         @Test
-        public void verifyPrepWithBypass() throws Exception {
+        void verifyPrepWithBypass() throws Exception {
             val service = (BaseRegisteredService) WebUtils.getRegisteredService(context);
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
             policy.setBypassTrustedDeviceEnabled(true);
@@ -145,7 +145,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyPrepWithNoBypassAndService() throws Exception {
+        void verifyPrepWithNoBypassAndService() throws Exception {
             WebUtils.putRegisteredService(context, null);
             WebUtils.putServiceIntoFlowScope(context, null);
             assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER,

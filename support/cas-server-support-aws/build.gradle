@@ -1,4 +1,11 @@
 description = 'Apereo CAS Amazon Web Services Support'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "AWS Support"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
 
@@ -10,9 +17,12 @@ dependencies {
     implementation project(":core:cas-server-core-rest-api")
     implementation project(":core:cas-server-core-rest")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-authentication")
 
     implementation libraries.awssts
     implementation libraries.aws
+    implementation libraries.awsverifiedpermissions
 
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")

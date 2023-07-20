@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -93,6 +94,7 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
+    @RegularExpressionCapable
     private List<String> supportedActions = Stream.of("*").toList();
 
     /**
@@ -101,12 +103,21 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
+    @RegularExpressionCapable
     private List<String> excludedActions = new ArrayList<>();
 
     /**
      * The audit format to use in the logs.
      */
     private AuditFormatTypes auditFormat = AuditFormatTypes.DEFAULT;
+
+    /**
+     * Abbreviate fields and entries in the audit logs where possible
+     * by the given length. This typically is applied to long service
+     * URLs that are captured in audit logs. Negative/Zero values
+     * disable the abbreviation altogether.
+     */
+    private int abbreviationLength = 125;
 
     /**
      * The audit format types.

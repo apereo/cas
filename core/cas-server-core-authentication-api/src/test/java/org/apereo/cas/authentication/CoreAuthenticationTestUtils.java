@@ -13,21 +13,21 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-
+import org.springframework.context.ApplicationEventPublisher;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -102,7 +102,7 @@ public class CoreAuthenticationTestUtils {
     public static StubPersonAttributeDao getAttributeRepository() {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
-        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
+        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase(Locale.ENGLISH)));
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("mail", CollectionUtils.wrap(CONST_USERNAME + "@example.org"));
         attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));
@@ -176,6 +176,7 @@ public class CoreAuthenticationTestUtils {
 
     public static CasModelRegisteredService getRegisteredService(final String url) {
         val service = mock(CasModelRegisteredService.class);
+        when(service.getFriendlyName()).thenCallRealMethod();
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("service name");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
@@ -257,5 +258,24 @@ public class CoreAuthenticationTestUtils {
         val authSupport = mock(AuthenticationSystemSupport.class);
         when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
         return authSupport;
+    }
+
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
+                                                                             final ServicesManager servicesManager) {
+        val publisher = mock(ApplicationEventPublisher.class);
+        return new DefaultAuthenticationSystemSupport(
+            new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
+            new DefaultPrincipalElectionStrategy(),
+            new DefaultAuthenticationResultBuilderFactory(),
+            getAuthenticationTransactionFactory(servicesManager),
+            servicesManager);
+    }
+
+    public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {
+        return new DefaultAuthenticationTransactionFactory(servicesManager);
+    }
+
+    public static AuthenticationTransactionFactory getAuthenticationTransactionFactory() {
+        return new DefaultAuthenticationTransactionFactory(mock(ServicesManager.class));
     }
 }

@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
-public class GroovySurrogateRegisteredServiceAccessStrategyTests {
+@Tag("GroovyServices")
+class GroovySurrogateRegisteredServiceAccessStrategyTests {
     @Test
-    public void verifySurrogateDisabled() {
-        val a = new GroovySurrogateRegisteredServiceAccessStrategy();
-        a.setGroovyScript("classpath:/surrogate-access.groovy");
-        assertFalse(executeStrategy("casuser-disabled", true, a));
+    void verifySurrogateDisabled() {
+        val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
+        strategy.setGroovyScript("classpath:/surrogate-access.groovy");
+        assertFalse(executeStrategy("casuser-disabled", true, strategy));
     }
 
     private static boolean executeStrategy(final String principal, final boolean surrogate, final GroovySurrogateRegisteredServiceAccessStrategy strategy) {
@@ -34,23 +34,23 @@ public class GroovySurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySurrogateFails() {
-        val a = new GroovySurrogateRegisteredServiceAccessStrategy();
-        a.setGroovyScript("classpath:/surrogate-access.groovy");
-        assertFalse(executeStrategy("casuser-fail", true, a));
+    void verifySurrogateFails() {
+        val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
+        strategy.setGroovyScript("classpath:/surrogate-access.groovy");
+        assertFalse(executeStrategy("casuser-fail", true, strategy));
     }
 
     @Test
-    public void verifySurrogateAllowed() {
-        val a = new GroovySurrogateRegisteredServiceAccessStrategy();
-        a.setGroovyScript("classpath:/surrogate-access.groovy");
-        assertTrue(executeStrategy("casuser-enabled", true, a));
+    void verifySurrogateAllowed() {
+        val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
+        strategy.setGroovyScript("classpath:/surrogate-access.groovy");
+        assertTrue(executeStrategy("casuser-enabled", true, strategy));
     }
 
     @Test
-    public void verifyNoSurrogateSession() {
-        val a = new GroovySurrogateRegisteredServiceAccessStrategy();
-        a.setGroovyScript("classpath:/surrogate-access.groovy");
-        assertTrue(executeStrategy("casuser", false, a));
+    void verifyNoSurrogateSession() {
+        val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
+        strategy.setGroovyScript("classpath:/surrogate-access.groovy");
+        assertTrue(executeStrategy("casuser", false, strategy));
     }
 }

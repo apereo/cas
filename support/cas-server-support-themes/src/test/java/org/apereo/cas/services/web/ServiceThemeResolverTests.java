@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
         "cas.theme.default-theme-name=test"
     })
 @Tag("Web")
-public class ServiceThemeResolverTests {
+class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 
     private static final String DEFAULT_THEME_NAME = "test";
@@ -46,7 +46,7 @@ public class ServiceThemeResolverTests {
     private ThemeResolver themeResolver;
 
     @Test
-    public void verifyGetServiceThemeDoesNotExist() {
+    void verifyGetServiceThemeDoesNotExist() {
         val r = new CasRegisteredService();
         r.setTheme("myTheme");
         r.setId(1000);
@@ -66,7 +66,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void verifyGetDefaultService() {
+    void verifyGetDefaultService() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);

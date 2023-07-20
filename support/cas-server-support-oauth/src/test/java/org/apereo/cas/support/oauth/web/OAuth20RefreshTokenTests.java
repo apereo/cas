@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuthToken")
-public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
+class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void initialize() {
@@ -28,19 +28,19 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
+    void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);
 
         val result = assertClientOK(service, true);
 
-        val at = this.ticketRegistry.getTicket(result.getKey(), OAuth20AccessToken.class);
+        val at = ticketRegistry.getTicket(result.getKey(), OAuth20AccessToken.class);
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
         this.ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
-        val at2 = this.ticketRegistry.getTicket(at.getId(), OAuth20AccessToken.class);
+        val at2 = ticketRegistry.getTicket(at.getId(), OAuth20AccessToken.class);
         assertNotNull(at2);
 
         val rt = ticketRegistry.getTicket(result.getRight(), OAuth20RefreshToken.class);
@@ -51,7 +51,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyRenewingRefreshToken() throws Exception {
+    void verifyRenewingRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);

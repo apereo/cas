@@ -22,6 +22,7 @@ import org.jooq.lambda.Unchecked;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -66,15 +67,17 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             return StringUtils.EMPTY;
         }
         try {
-            if (ScriptingUtils.isExternalGroovyScript(properties.getText())) {
+            if (ScriptingUtils.isExternalGroovyScript(properties.getText()) || ScriptingUtils.isInlineGroovyScript(properties.getText())) {
                 val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
                 val script = cacheMgr.resolveScriptableResource(properties.getText(), properties.getText());
-                val args = CollectionUtils.wrap("parameters", this.parameters, "logger", LOGGER);
+                val args = ScriptingUtils.isInlineGroovyScript(properties.getText())
+                    ? new HashMap<>(this.parameters)
+                    : CollectionUtils.<String, Object>wrap("parameters", this.parameters);
+                args.put("logger", LOGGER);
                 locale.ifPresent(loc -> args.put("locale", loc));
                 script.setBinding(args);
                 return script.execute(args.values().toArray(), String.class);
             }
-
             val templateFile = determineEmailTemplateFile();
             LOGGER.debug("Using email template file at [{}]", templateFile);
             val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);

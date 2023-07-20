@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -53,14 +53,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifySamlServiceAttributeNames() {
+    void verifySamlServiceAttributeNames() {
         val service = new SamlRegisteredService();
         service.setName("TestAttributeNames");
         service.setDescription("Test Description");

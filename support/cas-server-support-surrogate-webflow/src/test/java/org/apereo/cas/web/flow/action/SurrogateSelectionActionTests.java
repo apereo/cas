@@ -33,13 +33,13 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateSelectionActionTests {
+class SurrogateSelectionActionTests {
     @Autowired
     @Qualifier("selectSurrogateAction")
     private Action selectSurrogateAction;
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(mock(ServletExternalContext.class));
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -47,7 +47,7 @@ public class SurrogateSelectionActionTests {
     }
 
     @Test
-    public void verifyNoCredentialFound() throws Exception {
+    void verifyNoCredentialFound() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
@@ -58,7 +58,7 @@ public class SurrogateSelectionActionTests {
     }
 
     @Test
-    public void verifyCredentialFound() throws Exception {
+    void verifyCredentialFound() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val request = new MockHttpServletRequest();

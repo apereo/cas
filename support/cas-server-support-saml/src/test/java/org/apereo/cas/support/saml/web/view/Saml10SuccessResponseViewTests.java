@@ -9,12 +9,12 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("SAML1")
-public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
+class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
 
@@ -72,6 +72,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
@@ -95,7 +96,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponse() throws Exception {
+    void verifyResponse() throws Exception {
         val model = new HashMap<String, Object>();
 
         val attributes = new HashMap<String, List<Object>>();
@@ -135,7 +136,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponseWithNoAttributes() throws Exception {
+    void verifyResponseWithNoAttributes() throws Exception {
         val model = new HashMap<String, Object>();
 
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(PRINCIPAL_ID);
@@ -161,7 +162,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponseWithoutAuthMethod() throws Exception {
+    void verifyResponseWithoutAuthMethod() throws Exception {
         val model = new HashMap<String, Object>();
 
         val attributes = new HashMap<String, List<Object>>();

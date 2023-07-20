@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultLdapRegisteredServiceMapperTests {
+class DefaultLdapRegisteredServiceMapperTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -37,7 +37,7 @@ public class DefaultLdapRegisteredServiceMapperTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyIntegerIdOperation() {
+    void verifyIntegerIdOperation() {
         val mapper = new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
             new RegisteredServiceJsonSerializer(applicationContext));
         val id = String.format("^http://www.serviceid%s.org", RandomUtils.nextInt());

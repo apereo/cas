@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseSessionStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
-public class BrowserWebStorageSessionStoreTests {
+class BrowserWebStorageSessionStoreTests {
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor webflowCipherExecutor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val store = new BrowserWebStorageSessionStore(webflowCipherExecutor);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());

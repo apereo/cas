@@ -7,8 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.exception.http.WithLocationAction;
@@ -72,12 +71,11 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         private String redirectUrl;
 
         @Override
-        protected HttpAction redirectToOriginallyRequestedUrl(final WebContext context,
-                                                              final SessionStore sessionStore,
+        protected HttpAction redirectToOriginallyRequestedUrl(final CallContext callContext,
                                                               final String defaultUrl) {
-            val result = getSavedRequestHandler().restore(context, sessionStore, defaultUrl);
-            if (result instanceof WithLocationAction) {
-                redirectUrl = WithLocationAction.class.cast(result).getLocation();
+            val result = getSavedRequestHandler().restore(callContext, defaultUrl);
+            if (result instanceof WithLocationAction locationAction) {
+                redirectUrl = locationAction.getLocation();
             }
             return result;
         }

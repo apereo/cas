@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
-public class ThemeClassLoaderTemplateResolverTests {
+class ThemeClassLoaderTemplateResolverTests {
     private static void verifyThemeFile(final String themeName) {
         val themeResolver = new FixedThemeResolver();
         themeResolver.setDefaultThemeName(themeName);
@@ -43,7 +43,7 @@ public class ThemeClassLoaderTemplateResolverTests {
     }
 
     @Test
-    public void verifyOperationByDefaultValue() {
+    void verifyOperationByDefaultValue() {
         verifyThemeFile("test");
     }
 }

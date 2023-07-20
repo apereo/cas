@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcDefaultAttributeToScopeClaimMapperTests {
+class OidcDefaultAttributeToScopeClaimMapperTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ClaimMappingTests extends AbstractOidcTests {
+    class ClaimMappingTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -45,7 +45,7 @@ public class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyChainOperation() {
+        void verifyChainOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -64,9 +64,9 @@ public class OidcDefaultAttributeToScopeClaimMapperTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyValueTypes() {
+        void verifyValueTypes() {
             val oidcRegisteredService = getOidcRegisteredService();
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(
                 CollectionUtils.wrap("active1", "status1", "active2", "status2",
@@ -83,7 +83,7 @@ public class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
             val oidcRegisteredService = getOidcRegisteredService();
             assertTrue(mapper.containsMappedAttribute("name", oidcRegisteredService));
@@ -91,7 +91,7 @@ public class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyClaimMapOperation() {
+        void verifyClaimMapOperation() {
             val policy = new OidcEmailScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());

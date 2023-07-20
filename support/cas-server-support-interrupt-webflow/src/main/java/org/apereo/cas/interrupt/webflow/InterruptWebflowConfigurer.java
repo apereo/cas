@@ -72,9 +72,9 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        providerMap.forEach((k, v) -> {
-            if (containsSubflowState(flow, v.getId())) {
-                val state = getState(flow, v.getId(), SubflowState.class);
+        providerMap.forEach((id, provider) -> {
+            if (containsSubflowState(flow, provider.getId())) {
+                val state = getState(flow, provider.getId(), SubflowState.class);
                 createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT, true);
             }

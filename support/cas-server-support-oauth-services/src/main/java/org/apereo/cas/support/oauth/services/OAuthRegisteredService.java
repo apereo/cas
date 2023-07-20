@@ -42,6 +42,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean jwtAccessToken;
 
+    private Set<String> audience = new HashSet<>();
+    
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
 
     private RegisteredServiceOAuthAccessTokenExpirationPolicy accessTokenExpirationPolicy;
@@ -98,5 +100,6 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     public void initialize() {
         super.initialize();
         this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
+        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>(0));
     }
 }

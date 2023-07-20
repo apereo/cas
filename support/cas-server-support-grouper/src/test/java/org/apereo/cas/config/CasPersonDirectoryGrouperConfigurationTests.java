@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Grouper")
 @SpringBootTest(classes = BaseGrouperConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.authn.attribute-repository.grouper.state=ACTIVE")
-public class CasPersonDirectoryGrouperConfigurationTests {
+class CasPersonDirectoryGrouperConfigurationTests {
     @Autowired
     @Qualifier("grouperAttributeRepositories")
     private BeanContainer<IPersonAttributeDao> grouperAttributeRepositories;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(grouperAttributeRepositories);
     }
 

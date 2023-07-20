@@ -13,6 +13,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 
 import java.util.Set;
@@ -169,8 +170,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+            .resolveClientIdAndClientSecret(callContext).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = StringUtils.isNotBlank(clientId)
             ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId)

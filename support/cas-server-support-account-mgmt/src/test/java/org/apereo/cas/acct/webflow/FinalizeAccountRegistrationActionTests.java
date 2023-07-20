@@ -35,12 +35,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @Import({
     CasAccountManagementWebflowConfiguration.class,
     FinalizeAccountRegistrationActionTests.FinalizeAccountRegistrationActionTestConfiguration.class
 })
-public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
+class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
     private Action finalizeAccountRegistrationAction;
@@ -59,13 +59,13 @@ public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigure
     }
 
     @Test
-    public void verifyOperationFailsWithMissingRequest() throws Exception {
+    void verifyOperationFailsWithMissingRequest() throws Exception {
         val results = finalizeAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         AccountRegistrationUtils.putAccountRegistrationRequest(context, registrationRequest);
         val results = finalizeAccountRegistrationAction.execute(context);

@@ -23,6 +23,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AuthenticationHandler")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationTokenAuthenticationHandlerTests {
+class QRAuthenticationTokenAuthenticationHandlerTests {
     @Autowired
     @Qualifier("qrAuthenticationTokenAuthenticationHandler")
     private AuthenticationHandler qrAuthenticationTokenAuthenticationHandler;
@@ -63,14 +64,14 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
 
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val credential = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(credential));
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(QRAuthenticationTokenCredential.class));
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(qrAuthenticationTokenAuthenticationHandler);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -83,7 +84,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -95,7 +96,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -103,7 +104,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject("unknown")
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);

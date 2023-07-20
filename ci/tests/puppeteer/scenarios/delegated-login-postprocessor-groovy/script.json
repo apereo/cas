@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--logging.level.org.apereo.cas=info",
     "--cas.audit.engine.enabled=false",

@@ -1,8 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = {
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.core.enabled=true",
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     "CasFeatureModule.AccountManagement.enabled=true"
 })
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManagementActionTests {
+class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
     private Action accountProfileUpdateSecurityQuestionsAction;
@@ -82,7 +82,7 @@ public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswo
     }
 
     @Test
-    public void verifyMismatchedQuestionsAndAnswers() throws Exception {
+    void verifyMismatchedQuestionsAndAnswers() throws Exception {
         parameterMap.put("questions", new String[]{"question1", "question2", "question3"});
         parameterMap.put("answers", new String[]{"answer1", "answer2"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);
@@ -90,7 +90,7 @@ public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswo
     }
 
     @Test
-    public void verifyShortQuestions() throws Exception {
+    void verifyShortQuestions() throws Exception {
         parameterMap.put("questions", new String[]{"qaz", "zsxa", "123"});
         parameterMap.put("answers", new String[]{"a", "b", "c"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);
@@ -98,7 +98,7 @@ public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswo
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Exception {
         parameterMap.put("questions", new String[]{"question1", "question2"});
         parameterMap.put("answers", new String[]{"answer1", "answer2"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);

@@ -36,13 +36,13 @@ import static org.mockito.Mockito.*;
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
-public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     private Action verifyPasswordlessAccountAuthenticationAction;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = getRequestContext("casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
@@ -51,7 +51,7 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
     }
 
     @Test
-    public void verifyNoUserInfoAction() throws Exception {
+    void verifyNoUserInfoAction() throws Exception {
         val context = getRequestContext("nouserinfo");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
@@ -59,20 +59,20 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
     }
 
     @Test
-    public void verifyInvalidUser() throws Exception {
+    void verifyInvalidUser() throws Exception {
         val context = getRequestContext("unknown");
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
     @Test
-    public void verifyRequestPassword() throws Exception {
+    void verifyRequestPassword() throws Exception {
         val context = getRequestContext("needs-password");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT,
             verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
     @Test
-    public void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Exception {
+    void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Exception {
         val context = getRequestContext("needs-password-user-without-email-or-phone");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }

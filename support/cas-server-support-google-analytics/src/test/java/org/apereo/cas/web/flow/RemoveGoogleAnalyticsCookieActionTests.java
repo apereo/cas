@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseCasGoogleAnalyticsTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowActions")
-public class RemoveGoogleAnalyticsCookieActionTests {
+class RemoveGoogleAnalyticsCookieActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_REMOVE_COOKIE)
     private Action removeGoogleAnalyticsCookieAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

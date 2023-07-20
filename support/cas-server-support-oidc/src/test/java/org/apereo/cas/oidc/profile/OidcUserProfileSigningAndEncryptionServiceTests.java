@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=none,RSA1_5,RSA-OAEP-256")
-public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
+class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = getOidcRegisteredService();
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
         service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
@@ -35,14 +35,14 @@ public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyOAuth() {
+    void verifyOAuth() {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val input = oidcUserProfileSigningAndEncryptionService.encode(service, getClaims());
         assertFalse(input.isEmpty());
     }
 
     @Test
-    public void verifyNoSigningEncryption() {
+    void verifyNoSigningEncryption() {
         val service = getOidcRegisteredService();
         service.setUserInfoSigningAlg("RS256");
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);

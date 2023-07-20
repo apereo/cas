@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("WebflowActions")
-public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
+@Tag("WebflowServiceActions")
+class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -39,7 +39,7 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
     private Action acceptableUsagePolicyVerifyAction;
 
     @Test
-    public void verifyNoService() throws Exception {
+    void verifyNoService() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -47,7 +47,7 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
     }
 
     @Test
-    public void verifyDisabledService() throws Exception {
+    void verifyDisabledService() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -67,7 +67,7 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
     }
 
     @Test
-    public void verifyMustAccept() throws Exception {
+    void verifyMustAccept() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

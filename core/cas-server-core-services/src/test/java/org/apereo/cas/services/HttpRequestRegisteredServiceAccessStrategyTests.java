@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -15,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("RegisteredService")
-public class HttpRequestRegisteredServiceAccessStrategyTests {
+class HttpRequestRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "HttpRequestRegisteredServiceAccessStrategy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -36,14 +38,16 @@ public class HttpRequestRegisteredServiceAccessStrategyTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("192.861.151.163");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome/Mozilla");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        request.addHeader("CustomHeader", "abcd-12-xyz#");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
-    public void verifySerialization() throws IOException {
+    void verifySerialization() throws IOException {
         val strategyWritten = new HttpRequestRegisteredServiceAccessStrategy();
         strategyWritten.setIpAddress("129.+.123.\\d\\d");
         strategyWritten.setUserAgent("Google Chrome (Firefox)");
+        strategyWritten.setHeaders(CollectionUtils.wrap("Header1", "Value.+Pattern"));
         MAPPER.writeValue(JSON_FILE, strategyWritten);
         val read = MAPPER.readValue(JSON_FILE, RegisteredServiceAccessStrategy.class);
         assertEquals(strategyWritten, read);
@@ -51,34 +55,42 @@ public class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyAccessByIp() {
+    void verifyAccessByIp() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyUserAgentAccess() {
+    void verifyAccessByIpAndHeader() {
+        val policy = new HttpRequestRegisteredServiceAccessStrategy();
+        policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
+        policy.setHeaders(Map.of("CustomHeader", "^abcd-\\d\\d-.+#"));
+        assertTrue(policy.isServiceAccessAllowed());
+    }
+
+    @Test
+    void verifyUserAgentAccess() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyMatchFailsByIp() {
+    void verifyMatchFailsByIp() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("123.456.789.111");
         assertFalse(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyUndefinedValues() {
+    void verifyUndefinedValues() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyAllFieldsPresent() {
+    void verifyAllFieldsPresent() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         policy.setIpAddress(".*861.*");

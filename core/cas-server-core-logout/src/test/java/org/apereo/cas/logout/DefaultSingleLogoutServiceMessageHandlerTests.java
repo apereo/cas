@@ -27,10 +27,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class DefaultSingleLogoutServiceMessageHandlerTests {
+class DefaultSingleLogoutServiceMessageHandlerTests {
 
     @Test
-    public void verifyEmpty() {
+    void verifyEmpty() {
         val servicesManager = mock(ServicesManager.class);
         val service = new CasRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());

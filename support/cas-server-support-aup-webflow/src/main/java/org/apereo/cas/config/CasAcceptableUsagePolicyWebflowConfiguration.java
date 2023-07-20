@@ -11,6 +11,7 @@ import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -89,7 +90,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
-                    if (groovy.getLocation() != null) {
+                    if (groovy.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                         return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(),
                             new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
                     }

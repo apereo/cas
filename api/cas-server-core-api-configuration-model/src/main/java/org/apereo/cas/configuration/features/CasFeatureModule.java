@@ -14,6 +14,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,7 +27,7 @@ import java.util.TreeSet;
 public interface CasFeatureModule {
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
-               + field.getName().substring(0, 1).toUpperCase()
+               + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
                + field.getName().substring(1);
     }
 
@@ -71,6 +72,11 @@ public interface CasFeatureModule {
     }
 
     enum FeatureCatalog {
+        /**
+         * Dashboard and administrative console
+         * to manage CAS services, configuration, etc.
+         */
+        AdminConsole,
         /**
          * Just-in-time provisioning users to external systems
          * and identity management solutions.
@@ -186,6 +192,10 @@ public interface CasFeatureModule {
          * Auditing and audit log.
          */
         Audit,
+        /**
+         * Logging support for various providers and platforms.
+         */
+        Logging,
         /**
          * Authy MFA.
          */

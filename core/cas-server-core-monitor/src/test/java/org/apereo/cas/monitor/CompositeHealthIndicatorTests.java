@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Metrics")
-public class CompositeHealthIndicatorTests {
+class CompositeHealthIndicatorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val composite = new CompositeHealthIndicator(
             List.of(new DownHealthIndicator(Status.OUT_OF_SERVICE), new PingHealthIndicator())
         );

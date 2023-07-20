@@ -4,11 +4,11 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.v2.ProxyController;
 
@@ -39,21 +39,21 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationConfiguration.class
 })
 @Tag("CAS")
-public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
+class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
     @Qualifier("proxyController")
     private ObjectProvider<ProxyController> proxyController;
 
     @Test
-    public void verifyNoParams() {
+    void verifyNoParams() {
         assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, this.proxyController.getObject()
             .handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()).getModel()
             .get("code"));
     }
 
     @Test
-    public void verifyNonExistentPGT() {
+    void verifyNonExistentPGT() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
@@ -63,7 +63,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyExistingPGT() throws Exception {
+    void verifyExistingPGT() throws Exception {
         val ticket = new ProxyGrantingTicketImpl(
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
@@ -72,13 +72,15 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault");
 
+        val response = new MockHttpServletResponse();
+        assertTrue(this.proxyController.getObject().canHandle(request, response));
         assertTrue(this.proxyController.getObject().handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
             CasProtocolConstants.PARAMETER_TICKET));
     }
 
     @Test
-    public void verifyNotAuthorizedPGT() throws Exception {
+    void verifyNotAuthorizedPGT() throws Exception {
         val ticket = new ProxyGrantingTicketImpl(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);

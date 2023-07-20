@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationHandler")
-public class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
+class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
     @Test
-    public void verifyOperationPrevented() {
+    void verifyOperationPrevented() {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
@@ -33,7 +33,7 @@ public class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyMismatch() {
+    void verifyMismatch() {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
         assertFalse(input.isSatisfiedBy(authn, Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()),

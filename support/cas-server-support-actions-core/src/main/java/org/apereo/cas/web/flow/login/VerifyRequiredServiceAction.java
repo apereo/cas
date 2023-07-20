@@ -49,7 +49,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
 
-        val initialService = casProperties.getSso().getRequiredServicePattern();
+        val initialService = casProperties.getSso().getServices().getRequiredServicePattern();
         if (StringUtils.isNotBlank(initialService)) {
             val initialServicePattern = RegexUtils.createPattern(initialService);
             enforceInitialMandatoryService(context, ticketGrantingTicketId, initialServicePattern);

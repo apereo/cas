@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("Webflow")
-public class CasDefaultFlowUrlHandlerTests {
+class CasDefaultFlowUrlHandlerTests {
 
     private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
-    public void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
+    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -34,7 +34,7 @@ public class CasDefaultFlowUrlHandlerTests {
     }
 
     @Test
-    public void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
+    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");

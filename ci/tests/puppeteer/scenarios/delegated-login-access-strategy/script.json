@@ -1,8 +1,9 @@
 {
-  "dependencies": "pac4j-webflow",
+  "dependencies": "reports,pac4j-webflow",
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
@@ -19,7 +20,11 @@
     "--cas.authn.pac4j.cas[1].display-name=My CAS Two",
     
     "--logging.level.org.apereo.cas=debug",
-    
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

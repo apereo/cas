@@ -1,7 +1,7 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasJdbcAuditConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
-    CasSupportJdbcAuditConfiguration.class,
+    CasJdbcAuditConfiguration.class,
     CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
@@ -44,7 +44,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Getter
-public class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;

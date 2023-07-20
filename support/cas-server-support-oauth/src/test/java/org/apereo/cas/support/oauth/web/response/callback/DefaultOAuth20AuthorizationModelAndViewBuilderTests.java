@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20AuthorizationModelAndViewBuilderTests extends AbstractOAuth20Tests {
+class DefaultOAuth20AuthorizationModelAndViewBuilderTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthAuthorizationModelAndViewBuilder")
     private OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder;
 
     @Test
-    public void verifyFragment() throws Exception {
+    void verifyFragment() throws Exception {
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
         servicesManager.save(registeredService);
         val mv = oauthAuthorizationModelAndViewBuilder.build(registeredService, OAuth20ResponseModeTypes.FRAGMENT,

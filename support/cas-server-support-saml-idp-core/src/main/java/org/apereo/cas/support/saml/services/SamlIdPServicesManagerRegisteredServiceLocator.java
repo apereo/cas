@@ -6,10 +6,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,10 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
-    public SamlIdPServicesManagerRegisteredServiceLocator(final SamlRegisteredServiceCachingMetadataResolver resolver) {
+
+    public SamlIdPServicesManagerRegisteredServiceLocator(
+        final SamlRegisteredServiceCachingMetadataResolver resolver) {
+
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> {
             val parameterValue = getSamlParameterValue(registeredService, service);
@@ -43,12 +46,13 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                     return attribute.getEntityIdFrom(resolver, attributeValue);
                 })
                 .filter(StringUtils::isNotBlank)
+                .filter(StringUtils::isNotBlank)
                 .filter(registeredService::matches)
                 .stream()
                 .anyMatch(entityId -> {
                     LOGGER.trace("Resolving metadata for service [{}] via entity id [{}]", registeredService.getName(), entityId);
                     val samlService = SamlRegisteredService.class.cast(registeredService);
-                    val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, entityId);
+                    val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, entityId);
                     return adaptor.isPresent();
                 });
         });
@@ -87,6 +91,11 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
         return Optional.empty();
     }
 
+    @Override
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return SamlRegisteredService.class;
+    }
+
     @RequiredArgsConstructor
     @Getter
     private static class SamlProtocolServiceAttribute implements Ordered {
@@ -95,7 +104,10 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 @Override
                 public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                     val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-                    val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
+                    val sessionStore = openSamlConfigBean.getApplicationContext()
+                        .getBean("samlIdPDistributedSessionStore", SessionStore.class);
+                    val authnRequest = SamlIdPSessionManager.of(resolver.getOpenSamlConfigBean(), sessionStore)
+                        .fetch(RequestAbstractType.class, attributeValue);
                     openSamlConfigBean.logObject(authnRequest);
                     return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
                 }

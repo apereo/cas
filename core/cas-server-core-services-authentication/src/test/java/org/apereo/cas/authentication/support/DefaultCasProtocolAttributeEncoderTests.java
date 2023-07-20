@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Attributes")
-public class DefaultCasProtocolAttributeEncoderTests {
+class DefaultCasProtocolAttributeEncoderTests {
     private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class),
         CipherExecutor.noOpOfStringToString());
 
@@ -47,7 +47,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    public void verifyEncodeNamesCorrectly() {
+    void verifyEncodeNamesCorrectly() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -57,7 +57,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    public void verifyEncodeNamesUnnecessary() {
+    void verifyEncodeNamesUnnecessary() {
         when(webApplicationService.getFormat()).thenReturn(ValidationResponseType.JSON);
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
@@ -68,7 +68,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    public void verifyEncodeNamesWithNoService() {
+    void verifyEncodeNamesWithNoService() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -77,7 +77,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    public void verifyEncodeBinaryValuesCorrectly() {
+    void verifyEncodeBinaryValuesCorrectly() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user", "casuser".getBytes(StandardCharsets.UTF_8));
         val results = encoder.encodeAttributes(attributes, registeredService, webApplicationService);
@@ -87,7 +87,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    public void verifyEncodedWithPrefix() {
+    void verifyEncodedWithPrefix() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("_MAIL_", "casuser@example.org");
         val results = encoder.encodeAttributes(attributes, registeredService, webApplicationService);

@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 27017)
 @Tag("MongoDb")
-public class MongoDbConnectionFactoryTests {
+class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";
 
     @Test
-    public void verifyProps() {
+    void verifyProps() {
         val factory = new MongoDbConnectionFactory();
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
@@ -37,7 +37,7 @@ public class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    public void verifyClient() {
+    void verifyClient() {
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
         val factory = new MongoDbConnectionFactory();
@@ -46,7 +46,7 @@ public class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    public void verifyPackages() {
+    void verifyPackages() {
         val props = new SingleCollectionMongoDbProperties();
         props.setHost("localhost,localhost");
         props.setPort(27017);

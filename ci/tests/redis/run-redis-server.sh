@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-export REDIS_VERSION=${1:-7.0.5}
+export REDIS_VERSION=${1:-7.0.11}
 
 echo "Running Redis + Sentinel docker image: $REDIS_VERSION"
 
@@ -10,8 +10,8 @@ test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker-compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker-compose -f $COMPOSE_FILE up -d
 
-COUNT_REDIS=$(docker ps | grep "redis_server_"| wc -l)
-COUNT_SENTINEL=$(docker ps | grep "redis_sentinel_"| wc -l)
+COUNT_REDIS=$(docker ps | grep "redis_server_" | wc -l)
+COUNT_SENTINEL=$(docker ps | grep "redis_sentinel_" | wc -l)
 if [ "$COUNT_REDIS" -eq 3 -a "$COUNT_SENTINEL" -eq 3 ]; then
     echo "Redis + sentinel docker images are running."
 else

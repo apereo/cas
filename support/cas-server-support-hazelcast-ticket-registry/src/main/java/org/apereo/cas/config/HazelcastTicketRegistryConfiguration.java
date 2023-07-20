@@ -7,12 +7,15 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
+import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import com.hazelcast.config.AttributeConfig;
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
 import com.hazelcast.config.MapConfig;
@@ -26,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -50,15 +54,17 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val r = new HazelcastTicketRegistry(casTicketRegistryHazelcastInstance, ticketCatalog, hz.getPageSize());
-        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
-        return r;
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast");
+        return new HazelcastTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+            casTicketRegistryHazelcastInstance, hz);
     }
 
     @Bean(destroyMethod = "shutdown")
@@ -83,6 +89,11 @@ public class HazelcastTicketRegistryConfiguration {
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+
+                    val attributeConfig = new AttributeConfig();
+                    attributeConfig.setName("attributes");
+                    attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
+                    mapConfig.addAttributeConfig(attributeConfig);
                 }
                 return cfg;
             })
@@ -114,6 +125,7 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }

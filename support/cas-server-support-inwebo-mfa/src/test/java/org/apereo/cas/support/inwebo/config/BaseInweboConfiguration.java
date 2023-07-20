@@ -1,30 +1,35 @@
 package org.apereo.cas.support.inwebo.config;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.InweboAuthenticationConfiguration;
+import org.apereo.cas.config.InweboAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.config.InweboServiceConfiguration;
+import org.apereo.cas.config.InweboWebflowConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -61,6 +66,7 @@ public class BaseInweboConfiguration {
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreLogoutConfiguration.class,

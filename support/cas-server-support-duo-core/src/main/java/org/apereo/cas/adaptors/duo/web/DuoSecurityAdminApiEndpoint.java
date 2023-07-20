@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +60,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
         providers
             .stream()
             .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
@@ -93,6 +95,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
         providers
             .stream()
             .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())

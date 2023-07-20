@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-public class CasCoreNotificationsConfigurationTests {
+class CasCoreNotificationsConfigurationTests {
     @Autowired
     @Qualifier("notificationSender")
     private NotificationSender notificationSender;
@@ -48,7 +48,7 @@ public class CasCoreNotificationsConfigurationTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(notificationSender);
         assertNotNull(smsSender);
         assertNotNull(communicationsManager);

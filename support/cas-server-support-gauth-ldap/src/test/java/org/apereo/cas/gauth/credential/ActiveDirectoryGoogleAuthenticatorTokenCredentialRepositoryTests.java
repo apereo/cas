@@ -41,7 +41,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Tag("ActiveDirectory")
 @EnabledIfListeningOnPort(port = 10636)
-public class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
+class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
     @SneakyThrows
     protected String getUsernameUnderTest() {

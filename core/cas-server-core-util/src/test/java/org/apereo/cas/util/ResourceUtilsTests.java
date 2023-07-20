@@ -2,8 +2,10 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +29,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Utility")
-public class ResourceUtilsTests {
+class ResourceUtilsTests {
     @Test
-    public void verifyResourceExists() {
+    void verifyResourceExists() {
         assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         val resourceLoader = mock(ResourceLoader.class);
@@ -41,7 +44,7 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyResourceOnClasspath() {
+    void verifyResourceOnClasspath() {
         val res = new ClassPathResource("valid.json");
         assertNotNull(ResourceUtils.prepareClasspathResourceIfNeeded(res, false, "valid"));
         assertNull(ResourceUtils.prepareClasspathResourceIfNeeded(null, false, "valid"));
@@ -49,7 +52,7 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyPrepare() {
+    void verifyPrepare() {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), false, ".*");
@@ -57,7 +60,7 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyPrepareDir() {
+    void verifyPrepareDir() {
         val url = getClass().getClassLoader().getResource("META-INF");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), true, "MANIFEST");
@@ -65,24 +68,40 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyExport() throws Exception {
-        val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
+    void verifyExport() throws Exception {
+        val resourceName = "META-INF/additional-spring-configuration-metadata.json";
+        val url = getClass().getClassLoader().getResource(resourceName);
         assertNotNull(url);
         val parent = FileUtils.getTempDirectory();
         assertNull(ResourceUtils.exportClasspathResourceToFile(parent, null));
         assertNotNull(ResourceUtils.exportClasspathResourceToFile(parent, new UrlResource(url)));
 
+        try (val appCtx = new StaticApplicationContext()) {
+            appCtx.refresh();
+            assertDoesNotThrow(() -> ResourceUtils.exportResources(appCtx, parent,
+                Collections.singletonList("classpath:/" + resourceName)));
+        }
+        assertTrue(new File(parent, FilenameUtils.getName(resourceName)).exists());
+        
         val res = new ClassPathResource("valid.json");
         val file = new File(FileUtils.getTempDirectory(), "/one/two");
         FileUtils.write(new File(file, Objects.requireNonNull(res.getFilename())), "data", StandardCharsets.UTF_8);
         assertNotNull(ResourceUtils.exportClasspathResourceToFile(file, res));
     }
 
+    @Test
+    void verifyClasspathResourceDirectory() {
+        val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
+        assertNotNull(url);
+        val file = new File(url.toExternalForm()).getParentFile();
+        assertTrue(ResourceUtils.isJarResource(new ClassPathResource(file.getPath())));
+    }
+
     /**
      * Check that doesResourceExist validates existence of directory.
      */
     @Test
-    public void verifyResourceExistsDetectsFolder() throws IOException {
+    void verifyResourceExistsDetectsFolder() throws IOException {
         val path = Files.createTempDirectory("castest-");
         assertTrue(ResourceUtils.doesResourceExist(ResourceUtils.getResourceFrom(path.toString())));
         FileUtils.forceDelete(path.toFile());

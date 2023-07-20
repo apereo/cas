@@ -123,7 +123,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Data
     @SuppressWarnings("UnusedMethod")
-    private static class JsonBackedAccount implements Serializable {
+    public static class JsonBackedAccount implements Serializable {
         @Serial
         private static final long serialVersionUID = -8522936598053838986L;
 

@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 10389)
 @Slf4j
 @Tag("LdapRepository")
-public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
+class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 
     @Autowired
@@ -65,13 +65,13 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentNotFound() {
+    void verifyConsentNotFound() {
         assertNotNull(consentLdapConnectionFactory);
         assertTrue(getRepository().findConsentDecisions("unknown-user").isEmpty());
     }
 
     @Test
-    public void verifyNoConsent() throws Exception {
+    void verifyNoConsent() throws Exception {
         val ldap = casProperties.getConsent().getLdap();
         val factory = mock(ConnectionFactory.class);
         val repo = new LdapConsentRepository(new LdapConnectionFactory(factory), ldap);

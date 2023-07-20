@@ -57,13 +57,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
 @Tag("WebflowConfig")
-public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("wsFederationProtocolEndpointConfigurer")
     private ProtocolEndpointWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
     
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

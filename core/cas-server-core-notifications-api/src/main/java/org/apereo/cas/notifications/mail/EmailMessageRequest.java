@@ -3,7 +3,6 @@ package org.apereo.cas.notifications.mail;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
@@ -11,11 +10,9 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link EmailMessageRequest}.
@@ -54,9 +51,9 @@ public class EmailMessageRequest {
      *
      * @return the attribute value
      */
-    public Optional<Object> getAttributeValue() {
+    public List<String> getAttributeValue() {
         val value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value);
+        return CollectionUtils.toCollection(value, ArrayList.class);
     }
 
     /**
@@ -67,12 +64,8 @@ public class EmailMessageRequest {
      * @return the recipients
      */
     public List<String> getRecipients() {
-        if (hasAttributeValue()) {
-            val value = getAttributeValue();
-            if (value.isPresent()) {
-                return CollectionUtils.toCollection(value.get(), ArrayList.class);
-            }
-        }
-        return ObjectUtils.defaultIfNull(getTo(), List.of());
+        return hasAttributeValue()
+            ? getAttributeValue()
+            : ObjectUtils.defaultIfNull(getTo(), List.of());
     }
 }

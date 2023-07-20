@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
+class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
 
     private static MockHttpServletRequest getJwtRequest() {
         val request = new MockHttpServletRequest();
@@ -47,7 +47,7 @@ public class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20
     }
 
     @Test
-    public void verifyPlainJwtWithoutClientId() {
+    void verifyPlainJwtWithoutClientId() {
         val request = getJwtRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -58,7 +58,7 @@ public class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20
     }
 
     @Test
-    public void verifyPlainJwtWithClientId() {
+    void verifyPlainJwtWithClientId() {
         val request = getJwtRequest();
 
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret");

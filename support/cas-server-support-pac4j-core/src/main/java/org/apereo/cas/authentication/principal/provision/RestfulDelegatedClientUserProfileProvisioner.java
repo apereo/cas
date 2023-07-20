@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * This is {@link RestfulDelegatedClientUserProfileProvisioner}.
@@ -45,7 +46,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
                 .headers(headers)
                 .build();

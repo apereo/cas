@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Web")
-public class SimpleUrlValidatorFactoryBeanTests {
+class SimpleUrlValidatorFactoryBeanTests {
 
     @Test
-    public void verifyValidation() {
+    void verifyValidation() {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://www.demo.com/logout"));
@@ -22,7 +22,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    public void verifyValidationWithLocalUrlAllowed() {
+    void verifyValidationWithLocalUrlAllowed() {
         val validator = new SimpleUrlValidatorFactoryBean(true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://www.demo.com/logout"));
@@ -30,7 +30,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    public void verifyValidationWithRegEx() {
+    void verifyValidationWithRegEx() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));
@@ -40,7 +40,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    public void verifyValidationWithRegExCaseInsensitiv() {
+    void verifyValidationWithRegExCaseInsensitiv() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", false).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));
@@ -50,7 +50,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    public void verifyValidationWithRegExAndLocalUrlAllowed() {
+    void verifyValidationWithRegExAndLocalUrlAllowed() {
         val validator = new SimpleUrlValidatorFactoryBean(true, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));

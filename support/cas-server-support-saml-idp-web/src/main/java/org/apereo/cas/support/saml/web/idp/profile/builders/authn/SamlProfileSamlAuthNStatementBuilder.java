@@ -18,6 +18,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
@@ -37,12 +38,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Serial
     private static final long serialVersionUID = 8761566449790497226L;
 
-    private final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-                                                final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder,
+                                                final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder,
                                                 final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
@@ -67,10 +68,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
-        val authenticationMethod = authnContextClassRefBuilder.build(context);
+        
         val id = buildAuthnStatementSessionIdex(context);
-        val statement = newAuthnStatement(authenticationMethod,
-            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate()), id);
+        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate());
+
+        val authnContextClass = authnContextClassRefBuilder.build(context);
+        val statement = newAuthnStatement(authnContextClass, authnInstant, id);
 
         if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
             statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));

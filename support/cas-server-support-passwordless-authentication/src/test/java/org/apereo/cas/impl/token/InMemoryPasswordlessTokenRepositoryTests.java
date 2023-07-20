@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("PasswordOps")
-public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     private static final String CAS_USER = "casuser";
 
     @Autowired
@@ -28,7 +28,7 @@ public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUs
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    public void verifyToken() {
+    void verifyToken() {
         passwordlessTokenRepository.clean();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(CAS_USER).build();

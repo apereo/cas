@@ -2,12 +2,10 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.support.throttle.JdbcThrottleProperties;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcOperations;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Types;
 import java.util.Collection;
@@ -49,14 +47,15 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
         LOGGER.debug("Fetching failures in audit log for username [{}] and remote address [{}]", username, remoteAddress);
         val failuresInAudits = jdbcTemplate.query(
             throttle.getJdbc().getAuditQuery(),
-            new Object[]{
-                remoteAddress,
-                username,
-                throttle.getFailure().getCode(),
-                throttle.getCore().getAppCode(),
-                getFailureInRangeCutOffDate()},
-            new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> ThrottledSubmission.builder()
+            ps -> {
+                ps.setString(1, remoteAddress);
+                ps.setString(2, username);
+                ps.setString(3, throttle.getFailure().getCode());
+                ps.setString(4, throttle.getCore().getAppCode());
+                ps.setObject(5, getFailureInRangeCutOffDate());
+            },
+            (resultSet, i) -> ThrottledSubmission
+                .builder()
                 .key(UUID.randomUUID().toString())
                 .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
                 .build());

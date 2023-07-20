@@ -29,9 +29,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestfulUrlTemplateResolverTests {
+class RestfulUrlTemplateResolverTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         try (val webServer = new MockWebServer(9302,
@@ -49,7 +49,7 @@ public class RestfulUrlTemplateResolverTests {
     }
 
     @Test
-    public void verifyUnknownErrorAction() {
+    void verifyUnknownErrorAction() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         try (val webServer = new MockWebServer(9302,

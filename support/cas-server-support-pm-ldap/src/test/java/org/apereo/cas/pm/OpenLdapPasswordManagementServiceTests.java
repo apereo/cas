@@ -38,12 +38,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber"
 })
 @EnabledIfListeningOnPort(port = 11389)
-public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 11389;
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=admin,dc=example,dc=org", "P@ssw0rd");
         LdapIntegrationTestsOperations.populateEntries(localhost,
@@ -53,7 +53,7 @@ public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordMana
     }
 
     @Test
-    public void verifyTokenCreationAndParsing() {
+    void verifyTokenCreationAndParsing() {
         val token = passwordChangeService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         assertNotNull(token);
         val result = passwordChangeService.parseToken(token);
@@ -61,7 +61,7 @@ public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordMana
     }
 
     @Test
-    public void verifyPasswordChangedFails() {
+    void verifyPasswordChangedFails() {
         val credential = new UsernamePasswordCredential("caspm", "123456");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("Mellon".toCharArray());
@@ -72,19 +72,19 @@ public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordMana
     }
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("caspm@example.org", email);
     }
 
     @Test
-    public void verifyFindPhone() {
+    void verifyFindPhone() {
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("1234567890", ph);
     }
 
     @Test
-    public void verifyFindSecurityQuestions() {
+    void verifyFindSecurityQuestions() {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals(1, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));

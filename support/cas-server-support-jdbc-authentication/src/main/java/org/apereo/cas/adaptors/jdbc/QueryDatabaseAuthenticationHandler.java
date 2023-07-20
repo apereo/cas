@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -41,6 +42,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Slf4j
+@Monitorable
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private final QueryJdbcAuthenticationProperties properties;

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyScriptWebflowActionTests {
+class GroovyScriptWebflowActionTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -40,7 +40,7 @@ public class GroovyScriptWebflowActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyShellScript() throws Exception {
+    void verifyShellScript() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -56,7 +56,7 @@ public class GroovyScriptWebflowActionTests {
     }
 
     @Test
-    public void verifyScript() throws Exception {
+    void verifyScript() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+import org.apereo.cas.util.spring.boot.CasBanner;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Utility")
-public class CasEmbeddedContainerUtilsTests {
+class CasEmbeddedContainerUtilsTests {
     @Test
-    public void verifyMainArgs() {
-        assertTrue(CasEmbeddedContainerUtils.getLoggingInitialization().isPresent());
+    void verifyMainArgs() {
+        assertFalse(CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().isEmpty());
     }
 
     @Test
-    public void verifyCasBanner() {
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+    void verifyCasBanner() {
+        val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
@@ -38,7 +39,7 @@ public class CasEmbeddedContainerUtilsTests {
     }
 
     @Test
-    public void verifyStartup() {
+    void verifyStartup() {
         assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
         System.setProperty("CAS_APP_STARTUP", "buffering");
         assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
@@ -47,8 +48,8 @@ public class CasEmbeddedContainerUtilsTests {
     }
 
     @Test
-    public void verifyCustomBanner() {
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+    void verifyCustomBanner() {
+        val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.core.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 9092)
-public class RegisteredServiceKafkaDistributedCacheManagerTests {
+class RegisteredServiceKafkaDistributedCacheManagerTests {
 
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")
@@ -45,7 +45,7 @@ public class RegisteredServiceKafkaDistributedCacheManagerTests {
         registeredServiceDistributedCacheManager;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         assertFalse(registeredServiceDistributedCacheManager.contains(service));
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());

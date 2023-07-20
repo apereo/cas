@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationModelAndViewBuilder")
     private OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val parameters = new LinkedHashMap<String, String>();
         parameters.put(OidcConstants.EXPIRES_IN, "100");
         parameters.put(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());

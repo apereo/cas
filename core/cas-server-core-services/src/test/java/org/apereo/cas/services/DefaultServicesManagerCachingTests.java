@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -12,6 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultServicesManagerCachingTests}.
@@ -20,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerCachingTests {
+class DefaultServicesManagerCachingTests {
 
     @Test
-    public void verifyServicesCache() throws Exception {
+    void verifyServicesCache() throws Exception {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 
         val applicationContext = new StaticApplicationContext();
@@ -38,6 +41,7 @@ public class DefaultServicesManagerCachingTests {
 
         val context = ServicesManagerConfigurationContext.builder()
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext, List.of(service1), List.of()))
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache((Cache) cache)

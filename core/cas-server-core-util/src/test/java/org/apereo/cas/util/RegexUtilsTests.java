@@ -14,16 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Utility")
-public class RegexUtilsTests {
+class RegexUtilsTests {
 
     @Test
-    public void verifyNotValidRegex() {
+    void verifyNotValidRegex() {
         val notValidRegex = "***";
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
-    public void verifyBlankValidRegex() {
+    void verifyBlankValidRegex() {
         var pattern = RegexUtils.createPattern(StringUtils.EMPTY);
         assertNotNull(pattern);
         assertSame(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
@@ -33,7 +33,7 @@ public class RegexUtilsTests {
     }
 
     @Test
-    public void verifyNullRegex() {
+    void verifyNullRegex() {
         assertFalse(RegexUtils.isValidRegex(null));
     }
 }

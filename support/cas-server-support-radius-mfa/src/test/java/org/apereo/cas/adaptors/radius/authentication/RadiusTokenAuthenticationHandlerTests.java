@@ -45,14 +45,14 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Radius")
 @EnabledOnOs(OS.LINUX)
-public class RadiusTokenAuthenticationHandlerTests {
+class RadiusTokenAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("radiusTokenAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val c = new RadiusTokenCredential("Mellon");
 
         assertTrue(authenticationHandler.supports(c));

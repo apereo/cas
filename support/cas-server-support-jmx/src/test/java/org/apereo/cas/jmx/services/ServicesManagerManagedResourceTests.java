@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseCasJmxTests.SharedTestConfiguration.class)
 @Tag("JMX")
-public class ServicesManagerManagedResourceTests {
+class ServicesManagerManagedResourceTests {
 
     @Autowired
     @Qualifier("servicesManagerManagedResource")
     private ServicesManagerManagedResource servicesManagerManagedResource;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.servicesManagerManagedResource);
         assertNotNull(this.servicesManagerManagedResource.getServices());
     }

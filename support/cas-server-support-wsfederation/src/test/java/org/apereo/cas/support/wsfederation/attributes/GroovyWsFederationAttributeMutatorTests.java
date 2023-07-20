@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class GroovyWsFederationAttributeMutatorTests {
+class GroovyWsFederationAttributeMutatorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val g = new GroovyWsFederationAttributeMutator(new ClassPathResource("GroovyWsFedMutator.groovy"));
         val results = g.modifyAttributes(CoreAuthenticationTestUtils.getAttributes());
         assertEquals(1, results.size());

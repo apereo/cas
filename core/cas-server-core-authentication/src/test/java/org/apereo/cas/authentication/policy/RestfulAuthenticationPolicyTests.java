@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("RestfulApiAuthentication")
-public class RestfulAuthenticationPolicyTests {
+class RestfulAuthenticationPolicyTests {
     private static void assertPolicyFails(final int port, final HttpStatus status,
                                           final Class<? extends Throwable> exceptionClass) {
         val applicationContext = new StaticApplicationContext();
@@ -53,7 +53,7 @@ public class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyAllowedOperation() throws Exception {
+    void verifyAllowedOperation() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -69,7 +69,7 @@ public class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyStatusCodeUnAuthz() {
+    void verifyStatusCodeUnAuthz() {
         assertPolicyFails(9201, HttpStatus.UNAUTHORIZED, FailedLoginException.class);
         assertPolicyFails(9202, HttpStatus.LOCKED, AccountLockedException.class);
         assertPolicyFails(9203, HttpStatus.METHOD_NOT_ALLOWED, AccountDisabledException.class);

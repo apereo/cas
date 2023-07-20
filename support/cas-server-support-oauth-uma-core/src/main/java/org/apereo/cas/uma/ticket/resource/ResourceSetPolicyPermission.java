@@ -1,21 +1,23 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Type;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link ResourceSetPolicyPermission}.
@@ -25,7 +27,6 @@ import java.util.LinkedHashMap;
  */
 @Getter
 @Setter
-@Embeddable
 @Table(name = "UMA_ResourceSetPolicyPermission")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
@@ -41,11 +42,11 @@ public class ResourceSetPolicyPermission implements Serializable {
     @Column
     private String subject;
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>();
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Set<String> scopes = new HashSet<>();
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Map<String, Object> claims = new LinkedHashMap<>();
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -43,6 +44,7 @@ public class RememberMeAuthenticationProperties implements Serializable {
      * If left undefined, remember-me authentication
      * will proceed with the default CAS behavior.
      */
+    @RegularExpressionCapable
     private String supportedUserAgents;
 
     /**
@@ -53,5 +55,6 @@ public class RememberMeAuthenticationProperties implements Serializable {
      * If left undefined, remember-me authentication
      * will proceed with the default CAS behavior.
      */
+    @RegularExpressionCapable
     private String supportedIpAddresses;
 }

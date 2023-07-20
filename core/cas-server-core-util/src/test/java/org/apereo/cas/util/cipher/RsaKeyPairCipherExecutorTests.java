@@ -1,6 +1,7 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.val;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Cipher")
-public class RsaKeyPairCipherExecutorTests {
+class RsaKeyPairCipherExecutorTests {
     @Test
-    public void verifyActionOneWay() {
+    void verifyActionOneWay() {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
         val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
+        cipher1.setSigningAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         assertNotNull(cipher1.encode("TestValue"));
 
         val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
+        cipher.setSigningAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA384);
         assertNotNull(cipher.encode("TestValue"));
     }
 
     @Test
-    public void verifyRsaKeyPairResource() {
+    void verifyRsaKeyPairResource() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey, privateKey, publicKey);
@@ -38,7 +41,7 @@ public class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPair() {
+    void verifyRsaKeyPair() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
@@ -50,7 +53,7 @@ public class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairSigning() {
+    void verifyRsaKeyPairSigning() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
@@ -61,7 +64,7 @@ public class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairSigningOnly() {
+    void verifyRsaKeyPairSigningOnly() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey);
@@ -71,7 +74,7 @@ public class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairDoesNothing() {
+    void verifyRsaKeyPairDoesNothing() {
         val cipher = new RsaKeyPairCipherExecutor();
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);

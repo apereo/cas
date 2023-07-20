@@ -1,5 +1,6 @@
 {
   "dependencies": "core,events-configuration",
+
   "properties": [
     "--cas.events.core.track-configuration-modifications=false",
 

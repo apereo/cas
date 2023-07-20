@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationPolicy")
-public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
+class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     @Test
-    public void verifyOperationPrevented() throws Exception {
+    void verifyOperationPrevented() throws Exception {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
@@ -33,7 +33,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyHandlerCountMismatch() throws Exception {
+    void verifyHandlerCountMismatch() throws Exception {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy(true);
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
@@ -41,7 +41,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addSuccess("Handler1", mock(AuthenticationHandlerExecutionResult.class)).build();

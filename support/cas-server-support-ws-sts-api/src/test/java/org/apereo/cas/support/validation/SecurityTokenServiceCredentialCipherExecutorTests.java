@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Cipher")
-public class SecurityTokenServiceCredentialCipherExecutorTests {
+class SecurityTokenServiceCredentialCipherExecutorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cipher = new SecurityTokenServiceCredentialCipherExecutor(null,
             null, null, 0, 0);
         val encoded = cipher.encode("value");

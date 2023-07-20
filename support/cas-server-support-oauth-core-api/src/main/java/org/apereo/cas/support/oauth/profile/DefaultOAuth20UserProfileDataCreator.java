@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.jee.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.HashMap;
@@ -42,7 +42,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,
         actionResolverName = AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER)
-    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final JEEContext context) {
+    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getObject().getServicesManager(), accessToken.getClientId());
 
@@ -61,7 +61,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     }
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
-                                                              final JEEContext context,
+                                                              final WebContext context,
                                                               final RegisteredService registeredService) {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
@@ -77,18 +77,6 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
         return principal;
     }
-
-    /*
-    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) {
-        val authentication = accessToken.getAuthentication();
-        val attributes = new HashMap<>(authentication.getAttributes());
-        val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
-            .getAuthenticationAttributesForRelease(authentication, registeredService);
-        attributes.putAll(authnAttributes);
-        return getConfigurationContext().getPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
-    }
-     */
     
     protected void finalizeProfileResponse(final OAuth20AccessToken accessTokenTicket,
                                            final Map<String, Object> modelAttributes,

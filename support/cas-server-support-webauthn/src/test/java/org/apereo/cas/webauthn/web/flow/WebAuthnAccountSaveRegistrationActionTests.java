@@ -1,11 +1,11 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class WebAuthnAccountSaveRegistrationActionTests {
+class WebAuthnAccountSaveRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION)
     private Action webAuthnSaveAccountRegistrationAction;
@@ -61,14 +61,14 @@ public class WebAuthnAccountSaveRegistrationActionTests {
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setParameter("sessionToken", EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8)));
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());

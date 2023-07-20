@@ -35,12 +35,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",
     "cas.authn.oauth.core.user-profile-view-type=FLAT"
 })
-public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
+class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
@@ -60,7 +60,7 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationJWS() throws Exception {
+    void verifyOperationJWS() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -83,7 +83,7 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val id = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(id);
         service.setUserInfoSigningAlg(AlgorithmIdentifiers.NONE);

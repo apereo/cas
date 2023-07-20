@@ -18,10 +18,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class CasAppenderTests {
+class CasAppenderTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(CasAppender.class.getName());
         val appender = (CasAppender) logger.getAppenders().get("CasAppender");

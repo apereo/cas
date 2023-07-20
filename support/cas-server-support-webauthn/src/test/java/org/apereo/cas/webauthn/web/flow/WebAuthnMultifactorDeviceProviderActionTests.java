@@ -1,9 +1,9 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class WebAuthnMultifactorDeviceProviderActionTests {
+class WebAuthnMultifactorDeviceProviderActionTests {
     @Autowired
     @Qualifier("webAuthnDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction;
@@ -52,7 +52,7 @@ public class WebAuthnMultifactorDeviceProviderActionTests {
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

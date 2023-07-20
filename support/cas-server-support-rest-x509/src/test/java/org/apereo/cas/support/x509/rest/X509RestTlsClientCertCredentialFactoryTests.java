@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("X509")
-public class X509RestTlsClientCertCredentialFactoryTests {
+class X509RestTlsClientCertCredentialFactoryTests {
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();
 
     @Test
-    public void createX509Credential() throws Exception {
+    void createX509Credential() throws Exception {
         val request = new MockHttpServletRequest();
 
         try (val inStream = new FileInputStream(new ClassPathResource("ldap-crl.crt").getFile())) {
@@ -42,7 +42,7 @@ public class X509RestTlsClientCertCredentialFactoryTests {
     }
 
     @Test
-    public void createDefaultCredential() {
+    void createDefaultCredential() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");

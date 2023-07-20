@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Webflow")
-public class FlowExecutionExceptionResolverTests {
+class FlowExecutionExceptionResolverTests {
     @Test
-    public void verifyActionNull() {
+    void verifyActionNull() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -33,7 +33,7 @@ public class FlowExecutionExceptionResolverTests {
     }
 
     @Test
-    public void verifyActionModelView() {
+    void verifyActionModelView() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");

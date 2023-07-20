@@ -53,7 +53,7 @@ To determine the correct issuer, resources that are provided to
 the `webfinger` discovery endpoint using the `acct` URI scheme
 can be located and fetched using external user repositories via `email` or `username`.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The default repository implementation will
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>The default repository implementation will
 echo back the provided email or username, etc as it is <strong>ONLY</strong> relevant for demo/testing purposes.</p></div>
 
 The following user-info repository choices are available for configuration and production use.

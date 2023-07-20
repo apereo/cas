@@ -2,16 +2,17 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("SAML2")
-public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
 
@@ -64,7 +65,8 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     public static void prepTests() throws Exception {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
         if (jsonFolder.isDirectory()) {
-            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             jsonFolder.delete();
         }
         if (!jsonFolder.mkdir()) {
@@ -74,7 +76,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySavingSamlService() throws Exception {
+    void verifySavingSamlService() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -92,7 +94,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySavingInCommonSamlService() throws Exception {
+    void verifySavingInCommonSamlService() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -115,7 +117,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void checkPattern() {
+    void checkPattern() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val registeredService = new SamlRegisteredService();
@@ -125,6 +127,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         val dao = new InMemoryServiceRegistry(appCtx, List.of(registeredService), new ArrayList<>());
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
@@ -140,7 +143,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
         val serviceWritten = new SamlRegisteredService();
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
@@ -152,7 +155,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySignAssertionTrueWithDeserialization() {
+    void verifySignAssertionTrueWithDeserialization() {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
@@ -172,7 +175,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySignAssertionFalseWithDeserialization() {
+    void verifySignAssertionFalseWithDeserialization() {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",

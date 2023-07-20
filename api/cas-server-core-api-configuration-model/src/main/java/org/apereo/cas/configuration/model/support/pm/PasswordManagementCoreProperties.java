@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -46,6 +47,7 @@ public class PasswordManagementCoreProperties implements Serializable {
      * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     /**

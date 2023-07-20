@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchdb.serviceregistry.CouchDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
@@ -63,12 +63,6 @@ public class ServiceRegistryProperties implements Serializable {
     private GitServiceRegistryProperties git = new GitServiceRegistryProperties();
 
     /**
-     * Properties pertaining to Cosmos DB service registry.
-     */
-    @NestedConfigurationProperty
-    private CouchDbServiceRegistryProperties couchDb = new CouchDbServiceRegistryProperties();
-
-    /**
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
@@ -111,12 +105,6 @@ public class ServiceRegistryProperties implements Serializable {
     private MongoDbServiceRegistryProperties mongo = new MongoDbServiceRegistryProperties();
 
     /**
-     * Properties pertaining to couchbase service registry.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
-
-    /**
      * Properties pertaining to dynamo db service registry.
      */
     @NestedConfigurationProperty
@@ -127,6 +115,12 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonS3ServiceRegistryProperties amazonS3 = new AmazonS3ServiceRegistryProperties();
+
+    /**
+     * Properties pertaining to GCP firestore service registry.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudFirestoreServiceRegistryProperties googleCloudFirestore = new GoogleCloudFirestoreServiceRegistryProperties();
 
     /**
      * Properties pertaining to streaming service registry content over the wire.
@@ -163,4 +157,10 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ServiceRegistryCoreProperties core = new ServiceRegistryCoreProperties();
+
+    /**
+     * Registry templated services settings.
+     */
+    @NestedConfigurationProperty
+    private ServiceRegistryTemplatesProperties templates = new ServiceRegistryTemplatesProperties();
 }

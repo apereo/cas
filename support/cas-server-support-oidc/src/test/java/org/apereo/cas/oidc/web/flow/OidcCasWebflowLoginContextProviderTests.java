@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcCasWebflowLoginContextProviderTests extends AbstractOidcTests {
+class OidcCasWebflowLoginContextProviderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcCasWebflowLoginContextProvider")
     private CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

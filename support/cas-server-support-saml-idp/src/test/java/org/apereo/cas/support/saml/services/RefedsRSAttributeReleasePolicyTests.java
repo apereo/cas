@@ -25,19 +25,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata1"
 })
-public class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RefedsRSAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyMatch() {
+    void verifyMatch() {
         val filter = new RefedsRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -54,7 +54,7 @@ public class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfiguratio
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new RefedsRSAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, RefedsRSAttributeReleasePolicy.class);

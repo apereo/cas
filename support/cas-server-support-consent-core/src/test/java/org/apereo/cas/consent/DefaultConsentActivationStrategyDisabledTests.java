@@ -31,14 +31,14 @@ import static org.mockito.Mockito.*;
 @Getter
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class,
     properties = "cas.consent.core.active=false")
-public class DefaultConsentActivationStrategyDisabledTests {
+class DefaultConsentActivationStrategyDisabledTests {
 
     @Autowired
     @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
-    public void verifyNoConsent() {
+    void verifyNoConsent() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

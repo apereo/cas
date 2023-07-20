@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -28,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.2.1
  */
 @Tag("AuthenticationMetadata")
-public class RememberMeAuthenticationMetaDataPopulatorTests {
+class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private static AuthenticationBuilder newBuilder(final Credential credential,
                                                     final RememberMeAuthenticationProperties properties) {
@@ -40,13 +39,13 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
             .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (populator.supports(credential)) {
-            populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
+            populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         }
         return builder;
     }
 
     @Test
-    public void verifyWithTrueRememberMeCredentials() {
+    void verifyWithTrueRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -56,12 +55,12 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeUserAgentAndIp() {
+    void verifyRememberMeUserAgentAndIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()
@@ -73,12 +72,12 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeUserAgent() {
+    void verifyRememberMeUserAgent() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()
@@ -89,11 +88,11 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeIp() {
+    void verifyRememberMeIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()
@@ -104,7 +103,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyWithFalseRememberMeCredentials() {
+    void verifyWithFalseRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -114,7 +113,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyWithoutRememberMeCredentials() {
+    void verifyWithoutRememberMeCredentials() {
         val builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             new RememberMeAuthenticationProperties());
         val auth = builder.build();

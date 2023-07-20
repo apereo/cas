@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class GrouperRegisteredServiceAccessStrategyTests {
+class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -48,7 +48,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAccessStrategyJson() throws Exception {
+    void checkAccessStrategyJson() throws Exception {
         val attributes = new HashMap<String, Set<String>>();
         val v1 = new HashSet<String>();
         v1.add("admin");
@@ -73,7 +73,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkGrouperAttributes() {
+    void checkGrouperAttributes() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
             @Serial
             private static final long serialVersionUID = 8533229193475808261L;
@@ -97,7 +97,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkGrouperNoGroups() {
+    void checkGrouperNoGroups() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
             @Serial
             private static final long serialVersionUID = 8533229193475808261L;
@@ -111,7 +111,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkFailsConfig() {
+    void checkFailsConfig() {
         val strategy = new GrouperRegisteredServiceAccessStrategy();
         strategy.getConfigProperties().put("grouperClient.webService.url", "http://localhost:8012");
         strategy.getConfigProperties().put("grouperClient.webService.login", "unknown");

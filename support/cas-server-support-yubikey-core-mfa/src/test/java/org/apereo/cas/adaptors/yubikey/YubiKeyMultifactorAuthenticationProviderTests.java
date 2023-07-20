@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFAProvider")
-public class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
 
     @Override
     @SneakyThrows
@@ -37,7 +37,7 @@ public class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractM
     }
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val client = mock(YubicoClient.class);
         when(client.getWsapiUrls()).thenThrow(new RuntimeException());
         val http = mock(HttpClient.class);

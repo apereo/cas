@@ -90,4 +90,17 @@ public class CoreSamlMetadataProperties implements Serializable {
      */
     private boolean sloServiceRedirectBindingEnabled = true;
 
+    /**
+     * This is the key size that is used when generating the initial keypair
+     * that would hold the private/public key for the SAML2 metadata.
+     * This setting is only relevant when artifacts needs to be generated.
+     */
+    private int keySize = 4096;
+
+    /**
+     * The algorithm type/name that is used when generating certificates
+     * for the SAML2 identity provider.
+     * This setting is only relevant when artifacts needs to be generated.
+     */
+    private String certificateAlgorithm = "SHA512withRSA";
 }

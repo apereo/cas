@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
-    public void verifySetAnExpireByKey() {
+    void verifySetAnExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -54,7 +54,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractM
     }
 
     @Test
-    public void verifyExpireByDate() {
+    void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

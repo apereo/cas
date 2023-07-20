@@ -73,11 +73,11 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
 
         FunctionUtils.doIfNotNull(jpaProperties.getPhysicalNamingStrategyClassName(),
-            s -> {
+            __ -> {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());
                 val namingStrategy = PhysicalNamingStrategy.class.cast(clazz.getDeclaredConstructor().newInstance());
-                if (namingStrategy instanceof ApplicationContextAware) {
-                    ((ApplicationContextAware) namingStrategy).setApplicationContext(applicationContext);
+                if (namingStrategy instanceof ApplicationContextAware aware) {
+                    aware.setApplicationContext(applicationContext);
                 }
                 properties.put(AvailableSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
             });
@@ -100,7 +100,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
 
     @Override
     public Stream<? extends Serializable> streamQuery(final jakarta.persistence.Query query) {
-        val hibernateQuery = Query.class.cast(query);
+        val hibernateQuery = query.unwrap(Query.class);
         return hibernateQuery.stream();
     }
 }

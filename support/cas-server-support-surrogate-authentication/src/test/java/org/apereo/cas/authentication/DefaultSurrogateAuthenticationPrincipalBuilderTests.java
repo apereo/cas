@@ -24,9 +24,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Impersonation")
-public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
+class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     @Test
-    public void verifyOperationWithNoService() {
+    void verifyOperationWithNoService() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -35,7 +35,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     }
 
     @Test
-    public void verifyOperationWithService() {
+    void verifyOperationWithService() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -46,7 +46,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     }
 
     @Test
-    public void verifyOperationWithoutAuthn() {
+    void verifyOperationWithoutAuthn() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -58,7 +58,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
 
 
     @Test
-    public void verifyOperationWithSurrogate() {
+    void verifyOperationWithSurrogate() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -81,7 +81,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     }
 
     @Test
-    public void verifyOperationWithSurrogateSuccess() {
+    void verifyOperationWithSurrogateSuccess() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));

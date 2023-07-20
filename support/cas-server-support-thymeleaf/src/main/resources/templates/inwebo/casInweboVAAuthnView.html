@@ -24,6 +24,7 @@
              data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
         <div id="vaStartActivation" data-action="activation" data-container="vaContainer"
              data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
+        <span id="vaError" />
         <script th:inline="javascript">
             window.onload = () => {
                 iwstart("vaStartAuthentication", function(iw, data) {
@@ -31,15 +32,19 @@
                         document.getElementById('otp').value = data.result.values[1];
                         document.getElementById("otpForm").submit();
                     }
-                    if (data.type == "error" && data.code == "nok" && data.result.reason == "no_profile") {
-                        iwterminate();
-                        setTimeout(function() {
-                            iwstart("vaStartActivation", function(iw, data) {
-                                if (data.type == "success" && data.code == "ok" && data.action == "activation") {
-                                    window.location.href = window.location.href;
-                                }
-                            });
-                        }, 0);
+                    if (data.type == "error" && data.code == "nok") {
+                        if (data.result.reason == "no_profile") {
+                            iwterminate();
+                            setTimeout(function() {
+                                iwstart("vaStartActivation", function(iw, data) {
+                                    if (data.type == "success" && data.code == "ok" && data.action == "activation") {
+                                        window.location.href = window.location.href;
+                                    }
+                                });
+                            }, 0);
+                        } else if (data.result.reason == "force_close") {
+                            document.getElementById('vaError').textContent = 'Error: enable third-party cookies for this browser!';
+                        }
                     }
                 });
             };

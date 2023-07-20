@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
-public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
+class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static CriteriaSet getCriteriaFor(final String entityId) {
         val criteriaSet1 = new CriteriaSet();
         criteriaSet1.add(new EntityIdCriterion(entityId));
@@ -43,7 +43,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyAggregateCacheOverUrlResource() {
+    void verifyAggregateCacheOverUrlResource() {
         val aggregateRegisteredService = new SamlRegisteredService();
         aggregateRegisteredService.setName("AggregateMetadata");
         aggregateRegisteredService.setId(1000);
@@ -65,7 +65,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyCacheValidityForAggregates() {
+    void verifyCacheValidityForAggregates() {
         val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
 
         val aggregateRegisteredService = new SamlRegisteredService();
@@ -91,7 +91,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyCacheValidityWithUnknownEntityId() {
+    void verifyCacheValidityWithUnknownEntityId() {
         val criteriaSet = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
 
         val service = new SamlRegisteredService();
@@ -112,7 +112,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyRetryableOpWithFailure() {
+    void verifyRetryableOpWithFailure() {
         val criteriaSet = getCriteriaFor("urn:app.e2ma.net");
 
         val service = new SamlRegisteredService();
@@ -127,7 +127,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyRetryableOp() {
+    void verifyRetryableOp() {
 
         val service = new SamlRegisteredService();
         service.setName("Example");
@@ -147,7 +147,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verfifyAggregatedCacheLoading() throws Exception {
+    void verfifyAggregatedCacheLoading() throws Exception {
         val resolver = getResolver("PT5M");
 
         val service1 = getSamlRegisteredService(1, ".*", "classpath:aggregate-md.xml");
@@ -171,7 +171,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyMissingMetadataInMDQ() {
+    void verifyMissingMetadataInMDQ() {
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
@@ -179,7 +179,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyDynamicMetadata() {
+    void verifyDynamicMetadata() {
         val criteriaSet1 = getCriteriaFor("urn:mace:incommon:internet2.edu");
 
         val service = new SamlRegisteredService();

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowEvents")
 @Import(TimedMultifactorAuthenticationPolicyEventResolverTests.TimedMultifactorTestConfiguration.class)
-public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("timedAuthenticationPolicyWebflowEventResolver")
@@ -61,7 +61,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests extends Base
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -77,7 +77,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests extends Base
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

@@ -14,6 +14,7 @@ This strategy allows one to configure a service with the following properties:
 |-------------|--------------------------------------------------------------------------------|
 | `ipAddress` | (Optional) Regular expression pattern compared against the client IP address.  |
 | `userAgent` | (Optional) Regular expression pattern compared against the browser user agent. |
+| `headers`   | (Optional) Regular expression pattern compared against the request headers.    |
 
 The objective of this policy is examine specific properties of the HTTP request and make service access decisions by comparing those properties
 with pre-defined rules and patterns, such as those that might be based on an IP address, user-agent, etc.
@@ -26,7 +27,11 @@ with pre-defined rules and patterns, such as those that might be based on an IP 
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy",
     "ipAddress" : "192.\\d\\d\\d.\\d\\d\\d.101",
-    "userAgent": "Chrome.+"
+    "userAgent": "Chrome.+",
+    "headers":{
+      "@class": "java.util.TreeMap",
+      "Header1": "Value.+Pattern"
+    }
   }
 }
 ```

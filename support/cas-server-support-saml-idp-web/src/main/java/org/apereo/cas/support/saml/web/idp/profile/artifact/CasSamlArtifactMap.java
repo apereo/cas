@@ -9,16 +9,17 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 
 import javax.annotation.Nonnull;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -42,10 +43,12 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
     @Override
     public void put(
         @Nonnull
-        final String artifact, @Nonnull
+        final String artifact,
+        @Nonnull
         final String relyingPartyId,
         @Nonnull
-        final String issuerId, @Nonnull
+        final String issuerId,
+        @Nonnull
         final SAMLObject samlMessage) throws IOException {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
@@ -54,8 +57,10 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         if (ticketGrantingTicket == null) {
-            ticketGrantingTicket = samlIdPDistributedSessionStore
-                .get(new JEEContext(request, response), WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+            val ctx = new JEEContext(request, response);
+            val manager = new ProfileManager(ctx, samlIdPDistributedSessionStore);
+            ticketGrantingTicket = manager.getProfile()
+                .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
                 .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }

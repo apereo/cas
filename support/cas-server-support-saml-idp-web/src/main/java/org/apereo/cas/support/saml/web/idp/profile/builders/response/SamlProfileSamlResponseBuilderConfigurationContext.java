@@ -10,9 +10,11 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
@@ -20,6 +22,7 @@ import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link SamlProfileSamlResponseBuilderConfigurationContext}.
@@ -31,31 +34,34 @@ import org.pac4j.core.context.session.SessionStore;
 @Getter
 @Setter
 @SuperBuilder
+@With
+@AllArgsConstructor
 public class SamlProfileSamlResponseBuilderConfigurationContext {
+    private final ConfigurableApplicationContext applicationContext;
 
-    private final transient VelocityEngine velocityEngineFactory;
+    private final VelocityEngine velocityEngineFactory;
 
-    private final transient SamlIdPObjectSigner samlObjectSigner;
+    private final SamlIdPObjectSigner samlObjectSigner;
 
     private final CasConfigurationProperties casProperties;
 
-    private final transient SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
+    private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
-    private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
-    private final transient OpenSamlConfigBean openSamlConfigBean;
+    private final OpenSamlConfigBean openSamlConfigBean;
 
-    private final transient TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
-    private final transient CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    private final transient SAMLArtifactMap samlArtifactMap;
+    private final SAMLArtifactMap samlArtifactMap;
 
-    private final transient SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
+    private final SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
 
-    private final transient SessionStore sessionStore;
+    private final SessionStore sessionStore;
 
-    private final transient CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     private final MetadataResolver samlIdPMetadataResolver;
 

@@ -14,6 +14,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.core.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 9092)
-public class CasServicesStreamingKafkaConfigurationTests {
+class CasServicesStreamingKafkaConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")
     private DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager;
@@ -57,13 +58,13 @@ public class CasServicesStreamingKafkaConfigurationTests {
     private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val o = DistributedCacheObject.<RegisteredService>builder()
             .value(RegisteredServiceTestUtils.getRegisteredService())
             .publisherIdentifier(new PublisherIdentifier())
@@ -78,17 +79,17 @@ public class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    public void verifyListener() throws Exception {
+    void verifyListener() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val publisherId = new PublisherIdentifier();
-        
+        val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService), publisherId);
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo), publisherId);
         Thread.sleep(3000);
         assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
 
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceDeletedEvent(this, registeredService), publisherId);
+            new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo), publisherId);
 
         Thread.sleep(2500);
         registeredServiceDistributedCacheManager.clear();
@@ -96,7 +97,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = registeredServiceDistributedCacheManager.get(registeredService);
         assertNull(obj);
@@ -127,16 +128,17 @@ public class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    public void verifyPublisher() {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceDeletedEvent(this, registeredService),
+            new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService),
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceLoadedEvent(this, registeredService),
+            new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }

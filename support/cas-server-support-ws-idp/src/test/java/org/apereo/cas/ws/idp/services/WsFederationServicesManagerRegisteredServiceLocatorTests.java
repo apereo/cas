@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator;
@@ -57,7 +57,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationServicesManagerRegisteredServiceLocator.getOrder());
         val registeredService = getWsFederationRegisteredService("http://app.example.org/wsfed.*", "CAS");
@@ -81,7 +81,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     }
 
     @Test
-    public void verifyWithCallback() throws Exception {
+    void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas" + WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK;
         
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");

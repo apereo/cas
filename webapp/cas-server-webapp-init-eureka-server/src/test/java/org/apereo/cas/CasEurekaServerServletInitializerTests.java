@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebApp")
-public class CasEurekaServerServletInitializerTests {
+class CasEurekaServerServletInitializerTests {
 
     @Test
-    public void verifyInitializer() {
+    void verifyInitializer() {
         val servletContext = new MockServletContext();
         val servletInitializer = new CasEurekaServerServletInitializer();
         assertDoesNotThrow(() -> servletInitializer.onStartup(servletContext));

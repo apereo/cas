@@ -31,15 +31,14 @@ public class OAuth20RegisteredServiceUIAction extends BaseCasWebflowAction imple
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val serviceCtx = WebUtils.getService(requestContext);
         if (serviceCtx != null) {
             val service = serviceSelectionStrategy.resolveServiceFrom(serviceCtx);
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
-            if (registeredService instanceof OAuthRegisteredService) {
-                val oauthService = OAuthRegisteredService.class.cast(registeredService);
+            if (registeredService instanceof OAuthRegisteredService oauthService) {
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

@@ -18,7 +18,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-import org.thymeleaf.spring6.view.ThymeleafView;
+import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import java.util.Locale;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.custom.properties.test=test"
 })
 @Tag("Web")
-public class CasThymeleafViewResolverConfigurerTests {
+class CasThymeleafViewResolverConfigurerTests {
 
     @Autowired
     @Qualifier("thymeleafViewResolver")
@@ -51,11 +51,11 @@ public class CasThymeleafViewResolverConfigurerTests {
     private ThemeViewResolverFactory themeViewResolverFactory;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val view = thymeleafViewResolver.resolveViewName("testTemplate", Locale.ENGLISH);
         assertNotNull(view);
-        assertTrue(((ThymeleafView) view).getStaticVariables().containsKey("cas"));
-        assertTrue(((ThymeleafView) view).getStaticVariables().containsKey("casProperties"));
+        assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("cas"));
+        assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("casProperties"));
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -68,12 +68,12 @@ public class CasThymeleafViewResolverConfigurerTests {
     }
 
     @Test
-    public void verifyDirectView() throws Exception {
+    void verifyDirectView() throws Exception {
         val resolver = themeViewResolverFactory.create("cas-theme-default");
         val view = resolver.resolveViewName("oneCustomView", Locale.ENGLISH);
         assertNotNull(view);
-        assertTrue(((ThymeleafView) view).getStaticVariables().containsKey("cas"));
-        assertTrue(((ThymeleafView) view).getStaticVariables().containsKey("casProperties"));
+        assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("cas"));
+        assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("casProperties"));
     }
 
     @TestConfiguration(value = "CasThymeleafViewResolverConfigurerTestConfiguration", proxyBeanMethods = false)

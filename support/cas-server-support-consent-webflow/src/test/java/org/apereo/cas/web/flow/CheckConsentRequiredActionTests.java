@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @Import(CheckConsentRequiredActionTests.ConsentTestConfiguration.class)
-public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
+class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @BeforeEach
     public void beforeEach() {
@@ -42,7 +42,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyNoConsentWithoutServiceOrAuthn() throws Exception {
+    void verifyNoConsentWithoutServiceOrAuthn() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -58,7 +58,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationGlobalConsentActive() throws Exception {
+    void verifyOperationGlobalConsentActive() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -84,7 +84,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationServiceEnabled() throws Exception {
+    void verifyOperationServiceEnabled() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -95,7 +95,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationServiceDisabled() throws Exception {
+    void verifyOperationServiceDisabled() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

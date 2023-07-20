@@ -1,14 +1,10 @@
-{% assign min = 1 %}
-{% assign max = 999999 %}
-{% assign diff = max | minus: min %}
-
-{% assign rbrace = "}" %}
-{% assign lbrace = "{" %}
-
-{% assign actuatorEndpointRandomNumber = include.endpoints | remove: "," | truncate: 50, '' %}
-{% assign endpoints = include.endpoints | split: "," %}
-
-
+{%- assign min = 1 -%} 
+{%- assign max = 999999 -%} 
+{%- assign diff = max | minus: min -%} 
+{%- assign rbrace = "}" -%} 
+{%- assign lbrace = "{" -%} 
+{%- assign actuatorEndpointRandomNumber = include.endpoints | remove: "," | truncate: 50, '' -%} 
+{%- assign endpoints = include.endpoints | split: "," -%} 
 {% capture troubleshooting %}
 ```xml
 <Logger name="org.pac4j" level="debug" additivity="false">
@@ -22,87 +18,84 @@
 ```
 {% endcapture %}
 
-{% capture endpointprops %}{% include thirdpartyproperties.html
+{%- capture endpointprops -%}{% include_cached thirdpartyproperties.html
 disablePagination="true"
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disableNotes="true"
 thirdPartyStartsWith="management.endpoints,management.health,management.endpoint.health" %}
-{%endcapture%}
+{%- endcapture -%}
 
-
-{% capture basicauthprops %}{% include thirdpartyproperties.html
+{%- capture basicauthprops -%}{% include_cached thirdpartyproperties.html
 disablePagination="true"
 disableSearch="true"
 disableNotes="true"
 id=actuatorEndpointRandomNumber
 forcePropertyTabsOnClick="true"
 thirdPartyStartsWith="spring.security.user" %}
-{%endcapture%}
+{%- endcapture -%}
 
-{% capture jdbcauthprops %}{% include casproperties.html
+{%- capture jdbcauthprops -%}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
 disableNotes="true"
 forcePropertyTabsOnClick="true"
 properties="cas.monitor.endpoints.jdbc" %}
-{%endcapture%}
+{%- endcapture -%}
 <div style="display:none" id="jdbcauthpropReference">
     {{ jdbcauthprops | markdownify }}
 </div>
 
-{% capture ldapauthprops %}{% include casproperties.html
+{%- capture ldapauthprops -%}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
 disableNotes="true"
 forcePropertyTabsOnClick="true"
 properties="cas.monitor.endpoints.ldap" %}
-{%endcapture%}
+{%- endcapture -%}
 <div style="display:none" id="ldapauthpropReference">
     {{ ldapauthprops | markdownify }}
 </div>
 
-{% capture jaasauthprops %}{% include casproperties.html
+{%- capture jaasauthprops -%}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
 disableNotes="true"
 forcePropertyTabsOnClick="true"
 properties="cas.monitor.endpoints.jaas" %}
-{%endcapture%}
+{%- endcapture -%}
 <div style="display:none" id="jaasauthpropReference">
     {{ jaasauthprops | markdownify }}
 </div>
 
-{% capture casendpointsconfigprops %}{% include casproperties.html
+{%- capture casendpointsconfigprops -%}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
 disableNotes="true"
 forcePropertyTabsOnClick="true"
 properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpoint" %}
-{%endcapture%}
+{%- endcapture -%}
 
-
-
-{% if include.casModule.size > 0 %}
-{% assign casmodule = include.casModule %}
-{% capture casModuleReference %}{% include casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{% endcapture %}
-{% endif %}
+{%- if include.casModule.size > 0 -%}
+{%- assign casmodule = include.casModule -%}
+{%- capture casModuleReference -%}{% include_cached casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{%- endcapture -%}
+{%- endif %}
 
 <div class="accordion" id="{{ actuatorEndpointRandomNumber }}">
-    {% assign showClass = "" %}
+    {%- assign showClass = "show" -%}
 
-    {% for endpoint in endpoints %}
+    {%- for endpoint in endpoints -%} 
 
-    {% for configblock in site.data[siteDataVersion].actuators[endpoint] %}
-    {% assign config = configblock[1] | sort: "method" %}
+    {%- for configblock in site.data[siteDataVersion].actuators[endpoint] -%} 
+    {%- assign config = configblock[1] | sort: "method" -%} 
 
-    {% for cfg in config %}
+    {%- for cfg in config -%} 
 
-    {% assign key = cfg.path
+    {%- assign key = cfg.path
     | append: cfg.method
     | remove: "["
     | remove: "]"
@@ -110,7 +103,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
     | remove: '/'
     | remove: '$'
     | remove: rbrace
-    | remove: lbrace %}
+    | remove: lbrace -%} 
 
     <span class="accordion-header" id="heading{{key}}">
         <button {% if showClass contains "show" %} class="accordion-button" {% else %}
@@ -121,36 +114,37 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                 <tr>
                     <td style="width: 6%; border-bottom:none;">
 
-                        {% if cfg.method == "DELETE" %}
+                        {%- if cfg.method == "DELETE" -%} 
                         <span class="badge bg-danger">
-                            {% elsif cfg.method == "GET" %}
+                            {%- elsif cfg.method == "GET" -%} 
                             <span class="badge bg-primary">
-                                {% elsif cfg.method == "POST" %}
+                                {%- elsif cfg.method == "POST" -%} 
                                 <span class="badge bg-success">
-                                    {% else %}
+                                    {%- else -%} 
                                     <span class="badge bg-secondary">
-                                        {%endif %}
+                                        {%- endif -%} 
 
-                                        {% if cfg.casEndpoint == true %}
+                                        {%- if cfg.casEndpoint == true -%} 
                                         <i class="fas fa-copyright"></i>
-                                        {% else %}
+                                        {%- else -%} 
                                         <i class="fab fa-codepen"></i>
-                                        {% endif %}
-
-                                        {{ cfg.method }} </span>
+                                        {%- endif -%} 
+                                        &nbsp;
+                                        {{ cfg.method }} 
+                                    </span>
                     </td>
                     <td style="border-bottom:none;"><span><code>/cas/actuator/{{ cfg.path }}</code>
                             <sup>
-                                {% if cfg.casEndpoint == true %}
+                                {%- if cfg.casEndpoint == true -%} 
                                 <img class="undecorated img-fluid" width="42px" src="../../images/cas-sm.png"
                                      data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
                                      title="This endpoint is owned, provided and controlled by CAS."
                                      class="fas fa-copyright">
-                                {% else %}
+                                {%- else -%} 
                                 <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
                                    title="This endpoint is provided by a third-party framework to CAS."
                                    class="fas fa-codepen"></i>
-                                {% endif %}
+                                {%- endif -%} 
                             </sup>
                         </span></td>
                 </tr>
@@ -161,61 +155,52 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
     <div id="collapse{{key}}" class="accordion-collapse collapse {{ showClass }}" aria-labelledby="heading{{key}}"
          data-bs-parent="#{{ actuatorEndpointRandomNumber }}">
         <div class="accordion-body card card-body">
+            {% assign io="" %}
+
+            {%- if cfg.returnType.size > 0 -%}
+            {%- assign io = "Return Type: <code>" | append: cfg.returnType | append: "</code><p>" -%}
+            {%- endif -%}
+            
+            {%- if cfg.consumes.size > 0 -%}
+            {%- assign io = io | append: "Content Type: <code>" | append: cfg.consumes | append: "</code><p>" -%}
+            {%- endif -%} 
+            
+            {%- if cfg.produces.size > 0 -%}
+            {%- assign io = io | append: "Accept: <code>" | append: cfg.produces | append: "</code><p>" -%}
+            {%- endif -%} 
+
+            {%- if cfg.deprecated == true -%} 
+            {%- assign io = io | append: "Deprecated<p>" -%}
+            {%- endif -%} 
+
+            {%- assign io = io | append: "Signature: <code>" | append: cfg.signature | markdownify | append: "</code><p>" -%}
+
+            {%- assign io = io | append: "Owner: <code>" | append: cfg.owner | append: "</code><p>" -%}
+
             <p class="small text-left">
-                {% if cfg.summary.size > 0 %}
+                <a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="hover" 
+                    title="Input & Output" data-bs-html="true" data-bs-content='{{io}}'> 
+                    <i aria-hidden="true" class="fa fa-question"></i> 
+                </a>
+                <a tabindex="0" title="Endpoint Details" class="btn btn-sm btn-success" role="button"
+                    data-bs-toggle="modal" data-bs-target="#{{key}}ModalConfig">
+                    <i aria-hidden="true" class="fa fa-book-open"></i> 
+                </a>
+            &nbsp;
+                {%- if cfg.summary.size > 0 -%}
                 {{cfg.summary}}
-                {% else %}
-                {% unless cfg.casEndpoint == true %}
+                {%- else -%}
+                {%- unless cfg.casEndpoint == true -%}
                 There is no documentation available for this endpoint. The functionality presented here is provided to
                 CAS
                 via a third-party library or framework, which provides no documentation as part of endpoint definition's
                 metadata.
-                {% endunless %}
-                {% endif %}
+                {% endunless -%}
+                {%- endif -%}
             </p>
 
-            <table style="table-layout: fixed;">
-                <tr>
-                    {% if cfg.returnType.size > 0 %}
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Return Type"
-                           class="fas fa-exchange-alt"></i> <code>{{cfg.returnType}}</code></td>
-                    {% endif %}
-
-                    {% if cfg.consumes.size > 0 %}
-                    <td class="text-start"> <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                               title="Narrows the primary mapping by media types that can be consumed by the mapped handler. Consists of one or more media types one of which must match to the request <code>Content-Type</code> header."
-                                               class="fas fa-sign-in-alt"></i> <code>{{cfg.consumes | join: "<br/>" }}</code></td>
-                    {% endif %}
-
-                    {% if cfg.produces.size > 0 %}
-                    <td class="text-start"><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                              title="Narrows the primary mapping by media types that can be produced by the mapped handler. Consists of one or more media types one of which must be chosen via content negotiation against the <i>acceptable</i> media types of the request. Typically those are extracted from the <code>Accept</code> header but may be derived from query parameters, or other."
-                                              class="fas fa-sign-out-alt"></i> <code>{{cfg.produces | join: "<br/>"}}</code></td>
-                    {% endif %}
-                    {% if cfg.deprecated == true %}
-                    <td>
-                        <span class="badge bg-danger">
-                            <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                               title="This endpoint is deprecated and may be removed in future CAS releases."
-                               class="fas fa-exclamation-circle"></i> Deprecated
-                        </span>
-                    </td>
-                    {% endif %}
-                </tr>
-
-                <tr>
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Method Signature"
-                           class="fas fa-signature"></i> <code>{{ cfg.signature | markdownify }}</code></td>
-                </tr>
-                <tr>
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Endpoint Owner"
-                           class="fas fa-code"></i> <code>{{cfg.owner}}</code></td>
-                </tr>
-            </table>
-
             <p>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#{{key}}ModalConfig">Details</button>
+            
 
             <div class="modal fade" id="{{key}}ModalConfig" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
@@ -241,12 +226,12 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                     <a class="nav-link" data-bs-toggle='tab'
                                        href="#thirdpartyendpointprops{{ key }}">Third Party</a>
                                 </li>
-                                {% if cfg.name == "health" %}
+                                {%- if cfg.name == "health" -%}
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle='tab'
                                        href="#healthendpointinfo{{ key }}">Health</a>
                                 </li>
-                                {% endif %}
+                                {%- endif -%}
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle='tab'
                                        href="#endpointsecurity{{ key }}">Security</a>
@@ -261,30 +246,30 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                 <div class="tab-pane fade active show" id="endpointintro{{key}}">
                                     <br />
 
-                                    {% if cfg.parameters.size > 0 %}
+                                    {%- if cfg.parameters.size > 0 -%}
                                     <p>Endpoint Parameters:</p>
                                     <ul>
-                                        {% for param in cfg.parameters %}
+                                        {% for param in cfg.parameters -%} 
                                         <li>
-                                            {% if param.required %}
-                                            {% assign paramTitle = "Parameter is required." %}
-                                            {% else %}
-                                            {% assign paramTitle = "Parameter is optional." %}
-                                            {% endif %}
+                                            {%- if param.required -%} 
+                                            {%- assign paramTitle = "Parameter is required." -%} 
+                                            {%- else -%} 
+                                            {%- assign paramTitle = "Parameter is optional." -%} 
+                                            {%- endif -%} 
 
-                                            {% if param.selector %}
-                                            {% assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." %}
-                                            {% else %}
-                                            {% assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." %}
-                                            {% endif %}
+                                            {%- if param.selector -%} 
+                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%} 
+                                            {%- else -%} 
+                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%} 
+                                            {%- endif -%} 
                                             <i class="fas fa-info-circle" data-bs-toggle="tooltip"
                                                data-bs-placment="top" data-bs-html="true"
                                                title="{{ paramTitle }}"></i>
-                                            <code>{{param.type}} {{ param.name }}</code>{% if param.description.size > 0 %} - <sub>{{ param.description }}</sub>{% endif %}
+                                            <code>{{param.type}} {{ param.name }}</code>{%- if param.description.size > 0 -%} - <sub>{{ param.description }}</sub>{%- endif -%} 
                                         </li>
-                                        {% endfor %}
+                                        {%- endfor -%} 
                                     </ul>
-                                    {% endif %}
+                                    {%- endif -%}
 
                                     <p>CAS, being a Spring-Boot application at heart, includes a number of endpoints to help you monitor and manage the server when it’s pushed to production. You can choose to manage and monitor the deployment using HTTP endpoints, referred to as actuators.</p>
                                     <p>
@@ -299,21 +284,21 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                     </ul>
                                     </p>
 
-                                    {% if cfg.name == "status" %}
-                                    <div class="alert alert-warning"><strong>Obtaining Health Info</strong><p>Note
+                                    {%- if cfg.name == "status" -%}
+                                    <div class="alert alert-warning">:warning: <strong>Obtaining Health Info</strong><p>Note
                                         that <code>/status</code> endpoint is kept mostly
                                         as a legacy endpoint. If you wish to obtain health status of each monitor
                                         in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
-                                    {% endif %}
+                                    {%- endif -%}
 
-                                    <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
+                                    <div class="alert alert-info">:information_source: <strong>Exposed Endpoints</strong><p>
                                         Note that by default the only endpoints exposed over the web
                                         are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.
                                         Other endpoints need to be explicitly <strong>enabled and then
                                         exposed over the web</strong> in CAS settings in order to allow access.
                                     </p></div>
 
-                                    {% if cfg.name == "metrics" %}
+                                    {%- if cfg.name == "metrics" -%} 
                                     <p>
                                         Navigating to this endpoint displays a list of available meter names. You can drill down to view information about a
                                         particular meter by providing its name as a selector, e.g. <code>/metrics/jvm.memory.max</code>. The name you use here should match the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
@@ -327,7 +312,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         "Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace",
                                         you could add an additional <code>tag=id:Metaspace</code>, i.e. <code>/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace</code>.
                                     </p>
-                                    {% endif %}
+                                    {%- endif -%}
 
                                 </div>
 
@@ -335,30 +320,30 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                 <div class='tab-pane fade' id='casendppointprops{{ key }}'>
                                     <br />
 
-                                    {% if include.casModule.size > 0 %}
+                                    {%- if include.casModule.size > 0 -%}
                                     <p>This endpoint, <code>{{cfg.path}}</code> can be turned
                                         on by including the following dependency in the WAR overlay:</p>
 
                                     <div id="casmoduleplaceholder{{ key }}">
                                         {{ casModuleReference | markdownify }}
                                     </div>
-                                    {% endif %}
+                                    {%- endif -%}
 
 
                                     <p>To enable and expose an actuator endpoint:</p>
-{% capture epc %}```properties
+{%- capture epc -%}```properties
 management.endpoint.{{ cfg.name }}.enabled=true
 management.endpoints.web.exposure.include={{ cfg.name }}
 
 # Choose the proper security access level...
 # cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-```{% endcapture %}
+```{%- endcapture -%}
                                     <div>
                                         {{ epc | markdownify }}
                                     </div>
 
                                     <div id="casEndpointConfigPropsDiv">
-                                        {{ casendpointsconfigprops | markdownify }}
+                                        {{ casendpointsconfigprops | replace: "[key]", cfg.name | markdownify }}
 
                                     </div>
 
@@ -367,34 +352,32 @@ management.endpoints.web.exposure.include={{ cfg.name }}
                                         to remap the <code>health</code> endpoint to <code>healthcheck</code>,
                                         specify the following settings:
 
-{% capture health %}```properties
+{%- capture health -%}```properties
 management.endpoints.web.path-mapping.health=healthcheck
-```{% endcapture %}
+```{%- endcapture -%}
                                         <span>
 {{ health | markdownify }}
 </span>
                                     </p>
 
                                 </div>
-
-
                                 <div class="tab-pane fade" id="thirdpartyendpointprops{{ key }}">
                                     {{ endpointprops | markdownify }}
                                 </div>
 
-                                {% if cfg.name == "health" %}
+                                {%- if cfg.name == "health" -%}
 
                                 <br/>
 
-                                {% capture healthendpointinfo %}{% include {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}
-                                {% endcapture %}
+                                {%- capture healthendpointinfo -%}{% include_cached {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}
+                                {% endcapture -%}
 
                                 <div class="tab-pane fade" id="healthendpointinfo{{ key }}">
                                     <div>
                                         {{ healthendpointinfo | markdownify }}
                                     </div>
                                 </div>
-                                {% endif %}
+                                {%- endif -%}
 
                                 <div class='tab-pane fade' id='endpointsecurity{{ key }}'>
                                     <br/>
@@ -490,7 +473,7 @@ management.endpoints.web.path-mapping.health=healthcheck
                                             basic credentials, roles and attributes, etc. </li>
                                     </ul>
 
-                                    <div class="alert alert-info"><strong>Defaults</strong><p>
+                                    <div class="alert alert-info">:information_source: <strong>Defaults</strong><p>
                                         There is a special endpoint named <code>defaults</code> which serves as a shortcut that
                                         controls the security of all endpoints, if left undefined in CAS settings.
                                     </p></div>
@@ -558,10 +541,10 @@ management.endpoints.web.path-mapping.health=healthcheck
         </div>
     </div>
 
-    {% assign showClass = "" %}
-    {% endfor %}
-    {% endfor %}
-    {% endfor %}
+    {%- assign showClass = "" -%}
+    {%- endfor -%}
+    {%- endfor -%}
+    {%- endfor -%}
 </div>
 
 <br />

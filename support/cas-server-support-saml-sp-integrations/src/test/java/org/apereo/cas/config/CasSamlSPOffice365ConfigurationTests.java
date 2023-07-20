@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.office365.name-id-attribute=cn",
     "cas.saml-sp.office365.name-id-format=transient"
 })
-public class CasSamlSPOffice365ConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPOffice365ConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

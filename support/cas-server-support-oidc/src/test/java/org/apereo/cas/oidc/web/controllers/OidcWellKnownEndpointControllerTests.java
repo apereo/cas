@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
+class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -32,7 +32,7 @@ public class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
     protected OidcWellKnownEndpointController oidcWellKnownController;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var request = getHttpRequestForEndpoint("unknown/" + OidcConstants.WELL_KNOWN_URL);
         request.setRequestURI("unknown/issuer");
         var entity = oidcWellKnownController.getWellKnownDiscoveryConfiguration(request, new MockHttpServletResponse());

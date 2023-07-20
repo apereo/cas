@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,13 +26,14 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class TicketGrantingTicketImplTests {
+class TicketGrantingTicketImplTests {
 
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
 
@@ -44,7 +46,8 @@ public class TicketGrantingTicketImplTests {
     private static ServiceTicketSessionTrackingPolicy getTrackingPolicy(final boolean trackMostRecent) {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(trackMostRecent);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
+        return new DefaultServiceTicketSessionTrackingPolicy(props,
+            new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
     }
 
     @BeforeEach
@@ -57,7 +60,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val authenticationWritten = CoreAuthenticationTestUtils.getAuthentication();
         val expirationPolicyWritten = NeverExpiresExpirationPolicy.INSTANCE;
         val tgtWritten = new TicketGrantingTicketImpl(TGT_ID, null, null,
@@ -70,7 +73,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyEquals() {
+    void verifyEquals() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -80,12 +83,12 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyNullAuthentication() {
+    void verifyNullAuthentication() {
         assertThrows(Exception.class, () -> new TicketGrantingTicketImpl(TGT_ID, null, null, null, NeverExpiresExpirationPolicy.INSTANCE));
     }
 
     @Test
-    public void verifyGetAuthentication() {
+    void verifyGetAuthentication() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null, authentication, NeverExpiresExpirationPolicy.INSTANCE);
         assertEquals(t.getAuthentication(), authentication);
@@ -93,7 +96,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyIsRootTrue() {
+    void verifyIsRootTrue() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -101,7 +104,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyIsRootFalse() {
+    void verifyIsRootFalse() {
         val t1 = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val t = new TicketGrantingTicketImpl(TGT_ID,
@@ -112,7 +115,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyProperRootIsReturned() {
+    void verifyProperRootIsReturned() {
         val t1 = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val t2 = new TicketGrantingTicketImpl(TGT_ID,
@@ -127,7 +130,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyGetChainedPrincipalsWithOne() {
+    void verifyGetChainedPrincipalsWithOne() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val principals = new ArrayList<Authentication>();
         principals.add(authentication);
@@ -139,7 +142,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyCheckCreationTime() {
+    void verifyCheckCreationTime() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
 
         val startTime = ZonedDateTime.now(ZoneOffset.UTC).minusNanos(100);
@@ -150,7 +153,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyGetChainedPrincipalsWithTwo() {
+    void verifyGetChainedPrincipalsWithTwo() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val authentication1 = CoreAuthenticationTestUtils.getAuthentication("test1");
         val principals = new ArrayList<Authentication>();
@@ -167,7 +170,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyServiceTicketAsFromInitialCredentials() {
+    void verifyServiceTicketAsFromInitialCredentials() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = (RenewableServiceTicket) t.grantServiceTicket(ID_GENERATOR
@@ -177,7 +180,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyServiceTicketAsFromNotInitialCredentials() {
+    void verifyServiceTicketAsFromNotInitialCredentials() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -197,7 +200,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyWebApplicationServices() {
+    void verifyWebApplicationServices() {
         val testService = RegisteredServiceTestUtils.getService(TGT_ID);
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
@@ -214,7 +217,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyWebApplicationExpire() {
+    void verifyWebApplicationExpire() {
         val testService = RegisteredServiceTestUtils.getService(TGT_ID);
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
@@ -227,7 +230,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantSameServiceTicketKeepMostRecentSession() {
+    void verifyDoubleGrantSameServiceTicketKeepMostRecentSession() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -248,7 +251,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantSimilarServiceTicketKeepMostRecentSession() {
+    void verifyDoubleGrantSimilarServiceTicketKeepMostRecentSession() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -269,7 +272,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantSimilarServiceWithPathTicketKeepMostRecentSession() {
+    void verifyDoubleGrantSimilarServiceWithPathTicketKeepMostRecentSession() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -290,7 +293,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantSameServiceTicketKeepAll() {
+    void verifyDoubleGrantSameServiceTicketKeepAll() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -311,7 +314,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantDifferentServiceTicket() {
+    void verifyDoubleGrantDifferentServiceTicket() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -332,7 +335,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void verifyDoubleGrantDifferentServiceOnPathTicket() {
+    void verifyDoubleGrantDifferentServiceOnPathTicket() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 

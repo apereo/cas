@@ -6,7 +6,6 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
-
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +35,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         return FunctionUtils.doUnchecked(() -> {
-            val jsonWebKey = getJsonWebKeySigningKey();
+            val jsonWebKey = getJsonWebKeySigningKey(service);
             FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
                 () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
@@ -70,7 +69,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
         FunctionUtils.throwIf(!claims.getIssuer().equalsIgnoreCase(iss),
             () -> new IllegalArgumentException("Issuer assigned to claims "
-                                               + claims.getIssuer() + " does not match " + iss));
+                + claims.getIssuer() + " does not match " + iss));
     }
 
     protected String signToken(final OAuthRegisteredService service,
@@ -84,15 +83,25 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             .keyId(Optional.ofNullable(jsonWebKey)
                 .map(PublicJsonWebKey::getKeyId)
                 .orElseGet(() -> UUID.randomUUID().toString()))
-            .algorithm(getJsonWebKeySigningAlgorithm(service))
+            .algorithm(getJsonWebKeySigningAlgorithm(service, jsonWebKey))
             .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(service)))
             .build()
             .sign(claims);
     }
 
+    protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService svc) {
+        if (shouldSignToken(svc)) {
+            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
+            val jsonWebKey = getJsonWebKeySigningKey(Optional.of(svc));
+            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+            Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
+            return signToken(svc, claims, jsonWebKey);
+        }
+        val claimSet = JwtBuilder.parse(claims.toJson());
+        return JwtBuilder.buildPlain(claimSet, Optional.of(svc));
+    }
+
     protected byte[] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {
         return EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
     }
-
-    protected abstract PublicJsonWebKey getJsonWebKeySigningKey();
 }

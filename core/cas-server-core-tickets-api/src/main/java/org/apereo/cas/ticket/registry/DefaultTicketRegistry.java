@@ -1,6 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -15,24 +20,30 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @Getter
+@Monitorable
 public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 
-    /**
-     * A map to contain the tickets.
-     */
     private final Map<String, Ticket> mapInstance;
 
-    public DefaultTicketRegistry() {
-        this(CipherExecutor.noOp());
+    public DefaultTicketRegistry(final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog) {
+        this(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog);
     }
 
-    public DefaultTicketRegistry(final CipherExecutor cipherExecutor) {
-        super(cipherExecutor);
-        this.mapInstance = new ConcurrentHashMap<>();
+    public DefaultTicketRegistry(final CipherExecutor cipherExecutor,
+                                 final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog) {
+        this(cipherExecutor, ticketSerializationManager, ticketCatalog,
+            new ConcurrentHashMap<>(), QueueableTicketRegistryMessagePublisher.noOp(), new PublisherIdentifier());
     }
 
-    public DefaultTicketRegistry(final Map<String, Ticket> storageMap, final CipherExecutor cipherExecutor) {
-        super(cipherExecutor);
+    public DefaultTicketRegistry(final CipherExecutor cipherExecutor,
+                                 final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog,
+                                 final Map<String, Ticket> storageMap,
+                                 final QueueableTicketRegistryMessagePublisher ticketPublisher,
+                                 final PublisherIdentifier publisherIdentifier) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, ticketPublisher, publisherIdentifier);
         this.mapInstance = storageMap;
     }
 }

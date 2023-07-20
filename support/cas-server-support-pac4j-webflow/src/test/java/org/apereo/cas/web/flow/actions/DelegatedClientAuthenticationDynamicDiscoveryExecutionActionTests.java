@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -35,16 +36,17 @@ import static org.mockito.Mockito.*;
         "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC",
         "cas.authn.pac4j.core.discovery-selection.json.location=classpath:delegated-discovery.json"
     })
-@Tag("WebflowAuthenticationActions")
-public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
+@Tag("Delegation")
+class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     private Action delegatedAuthenticationDiscoveryAction;
 
     @Test
-    public void verifyOperationWithClient() throws Exception {
+    void verifyOperationWithClient() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         request.addParameter("username", "cas@example.org");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -56,7 +58,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     }
 
     @Test
-    public void verifyOperationWithoutClient() throws Exception {
+    void verifyOperationWithoutClient() throws Exception {
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
@@ -64,6 +66,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         val request = new MockHttpServletRequest();
         request.addParameter("username", "cas@test.org");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new org.springframework.mock.web.MockServletContext(), request, response));
         val result = delegatedAuthenticationDiscoveryAction.execute(context);

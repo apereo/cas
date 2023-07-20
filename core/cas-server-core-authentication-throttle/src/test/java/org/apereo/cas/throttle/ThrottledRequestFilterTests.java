@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("AuthenticationThrottling")
-public class ThrottledRequestFilterTests {
+class ThrottledRequestFilterTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val filter = mock(ThrottledRequestFilter.class);
         when(filter.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, filter.getOrder());

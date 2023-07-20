@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Simple")
-public class DefaultRandomStringGeneratorTests {
+class DefaultRandomStringGeneratorTests {
 
     private static final int LENGTH = 36;
 
@@ -19,12 +19,12 @@ public class DefaultRandomStringGeneratorTests {
         LENGTH);
 
     @Test
-    public void verifyDefaultLength() {
+    void verifyDefaultLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
     }
 
     @Test
-    public void verifyRandomString() {
+    void verifyRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(),
             this.randomStringGenerator.getNewString());
     }

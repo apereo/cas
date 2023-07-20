@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.sms.MockSmsSender;
@@ -14,6 +14,9 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -61,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RegisteredServicesEventListenerTests {
+class RegisteredServicesEventListenerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -73,21 +76,28 @@ public class RegisteredServicesEventListenerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    private ClientInfo clientInfo;
+
+    @BeforeEach
+    public void setup(){
+        clientInfo = ClientInfoHolder.getClientInfo();
+    }
+
     @Test
-    public void verifyServiceExpirationEventNoContact() {
+    void verifyServiceExpirationEventNoContact() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
                 val listener = new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
-                val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false);
+                val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo);
                 listener.handleRegisteredServiceExpiredEvent(event);
             }
         });
     }
 
     @Test
-    public void verifyServiceExpirationEventWithContact() {
+    void verifyServiceExpirationEventWithContact() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -95,12 +105,12 @@ public class RegisteredServicesEventListenerTests {
         contact.setPhone("13477465421");
         registeredService.getContacts().add(contact);
         val listener = new DefaultRegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
-        val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false);
+        val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo);
         assertDoesNotThrow(() -> listener.handleRegisteredServiceExpiredEvent(event));
     }
 
     @Test
-    public void verifyServiceExpirationWithRemovalEvent() {
+    void verifyServiceExpirationWithRemovalEvent() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -108,9 +118,9 @@ public class RegisteredServicesEventListenerTests {
         contact.setPhone("13477465421");
         registeredService.getContacts().add(contact);
         val listener = new DefaultRegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
-        listener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this));
+        listener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this, clientInfo));
         listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
-        val event = new CasRegisteredServiceExpiredEvent(this, registeredService, true);
+        val event = new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo);
         listener.handleRegisteredServiceExpiredEvent(event);
     }
 

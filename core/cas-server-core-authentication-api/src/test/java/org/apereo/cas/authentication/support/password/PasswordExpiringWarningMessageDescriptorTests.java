@@ -24,21 +24,21 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("PasswordOps")
-public class PasswordExpiringWarningMessageDescriptorTests {
+class PasswordExpiringWarningMessageDescriptorTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "PasswordExpiringWarningMessageDescriptor.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
         assertEquals(30, d.getDaysToExpiration());
         assertEquals("DefaultMessage", d.getDefaultMessage());
     }
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         handler.addMessageDescriptor(d);

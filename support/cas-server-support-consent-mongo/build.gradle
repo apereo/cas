@@ -1,4 +1,11 @@
 description = "Apereo CAS Consent Support via MongoDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Attribute Consent via MongoDbDb",
+            category: "Attribute Consent"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

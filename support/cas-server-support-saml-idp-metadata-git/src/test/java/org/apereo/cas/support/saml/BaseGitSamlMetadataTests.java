@@ -38,7 +38,7 @@ public abstract class BaseGitSamlMetadataTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowActions")
-public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI)
     private Action wsFederationMetadataUIAction;
@@ -43,7 +43,7 @@ public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentit
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

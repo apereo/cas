@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.arcGIS.name-id-attribute=cn",
     "cas.saml-sp.arcGIS.name-id-format=transient"
 })
-public class CasSamlSPArcGISConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPArcGISConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

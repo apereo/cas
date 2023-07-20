@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -69,26 +70,27 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         final RegisteredService service) {
 
         val applicationContext = getConfigurationContext().getApplicationContext();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         applicationContext
-            .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
+            .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service, clientInfo));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         val threshold = getConfigurationContext()
-            .getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
+            .getCasProperties().getAuthn().getAdaptive().getRisk().getCore().getThreshold();
         if (score.isRiskGreaterThan(threshold)) {
             applicationContext
-                .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
+                .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score, clientInfo));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
                 score.score(), authentication.getPrincipal(), threshold);
 
             applicationContext
-                .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
+                .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score, clientInfo));
             val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             applicationContext
-                .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
+                .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res, clientInfo));
 
             return CollectionUtils.wrapSet(res.result());
         }

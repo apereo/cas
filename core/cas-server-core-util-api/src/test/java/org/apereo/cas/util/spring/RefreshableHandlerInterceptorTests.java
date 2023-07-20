@@ -38,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RefreshableHandlerInterceptorTests {
+class RefreshableHandlerInterceptorTests {
     @Autowired
     @Qualifier("localeChangeHandlerInterceptor")
     private ObjectProvider<HandlerInterceptor> localeChangeHandlerInterceptor;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 
@@ -60,7 +60,7 @@ public class RefreshableHandlerInterceptorTests {
     }
 
     @Test
-    public void verifySupplierOperation() throws Exception {
+    void verifySupplierOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 

@@ -45,73 +45,104 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    public void removeAll() {
+        try (val keys = getKeys("*", "*", "*")) {
+            keys.forEach(template::delete);
+        }
+    }
+
+    @Override
     public Stream<? extends CasEvent> load() {
-        val keys = getKeys("*", "*", "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull);
+        try (val keys = getKeys("*", "*", "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
-        val keys = getKeys("*", "*", "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull)
-            .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
+        try (val keys = getKeys("*", "*", "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli())
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        val keys = getKeys(type, principal, "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull);
+        try (val keys = getKeys(type, principal, "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type,
                                                                   final String principal,
                                                                   final ZonedDateTime dateTime) {
-        val keys = getKeys(type, principal, "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull)
-            .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
+        try (val keys = getKeys(type, principal, "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli())
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsOfType(final String type) {
-        val keys = getKeys(type, "*", "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull);
+        try (val keys = getKeys(type, "*", "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        val keys = getKeys(type, "*", "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull)
-            .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
+        try (val keys = getKeys(type, "*", "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli())
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
-        val keys = getKeys("*", id, "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull);
+        try (val keys = getKeys("*", id, "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .toList()
+                .stream();
+        }
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsForPrincipal(final String principal, final ZonedDateTime dateTime) {
-        val keys = getKeys("*", principal, "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull)
-            .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
+        try (val keys = getKeys("*", principal, "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli())
+                .toList()
+                .stream();
+        }
     }
 
     @Override

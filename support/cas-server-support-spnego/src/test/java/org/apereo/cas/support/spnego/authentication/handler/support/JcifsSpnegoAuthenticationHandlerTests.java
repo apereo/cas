@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -30,14 +30,14 @@ import static org.mockito.Mockito.*;
  * @since 4.2.0
  */
 @Tag("Spnego")
-public class JcifsSpnegoAuthenticationHandlerTests {
+class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";
 
     private static final int POOL_SIZE = 10;
 
     @Test
-    public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -49,7 +49,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -60,7 +60,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
+    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)));
@@ -73,14 +73,14 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         try {
             authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }
     }
 
     @Test
-    public void verifyUnsuccessfulAuthentication() throws Exception {
+    void verifyUnsuccessfulAuthentication() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)));
@@ -90,18 +90,18 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
 
-        assertFalse(authenticationHandler.supports((SpnegoCredential) null));
+        assertFalse(authenticationHandler.supports((Credential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
         assertFalse(authenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void verifyGetSimpleCredentials() {
+    void verifyGetSimpleCredentials() {
         val myNtlmUser = "DOMAIN\\Username";
         val myNtlmUserWithNoDomain = USERNAME;
         val myKerberosUser = "Username@DOMAIN.COM";

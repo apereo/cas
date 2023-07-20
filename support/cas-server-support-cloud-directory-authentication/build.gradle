@@ -1,4 +1,11 @@
 description = 'Apereo CAS Amazon Cloud Directory Authentication Support'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "AWS Cloud Directory Authentication"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
 

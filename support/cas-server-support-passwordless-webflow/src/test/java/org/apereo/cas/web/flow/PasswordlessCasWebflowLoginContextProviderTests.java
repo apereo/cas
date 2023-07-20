@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswordlessAuthenticationActionTests {
+class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessCasWebflowLoginContextProvider")
     private CasWebflowLoginContextProvider passwordlessCasWebflowLoginContextProvider;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

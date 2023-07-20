@@ -18,10 +18,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Audits")
-public class AuditableExecutionResultTests {
+class AuditableExecutionResultTests {
 
     @Test
-    public void verifyOps() {
+    void verifyOps() {
         val input = AuditableExecutionResult.builder()
             .exception(new IllegalArgumentException())
             .serviceTicket(mock(ServiceTicket.class))

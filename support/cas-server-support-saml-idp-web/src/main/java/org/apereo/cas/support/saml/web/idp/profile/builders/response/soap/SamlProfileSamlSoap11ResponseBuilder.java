@@ -71,7 +71,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     protected Envelope encode(final SamlProfileBuilderContext context,
                               final Envelope envelope,
                               final String relayState) throws Exception {
-        val ctx = context.getMessageContext().getSubcontext(SOAP11Context.class, true);
+        val ctx = context.getMessageContext().ensureSubcontext(SOAP11Context.class);
         Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();
         encoder.setHttpServletResponseSupplier(context::getHttpResponse);

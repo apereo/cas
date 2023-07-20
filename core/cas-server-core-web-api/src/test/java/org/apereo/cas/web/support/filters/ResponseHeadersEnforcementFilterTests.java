@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class ResponseHeadersEnforcementFilterTests {
+class ResponseHeadersEnforcementFilterTests {
     private ResponseHeadersEnforcementFilter filter;
 
     private MockFilterConfig filterConfig;
@@ -40,13 +40,13 @@ public class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyUnrecognizedParam() {
+    void verifyUnrecognizedParam() {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
 
     @Test
-    public void verifyParam() {
+    void verifyParam() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -66,7 +66,7 @@ public class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyNoCacheParamJpeg() {
+    void verifyNoCacheParamJpeg() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -81,7 +81,7 @@ public class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyNoCacheParamPng() {
+    void verifyNoCacheParamPng() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();

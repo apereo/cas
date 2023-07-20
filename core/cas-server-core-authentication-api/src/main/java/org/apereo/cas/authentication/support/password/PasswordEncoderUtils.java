@@ -78,17 +78,20 @@ public class PasswordEncoderUtils {
 
         val encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
         switch (encoderType) {
-            case DEFAULT:
+            case DEFAULT -> {
                 LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
                     properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
-            case STANDARD:
+            }
+            case STANDARD -> {
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
-            case ARGON2:
+            }
+            case ARGON2 -> {
                 return new Argon2PasswordEncoder(properties.getStrength(), properties.getHashLength(),
                     1, ARGON2_DEFAULT_MEMORY, ARGON2_DEFAULT_ITERATIONS);
-            case BCRYPT:
+            }
+            case BCRYPT -> {
                 LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
                     properties.getStrength());
                 if (StringUtils.isBlank(properties.getSecret())) {
@@ -97,31 +100,36 @@ public class PasswordEncoderUtils {
                 }
                 LOGGER.debug("Creating BCRYPT encoder with secret");
                 return new BCryptPasswordEncoder(properties.getStrength(), RandomUtils.getNativeInstance());
-            case SCRYPT:
+            }
+            case SCRYPT -> {
                 LOGGER.debug("Creating SCRYPT encoder");
                 return new SCryptPasswordEncoder(DEFAULT_CPU_COST, DEFAULT_MEMORY_COST, DEFAULT_PARALLELISM,
                     DEFAULT_KEY_LENGTH, properties.getStrength());
-            case SSHA:
+            }
+            case SSHA -> {
                 LOGGER.warn("Creating SSHA encoder; digest based password encoding is not considered secure. "
-                            + "This strategy is here to support legacy implementations and using it is considered insecure.");
+                    + "This strategy is here to support legacy implementations and using it is considered insecure.");
                 return new LdapShaPasswordEncoder();
-            case PBKDF2:
+            }
+            case PBKDF2 -> {
                 val encodingAlgorithm = StringUtils.defaultString(properties.getEncodingAlgorithm(),
                     Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256.name());
                 return new Pbkdf2PasswordEncoder(properties.getSecret(),
                     properties.getStrength(), properties.getIterations(),
                     Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.valueOf(encodingAlgorithm));
-            case GLIBC_CRYPT:
+            }
+            case GLIBC_CRYPT -> {
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
                 val msg = String.format("Creating glibc CRYPT encoder with encoding alg [%s], strength [%s] and %ssecret",
                     properties.getEncodingAlgorithm(), properties.getStrength(),
                     BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
                 LOGGER.debug(msg);
                 return new GlibcCryptPasswordEncoder(properties.getEncodingAlgorithm(), properties.getStrength(), properties.getSecret());
-            case NONE:
-            default:
+            }
+            default -> {
                 LOGGER.trace("No password encoder shall be created given the requested encoder type [{}]", type);
                 return NoOpPasswordEncoder.getInstance();
+            }
         }
     }
 }

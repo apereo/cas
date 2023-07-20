@@ -5,7 +5,7 @@ GREEN="\e[32m"
 CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
-clear
+#clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
@@ -52,6 +52,10 @@ while (( "$#" )); do
     case "$1" in
     --max-workers)
         parallel="${parallel} --max-workers=8"
+        shift
+        ;;
+    --no-cache)
+        parallel="--no-configuration-cache "
         shift
         ;;
     --no-parallel)
@@ -149,6 +153,9 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
                 task+="testSyncope "
                 ;;
+            native)
+                task+="testNative "
+                ;;
             delegation)
                 task+="testDelegation "
                 ;;
@@ -156,6 +163,7 @@ while (( "$#" )); do
                 task+="testCookie "
                 ;;
             consent)
+                task+="testConsent "
                 task+="testConsent "
                 ;;
             duo|duosecurity)
@@ -176,7 +184,16 @@ while (( "$#" )); do
             cipher)
                 task+="testCipher "
                 ;;
+            elastic)
+                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh
+                task+="testElastic "
+                ;;
+            gcp)
+                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
+                task+="testGCP "
+                ;;
             web)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh
                 task+="testWeb "
                 ;;
             scim)
@@ -237,6 +254,15 @@ while (( "$#" )); do
             groovy|script)
                 task+="testGroovy "
                 ;;
+            groovyauthentication)
+                task+="testGroovyAuthentication "
+                ;;
+            groovymfa)
+                task+="testGroovyMfa "
+                ;;
+            groovyservices)
+                task+="testGroovyServices "
+                ;;
             hibernate)
                 task+="testHibernate "
                 ;;
@@ -288,6 +314,12 @@ while (( "$#" )); do
             saml2)
                 task+="testSAML2 "
                 ;;
+            samlresponse)
+                task+="testSAMLResponse "
+                ;;
+            samlattributes|samlattrs)
+                task+="testSAMLAttributes "
+                ;;
             saml)
                 task+="testSAML "
                 ;;
@@ -317,6 +349,12 @@ while (( "$#" )); do
                 ;;
             webflowconfig|swfcfg|webflowcfg|webflow-config)
                 task+="testWebflowConfig "
+                ;;
+            webflowaccountactions)
+                task+="testWebflowAccountActions "
+                ;;
+            webflowserviceactions)
+                task+="testWebflowServiceActions "
                 ;;
             webflowmfaconfig)
                 task+="testWebflowMfaConfig "
@@ -376,10 +414,6 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdap "
                 ;;
-            couchbase)
-                isDockerOnLinux && ./ci/tests/couchbase/run-couchbase-server.sh
-                task+="testCouchbase "
-                ;;
             mongodbmfa)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDbMFA "
@@ -387,10 +421,6 @@ while (( "$#" )); do
             mongo|mongodb)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
-                ;;
-            couchdb)
-                isDockerOnLinux && ./ci/tests/couchdb/run-couchdb-server.sh
-                task+="testCouchDb "
                 ;;
             mysql)
                 isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh

@@ -21,20 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2")
-public class SamlTemplatesVelocityEngineTests extends BaseSamlIdPConfigurationTests {
+class SamlTemplatesVelocityEngineTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngine velocityEngineFactoryBean;
 
     @Test
-    public void verifySaml2PostBinding() {
+    void verifySaml2PostBinding() {
         val template = velocityEngineFactoryBean.getTemplate("templates/saml2-post-binding.vm");
         assertNotNull(template);
         template.merge(new VelocityContext(), new StringWriter());
     }
 
     @Test
-    public void verifySaml2SimpleSignBinding() {
+    void verifySaml2SimpleSignBinding() {
         val template = velocityEngineFactoryBean.getTemplate("templates/saml2-post-simplesign-binding.vm");
         assertNotNull(template);
         template.merge(new VelocityContext(), new StringWriter());

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("WebflowActions")
-public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
+class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @BeforeEach
     public void setup() {
@@ -30,7 +30,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyNullTicket() throws Exception {
+    void verifyNullTicket() throws Exception {
         val ctx = new MockRequestContext();
         val action = new TicketGrantingTicketCheckAction(getTicketRegistry());
         val event = action.execute(ctx);
@@ -38,7 +38,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyInvalidTicket() throws Exception {
+    void verifyInvalidTicket() throws Exception {
         val ctx = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
@@ -48,7 +48,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyValidTicket() throws Exception {
+    void verifyValidTicket() throws Exception {
         val ctx = new MockRequestContext();
         val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val tgt = getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);

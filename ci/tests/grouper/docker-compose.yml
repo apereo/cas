@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    image: "postgres:14"
+    image: "postgres:15"
     restart: always
     ports:
       - '5432:5432'
@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:2.6.18.1"
+    image: "i2incommon/grouper:4.2.1"
     restart: always
     ports:
       - '443:443'
@@ -21,5 +21,5 @@ services:
       - GROUPER_DATABASE_PASSWORD=pass
       - GROUPER_DATABASE_USERNAME=postgres
       - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
-      - GROUPER_AUTO_DDL_UPTOVERSION=v2.6.*
+      - GROUPER_AUTO_DDL_UPTOVERSION=4.*.*
       - GROUPER_RUN_HSQLDB=false

@@ -42,4 +42,14 @@ public interface AuthenticationPostProcessor extends Ordered, DisposableBean {
     @Override
     default void destroy() throws Exception {
     }
+
+    /**
+     * No authentication post processor.
+     *
+     * @return the authentication post processor
+     */
+    static AuthenticationPostProcessor none() {
+        return (builder, transaction) -> {
+        };
+    }
 }

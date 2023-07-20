@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
-public class CasTomcatServletWebServerFactoryCloudClusterTests {
+class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -59,7 +59,7 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         assertNotNull(server);
@@ -67,7 +67,7 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
 
 
     @Test
-    public void verifyDynamicCloud() {
+    void verifyDynamicCloud() {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true).setClusteringType("CLOUD");
@@ -92,7 +92,7 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     }
 
     @Test
-    public void verifyStaticCloud() {
+    void verifyStaticCloud() {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true)

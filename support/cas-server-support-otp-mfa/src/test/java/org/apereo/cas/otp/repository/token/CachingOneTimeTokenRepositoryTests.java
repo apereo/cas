@@ -24,14 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
 @Getter
 @Tag("MFA")
-public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
     private OneTimeTokenRepository repository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val token = new OneTimeToken(RandomUtils.nextInt(), id);
         repository.store(token);

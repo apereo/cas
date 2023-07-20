@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("WebflowActions")
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-public class WsFederationClientRedirectActionTests {
+class WsFederationClientRedirectActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)
@@ -55,7 +55,7 @@ public class WsFederationClientRedirectActionTests {
     private ServerProperties serverProperties;
 
     @Test
-    public void verifyRequestOperation() throws Exception {
+    void verifyRequestOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

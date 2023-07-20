@@ -68,14 +68,14 @@ a new release branch should be created.
 git checkout -b $BRANCH
 ```
 
-<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor 
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor 
 releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
 If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
 skip this step and move on to next section to build and release.</p></div>
 
 ### GitHub Actions
 
-<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor 
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor 
 releases, when new branches are created.</p></div>
  
 Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
@@ -116,7 +116,7 @@ You should also switch back to the main development branch (i.e. `master`) and f
 
 ## Housekeeping
 
-<div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>When updating the release description, try to be keep 
 consistent and follow the same layout as previous releases.</p></div>
 
 Remember to mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
@@ -128,7 +128,7 @@ based on the newly-released version.
 
 ## Update Documentation
 
-<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Modify the `cas-server-documentation/_config.yml` file to exclude relevant branches and directories from the build. 
@@ -140,7 +140,7 @@ based on the newly-released version.
 
 ## Update Maintenance Policy
 
-<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
 
 Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note 
 the release schedule and EOL timeline.

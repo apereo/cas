@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAccountSaveRegistrationActionTests {
+class YubiKeyAccountSaveRegistrationActionTests {
     @BeforeEach
     public void setup() {
         val applicationContext = new StaticApplicationContext();
@@ -49,9 +49,9 @@ public class YubiKeyAccountSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val request = new MockHttpServletRequest();
         request.addParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_TOKEN, "yubikeyToken");
         request.addParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_ACCOUNT, UUID.randomUUID().toString());
@@ -64,7 +64,7 @@ public class YubiKeyAccountSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyActionFails() throws Exception {
+    void verifyActionFails() throws Exception {
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
@@ -73,7 +73,7 @@ public class YubiKeyAccountSaveRegistrationActionTests {
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         val request = new MockHttpServletRequest();
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());

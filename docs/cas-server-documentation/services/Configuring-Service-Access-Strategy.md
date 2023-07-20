@@ -15,16 +15,6 @@ principal attributes that must exist before access can be granted to the service
 one to configure various attributes in terms of access roles for the application and define rules that 
 would be enacted and validated when an authentication request from the application arrives.
 
-<div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of 
-principal/required attribute <strong>names</strong> is
-case-sensitive. Exact matches are required for any individual attribute name.</p></div>
-
-<div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache 
-attributes upon release, all required attributes must also be released to the 
-relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on 
-attribute release and filters.</p></div>
-
-
 | Topic                 | Resource                                                        |
 |-----------------------|-----------------------------------------------------------------|
 | Basic                 | See [this guide](Service-Access-Strategy-Basic.html).           |
@@ -37,4 +27,5 @@ attribute release and filters.</p></div>
 | OpenFGA               | See [this guide](Service-Access-Strategy-OpenFGA.html).         |
 | Open Policy Agent     | See [this guide](Service-Access-Strategy-OpenPolicyAgent.html). |
 | Chaining              | See [this guide](Service-Access-Strategy-Chain.html).           |
+| Custom                | See [this guide](Service-Access-Strategy-Custom.html).          |
 

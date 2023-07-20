@@ -1,9 +1,9 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.config.CasSupportActionsConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -49,13 +49,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.reset.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })
 @Tag("WebflowConfig")
-public class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
     private Action initCaptchaAction;
     
     @Test
-    public void verifyCaptcha() throws Exception {
+    void verifyCaptcha() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ public class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConf
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);

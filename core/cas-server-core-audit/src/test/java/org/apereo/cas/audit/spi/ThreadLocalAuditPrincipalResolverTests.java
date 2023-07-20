@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Audits")
-public class ThreadLocalAuditPrincipalResolverTests {
+class ThreadLocalAuditPrincipalResolverTests {
 
     private final ThreadLocalAuditPrincipalResolver theResolver =
         new ThreadLocalAuditPrincipalResolver(new DefaultAuditPrincipalIdProvider());
@@ -30,18 +30,18 @@ public class ThreadLocalAuditPrincipalResolverTests {
     }
 
     @Test
-    public void noAuthenticationOrCredentialsAvailableInThreadLocal() {
+    void noAuthenticationOrCredentialsAvailableInThreadLocal() {
         assertResolvedPrincipal(PrincipalResolver.UNKNOWN_USER);
     }
 
     @Test
-    public void singleThreadSetsSingleCredential() {
+    void singleThreadSetsSingleCredential() {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertResolvedPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME);
     }
 
     @Test
-    public void singleThreadSetsMultipleCredentials() {
+    void singleThreadSetsMultipleCredentials() {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("test2"));
@@ -50,7 +50,7 @@ public class ThreadLocalAuditPrincipalResolverTests {
     }
 
     @Test
-    public void singleThreadSetsAuthentication() {
+    void singleThreadSetsAuthentication() {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
         assertResolvedPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME);
     }

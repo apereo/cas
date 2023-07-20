@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("JDBCMFA")
 @Getter
-public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;
@@ -55,17 +55,17 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
     private Cleanable cleanerScheduler;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 
     @Test
-    public void verifyCleaner() {
+    void verifyCleaner() {
         assertDoesNotThrow(() -> cleanerScheduler.clean());
     }
 
     @Test
-    public void verifyRegistrationAndAuthentication() throws Exception {
+    void verifyRegistrationAndAuthentication() throws Exception {
         val id = UUID.randomUUID().toString();
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
@@ -79,7 +79,7 @@ public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTest
     }
 
     @Test
-    public void verifyUpdateRegistration() throws Exception {
+    void verifyUpdateRegistration() throws Exception {
         val id = UUID.randomUUID().toString();
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);

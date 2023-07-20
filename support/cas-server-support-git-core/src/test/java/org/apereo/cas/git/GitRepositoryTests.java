@@ -35,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Git")
 @Slf4j
-public class GitRepositoryTests {
+class GitRepositoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyPushPull() throws Exception {
+    void verifyPushPull() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setBranchesToClone("master");

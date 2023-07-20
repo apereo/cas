@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import jakarta.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,15 +22,21 @@ import java.util.Set;
 @SuperBuilder
 @Getter
 public class ServicesManagerConfigurationContext {
+    @Nonnull
     private final ServiceRegistry serviceRegistry;
 
+    @Nonnull
     private final ConfigurableApplicationContext applicationContext;
 
     @Builder.Default
     private final Set<String> environments = new HashSet<>();
 
+    @Nonnull
     private final Cache<Long, RegisteredService> servicesCache;
 
     @Builder.Default
     private final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators = new ArrayList<>();
+
+    @Nonnull
+    private final RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 }

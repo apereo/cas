@@ -15,7 +15,7 @@ const fs = require("fs");
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(5000);
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
     // console.log(payload);

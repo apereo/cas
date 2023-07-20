@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,9 +38,9 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientAuthenticationRedirectActionTests {
+class DelegatedClientAuthenticationRedirectActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT)
     private Action delegatedAuthenticationRedirectToClientAction;
@@ -49,7 +50,7 @@ public class DelegatedClientAuthenticationRedirectActionTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyRedirect() throws Exception {
+    void verifyRedirect() throws Exception {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("CasClient");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);
@@ -61,7 +62,7 @@ public class DelegatedClientAuthenticationRedirectActionTests {
     }
 
     @Test
-    public void verifyPost() throws Exception {
+    void verifyPost() throws Exception {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("SAML2ClientPostBinding");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);
@@ -78,7 +79,9 @@ public class DelegatedClientAuthenticationRedirectActionTests {
     private static MockRequestContext getMockRequestContext() {
         val context = new MockRequestContext();
         val externalContext = new MockExternalContext();
-        externalContext.setNativeRequest(new MockHttpServletRequest());
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        externalContext.setNativeRequest(request);
         externalContext.setNativeResponse(new MockHttpServletResponse());
         context.setExternalContext(externalContext);
         RequestContextHolder.setRequestContext(context);

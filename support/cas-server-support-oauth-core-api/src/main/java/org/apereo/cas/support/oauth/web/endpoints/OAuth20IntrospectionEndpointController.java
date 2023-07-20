@@ -17,6 +17,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -104,8 +106,9 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val authExtractor = new BasicAuthExtractor();
 
             val context = new JEEContext(request, response);
-            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore(),
+            val callContext = new CallContext(context, getConfigurationContext().getSessionStore(),
                 getConfigurationContext().getOauthConfig().getProfileManagerFactory());
+            val credentialsResult = authExtractor.extract(callContext);
 
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");
@@ -177,7 +180,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
             val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {
-                introspect.setGrantType(grant.get(0).toString().toLowerCase());
+                introspect.setGrantType(grant.get(0).toString().toLowerCase(Locale.ENGLISH));
             }
         } else {
             introspect.setActive(false);

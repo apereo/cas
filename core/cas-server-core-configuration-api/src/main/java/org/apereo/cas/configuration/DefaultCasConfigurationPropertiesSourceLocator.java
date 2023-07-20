@@ -23,6 +23,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,8 +42,6 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private static final List<String> EXTENSIONS = Arrays.asList("yml", "yaml", "properties");
 
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
-
-    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
 
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
@@ -76,7 +75,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource("casCompositePropertySource");
         compositePropertySource.addPropertySource(loadEnvironmentAndSystemProperties());
-        val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory(environment);
+        val config = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(environment);
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config != null && config.isDirectory() && config.exists()) {
             val sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
@@ -84,7 +83,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 compositePropertySource.addPropertySource(sourceProfiles);
             }
         } else {
-            LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
+            LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path",
+                 FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified").get());
         }
 
         val embeddedProperties = loadEmbeddedProperties(resourceLoader, environment);
@@ -103,13 +103,13 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * <p>
      * Where multiple filenames with same base name and different extensions exist, the priority is yaml, yml, properties.
      */
-    private List<File> getAllPossibleExternalConfigDirFilenames(
+    private static List<File> getAllPossibleExternalConfigDirFilenames(
         final Environment environment,
         final File configDirectory,
         final List<String> profiles) {
-        val applicationName = casConfigurationPropertiesEnvironmentManager.getApplicationName(environment);
-        val configName = casConfigurationPropertiesEnvironmentManager.getConfigurationName(environment);
-        val appNameLowerCase = applicationName.toLowerCase();
+        val applicationName = CasConfigurationPropertiesSourceLocator.getApplicationName(environment);
+        val configName = CasConfigurationPropertiesSourceLocator.getConfigurationName(environment);
+        val appNameLowerCase = applicationName.toLowerCase(Locale.ENGLISH);
         val appConfigNames = CollectionUtils.wrapList("application", appNameLowerCase, applicationName, configName);
 
         val fileNames = appConfigNames

@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.jira.name-id-attribute=cn",
     "cas.saml-sp.jira.name-id-format=transient"
 })
-public class CasSamlSPJiraConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPJiraConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

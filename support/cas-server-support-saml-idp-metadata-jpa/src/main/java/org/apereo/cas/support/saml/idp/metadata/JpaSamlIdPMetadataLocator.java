@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -30,6 +30,7 @@ import java.util.Optional;
 @Transactional(transactionManager = "transactionManagerSamlMetadataIdP")
 @Slf4j
 @Getter
+@Monitorable
 public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     @PersistenceContext(unitName = "jpaSamlMetadataIdPContext")
     private EntityManager entityManager;
@@ -69,7 +70,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
         }
         val query = getEntityManager().createQuery(sql, SamlIdPMetadataDocument.class);
         if (registeredService.isPresent()) {
-            query.setParameter("appliesTo", SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+            query.setParameter("appliesTo", getAppliesToFor(registeredService));
         }
         return query.setMaxResults(1);
     }

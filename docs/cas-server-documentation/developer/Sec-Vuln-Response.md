@@ -23,11 +23,28 @@ To review the old archives of the application security working group, [please se
 - Project members or the original reporter **SHOULD** verify and confirm that the produced patch does indeed fix the issue.
 - A patch release is made available to the wider public.
 
-<div class="alert alert-warning"><strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
+<div class="alert alert-warning">:warning: <strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> 
+'create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community 
+members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
 ### Dependency Upgrades
 
-Given the amount of effort involved in planning and releasing a security patch and disclosing the issue, communicating descriptions, intent, attack window and fixes, etc it is generally best to keep security releases reserved for issues that actually can be reproduced based on a concrete use case or those that truly and in practice affect the inner workings of the CAS software in a real way. If you could have such a use case at some point, please be sure to supply details and steps to reproduce issues. Supposed *vulnerabilities* that are picked up and reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless there is solid evidence provided by the reporter to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the installation script or switch to a more recent CAS version that might remove such warnings.
+Given the amount of effort involved in planning and releasing a security patch and disclosing the issue, communicating descriptions, intent, 
+attack window and fixes, etc it is generally best to keep security releases reserved for issues that **actually can be reproduced** based on a 
+concrete use case or those that truly and in practice affect the inner workings of the CAS software in a real way. If you could have such a 
+use case at some point, please be sure to **supply details to reproduce issues**. Supposed *vulnerabilities* that are picked up and 
+reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless 
+there is solid evidence **provided by the reporter** to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear 
+superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the 
+installation script or switch to a more recent CAS version that might remove such warnings.
+       
+CAS generally tends to upgrade dependencies for [feature (minor) and major releases](Release-Policy.html), and does so rather frequently. Dependency
+versions are not typically upgraded for patch and security fixes unless and until, as stated above, there is solid evidence to demonstrate and require
+the need and the effort for an upgrade. If you have tools, audit reports and processes in place that scan your CAS deployment and report back libraries
+and dependencies with known CVEs and your policies require a build without such CVEs, we recommend that you modify
+your CAS build to substitute, remove, upgrade or replace affected libraries and remove the warnings as you see best. Please note that doing so
+may jeopardize the stability of your CAS build and deployment and most likely will make your upgrades quite difficult
+as you might run into various dependency and library conflicts with newer versions. 
 
 ### Security Bounty
 
@@ -52,7 +69,11 @@ considered EOL will not receive further updates and/or attention from designated
 
 ### Time to Fix
 
-Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent on individuals' availability and willingness. We strongly recommend that you study the project's license for more information on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of urgency, please consider negotiating a professional support agreement with Apereo commercial [service/support providers](/cas/Support.html).
+Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official 
+meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent 
+on individuals' availability and willingness. We strongly recommend that you study the project's license for more information 
+on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of 
+urgency, please consider negotiating a professional support agreement with Apereo commercial [service/support providers](/cas/Support.html).
  
 ### Security Fixes
 
@@ -84,7 +105,7 @@ Once the release is made available, the following procedure may be observed:
     - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
-<div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Commitee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
+<div class="alert alert-info">:information_source: <strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Committee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
 
 ### Trusted Contacts
 

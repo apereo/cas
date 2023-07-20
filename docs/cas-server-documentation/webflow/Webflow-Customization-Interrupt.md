@@ -69,7 +69,7 @@ primary authentication event and before the single sign-on event. This means an 
 identified by CAS and by extension is made available to the interrupt, and interrupt has the ability to
 decide whether a single sign-on session can be established for the user.
 
-<div class="alert alert-info"><strong>Can We SSO Into Links?</strong><p>
+<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
 No. The collection of <code>links</code> are just links and are not tied in any way to the 
 CAS authentication sequence, meaning they do not activate a state, transition or view in 
 that sequence to trigger CAS into generating tickets, executing certain 
@@ -88,7 +88,7 @@ interrupt here loses the ability to decide whether a single sign-on session can 
 responses indicating this option will have no impact, since the query and interrupt responses 
 happen after the creation of the SSO session.
 
-<div class="alert alert-info"><strong>Can We SSO Into Links?</strong><p>
+<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
 Yes. In this strategy, links to external applications presented by the interrupt response
 should be able to take advantage of the established single sign-on session.</p>
 </div>
@@ -97,13 +97,13 @@ should be able to take advantage of the established single sign-on session.</p>
 
 Interrupt queries can be executed via the following ways:
 
-| Storage             | Description                                           
-|----------------------------------------------------------------------------------
-| JSON                | [See this guide](Webflow-Customization-Interrupt-JSON.html).   
-| Regex Attribute     | [See this guide](Webflow-Customization-Interrupt-RegexAttribute.html).   
-| Groovy              | [See this guide](Webflow-Customization-Interrupt-Groovy.html).   
-| REST                | [See this guide](Webflow-Customization-Interrupt-REST.html).   
-| Custom              | [See this guide](Webflow-Customization-Interrupt-Custom.html).   
+| Storage         | Description                                                            |
+|-----------------|------------------------------------------------------------------------|
+| JSON            | [See this guide](Webflow-Customization-Interrupt-JSON.html).           |
+| Regex Attribute | [See this guide](Webflow-Customization-Interrupt-RegexAttribute.html). |
+| Groovy          | [See this guide](Webflow-Customization-Interrupt-Groovy.html).         |
+| REST            | [See this guide](Webflow-Customization-Interrupt-REST.html).           |
+| Custom          | [See this guide](Webflow-Customization-Interrupt-Custom.html).         |
 
 ## Interrupt Policy Per Service
 
@@ -125,16 +125,15 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
   
 The following policy settings are supported:
 
-| Field               | Description                                           
-|---------------------------------------------------------------------------------------------------------------
-| `enabled`           | Whether interrupt notifications are enabled for this application. Default is `true`.
-| `forceExecution`    | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.
+| Field            | Description                                                                                                                                          |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `enabled`        | Whether interrupt notifications are enabled for this application. Default is `true`.                                                                 |
+| `forceExecution` | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`. |
 
 ## Skipping Interrupts
 
-<div class="alert alert-warning"><strong>Usage</strong>
-<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>. Consider
-assigning a dedicated interrupt policy to the application definition instead.</p>
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>.</p>
 </div>
 
 Interrupt notifications may be disabled on a per-service basis. A sample JSON file follows:

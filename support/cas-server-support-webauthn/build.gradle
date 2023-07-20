@@ -1,4 +1,12 @@
 description = "Apereo CAS FIDO2 WebAuthn Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support",
+            aliases: ["webauthn", "fido2", "passkey", "fido"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
@@ -13,7 +21,7 @@ dependencies {
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-webauthn-core")
     implementation project(":support:cas-server-support-webauthn-core-webflow")
-
+    
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration-api")
@@ -29,6 +37,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-webflow")
 
+    testImplementation libraries.springboottomcat
+
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-tickets")
@@ -37,6 +47,7 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")
 
+    testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-actions")
@@ -50,5 +61,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-webconfig", configuration: "tests")
 }

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("CAS")
-public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
+class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     @Override
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
         return getCasView(true, encoder, viewDelegated);
@@ -56,7 +56,7 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     }
 
     @Test
-    public void verifyFailureView() throws Exception {
+    void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = getCasView(false, new NoOpProtocolAttributeEncoder(), getDelegatedView());
         val model = new HashMap<String, Object>();

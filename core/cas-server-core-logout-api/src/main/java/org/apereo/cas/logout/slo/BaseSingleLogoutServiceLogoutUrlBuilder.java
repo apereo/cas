@@ -53,7 +53,7 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
                 return SingleLogoutUrl.from(registeredService);
             }
-            if (this.urlValidator.isValid(originalUrl)) {
+            if (urlValidator.isValid(originalUrl)) {
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
                 return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, webRegisteredService.getLogoutType()));
             }

@@ -37,11 +37,11 @@ def run(final Object... args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|------------------------------------------------------------------------------------------------------------------------
-| `principal`           | Authenticated principal.
-| `attributes`          | A map of type `Map<String, Object>` that contains both principal and authentication attributes. 
-| `service`             | The `Service` object representing the requesting application.
-| `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                                     |
+|---------------------|-------------------------------------------------------------------------------------------------|
+| `principal`         | Authenticated principal.                                                                        |
+| `attributes`        | A map of type `Map<String, Object>` that contains both principal and authentication attributes. |
+| `service`           | The `Service` object representing the requesting application.                                   |
+| `registeredService` | The `RegisteredService` object representing the service definition in the registry.             |
+| `requestContext`    | The object representing the Spring Webflow `RequestContext`.                                    |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                     |

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("SAML1")
-public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
+class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10FailureResponseView view;
 
@@ -48,7 +48,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponse() throws Exception {
+    void verifyResponse() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");

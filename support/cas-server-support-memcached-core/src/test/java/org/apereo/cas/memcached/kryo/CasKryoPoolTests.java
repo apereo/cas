@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class CasKryoPoolTests {
+class CasKryoPoolTests {
     @Test
-    public void verifyRunOperation() {
+    void verifyRunOperation() {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             assertNotNull(kryo);

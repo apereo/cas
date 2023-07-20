@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -46,7 +46,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
         final Map<String, List<Object>> attributes,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
 

@@ -91,10 +91,10 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion,
                                                                                final HttpServletRequest request,
                                                                                final HttpServletResponse response) {
-        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.service());
-        val registeredService = servicesManager.findServiceBy(assertion.service());
-        val authentication = assertion.primaryAuthentication();
-        return validateAuthenticationContext(request, response, registeredService, authentication, assertion.service());
+        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
+        val registeredService = servicesManager.findServiceBy(assertion.getService());
+        val authentication = assertion.getPrimaryAuthentication();
+        return validateAuthenticationContext(request, response, registeredService, authentication, assertion.getService());
     }
 
     @Override
@@ -117,8 +117,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         val providers = providerResult
             .map(provider -> {
-                if (provider instanceof ChainingMultifactorAuthenticationProvider) {
-                    val chain = ChainingMultifactorAuthenticationProvider.class.cast(provider);
+                if (provider instanceof ChainingMultifactorAuthenticationProvider chain) {
                     return chain.getMultifactorAuthenticationProviders().stream()
                         .filter(p -> p.equals(provider)).collect(Collectors.toList());
                 }

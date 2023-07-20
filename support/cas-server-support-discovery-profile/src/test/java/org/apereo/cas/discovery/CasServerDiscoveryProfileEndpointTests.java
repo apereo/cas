@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.discoveryProfile.enabled=true"
     })
 @Tag("ActuatorEndpoint")
-public class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
+class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("discoveryProfileEndpoint")
     private CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val discovery = discoveryProfileEndpoint.discovery();
         assertNotNull(discovery);
         assertFalse(discovery.isEmpty());

@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Utility")
-public class DefaultCasRuntimeModuleLoaderTests {
+class DefaultCasRuntimeModuleLoaderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val loader = new DefaultCasRuntimeModuleLoader();
         assertDoesNotThrow(loader::load);
     }

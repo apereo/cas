@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cookie")
-public class CasGoogleAnalyticsCookieGeneratorTests {
+class CasGoogleAnalyticsCookieGeneratorTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -53,11 +53,11 @@ public class CasGoogleAnalyticsCookieGeneratorTests {
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
 
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
     
     @Test
-    public void verifyCookieValue() {
+    void verifyCookieValue() {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 

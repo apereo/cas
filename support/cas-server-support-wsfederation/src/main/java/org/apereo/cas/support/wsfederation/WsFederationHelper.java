@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
-import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -61,6 +60,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
+import java.security.cert.X509Certificate;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -79,6 +79,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WsFederationHelper {
 
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     private final OpenSamlConfigBean openSamlConfigBean;
 
     private final ServicesManager servicesManager;
@@ -89,7 +93,6 @@ public class WsFederationHelper {
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
-        Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
         try (val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
@@ -113,7 +116,7 @@ public class WsFederationHelper {
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
             certParser.engineInit(config.getEncryptionCertificate().getInputStream());
             LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            val cert = (X509CertificateObject) certParser.engineRead();
+            val cert = (X509Certificate) certParser.engineRead();
             LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
             return new BasicX509Credential(cert, kp.getPrivate());
         }
@@ -217,14 +220,12 @@ public class WsFederationHelper {
                                                                               final Collection<WsFederationConfiguration> config,
                                                                               final Service service) {
         val securityToken = getSecurityTokenFromRequestedToken(reqToken, config);
-        if (securityToken instanceof Assertion) {
-            LOGGER.trace("Security token is an assertion.");
-            val assertion = Assertion.class.cast(securityToken);
+        if (securityToken instanceof Assertion assertion) {
             LOGGER.debug("Extracted assertion successfully: [{}]", assertion);
-            val cfg = config.stream()
-                .filter(c -> StringUtils.isNotBlank(c.getIdentityProviderIdentifier()))
-                .filter(c -> {
-                    val id = c.getIdentityProviderIdentifier();
+            val configuration = config.stream()
+                .filter(cfg -> StringUtils.isNotBlank(cfg.getIdentityProviderIdentifier()))
+                .filter(cfg -> {
+                    val id = cfg.getIdentityProviderIdentifier();
                     LOGGER.trace("Comparing identity provider identifier [{}] with assertion issuer [{}]", id, assertion.getIssuer());
                     return RegexUtils.find(id, assertion.getIssuer());
                 })
@@ -233,7 +234,7 @@ public class WsFederationHelper {
                     new IllegalArgumentException("Could not locate wsfed configuration for security token provided. The assertion issuer "
                                                  + assertion.getIssuer() + " does not match any of the identity provider identifiers in the configuration"));
 
-            return Pair.of(assertion, cfg);
+            return Pair.of(assertion, configuration);
         }
         throw new IllegalArgumentException("Could not extract or decrypt an assertion based on the security token provided");
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Setter;
@@ -34,6 +35,7 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
+@Monitorable
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**

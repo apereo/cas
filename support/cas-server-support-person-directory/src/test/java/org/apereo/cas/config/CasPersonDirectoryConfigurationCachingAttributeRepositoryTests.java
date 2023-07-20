@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
 })
 @Tag("Attributes")
-public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
+class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
     private IPersonAttributeDao cachingAttributeRepository;
@@ -36,7 +36,7 @@ public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
      * for each user while also maintaining a unique cache key for each.
      */
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val p1 = cachingAttributeRepository.getPerson("tensada");
         assertEquals("tensada", p1.getName());
         assertEquals("Tens", p1.getAttributeValue("oldName"));

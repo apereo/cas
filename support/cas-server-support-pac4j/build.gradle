@@ -14,8 +14,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
-    implementation project(":support:cas-server-support-pac4j-authentication")
-    
+
     compileOnly project(":support:cas-server-support-scim-core")
 
     implementation libraries.pac4joidcoauth

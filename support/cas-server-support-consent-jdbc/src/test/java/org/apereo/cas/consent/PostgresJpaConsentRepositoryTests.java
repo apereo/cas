@@ -23,5 +23,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.url=jdbc:postgresql://localhost:5432/audit",
     "cas.consent.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
-public class PostgresJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
+class PostgresJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
 }

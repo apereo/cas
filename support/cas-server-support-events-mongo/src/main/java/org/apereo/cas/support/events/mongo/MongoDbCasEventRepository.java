@@ -35,6 +35,11 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    public void removeAll() {
+        mongoTemplate.remove(new Query(), CasEvent.class, this.collectionName);
+    }
+
+    @Override
     public Stream<? extends CasEvent> load() {
         return this.mongoTemplate.stream(new Query(), CasEvent.class, this.collectionName);
     }

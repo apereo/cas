@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
+class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
     @Autowired
     @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;
@@ -50,7 +50,7 @@ public class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTe
     private ConsentRepository consentRepository;
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,

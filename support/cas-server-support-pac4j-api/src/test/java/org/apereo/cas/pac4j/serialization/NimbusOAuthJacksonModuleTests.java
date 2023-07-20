@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class NimbusOAuthJacksonModuleTests {
+class NimbusOAuthJacksonModuleTests {
     private static final AbstractJacksonBackedStringSerializer SERIALIZER = new AbstractJacksonBackedStringSerializer() {
         @Serial
         private static final long serialVersionUID = 1083978605633757365L;
@@ -35,7 +35,7 @@ public class NimbusOAuthJacksonModuleTests {
     };
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val mapper = SERIALIZER.getObjectMapper();
         assertTrue(mapper.getRegisteredModuleIds().contains(NimbusOAuthJacksonModule.class.getName()));
         runTest(CodeVerifier.class, new CodeVerifier(RandomUtils.randomAlphabetic(CodeVerifier.MIN_LENGTH)));

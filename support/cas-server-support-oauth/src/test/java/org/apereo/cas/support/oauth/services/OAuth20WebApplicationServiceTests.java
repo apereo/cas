@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("OAuth")
-public class OAuth20WebApplicationServiceTests {
+class OAuth20WebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeACompletePrincipalToJson() throws Exception {
+    void verifySerializeACompletePrincipalToJson() throws Exception {
         val service = new OAuthRegisteredService();
         service.setName("checkCloning");
         service.setServiceId("testId");

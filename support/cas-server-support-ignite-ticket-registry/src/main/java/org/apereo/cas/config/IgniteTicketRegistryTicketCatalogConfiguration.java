@@ -2,11 +2,15 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link IgniteTicketRegistryTicketCatalogConfiguration}.
@@ -17,11 +21,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ignite")
 @AutoConfiguration
-public class IgniteTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
+public class IgniteTicketRegistryTicketCatalogConfiguration {
 
-    public IgniteTicketRegistryTicketCatalogConfiguration(
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {}, applicationContext);
+    @ConditionalOnMissingBean(name = "igniteTicketCatalogConfigurationValuesProvider")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasTicketCatalogConfigurationValuesProvider igniteTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+        };
     }
 }

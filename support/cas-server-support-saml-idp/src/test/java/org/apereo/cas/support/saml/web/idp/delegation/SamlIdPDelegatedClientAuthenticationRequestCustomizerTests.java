@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.SamlIdPUtils;
-
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,9 +14,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
+import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.jee.context.JEEContext;
@@ -26,10 +29,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Arrays;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,13 +42,13 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2")
 @Import(SamlIdPDelegatedAuthenticationConfiguration.class)
-public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml2DelegatedClientAuthenticationRequestCustomizer")
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
     @Test
-    public void verifyAuthorization() throws Exception {
+    void verifyAuthorization() throws Exception {
         val saml2Client = mock(SAML2Client.class);
 
         val request = new MockHttpServletRequest();
@@ -69,7 +70,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         when(saml2Client.getIdentityProviderResolvedEntityId()).thenReturn(providerId);
         setAuthnRequestFor(webContext, providerId);
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
-
+        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
         assertTrue(customizer.isAuthorized(webContext, new CasClient(), webApplicationService));
     }
 
@@ -77,7 +78,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
-        SamlIdPUtils.storeSamlRequest(webContext, openSamlConfigBean, samlIdPDistributedSessionStore, context);
+        ((MockHttpServletRequest) webContext.getNativeRequest()).addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore).store(webContext, context);
     }
 
     private void setAuthnRequestFor(final JEEContext webContext,
@@ -103,6 +105,23 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         });
         scoping.setIDPList(idpList);
         authnRequest.setScoping(scoping);
+
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        val authnContext = (RequestedAuthnContext) builder.buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        authnContext.setComparison(AuthnContextComparisonTypeEnumeration.EXACT);
+
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        val classRef = (AuthnContextClassRef) builder.buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        classRef.setURI(UUID.randomUUID().toString());
+        authnContext.getAuthnContextClassRefs().add(classRef);
+
+        authnRequest.setRequestedAuthnContext(authnContext);
+
+        authnRequest.setIsPassive(Boolean.TRUE);
+        authnRequest.setForceAuthn(Boolean.TRUE);
+
         storeRequest(authnRequest, webContext);
     }
 }

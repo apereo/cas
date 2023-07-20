@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaAuthorizationNeedInfoResponseTests {
+class UmaAuthorizationNeedInfoResponseTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val info = new UmaAuthorizationNeedInfoResponse();
         info.setRedirectUser(true);
         info.setRequiredClaims(List.of("claim"));

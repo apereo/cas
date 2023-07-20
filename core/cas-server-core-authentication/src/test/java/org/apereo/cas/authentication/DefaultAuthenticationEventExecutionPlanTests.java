@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
@@ -9,12 +10,16 @@ import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionCont
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.Set;
@@ -29,9 +34,20 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationEventExecutionPlanTests {
+class DefaultAuthenticationEventExecutionPlanTests {
+    @Mock
+    private ServicesManager servicesManager;
+
+    @Mock
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @BeforeEach
+    public void before() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
+    }
+
     @Test
-    public void verifyDuplicateHandlers() throws Exception {
+    void verifyDuplicateHandlers() throws Exception {
         val h1 = new AcceptUsersAuthenticationHandler("Handler1");
         val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
         assertEquals(h1, h2);
@@ -44,8 +60,10 @@ public class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = PrincipalResolutionContext.builder()
+            .servicesManager(servicesManager)
+            .attributeDefinitionStore(attributeDefinitionStore)
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -65,12 +83,12 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         plan.registerAuthenticationPolicyResolver(transaction -> Set.of(new AllCredentialsValidatedAuthenticationPolicy()));
         assertFalse(plan.getAuthenticationPolicies(
-            new DefaultAuthenticationTransactionFactory().newTransaction(
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
     }
 
     @Test
-    public void verifyMismatchedCount() {
+    void verifyMismatchedCount() {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlersWithPrincipalResolver(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
         assertTrue(plan.getAuthenticationHandlers().isEmpty());
@@ -78,20 +96,20 @@ public class DefaultAuthenticationEventExecutionPlanTests {
 
 
     @Test
-    public void verifyNoHandlerResolves() {
-        val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
-            List.of(mock(Credential.class)));
+    void verifyNoHandlerResolves() {
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), mock(Credential.class));
         val plan = new DefaultAuthenticationEventExecutionPlan();
         assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
     }
 
 
     @Test
-    public void verifyDefaults() {
+    void verifyDefaults() {
         val input = mock(AuthenticationEventExecutionPlan.class);
         when(input.getAuthenticationHandlers()).thenReturn(Set.of());
         when(input.getAuthenticationHandlersBy(any())).thenCallRealMethod();
-        assertNotNull(input.getAuthenticationHandlersBy(authenticationHandler -> false));
+        assertNotNull(input.getAuthenticationHandlersBy(handler -> false));
     }
 
 }

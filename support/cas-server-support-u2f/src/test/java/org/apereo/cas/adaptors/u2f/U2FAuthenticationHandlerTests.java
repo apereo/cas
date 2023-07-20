@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
     }
 )
 @Tag("MFAProvider")
-public class U2FAuthenticationHandlerTests {
+class U2FAuthenticationHandlerTests {
     @Autowired
     @Qualifier("u2fAuthenticationHandler")
     private AuthenticationHandler u2fAuthenticationHandler;
@@ -52,7 +52,7 @@ public class U2FAuthenticationHandlerTests {
     private U2FDeviceRepository u2fDeviceRepository;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val token = '{'
                     + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\","
                     + "\"clientData\":\"eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiTkVuQUVaUE9vU1R2R"
@@ -88,7 +88,7 @@ public class U2FAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoAuthn() throws Exception {
+    void verifyNoAuthn() throws Exception {
         val credential = new U2FTokenCredential("token");
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -99,7 +99,7 @@ public class U2FAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyBadJson() throws Exception {
+    void verifyBadJson() throws Exception {
         val credential = new U2FTokenCredential("token");
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

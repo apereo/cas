@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Cipher")
-public class StringCipherExecutorTests {
+class StringCipherExecutorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val publicKey = """
             {
                 "kty": "RSA",

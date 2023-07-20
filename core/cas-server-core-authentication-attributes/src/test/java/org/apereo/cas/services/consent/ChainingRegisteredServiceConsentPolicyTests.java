@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ChainingRegisteredServiceConsentPolicyTests {
+class ChainingRegisteredServiceConsentPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(new DefaultRegisteredServiceConsentPolicy(Set.of("cn"), Set.of("givenName"))));
         chain.addPolicy(new DefaultRegisteredServiceConsentPolicy(Set.of("mail"), Set.of("address")));
@@ -31,7 +31,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusEnabled() {
+    void verifyStatusEnabled() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -40,7 +40,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusDisabled() {
+    void verifyStatusDisabled() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -49,7 +49,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusUndefined() {
+    void verifyStatusUndefined() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy(),
@@ -58,7 +58,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyExcludedServices() {
+    void verifyExcludedServices() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.TRUE).setExcludedServices(Set.of("application1")),

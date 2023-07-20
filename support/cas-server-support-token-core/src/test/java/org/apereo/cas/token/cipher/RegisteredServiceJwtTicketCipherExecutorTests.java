@@ -20,22 +20,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Cipher")
-public class RegisteredServiceJwtTicketCipherExecutorTests {
+class RegisteredServiceJwtTicketCipherExecutorTests {
     @Test
-    public void verifyCipheredTokenWithoutService() {
-        val c = new RegisteredServiceJwtTicketCipherExecutor();
-        val token = c.encode("Value", Optional.empty());
-        assertEquals("Value", c.decode(token, Optional.empty()));
+    void verifyCipheredTokenWithoutService() {
+        val cipher = new RegisteredServiceJwtTicketCipherExecutor();
+        val token = cipher.encode("Value", Optional.empty());
+        assertEquals("Value", cipher.decode(token, Optional.empty()));
     }
 
     @Test
-    public void verifyCipherStrategyPerService() {
+    void verifyCipherStrategyPerService() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
-        val c = new RegisteredServiceJwtTicketCipherExecutor();
-        assertTrue(c.getCipherOperationsStrategyType(service).isEmpty());
+        val cipher = new RegisteredServiceJwtTicketCipherExecutor();
+        assertTrue(cipher.getCipherOperationsStrategyType(service).isEmpty());
 
         service.getProperties().put(RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE.getPropertyName(),
             new DefaultRegisteredServiceProperty(BaseStringCipherExecutor.CipherOperationsStrategyType.SIGN_AND_ENCRYPT.name()));
-        assertTrue(c.getCipherOperationsStrategyType(service).isPresent());
+        assertTrue(cipher.getCipherOperationsStrategyType(service).isPresent());
     }
 }

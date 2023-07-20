@@ -32,13 +32,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationFactoryTests {
+class DelegatedClientIdentityProviderConfigurationFactoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyRedirectUrl() {
+    void verifyRedirectUrl() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -74,7 +74,7 @@ public class DelegatedClientIdentityProviderConfigurationFactoryTests {
     }
 
     @Test
-    public void verifyRedirectUrlCorrectlyEncoded() {
+    void verifyRedirectUrlCorrectlyEncoded() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -84,7 +84,7 @@ public class DelegatedClientIdentityProviderConfigurationFactoryTests {
         val client = new CasClient(new CasConfiguration());
         client.setCustomProperties(Map.of(
             ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, "custom-class",
-            ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, "My Great Client"));
+            ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, "My Great Client"));
         val factory = DelegatedClientIdentityProviderConfigurationFactory.builder()
             .casProperties(casProperties)
             .client(client)

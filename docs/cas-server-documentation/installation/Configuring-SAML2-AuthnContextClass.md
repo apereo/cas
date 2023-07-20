@@ -7,9 +7,16 @@ category: Protocols
 
 # SAML2 Authentication Context Class
 
-Each service may specify a required authentication class, which may overwrite the appropriate field in the ultimate SAML2 response that is sent back to the service provider. 
+Each service may specify a required authentication class, which may overwrite the 
+appropriate field in the ultimate SAML2 response that is sent back to the service provider. 
 
-## Static
+{% include_cached casproperties.html properties="cas.authn.saml-idp" includes=".core,.response" %}
+
+{% tabs saml2authnctx %}
+
+{% tab saml2authnctx Static %}
+     
+Always use the specified authentication context class in the final response.
 
 ```json
 {
@@ -21,8 +28,10 @@ Each service may specify a required authentication class, which may overwrite th
   "requiredAuthenticationContextClass": "https://refeds.org/profile/mfa",
 }
 ```
-      
-## Groovy 
+
+{% endtab %}
+
+{% tab saml2authnctx Groovy %}
 
 You can always manipulate the authentication context class in more dynamic ways using a Groovy script:
 
@@ -54,7 +63,9 @@ def run(final Object... args) {
 }
 ```
 
-## Custom
+{% endtab %}
+
+{% tab saml2authnctx Custom %}
 
 It is possible to design and inject your authentication context class builder
 into CAS using the following `@Bean` that would be registered in a `@AutoConfiguration` class:
@@ -66,4 +77,9 @@ public SamlProfileAuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder
 }
 ```
 
-Your configuration class needs to be registered with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
+Your configuration class needs to be registered with 
+CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
+
+{% endtab %}
+
+{% endtabs %}

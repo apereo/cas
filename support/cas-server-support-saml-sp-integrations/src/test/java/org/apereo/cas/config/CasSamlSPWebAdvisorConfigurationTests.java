@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.web-advisor.name-id-attribute=cn",
     "cas.saml-sp.web-advisor.name-id-format=transient"
 })
-public class CasSamlSPWebAdvisorConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPWebAdvisorConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

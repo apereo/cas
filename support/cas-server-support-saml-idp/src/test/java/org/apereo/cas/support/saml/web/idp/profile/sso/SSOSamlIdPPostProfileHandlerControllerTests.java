@@ -7,7 +7,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
 })
-public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;
@@ -225,7 +225,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
                                           final AuthnRequest authnRequest) {
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,

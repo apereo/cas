@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -46,12 +47,13 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
-                                                                 final Map<String, List<Object>> queryAttributes) {
+                                                                 final Map<String, List<Object>> queryAttributes,
+                                                                 final Optional<Service> service) {
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         val certificateAttributes = extractPersonAttributes(certificate);
         queryAttributes.putAll(certificateAttributes);
         val attributes = new LinkedHashMap<>(
-            super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes));
+            super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes, service));
         attributes.putAll(certificateAttributes);
         return attributes;
     }

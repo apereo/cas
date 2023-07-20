@@ -32,14 +32,14 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
+class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcSingleLogoutMessageCreator")
     private SingleLogoutMessageCreator oidcSingleLogoutMessageCreator;
 
     @Test
-    public void verifyBackChannelLogout() throws ParseException {
+    void verifyBackChannelLogout() throws ParseException {
         val service = getOidcRegisteredService(true, false);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -68,7 +68,7 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFrontChannelLogout() {
+    void verifyFrontChannelLogout() {
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
             .build();

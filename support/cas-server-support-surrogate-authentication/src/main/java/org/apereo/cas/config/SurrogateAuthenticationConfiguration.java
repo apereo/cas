@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
@@ -43,6 +44,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
@@ -117,6 +119,7 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
@@ -210,6 +213,10 @@ public class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver surrogatePrincipalResolver(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
@@ -221,8 +228,9 @@ public class SurrogateAuthenticationConfiguration {
             val personDirectory = casProperties.getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
-                attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
-                personDirectory);
+                attributeRepository, attributeMerger, SurrogatePrincipalResolver.class,
+                servicesManager, attributeDefinitionStore,
+                principal, personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;
         }

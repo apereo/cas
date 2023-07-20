@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
+class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenController")
     protected OidcAccessTokenEndpointController oidcAccessTokenEndpointController;
@@ -45,7 +45,7 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     private OidcUserProfileEndpointController oidcProfileController;
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -57,7 +57,7 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyClientNoCode() throws Exception {
+    void verifyClientNoCode() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.ACCESS_TOKEN_URL);
         val response = new MockHttpServletResponse();
         oidcAccessTokenEndpointController.handleRequest(request, response);
@@ -67,7 +67,7 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyDPoPRequest() throws Exception {
+    void verifyDPoPRequest() throws Exception {
         val ecJWK = new ECKeyGenerator(Curve.P_256).keyID("1234567890").generate();
         val proofFactory = new DefaultDPoPProofFactory(ecJWK, JWSAlgorithm.ES256);
 

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthToken")
-public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
+class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     @Override
     @BeforeEach
     public void setup() {
@@ -32,7 +32,7 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);
         registeredService.setDeviceTokenExpirationPolicy(null);
@@ -43,7 +43,7 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyCustom() {
+    void verifyCustom() {
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().clear();
         val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);

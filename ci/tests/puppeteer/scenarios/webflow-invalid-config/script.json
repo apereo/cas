@@ -1,5 +1,6 @@
 {
   "dependencies": "core",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.server.name=https://localhost:8443",

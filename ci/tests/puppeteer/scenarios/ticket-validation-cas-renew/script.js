@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
-        const service1 = "https://httpbin.org/get";
+        const service1 = "https://localhost:9859/get";
         console.log(`Logging into ${service1} without renew to create SSO`);
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service1}`);
         await cas.loginWith(page, "casuser", "Mellon");
@@ -24,7 +24,7 @@ const cas = require('../../cas.js');
             assert(body.includes("<cas:authenticationSuccess>"))
         }
 
-        const service2 = "https://httpbin.org/get";
+        const service2 = "https://localhost:9859/get";
         console.log(`Logging into ${service2} to validate with renew=true and existing SSO`);
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service2}`);
         ticket = await cas.assertTicketParameter(page);

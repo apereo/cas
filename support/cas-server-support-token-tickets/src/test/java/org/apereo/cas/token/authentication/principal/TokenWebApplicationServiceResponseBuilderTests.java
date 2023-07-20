@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -14,29 +15,29 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.TokenTicketsConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
@@ -81,6 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
@@ -98,7 +100,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Tag("Authentication")
-public class TokenWebApplicationServiceResponseBuilderTests {
+class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
     private ResponseBuilder<WebApplicationService> responseBuilder;
@@ -112,7 +114,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyDecrypt() {
+    void verifyDecrypt() {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
@@ -122,12 +124,12 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    public void verifyBuilderSupport() {
+    void verifyBuilderSupport() {
         assertTrue(responseBuilder.supports(serviceFactory.createService("test")));
     }
 
     @Test
-    public void verifyTokenBuilder() throws Exception {
+    void verifyTokenBuilder() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("jwtservice");
         val user = UUID.randomUUID().toString();
         val authentication = CoreAuthenticationTestUtils.getAuthentication(user);
@@ -144,7 +146,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    public void verifyTokenBuilderWithoutServiceTicket() throws Exception {
+    void verifyTokenBuilderWithoutServiceTicket() throws Exception {
         val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
             StringUtils.EMPTY,
             CoreAuthenticationTestUtils.getAuthentication());

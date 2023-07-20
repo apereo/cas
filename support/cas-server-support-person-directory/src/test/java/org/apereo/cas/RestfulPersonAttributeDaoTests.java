@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
     })
 @Tag("RestfulApi")
-public class RestfulPersonAttributeDaoTests {
+class RestfulPersonAttributeDaoTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;
@@ -61,7 +61,7 @@ public class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyGetPerson() {
+    void verifyGetPerson() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -73,7 +73,7 @@ public class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyGetPeople() {
+    void verifyGetPeople() {
         val person = attributeRepository.getPeople(Map.of("cn", "casuser"))
             .iterator().next();
         assertNotNull(person);

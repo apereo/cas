@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JwtTokenTicketBuilder;
@@ -20,7 +19,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
-
+import org.apereo.cas.validation.TicketValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +66,6 @@ public class TokenCoreConfiguration {
             return new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
         }
-
     }
 
     @Configuration(value = "TokenCoreJwtConfiguration", proxyBeanMethods = false)
@@ -78,8 +76,9 @@ public class TokenCoreConfiguration {
         @ConditionalOnMissingBean(name = "tokenCipherExecutor")
         public CipherExecutor tokenCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getToken().getCrypto();
-            val enabled = FunctionUtils.doIf(!crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
-                                             && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            val enabled = FunctionUtils.doIf(!crypto.isEnabled()
+                    && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                    && StringUtils.isNotBlank(crypto.getSigning().getKey()),
                 () -> {
                     LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                                 + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
@@ -112,10 +111,9 @@ public class TokenCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TokenCoreBuilderConfiguration {
 
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "tokenTicketBuilder")
+        @ConditionalOnMissingBean(name = TokenTicketBuilder.BEAN_NAME)
         public TokenTicketBuilder tokenTicketBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenTicketValidator")

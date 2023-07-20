@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebApp")
-public class CasWebApplicationServletInitializerTests {
+class CasWebApplicationServletInitializerTests {
 
     static {
         System.setProperty("spring.main.allow-bean-definition-overriding", "true");
@@ -23,7 +23,7 @@ public class CasWebApplicationServletInitializerTests {
     }
 
     @Test
-    public void verifyInitializr() {
+    void verifyInitializr() {
         val servletInitializer = new CasWebApplicationServletInitializer();
         val context = new MockServletContext();
         assertDoesNotThrow(() -> servletInitializer.onStartup(context));

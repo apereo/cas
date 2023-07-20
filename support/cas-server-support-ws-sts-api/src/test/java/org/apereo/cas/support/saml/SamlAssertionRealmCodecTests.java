@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class SamlAssertionRealmCodecTests {
+class SamlAssertionRealmCodecTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val codec = new SamlAssertionRealmCodec("CAS");
         val wrapper = mock(SamlAssertionWrapper.class);
         val keyInfo = mock(SAMLKeyInfo.class);

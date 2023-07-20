@@ -46,6 +46,7 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
             .authentication(result.getAuthentication())
             .service(result.getService())
             .registeredService(result.getRegisteredService())
-            .executionResult(result).build();
+            .executionResult(result)
+            .build();
     }
 }

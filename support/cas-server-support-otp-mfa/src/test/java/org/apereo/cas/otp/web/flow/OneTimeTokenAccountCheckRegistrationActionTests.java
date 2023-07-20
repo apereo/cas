@@ -34,9 +34,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class OneTimeTokenAccountCheckRegistrationActionTests {
+class OneTimeTokenAccountCheckRegistrationActionTests {
     @Test
-    public void verifyExistingAccount() {
+    void verifyExistingAccount() {
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())
@@ -60,7 +60,7 @@ public class OneTimeTokenAccountCheckRegistrationActionTests {
     }
 
     @Test
-    public void verifyCreateAccount() {
+    void verifyCreateAccount() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

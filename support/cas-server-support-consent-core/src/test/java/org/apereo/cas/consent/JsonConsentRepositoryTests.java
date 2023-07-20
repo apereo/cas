@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.consent.json.location=file://${java.io.tmpdir}/ConsentRepository.json")
 @Getter
 @Tag("FileSystem")
-public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
+class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @Test
-    public void verifyConsentDecisionId() throws Exception {
+    void verifyConsentDecisionId() throws Exception {
         val user = UUID.randomUUID().toString();
         val repo = getRepository();
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
@@ -43,7 +43,7 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyDisposedRepository() throws Exception {
+    void verifyDisposedRepository() throws Exception {
         val repo = new JsonConsentRepository(new FileSystemResource(File.createTempFile("records", ".json")));
         assertNotNull(repo.getWatcherService());
         assertDoesNotThrow(repo::destroy);

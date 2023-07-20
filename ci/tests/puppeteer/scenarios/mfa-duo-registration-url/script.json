@@ -6,6 +6,8 @@
   "environmentVariables": [
     "DUO_REGISTRATION_SIGNING_KEY=Rn8fXz_kmaqBHafs-JhwHW4pyWbMcI0_7mnKoBxd7CFvvsLE9RZLgLwZ_z5m8XjiyDWYAiv4hWFUf3cm-EA0nA"
   ],
+
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -21,7 +23,7 @@
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
     "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
     
-    "--cas.authn.mfa.duo[0].registration.registration-url=https://httpbin.org/anything/1",
+    "--cas.authn.mfa.duo[0].registration.registration-url=https://localhost:9859/anything/1",
     "--cas.authn.mfa.duo[0].registration.crypto.enabled=true",
     "--cas.authn.mfa.duo[0].registration.crypto.encryption-enabled=false",
     "--cas.authn.mfa.duo[0].registration.crypto.signing.key=${DUO_REGISTRATION_SIGNING_KEY}",

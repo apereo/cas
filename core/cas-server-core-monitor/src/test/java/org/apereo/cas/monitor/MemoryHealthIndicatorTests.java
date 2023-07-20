@@ -14,15 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-public class MemoryHealthIndicatorTests {
+class MemoryHealthIndicatorTests {
 
     @Test
-    public void verifyObserveOk() {
+    void verifyObserveOk() {
         assertEquals(Status.UP, new MemoryMonitorHealthIndicator(0).health().getStatus());
     }
 
     @Test
-    public void verifyObserveWarn() {
+    void verifyObserveWarn() {
         val monitor = new MemoryMonitorHealthIndicator(100);
         assertEquals(Status.DOWN, monitor.health().getStatus());
     }

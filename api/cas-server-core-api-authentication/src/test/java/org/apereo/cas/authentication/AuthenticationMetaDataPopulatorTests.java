@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationMetadata")
-public class AuthenticationMetaDataPopulatorTests {
+class AuthenticationMetaDataPopulatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(AuthenticationMetaDataPopulator.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, policy.getOrder());

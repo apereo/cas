@@ -14,6 +14,7 @@ import org.jooq.lambda.Unchecked;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,14 +47,16 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        val keys = redisTemplate.scan(buildRedisKeyForRecord(username), this.scanCount);
-        return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(username), this.scanCount)) {
+            return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
+        }
     }
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount);
-        return toCredentialRegistrationsAsStream(keys);
+        try (val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            return toCredentialRegistrationsAsStream(keys);
+        }
     }
 
     @Override
@@ -73,7 +76,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
             val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
-                .username(username.trim().toLowerCase())
+                .username(username.trim().toLowerCase(Locale.ENGLISH))
                 .build();
             redisTemplate.boundValueOps(redisKey).set(entry);
         }
@@ -84,9 +87,12 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(record -> getCipherExecutor().decode(record.getRecords()))
+            .filter(Objects::nonNull)
             .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
-            .flatMap(Collection::stream);
+            .flatMap(Collection::stream)
+            .toList()
+            .stream();
     }
 
     private static String getPatternRedisKey() {
@@ -94,6 +100,6 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
     }
 
     private static String buildRedisKeyForRecord(final String username) {
-        return CAS_WEB_AUTHN_PREFIX + username.trim().toLowerCase();
+        return CAS_WEB_AUTHN_PREFIX + username.trim().toLowerCase(Locale.ENGLISH);
     }
 }

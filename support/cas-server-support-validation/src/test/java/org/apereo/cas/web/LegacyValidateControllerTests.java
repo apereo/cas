@@ -1,11 +1,11 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.BaseCasCoreTests;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v1.LegacyValidateController;
 
 import lombok.Getter;
@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Tag("CAS")
 @Getter
-public class LegacyValidateControllerTests extends AbstractServiceValidateControllerTests {
+class LegacyValidateControllerTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
     private ServiceValidationViewFactory serviceValidationViewFactory;
@@ -38,6 +38,8 @@ public class LegacyValidateControllerTests extends AbstractServiceValidateContro
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
             .casProperties(casProperties)
+            .principalFactory(getPrincipalFactory())
+            .principalResolver(getDefaultPrincipalResolver())
             .ticketRegistry(getTicketRegistry())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
@@ -48,6 +50,7 @@ public class LegacyValidateControllerTests extends AbstractServiceValidateContro
             .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
             .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
             .validationViewFactory(serviceValidationViewFactory)
+            .serviceFactory(getWebApplicationServiceFactory())
             .build();
         return new LegacyValidateController(context);
     }

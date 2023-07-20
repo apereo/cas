@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class ClientFlowExecutionKeyTests {
+class ClientFlowExecutionKeyTests {
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val key = new ClientFlowExecutionKey(getClass().getSimpleName().getBytes(StandardCharsets.UTF_8));
         val result = SerializationUtils.serialize(key);
         assertNotNull(result);
@@ -29,7 +29,7 @@ public class ClientFlowExecutionKeyTests {
     }
 
     @Test
-    public void verifyBadKey() {
+    void verifyBadKey() {
         assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad-key"));
         assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad_key"));
 

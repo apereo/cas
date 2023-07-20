@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdaptiveResourceCRLFetcherTests {
+class LdaptiveResourceCRLFetcherTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
@@ -68,7 +68,7 @@ public class LdaptiveResourceCRLFetcherTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val config = mock(ConnectionConfig.class);
         val operation = mock(SearchOperation.class);
         val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
@@ -81,13 +81,13 @@ public class LdaptiveResourceCRLFetcherTests {
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=cn")
     @SuppressWarnings("ClassCanBeStatic")
-    public class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -98,13 +98,13 @@ public class LdaptiveResourceCRLFetcherTests {
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=unknown")
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnknownAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class UnknownAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -114,13 +114,13 @@ public class LdaptiveResourceCRLFetcherTests {
     @Nested
     @Tag("Ldap")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class DefaultFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertNotNull(fetcher.fetch(resource));
@@ -137,7 +137,7 @@ public class LdaptiveResourceCRLFetcherTests {
         }
 
         @Test
-        public void getCrlFromLdap() throws Exception {
+        void getCrlFromLdap() throws Exception {
             val cache = getCache();
             for (var i = 0; i < 10; i++) {
                 val checker =
@@ -149,7 +149,7 @@ public class LdaptiveResourceCRLFetcherTests {
         }
 
         @Test
-        public void getCrlFromLdapWithNoCaching() throws Exception {
+        void getCrlFromLdapWithNoCaching() throws Exception {
             for (var i = 0; i < 10; i++) {
                 val cache = getCache();
                 val checker = new CRLDistributionPointRevocationChecker(

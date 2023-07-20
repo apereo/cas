@@ -1,5 +1,6 @@
 {
   "dependencies": "swagger,reports",
+
   "properties": [
     "--springdoc.show.actuator=true",
 

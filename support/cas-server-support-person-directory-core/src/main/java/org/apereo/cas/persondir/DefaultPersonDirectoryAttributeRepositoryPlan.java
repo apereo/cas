@@ -49,7 +49,7 @@ public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDire
     @Override
     public void destroy() {
         LOGGER.trace("Closing attribute repositories, if any");
-        findAttributeRepositories(repo -> repo instanceof AutoCloseable)
+        findAttributeRepositories(AutoCloseable.class::isInstance)
             .map(AutoCloseable.class::cast)
             .forEach(Unchecked.consumer(AutoCloseable::close));
     }

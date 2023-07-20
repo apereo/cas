@@ -66,13 +66,13 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
                                                final RegisteredService registeredService,
                                                final HttpServletRequest request,
                                                final RequestContext context) {
-        if (!resolveEvents.isEmpty()) {
+        if (resolveEvents.isEmpty()) {
+            LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
+                authentication, registeredService);
+        } else {
             LOGGER.trace("Collection of resolved events for this authentication sequence are:");
             resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]",
                 e.getId(), e.getSource().getClass().getName()));
-        } else {
-            LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
-                authentication, registeredService);
         }
         val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         return result.map(pair -> {

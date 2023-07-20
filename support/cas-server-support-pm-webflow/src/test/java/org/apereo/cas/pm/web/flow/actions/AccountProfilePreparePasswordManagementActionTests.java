@@ -2,13 +2,13 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = {
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.core.enabled=true",
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     "CasFeatureModule.AccountManagement.enabled=true"
 })
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
+class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
     private Action prepareAccountProfilePasswordMgmtAction;
@@ -57,7 +57,7 @@ public class AccountProfilePreparePasswordManagementActionTests extends BasePass
     private ServiceTicketGeneratorAuthority accountProfileServiceTicketGeneratorAuthority;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
 
@@ -43,15 +43,15 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
         final Map<String, List<Object>> attributes,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 
         val matched = extensions.stream()
-            .filter(object -> object instanceof RegistrationInfo)
-            .map(info -> (RegistrationInfo) info)
+            .filter(RegistrationInfo.class::isInstance)
+            .map(RegistrationInfo.class::cast)
             .anyMatch(info -> RegexUtils.find(this.registrationAuthority, info.getRegistrationAuthority()));
 
         if (matched) {

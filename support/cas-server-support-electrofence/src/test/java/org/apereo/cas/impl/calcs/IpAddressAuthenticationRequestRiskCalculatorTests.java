@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("Authentication")
-public class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
-    public void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("nobody");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -33,14 +33,14 @@ public class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthe
     }
 
     @Test
-    public void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
-        assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));
+        assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold()));
     }
 }

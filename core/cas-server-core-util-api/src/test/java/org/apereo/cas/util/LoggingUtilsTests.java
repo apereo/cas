@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @Slf4j
-public class LoggingUtilsTests {
+class LoggingUtilsTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
             LoggingUtils.error(LOGGER, new RuntimeException("error"));
@@ -29,7 +29,7 @@ public class LoggingUtilsTests {
     }
 
     @Test
-    public void verifyGetNonNullMessage() {
+    void verifyGetNonNullMessage() {
         val exception = new UndeclaredThrowableException(new Exception("nested"));
         assertEquals("nested", LoggingUtils.getMessage(exception));
         val exception2 = new Exception("first", new Exception("second"));

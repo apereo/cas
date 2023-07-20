@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.wsfed[0].identity-attribute=upn"
     })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class WsFederationResponseValidatorTests {
+class WsFederationResponseValidatorTests {
     @Autowired
     @Qualifier("wsFederationResponseValidator")
     private WsFederationResponseValidator wsFederationResponseValidator;
@@ -100,7 +100,7 @@ public class WsFederationResponseValidatorTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice-validate");
         servicesManager.save(registeredService);

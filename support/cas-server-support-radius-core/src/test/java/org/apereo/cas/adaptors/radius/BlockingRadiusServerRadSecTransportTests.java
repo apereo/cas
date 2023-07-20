@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class
 }, properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
-public class BlockingRadiusServerRadSecTransportTests {
+class BlockingRadiusServerRadSecTransportTests {
     @Autowired
     @Qualifier(CasSSLContext.BEAN_NAME)
     private CasSSLContext casSslContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)

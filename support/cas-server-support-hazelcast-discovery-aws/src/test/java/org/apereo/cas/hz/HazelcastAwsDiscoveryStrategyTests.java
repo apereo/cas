@@ -20,13 +20,16 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastAwsDiscoveryStrategyTests {
+class HazelcastAwsDiscoveryStrategyTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val strategy = new HazelcastAwsDiscoveryStrategy();
         val properties = new HazelcastClusterProperties();
         val aws = properties.getDiscovery().getAws();
 
+        aws.setFamily("Family");
+        aws.setCluster("Cluster");
+        aws.setServiceName("MyService");
         aws.setAccessKey("AccessKey");
         aws.setSecretKey("Secret");
         aws.setIamRole("Role");

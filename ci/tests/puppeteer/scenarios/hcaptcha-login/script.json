@@ -1,5 +1,6 @@
 {
   "dependencies": "captcha",
+
   "properties": [
     "--cas.google-recaptcha.enabled=true",
     "--cas.google-recaptcha.verify-url=https://hcaptcha.com/siteverify",

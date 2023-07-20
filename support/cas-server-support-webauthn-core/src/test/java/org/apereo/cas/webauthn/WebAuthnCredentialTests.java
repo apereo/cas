@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFAProvider")
-public class WebAuthnCredentialTests {
+class WebAuthnCredentialTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val c1 = new WebAuthnCredential(UUID.randomUUID().toString());
         assertNotNull(c1.getToken());
         val c2 = new WebAuthnCredential();

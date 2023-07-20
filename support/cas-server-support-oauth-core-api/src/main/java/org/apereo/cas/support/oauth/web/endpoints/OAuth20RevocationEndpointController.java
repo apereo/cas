@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -78,8 +79,9 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         }
 
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+            .resolveClientIdAndClientSecret(callContext).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 
         if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {

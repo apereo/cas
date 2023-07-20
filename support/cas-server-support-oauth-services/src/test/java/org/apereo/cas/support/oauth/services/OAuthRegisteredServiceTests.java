@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("OAuth")
-public class OAuthRegisteredServiceTests {
+class OAuthRegisteredServiceTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     private final ServiceRegistry dao;
 
-    public OAuthRegisteredServiceTests() throws Exception {
+    OAuthRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -48,7 +48,7 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
+    void checkSaveMethod() {
         val r = new OAuthRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
@@ -67,7 +67,7 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeOAuthRegisteredServiceToJson() {
+    void verifySerializeOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");

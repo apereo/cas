@@ -31,7 +31,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+class RedisCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
     @Qualifier(CasEventRepository.BEAN_NAME)

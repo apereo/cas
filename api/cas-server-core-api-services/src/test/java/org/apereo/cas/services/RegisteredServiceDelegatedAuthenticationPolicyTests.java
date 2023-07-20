@@ -14,10 +14,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceDelegatedAuthenticationPolicyTests {
+class RegisteredServiceDelegatedAuthenticationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(RegisteredServiceDelegatedAuthenticationPolicy.class);
         when(policy.isProviderAllowed(anyString(), any())).thenCallRealMethod();
         assertTrue(policy.isProviderAllowed("hello", mock(RegisteredService.class)));

@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationThrottling")
-public class DefaultThrottledRequestResponseHandlerTests {
+class DefaultThrottledRequestResponseHandlerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         val handler = new DefaultThrottledRequestResponseHandler("username");

@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
+@Tag("GroovyAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.groovy-script.location=classpath:GroovyMfaResolver.groovy")
 @Import(GroovyScriptMultifactorAuthenticationPolicyEventResolverTests.GroovyMultifactorTestConfiguration.class)
-public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("groovyScriptAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
@@ -55,7 +55,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests exten
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -71,7 +71,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests exten
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

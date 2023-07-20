@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationBuilderTests {
+class DefaultAuthenticationBuilderTests {
     private static MutableCredential getCredential() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
@@ -37,7 +37,7 @@ public class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    public void verifyMergeCredentialMetadata() {
+    void verifyMergeCredentialMetadata() {
         val credential1 = getCredential();
         credential1.setCredentialMetadata(new BasicCredentialMetadata(credential1, Map.of("P1", "V1")));
         val credential2 = getCredential();
@@ -63,7 +63,7 @@ public class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
 
@@ -81,7 +81,7 @@ public class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    public void verifyMergeOperation() {
+    void verifyMergeOperation() {
         val builder1 = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         builder1.mergeAttribute("key", 12345);
         builder1.mergeAttribute("key", CollectionUtils.wrapList(54321, 998877));
@@ -101,7 +101,7 @@ public class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    public void verifyUpdateOperation() {
+    void verifyUpdateOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
@@ -119,5 +119,14 @@ public class DefaultAuthenticationBuilderTests {
         authn.updateAll(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
+    }
+
+    @Test
+    void verifyMergeAttributes() {
+        val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
+            .mergeAttributes(Map.of("cn", List.of("cn2")))
+            .build();
+        assertTrue(authn.getAttributes().containsKey("cn"));
+        assertEquals(List.of("cn1", "cn2"), authn.getAttributes().get("cn"));
     }
 }

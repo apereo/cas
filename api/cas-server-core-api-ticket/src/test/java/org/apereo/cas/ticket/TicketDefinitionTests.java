@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class TicketDefinitionTests {
+class TicketDefinitionTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val ticket = mock(TicketDefinition.class);
         when(ticket.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, ticket.getOrder());

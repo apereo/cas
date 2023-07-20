@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.pub;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisCompositeKey;
+import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.val;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRegistryMessagePublisher {
-    private final CasRedisTemplate<String, Ticket> redisTemplate;
+    private final CasRedisTemplate<String, RedisTicketDocument> redisTemplate;
 
     private final PublisherIdentifier publisherIdentifier;
 
@@ -29,21 +30,27 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
     }
 
     @Override
-    public void delete(final String id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE).withTicket(id);
-        sendPayload(payload);
+    public void delete(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     @Override
-    public void add(final Ticket id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(id);
-        sendPayload(payload);
+    public void add(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     @Override
-    public void update(final Ticket id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(id);
-        sendPayload(payload);
+    public void update(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     private void sendPayload(final RedisMessagePayload payload) {

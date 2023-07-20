@@ -87,31 +87,32 @@ public class MongoDbConnectionFactory {
     }
 
     public MongoDbConnectionFactory(final List<Converter> converters, final SSLContext sslContext) {
-        converters.add(new BaseConverters.LoggerConverter());
-        converters.add(new BaseConverters.ClassConverter());
-        converters.add(new BaseConverters.CommonsLogConverter());
-        converters.add(new BaseConverters.PersonAttributesConverter());
-        converters.add(new BaseConverters.CacheLoaderConverter());
-        converters.add(new BaseConverters.RunnableConverter());
-        converters.add(new BaseConverters.ReferenceQueueConverter());
-        converters.add(new BaseConverters.ThreadLocalConverter());
-        converters.add(new BaseConverters.CertPathConverter());
-        converters.add(new BaseConverters.CaffeinCacheConverter());
-        converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
-        converters.add(new BaseConverters.CacheConverter());
-        converters.add(new BaseConverters.PatternToStringConverter());
-        converters.add(new BaseConverters.StringToPatternConverter());
-        converters.add(new BaseConverters.CacheBuilderConverter());
-        converters.add(new BaseConverters.ObjectIdToLongConverter());
-        converters.add(new BaseConverters.BsonTimestampToStringConverter());
-        converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
-        converters.add(new BaseConverters.DateToZonedDateTimeConverter());
-        converters.add(new BaseConverters.BsonTimestampToDateConverter());
-        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
-        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
-        converters.addAll(Jsr310Converters.getConvertersToRegister());
+        val mongoConverters = new ArrayList<>(converters);
+        mongoConverters.add(new BaseConverters.LoggerConverter());
+        mongoConverters.add(new BaseConverters.ClassConverter());
+        mongoConverters.add(new BaseConverters.CommonsLogConverter());
+        mongoConverters.add(new BaseConverters.PersonAttributesConverter());
+        mongoConverters.add(new BaseConverters.CacheLoaderConverter());
+        mongoConverters.add(new BaseConverters.RunnableConverter());
+        mongoConverters.add(new BaseConverters.ReferenceQueueConverter());
+        mongoConverters.add(new BaseConverters.ThreadLocalConverter());
+        mongoConverters.add(new BaseConverters.CertPathConverter());
+        mongoConverters.add(new BaseConverters.CaffeinCacheConverter());
+        mongoConverters.add(new BaseConverters.CaffeinCacheLoaderConverter());
+        mongoConverters.add(new BaseConverters.CacheConverter());
+        mongoConverters.add(new BaseConverters.PatternToStringConverter());
+        mongoConverters.add(new BaseConverters.StringToPatternConverter());
+        mongoConverters.add(new BaseConverters.CacheBuilderConverter());
+        mongoConverters.add(new BaseConverters.ObjectIdToLongConverter());
+        mongoConverters.add(new BaseConverters.BsonTimestampToStringConverter());
+        mongoConverters.add(new BaseConverters.ZonedDateTimeToDateConverter());
+        mongoConverters.add(new BaseConverters.DateToZonedDateTimeConverter());
+        mongoConverters.add(new BaseConverters.BsonTimestampToDateConverter());
+        mongoConverters.add(new BaseConverters.ZonedDateTimeToStringConverter());
+        mongoConverters.add(new BaseConverters.StringToZonedDateTimeConverter());
+        mongoConverters.addAll(Jsr310Converters.getConvertersToRegister());
 
-        this.customConversions = new MongoCustomConversions(converters);
+        this.customConversions = new MongoCustomConversions(mongoConverters);
         this.sslContext = sslContext;
     }
 
@@ -286,6 +287,18 @@ public class MongoDbConnectionFactory {
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    /**
+     * Build mongo template.
+     *
+     * @param mongoClient the mongo client
+     * @param mongo       the mongo
+     * @return the cas mongo operations
+     */
+    public CasMongoOperations buildMongoTemplate(final MongoClient mongoClient, final BaseMongoDbProperties mongo) {
+        val mongoDbFactory = mongoDbFactory(mongoClient, mongo);
+        return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
+    }
+
     protected Collection<String> getMappingBasePackages() {
         return CollectionUtils.wrap(getClass().getPackage().getName());
     }
@@ -293,14 +306,14 @@ public class MongoDbConnectionFactory {
     private MongoMappingContext mongoMappingContext() {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
-        mappingContext.setSimpleTypeHolder(this.customConversions.getSimpleTypeHolder());
+        mappingContext.setSimpleTypeHolder(customConversions.getSimpleTypeHolder());
         mappingContext.setFieldNamingStrategy(MongoDbConnectionFactory.fieldNamingStrategy());
         return mappingContext;
     }
 
     private MappingMongoConverter mappingMongoConverter(final MongoDatabaseFactory mongoDbFactory) {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-        val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
+        val converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
         converter.setCustomConversions(customConversions);
         converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();

@@ -43,7 +43,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 10636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)
-public class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Override
     @SneakyThrows
     protected String getUsername() {

@@ -37,9 +37,10 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      *
      * @param object the object
      * @return the protocol endpoint configurer
+     * @throws Exception the exception
      */
     @CanIgnoreReturnValue
-    default ProtocolEndpointWebSecurityConfigurer<T> configure(T object) {
+    default ProtocolEndpointWebSecurityConfigurer<T> configure(T object) throws Exception {
         return this;
     }
 }

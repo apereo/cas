@@ -55,12 +55,14 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return redisTemplate.scan(getPatternRedisKey(), this.scanCount)
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(doc -> buildMetadataResolverFrom(service, doc))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            return results
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(doc -> buildMetadataResolverFrom(service, doc))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        }
     }
 
     @Override

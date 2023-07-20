@@ -37,9 +37,9 @@ import static org.mockito.Mockito.*;
  */
 @Import(SpnegoCredentialsActionTests.SpnegoAuthenticationTestConfiguration.class)
 @Tag("Spnego")
-public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
+class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
@@ -50,7 +50,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    public void verifyNoAuthzHeader() throws Exception {
+    void verifyNoAuthzHeader() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -59,7 +59,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    public void verifyErrorWithBadCredential() throws Exception {
+    void verifyErrorWithBadCredential() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
@@ -74,7 +74,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    public void verifyBadAuthzHeader() throws Exception {
+    void verifyBadAuthzHeader() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

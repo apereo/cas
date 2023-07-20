@@ -3,13 +3,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.xerces.xs.XSObject;
 import org.junit.jupiter.api.Tag;
@@ -27,9 +26,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,21 +36,21 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
 })
-public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifySamlResponseAllSigned() throws Exception {
+    void verifySamlResponseAllSigned() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -67,14 +64,14 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseWithIssuerEntityId() throws Exception {
+    void verifySamlResponseWithIssuerEntityId() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setIssuerEntityId("https://issuer.example.org");
         service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -86,7 +83,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseWithAttributeQuery() throws Exception {
+    void verifySamlResponseWithAttributeQuery() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -98,7 +95,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setIssuerEntityId("https://issuer.example.org");
         service.getAttributeValueTypes().put("permissions", XSObject.class.getSimpleName());
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -111,13 +108,13 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseAllSignedEncrypted() throws Exception {
+    void verifySamlResponseAllSignedEncrypted() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true, true);
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -131,13 +128,13 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseAssertionSigned() throws Exception {
+    void verifySamlResponseAssertionSigned() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(false, true);
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -153,12 +150,12 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseResponseSigned() throws Exception {
+    void verifySamlResponseResponseSigned() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, false);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -170,13 +167,13 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseNothingSigned() throws Exception {
+    void verifySamlResponseNothingSigned() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(false, false);
         val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -188,7 +185,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseSha1SigningAndDigest() throws Exception {
+    void verifySamlResponseSha1SigningAndDigest() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -204,7 +201,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA1,
             SignatureConstants.ALGO_ID_DIGEST_SHA1));
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -218,7 +215,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseSha256SigningAndDigest() throws Exception {
+    void verifySamlResponseSha256SigningAndDigest() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -240,7 +237,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA512,
             SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA384));
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -254,7 +251,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseAllSignedEncryptedWithCBC() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithCBC() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -265,7 +262,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -281,7 +278,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseAllSignedEncryptedWithGCM() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithGCM() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -292,7 +289,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -308,7 +305,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Exception {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -317,7 +314,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList("something"));
         service.setEncryptionOptional(true);
         service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
@@ -341,7 +338,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     private Response buildResponse(final MockHttpServletRequest request,
                                    final MockHttpServletResponse response,
                                    final SamlRegisteredService registeredService,
-                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                   final SamlRegisteredServiceMetadataAdaptor adaptor,
                                    final AuthnRequest authnRequest,
                                    final AuthenticatedAssertionContext assertion,
                                    final String binding) throws Exception {

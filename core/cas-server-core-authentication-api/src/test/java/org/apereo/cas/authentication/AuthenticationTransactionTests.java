@@ -18,25 +18,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Authentication")
-public class AuthenticationTransactionTests {
+class AuthenticationTransactionTests {
     @Test
-    public void verifyHasCredentialOfTypeSingle() {
-        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
+    void verifyHasCredentialOfTypeSingle() {
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertFalse(transaction.hasCredentialOfType(TestCredentialType2.class));
     }
 
     @Test
-    public void verifyHasCredentialOfTypeMultiple() {
-        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
+    void verifyHasCredentialOfTypeMultiple() {
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val transaction = new AuthenticationTransaction() {
             @Serial
             private static final long serialVersionUID = -8503574003503719399L;

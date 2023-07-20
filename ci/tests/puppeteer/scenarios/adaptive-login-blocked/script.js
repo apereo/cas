@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
     await cas.assertTextContent(page, "#content p", "Your authentication attempt is untrusted and unauthorized from your current workstation.");

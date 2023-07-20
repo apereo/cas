@@ -45,14 +45,17 @@ import static org.mockito.Mockito.*;
     "cas.authn.surrogate.ldap.base-dn=ou=surrogates,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bind-dn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bind-credential=password",
-    "cas.authn.surrogate.ldap.search-filter=cn={user}",
+
     "cas.authn.surrogate.ldap.surrogate-search-filter=employeeType={surrogate}",
+    "cas.authn.surrogate.ldap.surrogate-validation-filter=cn={surrogate}",
+
+    "cas.authn.surrogate.ldap.search-filter=cn={user}",
     "cas.authn.surrogate.ldap.member-attribute-name=mail",
     "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org|\\\\*"
 })
 @Getter
 @EnabledIfListeningOnPort(port = 10389)
-public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
     private static final String ADMIN_USER = RandomUtils.randomAlphabetic(10);
 
@@ -100,7 +103,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val su = casProperties.getAuthn().getSurrogate();
         val factory = mock(ConnectionFactory.class);
         val ldapService = new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager);
@@ -110,7 +113,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     }
 
     @Test
-    public void verifyNoAttr() {
+    void verifyNoAttr() {
         val su = casProperties.getAuthn().getSurrogate();
         val props = new SurrogateLdapAuthenticationProperties();
         BeanUtils.copyProperties(su.getLdap(), props);
@@ -121,7 +124,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     }
 
     @Test
-    public void verifyFailsProxying() {
+    void verifyFailsProxying() {
         val su = casProperties.getAuthn().getSurrogate();
         val factory = mock(ConnectionFactory.class);
         val props = new SurrogateLdapAuthenticationProperties();

@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
+class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
 
     @Test
-    public void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() {
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
     }

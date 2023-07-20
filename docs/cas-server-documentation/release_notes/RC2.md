@@ -44,7 +44,7 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ### Spring Boot 3
 
 The migration of the entire codebase to Spring Boot 3 and Jakarta APIs is ongoing, and at the moment
-is pending for the wider ecosystem of suppporting frameworks and libraries to catch up to these changes. 
+is waiting for the wider ecosystem of suppporting frameworks and libraries to catch up to these changes. 
 As a quick status update, we anticipate the work to finalize in the next release candidate.
 
 ### Testing Strategy

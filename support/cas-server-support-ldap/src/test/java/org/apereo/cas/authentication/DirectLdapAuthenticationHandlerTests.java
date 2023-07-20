@@ -21,5 +21,5 @@ import org.springframework.test.context.TestPropertySource;
     })
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAuthentication")
-public class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
+class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 }

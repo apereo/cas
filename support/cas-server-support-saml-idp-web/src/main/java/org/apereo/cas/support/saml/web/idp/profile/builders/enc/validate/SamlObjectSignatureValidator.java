@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.collect.Sets;
@@ -113,7 +113,7 @@ public class SamlObjectSignatureValidator {
      * @throws Exception the exception
      */
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
-                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                 final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 
@@ -140,7 +140,7 @@ public class SamlObjectSignatureValidator {
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peer = context.ensureSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = Objects.requireNonNull(peer.getEntityId());
@@ -150,11 +150,11 @@ public class SamlObjectSignatureValidator {
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
-        val protocol = context.getSubcontext(SAMLProtocolContext.class, true);
+        val protocol = context.ensureSubcontext(SAMLProtocolContext.class);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
         LOGGER.debug("Building security parameters context for signature validation of [{}]", peerEntityId);
-        val secCtx = context.getSubcontext(SecurityParametersContext.class, true);
+        val secCtx = context.ensureSubcontext(SecurityParametersContext.class);
         val validationParams = new SignatureValidationParameters();
 
         if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {
@@ -176,8 +176,8 @@ public class SamlObjectSignatureValidator {
         var foundValidCredential = false;
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
-            val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
-            try {
+            foundValidCredential = FunctionUtils.doAndHandle(() -> {
+                val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
                 val credential = it.next();
                 val resolver = new StaticCredentialResolver(credential);
                 val keyResolver = new StaticKeyInfoCredentialResolver(credential);
@@ -191,19 +191,18 @@ public class SamlObjectSignatureValidator {
                 LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.invoke(context);
                 LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
-
-                foundValidCredential = true;
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
-            } finally {
                 handler.destroy();
-            }
+                return true;
+            }, e -> {
+                LOGGER.debug(e.getMessage(), e);
+                return false;
+            }).get();
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
@@ -234,10 +233,10 @@ public class SamlObjectSignatureValidator {
             }
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver,

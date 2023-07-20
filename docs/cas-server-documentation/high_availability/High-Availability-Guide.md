@@ -47,7 +47,7 @@ It's worth pointing out some important characteristics of this architecture:
 Before proceeding into a detailed discussion of various aspects of the recommended architecture, we offer a guiding
 principle for planning a highly available deployment:
 
-<div class="alert alert-info"><strong>Aim for Simplicity</strong><p>Design the simplest solution that meets performance and availability requirements.</p></div>
+<div class="alert alert-info">:information_source: <strong>Aim for Simplicity</strong><p>Design the simplest solution that meets performance and availability requirements.</p></div>
 
 Experience has shown that simplicity is a vital system characteristic of successful and robust HA deployments.
 Strive for simplicity and you will be well served.

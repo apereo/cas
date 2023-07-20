@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.neo-gov.name-id-attribute=cn",
     "cas.saml-sp.neo-gov.name-id-format=transient"
 })
-public class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
     @Override
     protected String getServiceProviderId() {

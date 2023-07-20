@@ -9,14 +9,17 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -43,22 +46,41 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+        return super.isWildcardedAccount(surrogate, principal)
+            && doesSurrogateAccountExistInLdap(surrogate);
+    }
+
+    @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         try {
             val id = principal.getId();
-            val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
+            val searchFilter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
                 CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, "surrogate"),
                 CollectionUtils.wrapList(id, surrogate));
-            LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
-
-            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
-                filter, ldapProperties.getPageSize());
-            LOGGER.debug("LDAP response: [{}]", response);
-            return LdapUtils.containsResultEntry(response);
+            LOGGER.debug("Using LDAP search filter [{}] to authorize principal [{}] to impersonate [{}]", searchFilter, id, surrogate);
+            var response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), searchFilter, ldapProperties.getPageSize());
+            LOGGER.debug("LDAP search response: [{}]", response);
+            var entryResult = LdapUtils.containsResultEntry(response);
+            if (entryResult && StringUtils.isNotBlank(ldapProperties.getSurrogateValidationFilter())) {
+                entryResult = doesSurrogateAccountExistInLdap(surrogate);
+            }
+            return entryResult;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    private boolean doesSurrogateAccountExistInLdap(final String surrogate) {
+        return FunctionUtils.doUnchecked(() -> {
+            val validationFilter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateValidationFilter(),
+                "surrogate", List.of(surrogate));
+            LOGGER.debug("Using surrogate validation filter [{}] to verify surrogate account [{}]", validationFilter, surrogate);
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), validationFilter, ldapProperties.getPageSize());
+            LOGGER.debug("LDAP validation response: [{}]", response);
+            return LdapUtils.containsResultEntry(response);
+        });
     }
 
     @Override

@@ -36,13 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateAuthorizationActionTests {
+class SurrogateAuthorizationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
     private Action surrogateAuthorizationCheck;
 
     @Test
-    public void verifyAuthorized() throws Exception {
+    void verifyAuthorized() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
@@ -56,7 +56,7 @@ public class SurrogateAuthorizationActionTests {
     }
 
     @Test
-    public void verifyNotAuthorized() throws Exception {
+    void verifyNotAuthorized() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 

@@ -16,6 +16,10 @@ public interface BrowserSessionStorage extends Serializable {
      * session storage key to track data.
      */
     String KEY_SESSION_STORAGE = "sessionStorage";
+    /**
+     * Context key under which session data is stored.
+     */
+    String KEY_SESSION_STORAGE_CONTEXT = "sessionStorageContext";
 
     /**
      * Gets payload.

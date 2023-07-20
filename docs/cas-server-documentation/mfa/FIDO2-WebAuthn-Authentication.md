@@ -18,7 +18,7 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
 
-{% include_cached casproperties.html properties="cas.authn.mfa.web-authn" includes=".core,.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn" includes=".core,.crypto" excludes=".trust-source" %}
 
 ## Discoverable Credentials
 
@@ -29,47 +29,6 @@ CAS are given the option to login using their FIDO2-enabled device for a passwor
 > Discoverable Credential means that the private key and associated metadata is stored in persistent 
 memory on the authenticator, instead of encrypted and stored on the relying party server. 
 
-Device registration can occur out of band using available CAS APIs, or by allowing users to pass through the registration flow
+[Device registration](FIDO2-WebAuthn-Authentication-Registration.html) can occur out of band using 
+available CAS APIs, or by allowing users to pass through the registration flow
 as part of the typical multifactor authentication. See below for details on device registration.
-
-## Registration
-
-Device registration flows are baked into CAS automatically. A background 
-*cleaner* process is also automatically scheduled to scan the 
-repository periodically and remove expired device registration records 
-based on configured parameters. In the default setting, devices
-expire after a fixed period since a user registered their device. 
-
-{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.cleaner" %}
-
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
-the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running 
-on all nodes may likely lead to severe performance and locking issues.</p></div>
-
-### Actuator Endpoints
-
-The following endpoints are provided by CAS:
-
-{% include_cached actuators.html endpoints="webAuthnDevices" %}
-
-### Default
-
-By default, a repository implementation is included that collects 
-user device registrations and saves them into memory.
-This option should only be used for demo and testing purposes.
-
-### Others
-
-Device registrations can also be managed using any one of the following strategies.
-
-| Storage  | Description                                                                 |
-|----------|-----------------------------------------------------------------------------|
-| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).     |
-| MongoDb  | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  |
-| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).     |
-| JPA      | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).      |
-| Redis    | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).    |
-| DynamoDb | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html). |
-| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).     |
-
-

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.0
  */
 @Tag("RegisteredService")
-public class CasRegisteredServiceTests {
+class CasRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "CasRegisteredService.json");
 
@@ -133,7 +133,7 @@ public class CasRegisteredServiceTests {
     }
 
     @Test
-    public void verifyDefaultMatchingStrategy() {
+    void verifyDefaultMatchingStrategy() {
         val service = new CasRegisteredService();
         service.setMatchingStrategy(null);
         service.setServiceId("\\d\\d\\d");
@@ -141,7 +141,7 @@ public class CasRegisteredServiceTests {
     }
 
     @Test
-    public void verifyDefaults() {
+    void verifyDefaults() {
         val service = mock(RegisteredService.class);
         when(service.getDescription()).thenCallRealMethod();
         when(service.getFriendlyName()).thenCallRealMethod();

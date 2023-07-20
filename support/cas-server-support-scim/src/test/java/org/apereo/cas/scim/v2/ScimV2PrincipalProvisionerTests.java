@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("SCIM")
-public class ScimV2PrincipalProvisionerTests {
+class ScimV2PrincipalProvisionerTests {
     @Test
-    public void verifyScimServicePerApp() {
+    void verifyScimServicePerApp() {
         val provisioner = new ScimV2PrincipalProvisioner(new ScimProperties(),
             new DefaultScimV2PrincipalAttributeMapper());
         assertFalse(provisioner.provision(CoreAuthenticationTestUtils.getPrincipal(),

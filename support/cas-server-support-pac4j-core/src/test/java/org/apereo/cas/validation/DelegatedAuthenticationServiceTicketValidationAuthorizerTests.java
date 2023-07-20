@@ -25,9 +25,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Tickets")
-public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
+class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
@@ -38,7 +38,7 @@ public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
         val assertion = mock(Assertion.class);
         val principal = CoreAuthenticationTestUtils
             .getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("CasClient")));
-        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
+        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
 
         val az = new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer());

@@ -8,10 +8,11 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -50,10 +51,11 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreServicesConfiguration.class
 })
 @Tag("AuthenticationPolicy")
-public class UniquePrincipalAuthenticationPolicyTests {
+class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
@@ -62,7 +64,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyPolicyIsGoodUserNotFound() {
+    void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
@@ -70,7 +72,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyPolicyWithAssertion() throws Exception {
+    void verifyPolicyWithAssertion() throws Exception {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),

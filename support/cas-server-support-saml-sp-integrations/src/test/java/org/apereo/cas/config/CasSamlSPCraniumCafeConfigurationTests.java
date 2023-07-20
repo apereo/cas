@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.cranium-cafe.name-id-attribute=cn",
     "cas.saml-sp.cranium-cafe.name-id-format=transient"
 })
-public class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
     @Override
     protected String getServiceProviderId() {

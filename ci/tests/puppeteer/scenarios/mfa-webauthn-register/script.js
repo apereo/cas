@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?authn_method=mfa-webauthn");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "#status", "Register Device");
     await cas.assertVisibility(page, '#messages');

@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("Web")
-public class WebUtilTests {
+class WebUtilTests {
 
     @Test
-    public void verifyFindService() {
+    void verifyFindService() {
         val casArgumentExtractor =
             new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         val request = new MockHttpServletRequest();
@@ -36,7 +36,7 @@ public class WebUtilTests {
     }
 
     @Test
-    public void verifyFoundNoService() {
+    void verifyFoundNoService() {
         val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");

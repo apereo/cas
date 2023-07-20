@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
+class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceProxyTicketExpirationPolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val p = new DefaultRegisteredServiceProxyTicketExpirationPolicy();
         p.setNumberOfUses(12);
         p.setTimeToLive("60");

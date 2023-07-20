@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -75,15 +76,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
-    /**
-     * Creates a new instance using the current date for the authentication date and the given
-     * principal for the authenticated principal.
-     *
-     * @param p Authenticated principal.
-     */
-    public DefaultAuthenticationBuilder(final Principal p) {
+    public DefaultAuthenticationBuilder(final Principal principal) {
         this();
-        this.principal = p;
+        this.principal = principal;
     }
 
     /**
@@ -129,8 +124,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
                                            final Service service,
                                            final RegisteredService registeredService,
                                            final Authentication authentication) {
-
-        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .service(service)
+            .principal(principal)
+            .registeredService(registeredService)
+            .build();
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
         return DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(newPrincipal);
     }

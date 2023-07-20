@@ -34,13 +34,13 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.authn.adaptive.policy.reject-ip-addresses=1.2.3.4")
-public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    public void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -61,7 +61,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
 
     @Test
-    public void verifyError() throws Exception {
+    void verifyError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -75,7 +75,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
     }
 
     @Test
-    public void verifyAdaptiveError() throws Exception {
+    void verifyAdaptiveError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -87,7 +87,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         request.setLocalAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());

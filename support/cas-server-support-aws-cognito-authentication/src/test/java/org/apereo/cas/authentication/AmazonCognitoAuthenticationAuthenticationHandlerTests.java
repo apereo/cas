@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -41,6 +41,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoun
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
@@ -76,7 +77,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
+class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     @Autowired
     @Qualifier("amazonCognitoAuthenticationHandler")
     private AuthenticationHandler amazonCognitoAuthenticationHandler;
@@ -85,12 +86,12 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyHandler() {
+    void verifyHandler() {
         assertNotNull(amazonCognitoAuthenticationHandler);
     }
 
     @Test
-    public void verifyExpiredPassword() throws Exception {
+    void verifyExpiredPassword() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
 
         val provider = mock(CognitoIdentityProviderClient.class);
@@ -98,40 +99,40 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenReturn(initResult1);
 
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-exp-password", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
 
         assertThrows(AccountPasswordMustChangeException.class, () -> handler.authenticate(creds, mock(Service.class)));
     }
 
     @Test
-    public void verifyAccountDisabled() throws Exception {
+    void verifyAccountDisabled() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("disabled").build(), AccountDisabledException.class);
     }
 
     @Test
-    public void verifyAccountExpired() throws Exception {
+    void verifyAccountExpired() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("expired").build(), AccountExpiredException.class);
     }
 
     @Test
-    public void verifyAccountFail() throws Exception {
+    void verifyAccountFail() throws Exception {
         verifyAccountStatusFailure(UserNotFoundException.builder().message("no-found").build(), AccountNotFoundException.class);
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("not-found").build(), FailedLoginException.class);
     }
 
     @Test
-    public void verifyAccountNotFound() throws Exception {
+    void verifyAccountNotFound() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("fail").build(), FailedLoginException.class);
     }
 
     @Test
-    public void verifyAccountPassword() throws Exception {
+    void verifyAccountPassword() throws Exception {
         verifyAccountStatusFailure(InvalidPasswordException.builder().message("fail").build(), AccountPasswordMustChangeException.class);
     }
 
     @Test
-    public void verifyNoSub() throws Exception {
+    void verifyNoSub() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor(StringUtils.EMPTY);
         val provider = mock(CognitoIdentityProviderClient.class);
 
@@ -140,7 +141,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenReturn(result2);
 
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(creds, mock(Service.class)));
     }
@@ -165,7 +166,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
         when(provider.adminGetUser(any(AdminGetUserRequest.class))).thenReturn(userResult1);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
         assertNotNull(result);
@@ -192,7 +193,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminGetUser(any(AdminGetUserRequest.class))).thenReturn(userResult1);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
 
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
                 PrincipalFactoryUtils.newPrincipalFactory(), provider,
                 casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
@@ -212,7 +213,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenThrow(ex);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-exp-password", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         assertThrows(expected, () -> handler.authenticate(creds, mock(Service.class)));
     }

@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowActions")
-public class InitPasswordChangeActionTests extends BasePasswordManagementActionTests {
+class InitPasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

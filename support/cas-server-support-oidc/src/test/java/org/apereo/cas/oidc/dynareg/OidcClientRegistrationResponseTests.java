@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcClientRegistrationResponseTests extends AbstractOidcTests {
+class OidcClientRegistrationResponseTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = getOidcRegisteredService();
         val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         service.setJwks(new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));

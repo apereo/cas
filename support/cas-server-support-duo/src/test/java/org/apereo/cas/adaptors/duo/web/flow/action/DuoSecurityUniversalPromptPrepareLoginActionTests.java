@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;
@@ -53,7 +53,7 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -70,7 +70,7 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         val result = duoUniversalPromptPrepareLoginAction.execute(context);
         assertNotNull(result);
         assertNotNull(result.getAttributes().get("result"));

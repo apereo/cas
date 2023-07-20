@@ -1,8 +1,8 @@
 package org.apereo.cas.logging.web;
 
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -11,13 +11,11 @@ import org.springframework.beans.factory.ObjectProvider;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,10 +41,6 @@ public class ThreadContextMDCServletFilter implements Filter {
         if (StringUtils.isNotBlank(result)) {
             MDC.put(attributeName, result);
         }
-    }
-
-    @Override
-    public void init(final FilterConfig filterConfig) {
     }
 
     @Override
@@ -83,32 +77,24 @@ public class ThreadContextMDCServletFilter implements Filter {
             val params = request.getParameterMap();
             params.keySet()
                 .stream()
-                .filter(k -> !"password".equalsIgnoreCase(k))
-                .forEach(k -> {
-                    val values = params.get(k);
-                    addContextAttribute(k, Arrays.toString(values));
+                .filter(parameterName -> !"password".equalsIgnoreCase(parameterName))
+                .forEach(parameterName -> {
+                    val values = params.get(parameterName);
+                    addContextAttribute(parameterName, Arrays.toString(values));
                 });
 
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             val requestHeaderNames = request.getHeaderNames();
-            if (requestHeaderNames != null) {
-                Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
-            }
-
-            val cookieValue = this.ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
+            FunctionUtils.doIfNotNull(requestHeaderNames,
+                __ -> Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h))));
+            val cookieValue = ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
-                val p = this.ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
-                if (p != null) {
-                    addContextAttribute("principal", p.getId());
-                }
+                val p = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
+                FunctionUtils.doIfNotNull(p, __ -> addContextAttribute("principal", p.getId()));
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();
         }
-    }
-
-    @Override
-    public void destroy() {
     }
 }

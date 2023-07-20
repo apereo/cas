@@ -61,7 +61,7 @@ import static org.mockito.Mockito.*;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AuthenticationHandler")
-public class SoapAuthenticationHandlerTests {
+class SoapAuthenticationHandlerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -71,7 +71,7 @@ public class SoapAuthenticationHandlerTests {
     private AuthenticationHandler soapAuthenticationAuthenticationHandler;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = soapAuthenticationAuthenticationHandler.authenticate(creds, mock(Service.class));
         assertNotNull(result);
@@ -81,7 +81,7 @@ public class SoapAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailures() {
+    void verifyFailures() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         runTest(creds, HttpStatus.FORBIDDEN, AccountDisabledException.class);
         runTest(creds, HttpStatus.UNAUTHORIZED, FailedLoginException.class);

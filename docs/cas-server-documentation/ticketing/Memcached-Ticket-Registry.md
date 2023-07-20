@@ -10,8 +10,7 @@ category: Ticketing
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" 
-module="cas-server-support-memcached-ticket-registry,cas-server-support-memcached-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-ticket-registry" %}
 
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
 Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
@@ -27,7 +26,7 @@ Note that a change in the set of available cache nodes may produce a different t
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Not all ticket 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Not all ticket 
 registry operations are supported by the memcached ticket registry implementation. In particular, operations
 that execute bulk queries such as deleting and fetching all tickets in a single request may be unsupported,
 as memcached itself is rather unable to process and support that type of query.</p></div>

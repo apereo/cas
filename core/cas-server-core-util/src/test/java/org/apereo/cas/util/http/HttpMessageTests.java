@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Web")
-public class HttpMessageTests {
+class HttpMessageTests {
 
     @Test
-    public void verifyAsyncArgIsTakenIntoAccount() throws Exception {
+    void verifyAsyncArgIsTakenIntoAccount() throws Exception {
         assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend").isAsynchronous());
         assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend", true).isAsynchronous());
         assertFalse(new HttpMessage(new URL("http://www.google.com"), "messageToSend", false).isAsynchronous());

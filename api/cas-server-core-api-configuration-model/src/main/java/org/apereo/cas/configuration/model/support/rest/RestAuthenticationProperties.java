@@ -35,6 +35,11 @@ public class RestAuthenticationProperties implements Serializable {
     private String uri;
 
     /**
+     * HTTP method to use when contacting the REST API for authentication.
+     */
+    private String method = "POST";
+
+    /**
      * Password encoder settings for REST authentication.
      */
     @NestedConfigurationProperty

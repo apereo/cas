@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -21,9 +22,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
+class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val mock = mock(ServicesManager.class);
         when(mock.findServiceBy(anyLong(), any())).thenCallRealMethod();
         when(mock.findServiceByName(anyString(), any())).thenCallRealMethod();
@@ -37,7 +38,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
@@ -49,7 +50,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
     }
 
     @Test
-    public void verifySaveWithDomains() {
+    void verifySaveWithDomains() {
         val svc = new CasRegisteredService();
         svc.setId(RandomUtils.nextLong());
         svc.setName("domainService2");
@@ -60,7 +61,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
     }
 
     @Test
-    public void verifySaveInBulk() {
+    void verifySaveInBulk() {
         servicesManager.deleteAll();
         servicesManager.save(() -> {
             val svc = new CasRegisteredService();
@@ -74,7 +75,7 @@ public class DefaultChainingServicesManagerTests extends AbstractServicesManager
     }
 
     @Test
-    public void verifySaveInStreams() {
+    void verifySaveInStreams() {
         servicesManager.deleteAll();
         val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
         val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);

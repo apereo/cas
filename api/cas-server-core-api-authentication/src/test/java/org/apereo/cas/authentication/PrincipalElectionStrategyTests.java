@@ -14,9 +14,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class PrincipalElectionStrategyTests {
+class PrincipalElectionStrategyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(PrincipalElectionStrategy.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Integer.MAX_VALUE, policy.getOrder());

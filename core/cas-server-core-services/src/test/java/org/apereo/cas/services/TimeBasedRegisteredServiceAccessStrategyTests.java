@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class TimeBasedRegisteredServiceAccessStrategyTests {
+class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
 
@@ -32,7 +32,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void checkAuthorizationByRangePass() {
+    void checkAuthorizationByRangePass() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -41,7 +41,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthorizationByRangeFailStartTime() {
+    void checkAuthorizationByRangeFailStartTime() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -50,7 +50,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkFailWithNowAfterEndTime() {
+    void checkFailWithNowAfterEndTime() {
         var authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
@@ -58,7 +58,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkLocalFailWithNowAfterEndTime() {
+    void checkLocalFailWithNowAfterEndTime() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
@@ -66,7 +66,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkLocalFailWithNowBeforeStartTime() {
+    void checkLocalFailWithNowBeforeStartTime() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(15).toString());
@@ -74,7 +74,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkExpressionLanguage() {
+    void checkExpressionLanguage() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime("${#localStartDay}");
         authz.setEndingDateTime("${#localEndDay}");
@@ -83,7 +83,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthorizationByRangePassEndTime() {
+    void checkAuthorizationByRangePassEndTime() {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
@@ -91,7 +91,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
+    void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
         val authWritten = new TimeBasedRegisteredServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, authWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, TimeBasedRegisteredServiceAccessStrategy.class);

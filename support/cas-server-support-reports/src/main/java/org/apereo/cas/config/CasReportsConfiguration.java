@@ -14,19 +14,25 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
+import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
+import org.apereo.cas.web.report.ConfigurationJasyptCipherEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
@@ -40,6 +46,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -83,18 +90,35 @@ public class CasReportsConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
-            @Qualifier("principalFactory")
+            @Qualifier(PrincipalFactory.BEAN_NAME)
             final ObjectProvider<PrincipalFactory> principalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
             return new CasReleaseAttributesReportEndpoint(casProperties,
                 servicesManager, authenticationSystemSupport,
-                webApplicationServiceFactory, principalFactory);
+                webApplicationServiceFactory, principalFactory, defaultPrincipalResolver);
+        }
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolValidationEndpoint casProtocolValidationEndpoint(
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
+            @Qualifier("proxy20Handler")
+            final ProxyHandler proxy20Handler,
+            @Qualifier("v3ServiceValidateControllerValidationSpecification")
+            final CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification) {
+            return new CasProtocolValidationEndpoint(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
     }
 
@@ -157,6 +181,16 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint(
+            @Qualifier("casConfigurationCipherExecutor")
+            final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+            return new ConfigurationJasyptCipherEndpoint(casConfigurationCipherExecutor);
+        }
+
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasFeaturesEndpoint casFeaturesEndpoint(final CasConfigurationProperties casProperties) {
             return new CasFeaturesEndpoint(casProperties);
         }
@@ -183,7 +217,7 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasInfoEndpointContributor casInfoEndpointContributor(
+        public InfoContributor casInfoEndpointContributor(
             @Qualifier("casRuntimeModuleLoader")
             final CasRuntimeModuleLoader casRuntimeModuleLoader) {
             return new CasInfoEndpointContributor(casRuntimeModuleLoader);

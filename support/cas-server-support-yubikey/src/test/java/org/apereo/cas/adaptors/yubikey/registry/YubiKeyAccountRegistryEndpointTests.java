@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.yubikeyAccountRepository.enabled=true"
     })
 @Tag("MFAProvider")
-public class YubiKeyAccountRegistryEndpointTests {
+class YubiKeyAccountRegistryEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -54,7 +54,7 @@ public class YubiKeyAccountRegistryEndpointTests {
     private YubiKeyAccountRegistryEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());
@@ -76,7 +76,7 @@ public class YubiKeyAccountRegistryEndpointTests {
     }
 
     @Test
-    public void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Exception {
         val toSave = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
             .devices(CollectionUtils.wrapList(YubiKeyRegisteredDevice.builder()
                 .name(UUID.randomUUID().toString())
@@ -87,6 +87,6 @@ public class YubiKeyAccountRegistryEndpointTests {
         val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
     }
 }

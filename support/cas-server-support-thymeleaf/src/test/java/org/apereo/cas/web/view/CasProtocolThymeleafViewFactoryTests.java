@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class
 })
 @Tag("Web")
-public class CasProtocolThymeleafViewFactoryTests {
+class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired
     private SpringTemplateEngine springTemplateEngine;
@@ -36,7 +36,7 @@ public class CasProtocolThymeleafViewFactoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         val view = (CasThymeleafView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);

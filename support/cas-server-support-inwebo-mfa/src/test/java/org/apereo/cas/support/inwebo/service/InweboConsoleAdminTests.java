@@ -24,18 +24,18 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.inwebo.client-certificate.passphrase=password",
         "cas.authn.mfa.inwebo.service-id=7046"
     })
-public class InweboConsoleAdminTests {
+class InweboConsoleAdminTests {
     @Autowired
     @Qualifier("inweboConsoleAdmin")
     private InweboConsoleAdmin inweboConsoleAdmin;
 
     @Test
-    public void verifyLoginSearch() {
+    void verifyLoginSearch() {
         assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginSearch("casuser"));
     }
 
     @Test
-    public void verifyLoginQuery() {
+    void verifyLoginQuery() {
         assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginQuery(1L));
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.dynamodb;
 
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -180,7 +181,34 @@ public class DynamoDbTableUtils {
     }
 
     /**
-     * Scan table based on query and return response.
+     * Scan via filter expressions and respond.
+     *
+     * @param dynamoDbClient          the dynamo db client
+     * @param tableName               the table name
+     * @param filterExpression        the filter expression
+     * @param expressionAttributeName the expression attribute name
+     * @param expressionValues        the expression values
+     * @return the scan response
+     */
+    public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
+                                    final String tableName,
+                                    final String filterExpression,
+                                    final Map<String, String> expressionAttributeName,
+                                    final Map<String, AttributeValue> expressionValues) {
+        return FunctionUtils.doAndHandle(() -> {
+            val scanRequest = ScanRequest.builder()
+                .tableName(tableName)
+                .filterExpression(filterExpression)
+                .expressionAttributeValues(expressionValues)
+                .expressionAttributeNames(expressionAttributeName)
+                .build();
+            LOGGER.debug("Submitting request [{}] to get record with expression filters [{}]", scanRequest, filterExpression);
+            return dynamoDbClient.scan(scanRequest);
+        }, e -> ScanResponse.builder().items(Map.of()).build()).get();
+    }
+
+    /**
+     * Scan and build response.
      *
      * @param dynamoDbClient the dynamo db client
      * @param tableName      the table name
@@ -305,8 +333,7 @@ public class DynamoDbTableUtils {
          * @param desiredStatus the desired status
          */
         TableNeverTransitionedToStateException(final String tableName, final TableStatus desiredStatus) {
-            super(TableNeverTransitionedToStateException
-                .builder()
+            super(SdkClientException.builder()
                 .message("Table " + tableName + " never transitioned to desired state of " + desiredStatus.toString()));
         }
 

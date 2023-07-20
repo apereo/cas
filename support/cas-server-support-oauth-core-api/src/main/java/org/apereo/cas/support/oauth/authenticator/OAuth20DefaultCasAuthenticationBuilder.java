@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -15,6 +14,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +86,7 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
                                 final Service service) {
 
         val attrs = new HashMap<>(profile.getAttributes());
-        val profileAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(attrs);
+        val profileAttributes = CollectionUtils.toMultiValuedMap(attrs);
         val newPrincipal = principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
@@ -109,8 +109,8 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         val builder = DefaultAuthenticationBuilder.newInstance();
-        if (profile instanceof BasicUserProfile) {
-            val authenticationAttributes = ((BasicUserProfile) profile).getAuthenticationAttributes();
+        if (profile instanceof BasicUserProfile basicUserProfile) {
+            val authenticationAttributes = basicUserProfile.getAuthenticationAttributes();
             builder.addAttributes(authenticationAttributes);
         }
 

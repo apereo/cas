@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("SCIM")
 @EnabledIfListeningOnPort(port = 9666)
-public class ScimAccountRegistrationProvisionerTests {
+class ScimAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
@@ -67,7 +67,7 @@ public class ScimAccountRegistrationProvisionerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", UUID.randomUUID().toString()));
         val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
         assertTrue(results.isSuccess());

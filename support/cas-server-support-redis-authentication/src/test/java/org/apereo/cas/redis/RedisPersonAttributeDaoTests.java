@@ -9,20 +9,21 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.RedisAuthenticationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -62,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -80,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.redis[0].port=6379"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisPersonAttributeDaoTests {
+class RedisPersonAttributeDaoTests {
     private static final String USER_ID = UUID.randomUUID().toString();
 
     @Autowired
@@ -103,7 +105,7 @@ public class RedisPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyAttributes() {
+    void verifyAttributes() {
         val person = attributeRepository.getPerson(USER_ID);
         assertNotNull(person);
         val attributes = person.getAttributes();

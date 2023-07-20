@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org")
-public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
     private Action acceptPasswordlessAuthenticationAction;
@@ -45,7 +45,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -68,7 +68,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    public void verifyUnknownToken() throws Exception {
+    void verifyUnknownToken() throws Exception {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -83,7 +83,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    public void verifyMissingTokenAction() throws Exception {
+    void verifyMissingTokenAction() throws Exception {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
         val request = new MockHttpServletRequest();

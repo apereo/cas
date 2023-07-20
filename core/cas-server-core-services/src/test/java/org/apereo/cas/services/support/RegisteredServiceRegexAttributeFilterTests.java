@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceRegexAttributeFilterTests {
+class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
 
@@ -55,7 +55,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     private final Map<String, List<Object>> givenAttributesMap;
 
-    public RegisteredServiceRegexAttributeFilterTests() {
+    RegisteredServiceRegexAttributeFilterTests() {
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();
@@ -78,7 +78,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifyPatternFilter() {
+    void verifyPatternFilter() {
 
         val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(5, attrs.size());
@@ -98,7 +98,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
+    void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
@@ -129,21 +129,21 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() {
         val data = mock(RegisteredServiceAttributeFilter.class);
         when(data.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());
     }
 
     @Test
-    public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
+    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, filter);
         val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
         assertEquals(filter, filterRead);

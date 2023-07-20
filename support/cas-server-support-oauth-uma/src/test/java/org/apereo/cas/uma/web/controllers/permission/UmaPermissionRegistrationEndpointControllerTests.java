@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyPermissionRegistrationOperation() throws Exception {
+    void verifyPermissionRegistrationOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
@@ -39,7 +39,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyFailsAuthn() throws Exception {
+    void verifyFailsAuthn() throws Exception {
         val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -47,7 +47,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyBadInput() throws Exception {
+    void verifyBadInput() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = "###";
         var response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
@@ -55,7 +55,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyBadProfile() throws Exception {
+    void verifyBadProfile() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
 
         var body = createUmaResourceRegistrationRequest().toJson();

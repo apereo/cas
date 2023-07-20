@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.bynder.name-id-attribute=cn",
     "cas.saml-sp.bynder.name-id-format=transient"
 })
-public class CasSamlSPBynderConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPBynderConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

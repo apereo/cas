@@ -2,6 +2,9 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -11,9 +14,11 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
@@ -28,6 +33,8 @@ import java.util.Set;
 @Getter
 @Setter
 @SuperBuilder
+@With
+@AllArgsConstructor
 public class ServiceValidateConfigurationContext {
     private final Set<CasProtocolValidationSpecification> validationSpecifications;
 
@@ -48,6 +55,12 @@ public class ServiceValidateConfigurationContext {
     private final ServiceValidationViewFactory validationViewFactory;
 
     private final TicketRegistry ticketRegistry;
+
+    private final ServiceFactory serviceFactory;
+
+    private final PrincipalFactory principalFactory;
+
+    private final PrincipalResolver principalResolver;
 
     private ProxyHandler proxyHandler;
 }

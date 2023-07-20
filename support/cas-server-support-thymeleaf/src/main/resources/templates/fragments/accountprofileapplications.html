@@ -13,11 +13,11 @@
 <body>
 <span th:fragment="applications">
         <script type="text/javascript">
-            (material => {
+            (() => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#applicationsTable').DataTable();
                 });
-            })(mdc);
+            })();
         </script>
 
 

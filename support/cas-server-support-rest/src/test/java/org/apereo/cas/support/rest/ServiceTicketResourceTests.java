@@ -6,22 +6,17 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -30,15 +25,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RestfulApi")
-public class ServiceTicketResourceTests {
+class ServiceTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
     private static final String OTHER_EXCEPTION = "Other exception";
@@ -78,13 +70,7 @@ public class ServiceTicketResourceTests {
         val mgmr = mock(AuthenticationManager.class);
         lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-
-        val publisher = mock(ApplicationEventPublisher.class);
-
-        this.serviceTicketResource = new ServiceTicketResource(
-            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, mgmr),
-                new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
-                new DefaultAuthenticationTransactionFactory()),
+        this.serviceTicketResource = new ServiceTicketResource(CoreAuthenticationTestUtils.getAuthenticationSystemSupport(mgmr, mock(ServicesManager.class)),
             ticketSupport, new DefaultArgumentExtractor(new WebApplicationServiceFactory()),
             new CasProtocolServiceTicketResourceEntityResponseFactory(casMock),
             new UsernamePasswordRestHttpRequestCredentialFactory(),
@@ -99,7 +85,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfST() throws Exception {
+    void normalCreationOfST() throws Exception {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -110,7 +96,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfSTWithRenew() throws Exception {
+    void normalCreationOfSTWithRenew() throws Exception {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -126,7 +112,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithInvalidTicketException() throws Exception {
+    void creationOfSTWithInvalidTicketException() throws Exception {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -135,7 +121,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithGeneralException() throws Exception {
+    void creationOfSTWithGeneralException() throws Exception {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -145,7 +131,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithBadRequestException() throws Exception {
+    void creationOfSTWithBadRequestException() throws Exception {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -157,7 +143,7 @@ public class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithAuthenticationException() throws Exception {
+    void creationOfSTWithAuthenticationException() throws Exception {
         configureCasMockSTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")

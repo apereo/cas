@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisUtilsTests {
+class RedisUtilsTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyKeys() {
+    void verifyKeys() {
         val connection = RedisObjectFactory.newRedisConnectionFactory(casProperties.getAudit().getRedis(), true,
             CasSSLContext.disabled());
         val template = RedisObjectFactory.<String, Object>newRedisTemplate(Objects.requireNonNull(connection));
@@ -46,7 +46,8 @@ public class RedisUtilsTests {
         val keySize = 10;
         val scanCount = 1000;
         IntStream.range(0, keySize).forEach(i -> template.boundValueOps(redisKeyPrefix + i).set("TEST"));
-        val keys = template.scan(redisKeyPrefix + '*', scanCount);
-        assertEquals(keySize, keys.count());
+        try (val keys = template.scan(redisKeyPrefix + '*', scanCount)) {
+            assertEquals(keySize, keys.count());
+        }
     }
 }

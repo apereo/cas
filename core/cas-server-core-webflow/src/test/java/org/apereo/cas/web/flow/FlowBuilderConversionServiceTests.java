@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("WebflowConfig")
-public class FlowBuilderConversionServiceTests extends BaseWebflowConfigurerTests {
+class FlowBuilderConversionServiceTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
     protected FlowBuilderServices flowBuilderServices;
 
     @Test
-    public void verfyConversion() {
+    void verfyConversion() {
         val conversionService = flowBuilderServices.getConversionService();
 
         var result = conversionService.executeConversion("https://github.io", Service.class);

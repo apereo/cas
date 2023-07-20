@@ -31,13 +31,13 @@ import static org.springframework.http.HttpStatus.OK;
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
 @Tag("SMS")
-public class ClickatellSmsSenderTests {
+class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test
-    public void verifySmsSender() {
+    void verifySmsSender() {
         val data = '{'
             + "\"messages\": ["
             + '{'
@@ -64,7 +64,7 @@ public class ClickatellSmsSenderTests {
     }
 
     @Test
-    public void verifyError() {
+    void verifyError() {
         val data = '{'
             + "\"messages\": ["
             + "],"
@@ -80,7 +80,7 @@ public class ClickatellSmsSenderTests {
     }
 
     @Test
-    public void verifyUnacceptable() {
+    void verifyUnacceptable() {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\": \"false\", \"error\": \"fails\"}"
@@ -95,7 +95,7 @@ public class ClickatellSmsSenderTests {
     }
 
     @Test
-    public void verifyBadPayload() {
+    void verifyBadPayload() {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\":..."
@@ -110,7 +110,7 @@ public class ClickatellSmsSenderTests {
     }
 
     @Test
-    public void verifyBadSmsSender() {
+    void verifyBadSmsSender() {
         try (val webServer = new MockWebServer(8099,
             new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();

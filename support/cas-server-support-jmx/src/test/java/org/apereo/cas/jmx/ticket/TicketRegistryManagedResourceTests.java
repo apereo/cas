@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseCasJmxTests.SharedTestConfiguration.class)
 @Tag("JMX")
-public class TicketRegistryManagedResourceTests {
+class TicketRegistryManagedResourceTests {
     @Autowired
     @Qualifier("ticketRegistryManagedResource")
     private TicketRegistryManagedResource ticketRegistryManagedResource;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.ticketRegistryManagedResource);
         assertNotNull(this.ticketRegistryManagedResource.getTickets());
     }

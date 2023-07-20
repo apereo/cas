@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.server.prefix=https://sso.example.org/cas")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAccountRegistrationServiceTests {
+class DefaultAccountRegistrationServiceTests {
     private AccountRegistrationService accountRegistrationService;
 
     @Autowired
@@ -52,11 +52,11 @@ public class DefaultAccountRegistrationServiceTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("1.2.3.4");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
-    public void verifyMissingIssuer() throws Exception {
+    void verifyMissingIssuer() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer("unknown");
         val token = claims.toJson();
@@ -64,7 +64,7 @@ public class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingAudience() throws Exception {
+    void verifyMissingAudience() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience("unknown");
@@ -73,7 +73,7 @@ public class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingSubject() throws Exception {
+    void verifyMissingSubject() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());
@@ -82,7 +82,7 @@ public class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingClientInfo() throws Exception {
+    void verifyMissingClientInfo() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());

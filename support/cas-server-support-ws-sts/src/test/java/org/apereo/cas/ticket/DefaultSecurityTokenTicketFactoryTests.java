@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreWsSecuritySecurityTokenTicketConfiguration.class,
     CasWsSecurityTokenTicketComponentSerializationConfiguration.class
 })
-public class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    public void verifyTicket() {
+    void verifyTicket() {
         val securityTokenTicketFactory = (SecurityTokenTicketFactory) ticketFactory.get(SecurityTokenTicket.class);
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgt = new TicketGrantingTicketImpl("TGT-1234567890", originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
@@ -42,6 +42,5 @@ public class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTes
         val result = ticketSerializationManager.deserializeTicket(serialized, SecurityTokenTicket.class);
         assertNotNull(result);
         assertEquals(result, token);
-        
     }
 }

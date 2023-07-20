@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.adobe-cloud.name-id-attribute=cn",
     "cas.saml-sp.adobe-cloud.name-id-format=transient"
 })
-public class CasSamlSPAdobeCreativeCloudConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPAdobeCreativeCloudConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

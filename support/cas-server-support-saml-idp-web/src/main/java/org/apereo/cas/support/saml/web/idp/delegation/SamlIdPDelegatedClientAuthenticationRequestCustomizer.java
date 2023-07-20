@@ -1,15 +1,19 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.schema.XSURI;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.pac4j.core.client.IndirectClient;
@@ -18,8 +22,11 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,13 +42,14 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     private final OpenSamlConfigBean openSamlConfigBean;
 
+    private final CasConfigurationProperties casProperties;
+
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
-                sessionStore, openSamlConfigBean, AuthnRequest.class)
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(webContext, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast);
-
         result.ifPresent(authnRequest -> {
             LOGGER.debug("Retrieved the SAML2 authentication request from [{}]",
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
@@ -58,8 +66,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
                                 final WebApplicationService currentService) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
-            sessionStore, openSamlConfigBean, AuthnRequest.class);
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(webContext, AuthnRequest.class);
         if (result.isEmpty()) {
             LOGGER.trace("No SAML2 authentication request found in session store");
             return true;
@@ -94,12 +102,23 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
             && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
-            val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
+            val authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs()
+                .stream()
                 .map(XSURI::getURI)
-                .collect(Collectors.toList());
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE,
-                requestedAuthnContext.getComparison().name());
+                .toList();
+
+            val definedContexts = CollectionUtils.convertDirectedListToMap(
+                casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
+            val mappedMethods = authnContextClassRefs.stream()
+                .map(ref -> definedContexts.getOrDefault(ref, ref))
+                .map(ref -> new ArrayList<>(StringUtils.commaDelimitedListToSet(ref)))
+                .flatMap(List::stream)
+                .toList();
+            LOGGER.debug("Mapped authentication context classes are [{}]", mappedMethods);
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, mappedMethods);
+            val comparison = Optional.ofNullable(requestedAuthnContext.getComparison()).orElse(AuthnContextComparisonTypeEnumeration.EXACT);
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, comparison.name());
         }
     }
 

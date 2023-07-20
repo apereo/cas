@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -43,12 +44,14 @@ public class AuthenticationAttributeMultifactorAuthenticationProperties implemen
      * an attribute that is part of the authentication event metadata which can then trigger
      * additional multifactor authentication events.
      */
+    @RegularExpressionCapable
     private String globalAuthenticationAttributeNameTriggers;
 
     /**
      * The regular expression that is cross matches against the authentication attribute to determine
      * if the account is qualified for multifactor authentication.
      */
+    @RegularExpressionCapable
     private String globalAuthenticationAttributeValueRegex;
 
 }

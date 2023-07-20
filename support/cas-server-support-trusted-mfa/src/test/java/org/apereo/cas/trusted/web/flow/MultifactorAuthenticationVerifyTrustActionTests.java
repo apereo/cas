@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("WebflowMfaActions")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -75,7 +75,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

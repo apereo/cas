@@ -1,4 +1,11 @@
 description = "Apereo CAS Mongo Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "MongoDb Authentication"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")

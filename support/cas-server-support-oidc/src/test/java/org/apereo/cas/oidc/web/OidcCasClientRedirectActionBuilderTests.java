@@ -24,15 +24,15 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
+class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
 
     @Test
-    public void verifyPromptNone() {
+    void verifyPromptNone() {
         verifyBuild("=none");
     }
 
     @Test
-    public void verifyPromptLogin() {
+    void verifyPromptLogin() {
         verifyBuild("=login");
     }
 

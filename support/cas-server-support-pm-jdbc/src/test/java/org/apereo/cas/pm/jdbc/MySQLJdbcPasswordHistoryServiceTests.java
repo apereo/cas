@@ -18,11 +18,11 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.pm.jdbc.password=password",
     "cas.authn.pm.jdbc.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.pm.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQL8Dialect"
+    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
+class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 
     @BeforeEach
     public void initialize() {

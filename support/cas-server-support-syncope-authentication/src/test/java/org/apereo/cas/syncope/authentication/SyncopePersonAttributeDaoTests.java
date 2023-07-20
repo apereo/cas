@@ -28,31 +28,48 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Syncope")
-public class SyncopePersonAttributeDaoTests {
+class SyncopePersonAttributeDaoTests {
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = {
             "cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
             "cas.authn.attribute-repository.syncope.basic-auth-username=admin",
             "cas.authn.attribute-repository.syncope.basic-auth-password=password",
-            "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
+            "cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.username=userId",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_description=email_description"
         })
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
     @SuppressWarnings("ClassCanBeStatic")
-    public class SyncopeCoreServerTests extends BaseSyncopeTests {
+    class SyncopeCoreServerTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyUserIsFound() {
+        void verifyUserIsFound() {
             var found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             assertFalse(found.iterator().next().getAttributes().isEmpty());
             var people = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")),
                 IPersonAttributeDaoFilter.alwaysChoose());
             assertFalse(people.iterator().next().getAttributes().isEmpty());
         }
+
+        @Test
+        void verifyUserAttributeMappings() {
+            val found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
+            val attributes = found.iterator().next().getAttributes();
+            assertFalse(attributes.isEmpty());
+            assertNotNull(attributes.get("userId"));
+            assertNotNull(attributes.get("email"));
+            assertNull(attributes.get("syncopeUserAttr_email"));
+            assertNotNull(attributes.get("email_description"));
+            assertNull(attributes.get("syncopeUserAttr_description"));
+
+        }
+
     }
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
@@ -62,7 +79,7 @@ public class SyncopePersonAttributeDaoTests {
         })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class MockSyncopePersonTests extends BaseSyncopeTests {
+    class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")
         private BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos;
@@ -72,7 +89,7 @@ public class SyncopePersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyUserIsFound() {
+        void verifyUserIsFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -87,7 +104,7 @@ public class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        public void verifyUserIsNotFound() {
+        void verifyUserIsNotFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result");
             try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -98,7 +115,7 @@ public class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        public void verifySyncopeDown() {
+        void verifySyncopeDown() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val webserver = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {

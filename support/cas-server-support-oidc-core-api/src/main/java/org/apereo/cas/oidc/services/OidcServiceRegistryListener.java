@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -19,6 +20,8 @@ import lombok.val;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -46,15 +49,11 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         val matchingPolicies = new ArrayList<RegisteredServiceAttributeReleasePolicy>();
 
         if (policy instanceof RegisteredServiceChainingAttributeReleasePolicy chainedPolicy) {
-            matchingPolicies.addAll(chainedPolicy.getPolicies()
-                .stream()
-                .filter(p -> p instanceof OidcRegisteredServiceAttributeReleasePolicy)
-                .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
-                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope)).toList());
+            val policiesToAdd = buildMatchingPolicies(givenScope, chainedPolicy.getPolicies());
+            matchingPolicies.addAll(policiesToAdd);
         } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy oidcPolicy) {
-            if (oidcPolicy.getScopeType().equalsIgnoreCase(givenScope)) {
-                matchingPolicies.add(oidcPolicy);
-            }
+            val policiesToAdd = buildMatchingPolicies(givenScope, List.of(oidcPolicy));
+            matchingPolicies.addAll(policiesToAdd);
         }
 
         if (matchingPolicies.isEmpty()) {
@@ -66,10 +65,22 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         }
     }
 
+    private static List<OidcRegisteredServiceAttributeReleasePolicy> buildMatchingPolicies(
+        final String givenScope,
+        final List<RegisteredServiceAttributeReleasePolicy> policies) {
+        return policies
+            .stream()
+            .filter(OidcRegisteredServiceAttributeReleasePolicy.class::isInstance)
+            .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
+            .filter(policy -> policy.getScopeType().equalsIgnoreCase(givenScope)
+                         || (policy instanceof OidcCustomScopeAttributeReleasePolicy customPolicy && customPolicy.getScopeName().equals(givenScope)))
+            .toList();
+    }
+
     @Override
     public RegisteredService postLoad(final RegisteredService registeredService) {
-        if (registeredService instanceof OidcRegisteredService) {
-            return reconcile((OidcRegisteredService) registeredService);
+        if (registeredService instanceof OidcRegisteredService oidcService) {
+            return reconcile(oidcService);
         }
         return registeredService;
     }
@@ -99,13 +110,13 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                              + "Checking [{}] against user-defined scopes provided as [{}]", givenScope, givenScope, userScopes);
                 userScopes
                     .stream()
-                    .filter(t -> t.getScopeName().equals(givenScope.trim()))
+                    .filter(scope -> scope.getScopeName().equals(givenScope.trim()))
                     .findFirst()
                     .ifPresentOrElse(
                         userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService),
                         () -> customClaims.add(givenScope.trim()));
             } else {
-                val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
+                val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase(Locale.ENGLISH));
                 switch (scope) {
                     case EMAIL, ADDRESS, PROFILE, PHONE -> {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);

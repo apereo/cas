@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAMLMetadata")
-public class StaticMetadataResolverAdapterTests extends AbstractOpenSamlTests {
+class StaticMetadataResolverAdapterTests extends AbstractOpenSamlTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val resources = (Map) Map.of(new ClassPathResource("metadata.xml"), new MetadataFilterChain());
         val adapter = new StaticMetadataResolverAdapter(resources);
         adapter.setConfigBean(configBean);

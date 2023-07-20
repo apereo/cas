@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -21,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class ConsumerExecutionActionTests {
+class ConsumerExecutionActionTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -35,5 +36,19 @@ public class ConsumerExecutionActionTests {
         action.setEventId("result");
         assertNotNull(action.execute(context));
         assertNotNull(action.toString());
+    }
+
+    @Test
+    void verifyNoContentOperation() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val result = ConsumerExecutionAction.NO_CONTENT.execute(context);
+        assertNull(result);
+        assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
     }
 }

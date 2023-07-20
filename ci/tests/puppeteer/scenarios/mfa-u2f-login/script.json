@@ -1,5 +1,6 @@
 {
   "dependencies": "u2f",
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 

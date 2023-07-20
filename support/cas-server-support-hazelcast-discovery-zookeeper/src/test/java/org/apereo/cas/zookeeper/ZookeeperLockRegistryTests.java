@@ -40,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.core.enable-locking=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ZookeeperLockRegistryTests {
+class ZookeeperLockRegistryTests {
 
     @Autowired
     @Qualifier("casTicketRegistryLockRepository")
     private LockRepository casTicketRegistryLockRepository;
 
     @Test
-    public void verifyRepository() throws Exception {
+    void verifyRepository() throws Exception {
         val lockKey = UUID.randomUUID().toString();
 
         val container = new Container();

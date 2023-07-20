@@ -36,19 +36,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("WebflowActions")
-public class FrontChannelLogoutActionTests {
+class FrontChannelLogoutActionTests {
     
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=true")
-    public class SingleLogoutDisabledTests extends AbstractWebflowActionsTests {
+    class SingleLogoutDisabledTests extends AbstractWebflowActionsTests {
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
         private Action frontChannelLogoutAction;
 
         @Test
-        public void verifyNoSlo() throws Exception {
+        void verifyNoSlo() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -78,14 +78,14 @@ public class FrontChannelLogoutActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=false")
-    public class SingleLogoutEnabledTests extends AbstractWebflowActionsTests {
+    class SingleLogoutEnabledTests extends AbstractWebflowActionsTests {
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_FRONT_CHANNEL_LOGOUT)
         private Action frontChannelLogoutAction;
 
         @Test
-        public void verifyLogoutNone() throws Exception {
+        void verifyLogoutNone() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -112,7 +112,7 @@ public class FrontChannelLogoutActionTests {
         }
 
         @Test
-        public void verifyLogout() throws Exception {
+        void verifyLogout() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -139,7 +139,7 @@ public class FrontChannelLogoutActionTests {
         }
         
         @Test
-        public void verifyNoRequests() throws Exception {
+        void verifyNoRequests() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

@@ -24,6 +24,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Web")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationChannelControllerTests {
+class QRAuthenticationChannelControllerTests {
     @Autowired
     @Qualifier("tokenTicketJwtBuilder")
     private JwtBuilder jwtBuilder;
@@ -63,7 +64,7 @@ public class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    public void verifyOK() throws Exception {
+    void verifyOK() throws Exception {
         assertNotNull(qrAuthenticationChannelController);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -76,7 +77,7 @@ public class QRAuthenticationChannelControllerTests {
             .subject("casuser")
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -94,14 +95,14 @@ public class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("unknown-user")
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -118,7 +119,7 @@ public class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    public void verifyMissingHeader() {
+    void verifyMissingHeader() {
         assertNotNull(qrAuthenticationChannelController);
         val message = mock(Message.class);
         var headers = new MessageHeaders(Map.of("nativeHeaders", new LinkedMultiValueMap<>()));

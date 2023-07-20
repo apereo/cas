@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
-public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
+class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void setup() throws Exception {
@@ -39,7 +39,7 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
         assertNotNull(metadata);
@@ -53,7 +53,7 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyService() throws Exception {
+    void verifyService() throws Exception {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
 
         val service = new SamlRegisteredService();

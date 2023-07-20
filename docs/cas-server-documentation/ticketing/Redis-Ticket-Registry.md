@@ -12,8 +12,8 @@ Redis integration is enabled by including the following dependency in the WAR ov
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
 
-This registry stores tickets in one or more [Redis](http://redis.io/) instances. CAS presents and uses Redis as a
-key/value store that accepts `String` keys and CAS ticket objects as values. The key is started with `CAS_TICKET:`.
+This registry stores tickets in one or more [Redis](https://redis.io/) instances. CAS presents and uses Redis as a
+key/value store that accepts `String` keys and CAS ticket documents as values. The key is started with `CAS_TICKET:`.
 
 The Redis ticket registry supports Redis Sentinel, which provides high availability for Redis. In 
 practical terms this means that using Sentinel you can create a Redis deployment that resists 
@@ -23,8 +23,15 @@ collateral tasks such as monitoring, notifications and acts as a configuration p
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis" %}
+  
+## Indexing & Search
 
-### Caching & Messaging
+For better performance, it's best for the Redis server deployment to turn up and enable [RediSearch](https://redis.io/docs/stack/search/).
+RediSearch is a Redis module that enables querying, secondary indexing, and full-text search for Redis. These features allow CAS
+to build particular indexes for ticket documents for faster querying and search operations. In certain cases, this would
+significantly improve the performance of *lookup* operations.
+
+## Caching & Messaging
 
 The Redis ticket registry layers an in-memory cache on top of Redis to assist with performance, particularly
 when it comes to fetching ticket objects from Redis using `SCAN` or `KEYS` operations that execute pattern matching.
@@ -36,7 +43,13 @@ via dedicated CAS settings.
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis.cache" %}
 
-### Eviction Policy
+### Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="redisTicketsCache" %}
+
+## Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via its time-alive settings.
 The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the

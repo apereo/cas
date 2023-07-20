@@ -22,9 +22,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastKubernetesDiscoveryStrategyTests {
+class HazelcastKubernetesDiscoveryStrategyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cluster = new HazelcastClusterProperties();
         val kb = cluster.getDiscovery().getKubernetes();
         val id = UUID.randomUUID().toString();

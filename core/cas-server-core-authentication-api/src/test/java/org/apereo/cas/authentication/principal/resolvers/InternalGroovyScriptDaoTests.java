@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class InternalGroovyScriptDaoTests {
+class InternalGroovyScriptDaoTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -35,7 +35,7 @@ public class InternalGroovyScriptDaoTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val groovy = new GroovyPrincipalAttributesProperties();
         groovy.setLocation(new ClassPathResource("/GroovyAttributeDao.groovy"));
         val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));

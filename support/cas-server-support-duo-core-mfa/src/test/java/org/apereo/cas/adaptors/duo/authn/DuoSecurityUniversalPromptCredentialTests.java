@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptCredentialTests {
+class DuoSecurityUniversalPromptCredentialTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val c = new DuoSecurityUniversalPromptCredential(id, CoreAuthenticationTestUtils.getAuthentication());
         c.setProviderId(id);

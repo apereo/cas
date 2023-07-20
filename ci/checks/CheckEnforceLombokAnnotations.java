@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public class CheckEnforceLombokAnnotations {
                                              final String text,
                                              final String type,
                                              final String variable) {
-        var capitalized = variable.substring(0, 1).toUpperCase() + variable.substring(1);
+        var capitalized = variable.substring(0, 1).toUpperCase(Locale.ENGLISH) + variable.substring(1);
         var patternAccess = Pattern.compile("(public|private|protected)\\s+"
             + type
             + "\\s+(get|set)" + capitalized

@@ -1,5 +1,6 @@
 {
   "dependencies": "throttle,throttle-bucket4j",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

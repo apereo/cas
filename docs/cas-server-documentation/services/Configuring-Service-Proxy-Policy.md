@@ -14,7 +14,7 @@ fact allowed to receive the PGT.
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 This feature specifically applies to applications that understand and use the CAS protocol. Think <strong>VERY CAREFULLY</strong> before allowing an 
 application to exercise proxy authentication. Blindly authorizing an application to receive a proxy-granting 
 ticket may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those 
@@ -63,7 +63,7 @@ As noted earlier, the `pattern` must be specified as a valid regular expression.
 
 - If the pattern used here is identical to the pattern used by the registered service itself as specified by the `serviceId`, you may be able to reuse the same
   existing regular expression here via the `useServiceId` setting.
-- The setting `exactMatch` treats the regular expression pattern as an exact liteal and turns off the evaluation of the pattern as a regular expression in
+- The setting `exactMatch` treats the regular expression pattern as an exact literal and turns off the evaluation of the pattern as a regular expression in
   favor of a literal comparison.
 - 
 {% endtab %}
@@ -90,7 +90,7 @@ A proxy policy that reaches out to an external REST endpoint to determine proxy 
 ```
 
 Endpoints must be designed to accept/process `application/json`, where the request body will contain
-the contents of the registered service definition, and the requesing PGT url is passed as `pgtUrl` request parameter.
+the contents of the registered service definition, and the requesting PGT url is passed as `pgtUrl` request parameter.
 A successful `200` status code will allow proxy authentication to proceed.
 
 {% endtab %}

@@ -1,9 +1,5 @@
 package org.apereo.cas.web.cookie;
 
-import lombok.val;
-import org.apache.commons.lang3.ClassUtils;
-import org.jooq.lambda.Unchecked;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,35 +15,12 @@ import java.util.Optional;
 public interface CookieSameSitePolicy {
 
     /**
-     * Determine same-site policy based on given option.
-     *
-     * @param context the context
-     * @return the cookie same site policy
-     */
-    static CookieSameSitePolicy of(final CookieGenerationContext context) {
-        val option = context.getSameSitePolicy();
-        if (option.contains(".")) {
-            return Unchecked.supplier(() -> {
-                val clazz = ClassUtils.getClass(CookieSameSitePolicy.class.getClassLoader(), option);
-                return (CookieSameSitePolicy) clazz.getDeclaredConstructor().newInstance();
-            }).get();
-        }
-
-        return switch (option.toLowerCase().trim()) {
-            case "strict" -> strict();
-            case "lax" -> lax();
-            case "off" -> off();
-            default -> none();
-        };
-    }
-
-    /**
      * None cookie same site policy.
      *
      * @return the cookie same site policy
      */
     static CookieSameSitePolicy none() {
-        return (request, response) -> Optional.of("SameSite=None;");
+        return (request, response, __) -> Optional.of("SameSite=None;");
     }
 
     /**
@@ -56,7 +29,7 @@ public interface CookieSameSitePolicy {
      * @return the cookie same site policy
      */
     static CookieSameSitePolicy lax() {
-        return (request, response) -> Optional.of("SameSite=Lax;");
+        return (request, response, __) -> Optional.of("SameSite=Lax;");
     }
 
     /**
@@ -65,7 +38,7 @@ public interface CookieSameSitePolicy {
      * @return the cookie same site policy
      */
     static CookieSameSitePolicy strict() {
-        return (request, response) -> Optional.of("SameSite=Strict;");
+        return (request, response, __) -> Optional.of("SameSite=Strict;");
     }
 
     /**
@@ -74,15 +47,16 @@ public interface CookieSameSitePolicy {
      * @return the cookie same site policy
      */
     static CookieSameSitePolicy off() {
-        return (request, response) -> Optional.empty();
+        return (request, response, __) -> Optional.empty();
     }
 
     /**
      * Build option string based on the same-site option type.
      *
-     * @param request  the request
-     * @param response the response
+     * @param request                 the request
+     * @param response                the response
+     * @param cookieGenerationContext the cookie generation context
      * @return the string
      */
-    Optional<String> build(HttpServletRequest request, HttpServletResponse response);
+    Optional<String> build(HttpServletRequest request, HttpServletResponse response, CookieGenerationContext cookieGenerationContext);
 }

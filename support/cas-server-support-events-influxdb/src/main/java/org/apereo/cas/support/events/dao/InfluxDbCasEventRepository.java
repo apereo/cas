@@ -43,6 +43,11 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
+    public void removeAll() {
+        influxDbConnectionFactory.deleteAll();
+    }
+
+    @Override
     public CasEvent saveInternal(final CasEvent event) {
         influxDbConnectionFactory.write(MEASUREMENT,
             Map.of("value", event.getEventId()),

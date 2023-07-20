@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("JDBC")
-public class JpaSamlIdPMetadataGeneratorTests {
+class JpaSamlIdPMetadataGeneratorTests {
 
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true",
@@ -30,9 +30,9 @@ public class JpaSamlIdPMetadataGeneratorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
+    class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -49,9 +49,9 @@ public class JpaSamlIdPMetadataGeneratorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
+    class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -61,7 +61,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
         }
 
         @Test
-        public void verifyService() throws Exception {
+        void verifyService() throws Exception {
             val service = new SamlRegisteredService();
             service.setName("TestShib");
             service.setId(1000);

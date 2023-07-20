@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @Tag("MFA")
-public class DefaultChainingMultifactorAuthenticationProviderTests {
+class DefaultChainingMultifactorAuthenticationProviderTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestHeaders("headerbypass");
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

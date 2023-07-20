@@ -12,7 +12,7 @@ To enable single sign-on into some legacy applications it may be necessary to pr
 While such approach inevitably increases security risk, at times this may be a necessary evil in order to integrate
 applications with CAS.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>ClearPass is turned off by default.
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>ClearPass is turned off by default.
 No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the
 below configuration. Think <strong>VERY CAREFULLY</strong> before turning on this feature, as it <strong>MUST</strong> be
 the last resort in getting an integration to work...maybe not even then.</p></div>
@@ -38,7 +38,7 @@ for signing and encryption. When the attribute is to be released to the applicat
 the credential first and then will attempt to encrypt it again this time using the service's public key credentials.
 
 
-<div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
+<div class="alert alert-info">:information_source: <strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
 the credential via the proxying mechanism. Applications that intend to obtain the credential
 need to be updated to account for the following approach described here.</p></div>
 

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=MSIE")
 @Tag("WebflowEvents")
 @Import(AdaptiveMultifactorAuthenticationPolicyEventResolverTests.AdaptiveMultifactorTestConfiguration.class)
-public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
@@ -71,19 +71,19 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
     @Test
-    public void verifyOperationNeedsMfaByGeo() {
+    void verifyOperationNeedsMfaByGeo() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

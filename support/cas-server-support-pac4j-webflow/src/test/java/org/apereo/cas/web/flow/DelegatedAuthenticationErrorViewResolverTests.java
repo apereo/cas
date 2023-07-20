@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.sso.allow-missing-service-parameter=false")
+    properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("Webflow")
-public class DelegatedAuthenticationErrorViewResolverTests {
+class DelegatedAuthenticationErrorViewResolverTests {
     @Autowired
     @Qualifier("pac4jErrorViewResolver")
     private ErrorViewResolver resolver;
@@ -38,7 +38,7 @@ public class DelegatedAuthenticationErrorViewResolverTests {
     private Action delegatedAuthenticationAction;
 
     @Test
-    public void verifyOperationWithEx() {
+    void verifyOperationWithEx() {
         assertNotNull(delegatedAuthenticationAction);
         
         val request = new MockHttpServletRequest();
@@ -50,7 +50,7 @@ public class DelegatedAuthenticationErrorViewResolverTests {
     }
 
     @Test
-    public void verifyOperationWithoutEx() {
+    void verifyOperationWithoutEx() {
         val request = new MockHttpServletRequest();
         val mv = resolver.resolveErrorView(request, HttpStatus.INTERNAL_SERVER_ERROR, Map.of());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, mv.getViewName());

@@ -1,5 +1,12 @@
 description = "Apereo CAS Passwordless Authentication Webflow Support"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Passwordless Authentication",
+            title: "Passwordless Authentication",
+            aliases: ["passwordless"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

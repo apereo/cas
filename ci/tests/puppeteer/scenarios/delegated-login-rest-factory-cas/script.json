@@ -1,5 +1,6 @@
 {
   "dependencies": "pac4j-webflow",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

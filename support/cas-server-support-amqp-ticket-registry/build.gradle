@@ -1,5 +1,11 @@
 description = "Apereo CAS AMQP Ticket Registry"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "AMQP Ticket Registry"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-util")
     

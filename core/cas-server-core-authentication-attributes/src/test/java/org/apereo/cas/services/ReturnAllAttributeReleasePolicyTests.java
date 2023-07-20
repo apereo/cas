@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
-public class ReturnAllAttributeReleasePolicyTests {
+class ReturnAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllAttributeReleasePolicy.json");
 
@@ -46,7 +46,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new ReturnAllAttributeReleasePolicy();
         policyWritten.setExcludedAttributes(CollectionUtils.wrapSet("Hello", "World"));
         MAPPER.writeValue(JSON_FILE, policyWritten);
@@ -55,7 +55,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyExclusionRules() {
+    void verifyExclusionRules() {
         val policy = new ReturnAllAttributeReleasePolicy();
         policy.setExcludedAttributes(CollectionUtils.wrapSet("cn"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -75,7 +75,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentForServiceInDisabled() {
+    void verifyConsentForServiceInDisabled() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
         val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
@@ -96,7 +96,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentForServiceInUndefined() {
+    void verifyConsentForServiceInUndefined() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
         val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
@@ -120,7 +120,7 @@ public class ReturnAllAttributeReleasePolicyTests {
 
 
     @Test
-    public void verifyExcludedServicesFromConsent() {
+    void verifyExcludedServicesFromConsent() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
@@ -148,7 +148,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyNoConsentPolicy() {
+    void verifyNoConsentPolicy() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
@@ -171,7 +171,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentPolicyActive() {
+    void verifyConsentPolicyActive() {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));

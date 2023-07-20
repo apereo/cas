@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey Jpa Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via JDBC"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
 

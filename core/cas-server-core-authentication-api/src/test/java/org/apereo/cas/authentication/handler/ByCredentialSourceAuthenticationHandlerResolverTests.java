@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -18,22 +17,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("AuthenticationHandler")
-public class ByCredentialSourceAuthenticationHandlerResolverTests {
+class ByCredentialSourceAuthenticationHandlerResolverTests {
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val resolver = new ByCredentialSourceAuthenticationHandlerResolver();
         assertTrue(resolver.supports(CollectionUtils.wrapSet(new SimpleTestUsernamePasswordAuthenticationHandler()),
-            new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
     }
 
     @Test
-    public void verifyResolves() {
+    void verifyResolves() {
         val resolver = new ByCredentialSourceAuthenticationHandlerResolver();
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         c.setSource("TestHandler");
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler("TESTHANDLER");
-        val results = resolver.resolve(CollectionUtils.wrapSet(handler), new DefaultAuthenticationTransactionFactory().newTransaction(c));
+        val results = resolver.resolve(CollectionUtils.wrapSet(handler), CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(c));
         assertFalse(results.isEmpty());
     }
 }

@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceChainingAttributeFilterTests {
+class RegisteredServiceChainingAttributeFilterTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val chain = new RegisteredServiceChainingAttributeFilter();
         chain.getFilters().add(new RegisteredServiceRegexAttributeFilter(RegexUtils.MATCH_NOTHING_PATTERN.pattern()));
         assertTrue(chain.filter(CoreAuthenticationTestUtils.getAttributes()).isEmpty());

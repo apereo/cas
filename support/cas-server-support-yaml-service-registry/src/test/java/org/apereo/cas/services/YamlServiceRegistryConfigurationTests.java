@@ -4,8 +4,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.services.config.YamlServiceRegistryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.YamlServiceRegistryConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")
-public class YamlServiceRegistryConfigurationTests {
+class YamlServiceRegistryConfigurationTests {
     @Autowired
     @Qualifier("yamlServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.serviceRegistry);
     }
 }

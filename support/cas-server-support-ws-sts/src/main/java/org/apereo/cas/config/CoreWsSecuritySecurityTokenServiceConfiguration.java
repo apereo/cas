@@ -14,8 +14,6 @@ import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
-import org.apereo.cas.support.saml.sts.SamlTokenProvider;
-import org.apereo.cas.support.saml.sts.SamlTokenValidator;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
@@ -50,6 +48,7 @@ import org.apache.cxf.sts.token.provider.TokenProvider;
 import org.apache.cxf.sts.token.provider.jwt.JWTTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
+import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.SCTValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
@@ -85,6 +84,7 @@ import javax.net.ssl.HostnameVerifier;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -182,27 +182,28 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         public SAMLTokenProvider transportSamlTokenProvider(final CasConfigurationProperties casProperties,
                                                             @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-            val s = new DefaultSubjectProvider();
+            val subProvider = new DefaultSubjectProvider();
 
-            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(), __ -> s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
-            switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
-                case "email" -> s.setSubjectNameIDFormat(NameIDType.EMAIL);
-                case "entity" -> s.setSubjectNameIDFormat(NameIDType.ENTITY);
-                case "transient" -> s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
-                case "persistent" -> s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
-                default -> s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
+            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
+                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
+            switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase(Locale.ENGLISH)) {
+                case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
+                case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);
+                case "transient" -> subProvider.setSubjectNameIDFormat(NameIDType.TRANSIENT);
+                case "persistent" -> subProvider.setSubjectNameIDFormat(NameIDType.PERSISTENT);
+                default -> subProvider.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
             }
-            val c = new DefaultConditionsProvider();
-            c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
-            c.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
-            c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
-            c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
-            c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
-            val provider = new SamlTokenProvider();
+            val condProvider = new DefaultConditionsProvider();
+            condProvider.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
+            condProvider.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
+            condProvider.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
+            condProvider.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
+            condProvider.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
+            val provider = new SAMLTokenProvider();
             provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
             provider.setRealmMap(securityTokenServiceRealms);
-            provider.setConditionsProvider(c);
-            provider.setSubjectProvider(s);
+            provider.setConditionsProvider(condProvider);
+            provider.setSubjectProvider(subProvider);
             provider.setSignToken(wsfed.isSignTokens());
             return provider;
         }
@@ -265,7 +266,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportSamlTokenValidator")
         @Bean
         public TokenValidator transportSamlTokenValidator() {
-            return new SamlTokenValidator();
+            return new SAMLTokenValidator();
         }
 
         @ConditionalOnMissingBean(name = "transportJwtTokenValidator")

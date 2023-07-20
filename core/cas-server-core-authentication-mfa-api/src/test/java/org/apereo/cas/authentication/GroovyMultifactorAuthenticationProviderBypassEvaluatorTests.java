@@ -25,8 +25,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
-public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
+@Tag("GroovyAuthentication")
+class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     private static boolean runGroovyBypassFor(final Authentication authentication) {
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
@@ -57,7 +57,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
         assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
         assertTrue(runGroovyBypassFor(mock(Authentication.class)));

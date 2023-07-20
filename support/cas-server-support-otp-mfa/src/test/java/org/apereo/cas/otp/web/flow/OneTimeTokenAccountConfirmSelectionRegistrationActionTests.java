@@ -28,10 +28,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class OneTimeTokenAccountConfirmSelectionRegistrationActionTests {
+class OneTimeTokenAccountConfirmSelectionRegistrationActionTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())

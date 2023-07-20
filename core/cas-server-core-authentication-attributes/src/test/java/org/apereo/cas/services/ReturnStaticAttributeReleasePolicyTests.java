@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("Attributes")
-public class ReturnStaticAttributeReleasePolicyTests {
+class ReturnStaticAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ReturnStaticAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -44,7 +44,7 @@ public class ReturnStaticAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policyWritten = new ReturnStaticAttributeReleasePolicy();
         policyWritten.setAllowedAttributes(CollectionUtils.wrap("Hello", CollectionUtils.wrapList("World")));
         MAPPER.writeValue(JSON_FILE, policyWritten);
@@ -53,7 +53,7 @@ public class ReturnStaticAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyReleaseRules() {
+    void verifyReleaseRules() {
         val policy = new ReturnStaticAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap("Hello", CollectionUtils.wrapList("World")));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -73,7 +73,7 @@ public class ReturnStaticAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyExpressions() {
+    void verifyExpressions() {
         System.setProperty("MY_ATTR", "World");
         val policy = new ReturnStaticAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap("Hello",

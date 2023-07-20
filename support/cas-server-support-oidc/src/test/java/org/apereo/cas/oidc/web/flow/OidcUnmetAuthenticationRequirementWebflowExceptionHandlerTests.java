@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests extends AbstractOidcTests {
+class OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
     private CasWebflowExceptionHandler oidcUnmetAuthenticationRequirementWebflowExceptionHandler;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 

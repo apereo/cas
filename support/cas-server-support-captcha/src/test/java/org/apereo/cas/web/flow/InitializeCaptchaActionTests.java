@@ -35,13 +35,13 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
     }
 )
 @Tag("WebflowActions")
-public class InitializeCaptchaActionTests {
+class InitializeCaptchaActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_INIT_CAPTCHA)
     private Action initializeCaptchaAction;
 
     @Test
-    public void verifyCaptchaValidated() throws Exception {
+    void verifyCaptchaValidated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

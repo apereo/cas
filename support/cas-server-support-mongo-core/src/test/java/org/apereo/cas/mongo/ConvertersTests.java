@@ -24,10 +24,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MongoDb")
-public class ConvertersTests {
+class ConvertersTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNull(new BaseConverters.NullConverter().convert(new Object()));
         assertNull(new BaseConverters.StringToZonedDateTimeConverter().convert(StringUtils.EMPTY));
         assertNull(new BaseConverters.StringToPatternConverter().convert(StringUtils.EMPTY));

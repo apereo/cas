@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("MFA")
-public class DefaultRegisteredServiceMultifactorPolicyTests {
+class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
 
@@ -27,7 +27,7 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
+    void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");

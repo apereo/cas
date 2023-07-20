@@ -2,9 +2,14 @@ package org.apereo.cas.util.spring.beans;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
+import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +22,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public interface BeanContainer<T> {
+public interface BeanContainer<T> extends DisposableBean {
 
     /**
      * To list container bean.
@@ -115,6 +120,14 @@ public interface BeanContainer<T> {
      */
     BeanContainer<T> forEach(Consumer<T> o);
 
+    /**
+     * Include entries and import them into the container.
+     *
+     * @param entry the entry
+     * @return the bean container
+     */
+    BeanContainer<T> allOf(Collection<T> entry);
+
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
         private final List<T> items;
@@ -137,6 +150,13 @@ public interface BeanContainer<T> {
         }
 
         @Override
+        @CanIgnoreReturnValue
+        public BeanContainer<T> allOf(final Collection<T> entries) {
+            items.addAll(entries);
+            return this;
+        }
+
+        @Override
         public int size() {
             return this.items.size();
         }
@@ -150,6 +170,19 @@ public interface BeanContainer<T> {
         public BeanContainer<T> forEach(final Consumer<T> o) {
             items.forEach(o);
             return null;
+        }
+
+        @Override
+        public void destroy() throws Exception {
+            items.forEach(Unchecked.consumer(entry -> {
+                if (entry instanceof DisposableBean disposable) {
+                    disposable.destroy();
+                }
+                if (entry instanceof Closeable closeable) {
+                    IOUtils.closeQuietly(closeable);
+                }
+            }));
+            items.clear();
         }
     }
 }

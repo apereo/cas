@@ -19,9 +19,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.trusted.jpa.password=Oradoc_db1",
     "cas.authn.mfa.trusted.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
     "cas.authn.mfa.trusted.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
-    "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
+    "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class OracleJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {
+class OracleJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {
 }

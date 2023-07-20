@@ -5,8 +5,8 @@ import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.DigestUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
 
             val claims = buildJwtClaims(request);
             val logoutToken = configurationContext.getIdTokenSigningAndEncryptionService()
-                .encode((OidcRegisteredService) request.getRegisteredService(), claims);
+                .encode((OAuthRegisteredService) request.getRegisteredService(), claims);
             return builder.payload(logoutToken).build();
         }
         return builder.payload(StringUtils.EMPTY).build();
@@ -59,7 +59,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         val claims = new JwtClaims();
         claims.setIssuer(configurationContext.getIssuerService().determineIssuer(Optional.empty()));
         claims.setSubject(request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-        claims.setAudience(((OidcRegisteredService) request.getRegisteredService()).getClientId());
+        claims.setAudience(((OAuthRegisteredService) request.getRegisteredService()).getClientId());
         claims.setIssuedAtToNow();
         claims.setJwtId(UUID.randomUUID().toString());
         val events = new HashMap<String, Object>();

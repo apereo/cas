@@ -56,6 +56,16 @@ public class ScriptingUtils {
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
 
     /**
+     * Is groovy script?.
+     *
+     * @param script the script
+     * @return true/false
+     */
+    public static boolean isGroovyScript(final String script) {
+        return isInlineGroovyScript(script) || isExternalGroovyScript(script);
+    }
+
+    /**
      * Is inline groovy script ?.
      *
      * @param script the script
@@ -259,8 +269,8 @@ public class ScriptingUtils {
             if (!clazz.equals(Void.class)) {
                 return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }
-        } catch (final Exception e) {
-            var cause = e instanceof InvokerInvocationException ? e.getCause() : e;
+        } catch (final Throwable e) {
+            val cause = e instanceof InvokerInvocationException ? e.getCause() : e;
             if (failOnError) {
                 throw cause;
             }
@@ -389,43 +399,22 @@ public class ScriptingUtils {
                 LOGGER.debug("No groovy script is defined");
                 return null;
             }
-
             val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
-                new CompilerConfiguration(), true);
-            val clazz = classLoader.parseClass(script);
-
-            LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
-            val ctor = clazz.getDeclaredConstructor(constructorArgs);
-            val result = ctor.newInstance(args);
-
-            if (!expectedType.isAssignableFrom(result.getClass())) {
-                throw new ClassCastException("Result [" + result
-                                             + " is of type " + result.getClass()
-                                             + " when we were expecting " + expectedType);
+            try (val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+                new CompilerConfiguration(), true)) {
+                val clazz = classLoader.parseClass(script);
+                LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
+                val ctor = clazz.getDeclaredConstructor(constructorArgs);
+                val result = ctor.newInstance(args);
+                if (!expectedType.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result
+                                                 + " is of type " + result.getClass()
+                                                 + " when we were expecting " + expectedType);
+                }
+                return (T) result;
             }
-            return (T) result;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-        }
-        return null;
-    }
-
-    /**
-     * Gets script engine name.
-     *
-     * @param scriptFile the script file
-     * @return the script engine name
-     */
-    public static String getScriptEngineName(final String scriptFile) {
-        if (scriptFile.endsWith(".py")) {
-            return "python";
-        }
-        if (scriptFile.endsWith(".js")) {
-            return "js";
-        }
-        if (scriptFile.endsWith(".groovy")) {
-            return "groovy";
         }
         return null;
     }

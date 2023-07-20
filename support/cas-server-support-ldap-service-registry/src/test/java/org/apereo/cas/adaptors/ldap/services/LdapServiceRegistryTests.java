@@ -23,5 +23,5 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapServices")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
+class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 }

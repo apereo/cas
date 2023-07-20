@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.require-all-repository-sources=true"
 })
 @Tag("Attributes")
-public class PrincipalAttributeRepositoryFetcherTests {
+class PrincipalAttributeRepositoryFetcherTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser-whatever")

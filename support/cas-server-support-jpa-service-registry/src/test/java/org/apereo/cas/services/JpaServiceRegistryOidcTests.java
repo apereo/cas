@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Import(JpaServiceRegistryOidcTests.OidcJpaServiceRegistryTestConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
+class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
 
     @Test
-    public void verifyConsentPolicyWithScopesSavedAfterLoad() {
+    void verifyConsentPolicyWithScopesSavedAfterLoad() {
         var svc = new OidcRegisteredService();
         svc.setName("Scopes");
         svc.setServiceId("testId");

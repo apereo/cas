@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.open-athens.name-id-attribute=cn",
     "cas.saml-sp.open-athens.name-id-format=transient"
 })
-public class CasSamlSPOpenAthensConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPOpenAthensConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

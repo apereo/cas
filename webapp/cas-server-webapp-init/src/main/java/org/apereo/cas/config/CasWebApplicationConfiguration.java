@@ -10,7 +10,9 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -29,8 +31,8 @@ public class CasWebApplicationConfiguration {
 
     @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")
     @Bean
-    public CasWebApplicationReadyListener casWebApplicationReadyListener() {
-        return new CasWebApplicationReady();
+    @Lazy(false)
+    public CasWebApplicationReadyListener casWebApplicationReadyListener(final ConfigurableApplicationContext applicationContext) {
+        return new CasWebApplicationReady(applicationContext);
     }
-
 }

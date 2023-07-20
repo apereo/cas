@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("FileSystem")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class JsonResourceQRAuthenticationDeviceRepositoryTests {
+class JsonResourceQRAuthenticationDeviceRepositoryTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val resource = new FileSystemResource(Files.createTempFile("devices", ".json"));
         val repo = new JsonResourceQRAuthenticationDeviceRepository(resource);
 

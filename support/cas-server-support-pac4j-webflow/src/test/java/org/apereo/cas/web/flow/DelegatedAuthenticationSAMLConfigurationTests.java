@@ -5,6 +5,7 @@ import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -35,17 +36,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
+    DelegatedAuthenticationClientsTestConfiguration.class,
     DelegatedAuthenticationSAMLConfiguration.class,
     CasCoreHttpConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationSAMLConfigurationTests {
+class DelegatedAuthenticationSAMLConfigurationTests {
     @Autowired
     @Qualifier(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(hazelcastSAMLMessageStoreFactory);
     }
 

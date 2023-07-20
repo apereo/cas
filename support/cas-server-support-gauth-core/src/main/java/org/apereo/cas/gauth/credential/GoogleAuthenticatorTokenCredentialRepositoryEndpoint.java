@@ -131,14 +131,14 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request"))
-    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
         val serializer = new GoogleAuthenticatorAccountSerializer();
         val account = serializer.from(requestBody);
         LOGGER.trace("Storing account: [{}]", account);
         repository.getObject().save(account);
-        return HttpStatus.CREATED;
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 }

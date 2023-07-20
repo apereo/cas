@@ -16,10 +16,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class TicketRegistryCleanerTests {
+class TicketRegistryCleanerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cleaner = mock(TicketRegistryCleaner.class);
         when(cleaner.clean()).thenCallRealMethod();
         when(cleaner.cleanTicket(any())).thenCallRealMethod();

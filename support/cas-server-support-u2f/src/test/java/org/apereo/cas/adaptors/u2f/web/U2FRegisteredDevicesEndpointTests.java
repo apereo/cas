@@ -2,11 +2,11 @@ package org.apereo.cas.adaptors.u2f.web;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.config.U2FAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.U2FAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FWebflowConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     U2FAuthenticationMultifactorProviderBypassConfiguration.class,
     U2FWebflowConfiguration.class
 })
-public class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests {
+class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("u2fRegisteredDevicesEndpoint")
@@ -56,7 +56,7 @@ public class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);

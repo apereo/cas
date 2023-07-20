@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry.queue;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.registry.queue.commands.DeleteTicketsMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
-public class DeleteTicketsMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
+class DeleteTicketsMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
-    public void verifyDeleteTickets() throws Exception {
+    void verifyDeleteTickets() throws Exception {
         val ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
         val cmd = new DeleteTicketsMessageQueueCommand(new PublisherIdentifier(UUID.randomUUID().toString()))

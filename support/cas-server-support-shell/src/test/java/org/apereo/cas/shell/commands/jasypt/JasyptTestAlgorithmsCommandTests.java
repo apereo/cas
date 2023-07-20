@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class JasyptTestAlgorithmsCommandTests extends BaseCasShellCommandTests {
+class JasyptTestAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-test-algorithms"));
     }
 }

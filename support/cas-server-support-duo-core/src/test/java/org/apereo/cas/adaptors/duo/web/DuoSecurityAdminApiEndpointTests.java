@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityAdminApiEndpointTests {
+class DuoSecurityAdminApiEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -76,7 +76,7 @@ public class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
         try (val webServer = new MockWebServer(8443,
             new ByteArrayResource("{\"stat\": \"OK\" }".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -104,7 +104,7 @@ public class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
-    public void verifyCreateBypassCodes() throws Exception {
+    void verifyCreateBypassCodes() throws Exception {
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
         val data = Map.of("stat", "OK", "response", CollectionUtils.wrapList("123456"));
         val entity = MAPPER.writeValueAsString(data);

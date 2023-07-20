@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 @Tag("SHELL")
 @Order(Order.DEFAULT + 1)
-public class ExitCommandTests extends BaseCasShellCommandTests {
+class ExitCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         runShellCommand(() -> () -> "quit");
         fail("Shell should have quit but did not");
     }

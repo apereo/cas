@@ -1,14 +1,15 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreAuditConfiguration.class,
@@ -45,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.password-policy-pattern=^Th!.+{8,10}"
 })
 @Tag("PasswordOps")
-public class DefaultPasswordValidationServiceTests {
+class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")
     private PasswordValidationService passwordValidationService;
@@ -55,7 +57,7 @@ public class DefaultPasswordValidationServiceTests {
     private PasswordHistoryService passwordHistoryService;
 
     @Test
-    public void verifyReuseOldPassword() {
+    void verifyReuseOldPassword() {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordValidationService.isValid(request));
         request.setPassword("This!$P@$$".toCharArray());
@@ -64,7 +66,7 @@ public class DefaultPasswordValidationServiceTests {
     }
 
     @Test
-    public void verifyValidity() {
+    void verifyValidity() {
         assertFalse(passwordValidationService.isValid(
             new PasswordChangeRequest("casuser", "current-psw".toCharArray(), null, null)));
         assertFalse(passwordValidationService.isValid(

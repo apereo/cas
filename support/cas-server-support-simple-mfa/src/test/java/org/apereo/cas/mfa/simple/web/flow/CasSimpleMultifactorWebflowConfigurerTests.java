@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaConfig")
-public class CasSimpleMultifactorWebflowConfigurerTests {
+class CasSimpleMultifactorWebflowConfigurerTests {
 
     @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class,
         properties = {
@@ -42,14 +42,14 @@ public class CasSimpleMultifactorWebflowConfigurerTests {
     @Getter
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseMultifactorWebflowConfigurerTests {
+    class DefaultTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
         private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
         @Override
         protected String getMultifactorEventId() {
-            return CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_FLOW_ID;
+            return casProperties.getAuthn().getMfa().getSimple().getId();
         }
     }
 
@@ -63,20 +63,20 @@ public class CasSimpleMultifactorWebflowConfigurerTests {
     @Getter
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SurrogateTests extends BaseMultifactorWebflowConfigurerTests {
+    class SurrogateTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
         private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
 
         @Override
         protected String getMultifactorEventId() {
-            return CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_FLOW_ID;
+            return casProperties.getAuthn().getMfa().getSimple().getId();
         }
 
         @Test
-        public void verifySurrogateOperation() {
+        void verifySurrogateOperation() {
             val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
-            var state = (TransitionableState) flow.getState(CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_FLOW_ID);
+            var state = (TransitionableState) flow.getState(getMultifactorEventId());
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
         }
     }

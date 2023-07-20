@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("SAMLLogout")
-public class SamlCompliantLogoutMessageCreatorTests {
+class SamlCompliantLogoutMessageCreatorTests {
     private static final String TEST_URL = "https://google.com";
 
     private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();
 
     @Test
-    public void verifyMessageBuilding() throws Exception {
+    void verifyMessageBuilding() throws Exception {
 
         val service = RegisteredServiceTestUtils.getService(TEST_URL);
         val logoutUrl = new URL(service.getOriginalUrl());

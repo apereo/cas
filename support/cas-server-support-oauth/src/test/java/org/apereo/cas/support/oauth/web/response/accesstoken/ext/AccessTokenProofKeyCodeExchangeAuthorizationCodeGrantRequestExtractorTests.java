@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,21 +26,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests extends AbstractOAuth20Tests {
+class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ConfigurationContext")
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyExtraction() throws Exception {
+    void verifyExtraction() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "code-verifier");
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         request.addParameter(OAuth20Constants.CODE_CHALLENGE, "challenge");
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        servicesManager.save(service);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);

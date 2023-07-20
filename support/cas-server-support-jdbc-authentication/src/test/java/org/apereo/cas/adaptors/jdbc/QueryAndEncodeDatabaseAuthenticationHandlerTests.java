@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
 @Tag("JDBCAuthentication")
 @Import(QueryAndEncodeDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
 
     private static final String SQL = "SELECT * FROM users where %s";
@@ -120,7 +120,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationFailsToFindUser() {
+    void verifyAuthenticationFailsToFindUser() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -130,7 +130,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationInvalidSql() {
+    void verifyAuthenticationInvalidSql() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql("makesNoSenseInSql")).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -140,7 +140,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationMultipleAccounts() {
+    void verifyAuthenticationMultipleAccounts() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -152,7 +152,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationSuccessful() throws Exception {
+    void verifyAuthenticationSuccessful() throws Exception {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops")
@@ -169,7 +169,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationWithExpiredField() {
+    void verifyAuthenticationWithExpiredField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql())
             .setPasswordFieldName(PASSWORD_FIELD_NAME)
@@ -183,7 +183,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationWithDisabledField() {
+    void verifyAuthenticationWithDisabledField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setDisabledFieldName(DISABLED_FIELD_NAME)
@@ -197,7 +197,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @Test
-    public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
+    void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME)

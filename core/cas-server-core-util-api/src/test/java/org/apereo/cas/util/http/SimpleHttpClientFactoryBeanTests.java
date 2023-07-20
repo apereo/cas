@@ -16,10 +16,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class SimpleHttpClientFactoryBeanTests {
+class SimpleHttpClientFactoryBeanTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val input = new SimpleHttpClientFactoryBean();
         assertNotNull(input.getObject());
         assertNotNull(input.getObjectType());

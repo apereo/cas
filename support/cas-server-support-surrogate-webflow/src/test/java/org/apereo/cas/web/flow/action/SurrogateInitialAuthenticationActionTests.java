@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateInitialAuthenticationActionTests {
+class SurrogateInitialAuthenticationActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
     private Action initialAuthenticationAction;
 
     @Test
-    public void verifyNoCredentialsFound() throws Exception {
+    void verifyNoCredentialsFound() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
             new MockHttpServletResponse()));
@@ -45,7 +45,7 @@ public class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    public void verifySurrogateCredentialsFound() throws Exception {
+    void verifySurrogateCredentialsFound() throws Exception {
         val context = new MockRequestContext();
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
@@ -57,7 +57,7 @@ public class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    public void verifySelectingSurrogateList() throws Exception {
+    void verifySelectingSurrogateList() throws Exception {
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("+casuser");
@@ -72,7 +72,7 @@ public class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    public void verifyUsernamePasswordCredentialsFound() throws Exception {
+    void verifyUsernamePasswordCredentialsFound() throws Exception {
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("cassurrogate+casuser");
@@ -88,7 +88,7 @@ public class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    public void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() throws Exception {
+    void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() throws Exception {
         val context = new MockRequestContext();
         var credential = new UsernamePasswordCredential();
         credential.setUsername("cassurrogate+casuser");

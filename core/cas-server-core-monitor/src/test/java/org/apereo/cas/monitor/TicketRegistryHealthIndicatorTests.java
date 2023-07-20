@@ -19,10 +19,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class TicketRegistryHealthIndicatorTests {
+class TicketRegistryHealthIndicatorTests {
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
         when(ticketRegistry.serviceTicketCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
@@ -32,7 +32,7 @@ public class TicketRegistryHealthIndicatorTests {
     }
 
     @Test
-    public void verifyServiceTicketCount() {
+    void verifyServiceTicketCount() {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(1L);
         when(ticketRegistry.serviceTicketCount()).thenReturn(10L);

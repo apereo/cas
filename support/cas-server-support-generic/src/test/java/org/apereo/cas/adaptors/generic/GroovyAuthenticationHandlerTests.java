@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
-public class GroovyAuthenticationHandlerTests {
+@Tag("GroovyAuthentication")
+class GroovyAuthenticationHandlerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val resource = new ClassPathResource("GroovyAuthnHandler.groovy");
         val handler = new GroovyAuthenticationHandler("Test", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), resource, 0);

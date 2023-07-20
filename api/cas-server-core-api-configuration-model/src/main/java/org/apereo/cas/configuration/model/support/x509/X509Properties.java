@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.x509;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -207,6 +208,7 @@ public class X509Properties implements Serializable {
     /**
      * The compiled pattern supplied by the deployer.
      */
+    @RegularExpressionCapable
     private String regExTrustedIssuerDnPattern;
 
     /**
@@ -235,6 +237,7 @@ public class X509Properties implements Serializable {
     /**
      * The pattern that authorizes an acceptable certificate by its subject dn.
      */
+    @RegularExpressionCapable
     private String regExSubjectDnPattern = ".+";
 
     /**

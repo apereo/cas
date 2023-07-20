@@ -18,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationMetadata")
-public class AuthenticationCredentialTypeMetaDataPopulatorTests {
+class AuthenticationCredentialTypeMetaDataPopulatorTests {
     private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),
@@ -34,11 +34,11 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyPopulatorMultipleTimes() {
+    void verifyPopulatorMultipleTimes() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         IntStream.rangeClosed(1, 2)
-            .forEach(i -> populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials)));
+            .forEach(i -> populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials)));
         val auth = builder.build();
         val result = auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE);
         assertNotNull(result);

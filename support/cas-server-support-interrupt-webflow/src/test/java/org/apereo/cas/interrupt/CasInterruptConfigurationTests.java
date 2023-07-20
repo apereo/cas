@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasInterruptConfigurationTests {
+class CasInterruptConfigurationTests {
     @Autowired
     @Qualifier("interruptInquirer")
     private InterruptInquiryExecutionPlan interruptInquirer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(2, interruptInquirer.getInterruptInquirers().size());
     }
 

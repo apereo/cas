@@ -11,8 +11,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bouncycastle.asn1.ASN1IA5String;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
@@ -28,6 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -84,14 +85,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static URI[] getDistributionPoints(final X509Certificate cert) {
         try {
             val points = new ExtensionReader(cert).readCRLDistributionPoints();
-            val urls = new ArrayList<URI>(points == null ? 0 : points.size());
+            val urls = new ArrayList<URI>(Optional.ofNullable(points).map(List::size).orElse(0));
             if (points != null) {
                 points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
                     val nameSequence = ASN1Sequence.getInstance(pointName.getName());
                     IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
                         LOGGER.debug("Found CRL distribution point [{}].", name);
                         try {
-                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                            addURL(urls, ASN1IA5String.getInstance(name.getName()).getString());
                         } catch (final Exception e) {
                             LOGGER.warn("[{}] not supported: [{}].", pointName, e.getMessage());
                         }

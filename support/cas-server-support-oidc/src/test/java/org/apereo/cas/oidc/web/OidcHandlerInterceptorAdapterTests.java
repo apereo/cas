@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -26,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcHandlerInterceptorAdapterTests {
+class OidcHandlerInterceptorAdapterTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
-    public class PushedAuthorizationTests extends AbstractOidcTests {
+    class PushedAuthorizationTests extends AbstractOidcTests {
         @Test
-        public void verifyAuthzUrl() throws Exception {
+        void verifyAuthzUrl() throws Exception {
             val svc = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://oauth.example.org");
             servicesManager.save(svc);
 
@@ -42,6 +43,7 @@ public class OidcHandlerInterceptorAdapterTests {
             request.addParameter(OAuth20Constants.CLIENT_ID, svc.getClientId());
             request.addParameter(OAuth20Constants.REDIRECT_URI, svc.getServiceId());
             request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setMethod(HttpMethod.GET.name());
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
@@ -52,41 +54,46 @@ public class OidcHandlerInterceptorAdapterTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyNothing() throws Exception {
+        void verifyNothing() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             val response = new MockHttpServletResponse();
             assertTrue(oauthInterceptor.preHandle(request, response, new Object()));
         }
 
         @Test
-        public void verifyNoOIDC() throws Exception {
+        void verifyNoOIDC() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OAuth20Constants.DEVICE_AUTHZ_URL);
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
         }
 
         @Test
-        public void verifyConfigUrl() throws Exception {
+        void verifyConfigUrl() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.CLIENT_CONFIGURATION_URL);
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
         }
 
         @Test
-        public void verifyRegUrl() throws Exception {
+        void verifyRegUrl() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
         }
 
         @Test
-        public void verifyPushAuthzUrl() throws Exception {
+        void verifyPushAuthzUrl() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
             val response = new MockHttpServletResponse();
             assertFalse(oauthInterceptor.preHandle(request, response, new Object()));

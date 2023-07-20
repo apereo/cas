@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.awaitility.Awaitility.*;
-
 /**
  * This is {@link RestfulConsentRepositoryTests}.
  *
@@ -54,7 +52,7 @@ import static org.awaitility.Awaitility.*;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @EnableAutoConfiguration
-public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
+class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

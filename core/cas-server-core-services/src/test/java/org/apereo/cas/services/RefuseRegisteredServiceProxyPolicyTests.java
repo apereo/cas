@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("RegisteredService")
-public class RefuseRegisteredServiceProxyPolicyTests {
+class RefuseRegisteredServiceProxyPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "refuseRegisteredServiceProxyPolicy.json");
 
@@ -27,7 +27,7 @@ public class RefuseRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyJson() throws IOException {
+    void verifyJson() throws IOException {
         val policyWritten = new RefuseRegisteredServiceProxyPolicy();
         assertFalse(policyWritten.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
             new URL("https://github.com")));

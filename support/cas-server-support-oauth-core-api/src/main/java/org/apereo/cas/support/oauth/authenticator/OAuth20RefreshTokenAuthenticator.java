@@ -17,8 +17,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -47,7 +46,8 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     }
 
     @Override
-    protected boolean canAuthenticate(final WebContext context) {
+    protected boolean canAuthenticate(final CallContext callContext) {
+        val context = callContext.webContext();
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
 
@@ -57,9 +57,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getServicesManager(), clientId.get());
 
             LOGGER.trace("Checking if the client [{}] is eligible for refresh token authentication", clientId.get());
-            if (registeredService != null && !OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
-                return true;
-            }
+            return registeredService != null && !OAuth20Utils.doesServiceNeedAuthentication(registeredService);
         }
         return false;
     }
@@ -67,8 +65,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final WebContext context,
-                                       final SessionStore sessionStore) {
+                                       final CallContext callContext) {
         val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 

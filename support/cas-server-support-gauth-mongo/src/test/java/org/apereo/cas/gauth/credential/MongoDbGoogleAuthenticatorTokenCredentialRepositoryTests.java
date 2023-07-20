@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Tag("MongoDbMFA")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;

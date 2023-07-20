@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -31,6 +32,7 @@ public class RegexInterruptProperties implements Serializable {
      * complete the first condition for the interrupt notifications trigger.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeName;
 
     /**
@@ -38,5 +40,6 @@ public class RegexInterruptProperties implements Serializable {
      * complete the first condition for the interrupt notifications trigger.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeValue;
 }

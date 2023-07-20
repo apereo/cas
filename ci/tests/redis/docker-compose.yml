@@ -2,7 +2,10 @@ version: "3"
 
 services:
   redis-master:
-    image: bitnami/redis:${REDIS_VERSION}
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -15,7 +18,10 @@ services:
       - "6379:6379"
 
   replica_1:
-    image: bitnami/redis:${REDIS_VERSION}
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_replica_1
     command: redis-server --slaveof redis-master 6379
     environment:
@@ -31,7 +37,10 @@ services:
       - redis-master
 
   replica_2:
-    image: bitnami/redis:${REDIS_VERSION}
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_replica_2
     command: redis-server --slaveof redis-master 6379
     environment:

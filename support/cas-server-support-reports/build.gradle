@@ -1,9 +1,19 @@
 description = "Apereo CAS Web Application Reports"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Reporting",
+            title: "Reports & Actuators",
+            aliases: ["reports", "actuators"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-logout")
     
     implementation project(":support:cas-server-support-reports-core")
+    implementation project(":support:cas-server-support-validation-core")
     
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")

@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
+import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.shared.xml.impl.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -25,6 +26,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -52,6 +54,7 @@ public class CoreSamlConfiguration {
      */
     static {
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+        System.setProperty("com.sun.org.apache.xml.internal.security.ignoreLineBreaks", "true");
         Init.init();
     }
 
@@ -75,14 +78,17 @@ public class CoreSamlConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     public OpenSamlConfigBean openSamlConfigBean(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("shibboleth.VelocityEngine")
+        final VelocityEngine velocityEngine,
         @Qualifier("shibboleth.ParserPool")
-        final BasicParserPool parserPool) throws Exception {
-        return new DefaultOpenSamlConfigBean(parserPool);
+        final ParserPool parserPool) throws Exception {
+        return new DefaultOpenSamlConfigBean(parserPool, velocityEngine, applicationContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {"shibboleth.ParserPool", "basicParserPool"}, initMethod = "initialize")
-    public BasicParserPool parserPool(final CasConfigurationProperties casProperties) throws Exception {
+    public ParserPool parserPool(final CasConfigurationProperties casProperties) throws Exception {
         val pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);
         pool.setCoalescing(true);

@@ -4,8 +4,6 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.springframework.lang.NonNull;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,18 +28,18 @@ public class ReflectionUtils {
      * @param <T>         The type of the superclass/interface.
      * @return The - possibly empty - collection of subclasses.
      */
-    @NonNull
-    public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String packageName) {
+    public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
+            .enableInterClassDependencies()
+            .ignoreClassVisibility()
+            .removeTemporaryFilesAfterScan()
+            .enableAnnotationInfo()
             .scan()) {
-
-            if (superclass.isInterface()) {
-                return new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass));
-            }
-            return new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
-
+            return superclass.isInterface()
+                ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
+                : new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
         }
     }
 
@@ -53,7 +51,7 @@ public class ReflectionUtils {
      * @return The - possibly empty - collection of annotated classes.
      */
     public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,
-                                                                    final String packageName) {
+                                                                    final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableAnnotationInfo()
@@ -72,7 +70,7 @@ public class ReflectionUtils {
      * @param packageName The base package to look in.
      * @return The found class.
      */
-    public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String packageName) {
+    public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()

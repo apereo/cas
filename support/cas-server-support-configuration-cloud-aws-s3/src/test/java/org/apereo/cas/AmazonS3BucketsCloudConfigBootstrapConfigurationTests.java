@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
+class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     static final String BUCKET_NAME = "config-bucket";
 
     static final String ENDPOINT = "http://localhost:4566";
@@ -79,7 +79,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 

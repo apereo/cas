@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.simple.token.rest.headers.h1=h2"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
+class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -54,7 +54,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    public void verifyGenerateToken() throws Exception {
+    void verifyGenerateToken() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
@@ -74,7 +74,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyStoreToken() throws Exception {
+    void verifyStoreToken() throws Exception {
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
         try (val webServer = new MockWebServer(9229,
@@ -96,7 +96,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyValidateTokenFails() throws Exception {
+    void verifyValidateTokenFails() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
@@ -108,7 +108,7 @@ public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyValidateTokenOK() throws Exception {
+    void verifyValidateTokenOK() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())

@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
 @EnabledIfListeningOnPort(port = 11636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)
-public class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @SneakyThrows
     @Override

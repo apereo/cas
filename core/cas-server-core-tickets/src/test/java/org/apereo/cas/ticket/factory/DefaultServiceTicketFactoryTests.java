@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Tickets")
-public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    public void verifyBadType() {
+    void verifyBadType() {
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         assertThrows(ClassCastException.class,
             () -> factory.create(new MockTicketGrantingTicket("casuser"),
@@ -35,7 +35,7 @@ public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    public void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);
         svc.setServiceTicketExpirationPolicy(
             new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
@@ -50,7 +50,7 @@ public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    public void verifyDefaultExpirationPolicy() {
+    void verifyDefaultExpirationPolicy() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(svc);
 

@@ -487,10 +487,8 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Salesforce extends AbstractSamlSPProperties {
-
         @Serial
         private static final long serialVersionUID = 4685484530782109454L;
-
         public Salesforce() {
             addAttributes(CommonAttributeNames.MAIL.getAttributeName(), CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }

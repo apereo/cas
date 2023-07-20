@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.artifact;
 
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 
 /**
@@ -9,7 +8,7 @@ import org.apereo.cas.ticket.ServiceTicket;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public interface SamlArtifactTicket extends ServiceTicket, AuthenticationAwareTicket {
+public interface SamlArtifactTicket extends ServiceTicket {
 
     /**
      * The ticket prefix.

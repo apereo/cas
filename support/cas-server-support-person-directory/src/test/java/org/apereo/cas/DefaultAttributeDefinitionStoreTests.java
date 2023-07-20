@@ -50,14 +50,16 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
+        "cas.authn.attribute-repository.stub.attributes.memberships=m1,m2,m3,m4",
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
+        "cas.authn.attribute-repository.stub.attributes.allgroups=someValue",
         "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json",
         "cas.server.scope=cas.org"
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAttributeDefinitionStoreTests {
+class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
 
@@ -72,17 +74,24 @@ public class DefaultAttributeDefinitionStoreTests {
     private IPersonAttributeDao attributeRepository;
 
     @Test
-    public void verifyReturnAll() {
-        val person = attributeRepository.getPerson("casuser");
-        assertNotNull(person);
+    void verifyFlattenedDefn() {
+        val attributes = getAllReleasedAttributesForCasUser();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("allgroups"));
+        assertEquals(List.of("m1/m2/m3/m4"), attributes.get("allgroups"));
+    }
 
-        val policy = new ReturnAllAttributeReleasePolicy();
-        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
-            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
-            .build();
-        val attributes = policy.getAttributes(releasePolicyContext);
+    @Test
+    void verifyPatternedValues() {
+        val attributes = getAllReleasedAttributesForCasUser();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("affiliations"));
+        assertEquals(List.of("admins", "users"), attributes.get("affiliations"));
+    }
+
+    @Test
+    void verifyReturnAll() {
+        val attributes = getAllReleasedAttributesForCasUser();
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
@@ -90,8 +99,20 @@ public class DefaultAttributeDefinitionStoreTests {
         assertTrue(List.class.cast(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
     }
 
+    private Map<String, List<Object>> getAllReleasedAttributesForCasUser() {
+        val person = attributeRepository.getPerson("casuser");
+        assertNotNull(person);
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
+            .build();
+        return policy.getAttributes(releasePolicyContext);
+    }
+
     @Test
-    public void verifyMappedToMultipleNames() {
+    void verifyMappedToMultipleNames() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -112,7 +133,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyEncryptedAttributeDefinitions() {
+    void verifyEncryptedAttributeDefinitions() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         when(service.getPublicKey()).thenReturn(servicePublicKey);
@@ -140,7 +161,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyPredicateAttributeDefinitions() {
+    void verifyPredicateAttributeDefinitions() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -153,18 +174,8 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyMismatchedKeyReturnAll() {
-        val person = attributeRepository.getPerson("casuser");
-        assertNotNull(person);
-
-        val policy = new ReturnAllAttributeReleasePolicy();
-        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
-            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
-            .build();
-
-        val attributes = policy.getAttributes(releasePolicyContext);
+    void verifyMismatchedKeyReturnAll() {
+        val attributes = getAllReleasedAttributesForCasUser();
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("interesting-attribute"));
@@ -172,7 +183,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyAttrDefnNotFound() {
+    void verifyAttrDefnNotFound() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -196,7 +207,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyAttributeDefinitionsAsMap() {
+    void verifyAttributeDefinitionsAsMap() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -219,8 +230,9 @@ public class DefaultAttributeDefinitionStoreTests {
         }
     }
 
+
     @Test
-    public void verifyScopedAttrDefn() {
+    void verifyScopedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -244,7 +256,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyScriptedEmbeddedAttrDefn() {
+    void verifyScriptedEmbeddedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -270,7 +282,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyScriptedExternalAttrDefn() {
+    void verifyScriptedExternalAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("system.org");
@@ -296,7 +308,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyFormattedAttrDefn() {
+    void verifyFormattedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -321,7 +333,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -336,7 +348,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val defn = DefaultAttributeDefinition.builder()
             .key("eduPersonPrincipalName")
             .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
@@ -347,7 +359,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyStoreSerialization() throws Exception {
+    void verifyStoreSerialization() throws Exception {
         val defn = DefaultAttributeDefinition.builder()
             .key("eduPersonPrincipalName")
             .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
@@ -362,7 +374,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyExternalImport() throws Exception {
+    void verifyExternalImport() throws Exception {
         try (val store = new DefaultAttributeDefinitionStore(new ClassPathResource("AttributeDefns.json"))) {
             assertFalse(store.getAttributeDefinitions().isEmpty());
             assertNotNull(store.locateAttributeDefinition("eduPersonPrincipalName"));
@@ -370,7 +382,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyDefinitions() {
+    void verifyDefinitions() {
         val defn1 = DefaultAttributeDefinition.builder()
             .key("cn")
             .encrypted(true)
@@ -404,7 +416,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyDefinitionsReload() {
+    void verifyDefinitionsReload() {
         val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         assertDoesNotThrow(() -> {
             try (val store = new DefaultAttributeDefinitionStore(resource)) {
@@ -417,7 +429,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyBadDefinitionsResource() throws Exception {
+    void verifyBadDefinitionsResource() throws Exception {
         val file = File.createTempFile("badfile", ".json");
         FileUtils.write(file, "data", StandardCharsets.UTF_8);
         try (val store = new DefaultAttributeDefinitionStore(new FileSystemResource(file))) {
@@ -427,7 +439,7 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    public void verifyRemoveDefinition() {
+    void verifyRemoveDefinition() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()

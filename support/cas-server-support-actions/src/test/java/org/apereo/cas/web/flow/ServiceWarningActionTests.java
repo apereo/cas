@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("WebflowActions")
-public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
+@Tag("WebflowServiceActions")
+class ServiceWarningActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
     private Action action;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");

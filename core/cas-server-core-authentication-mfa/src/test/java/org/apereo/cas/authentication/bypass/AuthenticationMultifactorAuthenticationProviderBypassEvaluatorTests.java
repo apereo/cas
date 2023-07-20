@@ -27,10 +27,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-public class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
+class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

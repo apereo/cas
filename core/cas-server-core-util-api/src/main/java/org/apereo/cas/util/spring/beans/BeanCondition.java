@@ -116,7 +116,7 @@ public interface BeanCondition {
     Supplier<Boolean> given(PropertyResolver applicationContext);
 
     @Data
-    class Condition {
+    class PropertyCondition {
         private final String propertyName;
 
         private boolean matchIfMissing;
@@ -134,13 +134,13 @@ public interface BeanCondition {
     class PropertyBeanCondition implements BeanCondition {
         private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
 
-        private final Deque<Condition> conditionList = new ArrayDeque<>();
+        private final Deque<PropertyCondition> conditionList = new ArrayDeque<>();
 
         PropertyBeanCondition(final String name) {
-            conditionList.push(new Condition(name));
+            conditionList.push(new PropertyCondition(name));
         }
 
-        private static String resolvePropertyValue(final PropertyResolver propertyResolver, final Condition condition) {
+        private static String resolvePropertyValue(final PropertyResolver propertyResolver, final PropertyCondition condition) {
             try {
                 val result = propertyResolver.getProperty(condition.getPropertyName(), condition.getDefaultValue());
                 return SpringExpressionLanguageValueResolver.getInstance().resolve(result);
@@ -194,7 +194,7 @@ public interface BeanCondition {
         @Override
         @CanIgnoreReturnValue
         public BeanCondition and(final String name) {
-            conditionList.push(new Condition(name));
+            conditionList.push(new PropertyCondition(name));
             return this;
         }
 

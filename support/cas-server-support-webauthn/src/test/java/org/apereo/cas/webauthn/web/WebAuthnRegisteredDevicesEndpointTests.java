@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.webAuthnDevices.enabled=true"
     })
 @Tag("MFAProvider")
-public class WebAuthnRegisteredDevicesEndpointTests {
+class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("webAuthnRegisteredDevicesEndpoint")
     private WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint;
@@ -68,7 +68,7 @@ public class WebAuthnRegisteredDevicesEndpointTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id1 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id1));
 
@@ -92,7 +92,7 @@ public class WebAuthnRegisteredDevicesEndpointTests {
     }
 
     @Test
-    public void verifyImportExport() throws Exception {
+    void verifyImportExport() throws Exception {
         val id1 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id1));
         val export = webAuthnRegisteredDevicesEndpoint.export();
@@ -102,7 +102,7 @@ public class WebAuthnRegisteredDevicesEndpointTests {
         val toSave = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()));
         val content = WebAuthnUtils.getObjectMapper().writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, webAuthnRegisteredDevicesEndpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, webAuthnRegisteredDevicesEndpoint.importAccount(request).getStatusCode());
     }
 
     private CredentialRegistration register(final Authentication authn) throws Exception {

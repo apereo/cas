@@ -15,8 +15,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.ViewState;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,20 +35,20 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyUniversalPromptFlow() {
+    void verifyUniversalPromptFlow() {
         val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(loginFlow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN));
         assertEquals(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, loginFlow.getStartState().getId());
 
         val registry = getMultifactorFlowDefinitionRegistry();
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
-        val viewState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
-        assertTrue(viewState.getEntryActionList().get(0).toString()
+        val viewState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
+        assertTrue(viewState.getActionList().get(0).toString()
             .contains(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN));
     }
 

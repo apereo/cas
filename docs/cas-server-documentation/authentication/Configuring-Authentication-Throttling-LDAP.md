@@ -13,7 +13,7 @@ locate the throttled account in LDAP to update the appropriate attribute that re
 status. Presumably, the user account would then be blocked from future LDAP authentication attempts until
 the throttled authentication period expires or the lock from account status is removed. 
 
-<div class="alert alert-info"><strong>Usage</strong><p>
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 To locate the user account, the throttled submission must be able to locate the username
 from the authentication request first before an LDAP search can find the user entry. This indicates
 that CAS throttling must be taught to locate the username from the request using CAS settings, and

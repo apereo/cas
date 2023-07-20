@@ -7,12 +7,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
@@ -22,7 +23,6 @@ import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.MockRequestedAuthenticationContextValidator;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
@@ -43,6 +43,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -63,7 +64,7 @@ import static org.mockito.Mockito.*;
     CasValidationConfiguration.class
 })
 @Tag("CAS")
-public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
+class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
     private ServiceValidationViewFactory serviceValidationViewFactory;
@@ -72,6 +73,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
             .ticketRegistry(getTicketRegistry())
+            .principalResolver(getDefaultPrincipalResolver())
+            .principalFactory(getPrincipalFactory())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
@@ -82,12 +85,13 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             .validationAuthorizers(getServiceValidationAuthorizers())
             .validationViewFactory(serviceValidationViewFactory)
             .casProperties(casProperties)
+            .serviceFactory(getWebApplicationServiceFactory())
             .build();
         return new ServiceValidateController(context);
     }
 
     @Test
-    public void verifyValidationFailsInvalidTicket() throws Exception {
+    void verifyValidationFailsInvalidTicket() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         getServicesManager().save(registeredService);
@@ -103,7 +107,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyValidationTicketAuthzFails() throws Exception {
+    void verifyValidationTicketAuthzFails() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("not-authorized");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
@@ -123,7 +127,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyValidationFailsBadProxy() throws Exception {
+    void verifyValidationFailsBadProxy() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
@@ -145,7 +149,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyValidationFailsBadAccess() throws Exception {
+    void verifyValidationFailsBadAccess() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
@@ -168,7 +172,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyView() throws Exception {
+    void verifyView() throws Exception {
         val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(
             RegisteredServiceTestUtils.getService("https://www.casinthecloud.com"));
         val req = new MockHttpServletRequest(new MockServletContext());

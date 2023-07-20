@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
@@ -70,7 +70,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
         getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.stream().findFirst().orElse(null).getId());
+        val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
         val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);
@@ -82,7 +82,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     }
 
     @Test
-    public void verifyServiceInserted() {
+    void verifyServiceInserted() {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
         registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);

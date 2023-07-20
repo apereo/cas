@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.saml-metadata-ui.resources="
 })
 @Tag("SAMLMetadata")
-public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
+class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     private Action samlMetadataUIParserAction;
 
     @Test
-    public void verifyEntityIdUIInfoExistsDynamically() throws Exception {
+    void verifyEntityIdUIInfoExistsDynamically() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");

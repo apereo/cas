@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationPolicy")
-public class AuthenticationPolicyTests {
+class AuthenticationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(AuthenticationPolicy.class);
         when(policy.getOrder()).thenCallRealMethod();
         when(policy.shouldResumeOnFailure(any())).thenCallRealMethod();

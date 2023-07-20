@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,11 +15,11 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
-
 import java.net.URL;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,9 +30,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Web")
-public class CasThymeleafTemplatesDirectorTests {
+class CasThymeleafTemplatesDirectorTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -58,5 +57,7 @@ public class CasThymeleafTemplatesDirectorTests {
         when(provider.getCandidateUsername(any())).thenReturn(Optional.of("cas"));
         when(plan.getWebflowLoginContextProviders()).thenReturn(List.of(provider));
         assertFalse(director.getLoginFormUsername(mock(WebEngineContext.class)).isEmpty());
+
+        assertNotNull(director.format(LocalDateTime.now(Clock.systemUTC()), "yyyy/mm/dd"));
     }
 }

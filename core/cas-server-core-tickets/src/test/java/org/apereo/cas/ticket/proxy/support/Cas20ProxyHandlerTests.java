@@ -24,14 +24,14 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class Cas20ProxyHandlerTests {
+class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
 
     @Mock
     private TicketGrantingTicket proxyGrantingTicket;
 
-    public Cas20ProxyHandlerTests() {
+    Cas20ProxyHandlerTests() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -44,19 +44,19 @@ public class Cas20ProxyHandlerTests {
     }
 
     @Test
-    public void verifyValidProxyTicketWithoutQueryString() throws Exception {
+    void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/"),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void verifyValidProxyTicketWithQueryString() throws Exception {
+    void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/?test=test"),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void verifyNonValidProxyTicket() throws Exception {
+    void verifyNonValidProxyTicket() throws Exception {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
 

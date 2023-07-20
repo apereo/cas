@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
+import java.util.Locale;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
@@ -57,7 +58,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .parameters(parameters)
                 .build();

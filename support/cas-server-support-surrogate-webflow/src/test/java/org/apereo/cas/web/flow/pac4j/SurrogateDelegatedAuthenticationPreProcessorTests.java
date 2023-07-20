@@ -35,13 +35,13 @@ import static org.mockito.Mockito.*;
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateDelegatedAuthenticationPreProcessorTests {
+class SurrogateDelegatedAuthenticationPreProcessorTests {
     @Autowired
     @Qualifier("surrogateDelegatedAuthenticationPreProcessor")
     private DelegatedAuthenticationPreProcessor surrogateDelegatedAuthenticationPreProcessor;
 
     @Test
-    public void verifySurrogatePrincipalFound() {
+    void verifySurrogatePrincipalFound() {
         val credential = new BasicIdentifiableCredential("casuser");
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),
@@ -50,7 +50,7 @@ public class SurrogateDelegatedAuthenticationPreProcessorTests {
     }
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() {
         val credential = new BasicIdentifiableCredential("casuser");
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),
             mock(BaseClient.class), credential, RegisteredServiceTestUtils.getService());

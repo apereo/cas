@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultResponseTests {
+class DefaultResponseTests {
     @Test
-    public void verifyHeader() {
+    void verifyHeader() {
         val input = DefaultResponse.getHeaderResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.HEADER, input.responseType());
     }
 
     @Test
-    public void verifyRedirect() {
+    void verifyRedirect() {
         val input = DefaultResponse.getRedirectResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.REDIRECT, input.responseType());
     }
 
     @Test
-    public void verifyPost() {
+    void verifyPost() {
         val input = DefaultResponse.getPostResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.POST, input.responseType());
     }

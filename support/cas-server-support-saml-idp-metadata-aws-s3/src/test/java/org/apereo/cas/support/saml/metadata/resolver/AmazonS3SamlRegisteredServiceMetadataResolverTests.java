@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
-public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
+class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Autowired
     @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("SAML");
         service.setId(100);

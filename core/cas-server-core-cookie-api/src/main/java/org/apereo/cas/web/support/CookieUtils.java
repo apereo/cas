@@ -8,17 +8,14 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * This is {@link CookieUtils}.
@@ -32,12 +29,46 @@ public class CookieUtils {
     /**
      * Build cookie retrieving generator.
      *
+     * @param cookie             the cookie
+     * @param cookieValueManager the cookie value manager
+     * @return the cookie retrieving cookie generator
+     */
+    public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie,
+                                                                  final CookieValueManager cookieValueManager) {
+        val context = buildCookieGenerationContext(cookie);
+        return buildCookieRetrievingGenerator(cookieValueManager, context);
+    }
+
+    /**
+     * Build cookie retrieving generator cookie retrieving cookie generator.
+     *
+     * @param cookieValueManager the cookie value manager
+     * @param context            the context
+     * @return the cookie retrieving cookie generator
+     */
+    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieValueManager cookieValueManager,
+                                                                                  final CookieGenerationContext context) {
+        return new CookieRetrievingCookieGenerator(context, cookieValueManager);
+    }
+
+    /**
+     * Build cookie retrieving generator cookie.
+     *
+     * @param context the context
+     * @return the cookie retrieving cookie generator
+     */
+    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieGenerationContext context) {
+        return buildCookieRetrievingGenerator(CookieValueManager.noOp(), context);
+    }
+
+    /**
+     * Build cookie retrieving generator.
+     *
      * @param cookie the cookie
      * @return the cookie retrieving cookie generator
      */
     public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie) {
-        val context = buildCookieGenerationContext(cookie);
-        return new CookieRetrievingCookieGenerator(context);
+        return buildCookieRetrievingGenerator(cookie, CookieValueManager.noOp());
     }
 
     /**
@@ -59,21 +90,6 @@ public class CookieUtils {
             });
         }
         return null;
-    }
-
-    /**
-     * Gets cookie from request.
-     *
-     * @param cookieName the cookie name
-     * @param request    the request
-     * @return the cookie from request
-     */
-    public static Optional<Cookie> getCookieFromRequest(final String cookieName, final HttpServletRequest request) {
-        val cookies = request.getCookies();
-        if (cookies == null) {
-            return Optional.empty();
-        }
-        return Arrays.stream(cookies).filter(c -> c.getName().equalsIgnoreCase(cookieName)).findFirst();
     }
 
     /**

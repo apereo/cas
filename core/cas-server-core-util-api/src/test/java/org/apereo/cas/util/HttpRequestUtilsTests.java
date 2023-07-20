@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class HttpRequestUtilsTests {
+class HttpRequestUtilsTests {
 
     @Test
-    public void verifyNoRequest() {
+    void verifyNoRequest() {
         assertNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
     }
 
     @Test
-    public void verifyNoLoc() {
+    void verifyNoLoc() {
         val loc = HttpRequestUtils.getHttpServletRequestGeoLocation(new MockHttpServletRequest());
         assertNull(loc.getLongitude());
     }
 
     @Test
-    public void verifyHeader() {
+    void verifyHeader() {
         val request = new MockHttpServletRequest();
         request.addHeader("h1", "v1");
         request.addHeader("h2", "v2");
@@ -37,7 +37,7 @@ public class HttpRequestUtilsTests {
     }
 
     @Test
-    public void verifyPing() {
+    void verifyPing() {
         assertNotNull(HttpRequestUtils.pingUrl("https://github.com"));
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, HttpRequestUtils.pingUrl("bad-endpoint"));
     }

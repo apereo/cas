@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -73,11 +74,12 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        val clientInfo = ClientInfoHolder.getClientInfo();
         return list
             .stream()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
-            .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
+            .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)))
             .collect(Collectors.toList());
     }
 

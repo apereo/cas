@@ -25,15 +25,27 @@ public class LoggingUtils {
      * @return the log event
      */
     public LogEvent prepareLogEvent(final LogEvent logEvent) {
-        val messageModified = ApplicationContextProvider.getMessagSanitizer()
+        val newLogEventBuilder = getLogEventBuilder(logEvent);
+        return newLogEventBuilder.build();
+    }
+
+    /**
+     * Gets log event builder.
+     *
+     * @param logEvent the log event
+     * @return the log event builder
+     */
+    public Log4jLogEvent.Builder getLogEventBuilder(final LogEvent logEvent) {
+        val messageModified = ApplicationContextProvider.getMessageSanitizer()
             .map(sanitizer -> sanitizer.sanitize(logEvent.getMessage().getFormattedMessage()))
             .orElseGet(() -> logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
+        val contextData = new SortedArrayStringMap(logEvent.getContextData());
         val newLogEventBuilder = Log4jLogEvent.newBuilder()
             .setLevel(logEvent.getLevel())
             .setLoggerName(logEvent.getLoggerName())
             .setLoggerFqcn(logEvent.getLoggerFqcn())
-            .setContextData(new SortedArrayStringMap(logEvent.getContextData()))
+            .setContextData(contextData)
             .setContextStack(logEvent.getContextStack())
             .setEndOfBatch(logEvent.isEndOfBatch())
             .setIncludeLocation(logEvent.isIncludeLocation())
@@ -50,6 +62,6 @@ public class LoggingUtils {
         } catch (final Exception e) {
             newLogEventBuilder.setSource(null);
         }
-        return newLogEventBuilder.build();
+        return newLogEventBuilder;
     }
 }

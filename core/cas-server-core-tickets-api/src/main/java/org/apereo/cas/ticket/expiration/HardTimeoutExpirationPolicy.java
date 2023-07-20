@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
@@ -30,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
+@Slf4j
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Serial
@@ -56,8 +58,14 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
             return true;
         }
         val expiringTime = getMaximumExpirationTime(ticketState);
-        val expired = expiringTime.isBefore(ZonedDateTime.now(getClock()));
-        return expired || super.isExpired(ticketState);
+        val now = ZonedDateTime.now(getClock());
+        val expired = expiringTime.isBefore(now);
+        val result = expired || super.isExpired(ticketState);
+        if (result) {
+            LOGGER.trace("Ticket [{}] is expired because its expiration time [{}] is before [{}] or its parent ticket, if any, has expired",
+                ticketState.getId(), expiringTime, now);
+        }
+        return result;
     }
 
     @Override

@@ -37,13 +37,14 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("OAuthToken")
-public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
+        val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
         val logic = new DefaultSecurityLogic();
         logic.setLoadProfilesFromSession(false);
@@ -51,11 +52,12 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val mockClient = mock(DirectClient.class);
         when(mockClient.getName()).thenReturn("MockIndirectClient");
         when(mockClient.isInitialized()).thenReturn(true);
-        when(mockClient.getCredentials(any(), any(), any()))
-            .thenReturn(Optional.of(new UsernamePasswordCredentials("casuser", "Mellon")));
+        val testCredential = new UsernamePasswordCredentials("casuser", "Mellon");
+        when(mockClient.getCredentials(any())).thenReturn(Optional.of(testCredential));
+        when(mockClient.validateCredentials(any(), any())).thenReturn(Optional.of(testCredential));
         val profile = new CommonProfile();
         profile.setId(UUID.randomUUID().toString());
-        when(mockClient.getUserProfile(any(), any(), any())).thenReturn(Optional.of(profile));
+        when(mockClient.getUserProfile(any(), any())).thenReturn(Optional.of(profile));
 
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
@@ -65,9 +67,10 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         config.setSessionStoreFactory(JEESessionStoreFactory.INSTANCE);
         config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
         config.setWebContextFactory(JEEContextFactory.INSTANCE);
+        config.setProfileManagerFactory((webContext, sessionStore) -> profileManager);
         
         val result = (UserProfile) logic.perform(config,
-            (webContext, sessionStore, collection, objects) -> collection.iterator().next(),
+            (webContext, sessionStore, collection) -> collection.iterator().next(),
             "MockIndirectClient",
             DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
             new JEEFrameworkParameters(request, response));

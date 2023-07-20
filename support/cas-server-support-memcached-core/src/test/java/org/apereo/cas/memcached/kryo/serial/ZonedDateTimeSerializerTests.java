@@ -20,10 +20,10 @@ import java.time.ZonedDateTime;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class ZonedDateTimeSerializerTests {
+class ZonedDateTimeSerializerTests {
 
     @Test
-    public void verifyTranscoderWorks() {
+    void verifyTranscoderWorks() {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(2048);

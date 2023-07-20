@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.google-recaptcha.enabled=true"
 })
 @Tag("WebflowConfig")
-public class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
     private Action initCaptchaAction;
 
     @Test
-    public void verifyCaptcha() throws Exception {
+    void verifyCaptcha() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -60,7 +60,7 @@ public class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends 
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
         assertEquals(CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP,

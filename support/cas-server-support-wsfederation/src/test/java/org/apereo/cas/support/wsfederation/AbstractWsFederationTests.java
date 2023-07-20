@@ -1,12 +1,12 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.WsFedAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
-import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 

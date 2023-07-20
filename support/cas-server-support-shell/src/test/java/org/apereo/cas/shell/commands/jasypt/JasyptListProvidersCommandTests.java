@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class JasyptListProvidersCommandTests extends BaseCasShellCommandTests {
+class JasyptListProvidersCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-providers --includeBC"));
     }
 
     @Test
-    public void verifyNoBouncyCastleOperation() {
+    void verifyNoBouncyCastleOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-providers"));
     }
 }

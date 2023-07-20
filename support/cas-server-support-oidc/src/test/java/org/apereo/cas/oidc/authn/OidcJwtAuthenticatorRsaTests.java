@@ -21,6 +21,7 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jee.context.JEEContext;
@@ -52,14 +53,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.code.time-to-kill-in-seconds=60",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
 })
-public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
+class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcJwtClientProvider")
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -92,12 +93,12 @@ public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
 
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyBadUser() throws Exception {
+    void verifyBadUser() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -107,12 +108,12 @@ public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredential(request, "unknown", "unknown", registeredService.getClientId());
 
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyBadCred() {
+    void verifyBadCred() {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -120,7 +121,7 @@ public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, null);
-        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 

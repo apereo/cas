@@ -12,6 +12,7 @@ import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * This is {@link CoreValidationTestUtils}.
@@ -41,7 +42,8 @@ public class CoreValidationTestUtils {
 
         Arrays.stream(extraPrincipals).map(CoreAuthenticationTestUtils::getAuthentication).forEach(list::add);
         return new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
-            list, fromNewLogin, RegisteredServiceTestUtils.getService(), registeredService);
+            CoreAuthenticationTestUtils.getAuthentication(),
+            list, fromNewLogin, RegisteredServiceTestUtils.getService(), registeredService, Map.of());
     }
 
     public static Assertion getAssertion(final RegisteredService registeredService) {

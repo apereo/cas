@@ -8,13 +8,11 @@ category: Services
 
 # Service Access Strategy - Unauthorized URL
 
-
 The default strategy allows one to configure a service with the following properties:
 
-| Field                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `unauthorizedRedirectUrl` | Optional url to redirect the flow in case service access is not allowed.                                                                                                                                                                                                                                                                                                                                                                                                        |
-
+| Field                     | Description                                                                                                                                                                              |
+|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `unauthorizedRedirectUrl` | Optional url to redirect the flow in case service access is not allowed. Values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. |
 
 Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`.
 If so, the user will be redirected to `https://www.github.com` instead.
@@ -59,7 +57,7 @@ on outcome of the specified Groovy script.
 }
 ```
 
-The script itself will take the following form:
+The script itself may take the following form:
 
 ```groovy
 import org.apereo.cas.*
@@ -70,13 +68,16 @@ import org.apereo.cas.authentication.*
 
 URI run(final Object... args) {
     def registeredService = args[0]
-    def requestContext = args[1]
-    def applicationContext = args[2]
-    def logger = args[3]
+    def authentication = args[1]
+    def requestContext = args[2]
+    def applicationContext = args[3]
+    def logger = args[4]
     
-    logger.info("Redirecting to somewhere, processing [{}]", registeredService.name)
+    def username = authentication.principal.attributes["cn"][0] as String
+    logger.info("Building URL for service {} and username {}", registeredService.name, username)
+    
     /**
-     * Stuff Happens...
+     * Stuff happens...
      */
     return new URI("https://www.github.com");
 }
@@ -84,9 +85,10 @@ URI run(final Object... args) {
 
 The following parameters are provided to the script:
 
-| Field                | Description                                                                 |
-|----------------------|-----------------------------------------------------------------------------|
-| `registeredService`  | The object representing the matching registered service in the registry.    |
-| `requestContext`     | The object representing the Spring Webflow `RequestContext`.                |
-| `applicationContext` | The object representing the Spring `ApplicationContext`.                    |
-| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
+| Field                | Description                                                                                   |
+|----------------------|-----------------------------------------------------------------------------------------------|
+| `registeredService`  | The object representing the matching registered service in the registry.                      |
+| `authentication`     | The `Authentication` object representing the active authentication transaction and principal. |
+| `requestContext`     | The object representing the Spring Webflow `RequestContext`.                                  |
+| `applicationContext` | The object representing the Spring `ApplicationContext`.                                      |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.                   |

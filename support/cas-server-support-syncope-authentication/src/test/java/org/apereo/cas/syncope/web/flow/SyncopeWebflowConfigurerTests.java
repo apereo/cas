@@ -52,13 +52,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.syncope.provisioning.basic-auth-password=password"
 })
 @Tag("Syncope")
-public class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION)
     private Action syncopePrincipalProvisionerAction;
 
     @Test
-    public void verifyCreateUpdateOperation() throws Exception {
+    void verifyCreateUpdateOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

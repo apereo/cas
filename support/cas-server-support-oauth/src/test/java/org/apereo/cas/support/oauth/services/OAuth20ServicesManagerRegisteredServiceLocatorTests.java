@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth20Tests {
+class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
@@ -47,7 +47,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
     }
     
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
         val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());
@@ -56,10 +56,11 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
             String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service.getClientId()));
         val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
+        assertFalse(oauthServicesManagerRegisteredServiceLocator.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test
-    public void verifyWithCallback() throws Exception {
+    void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas"
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 

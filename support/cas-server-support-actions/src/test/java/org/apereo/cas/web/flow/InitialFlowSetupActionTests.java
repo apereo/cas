@@ -16,9 +16,9 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -50,11 +50,11 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("WebflowActions")
-public class InitialFlowSetupActionTests {
+class InitialFlowSetupActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractWebflowActionsTests {
+    class DefaultTests extends AbstractWebflowActionsTests {
 
         private static final String CONST_CONTEXT_PATH = "/test";
 
@@ -94,9 +94,9 @@ public class InitialFlowSetupActionTests {
                 .httpOnly(false)
                 .build();
 
-            this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);
+            this.warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(warn);
             this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-            this.tgtCookieGenerator = new CookieRetrievingCookieGenerator(tgt);
+            this.tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(tgt);
             this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
             val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
@@ -112,7 +112,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifySettingContextPath() {
+        void verifySettingContextPath() {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
@@ -125,7 +125,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyResettingContextPath() {
+        void verifyResettingContextPath() {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
@@ -153,13 +153,13 @@ public class InitialFlowSetupActionTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SsoDisabledTests extends AbstractWebflowActionsTests {
+    class SsoDisabledTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
         private Action action;
 
         @Test
-        public void verifyResponseStatusAsError() throws Exception {
+        void verifyResponseStatusAsError() throws Exception {
             val context = new MockRequestContext();
             var response = new MockHttpServletResponse();
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -169,7 +169,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyNoServiceFound() throws Exception {
+        void verifyNoServiceFound() throws Exception {
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -179,7 +179,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyServiceFound() throws Exception {
+        void verifyServiceFound() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
@@ -193,7 +193,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyServiceStrategy() throws Exception {
+        void verifyServiceStrategy() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
@@ -214,7 +214,7 @@ public class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyTgtNoSso() throws Exception {
+        void verifyTgtNoSso() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
 
@@ -229,7 +229,7 @@ public class InitialFlowSetupActionTests {
             val event = this.action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
             assertTrue(WebUtils.isExistingSingleSignOnSessionAvailable(context));
-            assertNull(getTicketRegistry().getTicket(tgt.getId()));
+            assertNotNull(getTicketRegistry().getTicket(tgt.getId()));
         }
 
 

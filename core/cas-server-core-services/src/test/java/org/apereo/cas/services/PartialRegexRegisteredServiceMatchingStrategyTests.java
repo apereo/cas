@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class PartialRegexRegisteredServiceMatchingStrategyTests {
+class PartialRegexRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "PartialRegexRegisteredServiceMatchingStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         service.setMatchingStrategy(strategy);
@@ -37,7 +37,7 @@ public class PartialRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyPattern1() {
+    void verifyPattern1() {
         val service = RegisteredServiceTestUtils.getRegisteredService("https://.*");
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -45,7 +45,7 @@ public class PartialRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyPattern2() {
+    void verifyPattern2() {
         val service = RegisteredServiceTestUtils.getRegisteredService("\\d\\d\\d");
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, "https://google123.com"));

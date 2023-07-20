@@ -21,5 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class PostgresJpaTicketRegistryCleanerTests extends BaseJpaTicketRegistryCleanerTests {
+class PostgresJpaTicketRegistryCleanerTests extends BaseJpaTicketRegistryCleanerTests {
 }

@@ -13,11 +13,11 @@
 <body>
     <span th:fragment="attributes">
         <script type="text/javascript">
-            (material => {
+            (() => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#attributesTable').DataTable();
                 });
-            })(mdc);
+            })();
         </script>
 
         <div class="profile-content w-100 mdc-data-table table-responsive noborder"

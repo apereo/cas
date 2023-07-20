@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.ticketExpirationPolicies.enabled=true")
 @Tag("ActuatorEndpoint")
-public class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
+class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("ticketExpirationPoliciesEndpoint")
     private TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         service.setTicketGrantingTicketExpirationPolicy(new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(10));
         service.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "PT10S"));

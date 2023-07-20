@@ -22,14 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class WatchableGroovyScriptResourceTests {
+class WatchableGroovyScriptResourceTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val file = File.createTempFile("file", ".groovy");
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
-        val resource = new WatchableGroovyScriptResource(new FileSystemResource(file));
-        assertDoesNotThrow(() -> resource.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
+        try (val resource = new WatchableGroovyScriptResource(new FileSystemResource(file))) {
+            assertDoesNotThrow(() -> resource.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
+        }
         Files.setLastModifiedTime(file.toPath(), FileTime.from(Instant.now()));
         Thread.sleep(5_000);
     }

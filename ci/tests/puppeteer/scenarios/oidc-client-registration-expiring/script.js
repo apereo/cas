@@ -63,10 +63,10 @@ async function executeRequest(clientId, clientSecret, expectFailure) {
     }, async res => {
         console.log(res.data);
     }, error => {
-        if (!expectFailure) {
-            throw `Operation failed: ${error}`;
-        } else {
+        if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);
+        } else {
+            throw `Operation failed: ${error}`;
         }
     });
 }

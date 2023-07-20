@@ -47,7 +47,7 @@ import static org.springframework.http.HttpStatus.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.rest.url=http://localhost:6591"
     })
-public class RestfulYubiKeyAccountRegistryTests {
+class RestfulYubiKeyAccountRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -60,7 +60,7 @@ public class RestfulYubiKeyAccountRegistryTests {
     private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Test
-    public void verifyRegistration() {
+    void verifyRegistration() {
         try (val webServer = new MockWebServer(6591,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();
@@ -75,7 +75,7 @@ public class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyAccount() throws Exception {
+    void verifyAccount() throws Exception {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(AbstractYubiKeyAccountRegistryTests.OTP);
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
@@ -100,7 +100,7 @@ public class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyAccounts() throws Exception {
+    void verifyAccounts() throws Exception {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(AbstractYubiKeyAccountRegistryTests.OTP);
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
@@ -121,7 +121,7 @@ public class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyFailsAccount() {
+    void verifyFailsAccount() {
         try (val webServer = new MockWebServer(6591,
             new ByteArrayResource("...".getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();

@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("multifactorProviderSelectedAction")
     private Action action;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("mfaProvider", TestMultifactorAuthenticationProvider.ID);

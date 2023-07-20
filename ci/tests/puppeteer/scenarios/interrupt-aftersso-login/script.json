@@ -1,5 +1,6 @@
 {
   "dependencies": "interrupt-webflow",
+
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",

@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -43,14 +43,14 @@ public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyEmpty() {
+    void verifyEmpty() {
         val results = authenticateUmaRequestWithProtectionScope();
         var response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(-1, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void verifyBadClientId() {
+    void verifyBadClientId() {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

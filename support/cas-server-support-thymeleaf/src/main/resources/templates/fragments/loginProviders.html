@@ -62,7 +62,7 @@
                                         th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)},redirectUrl=@{${entry.redirectUrl}}"
                                         th:title="${entry.name + ' ' + entry.type}"
                                         th:id="${entry.name}"
-                                        th:classappend="'mdc-button-' + ${entry.type}"
+                                        th:classappend="'mdc-button-' + ${entry.type} + ${entry.cssClass}"
                                         accesskey="s">
                                     <span class="mdc-button__label">[[${#strings.defaultString(entry.title,entry.name)}]]</span>
                                 </button>
@@ -125,7 +125,7 @@
                     <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"
                         th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
                     <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
-                        <div class="alert alert-info">
+                        <div class="alert alert-info">:information_source:
                             <span th:utext="#{screen.welcome.label.navto(${delegatedAuthenticationProviderPrimary.name})}" />
                         </div>
                     </div>

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.ReturnAttributes;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAttributes")
-public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
+class LdapUserAttributesToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -40,7 +41,7 @@ public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -55,7 +56,8 @@ public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
             val profile = new CommonProfile();
             profile.setId("casTest");
 
-            val result = generator.generate(mock(WebContext.class), JEESessionStore.INSTANCE, profile);
+            val callContext = new CallContext(mock(WebContext.class), JEESessionStore.INSTANCE);
+            val result = generator.generate(callContext, profile);
             assertFalse(result.isEmpty());
             assertTrue(profile.getAttributes().isEmpty());
             assertTrue(profile.getRoles().isEmpty());

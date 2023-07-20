@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -28,8 +29,9 @@ public record DefaultAuthenticationTransactionManager(ApplicationEventPublisher 
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         } else {
             val authentication = authenticationManager.authenticate(authenticationTransaction);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
-            publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
+            publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication, clientInfo));
             authenticationResult.collect(authentication);
         }
         return this;

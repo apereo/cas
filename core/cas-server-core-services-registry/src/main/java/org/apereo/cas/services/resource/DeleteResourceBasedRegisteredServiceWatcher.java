@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.File;
 import java.util.Arrays;
@@ -29,15 +30,16 @@ public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBas
         if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
             val service = serviceRegistryDao.getRegisteredServiceFromFile(file);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             if (service != null) {
-                serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+                serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
                 serviceRegistryDao.removeRegisteredService(service);
                 LOGGER.debug("Successfully deleted service definition [{}]", service.getName());
-                serviceRegistryDao.publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+                serviceRegistryDao.publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
             } else {
                 LOGGER.warn("Unable to locate a matching service definition from file [{}]. Reloading cache...", file);
                 val results = serviceRegistryDao.load();
-                serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results));
+                serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results, clientInfo));
             }
         }
     }

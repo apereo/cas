@@ -71,7 +71,7 @@ This pattern may be of interest in cases where the internal network architecture
 the CAS server from external users behind firewall, reverse proxy, or a messaging bus and
 allows only trusted applications to connect directly to the CAS server.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>The X.509 feature over REST
 using a body parameter or a http header provides a tremendously convenient target for claiming
 user identities or obtaining TGTs without proof of private key ownership.
 To securely use this feature, network configuration <strong>MUST</strong> allow connections

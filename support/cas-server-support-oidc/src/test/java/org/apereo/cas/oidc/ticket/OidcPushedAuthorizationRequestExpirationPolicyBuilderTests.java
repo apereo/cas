@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.par.max-time-to-live-in-seconds=PT45S")
-public class OidcPushedAuthorizationRequestExpirationPolicyBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestExpirationPolicyBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("pushedAuthorizationUriExpirationPolicy")
     private ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getPar().getMaxTimeToLiveInSeconds()).getSeconds();
         assertEquals(expiration, pushedAuthorizationUriExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
     }

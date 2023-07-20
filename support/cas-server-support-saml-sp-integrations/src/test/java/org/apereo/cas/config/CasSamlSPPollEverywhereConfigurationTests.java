@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.poll-everywhere.name-id-attribute=cn",
     "cas.saml-sp.poll-everywhere.name-id-format=transient"
 })
-public class CasSamlSPPollEverywhereConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPPollEverywhereConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

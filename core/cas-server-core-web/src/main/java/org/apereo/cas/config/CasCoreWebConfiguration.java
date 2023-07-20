@@ -1,9 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -12,9 +10,11 @@ import org.apereo.cas.web.CasYamlHttpMessageConverter;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
+import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -34,9 +34,11 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -86,7 +88,8 @@ public class CasCoreWebConfiguration {
         @Bean
         public HierarchicalMessageSource messageSource(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casCommonMessages") final Properties casCommonMessages) {
+            @Qualifier("casCommonMessages")
+            final Properties casCommonMessages) {
             val bean = new CasReloadableMessageBundle();
             val mb = casProperties.getMessageBundle();
             bean.setDefaultEncoding(mb.getEncoding());
@@ -106,8 +109,9 @@ public class CasCoreWebConfiguration {
         @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
-            val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
-            configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
+            val serviceFactoryList = configurers.stream()
+                .flatMap(c -> c.buildServiceFactories().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             return new DefaultArgumentExtractor(serviceFactoryList);
         }
@@ -129,6 +133,20 @@ public class CasCoreWebConfiguration {
         @ConditionalOnMissingBean(name = "yamlHttpMessageConverter")
         public HttpMessageConverter yamlHttpMessageConverter() {
             return new CasYamlHttpMessageConverter();
+        }
+    }
+
+    @Configuration(value = "CasCoreWebViewsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebViewsConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.VIEW_ID_DYNAMIC_HTML)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public View dynamicHtmlView() {
+            return (model, request, response) -> {
+                val html = (String) Objects.requireNonNull(model).get(DynamicHtmlView.class.getName());
+                new DynamicHtmlView(html).render(model, request, response);
+            };
         }
     }
 

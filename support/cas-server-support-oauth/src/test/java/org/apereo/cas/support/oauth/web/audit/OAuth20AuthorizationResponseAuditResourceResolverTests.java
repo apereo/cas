@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -20,10 +21,11 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationResponseAuditResourceResolverTests {
+class OAuth20AuthorizationResponseAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
-        val r = new OAuth20AuthorizationResponseAuditResourceResolver();
+    void verifyAction() {
+        val r = new OAuth20AuthorizationResponseAuditResourceResolver(
+            new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val modelAndView = new ModelAndView("dummyView",
             Map.of("k1", "v1", "longkey", RandomUtils.randomAlphabetic(60)));
         val result = r.resolveFrom(mock(JoinPoint.class), modelAndView);

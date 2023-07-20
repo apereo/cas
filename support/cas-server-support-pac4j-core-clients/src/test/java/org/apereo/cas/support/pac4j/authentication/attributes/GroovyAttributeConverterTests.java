@@ -26,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Groovy")
-public class GroovyAttributeConverterTests {
+class GroovyAttributeConverterTests {
     @Test
-    public void verifyUnknownType() {
+    void verifyUnknownType() {
         val c = new GroovyAttributeConverter();
         assertFalse(c.accept("unknown"));
         assertEquals("value", c.convert("value"));
     }
 
     @Test
-    public void verifyScript() {
+    void verifyScript() {
         val c = new GroovyAttributeConverter();
         assertTrue(c.accept("groovy { return attribute.toString() + '-test' }"));
         assertEquals("value-test", c.convert("value"));

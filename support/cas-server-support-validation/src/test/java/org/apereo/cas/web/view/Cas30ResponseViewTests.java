@@ -9,9 +9,10 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -22,7 +23,6 @@ import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.MockRequestedAuthenticationContextValidator;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 
@@ -75,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasValidationConfiguration.class
     })
 @Tag("CAS")
-public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
+class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
     @Qualifier("serviceValidationViewFactory")
@@ -124,7 +124,9 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .principalFactory(getPrincipalFactory())
             .ticketRegistry(getTicketRegistry())
+            .principalResolver(getDefaultPrincipalResolver())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
@@ -135,12 +137,13 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             .validationAuthorizers(getServiceValidationAuthorizers())
             .validationViewFactory(serviceValidationViewFactory)
             .casProperties(casProperties)
+            .serviceFactory(getWebApplicationServiceFactory())
             .build();
         return new ServiceValidateController(context);
     }
 
     @Test
-    public void verifyViewAuthnAttributes() throws Exception {
+    void verifyViewAuthnAttributes() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
@@ -148,7 +151,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
@@ -159,7 +162,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
         LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
@@ -170,7 +173,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @Test
-    public void verifyViewBinaryAttributes() throws Exception {
+    void verifyViewBinaryAttributes() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey("binaryAttribute"));
         val binaryAttr = attributes.get("binaryAttribute");

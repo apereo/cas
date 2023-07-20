@@ -2,13 +2,13 @@ package org.apereo.cas.support.events.audit;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,18 +18,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Events")
-public class CasAuditActionContextRecordedEventTests {
+class CasAuditActionContextRecordedEventTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(new Executable() {
             @Override
             @SuppressWarnings("JavaUtilDate")
-            public void execute() throws Throwable {
+            public void execute() {
                 val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-                    "CAS", new Date(), "1.2.3.4",
-                    "1.2.3.4", UUID.randomUUID().toString());
-                new CasAuditActionContextRecordedEvent(this, ctx);
+                    "CAS", LocalDateTime.now(Clock.systemUTC()),
+                    new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "Paris"));
+                new CasAuditActionContextRecordedEvent(this, ctx, null);
             }
         });
     }

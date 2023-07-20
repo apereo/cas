@@ -9,7 +9,7 @@ category: Protocols
 
 Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
 
-<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>OpenId Connect is a continuation of 
 the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If 
 you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and 
 behaviors that are documented for the <a href="OAuth-Authentication.html">OAuth protocol</a> 
@@ -50,7 +50,7 @@ The current implementation provides support for:
 | `/oidc/initToken`                        | Obtain an initial *master* access token required for dynamic client registration when operating in `PROTECTED` mode.                                                                                                                                                                                    |
 | `/oidc/clientConfig`                     | [Update or retrieve client](OIDC-Authentication-Dynamic-Registration.html) application definitions, registered with the server.                                                                                                                                                                         |
 
-<div class="alert alert-warning"><strong>Use Discovery</strong><p>The above endpoints
+<div class="alert alert-warning">:warning: <strong>Use Discovery</strong><p>The above endpoints
 are not strictly defined in the OpenID Connect specification. The CAS software may choose to change URL endpoints
 at any point in time. Do <strong>NOT</strong> hardcode these endpoints in your application configuration.
 Instead, use the Dynamic Discovery endpoint and parse the discovery document to discover the endpoints.</p></div>

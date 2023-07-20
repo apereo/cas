@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasBasicAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.web.config.CasBasicAuthenticationConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import org.junit.jupiter.api.Tag;
@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class BasicAuthenticationCasMultifactorWebflowCustomizerTests extends BaseWebflowConfigurerTests {
+class BasicAuthenticationCasMultifactorWebflowCustomizerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("basicAuthenticationCasMultifactorWebflowCustomizer")
     private CasMultifactorWebflowCustomizer customizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(customizer.getCandidateStatesForMultifactorAuthentication().isEmpty());
     }
 }

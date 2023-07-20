@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -16,13 +17,14 @@ import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.SamlIdPServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -50,19 +52,23 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDe
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -76,6 +82,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -311,7 +318,7 @@ public class SamlIdPEndpointsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner) {
@@ -339,7 +346,7 @@ public class SamlIdPEndpointsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
             return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
                 singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
@@ -413,7 +420,7 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
             return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver);
         }
@@ -464,15 +471,45 @@ public class SamlIdPEndpointsConfiguration {
             };
         }
 
+        @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieCipherExecutor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public CipherExecutor samlIdPDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
+            return FunctionUtils.doIf(type == SessionStorageTypes.TICKET_REGISTRY,
+                () -> {
+                    val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
+                    val crypto = cookie.getCrypto();
+                    var enabled = crypto.isEnabled();
+                    if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                        && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                        LOGGER.warn("Encryption/Signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
+                        enabled = true;
+                    }
+                    return enabled
+                        ? CipherExecutorUtils.newStringCipherExecutor(crypto, SamlIdPDistributedSessionCookieCipherExecutor.class)
+                        : CipherExecutor.noOp();
+                },
+                CipherExecutor::noOp).get();
+        }
+
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier("samlIdPDistributedSessionCookieCipherExecutor")
+            final CipherExecutor samlIdPDistributedSessionCookieCipherExecutor,
+            final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
-            return CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return CookieUtils.buildCookieRetrievingGenerator(cookie,
+                new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, geoLocationService,
+                    DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
-        @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+        @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore samlIdPDistributedSessionStore(
@@ -486,14 +523,12 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            if (type == SessionStorageTypes.TICKET_REGISTRY) {
-                return new DistributedJEESessionStore(ticketRegistry,
+            return switch (type) {
+                case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, samlIdPDistributedSessionCookieGenerator);
-            }
-            if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
-                return new BrowserWebStorageSessionStore(webflowCipherExecutor);
-            }
-            return JEESessionStore.INSTANCE;
+                case BROWSER_SESSION_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor);
+                default -> JEESessionStore.INSTANCE;
+            };
         }
     }
 
@@ -516,7 +551,7 @@ public class SamlIdPEndpointsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,

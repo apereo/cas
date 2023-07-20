@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -66,11 +68,15 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private final RestAuthenticationProperties properties;
 
+    private final HttpClient httpClient;
+
     public RestAuthenticationHandler(final ServicesManager servicesManager,
                                      final PrincipalFactory principalFactory,
-                                     final RestAuthenticationProperties properties) {
+                                     final RestAuthenticationProperties properties,
+                                     final HttpClient httpClient) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -80,11 +86,13 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         var response = (HttpResponse) null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpUtils.HttpExecutionRequest
+                .builder()
                 .basicAuthUsername(credential.getUsername())
                 .basicAuthPassword(credential.toPassword())
-                .method(HttpMethod.POST)
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(properties.getUri())
+                .httpClient(httpClient)
                 .build();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.resolve(Objects.requireNonNull(response).getCode());

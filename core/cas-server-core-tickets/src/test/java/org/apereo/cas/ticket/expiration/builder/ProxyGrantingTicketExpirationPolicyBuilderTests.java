@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class ProxyGrantingTicketExpirationPolicyBuilderTests {
+class ProxyGrantingTicketExpirationPolicyBuilderTests {
     @Test
-    public void verifyType() {
+    void verifyType() {
         val input = new ProxyGrantingTicketExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(new CasConfigurationProperties()),
             new CasConfigurationProperties());

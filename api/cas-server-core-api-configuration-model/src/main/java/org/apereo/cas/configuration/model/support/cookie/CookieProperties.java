@@ -96,7 +96,8 @@ public class CookieProperties implements Serializable {
      *     <li>{@code Lax}</li>
      *     <li>{@code Strict}</li>
      *     <li>{@code None}</li>
-     *     <li>{@code Off}: Disable the generation of the SamSite cookie attribute altogether.</li>
+     *     <li>{@code Off}: Disable the generation of the SameSite cookie attribute altogether.</li>
+     *     <li>Path to a Groovy script that is able to generate the SameSite cookie attribute dynamically.</li>
      *     <li>Fully qualified name of a class that implements {@code org.apereo.cas.web.cookie.CookieSameSitePolicy}</li>
      * </ul>
      */

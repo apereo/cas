@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=https:..sso.example.org.*")
-public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
+class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     protected static JEEContext getContextForEndpoint(final String endpoint) {
         val request = new MockHttpServletRequest();
         request.setScheme("https");
@@ -35,12 +35,12 @@ public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(oidcIssuerService.determineIssuer(Optional.empty()));
     }
 
     @Test
-    public void verifyEchoingOperation() throws Exception {
+    void verifyEchoingOperation() throws Exception {
         val svc = getOidcRegisteredService();
         val oidcService = OidcIssuerService.echoing("https://custom.issuer/");
         assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.empty()));
@@ -53,7 +53,7 @@ public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyServiceIssuer() {
+    void verifyServiceIssuer() {
         val svc = getOidcRegisteredService();
         var issuer = oidcIssuerService.determineIssuer(Optional.of(svc));
         assertEquals(issuer, casProperties.getAuthn().getOidc().getCore().getIssuer());
@@ -63,7 +63,7 @@ public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyIssuerPatterns() {
+    void verifyIssuerPatterns() {
         assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), "profile"));
     }
 }

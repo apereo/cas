@@ -15,12 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Cipher")
-public class JwtTicketCipherExecutorTests {
+class JwtTicketCipherExecutorTests {
 
     public static final String ST = "ST-1234567890";
 
     @Test
-    public void verifyCipheredToken() {
+    void verifyCipheredToken() {
         val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true, 0, 0);
         val token = c.encode(ST);
@@ -28,7 +28,7 @@ public class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipheredTokenWithoutEncryption() {
+    void verifyCipheredTokenWithoutEncryption() {
         val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false, 0, 0);
         val token = c.encode(ST);
@@ -36,7 +36,7 @@ public class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipheredTokenWithoutEncryptionAndSigning() {
+    void verifyCipheredTokenWithoutEncryptionAndSigning() {
         val c = new JwtTicketCipherExecutor();
         c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
         val token = c.encode(ST);
@@ -44,7 +44,7 @@ public class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipheredTokenWithSignAndEncrypt() {
+    void verifyCipheredTokenWithSignAndEncrypt() {
         val c = new JwtTicketCipherExecutor(null, null, true, 0, 0);
         c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.SIGN_AND_ENCRYPT);
         val token = c.encode(ST);

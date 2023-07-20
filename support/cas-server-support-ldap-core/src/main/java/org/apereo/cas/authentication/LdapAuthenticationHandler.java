@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -47,6 +48,7 @@ import java.util.Map;
 @Slf4j
 @Setter
 @Getter
+@Monitorable
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     /**

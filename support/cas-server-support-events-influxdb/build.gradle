@@ -1,4 +1,11 @@
 description = "Apereo CAS Event InfluxDb Repository"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events via InfluxDb"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")

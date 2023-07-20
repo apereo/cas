@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
+class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlMetadataResolverTemplate")
     private MongoOperations mongoDbSamlIdPMetadataTemplate;
@@ -54,7 +54,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyResolver() throws Exception {
+    void verifyResolver() throws Exception {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -73,7 +73,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyFailsResolver() throws Exception {
+    void verifyFailsResolver() throws Exception {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -88,7 +88,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyResolverDoesNotSupport() {
+    void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
 
     }

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboPushAuthenticateActionTests extends BaseActionTests {
+class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
     private InweboPushAuthenticateAction action;
 
@@ -41,7 +41,7 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAuthenticateOk() {
+    void verifyPushAuthenticateOk() {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
         val event = action.doExecute(requestContext);
@@ -50,7 +50,7 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAuthenticateFailed() {
+    void verifyPushAuthenticateFailed() {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
         val event = action.doExecute(requestContext);

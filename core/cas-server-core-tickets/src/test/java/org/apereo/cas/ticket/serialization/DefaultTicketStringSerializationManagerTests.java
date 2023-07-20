@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("Tickets")
-public class DefaultTicketStringSerializationManagerTests {
+class DefaultTicketStringSerializationManagerTests {
     @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;
@@ -60,7 +60,7 @@ public class DefaultTicketStringSerializationManagerTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,7 +73,7 @@ public class DefaultTicketStringSerializationManagerTests {
     }
 
     @Test
-    public void verifyBadClass() {
+    void verifyBadClass() {
         assertThrows(NullPointerException.class, () -> ticketSerializationManager.serializeTicket(mock(Ticket.class)));
         assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, StringUtils.EMPTY));
         assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, "something"));

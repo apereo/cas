@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class NullPrincipalTests {
+class NullPrincipalTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(NullPrincipal.getInstance().getId());
     }
 

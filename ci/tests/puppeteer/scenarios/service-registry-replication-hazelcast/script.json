@@ -1,6 +1,7 @@
 {
   "dependencies": "json-service-registry,service-registry-stream-hazelcast,reports",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 

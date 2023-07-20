@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends AbstractOidcTests {
+class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends AbstractOidcTests {
 
     @Test
-    public void verifyEmptyCacheOperation() {
+    void verifyEmptyCacheOperation() {
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);
@@ -53,7 +53,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
     }
 
     @Test
-    public void verifyCipherOperation() {
+    void verifyCipherOperation() {
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);

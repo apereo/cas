@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WSFederation")
-public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
+class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -36,7 +36,7 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
         request.setAttribute("locale", "en");
@@ -55,7 +55,7 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyNoContext() {
+    void verifyNoContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyNoCookieValue() {
+    void verifyNoCookieValue() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

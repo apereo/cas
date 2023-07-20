@@ -11,22 +11,23 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.TokenCoreComponentSerializationConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.TicketValidator;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -70,7 +72,7 @@ import static org.mockito.Mockito.*;
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
-    @Qualifier("tokenTicketBuilder")
+    @Qualifier(TokenTicketBuilder.BEAN_NAME)
     protected TokenTicketBuilder tokenTicketBuilder;
 
     @Autowired

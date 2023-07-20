@@ -8,7 +8,7 @@ import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaPropert
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
-
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -21,6 +21,7 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class WebUtilsTests {
+class WebUtilsTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -71,7 +72,14 @@ public class WebUtilsTests {
         assertFalse(WebUtils.isGraphicalUserAuthenticationEnabled(context));
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
 
+        WebUtils.putTargetTransition(context, "example-state");
+        assertNotNull(WebUtils.getTargetTransition(context));
+
+        WebUtils.putPasswordManagementQuery(context, null);
+        assertNull(WebUtils.getPasswordManagementQuery(context, Serializable.class));
+
         assertDoesNotThrow(() -> {
+            WebUtils.putWildcardedRegisteredService(context, true);
             WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
             WebUtils.putInitialHttpRequestPostParameters(context);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
@@ -101,7 +109,7 @@ public class WebUtilsTests {
         assertNull(WebUtils.getTicketGrantingTicket(context));
         assertThrows(IllegalArgumentException.class, () -> WebUtils.getPrincipalFromRequestContext(context, null));
 
-        request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
+        request.addParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, "true");
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         assertTrue(WebUtils.isAuthenticatingAtPublicWorkstation(context));
 

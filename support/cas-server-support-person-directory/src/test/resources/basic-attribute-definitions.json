@@ -13,5 +13,22 @@
     "name" : "interesting-attribute",
     "attribute" : "givenName",
     "scoped": true
+  },
+  "memberships" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "memberships",
+    "attribute" : "memberships",
+    "name": "affiliations",
+    "patterns" : {
+      "@class" : "java.util.TreeMap",
+      "m[0-2].*" : "admins",
+      "m[3-6].*" : "groovy { return 'users' }"
+    }
+  },
+  "allgroups" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "allgroups",
+    "attribute" : "memberships",
+    "flattened": "/"
   }
 }

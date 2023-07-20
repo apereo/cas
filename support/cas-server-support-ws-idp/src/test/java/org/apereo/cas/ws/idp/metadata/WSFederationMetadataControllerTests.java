@@ -21,13 +21,13 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationMetadataController")
     private WSFederationMetadataController wsFederationMetadataController;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         wsFederationMetadataController.doGet(request, response);
@@ -35,7 +35,7 @@ public class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = mock(MockHttpServletResponse.class);
         doThrow(new RuntimeException()).when(response).setContentType(anyString());

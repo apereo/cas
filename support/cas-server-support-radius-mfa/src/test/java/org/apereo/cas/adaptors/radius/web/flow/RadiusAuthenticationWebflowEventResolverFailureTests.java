@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.radius.client.inet-address=localhost,localguest"
     })
 @Tag("Radius")
-public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("radiusAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
@@ -62,8 +62,8 @@ public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCa
     public void initialize() {
         this.context = mock(RequestContext.class);
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-
         when(context.getFlowScope()).thenReturn(flowScope);
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
@@ -73,7 +73,6 @@ public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCa
             .thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         when(context.getFlowExecutionContext()).thenReturn(
             new MockFlowExecutionContext(new MockFlowSession(new Flow("mockFlow"))));
-
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
@@ -85,9 +84,8 @@ public class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCa
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         WebUtils.putCredential(context, new RadiusTokenCredential("token"));
-
         var event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertTrue(flowScope.contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));

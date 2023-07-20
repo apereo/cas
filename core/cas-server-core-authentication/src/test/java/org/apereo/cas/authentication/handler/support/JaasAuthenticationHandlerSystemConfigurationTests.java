@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class JaasAuthenticationHandlerSystemConfigurationTests {
+class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
 
@@ -53,7 +53,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    public void verifyWithAlternativeRealm() {
+    void verifyWithAlternativeRealm() {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
             () -> handler.authenticate(
@@ -61,20 +61,20 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
+    void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         handler.setRealm("TEST");
         assertNotNull(handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME), mock(Service.class)));
     }
 
     @Test
-    public void verifyWithValidCredentials() throws Exception {
+    void verifyWithValidCredentials() throws Exception {
         assertNotNull(handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
-    public void verifyWithInvalidCredentials() {
+    void verifyWithInvalidCredentials() {
         assertThrows(LoginException.class,
             () -> handler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));

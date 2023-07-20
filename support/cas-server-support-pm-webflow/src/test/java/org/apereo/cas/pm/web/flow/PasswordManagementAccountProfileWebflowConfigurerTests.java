@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -37,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.enabled=true",
     "CasFeatureModule.AccountManagement.enabled=true"
 })
-public class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
         assertTrue(Arrays.stream(flow.getStartActionList().toArray())

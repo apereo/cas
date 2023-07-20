@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
 import org.springframework.core.Ordered;
 
 /**
@@ -25,8 +26,12 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
         return new DefaultTicketDefinition(impl, api, prefix, Ordered.LOWEST_PRECEDENCE);
     }
 
-    protected void registerTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        plan.register(metadata);
+    protected void registerTicketDefinition(final TicketCatalog plan, final TicketDefinition ticketDefinition) {
+        val result = customizeTicketDefinitionBeforeRegistration(ticketDefinition);
+        plan.register(result);
     }
 
+    protected TicketDefinition customizeTicketDefinitionBeforeRegistration(final TicketDefinition ticketDefinition) {
+        return ticketDefinition;
+    }
 }

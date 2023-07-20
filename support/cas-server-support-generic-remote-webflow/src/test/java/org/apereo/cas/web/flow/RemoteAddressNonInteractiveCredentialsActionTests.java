@@ -32,14 +32,14 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,
     properties = "cas.authn.remote-address.ip-address-range=192.168.1.0/255.255.255.0")
 @Tag("WebflowActions")
-public class RemoteAddressNonInteractiveCredentialsActionTests {
+class RemoteAddressNonInteractiveCredentialsActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
     private Action remoteAddressCheck;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -53,7 +53,7 @@ public class RemoteAddressNonInteractiveCredentialsActionTests {
     }
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(StringUtils.EMPTY);

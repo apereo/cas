@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2Web")
-public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceMetadataHealthIndicator")
     private HealthIndicator samlRegisteredServiceMetadataHealthIndicator;
@@ -34,7 +34,7 @@ public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlI
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(samlRegisteredServiceMetadataHealthIndicator);
         servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
         val health = samlRegisteredServiceMetadataHealthIndicator.health();
@@ -42,7 +42,7 @@ public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlI
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);
@@ -51,7 +51,7 @@ public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlI
     }
 
     @Test
-    public void verifyFailsOperationWithMultiple() {
+    void verifyFailsOperationWithMultiple() {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);

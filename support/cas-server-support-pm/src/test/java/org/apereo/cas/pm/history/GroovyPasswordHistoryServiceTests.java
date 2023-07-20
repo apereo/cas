@@ -1,16 +1,17 @@
 package org.apereo.cas.pm.history;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -46,13 +48,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
     })
 @Tag("Groovy")
-public class GroovyPasswordHistoryServiceTests {
+class GroovyPasswordHistoryServiceTests {
     @Autowired
     @Qualifier(PasswordHistoryService.BEAN_NAME)
     private PasswordHistoryService passwordHistoryService;
 
     @Test
-    public void verifyValidity() {
+    void verifyValidity() {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));

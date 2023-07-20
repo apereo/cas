@@ -1,6 +1,6 @@
 {
-  "enabled": false,
   "dependencies": "oidc,json-service-registry",
+
   "properties": [
     "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
@@ -25,6 +25,3 @@
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
-
-
-

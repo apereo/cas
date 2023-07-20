@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
@@ -29,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Slf4j
 public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Serial
@@ -80,7 +82,13 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
             return true;
         }
         val expiringTime = getMaximumExpirationTime(ticketState);
-        return expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val result = expiringTime.isBefore(now);
+        if (result) {
+            LOGGER.trace("Ticket [{}] is expired because its expiration time [{}] is before [{}]",
+                ticketState.getId(), expiringTime, now);
+        }
+        return result;
     }
 
     @JsonIgnore

@@ -1,5 +1,6 @@
 {
   "dependencies": "core,reports",
+
   "server": "jetty",
   "properties": [
     "--cas.server.name=https://localhost:8443",
@@ -12,6 +13,8 @@
 
     "--spring.security.user.name=casuser",
     "--spring.profiles.active=embedded",
+
+    "--logging.level.org.apereo.cas=debug",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
     

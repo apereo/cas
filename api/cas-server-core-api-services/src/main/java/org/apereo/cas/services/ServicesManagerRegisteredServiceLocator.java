@@ -1,10 +1,13 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 
 import org.springframework.core.Ordered;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link ServicesManagerRegisteredServiceLocator}.
@@ -20,7 +23,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      * @param service    the service id
      * @return the registered service
      */
-    RegisteredService locate(Collection<RegisteredService> candidates, Service service);
+    RegisteredService locate(Collection<? extends RegisteredService> candidates, Service service);
 
     /**
      * Can this locator find/locate the given registered service
@@ -44,5 +47,9 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      */
     default String getName() {
         return getClass().getSimpleName();
+    }
+
+    default List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
+        return new ArrayList<>();
     }
 }

@@ -23,4 +23,8 @@ import java.io.Serial;
 public class Pac4jGoogleOidcClientProperties extends BasePac4jOidcClientProperties {
     @Serial
     private static final long serialVersionUID = 3259382317533639638L;
+
+    public Pac4jGoogleOidcClientProperties() {
+        setDiscoveryUri("https://accounts.google.com/.well-known/openid-configuration");
+    }
 }

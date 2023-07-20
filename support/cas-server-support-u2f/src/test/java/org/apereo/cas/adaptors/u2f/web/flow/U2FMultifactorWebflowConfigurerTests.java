@@ -24,7 +24,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 })
 @Tag("WebflowMfaConfig")
 @Getter
-public class U2FMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class U2FMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("u2fFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

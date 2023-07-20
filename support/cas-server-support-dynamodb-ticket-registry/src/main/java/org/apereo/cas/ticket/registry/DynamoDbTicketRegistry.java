@@ -1,18 +1,26 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -23,45 +31,89 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@Monitorable
 public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
+
     private final DynamoDbTicketRegistryFacilitator dbTableService;
 
-    @Override
-    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        return this.dbTableService.getSessionsFor(encodeTicketId(principalId));
+    public DynamoDbTicketRegistry(final CipherExecutor cipherExecutor,
+                                  final TicketSerializationManager ticketSerializationManager,
+                                  final TicketCatalog ticketCatalog,
+                                  final DynamoDbTicketRegistryFacilitator dbTableService) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.dbTableService = dbTableService;
     }
 
     @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) throws Exception {
-        try {
-            val toPut = toSave.map(Unchecked.function(ticket -> {
-                val encTicket = encodeTicket(ticket);
-                val principal = encodeTicketId(getPrincipalIdFrom(ticket));
-                return Triple.<Ticket, Ticket, String>of(ticket, encTicket, principal);
-            }));
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        return dbTableService.getSessionsFor(digestIdentifier(principalId));
+    }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        val filterExpressions = new ArrayList<String>();
+        val expressionValues = new HashMap<String, AttributeValue>();
+        val expressionAttrNames = new HashMap<String, String>();
+
+        filterExpressions.add("prefix=:prefix");
+        queryAttributes.forEach((key, queryValues) -> {
+            val expressionParameter = isCipherExecutorEnabled()
+                ? digestIdentifier(key)
+                : key.replace('.', '_').replace('-', '_');
+            val expressionAttrName = '#' + expressionParameter;
+
+            val criteriaValues = new ArrayList<String>();
+            for (var i = 0; i < queryValues.size(); i++) {
+                criteriaValues.add("contains(attributes." + expressionAttrName + ", :" + expressionParameter + i + ')');
+
+                val attributeValue = digestIdentifier(queryValues.get(i).toString());
+                expressionValues.put(':' + expressionParameter + i, AttributeValue.builder().s(attributeValue).build());
+            }
+            filterExpressions.add('(' + String.join(" OR ", criteriaValues) + ')');
+            expressionAttrNames.put(expressionAttrName, digestIdentifier(key));
+        });
+        val expression = String.join(" AND ", filterExpressions);
+        val prefix = dbTableService.getTicketCatalog().findTicketDefinition(TicketGrantingTicket.class)
+            .orElseThrow()
+            .getPrefix();
+        expressionValues.put(":prefix", AttributeValue.builder().s(prefix).build());
+        return dbTableService.getSessionsWithAttributes(expression, expressionAttrNames, expressionValues)
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull);
+    }
+
+    @Override
+    public void addTicket(final Stream<? extends Ticket> toSave) {
+        FunctionUtils.doAndHandle(__ -> {
+            val toPut = toSave.map(Unchecked.function(this::toTicketPayload));
             dbTableService.put(toPut);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        });
     }
 
     @Override
     public void addTicketInternal(final Ticket ticket) {
-        try {
+        FunctionUtils.doAndHandle(__ -> {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
                 ticket.getExpirationPolicy().getTimeToLive());
-            val encTicket = encodeTicket(ticket);
-            val principal = encodeTicketId(getPrincipalIdFrom(ticket));
-            this.dbTableService.put(ticket, encTicket, principal);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+            dbTableService.put(toTicketPayload(ticket));
+        });
+    }
+
+    private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {
+        val encTicket = encodeTicket(ticket);
+        val principal = digestIdentifier(getPrincipalIdFrom(ticket));
+        return DynamoDbTicketRegistryFacilitator.TicketPayload
+            .builder()
+            .originalTicket(ticket)
+            .encodedTicket(encTicket)
+            .principal(principal)
+            .attributes(collectAndDigestTicketAttributes(ticket))
+            .build();
     }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
@@ -96,9 +148,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = encodeTicketId(ticketIdToDelete);
-        return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
+        val ticketId = digestIdentifier(ticketToDelete.getId());
+        return dbTableService.delete(ticketToDelete.getId(), ticketId) ? 1 : 0;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      * @return the web async task
      */
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get collection of available authentication handlers")
     public Collection<AuthenticationHandlerDetails> handle() {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
@@ -63,7 +63,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      */
     @Operation(summary = "Get available authentication handler by name", parameters = @Parameter(name = "name", required = true))
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
             .stream()

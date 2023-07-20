@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Builder;
@@ -49,7 +50,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
 
         LOGGER.trace("Attempting to resolve a principal via [{}]", getName());
         var principalId = extractPrincipalId(credential, currentPrincipal);
@@ -62,7 +63,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (context.isResolveAttributes()) {
-            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0));
+            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0), service);
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!context.isReturnNullIfNoAttributes()) {
@@ -177,29 +178,23 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return builder.principalId(principalId).attributes(convertedAttributes).build();
     }
 
-    /**
-     * Retrieve person attributes as a map.
-     *
-     * @param principalId      the principal id
-     * @param credential       the credential whose id we have extracted.
-     * @param currentPrincipal the current principal
-     * @param queryAttributes  the query attributes
-     * @return the map
-     */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
-                                                                 final Map<String, List<Object>> queryAttributes) {
+                                                                 final Map<String, List<Object>> queryAttributes,
+                                                                 final Optional<Service> givenService) {
 
-        queryAttributes.computeIfAbsent("credentialId", k1 -> CollectionUtils.wrapList(credential.getId()));
-        queryAttributes.computeIfAbsent("credentialClass", k -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
-        return PrincipalAttributeRepositoryFetcher.builder()
+        queryAttributes.computeIfAbsent("credentialId", __ -> CollectionUtils.wrapList(credential.getId()));
+        queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
+
+        val attributeFetcher = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)
             .activeAttributeRepositoryIdentifiers(context.getActiveAttributeRepositoryIdentifiers())
             .currentPrincipal(currentPrincipal.orElse(null))
             .queryAttributes(queryAttributes)
-            .build()
-            .retrieve();
+            .service(givenService.orElse(null))
+            .build();
+        return attributeFetcher.retrieve();
     }
 
     /**

@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasScimConfiguration.class)
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
 @Tag("SCIM")
-public class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

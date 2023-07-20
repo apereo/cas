@@ -11,6 +11,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -25,6 +26,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -77,9 +79,10 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                     "description", rs.getDescription()))
                 .build();
             val body = this.registeredServiceSerializer.toString(rs);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             s3Client.putObject(request, RequestBody.fromString(body));
             LOGGER.trace("Saved registered service [{}]", rs);
-            publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -118,9 +121,10 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                     .key(object.key())
                     .build()));
                 val bucketName = determineBucketName(registeredService);
+                val clientInfo = ClientInfoHolder.getClientInfo();
                 s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
                 LOGGER.trace("Deleted registered service [{}]", registeredService);
-                publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
+                publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo));
                 return true;
             }
         } catch (final Exception e) {
@@ -178,6 +182,6 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     }
 
     private static String determineBucketName(final RegisteredService registeredService) {
-        return (BUCKET_NAME_PREFIX + '-' + registeredService.getName() + '-' + registeredService.getId()).toLowerCase();
+        return (BUCKET_NAME_PREFIX + '-' + registeredService.getName() + '-' + registeredService.getId()).toLowerCase(Locale.ENGLISH);
     }
 }

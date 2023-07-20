@@ -17,15 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebApp")
-public class CasEurekaServerBannerTests {
+class CasEurekaServerBannerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val banner = new CasEurekaServerBanner();
         assertNotNull(banner.getTitle());
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, CasEurekaServerBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }

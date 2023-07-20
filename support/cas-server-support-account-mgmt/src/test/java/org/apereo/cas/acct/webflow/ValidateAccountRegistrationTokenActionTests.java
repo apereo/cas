@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasAccountManagementWebflowConfiguration.class
 })
@@ -53,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.sms.from=3477562310",
     "cas.account-registration.core.registration-properties.location=classpath:/custom-registration.json"
 })
-public class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerTests {
+class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
     private Action validateAction;
@@ -63,7 +65,7 @@ public class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConf
     private Action submitAccountRegistrationAction;
 
     @Test
-    public void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -74,7 +76,7 @@ public class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConf
     }
 
     @Test
-    public void verifyPassRegistrationRequest() throws Exception {
+    void verifyPassRegistrationRequest() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -84,7 +86,7 @@ public class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConf
 
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter("username", "casuser");
         request.addParameter("email", "cas@example.org");

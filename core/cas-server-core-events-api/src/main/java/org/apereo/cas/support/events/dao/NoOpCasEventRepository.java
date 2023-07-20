@@ -39,4 +39,8 @@ public class NoOpCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> load() {
         return Stream.empty();
     }
+
+    @Override
+    public void removeAll() {
+    }
 }

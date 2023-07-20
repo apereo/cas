@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 
 import lombok.val;
@@ -50,18 +50,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
+class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=false")
-    public class DisabledTests extends BaseSamlIdPConfigurationTests {
+    class DisabledTests extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("saml2AttributeQueryProfileHandlerController")
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -75,7 +75,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
-    public class DefaultTests extends BaseSamlIdPConfigurationTests {
+    class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("saml2AttributeQueryProfileHandlerController")
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
@@ -94,7 +94,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyUnknownService() throws Exception {
+        void verifyUnknownService() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -135,7 +135,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyTicketExpired() throws Exception {
+        void verifyTicketExpired() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -175,7 +175,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyEncryptedNameIDFails() throws Exception {
+        void verifyEncryptedNameIDFails() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -215,7 +215,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyOK() throws Exception {
+        void verifyOK() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -252,7 +252,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyFault() throws Exception {
+        void verifyFault() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -304,7 +304,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             val subject = (Subject) builder.buildObject();
 
             if (nameIdFormat.equals(NameIDType.ENCRYPTED)) {
-                val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(defaultSamlRegisteredServiceCachingMetadataResolver,
+                val facade = SamlRegisteredServiceMetadataAdaptor.get(defaultSamlRegisteredServiceCachingMetadataResolver,
                     samlRegisteredService, samlRegisteredService.getServiceId()).get();
                 val encryptedId = samlIdPObjectEncrypter.encode(nameId, samlRegisteredService, facade);
                 subject.setEncryptedID(encryptedId);

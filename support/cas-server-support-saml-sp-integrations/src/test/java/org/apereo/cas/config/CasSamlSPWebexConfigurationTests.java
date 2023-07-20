@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.webex.name-id-attribute=cn",
     "cas.saml-sp.webex.name-id-format=transient"
 })
-public class CasSamlSPWebexConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPWebexConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

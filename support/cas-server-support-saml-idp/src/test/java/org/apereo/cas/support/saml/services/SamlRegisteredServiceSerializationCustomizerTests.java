@@ -22,16 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("SAML2")
-public class SamlRegisteredServiceSerializationCustomizerTests {
+class SamlRegisteredServiceSerializationCustomizerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class NoDefaults extends BaseSamlIdPConfigurationTests {
+    class NoDefaults extends BaseSamlIdPConfigurationTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyNoDefaults() throws Exception {
+        void verifyNoDefaults() throws Exception {
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1000.json").getInputStream());
             assertNotNull(service);
@@ -42,12 +42,12 @@ public class SamlRegisteredServiceSerializationCustomizerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.services.defaults.signAssertions=true")
-    public class WithDefaults extends BaseSamlIdPConfigurationTests {
+    class WithDefaults extends BaseSamlIdPConfigurationTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyDefaults() throws Exception {
+        void verifyDefaults() {
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1000.json").getInputStream());
             assertNotNull(service);
@@ -55,7 +55,7 @@ public class SamlRegisteredServiceSerializationCustomizerTests {
         }
 
         @Test
-        public void verifyDefaultsOverriddenByService() throws Exception {
+        void verifyDefaultsOverriddenByService() {
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1001.json").getInputStream());
             assertNotNull(service);

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @Tag("Cipher")
-public class CasConfigurationJasyptCipherExecutorTests {
+class CasConfigurationJasyptCipherExecutorTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.INITIALIZATION_VECTOR.getPropertyName(), "true");
@@ -43,7 +43,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecryptionEncryption() {
+    void verifyDecryptionEncryption() {
         val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
         val plain = jasypt.decryptValue(result);
@@ -51,14 +51,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyEncodeOps() {
+    void verifyEncodeOps() {
         assertNotNull(jasypt.getName());
         val result = jasypt.encode(getClass().getSimpleName());
         assertNotNull(result);
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairNotNeeded() {
+    void verifyDecryptionEncryptionPairNotNeeded() {
         val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
@@ -66,14 +66,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairFails() {
+    void verifyDecryptionEncryptionPairFails() {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
         val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairSuccess() {
+    void verifyDecryptionEncryptionPairSuccess() {
         val value = jasypt.encryptValue("Testing");
         val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
@@ -85,7 +85,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
      * Password encrypted with 6.4.0 and password of "P@$$w0rd".
      */
     @Test
-    public void verifyEncryptedPassword() {
+    void verifyEncryptedPassword() {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
@@ -94,7 +94,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyAlgorithms() {
+    void verifyAlgorithms() {
         val algorithms = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
             assertTrue(isAlgorithmFunctional(algorithm.toString()));

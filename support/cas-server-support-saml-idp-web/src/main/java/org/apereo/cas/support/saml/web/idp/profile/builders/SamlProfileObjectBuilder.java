@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
+
 import org.opensaml.core.xml.XMLObject;
 
 /**
@@ -10,8 +12,7 @@ import org.opensaml.core.xml.XMLObject;
  * @param <T> the type parameter
  * @since 5.0.0
  */
-@FunctionalInterface
-public interface SamlProfileObjectBuilder<T extends XMLObject> {
+public interface SamlProfileObjectBuilder<T extends XMLObject> extends Saml20ObjectBuilder {
 
     /**
      * Build.

@@ -37,7 +37,7 @@ import org.springframework.test.context.TestPropertySource;
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
 @Import(MongoDbWebAuthnConfiguration.class)
-public class MongoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class MongoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     @Qualifier("mongoWebAuthnTemplate")
     private MongoOperations mongoTemplate;

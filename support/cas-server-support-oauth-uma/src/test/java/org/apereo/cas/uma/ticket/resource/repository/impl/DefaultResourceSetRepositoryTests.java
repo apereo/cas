@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class DefaultResourceSetRepositoryTests {
+class DefaultResourceSetRepositoryTests {
     @Test
-    public void verifyOwner() {
+    void verifyOwner() {
         val repo = new DefaultResourceSetRepository();
         val set = buildTestResource();
         repo.save(set);
@@ -29,7 +29,7 @@ public class DefaultResourceSetRepositoryTests {
     }
 
     @Test
-    public void verifyUpdateFails() {
+    void verifyUpdateFails() {
         val repo = new DefaultResourceSetRepository();
         val set1 = buildTestResource();
         val set2 = buildTestResource();

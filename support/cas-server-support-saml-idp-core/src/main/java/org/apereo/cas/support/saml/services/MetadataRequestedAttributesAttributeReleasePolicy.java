@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
         final Map<String, List<Object>> attributes,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         return fetchRequestedAttributes(attributes, context, facade);
@@ -59,7 +59,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
         val entityId = getEntityIdFromRequest(context.getService());
         val facade = determineServiceProviderMetadataFacade((SamlRegisteredService) context.getRegisteredService(), entityId);
         return facade
-            .map(SamlRegisteredServiceServiceProviderMetadataFacade::ssoDescriptor)
+            .map(SamlRegisteredServiceMetadataAdaptor::ssoDescriptor)
             .map(sso -> sso.getAttributeConsumingServices()
                 .stream()
                 .map(svc -> svc.getRequestedAttributes().stream()
@@ -74,7 +74,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     private Map<String, List<Object>> fetchRequestedAttributes(final Map<String, List<Object>> attributes,
                                                                final RegisteredServiceAttributeReleasePolicyContext context,
-                                                               final SamlRegisteredServiceServiceProviderMetadataFacade facade) {
+                                                               final SamlRegisteredServiceMetadataAdaptor facade) {
         val releaseAttributes = new HashMap<String, List<Object>>();
         Optional.ofNullable(facade.ssoDescriptor())
             .ifPresent(sso -> sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestedAttributes().stream().filter(attr -> {

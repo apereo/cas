@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
 @Import(QueryDatabaseAuthenticationHandlerMariaDbTests.DatabaseTestConfiguration.class)
-public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casmariadbusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";
@@ -84,7 +84,7 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("location"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),

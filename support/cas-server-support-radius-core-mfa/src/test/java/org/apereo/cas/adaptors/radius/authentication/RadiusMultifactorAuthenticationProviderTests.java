@@ -21,14 +21,14 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Radius")
-public class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new RadiusMultifactorAuthenticationProvider(CollectionUtils.wrapList(mock(RadiusServer.class)));
     }
 
     @Test
-    public void verifyPingFails() throws Exception {
+    void verifyPingFails() throws Exception {
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(new TimeoutException("timeout"));
@@ -37,7 +37,7 @@ public class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMu
     }
 
     @Test
-    public void verifyPingPasses() throws Exception {
+    void verifyPingPasses() throws Exception {
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(new RuntimeException("pass"));

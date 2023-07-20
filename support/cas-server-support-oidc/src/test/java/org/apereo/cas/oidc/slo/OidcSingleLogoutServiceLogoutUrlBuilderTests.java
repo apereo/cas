@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
+class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach
@@ -32,7 +32,7 @@ public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTe
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         servicesManager.save(getOidcRegisteredService(id));
 

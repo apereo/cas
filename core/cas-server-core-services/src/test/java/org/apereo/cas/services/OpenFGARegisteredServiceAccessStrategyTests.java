@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class OpenFGARegisteredServiceAccessStrategyTests {
+class OpenFGARegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OpenFGARegisteredServiceAccessStrategy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val strategyWritten = new OpenFGARegisteredServiceAccessStrategy();
         strategyWritten.setApiUrl("https://localhost:8080");
         strategyWritten.setRelation("owner");
@@ -45,7 +45,7 @@ public class OpenFGARegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val strategy = new OpenFGARegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");

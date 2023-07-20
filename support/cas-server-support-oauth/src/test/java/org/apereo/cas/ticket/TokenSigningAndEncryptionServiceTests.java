@@ -21,27 +21,27 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
+class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val publicKey = mock(PublicJsonWebKey.class);
         when(publicKey.getPublicKey()).thenReturn(null);
 
         val service = mock(BaseTokenSigningAndEncryptionService.class);
         when(service.decode(anyString(), any())).thenCallRealMethod();
-        when(service.getJsonWebKeySigningKey()).thenReturn(publicKey);
+        when(service.getJsonWebKeySigningKey(Optional.empty())).thenReturn(publicKey);
 
         assertThrows(IllegalArgumentException.class,
             () -> service.decode(UUID.randomUUID().toString(), Optional.empty()));
     }
 
     @Test
-    public void verifyBadSignatureOperation() {
+    void verifyBadSignatureOperation() {
         val publicKey = mock(PublicJsonWebKey.class);
         when(publicKey.getPublicKey()).thenReturn(mock(PublicKey.class));
 
         val service = mock(BaseTokenSigningAndEncryptionService.class);
-        when(service.getJsonWebKeySigningKey()).thenReturn(publicKey);
+        when(service.getJsonWebKeySigningKey(Optional.empty())).thenReturn(publicKey);
         when(service.decode(anyString(), any())).thenCallRealMethod();
         when(service.verifySignature(anyString(), any())).thenReturn(null);
 

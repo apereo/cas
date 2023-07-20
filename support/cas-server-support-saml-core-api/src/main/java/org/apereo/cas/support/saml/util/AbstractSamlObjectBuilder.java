@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -63,6 +62,7 @@ import java.security.PublicKey;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -87,8 +87,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         .useWrapperNameAsProperty(true)
         .build()
         .toObjectMapper();
-    
-    private static final int RANDOM_ID_SIZE = 16;
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
@@ -241,16 +239,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
     }
 
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
-    }
+
 
     /**
      * New attribute value.
@@ -263,10 +252,10 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
         LOGGER.trace("Creating new attribute value XMLObject for value: [{}], value type: [{}], QName: [{}]", value, valueType, elementName);
 
-        if (value instanceof NameIDType) {
+        if (value instanceof NameIDType instance) {
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
-            ((NameIDType) value).detach();
-            return (NameIDType) value;
+            instance.detach();
+            return (XMLObject) value;
         }
 
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
@@ -288,7 +277,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSBoolean.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSBooleanBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
-            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
+            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase(Locale.ENGLISH)));
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }

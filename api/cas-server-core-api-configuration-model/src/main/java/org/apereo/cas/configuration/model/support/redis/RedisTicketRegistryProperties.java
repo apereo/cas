@@ -50,6 +50,14 @@ public class RedisTicketRegistryProperties extends BaseRedisProperties {
      */
     private String queueIdentifier;
 
+    /**
+     * Allows the register to detect the presence of Redis modules,
+     * in particular RediSearch, which allows the registry to create specific
+     * indexes and search Redis documents to look up tickets. Enabling indexing
+     * and searching capabilities may lead to significant performance improvements.
+     */
+    private boolean enableRedisSearch = true;
+
     public RedisTicketRegistryProperties() {
         crypto.setEnabled(false);
     }

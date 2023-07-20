@@ -37,8 +37,8 @@ may convey additional information about the nature of the request or the authent
 | `requestId`     | Generated identifier for this request.   |
 
 Additionally, all available request attributes, headers, and parameters are exposed as variables.
-<div class="alert alert-warning">
-  <strong>Pay Attention</strong><br /> These variables potentially include the password. If you set <code>includeMDC=true</code> in <a href="Logging-SysLog.html">SysLog Appender</a>, these details, including clear password, will be sent to the log server.
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><br /> These variables potentially include the password. If you set <code>includeMDC=true</code> in <a 
+href="Logging-SysLog.html">SysLog Appender</a>, these details, including clear password, will be sent to the log server.
 </div>
 
 The above variables may be used in logging patterns:

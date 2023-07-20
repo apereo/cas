@@ -19,27 +19,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAMLMetadata")
-public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("samlIdPMetadataController")
     private SamlIdPMetadataController samlIdPMetadataController;
 
     @Test
-    public void verifyOperationByServiceId() {
+    void verifyOperationByServiceId() {
         val response = new MockHttpServletResponse();
         val service = RegisteredServiceTestUtils.getService().getId();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(service, response));
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val response = new MockHttpServletResponse();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp("1000", response));
     }
 
     @Test
-    public void verifyNoServiceOperation() {
+    void verifyNoServiceOperation() {
         val response = new MockHttpServletResponse();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(null, response));
     }

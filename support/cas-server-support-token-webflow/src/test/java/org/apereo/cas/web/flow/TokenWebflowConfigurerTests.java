@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

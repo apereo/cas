@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.sms-provider.sns.credential-access-key=test",
     "cas.sms-provider.sns.credential-secret-key=test"
 })
-public class AmazonSimpleNotificationServiceSmsConfigurationTests {
+class AmazonSimpleNotificationServiceSmsConfigurationTests {
 
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(smsSender);
     }
 }

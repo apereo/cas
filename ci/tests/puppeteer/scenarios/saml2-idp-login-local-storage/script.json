@@ -1,9 +1,17 @@
 {
-  "dependencies": "saml-idp",
+  "dependencies": "saml-idp,duo",
   "conditions": {
-    "docker": "true"
+    "docker": "true",
+    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },
+
   "properties": [
+    "--spring.main.lazy-initialization=false",
+
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
+    
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
@@ -17,6 +25,20 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
+    "--cas.authn.accept.users=duocode::Mellon",
+    "--cas.authn.mfa.duo[0].account-status-enabled=true",
+
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoAdmin",
+    "--management.endpoints.enabled-by-default=true"
+  ,
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

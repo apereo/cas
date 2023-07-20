@@ -1,11 +1,11 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportDynamoDbAuditConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -44,7 +44,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @Tag("DynamoDb")
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
+class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

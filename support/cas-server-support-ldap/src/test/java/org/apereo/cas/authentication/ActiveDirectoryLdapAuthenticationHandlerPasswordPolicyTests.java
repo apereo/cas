@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
@@ -12,10 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,7 +42,7 @@ import static org.mockito.Mockito.*;
 })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")
-public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
+class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override
     protected String getUsername() {
@@ -54,7 +50,7 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
     }
 
     @Test
-    public void verifyAuthenticateWarnings() {
+    void verifyAuthenticateWarnings() {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
 
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {

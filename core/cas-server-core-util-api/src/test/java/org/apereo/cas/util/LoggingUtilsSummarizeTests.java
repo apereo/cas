@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link LoggingUtilsSummarizeTests} configured with log level higher than debug to trigger summarize logic.
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  */
 @Tag("Utility")
 @Slf4j
-public class LoggingUtilsSummarizeTests {
+class LoggingUtilsSummarizeTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
             LoggingUtils.warn(LOGGER, "error", new RuntimeException("error"));

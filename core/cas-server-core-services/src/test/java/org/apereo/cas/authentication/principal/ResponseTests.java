@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.4
  */
 @Tag("Authentication")
-public class ResponseTests {
+class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";
 
     private static final String TICKET_VALUE = "foobar";
 
     @Test
-    public void verifyConstructionWithoutFragmentAndNoQueryString() {
+    void verifyConstructionWithoutFragmentAndNoQueryString() {
         val url = "http://localhost:8080/foo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -29,7 +29,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyConstructionWithoutFragmentButHasQueryString() {
+    void verifyConstructionWithoutFragmentButHasQueryString() {
         val url = "http://localhost:8080/foo?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -38,7 +38,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndQueryString() {
+    void verifyConstructionWithFragmentAndQueryString() {
         val url = "http://localhost:8080/foo?test=boo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -47,7 +47,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndNoQueryString() {
+    void verifyConstructionWithFragmentAndNoQueryString() {
         val url = "http://localhost:8080/foo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -56,7 +56,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndNoQueryString2() {
+    void verifyConstructionWithFragmentAndNoQueryString2() {
         val url = "http://localhost:8080/foo#hello?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -65,7 +65,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyUrlSanitization() {
+    void verifyUrlSanitization() {
         val url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
@@ -75,7 +75,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyUrlWithUnicode() {
+    void verifyUrlWithUnicode() {
         val url = "https://www.example.com/πολιτικῶν";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
@@ -84,7 +84,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void verifyUrlWithUrn() {
+    void verifyUrlWithUrn() {
         val url = "urn:applis-cri:java-sso";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-123456");

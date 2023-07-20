@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class ReturnRestfulAttributeReleasePolicyTests {
+class ReturnRestfulAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "ReturnRestfulAttributeReleasePolicyTests.json");
 
@@ -36,7 +36,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyJson() throws IOException {
+    void verifyJson() throws IOException {
         val policyWritten = new ReturnRestfulAttributeReleasePolicy()
             .setEndpoint("http://endpoint.example.org")
             .setAllowedAttributes(CollectionUtils.wrap("attribute1", CollectionUtils.wrapList("value1")));
@@ -46,7 +46,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyPolicy() throws IOException {
+    void verifyPolicy() throws IOException {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -63,7 +63,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyPolicyWithMappedAttributes() throws IOException {
+    void verifyPolicyWithMappedAttributes() throws IOException {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -84,7 +84,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyBadPolicy() {
+    void verifyBadPolicy() {
         try (val webServer = new MockWebServer(9298,
             new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {

@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.authn.mfa.gauth.json.location=file:${java.io.tmpdir}/repository.json")
 @Getter
 @Tag("MFAProvider")
-public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
@@ -48,7 +48,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val resource = mock(Resource.class);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(resource,
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
@@ -61,14 +61,14 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     }
 
     @Test
-    public void verifyNotExists() {
+    void verifyNotExists() {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new ClassPathResource("acct-bad.json"),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());
     }
 
     @Test
-    public void verifyNoAccounts() throws Exception {
+    void verifyNoAccounts() throws Exception {
         val file = File.createTempFile("account", ".json");
         FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new FileSystemResource(file),
@@ -88,7 +88,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     }
 
     @Test
-    public void verifyBadResource() throws Exception {
+    void verifyBadResource() throws Exception {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new UrlResource(new URL("https://httpbin.org/get")),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());

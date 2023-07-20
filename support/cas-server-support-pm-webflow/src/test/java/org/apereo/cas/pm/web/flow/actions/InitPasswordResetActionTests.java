@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Mail")
-public class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
+class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("1.2.3.4");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val context = new MockRequestContext();
@@ -48,7 +48,7 @@ public class InitPasswordResetActionTests extends BasePasswordManagementActionTe
     }
 
     @Test
-    public void verifyActionUserlessToken() throws Exception {
+    void verifyActionUserlessToken() throws Exception {
         val request = new MockHttpServletRequest();
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().build());
         val context = new MockRequestContext();

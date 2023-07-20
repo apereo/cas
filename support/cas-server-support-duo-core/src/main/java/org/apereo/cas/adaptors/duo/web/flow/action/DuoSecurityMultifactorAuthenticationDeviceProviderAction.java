@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -41,6 +42,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
         val accounts = providers
             .stream()
             .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .map(provider -> provider.getDuoAuthenticationService().getAdminApiService())
             .filter(Optional::isPresent)

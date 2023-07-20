@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
@@ -89,12 +88,6 @@ public class PrincipalAttributesProperties implements Serializable {
      * Retrieve attributes from redis repositories.
      */
     private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>(0);
-
-    /**
-     * Retrieve attributes from Couchbase repositories.
-     */
-    @NestedConfigurationProperty
-    private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
 
     /**
      * Use stubbed attribute definitions as the underlying attribute repository source.

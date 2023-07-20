@@ -20,6 +20,6 @@ public class OneTimeTokenAuthenticationWebflowAction extends BaseCasWebflowActio
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        return this.casWebflowEventResolver.resolveSingle(requestContext);
+        return casWebflowEventResolver.resolveSingle(requestContext);
     }
 }

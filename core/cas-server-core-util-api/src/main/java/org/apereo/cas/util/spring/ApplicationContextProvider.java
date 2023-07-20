@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import lombok.Synchronized;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -18,9 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import javax.annotation.Nonnull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +37,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(
-        @Nonnull final ApplicationContext context) {
+    public void setApplicationContext(@Nonnull final ApplicationContext context) {
         CONTEXT = context;
     }
 
@@ -204,11 +200,11 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     /**
-     * Gets messag sanitizer.
+     * Gets message sanitizer.
      *
-     * @return the messag sanitizer
+     * @return the message sanitizer
      */
-    public static Optional<MessageSanitizer> getMessagSanitizer() {
+    public static Optional<MessageSanitizer> getMessageSanitizer() {
         if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
             return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
         }

@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class OneTimeTokenTests {
+class OneTimeTokenTests {
 
     @Test
-    public void verifyComparisonWorks() throws Exception {
+    void verifyComparisonWorks() throws Exception {
         val otp1 = new OneTimeToken(123456, "casuser");
         Thread.sleep(1);
         val otp2 = new OneTimeToken(123456, "casuser");

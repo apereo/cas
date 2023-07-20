@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
+import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,21 +25,47 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisObjectFactoryTests {
+class RedisObjectFactoryTests {
     @Test
-    public void verifyConnection() {
+    void verifyRedisSearchCommandSupported() {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(6379);
+        val command = RedisObjectFactory.newRedisModulesCommands(props);
+        assertFalse(command.isEmpty());
+        val indexName = UUID.randomUUID().toString();
+        val result = command.get().ftCreate(indexName,
+            Field.text("name").build(),
+            Field.numeric("id").build());
+        assertEquals("OK", result);
+        val info = command.get().ftInfo(indexName);
+        assertNotNull(info);
+    }
+
+
+    @Test
+    void verifyConnection() {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
         props.getPool().setMinEvictableIdleTimeMillis(2000);
         props.getPool().setNumTestsPerEvictionRun(1);
         props.getPool().setSoftMinEvictableIdleTimeMillis(1);
+        props.getPool().setEnabled(true);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
     @Test
-    public void verifyClusterConnection() {
+    public void verifyConnectionURI() {
+        val props = new BaseRedisProperties();
+        props.setUri("redis://localhost:6379");
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
+        assertNotNull(connection);
+    }
+
+    @Test
+    void verifyClusterConnection() {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")
@@ -70,7 +97,7 @@ public class RedisObjectFactoryTests {
     }
 
     @Test
-    public void verifyNonDefaultClientConnectionOptions() {
+    void verifyNonDefaultClientConnectionOptions() {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")
@@ -106,7 +133,7 @@ public class RedisObjectFactoryTests {
 
 
     @Test
-    public void validateRedisReadFromValues() {
+    void validateRedisReadFromValues() {
         Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(Enum::name).forEach(ReadFrom::valueOf);
     }
 }

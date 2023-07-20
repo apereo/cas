@@ -41,14 +41,14 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
-public class SystemMonitorHealthIndicatorTests {
+class SystemMonitorHealthIndicatorTests {
 
     @Autowired
     @Qualifier("metricsEndpoint")
     private ObjectProvider<MetricsEndpoint> metricsEndpoint;
     
     @Test
-    public void verifyObserveOk() {
+    void verifyObserveOk() {
         val monitor = new SystemMonitorHealthIndicator(metricsEndpoint, 10);
         val status = monitor.health().getStatus();
         assertEquals(Status.UP, status);

@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcClientSecretValidatorTests extends AbstractOidcTests {
+class OidcClientSecretValidatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
     private OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
     @Test
-    public void verifyNotExpired() {
+    void verifyNotExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
         service.setClientSecret(secret);
@@ -38,7 +38,7 @@ public class OidcClientSecretValidatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyExpired() {
+    void verifyExpired() {
         val secret = UUID.randomUUID().toString();
         val service = getOidcRegisteredService();
         service.setClientSecret(secret);

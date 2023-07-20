@@ -23,14 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
-public class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementActionTests {
+@Tag("WebflowAccountActions")
+class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
     protected Action accountUnlockStatusPrepareAction;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
         val request = new MockHttpServletRequest();

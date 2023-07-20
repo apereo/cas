@@ -23,17 +23,17 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Audits")
-public class ProtocolSpecificationValidationAuditResourceResolverTests {
+class ProtocolSpecificationValidationAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new CasConfigurationProperties();
         props.getAudit().getEngine().setIncludeValidationAssertion(true);
 
         val resolver = new ProtocolSpecificationValidationAuditResourceResolver(props);
         val assertion = mock(Assertion.class);
-        when(assertion.service()).thenReturn(RegisteredServiceTestUtils.getService());
-        when(assertion.primaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(assertion.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{new MockHttpServletRequest(), assertion});
@@ -42,7 +42,7 @@ public class ProtocolSpecificationValidationAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyNoOp() {
+    void verifyNoOp() {
         val props = new CasConfigurationProperties();
         props.getAudit().getEngine().setIncludeValidationAssertion(true);
 

@@ -22,17 +22,17 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.3.0
  */
 @Tag("RestfulApi")
-public class RestfulPropertySourceLocatorTests {
+class RestfulPropertySourceLocatorTests {
 
     @Test
-    public void verifyNoUrl() {
+    void verifyNoUrl() {
         val environment = new MockEnvironment();
         val loc = new RestfulPropertySourceLocator();
         assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
     }
 
     @Test
-    public void verifyBadParsing() {
+    void verifyBadParsing() {
         val environment = new MockEnvironment();
         environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:8021");
         environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");

@@ -25,22 +25,22 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class MetadataUIUtilsTests {
+class MetadataUIUtilsTests {
     @Test
-    public void verifyNoDescriptor() {
+    void verifyNoDescriptor() {
         val entity = mock(EntityDescriptor.class);
         assertNull(MetadataUIUtils.getSPSsoDescriptor(entity));
     }
 
     @Test
-    public void verifyDescriptor() {
+    void verifyDescriptor() {
         val entity = mock(EntityDescriptor.class);
         when(entity.getSPSSODescriptor(anyString())).thenReturn(mock(SPSSODescriptor.class));
         assertNotNull(MetadataUIUtils.getSPSsoDescriptor(entity));
     }
 
     @Test
-    public void verifyLocate() {
+    void verifyLocate() {
         val entity = mock(EntityDescriptor.class);
 
         val request = new MockHttpServletRequest();

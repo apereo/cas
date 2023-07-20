@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
     public void verifyOperationByProvider() {

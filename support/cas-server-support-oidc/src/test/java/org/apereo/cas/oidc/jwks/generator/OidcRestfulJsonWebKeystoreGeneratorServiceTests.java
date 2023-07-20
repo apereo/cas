@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.rest.basic-auth-username=casuser",
     "cas.authn.oidc.jwks.rest.basic-auth-password=123456"
 })
-public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static MockWebServer SERVER;
 
     @BeforeAll
@@ -52,7 +52,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
 
@@ -64,7 +64,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         var oidcProperties = new OidcProperties();
         oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
         oidcProperties.getJwks().getRest().setMethod("get");

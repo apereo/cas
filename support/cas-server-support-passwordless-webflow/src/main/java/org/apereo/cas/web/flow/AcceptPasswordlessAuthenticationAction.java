@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -25,8 +26,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AcceptPasswordlessAuthenticationAction}.
@@ -64,7 +65,8 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         val principal = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         try {
             val token = requestContext.getRequestParameters().getRequired("token");
-            val passwordlessToken = passwordlessTokenRepository.findToken(principal.getUsername()).orElseThrow();
+            val passwordlessToken = passwordlessTokenRepository.findToken(principal.getUsername())
+                .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + principal.getUsername()));
             return FunctionUtils.doIf(passwordlessToken.getToken().equalsIgnoreCase(token),
                     () -> {
                         handlePasswordlessAuthenticationAttempt(requestContext, principal, passwordlessToken);
@@ -91,7 +93,10 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         val service = WebUtils.getService(requestContext);
         var authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
 
-        val processors = new ArrayList<>(applicationContext.getBeansOfType(PasswordlessAuthenticationPreProcessor.class).values());
+        val processors = applicationContext.getBeansOfType(PasswordlessAuthenticationPreProcessor.class).values()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
         AnnotationAwareOrderComparator.sortIfNecessary(processors);
         for (val processor : processors) {
             authenticationResultBuilder = processor.process(authenticationResultBuilder, principal, service, credential, token);

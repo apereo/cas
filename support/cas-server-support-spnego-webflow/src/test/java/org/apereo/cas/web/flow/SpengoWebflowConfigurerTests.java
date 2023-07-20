@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.SpnegoConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
-import org.apereo.cas.web.flow.config.SpnegoWebflowConfiguration;
+import org.apereo.cas.config.SpnegoWebflowActionsConfiguration;
+import org.apereo.cas.config.SpnegoWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -34,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.spnego.system.kerberos-conf=classpath:kerb5.conf",
     "cas.authn.spnego.system.login-conf=classpath:jaas.conf"
 })
-public class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

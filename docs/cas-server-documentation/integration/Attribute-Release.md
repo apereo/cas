@@ -13,7 +13,7 @@ Attributes are returned to scoped services and pass through a two-step process:
 * [Attribute Resolution](Attribute-Resolution.html): Done at the time of establishing the principal, *usually* via `PrincipalResolver` components where attributes are resolved from various sources.
 * Attribute Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response.
 
-<div class="alert alert-info"><strong>Service Management</strong><p>Attribute release may also be configured via the
+<div class="alert alert-info">:information_source: <strong>Service Management</strong><p>Attribute release may also be configured via the
 <a href="../services/Service-Management.html">Service Management tool</a>.</p></div>
 
 ## Principal-Id Attribute

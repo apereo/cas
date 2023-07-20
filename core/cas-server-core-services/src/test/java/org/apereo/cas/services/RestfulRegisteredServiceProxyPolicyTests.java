@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("RegisteredService")
-public class RestfulRegisteredServiceProxyPolicyTests {
+class RestfulRegisteredServiceProxyPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RestfulRegisteredServiceProxyPolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val policy = new RestfulRegisteredServiceProxyPolicy();
         policy.setEndpoint("http://localhost:9222");
         policy.setHeaders(CollectionUtils.wrap("header", "value"));
@@ -43,7 +43,7 @@ public class RestfulRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Exception {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -56,7 +56,7 @@ public class RestfulRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    public void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Exception {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();

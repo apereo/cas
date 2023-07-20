@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
+class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 
     @Override
     @Test
-    public void verifySingleRowAttributeRepository() {
+    void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -51,7 +51,7 @@ public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRow
 
     @Override
     @Test
-    public void verifyPeopleSingleRowAttributeRepository() {
+    void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val people = attributeRepository.getPeople(Map.of("username", List.of("casuser")));
         val person = people.iterator().next();

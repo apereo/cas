@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class Cas10ResponseViewTests {
+class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
 
@@ -53,7 +53,7 @@ public class Cas10ResponseViewTests {
     }
 
     @Test
-    public void verifySuccessView() throws Exception {
+    void verifySuccessView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
@@ -63,7 +63,7 @@ public class Cas10ResponseViewTests {
     }
 
     @Test
-    public void verifyFailureView() throws Exception {
+    void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),

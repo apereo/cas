@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Tickets")
-public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyTicketGrantingTicketAsDefault() throws Exception {
+    void verifyTicketGrantingTicketAsDefault() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
@@ -42,7 +42,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
     }
 
     @Test
-    public void verifyTicketGrantingTicketAsJwt() throws Exception {
+    void verifyTicketGrantingTicketAsJwt() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
@@ -69,7 +69,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
     }
 
     @Test
-    public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
+    void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 

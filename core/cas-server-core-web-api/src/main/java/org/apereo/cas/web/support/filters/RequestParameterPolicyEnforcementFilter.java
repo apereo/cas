@@ -231,7 +231,6 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * @return non-null Set of zero or more Characters to block
      */
     public static Set<Character> parseCharactersToForbid(final String value) {
-
         val charactersToForbid = new HashSet<Character>();
 
         var paramValue = value;
@@ -397,10 +396,6 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         }
 
         chain.doFilter(request, response);
-    }
-
-    @Override
-    public void destroy() {
     }
 
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {

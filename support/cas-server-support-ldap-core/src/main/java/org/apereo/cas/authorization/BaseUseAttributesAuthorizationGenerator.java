@@ -13,10 +13,10 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -61,11 +61,11 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     protected void addProfileRolesFromAttributes(final UserProfile profile,
                                                  final LdapAttribute ldapAttribute,
                                                  final String prefix) {
-        ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase())));
+        ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase(Locale.ENGLISH))));
     }
 
     @Override
-    public Optional<UserProfile> generate(final WebContext context, final SessionStore sessionStore,
+    public Optional<UserProfile> generate(final CallContext context,
                                           final UserProfile profile) {
         val username = profile.getId();
         LOGGER.debug("Attempting to get details for user [{}].", username);

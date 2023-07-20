@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -55,6 +56,7 @@ public class OidcCoreProperties implements Serializable {
      * level rule to allow incoming requests to pass through if the match is successful. By default,
      * the pattern is designed to never match anything.
      */
+    @RegularExpressionCapable
     private String acceptedIssuersPattern = "a^";
 
     /**

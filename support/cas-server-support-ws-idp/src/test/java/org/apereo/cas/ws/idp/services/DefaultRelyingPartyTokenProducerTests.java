@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketValidator;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 @Import(DefaultRelyingPartyTokenProducerTests.DefaultRelyingPartyTokenProducerTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.wsfed-idp.sts.custom-claims=my-custom-claim,second-custom-claim")
-public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationRelyingPartyTokenProducer")
     private WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer;
@@ -53,7 +53,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -83,7 +83,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
     }
 
     @Test
-    public void verifyRequestFailsOperation() {
+    void verifyRequestFailsOperation() {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -103,7 +103,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
 
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();

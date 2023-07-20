@@ -35,11 +35,11 @@ public abstract class AbstractRadiusServerTests {
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
-    public void verifyAuthenticationSuccess() throws Exception {
+    void verifyAuthenticationSuccess() throws Exception {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.code());
@@ -51,7 +51,7 @@ public abstract class AbstractRadiusServerTests {
     public abstract RadiusServer getRadiusServer();
 
     @Test
-    public void verifyAuthenticationFails() throws Exception {
+    void verifyAuthenticationFails() throws Exception {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "badpsw");
         assertNull(response);

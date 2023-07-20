@@ -27,7 +27,7 @@ grouperClient.webService.password = password
 
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.grouper" %}
 
-You may also consider externalizing the Grouper client condfiguration file
+You may also consider externalizing the Grouper client configuration file
 by modifying `/src/main/resources/grouper.client.properties` to contain the following:
 
 ```properties

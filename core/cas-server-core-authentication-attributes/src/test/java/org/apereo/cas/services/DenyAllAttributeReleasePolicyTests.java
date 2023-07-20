@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
-public class DenyAllAttributeReleasePolicyTests {
+class DenyAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "denyAllAttributeReleasePolicy.json");
 
@@ -26,7 +26,7 @@ public class DenyAllAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new DenyAllAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);

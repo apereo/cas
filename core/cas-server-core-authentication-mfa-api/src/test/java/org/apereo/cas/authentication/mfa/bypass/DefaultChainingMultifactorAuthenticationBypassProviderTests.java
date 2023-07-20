@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
+class DefaultChainingMultifactorAuthenticationBypassProviderTests {
 
     private static void mockRememberBypass(final TestMultifactorAuthenticationProvider provider, final Authentication authentication) {
         val authnAttributes = new HashMap<String, List<Object>>();
@@ -38,7 +38,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyChain() {
+    void verifyChain() {
         val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
         p.addMultifactorAuthenticationProviderBypassEvaluator(
             new MultifactorAuthenticationProviderBypassEvaluator[]{NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance()});
@@ -46,7 +46,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyEmptyChainOperation() {
+    void verifyEmptyChainOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -62,7 +62,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

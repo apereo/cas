@@ -22,6 +22,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.par.max-time-to-live-in-seconds=5",
     "cas.authn.oidc.par.number-of-uses=1"
 })
-public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationRequestResponseBuilder")
     private OAuth20AuthorizationResponseBuilder oidcPushedAuthorizationRequestResponseBuilder;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertEquals(0, oidcPushedAuthorizationRequestResponseBuilder.getOrder());
 
         val registeredService = getOidcRegisteredService();
@@ -52,7 +55,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
-            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .authentication(RegisteredServiceTestUtils.getAuthentication("casuser",
+                Map.of("customAttribute", List.of("CASUSER-ORIGINAL"))))
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
@@ -85,11 +89,13 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
 
         request.addParameter(OidcConstants.REQUEST_URI, uri);
 
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
+            Map.of("customAttribute", List.of("CASUSER-TGT")));
+        val tgt = new MockTicketGrantingTicket(authn);
         ticketRegistry.addTicket(tgt);
 
-        val c = ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(c);
+        val cookie = ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
+        request.setCookies(cookie);
 
         context = new JEEContext(request, response);
         authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(context,
@@ -101,6 +107,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         assertNotNull(accessTokenRequest.getResponseType());
         assertNotNull(accessTokenRequest.getGrantType());
         assertNotNull(accessTokenRequest.getTicketGrantingTicket());
+        val customAttribute = accessTokenRequest.getAuthentication().getAttributes().get("customAttribute");
+        assertEquals(List.of("CASUSER-TGT", "CASUSER-ORIGINAL"), customAttribute);
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class));
     }
 }

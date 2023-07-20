@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
+class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
@@ -29,7 +29,7 @@ public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void removeNonExistingService() {
+    void removeNonExistingService() {
         var registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         assertTrue(getNewServiceRegistry().delete(registeredService));
     }

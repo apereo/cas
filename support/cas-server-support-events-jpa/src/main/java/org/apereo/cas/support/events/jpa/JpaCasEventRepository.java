@@ -53,6 +53,12 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    public void removeAll() {
+        this.entityManager.createQuery("DELETE FROM JpaCasEvent e").executeUpdate();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> load() {
         val query = entityManager.createQuery(SELECT_QUERY.trim(), JpaCasEvent.class);
         return jpaBeanFactory
@@ -61,6 +67,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -72,6 +79,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
@@ -82,6 +90,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
@@ -93,6 +102,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsOfType(final String type) {
         val query = entityManager.createQuery(SELECT_QUERY.concat("where r.type = :type"), JpaCasEvent.class)
             .setParameter(TYPE_PARAM, type);
@@ -102,6 +112,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -113,6 +124,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
         val sql = SELECT_QUERY.concat("where r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -123,6 +135,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
         var query = entityManager.createQuery(sql, JpaCasEvent.class)

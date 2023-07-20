@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("PasswordOps")
-public class GlibcCryptPasswordEncoderTests {
+class GlibcCryptPasswordEncoderTests {
 
     private static final String PASSWORD_CLEAR = "12345abcDEF!$";
 
@@ -39,7 +39,7 @@ public class GlibcCryptPasswordEncoderTests {
     }
 
     @Test
-    public void sha512EncodingTest() {
+    void sha512EncodingTest() {
         assertTrue(testEncodingRoundtrip("SHA-512"));
         assertTrue(testEncodingRoundtrip("6"));
         assertTrue(testMatchWithDifferentSalt("SHA-512",
@@ -47,28 +47,28 @@ public class GlibcCryptPasswordEncoderTests {
     }
 
     @Test
-    public void ha256EncodingTest() {
+    void ha256EncodingTest() {
         assertTrue(testEncodingRoundtrip("SHA-256"));
         assertTrue(testEncodingRoundtrip("5"));
         assertTrue(testMatchWithDifferentSalt("SHA-256", "$5$rounds=1000$e98244bb01b64f47$2qphrK8axtGjgmCJFYwaH7czw5iK9feLl7tKjyTlDy0"));
     }
 
     @Test
-    public void md5EncodingTest() {
+    void md5EncodingTest() {
         assertTrue(testEncodingRoundtrip("MD5"));
         assertTrue(testEncodingRoundtrip("1"));
         assertTrue(testMatchWithDifferentSalt("MD5", "$1$c4676fd0$HOHZ2CYp45lZAAQyvF4C21"));
     }
 
     @Test
-    public void desUnixCryptEncodingTest() {
+    void desUnixCryptEncodingTest() {
         assertTrue(testEncodingRoundtrip("aB"));
         assertTrue(testEncodingRoundtrip("42xyz"));
         assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
     }
 
     @Test
-    public void verifyBadInput() {
+    void verifyBadInput() {
         val encoder = new GlibcCryptPasswordEncoder(null, 0, null);
         assertNull(encoder.encode(null));
         assertNull(encoder.encode("password"));
@@ -76,7 +76,7 @@ public class GlibcCryptPasswordEncoderTests {
     }
 
     @Test
-    public void verifyNoSalt() {
+    void verifyNoSalt() {
         val encoder = new GlibcCryptPasswordEncoder("MD5", 10, "secret");
         assertNotNull(encoder.encode("value"));
     }

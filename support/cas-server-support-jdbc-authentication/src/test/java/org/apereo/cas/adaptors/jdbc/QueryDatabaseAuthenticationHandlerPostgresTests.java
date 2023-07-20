@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Import(QueryDatabaseAuthenticationHandlerPostgresTests.DatabaseTestConfiguration.class)
-public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";
@@ -86,7 +86,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("locations"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         properties.setName("DbHandler");

@@ -40,7 +40,7 @@ public abstract class BaseJpaSamlMetadataTests {
     protected SamlRegisteredServiceMetadataResolver resolver;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired

@@ -26,14 +26,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class StandaloneConfigurationFilePropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
-
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
     @Override
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource(getClass().getSimpleName());
-        val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile(environment);
+        val configFile = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(environment);
         if (configFile != null) {
             val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);

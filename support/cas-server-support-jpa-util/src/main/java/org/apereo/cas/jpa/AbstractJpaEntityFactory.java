@@ -35,11 +35,20 @@ public abstract class AbstractJpaEntityFactory<T> {
     }
 
     /**
+     * Is MS SQL Server ?.
+     *
+     * @return true/false
+     */
+    public boolean isMsSqlServer() {
+        return this.dialect.contains("SQLServer");
+    }
+
+    /**
      * Is oracle ?.
      *
      * @return true/false
      */
-    protected boolean isOracle() {
+    public boolean isOracle() {
         return this.dialect.contains("Oracle");
     }
 
@@ -48,7 +57,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isMySql() {
+    public boolean isMySql() {
         return this.dialect.contains("MySQL");
     }
 
@@ -57,7 +66,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isPostgres() {
+    public boolean isPostgres() {
         return this.dialect.contains("PostgreSQL");
     }
 
@@ -66,7 +75,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isMariaDb() {
+    public boolean isMariaDb() {
         return this.dialect.contains("MariaDB");
     }
 

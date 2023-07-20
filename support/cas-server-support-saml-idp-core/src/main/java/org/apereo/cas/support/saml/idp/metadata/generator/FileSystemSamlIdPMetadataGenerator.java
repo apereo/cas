@@ -62,7 +62,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @Override
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
-
+        LOGGER.info("Writing SAML2 metadata to [{}]", metadataFile);
+        
         val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
         if (mdProps.getFileSystem().isSignMetadata()) {
             val resolvedCert = getConfigurationContext().getSamlIdPMetadataLocator().resolveSigningCertificate(registeredService);
@@ -79,6 +80,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         } else {
             FileUtils.write(metadataFile, metadata, StandardCharsets.UTF_8);
         }
+        LOGGER.info("Wrote SAML2 metadata to [{}]", metadataFile);
         return metadata;
     }
 
@@ -126,6 +128,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             LOGGER.info("Key file [{}] already exists, and will be deleted", key.getCanonicalPath());
             FileUtils.forceDelete(key);
         }
+        LOGGER.debug("Writing SAML2 key file to [{}]", key.getPath());
+        LOGGER.debug("Writing SAML2 certificate file to [{}]", certificate.getPath());
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);
              val certWriter = Files.newBufferedWriter(certificate.toPath(), StandardCharsets.UTF_8)) {
             getConfigurationContext().getSamlIdPCertificateAndKeyWriter()

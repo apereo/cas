@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthToken")
-public class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
+class OAuth20DefaultAccessTokenFactoryTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperationCreate() {
+    void verifyOperationCreate() {
         val registeredService = getRegisteredService("https://app.oauth.org", "clientid-at", "secret-at");
         registeredService.setAccessTokenExpirationPolicy(
             new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy("PT10S", "PT10S"));

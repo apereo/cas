@@ -24,20 +24,20 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-        "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosiqinNFEKXHxgXCJEBr",
+        "cas.authn.mfa.duo[0].application-key=my134nfd46m89",
+        "cas.authn.mfa.duo[0].duo-integration-key=SIOXVQQD3UMZ8XXMNZQ8",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("duoAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val event = resolver.resolveSingle(BaseDuoSecurityTests.getMockRequestContext(applicationContext));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

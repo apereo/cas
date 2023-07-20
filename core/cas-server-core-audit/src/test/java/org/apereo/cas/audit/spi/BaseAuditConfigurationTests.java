@@ -5,13 +5,16 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,20 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseAuditConfigurationTests {
     private static final String USER = RandomUtils.randomAlphanumeric(6);
 
+    protected AuditActionContext auditActionContext;
+
     public abstract AuditTrailManager getAuditTrailManager();
 
     @BeforeEach
     public void onSetUp() {
         val auditTrailManager = getAuditTrailManager();
         auditTrailManager.removeAll();
-        val ctx = new AuditActionContext(USER, "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", "GoogleChrome");
-        auditTrailManager.record(ctx);
+        this.auditActionContext = new AuditActionContext(USER, "TEST", "TEST",
+            "CAS", LocalDateTime.now(Clock.systemUTC()), new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
+        auditTrailManager.record(auditActionContext);
     }
 
     @Test
-    public void verifyAuditByDate() {
+    void verifyAuditByDate() {
         val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, time);
         val results = getAuditTrailManager().getAuditRecords(criteria);
@@ -46,7 +50,7 @@ public abstract class BaseAuditConfigurationTests {
     }
 
     @Test
-    public void verifyAuditByPrincipal() {
+    void verifyAuditByPrincipal() {
         val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, time,

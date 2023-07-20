@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAMLLogout")
-public class SamlIdPLogoutResponseObjectBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPLogoutResponseObjectBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
     private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val response = samlIdPLogoutResponseObjectBuilder.newLogoutResponse(
             UUID.randomUUID().toString(), "https://github.com/apereo/cas",
             samlIdPLogoutResponseObjectBuilder.newIssuer("myissuer"),

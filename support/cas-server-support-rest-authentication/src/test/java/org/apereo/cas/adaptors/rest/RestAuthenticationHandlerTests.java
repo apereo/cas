@@ -15,18 +15,19 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
@@ -45,6 +46,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -76,6 +78,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreServicesConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -88,7 +91,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.authn.rest[0].uri=http://localhost:8081/authn")
 @Tag("RestfulApiAuthentication")
-public class RestAuthenticationHandlerTests {
+class RestAuthenticationHandlerTests {
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private BeanContainer<AuthenticationHandler> authenticationHandler;
@@ -98,7 +101,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val instant = Instant.now(Clock.systemUTC()).plus(10, ChronoUnit.DAYS);
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)
@@ -116,7 +119,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoPrincipal() {
+    void verifyNoPrincipal() {
         try (val webServer = new MockWebServer(8081, StringUtils.EMPTY)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -125,7 +128,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDisabledAccount() {
+    void verifyDisabledAccount() {
         try (val webServer = new MockWebServer(8081, HttpStatus.FORBIDDEN)) {
             webServer.start();
             assertThrows(AccountDisabledException.class,
@@ -134,7 +137,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUnauthorized() {
+    void verifyUnauthorized() {
         try (val webServer = new MockWebServer(8081, HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -143,7 +146,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOther() {
+    void verifyOther() {
         try (val webServer = new MockWebServer(8081, HttpStatus.REQUEST_TIMEOUT)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -152,7 +155,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyLocked() {
+    void verifyLocked() {
         try (val webServer = new MockWebServer(8081, HttpStatus.LOCKED)) {
             webServer.start();
             assertThrows(AccountLockedException.class,
@@ -161,7 +164,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyConditionReq() {
+    void verifyConditionReq() {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_REQUIRED)) {
             webServer.start();
             assertThrows(AccountPasswordMustChangeException.class,
@@ -170,7 +173,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyConditionFail() {
+    void verifyConditionFail() {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_FAILED)) {
             webServer.start();
             assertThrows(AccountExpiredException.class,
@@ -179,7 +182,7 @@ public class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNotFound() {
+    void verifyNotFound() {
         try (val webServer = new MockWebServer(8081, HttpStatus.NOT_FOUND)) {
             webServer.start();
             assertThrows(AccountNotFoundException.class,

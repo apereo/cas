@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -28,20 +28,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML2")
-public class SamlProfileSamlAssertionBuilderTests {
+@Tag("SAMLResponse")
+class SamlProfileSamlAssertionBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class AssertionWithDefaultMetadata extends BaseSamlIdPConfigurationTests {
+    class AssertionWithDefaultMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAssertionBuilder")
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        public void verifyAssertionWithDefaultIssuer() throws Exception {
+        void verifyAssertionWithDefaultIssuer() throws Exception {
             val service = getSamlRegisteredServiceForTestShib();
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -63,18 +63,18 @@ public class SamlProfileSamlAssertionBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-    public class AssertionWithServiceProviderMetadata extends BaseSamlIdPConfigurationTests {
+    class AssertionWithServiceProviderMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAssertionBuilder")
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        public void verifyAssertionWithServiceMetadataAndIssuer() throws Exception {
+        void verifyAssertionWithServiceMetadataAndIssuer() throws Exception {
             val service = getSamlRegisteredServiceFor("https://cassp.example.org");
             service.setId(1000);
             service.setName("ObjectSignerTest");
 
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
             val buildContext = SamlProfileBuilderContext.builder()

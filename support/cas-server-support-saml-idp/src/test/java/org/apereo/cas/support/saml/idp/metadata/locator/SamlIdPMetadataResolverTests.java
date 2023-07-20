@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 
 import com.google.common.collect.Iterables;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 @EnableRetry
-public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
 
     @RepeatedTest(2)
     public void verifyOperation() throws Exception {
@@ -56,7 +57,7 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
     }
 
     @Test
-    public void verifyOperationWithService() throws Exception {
+    void verifyOperationWithService() throws Exception {
         val criteria = new CriteriaSet(
             new SamlIdPSamlRegisteredServiceCriterion(getSamlRegisteredServiceFor(UUID.randomUUID().toString())),
             new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getCore().getEntityId()));

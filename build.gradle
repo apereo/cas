@@ -3,9 +3,9 @@ import java.util.concurrent.ConcurrentHashMap
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
-
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven {
@@ -25,10 +25,10 @@ buildscript {
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-
+        classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
+        classpath "com.github.johnrengelman:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
     }
 }
@@ -50,6 +50,7 @@ ext {
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
+    terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
@@ -129,7 +130,11 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("publishToMavenLocal") }) {
+    jacoco {
+        toolVersion = "$gradleJacocoVersion"
+    }
+
+    if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
         apply plugin: "maven-publish"
     }
 
@@ -154,10 +159,6 @@ allprojects {
     project.ext["forceBootifulArtifact"] = null
 
     afterEvaluate { project ->
-        jacoco {
-            toolVersion = "$gradleJacocoVersion"
-        }
-
         if (rootProject.generateGitProperties) {
             gitProperties {
                 customProperty 'project.group', project.group
@@ -217,39 +218,6 @@ subprojects {
         provided
     }
 
-    if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-        tasks.named('jacocoTestReport') {
-            reports {
-                xml.required.set(true)
-                html.required.set(true)
-            }
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-            sourceSets sourceSets.main
-            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-        }
-
-        tasks.named('jacocoTestCoverageVerification') {
-            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-            violationRules {
-                rule {
-                    element = 'CLASS'
-                    limit {
-                        minimum = 0.80
-                    }
-                }
-            }
-        }
-    }
-
     apply from: rootProject.file("gradle/overrides.gradle")
 
     /**
@@ -299,7 +267,6 @@ subprojects {
                         }
                     }
                 }
-
 
                 if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
                     repositories {
@@ -387,16 +354,16 @@ subprojects {
         it.options.incremental = true
 
         def casCompilerArgs = ["-parameters"]
-
-        def terminateCompilerOnWarning = project.ext.properties.get("terminateCompilerOnWarning", true)
-        if (terminateCompilerOnWarning) {
+        if (rootProject.ext.terminateCompilerOnWarning) {
             casCompilerArgs.add("-Werror")
         }
 
         if (!rootProject.skipErrorProneCompiler) {
+            it.options.errorprone.disableAllChecks = !rootProject.ext.terminateCompilerOnWarning
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
+            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
@@ -526,27 +493,28 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
 }
 
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-    tasks.register('jacocoMerge', JacocoMerge) {
-        subprojects.each { subproject ->
-            executionData subproject.tasks.withType(Test)
-            dependsOn tasks.withType(Test)
-        }
-        doFirst {
-            executionData = files(executionData.findAll { it.exists() })
-        }
-    }
-
     tasks.register('jacocoRootReport', JacocoReport) {
-        description = 'Generates an aggregate report from all projects'
-
-        subprojects.each {
-            if (!it.path.contains(":docs")) {
-                it.tasks.withType(Test).each { task -> dependsOn(task) }
+        def executions = subprojects.findAll { subproject ->
+            if (!subproject.path.contains(":docs")) {
+                subproject.tasks.withType(Test).each{ task ->
+                    dependsOn(task)
+                    mustRunAfter(task)
+                }
             }
+            def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            logger.info "${subproject.name} with execution file ${execFile}"
+            true
+        }.collect {subproject ->
+            subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
         }
+        logger.info "Coverage execution data files: ${executions}"
+        executionData.from(executions)
 
-        dependsOn jacocoMerge
-
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            csv.required.set(true)
+        }
         additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
         sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
         classDirectories.setFrom(
@@ -556,21 +524,14 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
                             exclude: rootProject.excludedFilesFromTestCoverage
                     )
                 })
-        //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
-        executionData jacocoMerge.destinationFile
-
-        reports {
-            html.required.set(true)
-            xml.required.set(true)
-            csv.required.set(true)
-        }
     }
 }
 
 tasks.register('casVersion') {
     description = "Display current CAS version"
+    def casVersion = rootProject.version
     doLast {
-        println rootProject.version
+        println casVersion
     }
 }
 
@@ -592,6 +553,36 @@ tasks.register('verifyRequiredJavaVersion') {
     def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
     if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
         throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
+    }
+}
+
+tasks.register('publishProjectModules') {
+    def outputFile = new File("${buildDir}", "modules.json")
+    def results = []
+    subprojects.each {
+        def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
+        if (publishMetadata) {
+            def metadata = it.ext.projectMetadata
+            if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
+                throw new GradleException("Missing required project metadata for ${it.name}")
+            }
+            if (!metadata.containsKey("selectable")) {
+                metadata.put("selectable", true)
+            }
+            results += [
+                name: it.name,
+                version: it.version,
+                group: it.group,
+                description: it.description,
+                details: metadata
+            ]
+        }
+    }
+    doLast {
+        outputFile.getParentFile().mkdirs()
+        def json = groovy.json.JsonOutput.toJson(results)
+        outputFile.write json
+        println "Published project modules to ${outputFile}"
     }
 }
 

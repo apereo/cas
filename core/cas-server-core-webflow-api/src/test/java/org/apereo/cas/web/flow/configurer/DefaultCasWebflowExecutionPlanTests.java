@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Webflow")
-public class DefaultCasWebflowExecutionPlanTests {
+class DefaultCasWebflowExecutionPlanTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val plan = new DefaultCasWebflowExecutionPlan();
 
         val p1 = mock(CasWebflowLoginContextProvider.class);

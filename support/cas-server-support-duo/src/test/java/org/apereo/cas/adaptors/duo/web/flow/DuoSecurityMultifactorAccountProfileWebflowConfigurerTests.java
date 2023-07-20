@@ -65,7 +65,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
     "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
 })
-public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
@@ -75,7 +75,7 @@ public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends 
     private MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

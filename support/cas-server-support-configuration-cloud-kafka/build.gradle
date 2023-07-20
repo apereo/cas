@@ -1,7 +1,16 @@
 description = "Apereo CAS Configuration - Cloud Bus Kafka"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management Bus via Apache Kafka"
+    ]
+}
 dependencies {
     implementation libraries.zookeeper
     implementation libraries.springcloudbuskafka
     implementation libraries.springkafka
+    implementation libraries.springcloudbootstrap
+
     runtimeOnly project(":core:cas-server-core-events-configuration-cloud-bus")
 }

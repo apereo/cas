@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationHand
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -30,6 +31,11 @@ import java.io.Serializable;
 public class AzureActiveDirectoryAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -21355975558426360L;
+
+    /**
+     * Enable authentication against Azure active directory.
+     */
+    private boolean enabled = true;
 
     /**
      * The name of the authentication handler.
@@ -104,6 +110,7 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**
@@ -112,6 +119,12 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     @RequiredProperty
     @ExpressionLanguageCapable
     private String tenant;
+
+    /**
+     * Scope used when fetching access tokens.
+     * Multiple scopes may be separated using a comma.
+     */
+    private String scope = "openid,email,profile,address";
 
     /**
      * Define the scope and state of this authentication handler

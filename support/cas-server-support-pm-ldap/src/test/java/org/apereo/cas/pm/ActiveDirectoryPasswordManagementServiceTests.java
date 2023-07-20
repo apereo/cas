@@ -41,16 +41,16 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
 @EnabledIfListeningOnPort(port = 10636)
-public class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifyPasswordReset() {
+    void verifyPasswordReset() {
         val credential = new UsernamePasswordCredential("changepassword", StringUtils.EMPTY);
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("P@ssw0rdMellon".toCharArray());
@@ -60,7 +60,7 @@ public class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPassw
     }
 
     @Test
-    public void verifyPasswordChange() {
+    void verifyPasswordChange() {
         val credential = new UsernamePasswordCredential("changepasswordnoreset", "P@ssw0rd");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("P@ssw0rd2".toCharArray());
@@ -70,19 +70,19 @@ public class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPassw
     }
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("changepassword@example.org", email);
     }
 
     @Test
-    public void verifyFindPhone() {
+    void verifyFindPhone() {
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("1234567890", ph);
     }
 
     @Test
-    public void verifyFindSecurityQuestions() {
+    void verifyFindSecurityQuestions() {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("DepartmentQuestion"));

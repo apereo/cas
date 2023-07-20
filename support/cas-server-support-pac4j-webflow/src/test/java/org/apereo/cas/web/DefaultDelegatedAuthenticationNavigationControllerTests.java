@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DefaultDelegatedAuthenticationNavigationControllerTests {
+class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired
     @Qualifier("defaultDelegatedAuthenticationNavigationController")
@@ -45,18 +46,18 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
-    public void verifyRedirectByParam() throws Exception {
+    void verifyRedirectByParam() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         request.addParameter("customParam", "customValue");
         val response = new MockHttpServletResponse();
         var view = controller.redirectResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
-        assertTrue(new URIBuilder(((RedirectView) view).getUrl()).getQueryParams()
+        assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
             .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
         view = controller.postResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
-        assertTrue(new URIBuilder(((RedirectView) view).getUrl()).getQueryParams()
+        assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
             .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
     }
 

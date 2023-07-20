@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
+
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
@@ -18,11 +20,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20AccessTokenResponseAuditResourceResolverTests {
+class OAuth20AccessTokenResponseAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
-        val r = new OAuth20AccessTokenResponseAuditResourceResolver();
+    void verifyAction() {
+        val resolver = new OAuth20AccessTokenResponseAuditResourceResolver(new AuditEngineProperties()
+            .setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val result = new ModelAndView("dummyView", Map.of("k1", "v1"));
-        assertTrue(r.resolveFrom(mock(JoinPoint.class), result).length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), result).length > 0);
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -12,12 +13,12 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListener;
 import org.apereo.cas.support.saml.idp.SamlIdPCasEventListener;
+import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -49,7 +50,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -75,7 +76,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +108,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlIdPMetadataController samlIdPMetadataController(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
@@ -135,7 +135,7 @@ public class SamlIdPMetadataConfiguration {
         @ConditionalOnAvailableEndpoint
         public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -152,8 +152,10 @@ public class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
+            @Qualifier("casSamlIdPMetadataResolver")
+            final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -161,15 +163,19 @@ public class SamlIdPMetadataConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
             return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties, servicesManager,
-                authenticationSystemSupport, samlIdPServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
+                authenticationSystemSupport, samlIdPServiceFactory,
+                PrincipalFactoryUtils.newPrincipalFactory(),
                 samlProfileSamlResponseBuilder,
                 defaultSamlRegisteredServiceCachingMetadataResolver,
-                new NonInflatingSaml20ObjectBuilder(openSamlConfigBean));
+                new NonInflatingSaml20ObjectBuilder(openSamlConfigBean),
+                defaultPrincipalResolver, casSamlIdPMetadataResolver);
         }
 
     }
@@ -241,6 +247,7 @@ public class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Order(Ordered.HIGHEST_PRECEDENCE + 5)
+        @ConditionalOnMissingGraalVMNativeImage
         public SamlRegisteredServiceMetadataResolver groovyResourceMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -277,16 +284,16 @@ public class SamlIdPMetadataConfiguration {
 
         @Lazy
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
-        @DependsOn("samlIdPMetadataGenerator")
+        @DependsOn(SamlIdPMetadataGenerator.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) throws Exception {
+            final OpenSamlConfigBean openSamlConfigBean) {
             val idp = casProperties.getAuthn().getSamlIdp();
             val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
             resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
@@ -298,9 +305,10 @@ public class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class SamlIdPMetadataGenerationConfiguration {
-        @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-        @Bean
+        @ConditionalOnMissingBean(name = SamlIdPMetadataGenerator.BEAN_NAME)
+        @Bean(initMethod = "initialize")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
@@ -313,10 +321,12 @@ public class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
             final CasConfigurationProperties casProperties) throws Exception {
+            val properties = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
             val url = new URL(casProperties.getServer().getPrefix());
-            val generator = new DefaultSamlIdPCertificateAndKeyWriter();
-            generator.setHostname(url.getHost());
+            val generator = new DefaultSamlIdPCertificateAndKeyWriter(url.getHost());
             generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+            properties.setCertificateAlgorithm(properties.getCertificateAlgorithm());
+            properties.setKeySize(properties.getKeySize());
             return generator;
         }
 
@@ -379,7 +389,7 @@ public class SamlIdPMetadataConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPMetadataResolverConfiguration {
 
-        @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+        @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
@@ -429,8 +439,10 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
+        @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
         public SamlIdPCasEventListener samlIdPCasEventListener(
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
             return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
         }

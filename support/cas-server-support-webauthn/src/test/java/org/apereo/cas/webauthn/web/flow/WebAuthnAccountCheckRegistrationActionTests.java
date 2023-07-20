@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnAccountCheckRegistrationActionTests {
+class WebAuthnAccountCheckRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_ACCOUNT_REGISTRATION)
     private Action webAuthnCheckAccountRegistrationAction;
@@ -48,13 +48,13 @@ public class WebAuthnAccountCheckRegistrationActionTests {
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());

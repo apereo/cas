@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandl
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties.PasswordPolicyHandlingOptions;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
@@ -25,7 +26,6 @@ import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -105,10 +105,7 @@ import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.context.ApplicationContext;
-
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
@@ -119,8 +116,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -174,7 +171,7 @@ public class LdapUtils {
      * @return the long value
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
-        val v = getString(entry, attribute, nullValue.toString());
+        val v = getString(entry, attribute, String.valueOf(nullValue));
         return Long.valueOf(v);
     }
 
@@ -231,7 +228,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean isLdapConnectionUrl(final String r) {
-        return r.toLowerCase().startsWith(LDAP_PREFIX);
+        return r.toLowerCase(Locale.ENGLISH).startsWith(LDAP_PREFIX);
     }
 
     /**
@@ -369,9 +366,9 @@ public class LdapUtils {
                         LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                     }
                     if (script != null) {
-                        val parameters = new LinkedHashMap<String, String>();
-                        IntStream.range(0, values.size())
-                            .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
+                        val parameters = IntStream.range(0, values.size())
+                            .boxed()
+                            .collect(Collectors.toMap(paramName::get, values::get, (__, b) -> b, LinkedHashMap::new));
                         val args = CollectionUtils.<String, Object>wrap("filter", filter,
                             "parameters", parameters,
                             "applicationContext", ApplicationContextProvider.getApplicationContext(),
@@ -448,26 +445,26 @@ public class LdapUtils {
     /**
      * New ldap authenticator.
      *
-     * @param l the ldap settings.
+     * @param props the ldap settings.
      * @return the authenticator
      */
-    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        switch (l.getType()) {
+    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties props) {
+        switch (props.getType()) {
             case AD -> {
-                LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
-                return getActiveDirectoryAuthenticator(l);
+                LOGGER.debug("Creating active directory authenticator for [{}]", props.getLdapUrl());
+                return getActiveDirectoryAuthenticator(props);
             }
             case DIRECT -> {
-                LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
-                return getDirectBindAuthenticator(l);
+                LOGGER.debug("Creating direct-bind authenticator for [{}]", props.getLdapUrl());
+                return getDirectBindAuthenticator(props);
             }
             case AUTHENTICATED -> {
-                LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(l);
+                LOGGER.debug("Creating authenticated authenticator for [{}]", props.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(props);
             }
             default -> {
-                LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(l);
+                LOGGER.debug("Creating anonymous authenticator for [{}]", props.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(props);
             }
         }
     }
@@ -475,39 +472,39 @@ public class LdapUtils {
     /**
      * New pooled connection factory pooled connection factory.
      *
-     * @param l the ldap properties
+     * @param props the ldap properties
      * @return the pooled connection factory
      */
-    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
-        val connectionConfig = newLdaptiveConnectionConfig(l);
+    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties props) {
+        val connectionConfig = newLdaptiveConnectionConfig(props);
 
-        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", props.getLdapUrl());
         val pooledCf = new PooledConnectionFactory(connectionConfig);
-        pooledCf.setMinPoolSize(l.getMinPoolSize());
-        pooledCf.setMaxPoolSize(l.getMaxPoolSize());
-        pooledCf.setValidateOnCheckOut(l.isValidateOnCheckout());
-        pooledCf.setValidatePeriodically(l.isValidatePeriodically());
-        pooledCf.setBlockWaitTime(Beans.newDuration(l.getBlockWaitTime()));
+        pooledCf.setMinPoolSize(props.getMinPoolSize());
+        pooledCf.setMaxPoolSize(props.getMaxPoolSize());
+        pooledCf.setValidateOnCheckOut(props.isValidateOnCheckout());
+        pooledCf.setValidatePeriodically(props.isValidatePeriodically());
+        pooledCf.setBlockWaitTime(Beans.newDuration(props.getBlockWaitTime()));
 
         val strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(Beans.newDuration(l.getIdleTime()));
-        strategy.setPrunePeriod(Beans.newDuration(l.getPrunePeriod()));
+        strategy.setIdleTime(Beans.newDuration(props.getIdleTime()));
+        strategy.setPrunePeriod(Beans.newDuration(props.getPrunePeriod()));
 
         pooledCf.setPruneStrategy(strategy);
 
-        val validator = l.getValidator();
-        switch (validator.getType().trim().toLowerCase()) {
+        val validator = props.getValidator();
+        switch (validator.getType().trim().toLowerCase(Locale.ENGLISH)) {
             case "compare" -> {
                 val compareRequest = new CompareRequest(
                     validator.getDn(),
                     validator.getAttributeName(),
                     validator.getAttributeValue());
                 val compareValidator = new CompareConnectionValidator(compareRequest);
-                compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-                compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                compareValidator.setValidatePeriod(Beans.newDuration(props.getValidatePeriod()));
+                compareValidator.setValidateTimeout(Beans.newDuration(props.getValidateTimeout()));
                 pooledCf.setValidator(compareValidator);
             }
-            case "none" -> LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+            case "none" -> LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", props.getLdapUrl());
             case "search" -> {
                 val searchRequest = new SearchRequest();
                 searchRequest.setBaseDn(validator.getBaseDn());
@@ -516,39 +513,34 @@ public class LdapUtils {
                 searchRequest.setSearchScope(SearchScope.valueOf(validator.getScope()));
                 searchRequest.setSizeLimit(1);
                 val searchValidator = new SearchConnectionValidator(searchRequest);
-                searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-                searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                searchValidator.setValidatePeriod(Beans.newDuration(props.getValidatePeriod()));
+                searchValidator.setValidateTimeout(Beans.newDuration(props.getValidateTimeout()));
                 pooledCf.setValidator(searchValidator);
             }
         }
 
-        pooledCf.setFailFastInitialize(l.isFailFast());
+        pooledCf.setFailFastInitialize(props.isFailFast());
 
-        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
-            val pass =
-                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
-            switch (pass) {
-                case BIND:
-                    if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
-                        val bindRequest = new SimpleBindRequest(l.getBindDn(), l.getBindCredential());
-                        pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
-                        LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                    } else {
-                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
-                            .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
-                            .collect(Collectors.toList());
-                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
-                                    + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
-                                    + "set the pool passivator setting to one of [{}]",
-                            l.getPoolPassivator(), l.getLdapUrl(), values);
-                    }
-                    break;
-                default:
-                    break;
+        if (StringUtils.isNotBlank(props.getPoolPassivator())) {
+            val pass = AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(props.getPoolPassivator().toUpperCase(Locale.ENGLISH));
+            if (pass == AbstractLdapProperties.LdapConnectionPoolPassivator.BIND) {
+                if (StringUtils.isNotBlank(props.getBindDn()) && StringUtils.isNoneBlank(props.getBindCredential())) {
+                    val bindRequest = new SimpleBindRequest(props.getBindDn(), props.getBindCredential());
+                    pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
+                    LOGGER.debug("Created [{}] passivator for [{}]", props.getPoolPassivator(), props.getLdapUrl());
+                } else {
+                    val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                        .collect(Collectors.toList());
+                    LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                            + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                            + "set the pool passivator setting to one of [{}]",
+                        props.getPoolPassivator(), props.getLdapUrl(), values);
+                }
             }
         }
 
-        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
+        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
         pooledCf.initialize();
         return pooledCf;
     }
@@ -624,7 +616,8 @@ public class LdapUtils {
             }
 
             if (StringUtils.isNotBlank(properties.getTrustManager())) {
-                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase())) {
+                val manager = properties.getTrustManager().trim().toUpperCase(Locale.ENGLISH);
+                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(manager)) {
                     case ANY -> sslConfig.setTrustManagers(new AllowAnyTrustManager());
                     default -> sslConfig.setTrustManagers(new DefaultTrustManager());
                 }
@@ -634,20 +627,25 @@ public class LdapUtils {
         if (StringUtils.isNotBlank(properties.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", properties.getSaslMechanism());
 
-            val bc = new BindConnectionInitializer();
-            val sc = getSaslConfigFrom(properties);
+            val initializer = new BindConnectionInitializer();
+            val saslConfig = getSaslConfigFrom(properties);
 
-
-            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> sc.setAuthorizationId(properties.getSaslAuthorizationId()));
-            sc.setMutualAuthentication(properties.getSaslMutualAuth());
+            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> saslConfig.setAuthorizationId(properties.getSaslAuthorizationId()));
+            saslConfig.setMutualAuthentication(properties.getSaslMutualAuth());
             if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
-                sc.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
+                saslConfig.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
             }
             if (StringUtils.isNotBlank(properties.getSaslSecurityStrength())) {
-                sc.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
+                saslConfig.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
             }
-            bc.setBindSaslConfig(sc);
-            connectionConfig.setConnectionInitializers(bc);
+            if (StringUtils.isNotBlank(properties.getBindDn())) {
+                initializer.setBindDn(properties.getBindDn());
+                if (StringUtils.isNotBlank(properties.getBindCredential())) {
+                    initializer.setBindCredential(new Credential(properties.getBindCredential()));
+                }
+            }
+            initializer.setBindSaslConfig(saslConfig);
+            connectionConfig.setConnectionInitializers(initializer);
         } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
             connectionConfig.setConnectionInitializers(new FastBindConnectionInitializer());
@@ -661,49 +659,49 @@ public class LdapUtils {
     /**
      * Returns a pooled connection factory or default connection factory based on {@link AbstractLdapProperties#isDisablePooling()}.
      *
-     * @param l ldap properties
+     * @param properties ldap properties
      * @return the connection factory
      */
-    public static ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
-        return l.isDisablePooling() ? newLdaptiveDefaultConnectionFactory(l) : newLdaptivePooledConnectionFactory(l);
+    public static ConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties properties) {
+        return properties.isDisablePooling() ? newLdaptiveDefaultConnectionFactory(properties) : newLdaptivePooledConnectionFactory(properties);
     }
 
     /**
      * New dn resolver entry resolver.
      * Creates the necessary search entry resolver.
      *
-     * @param l       the ldap settings
-     * @param factory the factory
+     * @param properties the ldap settings
+     * @param factory    the factory
      * @return the entry resolver
      */
-    public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
+    public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties properties,
                                                                final ConnectionFactory factory) {
 
-        var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
+        var resolvers = Arrays.stream(StringUtils.split(properties.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
                 val entryResolver = new SearchEntryResolver();
                 entryResolver.setBaseDn(baseDn.trim());
-                entryResolver.setUserFilter(l.getSearchFilter());
-                entryResolver.setSubtreeSearch(l.isSubtreeSearch());
+                entryResolver.setUserFilter(properties.getSearchFilter());
+                entryResolver.setSubtreeSearch(properties.isSubtreeSearch());
                 entryResolver.setConnectionFactory(factory);
-                entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
-                entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
+                entryResolver.setAllowMultipleEntries(properties.isAllowMultipleEntries());
+                entryResolver.setBinaryAttributes(properties.getBinaryAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
-                if (StringUtils.isNotBlank(l.getDerefAliases())) {
-                    entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+                if (StringUtils.isNotBlank(properties.getDerefAliases())) {
+                    entryResolver.setDerefAliases(DerefAliases.valueOf(properties.getDerefAliases()));
                 }
 
-                val entryHandlers = newLdaptiveEntryHandlers(l.getSearchEntryHandlers());
-                val searchResultHandlers = newLdaptiveSearchResultHandlers(l.getSearchEntryHandlers());
+                val entryHandlers = newLdaptiveEntryHandlers(properties.getSearchEntryHandlers());
+                val searchResultHandlers = newLdaptiveSearchResultHandlers(properties.getSearchEntryHandlers());
                 if (!entryHandlers.isEmpty()) {
-                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), entryHandlers);
+                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", properties.getLdapUrl(), entryHandlers);
                     entryResolver.setEntryHandlers(entryHandlers.toArray(LdapEntryHandler[]::new));
                 }
                 if (!searchResultHandlers.isEmpty()) {
-                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), searchResultHandlers);
+                    LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", properties.getLdapUrl(), searchResultHandlers);
                     entryResolver.setSearchResultHandlers(searchResultHandlers.toArray(SearchResultHandler[]::new));
                 }
-                if (l.isFollowReferrals()) {
+                if (properties.isFollowReferrals()) {
                     entryResolver.setSearchResultHandlers(new FollowSearchReferralHandler());
                 }
                 return entryResolver;
@@ -790,49 +788,50 @@ public class LdapUtils {
     /**
      * Gets authenticated authenticator.
      *
-     * @param l the lDAP properties
+     * @param properties the lDAP properties
      * @return the authenticated or anon search authenticator
      */
-    public static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getBaseDn())) {
+    public static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final AbstractLdapAuthenticationProperties properties) {
+        if (StringUtils.isBlank(properties.getBaseDn())) {
             throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
         }
-        if (StringUtils.isBlank(l.getSearchFilter())) {
+        if (StringUtils.isBlank(properties.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
-        val connectionFactoryForSearch = newLdaptiveConnectionFactory(l);
-        val resolver = buildAggregateDnResolver(l, connectionFactoryForSearch);
+        val connectionFactoryForSearch = newLdaptiveConnectionFactory(properties);
+        val resolver = buildAggregateDnResolver(properties, connectionFactoryForSearch);
 
-        val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
-            ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(l)))
-            : new Authenticator(resolver, getCompareAuthenticationHandler(l, newLdaptiveConnectionFactory(l)));
+        val auth = StringUtils.isBlank(properties.getPrincipalAttributePassword())
+            ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)))
+            : new Authenticator(resolver, getCompareAuthenticationHandler(properties, newLdaptiveConnectionFactory(properties)));
 
-        if (l.isEnhanceWithEntryResolver()) {
-            auth.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptiveConnectionFactory(l)));
+        if (properties.isEnhanceWithEntryResolver()) {
+            auth.setEntryResolver(newLdaptiveSearchEntryResolver(properties, newLdaptiveConnectionFactory(properties)));
         }
         return auth;
     }
 
-    private static Authenticator getDirectBindAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getDnFormat())) {
+    private static Authenticator getDirectBindAuthenticator(final AbstractLdapAuthenticationProperties properties) {
+        if (StringUtils.isBlank(properties.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        return getAuthenticatorViaDnFormat(l);
+        return getAuthenticatorViaDnFormat(properties, null);
     }
 
-    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        if (StringUtils.isBlank(l.getDnFormat())) {
+    private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties properties) {
+        if (StringUtils.isBlank(properties.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
-        return getAuthenticatorViaDnFormat(l);
+        return getAuthenticatorViaDnFormat(properties, newLdaptiveConnectionFactory(properties));
     }
 
-    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
-        val resolver = new FormatDnResolver(l.getDnFormat());
-        val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(l)));
+    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties properties,
+                                                             final ConnectionFactory factory) {
+        val resolver = new FormatDnResolver(properties.getDnFormat());
+        val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)));
 
-        if (l.isEnhanceWithEntryResolver()) {
-            authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptiveConnectionFactory(l)));
+        if (properties.isEnhanceWithEntryResolver()) {
+            authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(properties, factory));
         }
         return authenticator;
     }
@@ -841,72 +840,72 @@ public class LdapUtils {
         return new SimpleBindAuthenticationHandler(factory);
     }
 
-    private static AuthenticationHandler getCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
+    private static AuthenticationHandler getCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties properties,
                                                                          final ConnectionFactory factory) {
         val handler = new CompareAuthenticationHandler(factory);
-        handler.setPasswordAttribute(l.getPrincipalAttributePassword());
+        handler.setPasswordAttribute(properties.getPrincipalAttributePassword());
         return handler;
     }
 
-    private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
+    private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties properties) {
 
-        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
+        if (Mechanism.valueOf(properties.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new SaslConfig();
             sc.setMechanism(Mechanism.DIGEST_MD5);
-            sc.setRealm(l.getSaslRealm());
+            sc.setRealm(properties.getSaslRealm());
             return sc;
         }
-        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.CRAM_MD5) {
+        if (Mechanism.valueOf(properties.getSaslMechanism()) == Mechanism.CRAM_MD5) {
             val sc = new SaslConfig();
             sc.setMechanism(Mechanism.CRAM_MD5);
             return sc;
         }
-        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.EXTERNAL) {
+        if (Mechanism.valueOf(properties.getSaslMechanism()) == Mechanism.EXTERNAL) {
             val sc = new SaslConfig();
             sc.setMechanism(Mechanism.EXTERNAL);
             return sc;
         }
         val sc = new SaslConfig();
         sc.setMechanism(Mechanism.GSSAPI);
-        sc.setRealm(l.getSaslRealm());
+        sc.setRealm(properties.getSaslRealm());
         return sc;
     }
 
     /**
      * New default connection factory.
      *
-     * @param l the l
+     * @param properties LDAP properties
      * @return the connection factory
      */
-    public static ConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties l) {
-        LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
-        val connectionConfig = newLdaptiveConnectionConfig(l);
+    public static ConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties properties) {
+        LOGGER.debug("Creating LDAP connection factory for [{}]", properties.getLdapUrl());
+        val connectionConfig = newLdaptiveConnectionConfig(properties);
         return new DefaultConnectionFactory(connectionConfig);
     }
 
     /**
      * Build aggregate dn resolver dn resolver.
      *
-     * @param l                 the lDAP properties
+     * @param properties        the LDAP properties
      * @param connectionFactory the connection factory
      * @return the dn resolver
      */
-    public static DnResolver buildAggregateDnResolver(final AbstractLdapAuthenticationProperties l,
+    public static DnResolver buildAggregateDnResolver(final AbstractLdapAuthenticationProperties properties,
                                                       final ConnectionFactory connectionFactory) {
-        var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
+        var resolvers = Arrays.stream(StringUtils.split(properties.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
                 val resolver = new SearchDnResolver();
                 resolver.setBaseDn(baseDn);
-                resolver.setSubtreeSearch(l.isSubtreeSearch());
-                resolver.setAllowMultipleDns(l.isAllowMultipleDns());
+                resolver.setSubtreeSearch(properties.isSubtreeSearch());
+                resolver.setAllowMultipleDns(properties.isAllowMultipleDns());
                 resolver.setConnectionFactory(connectionFactory);
-                resolver.setUserFilter(l.getSearchFilter());
-                resolver.setResolveFromAttribute(l.getResolveFromAttribute());
-                if (l.isFollowReferrals()) {
+                resolver.setUserFilter(properties.getSearchFilter());
+                resolver.setResolveFromAttribute(properties.getResolveFromAttribute());
+                if (properties.isFollowReferrals()) {
                     resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
                 }
-                if (StringUtils.isNotBlank(l.getDerefAliases())) {
-                    resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+                if (StringUtils.isNotBlank(properties.getDerefAliases())) {
+                    resolver.setDerefAliases(DerefAliases.valueOf(properties.getDerefAliases()));
                 }
                 return resolver;
             })
@@ -915,40 +914,21 @@ public class LdapUtils {
     }
 
     /**
-     * Create ldap authentication factory bean set factory bean.
-     *
-     * @return the set factory bean
-     */
-    public static SetFactoryBean createLdapAuthenticationFactoryBean() {
-        val bean = new SetFactoryBean() {
-            @Override
-            protected void destroyInstance(final Set set) {
-                set.forEach(Unchecked.consumer(handler ->
-                    ((DisposableBean) handler).destroy()
-                ));
-            }
-        };
-        bean.setSourceSet(new HashSet<>());
-        return bean;
-    }
-
-    /**
      * Create ldap password policy handling strategy.
      *
-     * @param l                  the lDAP properties
+     * @param properties         the lDAP properties
      * @param applicationContext the application context
      * @return the authentication password policy handling strategy
      */
     public static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
-        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l,
-                                             final ApplicationContext applicationContext) {
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties properties, final ApplicationContext applicationContext) {
+        if (properties.getPasswordPolicy().getStrategy() == PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         }
 
-        val location = l.getPasswordPolicy().getGroovy().getLocation();
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+        val location = properties.getPasswordPolicy().getGroovy().getLocation();
+        if (properties.getPasswordPolicy().getStrategy() == PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
         }
@@ -971,8 +951,8 @@ public class LdapUtils {
         final Authenticator authenticator,
         final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyContext(passwordPolicy);
-        val requestHandlers = new HashSet<>();
-        val responseHandlers = new HashSet<>();
+        val requestHandlers = new HashSet<AuthenticationRequestHandler>();
+        val responseHandlers = new HashSet<AuthenticationResponseHandler>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {
@@ -1117,7 +1097,8 @@ public class LdapUtils {
         @Override
         @SneakyThrows
         public String resolve(final User user) {
-            return resolvers().stream()
+            return resolvers()
+                .stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
                         () -> resolver.resolve(user),
                         throwable -> {

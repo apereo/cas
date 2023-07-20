@@ -21,10 +21,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ChainingRestHttpRequestCredentialFactoryTests {
+class ChainingRestHttpRequestCredentialFactoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val body = new LinkedMultiValueMap<String, String>();
         body.put("username", List.of("casuser"));
@@ -38,7 +38,7 @@ public class ChainingRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    public void verifyDefaultImpl() {
+    void verifyDefaultImpl() {
         val request = new MockHttpServletRequest();
         val body = new LinkedMultiValueMap<String, String>();
         val factory = mock(RestHttpRequestCredentialFactory.class);

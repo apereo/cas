@@ -15,6 +15,8 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 an open-source Java server component by the same name hosted here, with support for a plethora of 
 additional authentication protocols and features.
 
+## Feature Summary
+
 The following items include a summary of features and technologies presented by the CAS project:
 
 * [Spring Webflow](webflow/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).

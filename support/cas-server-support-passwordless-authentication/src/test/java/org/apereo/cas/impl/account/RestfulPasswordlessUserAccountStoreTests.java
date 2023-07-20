@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
 @Tag("RestfulApi")
-public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -39,7 +39,7 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val u = PasswordlessUserAccount.builder()
             .email("casuser@example.org")
             .phone("1234567890")
@@ -57,7 +57,7 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
     }
 
     @Test
-    public void verifyFailsAction() {
+    void verifyFailsAction() {
         try (val webServer = new MockWebServer(9291,
             new ByteArrayResource("###".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

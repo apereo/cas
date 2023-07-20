@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.springframework.core.io.Resource;
 
 import java.io.Serial;
@@ -23,8 +24,8 @@ public class OidcJsonWebKeystoreGeneratedEvent extends AbstractCasEvent {
 
     private final Resource file;
 
-    public OidcJsonWebKeystoreGeneratedEvent(final Object source, final Resource file) {
-        super(source);
+    public OidcJsonWebKeystoreGeneratedEvent(final Object source, final Resource file, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.file = file;
     }
 }

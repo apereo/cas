@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 @Tag("AmazonWebServices")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
+class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
@@ -60,7 +60,7 @@ public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     private S3Client amazonS3ServiceRegistryClient;
 
     @Test
-    public void verifyFailsOp() {
+    void verifyFailsOp() {
         assertNotNull(amazonS3ServiceRegistryClient);
         val service = mock(RegisteredService.class);
         when(service.getId()).thenThrow(new RuntimeException());

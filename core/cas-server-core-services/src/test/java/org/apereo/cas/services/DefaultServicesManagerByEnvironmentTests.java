@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -11,15 +12,16 @@ import org.springframework.context.support.StaticApplicationContext;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author battags
  * @since 3.0.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
+class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
     @Test
-    public void verifyServiceByEnvironment() {
+    void verifyServiceByEnvironment() {
         val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(getClass().getSimpleName());
@@ -40,6 +42,7 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(CollectionUtils.wrapSet("prod1", "qa1"))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))

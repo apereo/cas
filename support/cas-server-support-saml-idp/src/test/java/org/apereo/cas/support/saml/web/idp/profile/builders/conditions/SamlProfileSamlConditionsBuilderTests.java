@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
@@ -22,18 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.response.skew-allowance=0",
     "cas.saml-core.skew-allowance=3000"
 })
-public class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    public void verifyWithSkew() throws Exception {
+    void verifyWithSkew() throws Exception {
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSkewAllowance(5000);
         service.setAssertionAudiences("https://www.example.com");
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

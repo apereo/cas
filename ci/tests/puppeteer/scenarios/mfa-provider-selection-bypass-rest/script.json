@@ -1,5 +1,6 @@
 {
   "dependencies": "yubikey,gauth",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     

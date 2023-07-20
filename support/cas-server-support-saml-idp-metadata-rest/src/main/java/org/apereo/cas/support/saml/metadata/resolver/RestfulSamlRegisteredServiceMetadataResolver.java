@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * This is {@link RestfulSamlRegisteredServiceMetadataResolver}.
@@ -62,7 +63,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .parameters(CollectionUtils.wrap("entityId", service.getServiceId()))
                 .headers(headers)

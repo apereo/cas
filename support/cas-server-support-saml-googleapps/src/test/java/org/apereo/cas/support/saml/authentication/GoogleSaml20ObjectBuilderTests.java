@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.authentication;
 
+import org.apereo.cas.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 
 import lombok.val;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
-public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
+class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "fVJNT+MwEL2vtP/B8j1JEy6V1QR1QWgrwW5EA4e9uc4kMbU9weO0u/9+3RQEHOD6/OZ9jGd1+dcadgBPGl3J83TBGTiFrXZ9yR"
         + "+am2TJL6vv31YkrRnFegqDu4fnCSiwOOlIzA8ln7wTKEmTcNICiaDEdn13K4p0IUaPARUazjbXJd"
@@ -50,7 +50,7 @@ public class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
         + "/BS73KC3Mnzulqf5jOg26WaqmByNoHSnoeUsq86uHy8k3s1/";
     
     @Test
-    public void decodeNonInflatedSamlAuthnRequest() {
+    void decodeNonInflatedSamlAuthnRequest() {
         val builder = new GoogleSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         val authnRequest = SamlUtils.transformSamlObject(this.configBean, decoded, AuthnRequest.class);

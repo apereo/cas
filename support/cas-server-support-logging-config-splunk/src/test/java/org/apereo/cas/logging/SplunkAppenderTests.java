@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("Simple")
-public class SplunkAppenderTests {
+class SplunkAppenderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         LOGGER.info("Testing splunk appender");
         assertTrue(LOGGER.isInfoEnabled());
     }

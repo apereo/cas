@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.sso.enabled=true"
 })
 @Tag("ActuatorEndpoint")
-public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
+class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("singleSignOnSessionStatusEndpoint")
     private SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint;
@@ -43,7 +43,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyOperationByValue() throws Exception {
+    void verifyOperationByValue() throws Exception {
         val request = new MockHttpServletRequest();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -52,7 +52,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -71,7 +71,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     }
 
     @Test
-    public void verifyNoTicket() {
+    void verifyNoTicket() {
         val request = new MockHttpServletRequest();
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
 

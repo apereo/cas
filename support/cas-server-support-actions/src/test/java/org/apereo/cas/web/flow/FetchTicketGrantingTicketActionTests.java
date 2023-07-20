@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class FetchTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
+class FetchTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
     private Action action;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
+class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
     private CasConfigurationProperties properties;
 
     @BeforeEach
@@ -55,7 +55,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests 
     }
 
     @Test
-    public void verifyResourceIsUnavailable() {
+    void verifyResourceIsUnavailable() {
         val principal = RegisteredServiceTestUtils.getPrincipal("cas@example.org");
         val locator = getLocator(principal);
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
@@ -67,7 +67,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests 
     }
 
     @Test
-    public void verifyResourceFindUser() {
+    void verifyResourceFindUser() {
         val principal = RegisteredServiceTestUtils.getPrincipal("cas@example.org", Map.of("cn", List.of("cas", "casuser", "cas-user")));
         val locator = getLocator(principal);
         val json = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson();
@@ -81,7 +81,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests 
     }
 
     @Test
-    public void verifyPrincipalAttribute() {
+    void verifyPrincipalAttribute() {
         val principal = RegisteredServiceTestUtils.getPrincipal("cas@example.org",
             Map.of("email", List.of("cas@example.net", "casuser@example.org", "casuser@yahoo.com")));
         val locator = getLocator(principal);

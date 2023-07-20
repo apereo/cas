@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.sync;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -25,30 +24,30 @@ import static org.mockito.Mockito.*;
 
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
+class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseLdapPasswordSynchronizationTests {
+    class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifySyncFindsNoUser() {
+        void verifySyncFindsNoUser() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
                 sync.destroy();
             });
         }
 
         @Test
-        public void verifyBadCredential() {
+        void verifyBadCredential() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0));
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
                 sync.destroy();
             });
         }
@@ -60,14 +59,14 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         "cas.authn.password-sync.ldap[0].password-synchronization-failure-fatal=false",
         "cas.authn.password-sync.ldap[0].password-attribute=unicodePwd"
     })
-    public class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
+    class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifySyncFailsWithUnicodePswd() {
+        void verifySyncFailsWithUnicodePswd() {
             assertDoesNotThrow(() -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
             });
         }
     }
@@ -75,17 +74,17 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.password-sync.ldap[0].password-attribute=st")
-    public class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
+    class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val sync = ldapPasswordSynchronizers.first();
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password");
             assertTrue(sync.supports(credentials));
             assertDoesNotThrow(() -> {
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction());
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction());
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
             });
         }
     }

@@ -36,7 +36,7 @@ you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log
 
 Yes. [Study this](#review-logs).
 
-## How do I tune/extend MongoDb, MySQL, Hazelcas, Docker, etc?
+## How do I tune/extend MongoDb, MySQL, Hazelcast, Docker, etc?
 
 If you have a question about tuning and configuration of external components utilized by CAS
 and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
@@ -146,7 +146,7 @@ CATALINA_OPTS=-Xms1000m -Xmx2000m
 You will want to profile your server with something like [JVisualVM](https://visualvm.github.io/). This will help you see what is actually 
 going on with your memory.
 
-You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) 
+You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](https://www.yourkit.com/java/profiler/) 
 and analyzing offline using some analysis tool. 
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 

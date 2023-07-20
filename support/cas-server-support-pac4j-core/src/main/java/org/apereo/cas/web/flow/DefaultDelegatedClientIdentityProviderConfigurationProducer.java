@@ -101,7 +101,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val customizers = configurationContext.getObject().getDelegatedClientAuthenticationRequestCustomizers();
             if (customizers.isEmpty() || customizers.stream()
                 .filter(BeanSupplier::isNotProxy)
-                .anyMatch(c -> c.isAuthorized(webContext, client, currentService))) {
+                .anyMatch(clientConfig -> clientConfig.isAuthorized(webContext, client, currentService))) {
                 return DelegatedClientIdentityProviderConfigurationFactory.builder()
                     .client(client)
                     .webContext(webContext)

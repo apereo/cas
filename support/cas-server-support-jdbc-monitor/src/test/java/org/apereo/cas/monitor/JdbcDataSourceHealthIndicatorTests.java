@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("JDBC")
-public class JdbcDataSourceHealthIndicatorTests {
+class JdbcDataSourceHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private DataSource dataSource;
@@ -44,7 +44,7 @@ public class JdbcDataSourceHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserve() {
+    void verifyObserve() {
         val monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
@@ -53,7 +53,7 @@ public class JdbcDataSourceHealthIndicatorTests {
     }
 
     @Test
-    public void verifyBadQuery() {
+    void verifyBadQuery() {
         val monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM XYZ");

@@ -34,19 +34,19 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.2.0
  */
 @Tag("WebflowActions")
-public class RenderLoginActionTests {
+class RenderLoginActionTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractWebflowActionsTests {
+    class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
         private Action renderLoginAction;
 
         @Test
-        public void verifyNoRender() throws Exception {
+        void verifyNoRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -60,13 +60,13 @@ public class RenderLoginActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.webflow.login-decorator.groovy.location=classpath:/GroovyLoginWebflowDecorator.groovy")
-    public class GroovyRendererTests extends AbstractWebflowActionsTests {
+    class GroovyRendererTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
         private Action renderLoginAction;
 
         @Test
-        public void verifyGroovyRender() throws Exception {
+        void verifyGroovyRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -81,13 +81,13 @@ public class RenderLoginActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.webflow.login-decorator.rest.url=http://localhost:1234")
-    public class RestfulRendererTests extends AbstractWebflowActionsTests {
+    class RestfulRendererTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
         private Action renderLoginAction;
 
         @Test
-        public void verifyRestfulRender() throws Exception {
+        void verifyRestfulRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

@@ -1,6 +1,10 @@
 {
   "dependencies": "x509-webflow,json-service-registry",
+
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--logging.level.org.apereo.cas=debug",
 
     "--cas.service-registry.core.init-from-json=true",

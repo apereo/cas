@@ -3,7 +3,7 @@ package org.apereo.cas.aws;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.AmazonCoreConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.rest.config.CasCoreRestConfiguration;
+import org.apereo.cas.config.CasCoreRestConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("AmazonWebServices")
 @EnabledIfListeningOnPort(port = 4566)
-public class AmazonSecurityTokenServiceEndpointTests {
+class AmazonSecurityTokenServiceEndpointTests {
     @TestPropertySource(properties = {
         "cas.amazon-sts.endpoint=http://127.0.0.1:4566",
         "cas.amazon-sts.region=us-east-1",
@@ -60,7 +60,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.attribute-repository.stub.attributes.groupMembership=some-value"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -75,7 +75,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyAuthzFails() {
+        void verifyAuthzFails() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -90,7 +90,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
     @Tag("AmazonWebServices")
     @TestPropertySource(properties = "cas.amazon-sts.principal-attribute-name=unknown")
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithMissingAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMissingAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -105,7 +105,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyAuthzFails() {
+        void verifyAuthzFails() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -123,7 +123,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.principal-attribute-value="
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithoutAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -138,7 +138,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -151,7 +151,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyContextValidationFails() {
+        void verifyContextValidationFails() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -164,7 +164,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyNoCredentials() {
+        void verifyNoCredentials() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
@@ -173,7 +173,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyFailsAuthN() {
+        void verifyFailsAuthN() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -195,7 +195,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.rbac-enabled=true",
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role"
     })
-    public class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -210,7 +210,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -230,7 +230,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.rbac-enabled=true",
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role,arn:aws:iam::123873472251:role/superuser-iam-role"
     })
-    public class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -245,7 +245,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -256,7 +256,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifySpecificUnknownRoleOperation() {
+        void verifySpecificUnknownRoleOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));

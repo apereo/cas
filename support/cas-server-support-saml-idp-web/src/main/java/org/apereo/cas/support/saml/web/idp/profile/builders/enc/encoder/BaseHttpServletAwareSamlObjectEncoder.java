@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder;
 
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
@@ -37,7 +37,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
     /**
      * The Adaptor.
      */
-    protected final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
+    protected final SamlRegisteredServiceMetadataAdaptor adaptor;
 
     /**
      * The Http response.
@@ -88,10 +88,10 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
                                                       final String relayState, final MessageContext messageContext) {
         val ctx = new MessageContext();
         ctx.setMessage(samlObject);
-        ctx.addSubcontext(messageContext.getSubcontext(SAMLBindingContext.class, true));
+        ctx.addSubcontext(messageContext.ensureSubcontext(SAMLBindingContext.class));
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(Pair.of(request, messageContext), ctx, adaptor, getBinding());
-        val self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
+        val self = ctx.ensureSubcontext(SAMLSelfEntityContext.class);
         self.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(samlObject));
         return ctx;
     }

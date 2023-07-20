@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
+import org.apereo.cas.config.LdapMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class PooledLdapConnectionFactoryHealthIndicatorTests {
+class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryHealthIndicator")
     private CompositeHealthContributor monitor;
@@ -45,7 +45,7 @@ public class PooledLdapConnectionFactoryHealthIndicatorTests {
     private ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean;
 
     @Test
-    public void verifyObserve() throws Exception {
+    void verifyObserve() throws Exception {
         val results = monitor.stream()
             .map(it -> HealthIndicator.class.cast(it.getContributor()))
             .map(it -> it.health().getStatus()).toList();

@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -23,6 +25,7 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link TicketGrantingTicketExpirationPolicy}.
@@ -31,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.10
  */
 @Tag("Tickets")
-public class TicketGrantingTicketExpirationPolicyTests {
+class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 200;
 
@@ -51,7 +54,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
     }
 
     @BeforeEach
@@ -61,7 +64,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTgtIsExpiredByHardTimeOut() {
+    void verifyTgtIsExpiredByHardTimeOut() {
         val creationTime = this.ticketGrantingTicket.getCreationTime();
 
         this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
@@ -74,7 +77,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTgtIsExpiredBySlidingWindow() {
+    void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(),
             expirationPolicy, false, getTrackingPolicy());
 
@@ -86,7 +89,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerializeAnExpirationPolicyToJson() throws IOException {
+    void verifySerializeAnExpirationPolicyToJson() throws IOException {
         val policy = new TicketGrantingTicketExpirationPolicy(100, 100);
         MAPPER.writeValue(JSON_FILE, policy);
         val policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
@@ -94,7 +97,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

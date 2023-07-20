@@ -39,13 +39,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.provisioning.syncope.basic-auth-password=password"
 })
 @Tag("Syncope")
-public class SyncopeAccountRegistrationProvisionerTests {
+class SyncopeAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @Test
-    public void verifySubmitUser() throws Exception {
+    void verifySubmitUser() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(
             Map.of("username", UUID.randomUUID().toString(),
                 "password", RandomUtils.randomAlphabetic(8),
@@ -56,7 +56,7 @@ public class SyncopeAccountRegistrationProvisionerTests {
     }
 
     @Test
-    public void verifySubmitUserByUnknownRealm() throws Exception {
+    void verifySubmitUserByUnknownRealm() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(
             Map.of("username", UUID.randomUUID().toString(),
                 "realm", "unknown-realm",

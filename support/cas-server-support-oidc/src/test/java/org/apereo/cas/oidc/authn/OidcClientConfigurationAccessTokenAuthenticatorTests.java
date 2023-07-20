@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -24,17 +25,17 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
+class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val at = getAccessToken();
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -47,14 +48,14 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val at = getAccessToken();
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

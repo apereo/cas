@@ -31,6 +31,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -56,6 +57,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     private Map<String, Object> encryptionOpHeaders = new LinkedHashMap<>();
 
     private Map<String, Object> commonHeaders = new LinkedHashMap<>();
+
+    private String signingAlgorithm;
 
     /**
      * Extract private key from resource private key.
@@ -178,8 +181,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
         try {
             val activeSigningKey = givenKey instanceof IdentifiableKey idk ? idk.getKey() : givenKey;
-            if (activeSigningKey instanceof RSAPrivateKey) {
-                val privKey = RSAPrivateKey.class.cast(activeSigningKey);
+            if (activeSigningKey instanceof RSAPrivateKey privKey) {
                 val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
                 val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
                 return EncodingUtils.verifyJwsSignature(pubKey, value);
@@ -197,8 +199,9 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the signing algorithm for
      */
     protected String getSigningAlgorithmFor(final Key signingKey) {
-        return "RSA".equalsIgnoreCase(signingKey.getAlgorithm())
-            ? AlgorithmIdentifiers.RSA_USING_SHA512
-            : AlgorithmIdentifiers.HMAC_SHA512;
+        return Optional.ofNullable(signingAlgorithm)
+            .orElseGet(() -> "RSA".equalsIgnoreCase(signingKey.getAlgorithm())
+                ? AlgorithmIdentifiers.RSA_USING_SHA512
+                : AlgorithmIdentifiers.HMAC_SHA512);
     }
 }

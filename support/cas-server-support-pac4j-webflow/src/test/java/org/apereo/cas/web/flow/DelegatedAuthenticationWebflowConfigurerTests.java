@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
-public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

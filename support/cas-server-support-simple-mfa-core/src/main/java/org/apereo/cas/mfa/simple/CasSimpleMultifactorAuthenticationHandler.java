@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandler}.
@@ -63,16 +62,14 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential,
-                                                                    final Service service) throws GeneralSecurityException {
-        try {
+                                                                    final Service service) throws Exception {
+
+        return FunctionUtils.doAndThrow(() -> {
             val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
             val authentication = WebUtils.getInProgressAuthentication();
             val resolvedPrincipal = resolvePrincipal(applicationContext, authentication.getPrincipal());
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
             return createHandlerResult(tokenCredential, principal);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new FailedLoginException(e.getMessage());
-        }
+        }, e -> new FailedLoginException(e.getMessage()));
     }
 }

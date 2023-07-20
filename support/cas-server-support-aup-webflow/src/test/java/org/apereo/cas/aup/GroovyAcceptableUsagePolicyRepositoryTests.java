@@ -31,19 +31,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("Groovy")
 @TestPropertySource(properties = "cas.acceptable-usage-policy.groovy.location=classpath:/AcceptableUsagePolicy.groovy")
-public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyRepositoryActionWithAdvancedConfig() throws Exception {
+    void verifyRepositoryActionWithAdvancedConfig() throws Exception {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("aupAccepted", "false"));
     }
 
     @Test
-    public void verifyPolicyTerms() throws Exception {
+    void verifyPolicyTerms() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -57,7 +57,7 @@ public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUs
     }
 
     @Test
-    public void verifyPolicyTermsFails() throws Exception {
+    void verifyPolicyTermsFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

@@ -21,7 +21,7 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseAuthenticationAttributes` | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date. |
 | `principalIdAttribute`                        | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier.                                                                                                                                                           |
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
 the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that 
 you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
@@ -56,7 +56,7 @@ Principal attributes typically convey personally identifiable data about the aut
 such as address, last name, etc. Release policies are available in CAS and documented below
 to explicitly control the collection of attributes that may be authorized for release to a given application.
 
-<div class="alert alert-info"><strong>Remember</strong><p>Depending on the protocol used and the type/class of service (i.e. relying party) registered with CAS,
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>Depending on the protocol used and the type/class of service (i.e. relying party) registered with CAS,
 additional release policies may become available that allow more fine-tuned control over attribute release, catering better to the needs of the particular
 authentication protocol at hand. Remember to verify attribute release capabilities of CAS by visiting and studies the appropriate documentation for each protocol.</p></div>
 
@@ -69,6 +69,7 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 | Return Allowed       | [See this page](Attribute-Release-Policy-ReturnAllowed.html).     |
 | Return Encrypted     | [See this page](Attribute-Release-Policy-ReturnEncrypted.html).   |
 | Return Mapped        | [See this page](Attribute-Release-Policy-ReturnMapped.html).      |
+| Return Linked        | [See this page](Attribute-Release-Policy-ReturnLinked.html).      |
 | Mapped Groovy File   | [See this page](Attribute-Release-Policy-ExternalGroovy.html).    |
 | Mapped Inline Groovy | [See this page](Attribute-Release-Policy-InlineGroovy.html).      |
 | Return MultiMapped   | [See this page](Attribute-Release-Policy-ReturnMultiMapped.html). |

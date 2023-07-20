@@ -1,4 +1,13 @@
 description = "Apereo CAS Account Management and Registration Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Account Management",
+            title: "Account Registration",
+            aliases: ["acct-mgmt"]
+    ]
+}
+
 dependencies {
     implementation libraries.jose4j
 

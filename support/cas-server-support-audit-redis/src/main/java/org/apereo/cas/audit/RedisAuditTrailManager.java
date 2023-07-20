@@ -2,7 +2,6 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -56,29 +56,30 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     @Override
     public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
-        val dt = DateTimeUtils.dateOf(localDate);
-        LOGGER.debug("Retrieving audit records since [{}]", dt);
+        LOGGER.debug("Retrieving audit records since [{}]", localDate);
 
-        val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
+        try (val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
             ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString())
-            : getAuditRedisKeys();
-
-        return keys
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(AuditActionContext.class::cast)
-            .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
-            .collect(Collectors.toSet());
+            : getAuditRedisKeys()) {
+            return keys
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(AuditActionContext.class::cast)
+                .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate.atStartOfDay()))
+                .collect(Collectors.toSet());
+        }
     }
 
     @Override
     public void removeAll() {
-        getAuditRedisKeys().forEach(redisTemplate::delete);
+        try (val keys = getAuditRedisKeys()) {
+            keys.forEach(redisTemplate::delete);
+        }
     }
 
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {
-        val redisKey = getPatternAuditRedisKey(String.valueOf(audit.getWhenActionWasPerformed().getTime()), audit.getPrincipal());
+        val redisKey = getPatternAuditRedisKey(String.valueOf(audit.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC)), audit.getPrincipal());
         this.redisTemplate.boundValueOps(redisKey).set(audit);
     }
 

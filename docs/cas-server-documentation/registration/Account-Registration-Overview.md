@@ -16,7 +16,7 @@ account registration workflow allows users to register accounts with CAS to:
 - Finalize the account creation request, choose a password, security questions, etc.
 - Ultimately, submit the account registration request to an identity manager system for provisioning and follow-up processes.
 
-<div class="alert alert-info"><strong>Usage Note</strong><p>CAS is <strong>NOT</strong>, as 
+<div class="alert alert-info">:information_source: <strong>Usage Note</strong><p>CAS is <strong>NOT</strong>, as 
 of this writing, an identity management solution and does not intend to provide 
 features or support capabilities that are typically found in such
 systems, such as complex provisioning workflows, account lifecycle management, 
@@ -68,7 +68,7 @@ The following fields are supported:
 | `order`    | The display order of this input on the screen.                                               |
 | `values`   | List of values to display in order, when type is set to `select`.                            |
 
-<div class="alert alert-info"><strong>Is it possible to...?</strong><p>You must be wondering 
+<div class="alert alert-info">:information_source: <strong>Is it possible to...?</strong><p>You must be wondering 
 by now whether it's possible to customize the screen and include other types of fields, forms and values. 
 In general, you should be able to use JSON metadata to describe additional fields so long as the input field's
 type is simple enough and supported. If you have a type that isn't supported by the existing 

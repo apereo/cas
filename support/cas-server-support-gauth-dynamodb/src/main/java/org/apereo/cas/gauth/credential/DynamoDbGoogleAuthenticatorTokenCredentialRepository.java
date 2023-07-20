@@ -8,6 +8,7 @@ import lombok.val;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,13 +31,13 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public OneTimeTokenAccount get(final long id) {
         val r = facilitator.find(id);
-        return r != null ? decode(r) : null;
+        return Optional.ofNullable(r).map(this::decode).orElse(null);
     }
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
         val r = facilitator.find(username, id);
-        return r != null ? decode(r) : null;
+        return Optional.ofNullable(r).map(this::decode).orElse(null);
     }
 
     @Override

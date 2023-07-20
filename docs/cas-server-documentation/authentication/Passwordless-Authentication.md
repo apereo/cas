@@ -15,7 +15,7 @@ number. Once located, the CAS-generated token is sent to the user via the config
 strategies (i.e. email, sms, etc) where the user is then expected to 
 provide the token back to CAS in order to proceed. 
 
-<div class="alert alert-info"><strong>No Magic Link</strong><p>
+<div class="alert alert-info">:information_source: <strong>No Magic Link</strong><p>
 Presently, there is no support for magic links that would remove the task of providing the token 
 back to CAS allowing the user to proceed automagically.
 This variant may be worked out in future releases.</p></div>

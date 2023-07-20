@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcLocaleChangeInterceptorTests extends AbstractOidcTests {
+class OidcLocaleChangeInterceptorTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcLocaleChangeInterceptor")
     private HandlerInterceptor oidcLocaleChangeInterceptor;
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, new SessionLocaleResolver());

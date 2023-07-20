@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("WebflowActions")
-public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
+@Tag("WebflowServiceActions")
+class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
     @BeforeEach
     public void setup() {
         val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();
@@ -31,7 +31,7 @@ public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflo
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

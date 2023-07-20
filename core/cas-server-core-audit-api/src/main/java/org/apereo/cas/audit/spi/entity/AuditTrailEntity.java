@@ -2,13 +2,14 @@ package org.apereo.cas.audit.spi.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 /**
@@ -18,20 +19,18 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Entity(name = "COM_AUDIT_TRAIL")
+@MappedSuperclass
+@ToString
+@SuperBuilder
+@Accessors(chain = true)
 @Getter
 @Setter
 public class AuditTrailEntity {
 
-    /**
-     * Audit table name.
-     */
-    public static final String AUDIT_TRAIL_TABLE_NAME = "COM_AUDIT_TRAIL";
-
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id = -1;
+    private long id;
 
     @Column(name = "AUD_USER")
     private String user;
@@ -42,7 +41,7 @@ public class AuditTrailEntity {
     @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
-    @Column(name = "AUD_RESOURCE", length = 2048)
+    @Column(name = "AUD_RESOURCE")
     private String resource;
 
     @Column(name = "AUD_ACTION")
@@ -53,6 +52,9 @@ public class AuditTrailEntity {
 
     @Column(name = "AUD_USERAGENT")
     private String userAgent;
+    
+    @Column(name = "AUD_GEOLOCATION")
+    private String geoLocation;
 
     @Column(name = "AUD_DATE", nullable = false)
     private ZonedDateTime recordDate;

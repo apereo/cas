@@ -1,25 +1,20 @@
 <!-- fragment:keep -->
 
-{% assign min = 1 %}
-{% assign max = 999999 %}
-{% assign diff = max | minus: min %}
-
-{% assign rbrace = "}" %}
-{% assign lbrace = "{" %}
-
-{% assign modules = include.modules | split: "," %}
-{% assign excludes = include.excludes | split: "," %}
-{% assign includes = include.includes | split: "," %}
-{% assign properties = include.properties | split: "," %}
-{% assign thirdParty = include.thirdParty | split: "," %}
-{% assign thirdPartyExactMatch = include.thirdPartyExactMatch | split: "," %}
-{% assign thirdPartyStartsWith = include.thirdPartyStartsWith | split: "," %}
-{% assign includeRsaKeys = include.includeRsaKeys %}
-{% assign forcePropertyTabsOnClick = include.forcePropertyTabsOnClick | default: "false" %}
-
-{% assign casPropertiesRandomNumber = include.properties
+{%- assign min = 1 -%}
+{%- assign max = 999999 -%}
+{%- assign diff = max | minus: min -%}
+{%- assign rbrace = "}" -%}
+{%- assign lbrace = "{" -%}
+{%- assign excludes = include.excludes | split: "," -%}
+{%- assign includes = include.includes | split: "," -%}
+{%- assign properties = include.properties | split: "," -%}
+{%- assign thirdParty = include.thirdParty | split: "," -%}
+{%- assign thirdPartyExactMatch = include.thirdPartyExactMatch | split: "," -%}
+{%- assign thirdPartyStartsWith = include.thirdPartyStartsWith | split: "," -%}
+{%- assign includeRsaKeys = include.includeRsaKeys -%} 
+{%- assign forcePropertyTabsOnClick = include.forcePropertyTabsOnClick | default: "false" -%}
+{%- assign casPropertiesRandomNumber = include.properties
     | append: include.id 
-    | default: include.modules
     | default: include.thirdParty
     | default: include.thirdPartyStartsWith
     | default: include.thirdPartyExactMatch
@@ -30,11 +25,11 @@
     | remove: ","
     | remove: "[0]"
     | remove: "[]"
-    | truncate: 80, '' %}
+    | truncate: 80, '' -%}
 
 <p>The following settings and properties are available from the CAS configuration catalog:</p>
 
-{% if forcePropertyTabsOnClick == "true" %}
+{%- if forcePropertyTabsOnClick == "true" -%}
 <script>
     function enablePropertiesTab{{ casPropertiesRandomNumber }}(link) {
         // console.log(link);
@@ -57,7 +52,7 @@
         }, 1000);
     });
 </script>
-{% endif %}
+{%- endif -%}
 
 <ul {% if forcePropertyTabsOnClick == "true" %} style="display:none;"  {% endif %}
     class='nav nav-tabs' id="navPillsMenus{{ casPropertiesRandomNumber }}">
@@ -141,7 +136,7 @@
             href='#passwordPolicyProperties{{ casPropertiesRandomNumber }}'>Password Policy</a>
     </li>
 
-    {% if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 %}
+    {%- if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 -%}
     <li class='nav-item property-tab'>
         <a class='nav-link'
             id="linkThirdPartyProperties{{ casPropertiesRandomNumber }}"
@@ -149,9 +144,9 @@
             onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
             href='#thirdPartyProperties{{ casPropertiesRandomNumber }}'>Third Party</a>
     </li>
-    {% endif %}
+    {%- endif -%}
 
-    {% unless include.disableNotes == "true" %} 
+    {%- unless include.disableNotes == "true" -%} 
     <li class='nav-item property-tab'>
         <a class='nav-link'
             onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
@@ -159,26 +154,26 @@
             data-bs-toggle='tab'
             href='#notes{{ casPropertiesRandomNumber }}'>Notes</a>
     </li>
-    {% endunless %}
+    {%- endunless -%}
 </ul>
 
-{% assign signingEncryptionEnabled = false %}
-{% assign optionalSettingsFound = false %}
-{% assign requiredSettingsFound = false %}
-{% assign rdbmsSettingsFound = false %}
-{% assign emailSettingsFound = false %}
-{% assign ldapSettingsFound = false %}
-{% assign authnPredicateSettingsFound = false %}
-{% assign passwordEncoderSettingsFound = false %}
-{% assign principalTransformationSettingsFound = false %}
-{% assign passwordPolicySettingsFound = false %}
+{%- assign signingEncryptionEnabled = false -%}
+{%- assign optionalSettingsFound = false -%}
+{%- assign requiredSettingsFound = false -%}
+{%- assign rdbmsSettingsFound = false -%}
+{%- assign emailSettingsFound = false -%}
+{%- assign ldapSettingsFound = false -%}
+{%- assign authnPredicateSettingsFound = false -%}
+{%- assign passwordEncoderSettingsFound = false -%}
+{%- assign principalTransformationSettingsFound = false -%}
+{%- assign passwordPolicySettingsFound = false -%}
 
-{% assign textAreaRequiredProperties = blank %}
-{% assign textAreaOptionalProperties = blank %}
-{% assign textAreaCryptoProperties = blank %}
-{% assign textAreaPrincipalTransformationProperties = blank %}
-{% assign textAreaPasswordPolicyProperties = blank %}
-{% assign textAreaPasswordEncoderProperties = blank %}
+{%- assign textAreaRequiredProperties = blank -%}
+{%- assign textAreaOptionalProperties = blank -%}
+{%- assign textAreaCryptoProperties = blank -%}
+{%- assign textAreaPrincipalTransformationProperties = blank -%}
+{%- assign textAreaPasswordPolicyProperties = blank -%}
+{%- assign textAreaPasswordEncoderProperties = blank -%}
 
 <div class='tab-content clearfix' id="casPropertiesTabContent{{casPropertiesRandomNumber}}">
 
@@ -196,168 +191,67 @@
     <thead><tr><th></th></tr></thead>
     <tbody>
 
-        {% for module in modules %}
-            {% for cfg in site.data[siteDataVersion][module] %}
-                {% assign configBlock = cfg[1] %}
+        {%- for prop in properties -%}
+            {%- for module in site.data[siteDataVersion] -%}
+                {%- assign moduleEntry = module[1] -%}
+                {%- for cfg in moduleEntry -%}
+                    {%- assign configBlock = cfg[1] -%}
 
-                {% for config in configBlock %}
-                    {% if config.required == true %}
+                    {%- for config in configBlock -%}
+                        {%- if config.required == true and config.name contains prop -%}
 
-                        {% assign foundExcluded = false %}
-                        {% for ex in excludes %}
-                            {% if config.name contains ex %}
-                                {% assign foundExcluded = true %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if includes.size > 0 and foundExcluded == false %}
-                            {% assign foundIncluded = false %}
-                            {% for inc in includes %}
-                                {% if config.name contains inc %}
-                                    {% assign foundIncluded = true %}
-                                {% endif %}
-                            {% endfor %}
-                            {% if foundIncluded == false %}
-                                {% assign foundExcluded = true %}
-                            {% endif %}
-                        {% endif %}
+                            {%- assign foundExcluded = false -%}
+                            {%- for ex in excludes -%}
+                                {%- if config.name contains ex -%}
+                                    {%- assign foundExcluded = true -%}
+                                {%- endif -%}
+                            {%- endfor -%}
 
-                        {% unless foundExcluded == true %}
-                            {% assign signingEncryptionCollected = false %}
-                            {% if config.name contains ".crypto" %}
-                                {% assign signingEncryptionEnabled = true %}
-                                {% assign signingEncryptionCollected = true %}
-                            {% endif %}
-                            {% if config.name contains ".jpa" or config.name contains ".jdbc" %}
-                                {% assign rdbmsSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".mail" %}
-                                {% assign emailSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".ldap" %}
-                                {% assign ldapSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".credential-criteria" %}
-                                {% assign authnPredicateSettingsFound = true %}
-                            {% endif %}
-
-                            {% assign passwordEncoderSettingsFound = false %}
-                            {% if config.name contains ".password-encoder" %}
-                                {% assign passwordEncoderSettingsFound = true %}
-                            {% endif %}
-                            {% assign principalTransformationSettingsFound = false %}
-                            {% if config.name contains ".principal-transformation" %}
-                                {% assign principalTransformationSettingsFound = true %}
-                            {% endif %}
-                            {% assign passwordPolicySettingsFound = false %}
-                            {% if config.name contains ".password-policy" %}
-                                {% assign passwordPolicySettingsFound = true %}
-                            {% endif %}
-
-
-                            {% assign requiredSettingsFound = true %}
-                            {% assign textAreaRequiredProperties = textAreaRequiredProperties
-                                | append: "# "
-                                | append: config.shortDescription | strip_html
-                                | append: "&#13;&#10;"
-                                | append: "# "
-                                | append: config.name | replace: "[]", "[0]"
-                                | append: "="
-                                | append: config.defaultValue
-                                | append: "&#13;&#10;"
-                                | append: "&#13;&#10;" %}
-
-                                {% capture renderedProperties %}{% include casproperty.html
-                                    name=config.name
-                                    owner=config.owner
-                                    defaultValue=config.defaultValue
-                                    description=config.description
-                                    duration=config.duration
-                                    expressionLanguage=config.expressionLanguage
-                                    deprecationLevel=config.deprecationLevel
-                                    deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
-                                {{ renderedProperties | markdownify }}
-
-                                {% if signingEncryptionCollected == true %}
-                                {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
-                                {% endif %}
-                                {% if passwordEncoderSettingsFound == true %}
-                                {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
-                                {% endif %}
-                                {% if principalTransformationSettingsFound == true %}
-                                {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
-                                {% endif %}
-                                {% if passwordPolicySettingsFound == true %}
-                                {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
-                                {% endif %}
-                                
-                        {% endunless %}
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
-
-
-        {% for prop in properties %}
-            {% for module in site.data[siteDataVersion] %}
-                {% assign moduleEntry = module[1] %}
-                {% for cfg in moduleEntry %}
-                    {% assign configBlock = cfg[1] %}
-
-                    {% for config in configBlock %}
-                        {% if config.required == true and config.name contains prop %}
-
-                            {% assign foundExcluded = false %}
-                            {% for ex in excludes %}
-                                {% if config.name contains ex %}
-                                    {% assign foundExcluded = true %}
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if includes.size > 0 and foundExcluded == false %}
-                                {% assign foundIncluded = false %}
-                                {% for inc in includes %}
-                                    {% if config.name contains inc %}
-                                        {% assign foundIncluded = true %}
-                                    {% endif %}
-                                {% endfor %}
-                                {% if foundIncluded == false %}
-                                    {% assign foundExcluded = true %}
-                                {% endif %}
-                            {% endif %}
+                            {%- if includes.size > 0 and foundExcluded == false -%}
+                                {%- assign foundIncluded = false -%}
+                                {%- for inc in includes -%}
+                                    {%- if config.name contains inc -%}
+                                        {%- assign foundIncluded = true -%}
+                                    {%- endif -%}
+                                {%- endfor -%}
+                                {%- if foundIncluded == false -%}
+                                    {%- assign foundExcluded = true -%}
+                                {%- endif -%}
+                            {%- endif -%}
         
-                            {% unless foundExcluded == true %}
-                                {% assign signingEncryptionCollected = false %}
-                                {% if config.name contains ".crypto" %}
-                                    {% assign signingEncryptionEnabled = true %}
-                                    {% assign signingEncryptionCollected = true %}
-                                {% endif %}
-                                {% if config.name contains ".jpa" or config.name contains ".jdbc" %}
-                                    {% assign rdbmsSettingsFound = true %}
-                                {% endif %}
-                                {% if config.name contains ".mail" %}
-                                    {% assign emailSettingsFound = true %}
-                                {% endif %}
-                                {% if config.name contains ".ldap" %}
-                                    {% assign ldapSettingsFound = true %}
-                                {% endif %}
-                                {% if config.name contains ".credential-criteria" %}
-                                    {% assign authnPredicateSettingsFound = true %}
-                                {% endif %}
-                                {% assign passwordEncoderSettingsFound = false %}
-                                {% if config.name contains ".password-encoder" %}
-                                    {% assign passwordEncoderSettingsFound = true %}
-                                {% endif %}
-                                {% assign principalTransformationSettingsFound = false %}
-                                {% if config.name contains ".principal-transformation" %}
-                                    {% assign principalTransformationSettingsFound = true %}
-                                {% endif %}
-                                {% assign passwordPolicySettingsFound = false %}
-                                {% if config.name contains ".password-policy" %}
-                                    {% assign passwordPolicySettingsFound = true %}
-                                {% endif %}
+                            {%- unless foundExcluded == true -%}
+                                {%- assign signingEncryptionCollected = false -%}
+                                {%- if config.name contains ".crypto" -%}
+                                    {%- assign signingEncryptionEnabled = true -%}
+                                    {%- assign signingEncryptionCollected = true -%}
+                                {%- endif -%}
+                                {%- if config.name contains ".jpa" or config.name contains ".jdbc" -%}
+                                    {%- assign rdbmsSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- if config.name contains ".mail" -%}
+                                    {%- assign emailSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- if config.name contains ".ldap" -%}
+                                    {%- assign ldapSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- if config.name contains ".credential-criteria" -%}
+                                    {%- assign authnPredicateSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- assign passwordEncoderSettingsFound = false -%}
+                                {%- if config.name contains ".password-encoder" -%}
+                                    {%- assign passwordEncoderSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- assign principalTransformationSettingsFound = false -%}
+                                {%- if config.name contains ".principal-transformation" -%}
+                                    {%- assign principalTransformationSettingsFound = true -%}
+                                {%- endif -%}
+                                {%- assign passwordPolicySettingsFound = false -%}
+                                {%- if config.name contains ".password-policy" -%}
+                                    {%- assign passwordPolicySettingsFound = true -%}
+                                {%- endif -%}
 
-                                {% assign requiredSettingsFound = true %}
-                                {% assign textAreaRequiredProperties = textAreaRequiredProperties
+                                {%- assign requiredSettingsFound = true -%}
+                                {%- assign textAreaRequiredProperties = textAreaRequiredProperties
                                     | append: "# "
                                     | append: config.shortDescription | strip_html
                                     | append: "&#13;&#10;"
@@ -366,37 +260,38 @@
                                     | append: "="
                                     | append: config.defaultValue
                                     | append: "&#13;&#10;"
-                                    | append: "&#13;&#10;" %}
+                                    | append: "&#13;&#10;" -%}
 
-                                    {% capture renderedProperties %}{% include casproperty.html
+                                    {%- capture renderedProperties -%}{% include_cached casproperty.html
                                         name=config.name
                                         owner=config.owner
                                         defaultValue=config.defaultValue
                                         description=config.description
                                         duration=config.duration
+                                        regexPattern=config.regexPattern
                                         expressionLanguage=config.expressionLanguage
                                         deprecationLevel=config.deprecationLevel
-                                        deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
+                                        deprecationReplacement=config.deprecationReplacement %}{%- endcapture -%}
                                     {{ renderedProperties | markdownify }}
-                                    {% if signingEncryptionCollected == true %}
-                                    {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if passwordPolicySettingsFound == true %}
-                                    {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if passwordEncoderSettingsFound == true %}
-                                    {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if principalTransformationSettingsFound == true %}
-                                    {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
-                                    {% endif %}
-                            {% endunless %}
+                                    {%- if signingEncryptionCollected == true -%}
+                                    {%- assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties -%}
+                                    {%- endif -%}
+                                    {%- if passwordPolicySettingsFound == true -%}
+                                    {%- assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties -%}
+                                    {%- endif -%}
+                                    {%- if passwordEncoderSettingsFound == true -%}
+                                    {%- assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties -%}
+                                    {%- endif -%}
+                                    {%- if principalTransformationSettingsFound == true -%}
+                                    {%- assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties -%}
+                                    {%- endif -%}
+                            {%- endunless -%}
 
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
+                        {%- endif -%}
+                    {%- endfor -%}
+                {%- endfor -%}
+            {%- endfor -%}
+        {%- endfor -%}
 
     </tbody>
     </table>
@@ -412,8 +307,8 @@
         The configuration settings listed below are tagged as <u><i>Optional</i></u> in the CAS configuration metadata. This
         flag indicates that the presence of the setting
         is not immediately necessary in the end-user CAS configuration, because a default value is assigned or
-        the activation of the feature is not conditionally controlled by the setting value. You should only include this field in your
-        configuration if you need to modify the default value.
+        the activation of the feature is not conditionally controlled by the setting value. In other words, you should only include this field in your
+        configuration <strong>if you need to modify the default value</strong> or <strong>if you need to turn on the feature</strong> controlled by the setting.
     </sub>
     <br><p />
 
@@ -421,166 +316,69 @@
     <thead><tr><th></th></tr></thead>
     <tbody>
 
-        {% for module in modules %}
-            {% for cfg in site.data[siteDataVersion][module] %}
-                {% assign configBlock = cfg[1] %}
+        {%- for prop in properties -%} 
+            {%- for module in site.data[siteDataVersion] -%} 
+                {%- assign moduleEntry = module[1] -%} 
+                {%- for cfg in moduleEntry -%} 
+                    {%- assign configBlock = cfg[1] -%} 
 
-                {% for config in configBlock %}
-                    {% unless config.required == true %}
+                    {%- for config in configBlock -%} 
+                        {%- if config.name contains prop -%} 
+                            {%- unless config.required == true -%} 
+                                {%- assign foundExcluded = false -%} 
+                                {%- for ex in excludes -%} 
+                                    {%- if config.name contains ex -%} 
+                                        {%- assign foundExcluded = true -%} 
+                                    {%- endif -%} 
+                                {%- endfor -%} 
 
-                        {% assign foundExcluded = false %}
-                        {% for ex in excludes %}
-                            {% if config.name contains ex %}
-                                {% assign foundExcluded = true %}
-                            {% endif %}
-                        {% endfor %}
+                                {%- if includes.size > 0 and foundExcluded == false -%} 
+                                    {%- assign foundIncluded = false -%} 
+                                    {%- for inc in includes -%} 
+                                        {%- if config.name contains inc -%} 
+                                            {%- assign foundIncluded = true -%} 
+                                        {%- endif -%} 
+                                    {%- endfor -%} 
+                                    {%- if foundIncluded == false -%} 
+                                        {%- assign foundExcluded = true -%} 
+                                    {%- endif -%} 
+                                {%- endif -%} 
         
-                        {% if includes.size > 0 and foundExcluded == false %}
-                            {% assign foundIncluded = false %}
-                            {% for inc in includes %}
-                                {% if config.name contains inc %}
-                                    {% assign foundIncluded = true %}
-                                {% endif %}
-                            {% endfor %}
-                            {% if foundIncluded == false %}
-                                {% assign foundExcluded = true %}
-                            {% endif %}
-                        {% endif %}
-        
-                        {% unless foundExcluded == true %}
-                            {% assign signingEncryptionCollected = false %}
-                            {% if config.name contains ".crypto." %}
-                                {% assign signingEncryptionEnabled = true %}
-                                {% assign signingEncryptionCollected = true %}
-                            {% endif %}
-                            {% if config.name contains ".jpa" or config.name contains ".jdbc" %}
-                                {% assign rdbmsSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".mail" %}
-                                {% assign emailSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".ldap" %}
-                                {% assign ldapSettingsFound = true %}
-                            {% endif %}
-                            {% if config.name contains ".credential-criteria" %}
-                                {% assign authnPredicateSettingsFound = true %}
-                            {% endif %}
-                            {% assign passwordEncoderSettingsFound = false %}
-                            {% if config.name contains ".password-encoder." %}
-                                {% assign passwordEncoderSettingsFound = true %}
-                            {% endif %}
-                            {% assign principalTransformationSettingsFound = false %}
-                            {% if config.name contains ".principal-transformation." %}
-                                {% assign principalTransformationSettingsFound = true %}
-                            {% endif %}
-                            {% assign passwordPolicySettingsFound = false %}
-                            {% if config.name contains ".password-policy." %}
-                                {% assign passwordPolicySettingsFound = true %}
-                            {% endif %}
+                                {%- unless foundExcluded == true -%} 
+                                    {%- assign signingEncryptionCollected = false -%} 
 
-                            {% assign optionalSettingsFound = true %}
-                            {% assign textAreaOptionalProperties = textAreaOptionalProperties
-                                | append: "# "
-                                | append: config.shortDescription | strip_html
-                                | append: "&#13;&#10;"
-                                | append: "# "
-                                | append: config.name | replace: "[]", "[0]"
-                                | append: "="
-                                | append: config.defaultValue
-                                | append: "&#13;&#10;"
-                                | append: "&#13;&#10;" %}
-                            {% capture renderedProperties %}{% include casproperty.html
-                                name=config.name
-                                owner=config.owner
-                                defaultValue=config.defaultValue
-                                description=config.description
-                                duration=config.duration
-                                expressionLanguage=config.expressionLanguage
-                                deprecationLevel=config.deprecationLevel
-                                deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
-                            {{ renderedProperties | markdownify }}
-                            {% if signingEncryptionCollected == true %}
-                            {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
-                            {% endif %}
-                            {% if passwordPolicySettingsFound == true %}
-                            {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
-                            {% endif %}
-                            {% if passwordEncoderSettingsFound == true %}
-                            {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
-                            {% endif %}
-                            {% if principalTransformationSettingsFound == true %}
-                            {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
-                            {% endif %}
-                        {% endunless %}
+                                    {%- if config.name contains ".crypto" -%} 
+                                        {%- assign signingEncryptionEnabled = true -%} 
+                                        {%- assign signingEncryptionCollected = true -%} 
+                                    {%- endif -%} 
 
-                    {% endunless %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
+                                    {%- if config.name contains ".jpa" or config.name contains ".jdbc" -%} 
+                                        {%- assign rdbmsSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- if config.name contains ".mail" -%} 
+                                        {%- assign emailSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- if config.name contains ".ldap" -%} 
+                                        {%- assign ldapSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- if config.name contains ".credential-criteria" -%} 
+                                        {%- assign authnPredicateSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- assign passwordEncoderSettingsFound = false -%} 
+                                    {%- if config.name contains ".password-encoder" -%} 
+                                        {%- assign passwordEncoderSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- assign principalTransformationSettingsFound = false -%} 
+                                    {%- if config.name contains ".principal-transformation" -%} 
+                                        {%- assign principalTransformationSettingsFound = true -%} 
+                                    {%- endif -%} 
+                                    {%- assign passwordPolicySettingsFound = false -%} 
+                                    {%- if config.name contains ".password-policy" -%} 
+                                        {%- assign passwordPolicySettingsFound = true -%} 
+                                    {%- endif -%} 
 
-        {% for prop in properties %}
-            {% for module in site.data[siteDataVersion] %}
-                {% assign moduleEntry = module[1] %}
-                {% for cfg in moduleEntry %}
-                    {% assign configBlock = cfg[1] %}
-
-                    {% for config in configBlock %}
-                        {% if config.name contains prop %}
-                            {% unless config.required == true %}
-                                {% assign foundExcluded = false %}
-                                {% for ex in excludes %}
-                                    {% if config.name contains ex %}
-                                        {% assign foundExcluded = true %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if includes.size > 0 and foundExcluded == false %}
-                                    {% assign foundIncluded = false %}
-                                    {% for inc in includes %}
-                                        {% if config.name contains inc %}
-                                            {% assign foundIncluded = true %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if foundIncluded == false %}
-                                        {% assign foundExcluded = true %}
-                                    {% endif %}
-                                {% endif %}
-        
-                                {% unless foundExcluded == true %}
-                                    {% assign signingEncryptionCollected = false %}
-
-                                    {% if config.name contains ".crypto" %}
-                                        {% assign signingEncryptionEnabled = true %}
-                                        {% assign signingEncryptionCollected = true %}
-                                    {% endif %}
-
-                                    {% if config.name contains ".jpa" or config.name contains ".jdbc" %}
-                                        {% assign rdbmsSettingsFound = true %}
-                                    {% endif %}
-                                    {% if config.name contains ".mail" %}
-                                        {% assign emailSettingsFound = true %}
-                                    {% endif %}
-                                    {% if config.name contains ".ldap" %}
-                                        {% assign ldapSettingsFound = true %}
-                                    {% endif %}
-                                    {% if config.name contains ".credential-criteria" %}
-                                        {% assign authnPredicateSettingsFound = true %}
-                                    {% endif %}
-                                    {% assign passwordEncoderSettingsFound = false %}
-                                    {% if config.name contains ".password-encoder" %}
-                                        {% assign passwordEncoderSettingsFound = true %}
-                                    {% endif %}
-                                    {% assign principalTransformationSettingsFound = false %}
-                                    {% if config.name contains ".principal-transformation" %}
-                                        {% assign principalTransformationSettingsFound = true %}
-                                    {% endif %}
-                                    {% assign passwordPolicySettingsFound = false %}
-                                    {% if config.name contains ".password-policy" %}
-                                        {% assign passwordPolicySettingsFound = true %}
-                                    {% endif %}
-
-                                    {% assign optionalSettingsFound = true %}
-                                    {% assign textAreaOptionalProperties = textAreaOptionalProperties
+                                    {%- assign optionalSettingsFound = true -%} 
+                                    {%- assign textAreaOptionalProperties = textAreaOptionalProperties
                                         | append: "# "
                                         | append: config.shortDescription | strip_html
                                         | append: "&#13;&#10;"
@@ -589,36 +387,37 @@
                                         | append: "="
                                         | append: config.defaultValue
                                         | append: "&#13;&#10;"
-                                        | append: "&#13;&#10;" %}
-                                    {% capture renderedProperties %}{% include casproperty.html
+                                        | append: "&#13;&#10;" -%} 
+                                    {%- capture renderedProperties -%} {% include_cached casproperty.html
                                         name=config.name
                                         owner=config.owner
                                         defaultValue=config.defaultValue
                                         description=config.description
                                         duration=config.duration
+                                        regexPattern=config.regexPattern
                                         expressionLanguage=config.expressionLanguage
                                         deprecationLevel=config.deprecationLevel
-                                        deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
+                                        deprecationReplacement=config.deprecationReplacement %}{%- endcapture -%}
                                     {{ renderedProperties | markdownify }}
-                                    {% if signingEncryptionCollected == true %}
-                                    {% assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if passwordPolicySettingsFound == true %}
-                                    {% assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if passwordEncoderSettingsFound == true %}
-                                    {% assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties %}
-                                    {% endif %}
-                                    {% if principalTransformationSettingsFound == true %}
-                                    {% assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties %}
-                                    {% endif %}
-                                {% endunless %}
-                            {% endunless %}
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
+                                    {%- if signingEncryptionCollected == true -%} 
+                                    {%- assign textAreaCryptoProperties = textAreaCryptoProperties | append: renderedProperties -%} 
+                                    {%- endif -%} 
+                                    {%- if passwordPolicySettingsFound == true -%} 
+                                    {%- assign textAreaPasswordPolicyProperties = textAreaPasswordPolicyProperties | append: renderedProperties -%} 
+                                    {%- endif -%} 
+                                    {%- if passwordEncoderSettingsFound == true -%} 
+                                    {%- assign textAreaPasswordEncoderProperties = textAreaPasswordEncoderProperties | append: renderedProperties -%} 
+                                    {%- endif -%} 
+                                    {%- if principalTransformationSettingsFound == true -%} 
+                                    {%- assign textAreaPrincipalTransformationProperties = textAreaPrincipalTransformationProperties | append: renderedProperties -%} 
+                                    {%- endif -%} 
+                                {%- endunless -%} 
+                            {%- endunless -%} 
+                        {%- endif -%} 
+                    {%- endfor -%} 
+                {%- endfor -%} 
+            {%- endfor -%} 
+        {%- endfor -%} 
 
     </tbody>
     </table>
@@ -627,7 +426,7 @@
 </div>
 
 
-{% if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 %}
+{%- if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 -%}
 <div class='tab-pane properties-tab fade in' id='thirdPartyProperties{{ casPropertiesRandomNumber }}'>
     <i style="vertical-align: sub;" class="fas fa-info-circle"></i>
     <sub>
@@ -635,20 +434,20 @@
     </sub>
     <br><p />
 
-    {% assign tpsw = include.thirdPartyStartsWith %}
-    {% assign tp = include.thirdParty %}
-    {% assign tpem = include.thirdPartyExactMatch %}
+    {%- assign tpsw = include.thirdPartyStartsWith -%} 
+    {%- assign tp = include.thirdParty -%} 
+    {%- assign tpem = include.thirdPartyExactMatch -%} 
 
-    {% include thirdpartyproperties.html 
+    {%- include_cached thirdpartyproperties.html 
         id=casPropertiesRandomNumber 
         thirdPartyStartsWith=tpsw
         thirdParty=tp 
         thirdPartyExactMatch=tpem 
-    %}
+    -%} 
 </div>
-{% endif %}
+{%- endif -%}
 
-{% if signingEncryptionEnabled == true %}
+{%- if signingEncryptionEnabled == true -%}
 <div class='tab-pane properties-tab fade in' id='signingEncryptionProperties{{ casPropertiesRandomNumber }}'>
     <table class="cas-datatable properties" 
             id='tableSigningEncryptionProperties{{ casPropertiesRandomNumber }}'>
@@ -656,142 +455,144 @@
         <tbody>{{ textAreaCryptoProperties }} </tbody>
     </table>
 
-    {% capture signingEncConfig %}{% include {{ version }}/signing-encryption-configuration.md includeRsaKeys=includeRsaKeys %}{% endcapture %}
+    {%- capture signingEncConfig -%}{% include_cached {{ version }}/signing-encryption-configuration.md includeRsaKeys=includeRsaKeys %}{%- endcapture -%}
     {{ signingEncConfig | markdownify }}
 </div>
-{% endif %}
+{%- endif -%}
 
-{% if rdbmsSettingsFound == true %}
+{%- if rdbmsSettingsFound == true -%}
 <div class='tab-pane properties-tab fade in' id='rdbmsProperties{{ casPropertiesRandomNumber }}'>
-    {% capture rdbmsConfig %}{% include {{ version }}/rdbms-configuration.md %}{% endcapture %}
+    {%- capture rdbmsConfig -%} {% include_cached {{ version }}/rdbms-configuration.md %}{%- endcapture -%}
     {{ rdbmsConfig | markdownify }}
 </div>
-{% endif %}
+{%- endif -%}
 
-{% if emailSettingsFound == true %}
+{%- if emailSettingsFound == true -%}
 <div class='tab-pane properties-tab fade in' id='emailProperties{{ casPropertiesRandomNumber }}'>
-    {% capture emailConfig %}{% include {{ version }}/email-notifications-configuration.md %}{% endcapture %}
+    {%- capture emailConfig -%}{% include_cached {{ version }}/email-notifications-configuration.md %}{%- endcapture -%}
     {{ emailConfig | markdownify }}
 </div>
-{% endif %}
+{%- endif -%}
 
-{% if ldapSettingsFound == true %}
+{%- if ldapSettingsFound == true -%}
 <div class='tab-pane properties-tab fade in' id='ldapProperties{{ casPropertiesRandomNumber }}'>
-    {% capture ldapConfig %}{% include {{ version }}/ldap-configuration.md %}{% endcapture %}
+    {%- capture ldapConfig -%} {% include_cached {{ version }}/ldap-configuration.md %}{%- endcapture -%}
     {{ ldapConfig | markdownify }}
 </div>
-{% endif %}
+{%- endif -%}
 
 
-{% unless textAreaPasswordEncoderProperties == blank %}
+{%- unless textAreaPasswordEncoderProperties == blank -%}
 <div class='tab-pane properties-tab fade in' id='passwordEncoderProperties{{ casPropertiesRandomNumber }}'>
+
     <table class="cas-datatable properties"
            id='tablePasswordEncoderProperties{{ casPropertiesRandomNumber }}'>
         <thead><tr><th></th></tr></thead>
         <tbody>{{ textAreaPasswordEncoderProperties }} </tbody>
     </table>
 
-    {% capture passwordEncoderConfig %}{% include {{ version }}/password-encoding-configuration.md %}{% endcapture %}
+    {%- capture passwordEncoderConfig -%}{% include_cached {{ version }}/password-encoding-configuration.md %}{%- endcapture -%}
     {{ passwordEncoderConfig | markdownify }}
 </div>
-{% endunless %}
+{%- endunless -%}
 
-{% unless textAreaPasswordPolicyProperties == blank %}
+{%- unless textAreaPasswordPolicyProperties == blank -%}
 <div class='tab-pane properties-tab fade in' id='passwordPolicyProperties{{ casPropertiesRandomNumber }}'>
+    <p/>
     <table class="cas-datatable properties"
            id='tablePasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
         <thead><tr><th></th></tr></thead>
         <tbody>{{ textAreaPasswordPolicyProperties }} </tbody>
     </table>
     
-    {% capture passwordPolicyConfig %}{% include {{ version }}/password-policy-configuration.md %}{% endcapture %}
+    {%- capture passwordPolicyConfig -%}{% include_cached {{ version }}/password-policy-configuration.md %}{%- endcapture -%}
     {{ passwordPolicyConfig | markdownify }}
 </div>
-{% endunless %}
+{%- endunless -%}
 
-{% unless textAreaPrincipalTransformationProperties == blank %}
+{%- unless textAreaPrincipalTransformationProperties == blank -%}
 <div class='tab-pane properties-tab fade in' id='principalTransformationProperties{{ casPropertiesRandomNumber }}'>
+    <p/>
     <table class="cas-datatable properties"
            id='tablePrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
         <thead><tr><th></th></tr></thead>
         <tbody>{{ textAreaPrincipalTransformationProperties }} </tbody>
     </table>
 
-    {% capture principalTransformationConfig %}{% include {{ version }}/principal-transformation-configuration.md %}{% endcapture %}
+    {%- capture principalTransformationConfig -%}{% include_cached {{ version }}/principal-transformation-configuration.md %}{%- endcapture -%}
     {{ principalTransformationConfig | markdownify }}
 </div>
-{% endunless %}
+{%- endunless -%}
 
-{% if authnPredicateSettingsFound == true %}
+{%- if authnPredicateSettingsFound == true -%}
 <div class="tab-pane properties-tab fade in" id="authnPredicateProperties{{ casPropertiesRandomNumber }}">
-    {% capture authnConfig %}{% include {{ version }}/authentication-credential-selection-configuration.md %}{% endcapture %}
+    {%- capture authnConfig -%}{% include_cached {{ version }}/authentication-credential-selection-configuration.md %}{%- endcapture -%}
     {{ authnConfig | markdownify }}
 </div>
-{% endif %}
+{%- endif -%}
 
-{% unless include.disableNotes == "true" %} 
+{%- unless include.disableNotes == "true" -%} 
 <div class='tab-pane properties-tab fade in' id='notes{{ casPropertiesRandomNumber }}'>
-    {% capture notesConfig %}{% include config-guidelines.md %}{% endcapture %}
+    {%- capture notesConfig -%}{%- include_cached config-guidelines.md %}{%- endcapture -%}
     {{ notesConfig | markdownify }}
 </div>
-{% endunless %}
-
+{%- endunless -%}
 
 <script>
-
     window.addEventListener('load', (event) => {
-        {% unless optionalSettingsFound %}
-            $("#linkOptionalProperties{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless rdbmsSettingsFound %}
-            $("#linkRdbms{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless emailSettingsFound %}
-            $("#linkEmail{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless signingEncryptionEnabled %}
-            $("#linkSigningEncryption{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless requiredSettingsFound %}
-            $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% if textAreaPasswordPolicyProperties == blank or textAreaPasswordPolicyProperties == '' %}
-            $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove()
-        {% endif %}
-        {% if textAreaPrincipalTransformationProperties == blank or textAreaPrincipalTransformationProperties == '' %}
-            $("#linkPrincipalTransformation{{ casPropertiesRandomNumber }}").remove()
-        {% endif %}
-        {% if textAreaPasswordEncoderProperties == blank or textAreaPasswordEncoderProperties == '' %}
-            $("#linkPasswordEncoder{{ casPropertiesRandomNumber }}").remove()
-        {% endif %}
-        {% unless authnPredicateSettingsFound %}
-            $("#linkAuthnPredicate{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-        {% unless ldapSettingsFound %}
-            $("#linkLdap{{ casPropertiesRandomNumber }}").remove()
-        {% endunless %}
-
         
+        {%- unless optionalSettingsFound -%}
+            $("#linkOptionalProperties{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
+        {%- unless rdbmsSettingsFound -%}
+            $("#linkRdbms{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
+        {%- unless emailSettingsFound -%}
+            $("#linkEmail{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
+        {%- unless signingEncryptionEnabled -%} 
+            $("#linkSigningEncryption{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%} 
+        {%- unless requiredSettingsFound -%} 
+            $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove();
+            $("#requiredProperties{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%} 
+        {%- if textAreaPasswordPolicyProperties == blank or textAreaPasswordPolicyProperties == '' -%} 
+            $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove();
+        {%- endif -%} 
+        {%- if textAreaPrincipalTransformationProperties == blank or textAreaPrincipalTransformationProperties == '' -%} 
+            $("#linkPrincipalTransformation{{ casPropertiesRandomNumber }}").remove();
+        {%- endif -%} 
+        {%- if textAreaPasswordEncoderProperties == blank or textAreaPasswordEncoderProperties == '' -%} 
+            $("#linkPasswordEncoder{{ casPropertiesRandomNumber }}").remove();
+        {%- endif -%} 
+        {%- unless authnPredicateSettingsFound -%} 
+            $("#linkAuthnPredicate{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%} 
+        {%- unless ldapSettingsFound -%} 
+            $("#linkLdap{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%} 
+
         // console.log("Checking for visible link menu in: navPillsMenus{{ casPropertiesRandomNumber }}");
-        var id=$("#navPillsMenus{{ casPropertiesRandomNumber }} a:visible:first").prop('id');
+        let id=$("#navPillsMenus{{ casPropertiesRandomNumber }} a:visible:first").prop('id');
         // console.log("Attempting to select tab with id " + id);
         if (id != undefined && id != null) {
             // console.log("Selecting first tab with link id " + id);
-            var firstTabEl = document.querySelector("#" + id);
-            var firstTab = new bootstrap.Tab(firstTabEl);
+            let firstTabEl = document.querySelector(`#${id}`);
+            let firstTab = new bootstrap.Tab(firstTabEl);
             firstTab.show();
             // console.log("Selected tab with link id " + id);
         }
 
         let c = $("#tableRequiredProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {
-            $("#navRequiredProperties{{ casPropertiesRandomNumber }}").closest("table").remove()
-            $("#navRequiredPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove()
+            $("#navRequiredProperties{{ casPropertiesRandomNumber }}").closest("table").remove();
+            $("#navRequiredPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove();
         }
         c = $("#tableOptionalProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {
-            $("#navOptionalProperties{{ casPropertiesRandomNumber }}").closest("table").remove()
-            $("#navOptionalPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove()
+            $("#navOptionalProperties{{ casPropertiesRandomNumber }}").closest("table").remove();
+            $("#navOptionalPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove();
         }
         c = $("#tableThirdPartyProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {

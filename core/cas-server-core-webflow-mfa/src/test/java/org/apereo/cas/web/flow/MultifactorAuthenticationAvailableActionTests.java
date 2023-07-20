@@ -29,17 +29,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationAvailableActionTests {
+class MultifactorAuthenticationAvailableActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         private Action mfaAvailableAction;
 
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -52,7 +52,7 @@ public class MultifactorAuthenticationAvailableActionTests {
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
             val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
@@ -61,13 +61,13 @@ public class MultifactorAuthenticationAvailableActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class FailureModeNoneTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class FailureModeNoneTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         private Action mfaAvailableAction;
 
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -83,7 +83,7 @@ public class MultifactorAuthenticationAvailableActionTests {
             provider.setAvailable(false);
             provider.setFailureMode(MultifactorAuthenticationProviderFailureModes.NONE);
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());

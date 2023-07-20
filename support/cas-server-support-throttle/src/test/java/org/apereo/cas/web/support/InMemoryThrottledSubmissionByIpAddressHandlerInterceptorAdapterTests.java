@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 )
 @Getter
 @Tag("AuthenticationThrottling")
-public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
+class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

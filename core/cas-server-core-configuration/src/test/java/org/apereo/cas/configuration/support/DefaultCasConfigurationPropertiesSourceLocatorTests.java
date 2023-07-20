@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
+import org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
-import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +18,7 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.mock.env.MockEnvironment;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreEnvironmentConfiguration.class,
+    CasCoreEnvironmentBootstrapConfiguration.class,
     CasCoreConfigurationWatchConfiguration.class,
-    CasCoreBootstrapStandaloneConfiguration.class
+    CasCoreStandaloneBootstrapConfiguration.class
 },
     properties = {
         "spring.cloud.config.enabled=false",
@@ -40,22 +41,22 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 )
 @Tag("CasConfiguration")
-public class DefaultCasConfigurationPropertiesSourceLocatorTests {
+class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");
         System.setProperty("spring.profiles.active", CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE + ",dev");
         System.setProperty("cas.standalone.configuration-directory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configuration-file", "src/test/resources/standalone.properties");
-        System.setProperty("test.overriden-by-system-property", "from-system-properties");
+        System.setProperty("test.overridden-by-system-property", "from-system-properties");
     }
 
     @Autowired
-    @Qualifier("casCoreBootstrapPropertySourceLocator")
+    @Qualifier(CasConfigurationPropertiesSourceLocator.BOOTSTRAP_PROPERTY_LOCATOR_BEAN_NAME)
     private PropertySourceLocator casCoreBootstrapPropertySourceLocator;
 
     @Autowired
     @Qualifier("casConfigurationWatchService")
-    private CasEventListener casConfigurationWatchService;
+    private InitializingBean casConfigurationWatchService;
 
     @Autowired
     private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
@@ -67,7 +68,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     private ResourceLoader resourceLoader;
 
     @Test
-    public void verifyLocator() {
+    void verifyLocator() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 
@@ -79,7 +80,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyPriority() {
+    void verifyPriority() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -92,7 +93,16 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyGroovySlurper() {
+    void verifyNoneProfile() {
+        val mockEnv =new MockEnvironment();
+        mockEnv.setActiveProfiles(CasConfigurationPropertiesSourceLocator.PROFILE_NONE);
+        val source = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(mockEnv);
+        assertNull(source);
+    }
+
+
+    @Test
+    void verifyGroovySlurper() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -101,18 +111,18 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyYamlLoaderThrows() {
+    void verifyYamlLoaderThrows() {
         val loader = configurationPropertiesLoaderFactory.getLoader(
             resourceLoader.getResource("classpath:/badyaml.yml"), "test");
         assertThrows(YAMLException.class, loader::load);
     }
 
     @Test
-    public void verifySystemPropertiesOverrideCasConfiguration() {
+    void verifySystemPropertiesOverrideCasConfiguration() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 
         val composite = (CompositePropertySource) source;
-        assertEquals("from-system-properties", composite.getProperty("test.overriden-by-system-property"));
+        assertEquals("from-system-properties", composite.getProperty("test.overridden-by-system-property"));
     }
 }

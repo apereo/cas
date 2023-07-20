@@ -106,6 +106,8 @@ public class CasCoreHttpConfiguration {
 
             val httpClient = casProperties.getHttpClient();
             client.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+            client.setSocketTimeout(Beans.newDuration(httpClient.getSocketTimeout()).toMillis());
+            client.setResponseTimeout(Beans.newDuration(httpClient.getResponseTimeout()).toMillis());
 
             if (StringUtils.isNotBlank(httpClient.getProxyHost()) && httpClient.getProxyPort() > 0) {
                 client.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
@@ -113,6 +115,7 @@ public class CasCoreHttpConfiguration {
             client.setSslContext(casSslContext.getSslContext());
             client.setSslSocketFactory(trustStoreSslSocketFactory);
             client.setTrustManagers(casSslContext.getTrustManagers());
+
             val defaultHeaders = new ArrayList<Header>();
             httpClient.getDefaultHeaders().forEach((name, value) -> defaultHeaders.add(new BasicHeader(name, value)));
             client.setDefaultHeaders(defaultHeaders);

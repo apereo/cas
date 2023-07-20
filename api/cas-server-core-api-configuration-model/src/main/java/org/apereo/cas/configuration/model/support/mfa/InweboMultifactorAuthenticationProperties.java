@@ -77,6 +77,11 @@ public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAu
     private boolean pushEnabled = true;
 
     /**
+     * Whether the push authentication should happen directly (without proposing the browser authentication if defined).
+     */
+    private boolean pushAuto = true;
+
+    /**
      * The browser authenticator to use (or none).
      */
     private BrowserAuthenticatorTypes browserAuthenticator = BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;

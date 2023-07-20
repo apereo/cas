@@ -1,8 +1,10 @@
 package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,7 +31,10 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private final transient CipherExecutor<Serializable, Serializable> cipherExecutor;
+    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+
+    @Getter
+    private final CookieSameSitePolicy cookieSameSitePolicy;
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {

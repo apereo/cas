@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationTests {
+class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultAuthentication.json");
 
@@ -27,7 +27,7 @@ public class DefaultAuthenticationTests {
         .build().toObjectMapper();
 
     @Test
-    public void verifySerializeADefaultAuthenticationToJson() throws Exception {
+    void verifySerializeADefaultAuthenticationToJson() throws Exception {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
         MAPPER.writeValue(JSON_FILE, authn);
         val authn2 = MAPPER.readValue(JSON_FILE, Authentication.class);

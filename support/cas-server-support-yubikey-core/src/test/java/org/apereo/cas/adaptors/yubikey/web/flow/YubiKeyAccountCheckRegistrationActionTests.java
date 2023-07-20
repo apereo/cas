@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAccountCheckRegistrationActionTests {
+class YubiKeyAccountCheckRegistrationActionTests {
 
     @BeforeEach
     public void setup() {
@@ -47,24 +47,24 @@ public class YubiKeyAccountCheckRegistrationActionTests {
     }
     
     @Test
-    public void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val action = new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
-    public void verifyActionRegister() throws Exception {
+    void verifyActionRegister() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val registry = new ClosedYubiKeyAccountRegistry(new DenyAllYubiKeyAccountValidator());
         val action = new YubiKeyAccountCheckRegistrationAction(registry);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());

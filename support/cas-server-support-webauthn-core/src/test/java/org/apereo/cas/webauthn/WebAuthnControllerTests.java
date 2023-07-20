@@ -46,10 +46,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFAProvider")
-public class WebAuthnControllerTests {
+class WebAuthnControllerTests {
 
     @Test
-    public void verifyStartAuthentication() throws Exception {
+    void verifyStartAuthentication() throws Exception {
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
@@ -78,7 +78,7 @@ public class WebAuthnControllerTests {
     }
 
     @Test
-    public void verifyFinishAuthentication() throws Exception {
+    void verifyFinishAuthentication() throws Exception {
         val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);
@@ -138,7 +138,7 @@ public class WebAuthnControllerTests {
     }
 
     @Test
-    public void verifyStartRegistration() throws Exception {
+    void verifyStartRegistration() throws Exception {
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
@@ -173,7 +173,7 @@ public class WebAuthnControllerTests {
     }
 
     @Test
-    public void verifyFinishRegistration() throws Exception {
+    void verifyFinishRegistration() throws Exception {
         val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);

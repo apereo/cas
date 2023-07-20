@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20Tests {
+class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ConfigurationContext")
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyNoService() {
+    void verifyNoService() {
         val request = new MockHttpServletRequest();
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), CLIENT_SECRET);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());

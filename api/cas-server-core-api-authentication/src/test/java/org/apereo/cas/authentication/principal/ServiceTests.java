@@ -14,9 +14,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class ServiceTests {
+class ServiceTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(Service.class);
         doCallRealMethod().when(policy).setPrincipal(anyString());
         assertDoesNotThrow(() -> policy.setPrincipal("casuser"));

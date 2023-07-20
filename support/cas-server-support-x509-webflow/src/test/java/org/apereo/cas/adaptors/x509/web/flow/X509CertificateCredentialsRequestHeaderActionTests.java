@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.authn.x509.extract-cert=true")
 @Tag("X509")
-public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
+class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
-    public void verifyCredentialsResultsInAuthnFailure() throws Exception {
+    void verifyCredentialsResultsInAuthnFailure() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -43,7 +43,7 @@ public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCert
     }
 
     @Test
-    public void verifyErrorInRequestResultsInError() throws Exception {
+    void verifyErrorInRequestResultsInError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));

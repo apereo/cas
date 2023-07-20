@@ -14,7 +14,7 @@ standard and follows cryptographic best practices.
 You can manually rotate keys periodically to change the JSON web key (JWK) key, or you can configure the appropriate schedule
 in CAS configuration so it would automatically rotate keys for you. 
 
-<div class="alert alert-info"><strong>Rotation Guidance</strong><p>
+<div class="alert alert-info">:information_source: <strong>Rotation Guidance</strong><p>
 NIST guidelines seem to recommend a rotation schedule of at least once every two years. 
 In practice, modest CAS deployments in size and scale tend to rotate keys once every six months, either 
 manually or automatically on a schedule.

@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.AMQPTicketRegistryConfiguration;
-import org.apereo.cas.config.AMQPTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -28,12 +27,11 @@ import org.springframework.test.context.TestPropertySource;
     AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class,
     CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
-    AMQPTicketRegistryTicketCatalogConfiguration.class,
     AMQPTicketRegistryConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.ticket.registry.amqp.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
-    "cas.ticket.registry.amqp.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+    "cas.ticket.registry.amqp.in-memory.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
+    "cas.ticket.registry.amqp.in-memory.encryption.key=BXRiSBWJcRksTizjdaCoLw",
 
     "spring.rabbitmq.host=localhost",
     "spring.rabbitmq.port=5672",
@@ -43,13 +41,13 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
 @Getter
-public class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
+class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired
-    @Qualifier("messageQueueCipherExecutor")
+    @Qualifier("defaultTicketRegistryCipherExecutor")
     private CipherExecutor messageQueueCipherExecutor;
 
     @Override
