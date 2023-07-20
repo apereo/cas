@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Mail")
-public class EmailMessageBodyBuilderTests {
+class EmailMessageBodyBuilderTests {
     @Test
-    public void verifyNoBody() {
+    void verifyNoBody() {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -37,7 +37,7 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyLocalizedFileFound() {
+    void verifyLocalizedFileFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -50,7 +50,7 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyLocalizedFileNotFound() {
+    void verifyLocalizedFileNotFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -63,7 +63,7 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -76,7 +76,7 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyTemplateOperation() {
+    void verifyTemplateOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -92,7 +92,25 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyGroovyOperation() {
+    void verifyInlineGroovyOperation() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val cacheMgr = new GroovyScriptResourceCacheManager();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(appCtx);
+        val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
+        val results = EmailMessageBodyBuilder.builder()
+            .properties(props)
+            .locale(Optional.of(Locale.CANADA))
+            .parameters(CollectionUtils.wrap("key", "Hello"))
+            .build()
+            .addParameter("key2", "World");
+        val result = results.get();
+        assertEquals("Hello, World", result);
+    }
+
+    @Test
+    void verifyGroovyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

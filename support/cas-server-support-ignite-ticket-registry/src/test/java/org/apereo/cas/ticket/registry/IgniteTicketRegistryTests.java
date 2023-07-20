@@ -3,7 +3,10 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.val;
@@ -53,7 +56,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.ignite.trust-store-type=pkcs12"
     })
 @Getter
-public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
+class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
@@ -78,10 +81,10 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyDeleteUnknown() {
         val catalog = mock(TicketCatalog.class);
-        val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
+        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, igniteConfiguration,
             casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
-        assertTrue(registry.deleteSingleTicket("unknownticket") > 0);
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication())) > 0);
         registry.destroy();
     }
 }

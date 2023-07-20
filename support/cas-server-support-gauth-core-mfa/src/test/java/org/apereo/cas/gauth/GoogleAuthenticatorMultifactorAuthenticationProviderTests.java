@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
  * @since 6.1.0
  */
 @Tag("MFAProvider")
-public class GoogleAuthenticatorMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class GoogleAuthenticatorMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new GoogleAuthenticatorMultifactorAuthenticationProvider();

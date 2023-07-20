@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Import(WSFederationValidateRequestCallbackControllerTests.WSFederationValidateRequestCallbackControllerTestConfiguration.class)
-public class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("federationValidateRequestCallbackController")
     private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;
@@ -62,7 +62,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyWithTicketGrantingTicket() throws Exception {
+    void verifyWithTicketGrantingTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -105,7 +105,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     }
 
     @Test
-    public void verifyWithoutTicketGrantingTicket() throws Exception {
+    void verifyWithoutTicketGrantingTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationPolicy")
-public class NotPreventedAuthenticationPolicyTests {
+class NotPreventedAuthenticationPolicyTests {
 
     @Test
-    public void verifyOperationPrevented() throws Exception {
+    void verifyOperationPrevented() throws Exception {
         val input = new NotPreventedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
@@ -33,7 +33,7 @@ public class NotPreventedAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyOperationNotPrevented() throws Exception {
+    void verifyOperationNotPrevented() throws Exception {
         val input = new NotPreventedAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
         assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());

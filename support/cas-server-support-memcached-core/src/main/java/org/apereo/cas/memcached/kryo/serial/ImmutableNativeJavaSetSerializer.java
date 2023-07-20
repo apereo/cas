@@ -9,6 +9,7 @@ import lombok.val;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link ImmutableNativeJavaSetSerializer}.
@@ -32,10 +33,7 @@ public class ImmutableNativeJavaSetSerializer extends Serializer<Set<Object>> {
     @Override
     public Set<Object> read(final Kryo kryo, final Input input, final Class<? extends Set<Object>> aClass) {
         val size = input.readInt(true);
-        val list = new Object[size];
-        for (var i = 0; i < size; ++i) {
-            list[i] = kryo.readClassAndObject(input);
-        }
+        val list = IntStream.range(0, size).mapToObj(i -> kryo.readClassAndObject(input)).toArray();
         return Arrays.stream(list).collect(Collectors.toSet());
     }
 }

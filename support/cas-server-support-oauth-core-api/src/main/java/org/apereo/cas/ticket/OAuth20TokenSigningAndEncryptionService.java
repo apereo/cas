@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
+import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 
@@ -35,12 +38,26 @@ public interface OAuth20TokenSigningAndEncryptionService {
     /**
      * Gets json web key signing algorithm.
      *
-     * @param svc the svc
+     * @param svc        the svc
+     * @param signingKey the signing key
      * @return the json web key signing algorithm
      */
-    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
-        return AlgorithmIdentifiers.RSA_USING_SHA256;
+    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
+                                                 final JsonWebKey signingKey) {
+        var defaultAlgorithm = AlgorithmIdentifiers.RSA_USING_SHA256;
+        if (signingKey instanceof EllipticCurveJsonWebKey) {
+            defaultAlgorithm = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;
+        }
+        return StringUtils.defaultString(signingKey.getAlgorithm(), defaultAlgorithm);
     }
+
+    /**
+     * Gets json web key used as the signing key.
+     *
+     * @param serviceResult the service result
+     * @return the json web key signing key
+     */
+    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> serviceResult);
 
     /**
      * Should sign token for service?

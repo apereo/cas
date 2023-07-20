@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
+class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
 
     @BeforeEach
     public void setup() {
@@ -31,7 +31,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOidcActionWithoutMDUI() throws Exception {
+    void verifyOidcActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(ctx, null);
         val event = oidcRegisteredServiceUIAction.execute(ctx);
@@ -40,7 +40,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOidcActionWithMDUI() throws Exception {
+    void verifyOidcActionWithMDUI() throws Exception {
         val ctx = new MockRequestContext();
         servicesManager.save(getOidcRegisteredService());
         WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(

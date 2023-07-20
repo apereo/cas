@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             addUrlParameter(context, builder, OAuth20Constants.REQUEST);
             addUrlParameter(context, builder, OAuth20Constants.STATE);
             addUrlParameter(context, builder, OAuth20Constants.NONCE);
+            addUrlParameter(context, builder, TokenConstants.PARAMETER_NAME_TOKEN);
             getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
             val callbackResolved = builder.build().toString();
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);

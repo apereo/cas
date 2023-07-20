@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Radius")
-public class RadiusProtocolTests {
+class RadiusProtocolTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         Arrays.stream(RadiusProtocol.values()).forEach(protocol -> assertNotNull(protocol.getName()));
     }
 }

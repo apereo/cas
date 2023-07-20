@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("Utility")
-public class PasswordEncoderUtilsTests {
+class PasswordEncoderUtilsTests {
     private static final String RAW_PASSWORD = UUID.randomUUID().toString();
 
     private StaticApplicationContext applicationContext;
@@ -41,7 +41,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyNoType() {
+    void verifyNoType() {
         val properties = new PasswordEncoderProperties();
         properties.setType(null);
         var encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -52,7 +52,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyArgon2() {
+    void verifyArgon2() {
         val properties = new PasswordEncoderProperties();
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.ARGON2.name());
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -60,7 +60,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyBcryptType() {
+    void verifyBcryptType() {
         val properties = new PasswordEncoderProperties();
         properties.setSecret(null);
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.BCRYPT.name());
@@ -69,7 +69,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyPbkdf2() {
+    void verifyPbkdf2() {
         val properties = new PasswordEncoderProperties();
         properties.setSecret(UUID.randomUUID().toString());
         properties.setStrength(16);
@@ -79,7 +79,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyGroovyType() {
+    void verifyGroovyType() {
         val properties = new PasswordEncoderProperties();
         properties.setType("classpath:/GroovyPasswordEncoder.groovy");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -87,7 +87,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyClassType() {
+    void verifyClassType() {
         val properties = new PasswordEncoderProperties();
         properties.setType("org.example.cas.SamplePasswordEncoder");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -95,7 +95,7 @@ public class PasswordEncoderUtilsTests {
     }
 
     @Test
-    public void verifyAvailableTypes() {
+    void verifyAvailableTypes() {
         val secret = UUID.randomUUID().toString();
         Arrays.stream(PasswordEncoderProperties.PasswordEncoderTypes.values()).forEach(type -> {
             val properties = new PasswordEncoderProperties();

@@ -1,9 +1,11 @@
 package org.apereo.cas.web.cookie;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,6 +22,8 @@ import java.io.Serializable;
 @Getter
 @SuperBuilder
 @Setter
+@With
+@AllArgsConstructor
 public class CookieGenerationContext implements Serializable {
     /**
      * Empty cookie generation context.

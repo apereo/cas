@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.RestSamlMetadataProperties;
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -33,6 +33,7 @@ import java.util.Optional;
  * @since 6.2.0
  */
 @Slf4j
+@Monitorable
 public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -52,8 +53,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();
-            registeredService.ifPresent(service -> parameters.put("appliesTo",
-                SamlIdPMetadataGenerator.getAppliesToFor(registeredService)));
+            registeredService.ifPresent(service -> parameters.put("appliesTo", getAppliesToFor(registeredService)));
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())

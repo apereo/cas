@@ -9,6 +9,8 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.util.Locale;
+
 /**
  * Default OAuth device token factory.
  *
@@ -53,7 +55,7 @@ public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCod
         if (providedCode.startsWith(prefix)) {
             return providedCode;
         }
-        return prefix + providedCode.toUpperCase();
+        return prefix + providedCode.toUpperCase(Locale.ENGLISH);
     }
 
     @Override

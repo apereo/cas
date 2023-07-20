@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
+class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val file = File.createTempFile("service", ".json");

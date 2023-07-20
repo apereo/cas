@@ -1,11 +1,16 @@
 {
   "dependencies": "core",
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--cas.events.core.track-geolocation=true",
+
     "--cas.authn.adaptive.policy.reject-ip-addresses=.*",
     "--cas.authn.adaptive.policy.reject-browsers=.*",
+
     "--cas.service-registry.core.init-from-json=true"
   ]
 }

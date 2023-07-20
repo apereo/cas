@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)
-public class CasHibernateJpaBeanFactoryTests {
+class CasHibernateJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -54,7 +54,7 @@ public class CasHibernateJpaBeanFactoryTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val adapter = jpaBeanFactory.newJpaVendorAdapter();
         assertNotNull(adapter);
 

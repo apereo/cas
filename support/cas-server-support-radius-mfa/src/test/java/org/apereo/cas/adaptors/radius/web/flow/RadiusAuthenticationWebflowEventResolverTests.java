@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.radius.client.inet-address=localhost,localguest"
     })
 @Tag("Radius")
-public class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("radiusAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
@@ -70,13 +70,13 @@ public class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         WebUtils.putCredential(context, new RadiusTokenCredential("token"));
         val event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

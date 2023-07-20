@@ -40,7 +40,7 @@ public class DefaultDelegatedClientFactory extends BaseDelegatedClientFactory im
     public void destroy() {
         Optional.ofNullable(getCachedClients())
             .stream()
-            .filter(client -> client instanceof SAML2Client)
+            .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .forEach(Unchecked.consumer(SAML2Client::destroy));
     }

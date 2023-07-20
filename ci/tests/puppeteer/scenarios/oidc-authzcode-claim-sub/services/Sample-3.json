@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client3",
+  "clientSecret": "secret3",
+  "serviceId": "^https://localhost:9859/anything/sample3",
+  "name": "Sample",
+  "id": 3,
+  "scopes" : [ "java.util.HashSet", [ "email", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "bypassApprovalPrompt": true,
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "systemId",
+    "canonicalizationMode" : "UPPER",
+    "scope": "apereo.org",
+    "removePattern": "#.+"
+  }
+}

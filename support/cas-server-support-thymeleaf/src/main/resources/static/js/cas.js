@@ -70,7 +70,6 @@ function showGeoPosition(position) {
     $('[name="geolocation"]').val(loc);
 }
 
-
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(() => {
         let location = self.document.location;
@@ -79,7 +78,7 @@ function preserveAnchorTagOnForm() {
         if (action === undefined) {
             action = location.href;
         } else {
-            action += location.search + location.hash;
+            action += location.search + encodeURIComponent(location.hash);
         }
         $('#fm1').attr('action', action);
 
@@ -97,26 +96,46 @@ function preventFormResubmission() {
     });
 }
 
-function writeToSessionStorage(value) {
-    if (typeof (Storage) !== "undefined") {
-        window.sessionStorage.removeItem("sessionStorage");
-        window.sessionStorage.setItem('sessionStorage', value);
-        console.log(`Stored ${value} in session storage`);
+function writeToLocalStorage(value, key= "localStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for write-ops");
     } else {
-        console.log("Browser does not support session storage for write-ops");
+        window.localStorage.removeItem(key);
+        window.localStorage.setItem(key, value);
+        console.log(`Stored ${value} in local storage under key ${key}`);
     }
 }
 
-function readFromSessionStorage() {
-    if (typeof (Storage) !== "undefined") {
-        let sessionStorage = window.sessionStorage.getItem("sessionStorage");
-        console.log(`Read ${sessionStorage} in session storage`);
-        window.localStorage.removeItem("sessionStorage");
-        return sessionStorage;
-    } else {
-        console.log("Browser does not support session storage for read-ops");
+function readFromLocalStorage(key = "localStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for read-ops");
+        return null;
     }
-    return null;
+    let payload = window.localStorage.getItem(key);
+    console.log(`Read ${payload} in local storage under key ${key}`);
+    window.localStorage.removeItem(key);
+    return payload;
+}
+
+function writeToSessionStorage(value, key= "sessionStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for write-ops");
+    } else {
+        window.sessionStorage.removeItem(key);
+        window.sessionStorage.setItem(key, value);
+        console.log(`Stored ${value} in session storage under key ${key}`);
+    }
+}
+
+function readFromSessionStorage(key= "sessionStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for read-ops");
+        return null;
+    }
+    let payload = window.sessionStorage.getItem(key);
+    console.log(`Read ${payload} in session storage under key ${key}`);
+    window.sessionStorage.removeItem(key);
+    return payload;
 }
 
 function resourceLoadedSuccessfully() {
@@ -135,12 +154,12 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"]').focus();
 
         $('.reveal-password').click(ev => {
-            if ($('.pwd').attr('type') !== 'text') {
-                $('.pwd').attr('type', 'text');
-                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
-            } else {
+            if ($('.pwd').attr('type') === 'text') {
                 $('.pwd').attr('type', 'password');
                 $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            } else {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
             }
             ev.preventDefault();
         });

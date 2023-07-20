@@ -37,6 +37,20 @@ Having reviewed the change log, if you do not see an improvement that fixes/adju
 please discuss the issue on the appropriate CAS mailing lists. The result of the discussing would be a scope/effort
 evaluation to determine feasibility of the solution and the target version in which the fix will be done. 
 
+## Select CAS Version
+
+Which CAS version should you choose for the upgrade and how often should you consider upgrading?
+
+There are no definitive answers here, but here are some general guidelines:
+
+- Choose a CAS version that preferably is still under [active maintenance](../developer/Maintenance-Policy.html).
+  - ...cross-check the system and platform requirements with your available resources and skillset.
+- Make sure you understand what happens to your CAS deployment when it switches to *Security-Patch Mode*.
+  - ...and review the [security vulnerability response](../developer/Sec-Vuln-Response.html) guidelines.
+- Consider keeping up with CAS patch releases (`X.Y.1` to `X.Y.2`) as they are typically on a monthly basis released.
+- Have automation and tooling in place to run integration, functional and performance tests on your CAS upgrade.
+- Finally, review the project license to understand guidelines around stability, warranties and promises.
+
 ## Scope Review
 
 Once you decide your ideal CAS version for the upgrade, before attempting to upgrade, 
@@ -84,7 +98,7 @@ Go through your catalog of changes found in your local overlay. Compare and diff
 original version. You can find out the delta between two versions via the following ways:
 
 1. If you have built the clean CAS overlay once, you will automatically get the original version typically
-in the `target` or `build/libs` directory of CAS overlay. Find the correct file at the correct path and compare.
+in the `build/libs` directory of CAS overlay. Find the correct file at the correct path and compare.
 
 2. Go directly to the [project source repository](https://github.com/apereo/cas), find the appropriate branch
 and compare files. 

@@ -5,9 +5,7 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -16,12 +14,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,8 +38,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     }
 
     @Override
-    @SneakyThrows
-    public void tearDownServiceRegistry() {
+    public void tearDownServiceRegistry() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
         super.tearDownServiceRegistry();
     }
@@ -53,11 +48,11 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     public void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
-        assertThrows(IllegalArgumentException.class, () -> this.newServiceRegistry.save(r));
+        assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(r));
     }
 
     @Test
-    public void verifyInvalidFileLoad() {
+    void verifyInvalidFileLoad() {
         val file = mock(File.class);
         when(file.canRead()).thenReturn(Boolean.FALSE);
         assertTrue(newServiceRegistry.load(file).isEmpty());
@@ -76,7 +71,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     }
 
     @Test
-    public void verify() {
+    void verify() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

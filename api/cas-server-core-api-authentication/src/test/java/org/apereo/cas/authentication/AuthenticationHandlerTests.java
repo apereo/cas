@@ -17,10 +17,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class AuthenticationHandlerTests {
+class AuthenticationHandlerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new AuthenticationHandler() {
             @Override
             public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) {
@@ -35,7 +35,7 @@ public class AuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDisabledOperation() {
+    void verifyDisabledOperation() {
         val input = AuthenticationHandler.disabled();
 
         assertEquals(AuthenticationHandlerStates.ACTIVE, input.getState());

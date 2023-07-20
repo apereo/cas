@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.app-dynamics.name-id-attribute=cn",
     "cas.saml-sp.app-dynamics.name-id-format=transient"
 })
-public class CasSamlSPAppDynamicsConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPAppDynamicsConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

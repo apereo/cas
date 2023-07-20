@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Web")
-public class CasWebflowLoginContextProviderTests {
+class CasWebflowLoginContextProviderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val provider = mock(CasWebflowLoginContextProvider.class);
         when(provider.getOrder()).thenCallRealMethod();
         when(provider.getName()).thenCallRealMethod();

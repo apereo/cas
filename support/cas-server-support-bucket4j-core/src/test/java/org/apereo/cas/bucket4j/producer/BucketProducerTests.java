@@ -21,10 +21,10 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("AuthenticationThrottling")
-public class BucketProducerTests {
+class BucketProducerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val limit1 = new Bucket4jBandwidthLimitProperties()
             .setDuration("PT15S")
             .setInitialTokens(100)
@@ -39,7 +39,7 @@ public class BucketProducerTests {
     }
 
     @Test
-    public void verifyNoBucket() {
+    void verifyNoBucket() {
         val limit1 = new Bucket4jBandwidthLimitProperties()
             .setDuration("PT15S")
             .setInitialTokens(100)

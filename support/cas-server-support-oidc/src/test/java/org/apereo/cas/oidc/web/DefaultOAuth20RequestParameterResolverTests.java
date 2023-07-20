@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,14 +28,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @SuppressWarnings("JavaUtilDate")
-public class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
+class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     @Test
-    public void verifySignedJwtWithClientId() {
+    void verifySignedJwtWithClientId() {
         val registeredService = getOidcRegisteredService("client");
         servicesManager.save(registeredService);
 
         val payload = JwtBuilder.JwtRequest.builder()
             .registeredService(Optional.of(registeredService))
+            .serviceAudience(Set.of(UUID.randomUUID().toString()))
             .issuer("https://cas.example.org")
             .jwtId(UUID.randomUUID().toString())
             .subject("casuser")

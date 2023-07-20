@@ -191,7 +191,18 @@ public class DigestUtils {
      * @return the string
      */
     public static String abbreviate(final String str) {
-        return StringUtils.abbreviate(str, ABBREVIATE_MAX_WIDTH);
+        return abbreviate(str, ABBREVIATE_MAX_WIDTH);
+    }
+
+    /**
+     * Abbreviate string.
+     *
+     * @param str      the str
+     * @param maxWidth the max width; negative/zero values disable abbreviation
+     * @return the string
+     */
+    public static String abbreviate(final String str, final int maxWidth) {
+        return maxWidth <= 0 ? str : StringUtils.abbreviate(str, maxWidth);
     }
 
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {

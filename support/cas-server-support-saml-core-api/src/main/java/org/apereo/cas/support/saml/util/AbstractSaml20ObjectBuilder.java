@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
-import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,7 +38,6 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
-import javax.xml.namespace.QName;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.Instant;
@@ -47,6 +45,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -57,7 +56,7 @@ import java.util.Map;
  * @since 4.1
  */
 @Slf4j
-public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder implements Saml20ObjectBuilder {
     @Serial
     private static final long serialVersionUID = -4325127376598205277L;
 
@@ -71,7 +70,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return;
         }
 
-        val compareFormat = nameFormat.trim().toLowerCase();
+        val compareFormat = nameFormat.trim().toLowerCase(Locale.ENGLISH);
         switch (compareFormat) {
             case "basic", Attribute.BASIC -> attribute.setNameFormat(Attribute.BASIC);
             case "uri", Attribute.URI_REFERENCE -> attribute.setNameFormat(Attribute.URI_REFERENCE);
@@ -288,17 +287,31 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param sessionIndex    the session index
      * @return the authn statement
      */
-    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant,
+    public AuthnStatement newAuthnStatement(final String contextClassRef,
+                                            final ZonedDateTime authnInstant,
                                             final String sessionIndex) {
-        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
-            contextClassRef, authnInstant, sessionIndex);
-        val stmt = newSamlObject(AuthnStatement.class);
         val ctx = newSamlObject(AuthnContext.class);
-
         val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setURI(contextClassRef);
         ctx.setAuthnContextClassRef(classRef);
-        stmt.setAuthnContext(ctx);
+        return newAuthnStatement(ctx, authnInstant, sessionIndex);
+    }
+
+    /**
+     * New authn statement authn statement.
+     *
+     * @param context      the context
+     * @param authnInstant the authn instant
+     * @param sessionIndex the session index
+     * @return the authn statement
+     */
+    public AuthnStatement newAuthnStatement(final AuthnContext context,
+                                            final ZonedDateTime authnInstant,
+                                            final String sessionIndex) {
+        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
+            context, authnInstant, sessionIndex);
+        val stmt = newSamlObject(AuthnStatement.class);
+        stmt.setAuthnContext(context);
         stmt.setAuthnInstant(authnInstant.toInstant());
         stmt.setSessionIndex(sessionIndex);
         return stmt;
@@ -371,6 +384,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
+            val ip = InetAddressUtils.getByName(recipient);
+            if (ip != null) {
+                data.setAddress(ip.getHostName());
+            }
         }
 
         if (notOnOrAfter != null) {
@@ -379,10 +396,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
-            val ip = InetAddressUtils.getByName(inResponseTo);
-            if (ip != null) {
-                data.setAddress(ip.getHostName());
-            }
         }
 
         if (notBefore != null) {
@@ -394,31 +407,26 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         subject.setNameID(null);
         subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
-        if (nameId instanceof NameID) {
-            subject.setNameID((NameID) nameId);
+        if (nameId instanceof NameID instance) {
+            subject.setNameID(instance);
             subject.setEncryptedID(null);
         }
-        if (nameId instanceof EncryptedID) {
+        if (nameId instanceof EncryptedID instance) {
             subject.setNameID(null);
-            subject.setEncryptedID((EncryptedID) nameId);
+            subject.setEncryptedID(instance);
         }
-        if (subjectConfNameId instanceof NameID) {
-            confirmation.setNameID((NameID) subjectConfNameId);
+        if (subjectConfNameId instanceof NameID instance) {
+            confirmation.setNameID(instance);
             confirmation.setEncryptedID(null);
         }
-        if (subjectConfNameId instanceof EncryptedID) {
+        if (subjectConfNameId instanceof EncryptedID instance) {
             confirmation.setNameID(null);
-            confirmation.setEncryptedID((EncryptedID) subjectConfNameId);
+            confirmation.setEncryptedID(instance);
         }
         subject.getSubjectConfirmations().add(confirmation);
 
         LOGGER.debug("Built subject [{}]", subject);
         return subject;
-    }
-
-    @Override
-    public String generateSecureRandomId() {
-        return RandomUtils.generateSecureRandomId();
     }
 
     /**
@@ -436,26 +444,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return inflateAuthnRequest(decodedBytes);
     }
 
-    /**
-     * New saml object.
-     *
-     * @param <T>        the type parameter
-     * @param objectType the name id class
-     * @return the t
-     */
-    protected <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+    @Override
+    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
         return SamlUtils.newSamlObject(objectType, qName);
-    }
-
-    /**
-     * Gets saml object q name.
-     *
-     * @param objectType the object type
-     * @return the saml object q name
-     */
-    protected QName getSamlObjectQName(final Class objectType) {
-        return SamlUtils.getSamlObjectQName(objectType);
     }
 
 

@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("AuthenticationThrottling")
-public class DefaultBucketConsumerTests {
+class DefaultBucketConsumerTests {
 
     @Test
-    public void verifyFailureAsync() {
+    void verifyFailureAsync() {
         val props = new Bucket4jThrottleProperties();
         props.setBlocking(false);
         props.getBandwidth().add(new Bucket4jBandwidthLimitProperties().setCapacity(1).setRefillDuration("PT1S"));

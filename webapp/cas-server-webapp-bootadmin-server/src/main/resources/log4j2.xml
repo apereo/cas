@@ -11,7 +11,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         </Console>
 
         <RollingFile name="casFile" fileName="casbootadmin.log" append="true"
-                     filePattern="casbootadmin-%d{yyyy-MM-dd-HH}-%i.log">
+                     filePattern="casbootadmin-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />

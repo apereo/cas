@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-public class PoolHealthIndicatorTests {
+class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    public void verifyObserveOK() {
+    void verifyObserveOK() {
         val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -48,7 +48,7 @@ public class PoolHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveDown() {
+    void verifyObserveDown() {
         val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
@@ -73,7 +73,7 @@ public class PoolHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveError() {
+    void verifyObserveError() {
         val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {

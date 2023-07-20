@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
+class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
 
     @Autowired
     @Qualifier("passwordManagementSingleSignOnParticipationStrategy")
     private SingleSignOnParticipationStrategy strategy;
 
     @Test
-    public void verifyStrategyWithANonPmRequest() {
+    void verifyStrategyWithANonPmRequest() {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
             .httpServletResponse(new MockHttpServletResponse())
@@ -46,7 +46,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
     }
 
     @Test
-    public void verifyStrategyWithAnInvalidPmRequest() {
+    void verifyStrategyWithAnInvalidPmRequest() {
         val ctx = new MockRequestContext();
         ctx.putRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, "invalidResetToken");
 
@@ -59,7 +59,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
     }
 
     @Test
-    public void verifyStrategyWithAValidPmRequest() throws Exception {
+    void verifyStrategyWithAValidPmRequest() throws Exception {
         val ctx = new MockRequestContext();
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);

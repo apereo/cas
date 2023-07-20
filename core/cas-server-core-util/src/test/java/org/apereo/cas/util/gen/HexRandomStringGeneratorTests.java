@@ -12,20 +12,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Simple")
-public class HexRandomStringGeneratorTests {
+class HexRandomStringGeneratorTests {
 
     private static final int LENGTH = 36;
 
     private final RandomStringGenerator randomStringGenerator = new HexRandomStringGenerator(LENGTH);
 
     @Test
-    public void verifyDefaultLength() {
+    void verifyDefaultLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
         assertEquals(LENGTH, new HexRandomStringGenerator().getDefaultLength());
     }
 
     @Test
-    public void verifyRandomString() {
+    void verifyRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(), this.randomStringGenerator.getNewString());
     }
 }

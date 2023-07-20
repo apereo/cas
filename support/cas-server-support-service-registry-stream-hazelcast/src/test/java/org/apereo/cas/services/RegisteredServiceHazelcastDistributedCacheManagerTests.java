@@ -12,6 +12,7 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Hazelcast")
-public class RegisteredServiceHazelcastDistributedCacheManagerTests {
+class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
 
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
@@ -47,7 +48,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = mgr.get(registeredService);
         assertNull(obj);
@@ -70,19 +71,20 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    public void verifyPublisher() {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val casRegisteredServiceStreamPublisherIdentifier = new PublisherIdentifier("123456");
         
         val publisher = new DefaultCasRegisteredServiceStreamPublisher(mgr);
+        val clientInfo = ClientInfoHolder.getClientInfo();
         publisher.publish(registeredService,
-            new CasRegisteredServiceDeletedEvent(this, registeredService),
+            new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         publisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService),
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         publisher.publish(registeredService,
-            new CasRegisteredServiceLoadedEvent(this, registeredService),
+            new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         assertFalse(mgr.getAll().isEmpty());
     }

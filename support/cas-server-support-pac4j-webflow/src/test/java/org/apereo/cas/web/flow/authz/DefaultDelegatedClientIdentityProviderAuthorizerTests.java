@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
-public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
+class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderAuthorizer")
     private DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;
@@ -54,7 +54,7 @@ public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     }
 
     @Test
-    public void verifyClientNameFromAuth() throws Exception {
+    void verifyClientNameFromAuth() throws Exception {
         val client = builtClients.findClient("FacebookClient").get();
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
@@ -71,7 +71,7 @@ public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     }
 
     @Test
-    public void verifyAuthzByService() {
+    void verifyAuthzByService() {
         verifyAuthzForService(new MockHttpServletRequest(), new MockRequestContext());
     }
 

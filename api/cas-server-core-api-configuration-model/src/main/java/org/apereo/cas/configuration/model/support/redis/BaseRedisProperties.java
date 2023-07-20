@@ -34,6 +34,11 @@ public class BaseRedisProperties implements Serializable {
     private boolean enabled = true;
 
     /**
+     * Database URI.
+     */
+    private String uri;
+
+    /**
      * Database index used by the connection factory.
      */
     @RequiredProperty
@@ -44,6 +49,12 @@ public class BaseRedisProperties implements Serializable {
      */
     @RequiredProperty
     private String host = "localhost";
+
+    /**
+     * Login username of the redis server.
+     */
+    @RequiredProperty
+    private String username;
 
     /**
      * Login password of the redis server.
@@ -82,7 +93,7 @@ public class BaseRedisProperties implements Serializable {
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
     /**
-     * Redis scan count option. When and if specified, SCAN operations would be "counted" or limited by this serting.
+     * Redis scan count option. When and if specified, SCAN operations would be "counted" or limited by this setting.
      * While SCAN does not provide guarantees about the number of elements returned
      * at every iteration, it is possible to empirically adjust the behavior
      * of SCAN using the COUNT option. Basically with COUNT the user specified
@@ -96,6 +107,17 @@ public class BaseRedisProperties implements Serializable {
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;
+
+    /**
+     * The shared native connection is never closed by Lettuce connection, therefore it is not validated by default when connections are retrieved.
+     * If this setting is {@code true}, a shared connection will be used for regular operations and
+     * a connection provider will be used to select a connection for blocking and tx operations only, which
+     * should not share a connection. If native connection sharing is disabled, new (or pooled) connections will be used for all operations.
+     * By default, multiple connections share a single thread-safe native connection. If you enable connection pooling,
+     * then native connection sharing will be disabled and the connection pool will be used for all operations.
+     * You may however explicitly control connection sharing via this setting as an override.
+     */
+    private Boolean shareNativeConnections;
 
     /**
      * Redis protocol version.

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -52,7 +52,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
     }
 
     @Test
-    public void verifySave() {
+    void verifySave() {
         val id = UUID.randomUUID().toString();
         assertNull(registry.get(654321));
         assertNull(registry.get(id, 654321));
@@ -73,7 +73,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
     }
 
     @Test
-    public void verifyDelete() {
+    void verifyDelete() {
         val id = UUID.randomUUID().toString();
         val toSave = OneTimeTokenAccount.builder()
             .username(id)
@@ -89,7 +89,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends Base
 
     @Override
     @Test
-    public void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() {
         val id = UUID.randomUUID().toString();
         val toSave = OneTimeTokenAccount.builder()
             .username(id)

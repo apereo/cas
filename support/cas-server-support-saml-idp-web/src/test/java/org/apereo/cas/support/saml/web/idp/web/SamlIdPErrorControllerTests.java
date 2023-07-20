@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("SAML2Web")
-public class SamlIdPErrorControllerTests {
+class SamlIdPErrorControllerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val ctrl = new SamlIdPErrorController();
         assertNotNull(ctrl.handleRequest());
     }

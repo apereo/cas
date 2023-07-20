@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.x509.crl-resource-expired-policy=threshold"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class X509CrlDistributionCheckerCachingTests {
+class X509CrlDistributionCheckerCachingTests {
     @Autowired
     @Qualifier("crlDistributionPointRevocationChecker")
     private RevocationChecker crlDistributionPointRevocationChecker;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(crlDistributionPointRevocationChecker);
     }
 }

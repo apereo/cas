@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -68,7 +68,7 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
         final Map<String, List<Object>> attributes,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val releaseAttributes = new HashMap<String, List<Object>>();

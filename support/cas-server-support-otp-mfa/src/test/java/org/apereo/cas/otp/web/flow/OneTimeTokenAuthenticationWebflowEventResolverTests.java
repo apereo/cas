@@ -8,7 +8,6 @@ import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,9 +24,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OneTimeTokenAuthenticationWebflowEventResolverTests}.
@@ -37,13 +34,13 @@ import static org.mockito.Mockito.when;
  */
 @Tag("WebflowEvents")
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
-public class OneTimeTokenAuthenticationWebflowEventResolverTests {
+class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Autowired
     @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;
 
     @Test
-    public void verifyResolver() {
+    void verifyResolver() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

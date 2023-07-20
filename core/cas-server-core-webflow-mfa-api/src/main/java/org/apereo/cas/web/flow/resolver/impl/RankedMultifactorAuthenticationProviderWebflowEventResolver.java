@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +23,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,11 +56,12 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         this.singleSignOnParticipationStrategy = singleSignOnParticipationStrategy;
     }
 
-    private static Set<Event> buildEventForMultifactorProvider(final RequestContext context,
-                                                               final RegisteredService service,
-                                                               final Authentication authentication,
-                                                               final String id,
-                                                               final MultifactorAuthenticationProvider provider) {
+    private static Set<Event> buildEventForMultifactorProvider(
+        final RequestContext context,
+        final RegisteredService service,
+        final Authentication authentication,
+        final String id,
+        final MultifactorAuthenticationProvider provider) {
         val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
         LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
         val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
@@ -113,7 +112,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             .build();
         if (singleSignOnParticipationStrategy.supports(ssoRequest) && !singleSignOnParticipationStrategy.isParticipating(ssoRequest)) {
             LOGGER.debug("Cannot proceed with existing authenticated session for [{}] since the single sign-on participation "
-                         + "strategy for this request could now allow participation in the current session.", authentication);
+                + "strategy for this request could now allow participation in the current session.", authentication);
             return resumeFlow(context);
         }
 
@@ -155,8 +154,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     }
 
     @Audit(action = AuditableActions.AUTHENTICATION_EVENT,
-        actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
+           actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
+           resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

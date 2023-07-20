@@ -16,30 +16,30 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("SAML2")
-public class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifySigValidationFilterByRes() throws Exception {
+    void verifySigValidationFilterByRes() throws Exception {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("metadata/idp-signing.crt"));
         assertNotNull(filter);
     }
 
     @Test
-    public void verifySigValidationFilterPublicKey() throws Exception {
+    void verifySigValidationFilterPublicKey() throws Exception {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("public-key.pem"));
         assertNotNull(filter);
     }
 
     @Test
-    public void verifySigValidationFilter() {
+    void verifySigValidationFilter() {
         val filter = SamlUtils.buildSignatureValidationFilter(applicationContext, "classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }
 
     @Test
-    public void verifySigValidationFilterByPath() throws Exception {
+    void verifySigValidationFilterByPath() throws Exception {
         val filter = SamlUtils.buildSignatureValidationFilter("classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }

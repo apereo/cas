@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.server.name=https://localhost:8443",
@@ -23,7 +24,3 @@
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
-
-
-
-

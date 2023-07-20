@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("SAML2")
-public class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
+@Tag("SAMLAttributes")
+class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @Test
-    public void verifyStoreIsLoaded() throws Exception {
+    void verifyStoreIsLoaded() throws Exception {
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonUniqueId").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("organizationName").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("displayName").isPresent());
@@ -40,7 +40,7 @@ public class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTes
     }
 
     @Test
-    public void verifyEduPersonTargetedID() throws Exception {
+    void verifyEduPersonTargetedID() throws Exception {
         val defn = attributeDefinitionStore.locateAttributeDefinition("eduPersonTargetedID", SamlIdPAttributeDefinition.class)
             .get().withSalt(UUID.randomUUID().toString());
         val values = defn.resolveAttributeValues(getAttributeDefinitionResolutionContext());

@@ -1,5 +1,6 @@
 {
   "dependencies": "reports",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

@@ -5,6 +5,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -24,7 +25,7 @@ public class DefaultRegisteredServiceDomainExtractor implements RegisteredServic
 
     @Override
     public String extract(final String service) {
-        var value = StringUtils.remove(service.toLowerCase(), ".+");
+        var value = StringUtils.remove(service.toLowerCase(Locale.ENGLISH), ".+");
         value = StringUtils.remove(value, ".*");
         val extractor = this.domainExtractor.matcher(value);
         return extractor.lookingAt() ? validate(extractor.group(1)) : DOMAIN_DEFAULT;

@@ -1,18 +1,17 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.validation.TicketValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -21,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link JwtTokenTicketBuilder}.
@@ -29,8 +29,10 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @Slf4j
-public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy, JwtBuilder jwtBuilder, ServicesManager servicesManager,
-                                    CasConfigurationProperties casProperties) implements TokenTicketBuilder {
+public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationPolicyBuilder expirationPolicy,
+    JwtBuilder jwtBuilder, ServicesManager servicesManager,
+    CasConfigurationProperties casProperties) implements TokenTicketBuilder {
+    
     @Override
     @SuppressWarnings("JavaUtilDate")
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) {
@@ -48,7 +50,7 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
             .registeredService(Optional.ofNullable(registeredService))
-            .serviceAudience(webApplicationService.getId())
+            .serviceAudience(Set.of(webApplicationService.getId()))
             .issueDate(new Date())
             .jwtId(serviceTicketId)
             .subject(assertion.getPrincipal().getId())
@@ -61,9 +63,10 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
     }
 
     @Override
-    public String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) {
-        val authentication = ticketGrantingTicket.getAuthentication();
-
+    public String build(final Authentication authentication,
+                        final RegisteredService registeredService,
+                        final String jwtIdentifier,
+                        final Map<String, List<Object>> claims) {
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
         attributes.putAll(claims);
@@ -73,10 +76,10 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
 
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
-            .serviceAudience(casProperties.getServer().getPrefix())
-            .registeredService(Optional.empty())
-            .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
-            .jwtId(ticketGrantingTicket.getId())
+            .serviceAudience(Set.of(casProperties.getServer().getPrefix()))
+            .registeredService(Optional.ofNullable(registeredService))
+            .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
+            .jwtId(jwtIdentifier)
             .subject(authentication.getPrincipal().getId())
             .validUntilDate(validUntilDate)
             .attributes(attributes)
@@ -85,11 +88,6 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
         return jwtBuilder.build(request);
     }
 
-    /**
-     * Gets time to live.
-     *
-     * @return the time to live
-     */
     private Long getTimeToLive() {
         val timeToLive = expirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
         return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;

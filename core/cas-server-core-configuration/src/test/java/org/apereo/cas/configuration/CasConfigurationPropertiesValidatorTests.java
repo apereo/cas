@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {"cas.something=else", "cas.hello[0]=world"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasConfigurationPropertiesValidatorTests {
+class CasConfigurationPropertiesValidatorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         assertFalse(validator.validate().isEmpty());
     }

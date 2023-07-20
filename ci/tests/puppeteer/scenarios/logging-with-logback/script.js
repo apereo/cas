@@ -7,7 +7,7 @@ const assert = require('assert');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

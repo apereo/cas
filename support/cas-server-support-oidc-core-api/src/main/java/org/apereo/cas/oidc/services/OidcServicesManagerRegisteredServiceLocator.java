@@ -39,7 +39,7 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
                     match = CollectionUtils.firstElement(clientIdAttribute)
                         .map(Object::toString)
                         .stream()
-                        .anyMatch(clientId -> oidcService.getClientId().equalsIgnoreCase(clientId));
+                        .anyMatch(clientId -> oidcService.getClientId().equals(clientId));
                 }
                 return match;
             });
@@ -47,8 +47,12 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
 
     @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
-        return registeredService instanceof OidcRegisteredService
-               && super.supportsInternal(registeredService, service);
+        return registeredService instanceof OidcRegisteredService && supportsInternal(registeredService, service);
+    }
+
+    @Override
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return OidcRegisteredService.class;
     }
 }
 

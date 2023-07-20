@@ -22,9 +22,9 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("SAML2")
-public class SamlMetadataResolverAuditResourceResolverTests {
+class SamlMetadataResolverAuditResourceResolverTests {
     @Test
-    public void verifyActionUnknown() {
+    void verifyActionUnknown() {
         val resourceRes = new SamlMetadataResolverAuditResourceResolver();
         val resolver = mock(MetadataResolver.class);
         when(resolver.getId()).thenReturn(UUID.randomUUID().toString());

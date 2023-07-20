@@ -27,17 +27,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFATrustedDevices")
-public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

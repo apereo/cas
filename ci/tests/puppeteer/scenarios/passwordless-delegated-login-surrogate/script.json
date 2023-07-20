@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser3",
     "--cas.authn.attribute-repository.stub.attributes.lastname=User3",
@@ -12,7 +13,9 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     
     "--cas.service-registry.core.init-from-json=true",
+    
     "--cas.audit.slf4j.use-single-line=true",
+    "--cas.audit.engine.enabled=false",
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.accept.users=casuser-server::Mellon,casuser-client::Mellon,casuser-none::Mellon",
@@ -23,7 +26,7 @@
     "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.security=warn",
     "--logging.level.org.springframework.web=warn",
-    "--logging.level.org.springframework.webflow=warn",
+    "--logging.level.org.springframework.webflow=info",
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",

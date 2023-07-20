@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -53,7 +54,7 @@ import static org.mockito.Mockito.*;
 @EnableScheduling
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
+class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -81,11 +82,10 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val ticket = new MockTicketGrantingTicket("casuser");
         val catalog = mock(TicketCatalog.class);
         val defn = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);
-        
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
-        val registry = new MongoDbTicketRegistry(catalog, mongoDbTicketRegistryTemplate, mgr);
+        val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, mongoDbTicketRegistryTemplate);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 

@@ -34,29 +34,29 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationHandler")
-public class PasswordlessTokenAuthenticationHandlerTests {
+class PasswordlessTokenAuthenticationHandlerTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.passwordless.core.enabled=false")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DisabledTests extends BasePasswordlessUserAccountStoreTests {
+    class DisabledTests extends BasePasswordlessUserAccountStoreTests {
 
         @Autowired
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
         @Test
-        public void verifyDisable() {
-            val authenticationHandlers = authenticationEventExecutionPlan.getAuthenticationHandlersBy(h -> h instanceof PasswordlessTokenAuthenticationHandler);
+        void verifyDisable() {
+            val authenticationHandlers = authenticationEventExecutionPlan.getAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
             assertTrue(authenticationHandlers.isEmpty());
         }
     }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests {
+    class DefaultTests {
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val repository = new InMemoryPasswordlessTokenRepository(60, CipherExecutor.noOpOfSerializableToString());
 
             val uid = UUID.randomUUID().toString();

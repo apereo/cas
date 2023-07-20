@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=http://www.w3.org/2001/10/xml-exc-c14n#"
 )
-public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -62,7 +62,7 @@ public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySoapOperation() throws Exception {
+    void verifySoapOperation() throws Exception {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -87,7 +87,7 @@ public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySignByBasicCredOperation() throws Exception {
+    void verifySignByBasicCredOperation() throws Exception {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -114,7 +114,7 @@ public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPCo
     }
     
     @Test
-    public void verifySignByFingerprintOperation() throws Exception {
+    void verifySignByFingerprintOperation() throws Exception {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),

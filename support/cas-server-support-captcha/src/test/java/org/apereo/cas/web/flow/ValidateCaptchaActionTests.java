@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.google-recaptcha.verify-url=http://localhost:9294"
 )
 @Tag("WebflowActions")
-public class ValidateCaptchaActionTests {
+class ValidateCaptchaActionTests {
 
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
@@ -56,7 +56,7 @@ public class ValidateCaptchaActionTests {
     private CaptchaActivationStrategy captchaActivationStrategy;
 
     @Test
-    public void verifyCaptchaValidationSkipped() throws Exception {
+    void verifyCaptchaValidationSkipped() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -76,7 +76,7 @@ public class ValidateCaptchaActionTests {
     }
 
     @Test
-    public void verifyCaptchaValidated() throws Exception {
+    void verifyCaptchaValidated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -94,7 +94,7 @@ public class ValidateCaptchaActionTests {
     }
 
     @Test
-    public void verifyCaptchaFails() throws Exception {
+    void verifyCaptchaFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

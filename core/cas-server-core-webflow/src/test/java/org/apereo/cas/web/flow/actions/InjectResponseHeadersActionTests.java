@@ -11,7 +11,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -31,6 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,7 +51,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("WebflowActions")
-public class InjectResponseHeadersActionTests {
+class InjectResponseHeadersActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -60,7 +61,7 @@ public class InjectResponseHeadersActionTests {
     private UrlValidator urlValidator;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -80,7 +81,7 @@ public class InjectResponseHeadersActionTests {
     }
 
     @Test
-    public void verifyRedirectAction() throws Exception {
+    void verifyRedirectAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -90,7 +91,7 @@ public class InjectResponseHeadersActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new HashMap<String, String>();
-        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(), "true");
+        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH), "true");
 
         val casResponse = mock(Response.class);
         when(casResponse.url()).thenReturn("https://google.com");

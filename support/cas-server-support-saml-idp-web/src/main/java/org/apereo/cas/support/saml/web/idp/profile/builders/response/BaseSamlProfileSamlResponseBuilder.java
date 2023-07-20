@@ -39,7 +39,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     @Serial
     private static final long serialVersionUID = -1891703354216174875L;
 
-    private final transient SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
+    protected final SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
 
     protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext ctx) {
         super(ctx.getOpenSamlConfigBean());
@@ -61,7 +61,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     protected T encodeFinalResponse(final SamlProfileBuilderContext context,
                                     final T finalResponse) throws Exception {
-        val scratch = context.getMessageContext().getSubcontext(ScratchContext.class, true);
+        val scratch = context.getMessageContext().ensureSubcontext(ScratchContext.class);
         val map = (Map) Objects.requireNonNull(scratch).getMap();
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
@@ -79,35 +79,19 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     protected abstract T buildResponse(Optional<Assertion> assertion, SamlProfileBuilderContext context) throws Exception;
 
-    /**
-     * Build entity issuer issuer.
-     *
-     * @param entityId the entity id
-     * @return the issuer
-     */
     protected Issuer buildSamlResponseIssuer(final String entityId) {
         val issuer = newIssuer(entityId);
         issuer.setFormat(NameIDType.ENTITY);
         return issuer;
     }
 
-    /**
-     * Encode the final result into the http response.
-     *
-     * @param context      the context
-     * @param samlResponse the saml response
-     * @param relayState   the relay state
-     * @return the t
-     * @throws Exception the exception
-     */
     protected abstract T encode(SamlProfileBuilderContext context,
                                 T samlResponse,
                                 String relayState) throws Exception;
 
-
     protected Optional<SAMLObject> encryptAssertion(final Optional<Assertion> assertion, final SamlProfileBuilderContext context) {
         return assertion.map(result -> {
-            if (context.getRegisteredService().isEncryptAssertions()) {
+            if (encryptAssertionFor(context)) {
                 LOGGER.debug("SAML service [{}] requires assertions to be encrypted", context.getAdaptor().getEntityId());
                 val encrypted = configurationContext.getSamlObjectEncrypter().encode(assertion.get(),
                     context.getRegisteredService(), context.getAdaptor());
@@ -123,5 +107,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
             return assertion.get();
         });
 
+    }
+
+    protected boolean encryptAssertionFor(final SamlProfileBuilderContext context) {
+        return context.getRegisteredService().isEncryptAssertions();
     }
 }

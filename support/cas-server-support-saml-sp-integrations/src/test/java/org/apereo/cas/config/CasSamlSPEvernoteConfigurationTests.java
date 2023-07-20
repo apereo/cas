@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.evernote.name-id-attribute=cn",
     "cas.saml-sp.evernote.name-id-format=transient"
 })
-public class CasSamlSPEvernoteConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPEvernoteConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

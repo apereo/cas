@@ -25,14 +25,14 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Attributes")
-public class ReturnEncryptedAttributeReleasePolicyTests {
+class ReturnEncryptedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws IOException {
+    void verifySerialization() throws IOException {
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("attributeOne");
         val policyWritten = new ReturnEncryptedAttributeReleasePolicy(allowedAttributes);
@@ -43,7 +43,7 @@ public class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyNoPublicKey() {
+    void verifyNoPublicKey() {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
@@ -62,7 +62,7 @@ public class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyBadCipher() {
+    void verifyBadCipher() {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = mock(RegisteredServicePublicKey.class);
@@ -79,7 +79,7 @@ public class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyEncrypt() {
+    void verifyEncrypt() {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn", "uid", "mail"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");

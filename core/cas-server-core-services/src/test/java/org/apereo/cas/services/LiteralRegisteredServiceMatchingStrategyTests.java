@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class LiteralRegisteredServiceMatchingStrategyTests {
+class LiteralRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ExactLiteralRegisteredServiceMatchingStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         service.setMatchingStrategy(strategy);
@@ -37,19 +38,19 @@ public class LiteralRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyOperationCaseInsensitive() {
+    void verifyOperationCaseInsensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
-        assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase()));
+        assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));
         assertFalse(strategy.matches(service, "https://.*"));
     }
 
     @Test
-    public void verifyOperationCaseSensitive() {
+    void verifyOperationCaseSensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(false);
-        assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase()));
+        assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));
     }
 
 

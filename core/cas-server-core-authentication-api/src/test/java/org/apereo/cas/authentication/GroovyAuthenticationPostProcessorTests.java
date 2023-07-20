@@ -16,10 +16,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
-public class GroovyAuthenticationPostProcessorTests {
+@Tag("GroovyAuthentication")
+class GroovyAuthenticationPostProcessorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val g = new GroovyAuthenticationPostProcessor(new ClassPathResource("GroovyPostProcessor.groovy"));
         val transaction = mock(AuthenticationTransaction.class);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();

@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-public class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void findsSigningCredential() throws Exception {
+    void findsSigningCredential() throws Exception {
         val samlRegisteredService = getSamlRegisteredServiceFor(true, true, false, "https://cassp.example.org");
         samlRegisteredService.setId(1000);
         samlRegisteredService.setName("ObjectSignerTest");
@@ -35,7 +35,7 @@ public class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTes
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
 

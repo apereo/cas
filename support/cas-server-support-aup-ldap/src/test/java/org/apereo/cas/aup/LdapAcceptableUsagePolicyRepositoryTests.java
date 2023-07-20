@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=carLicense"
 })
 @Getter
-public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;
@@ -60,7 +60,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
 
@@ -77,7 +77,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     }
 
     @Test
-    public void verifyMissingUser() throws Exception {
+    void verifyMissingUser() throws Exception {
         val actualPrincipalId = UUID.randomUUID().toString();
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, Map.of(), c);
@@ -85,7 +85,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));

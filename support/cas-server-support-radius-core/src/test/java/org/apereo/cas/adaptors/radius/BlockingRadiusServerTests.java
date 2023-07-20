@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Radius")
 @EnabledOnOs(OS.LINUX)
-public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
+class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     public static final String USERNAME = UUID.randomUUID().toString();
 
     @Test
-    public void verifyBadSecret() {
+    void verifyBadSecret() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(ACCOUNTING_PORT)
             .authenticationPort(AUTHENTICATION_PORT)
@@ -42,7 +42,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     }
 
     @Test
-    public void verifyBadPorts() {
+    void verifyBadPorts() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)
@@ -55,7 +55,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     }
 
     @Test
-    public void verifyBadAddress() {
+    void verifyBadAddress() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)
@@ -68,7 +68,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
     }
 
     @Test
-    public void verifyNasSettings() {
+    void verifyNasSettings() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)

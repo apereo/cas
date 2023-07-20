@@ -16,9 +16,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.jpa.password=password",
     "cas.service-registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.service-registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
+    "cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class JpaServiceRegistryMySQLTests extends JpaServiceRegistryTests {
+class JpaServiceRegistryMySQLTests extends JpaServiceRegistryTests {
 }

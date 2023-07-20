@@ -19,7 +19,7 @@ The cas-overlay comes with an external log42.xml in etc/cas/config and a propert
 By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
 For debugging and diagnostic purposes you may want to set these levels to `DEBUG` or `TRACE`.
 
-<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
+<div class="alert alert-warning">:warning: <strong>Production</strong><p>You should always run everything under
 <code>WARN</code>. In production warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
@@ -48,14 +48,14 @@ of the `log4j2.xml` file, in a property file called `log4j2.component.properties
 properties. If setting properties in a `log4j2.component.properties`, be sure to include:
 
 ```properties
-Log4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+log4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
 ```
 
 in order to keep using asynchronous logging which CAS sets by default. 
 To turn off asynchronous logging, include the following in `log4j2.component.properites` or as a system property:
 
 ```properties
-Log4jContextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
+log4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
 ```
 
 ## Configuration
@@ -112,7 +112,7 @@ The following `Appender` elements are only a partial collection of available opt
 | `JPAAppender`         | Writes log events to a relational database table using the Java Persistence API `2.1`.                                                                                                          |
 | `HttpAppender`        | Sends log events over HTTP. A Layout must be provided to format the log event.                                                                                                                  |
 | `KafkaAppender`       | Logs events to an Apache Kafka topic. Each log event is sent as a Kafka record.                                                                                                                 |
-| `NoSQLAppender`       | Writes log events to a NoSQL database; Provider implementations currently exist for MongoDB and Apache CouchDB.                                                                                 |
+| `NoSQLAppender`       | Writes log events to a NoSQL database; Provider implementations exist for MongoDB and Apache CouchDB.                                                                                           |
 | `RoutingAppender`     | Evaluates log events and then routes them to a subordinate `Appender`.                                                                                                                          |
 | `SMTPAppender`        | Sends an e-mail when a specific logging event occurs, typically on errors or fatal errors.                                                                                                      |
 | `JeroMQ`              | The ZeroMQ appender uses the JeroMQ library to send log events to one or more ZeroMQ endpoints.                                                                                                 |
@@ -151,7 +151,7 @@ JVM starts, when the log size reaches `10` megabytes, and when the current date 
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-                    filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
     <Policies>
         <OnStartupTriggeringPolicy />
@@ -179,11 +179,11 @@ directory that match the `*/*.log` glob and are `7` days old or older.
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
-    <DefaultRolloverStrategy max="5">
+    <DefaultRolloverStrategy max="5" compressionLevel="9">
         <Delete basePath="${baseDir}" maxDepth="2">
-            <IfFileName glob="*/*.log" />
+            <IfFileName glob="*/*.log.gz" />
             <IfLastModified age="7d" />
         </Delete>
     </DefaultRolloverStrategy>

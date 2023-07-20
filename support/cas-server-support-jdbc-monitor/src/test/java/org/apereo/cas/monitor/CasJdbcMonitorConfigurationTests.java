@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.config.CasJdbcMonitorConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.monitor.config.CasJdbcMonitorConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("JDBC")
-public class CasJdbcMonitorConfigurationTests {
+class CasJdbcMonitorConfigurationTests {
 
     @Autowired
     @Qualifier("dataSourceHealthIndicator")
     private HealthIndicator dataSourceHealthIndicator;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(dataSourceHealthIndicator);
     }
 }

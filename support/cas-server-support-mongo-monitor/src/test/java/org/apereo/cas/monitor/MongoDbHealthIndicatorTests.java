@@ -9,24 +9,26 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.mongo.CasMongoOperations;
-import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,8 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -84,7 +88,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 27017)
 @SuppressWarnings("JavaUtilDate")
-public class MongoDbHealthIndicatorTests {
+class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")
     private HealthIndicator mongoHealthIndicator;
@@ -97,12 +101,12 @@ public class MongoDbHealthIndicatorTests {
     public void bootstrap() {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
-            "action", "appcode", new Date(), "clientIp",
-            "serverIp", UUID.randomUUID().toString()), "monitor");
+            "action", "appcode", LocalDateTime.now(Clock.systemUTC()),
+            new ClientInfo("clientIp", "serverIp", UUID.randomUUID().toString(), "Paris")));
     }
 
     @Test
-    public void verifyMonitor() {
+    void verifyMonitor() {
         val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
         val details = (Map) health.getDetails().get(MongoDbHealthIndicator.class.getSimpleName() + "-monitor");

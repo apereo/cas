@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -35,15 +35,16 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
-public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;
 
     @Test
-    public void verifyNoMetadataForRequest() {
+    void verifyNoMetadataForRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
@@ -55,15 +56,16 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyNoSignAuthnRequest() throws Exception {
+    void verifyNoSignAuthnRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
         val authnRequest = getAuthnRequestFor(service.getServiceId());
 
-        val adaptor = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+        val adaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
         when(adaptor.isAuthnRequestsSigned()).thenReturn(true);
         val context = new MessageContext();
         context.setMessage(authnRequest);
@@ -73,7 +75,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
 
     @Test
-    public void verifyException() {
+    void verifyException() {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         val results = controller.handleUnauthorizedServiceException(request, new IllegalStateException());

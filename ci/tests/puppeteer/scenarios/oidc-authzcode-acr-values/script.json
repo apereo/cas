@@ -1,5 +1,6 @@
 {
   "dependencies": "oidc,gauth",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     

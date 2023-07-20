@@ -71,7 +71,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 11211)
 @Tag("Memcached")
 @Getter
-public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
+class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
@@ -128,9 +128,9 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyFailures() throws Exception {
         val pool = mock(ObjectPool.class);
-        val registry = new MemcachedTicketRegistry(pool);
+        val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
-        assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser")) > 0);
         assertDoesNotThrow(() -> {
             val client = mock(MemcachedClientIF.class);
             when(pool.borrowObject()).thenReturn(client);

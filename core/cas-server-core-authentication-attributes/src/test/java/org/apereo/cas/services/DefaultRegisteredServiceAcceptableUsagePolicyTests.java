@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceAcceptableUsagePolicyTests {
+class DefaultRegisteredServiceAcceptableUsagePolicyTests {
     private static final File JSON_FILE =
         new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceAcceptableUsagePolicyTests.json");
 
@@ -28,7 +28,7 @@ public class DefaultRegisteredServiceAcceptableUsagePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policyWritten.setEnabled(true);
         policyWritten.setMessageCode("example.code");

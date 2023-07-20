@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")
     private SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController;
@@ -42,9 +42,23 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
         this.samlRegisteredService.setSignUnsolicitedAuthnRequest(true);
         servicesManager.save(samlRegisteredService);
     }
+    
+    @Test
+    void verifySignedAuthnRequest() throws Exception {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setServiceId("signed:authn:service");
+        servicesManager.save(service);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
+        request.addParameter(SamlIdPConstants.TARGET, "relay-state");
+        val response = new MockHttpServletResponse();
+        val mv = idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
+    }
 
     @Test
-    public void verifyNoShire() {
+    void verifyNoShire() {
         val request = new MockHttpServletRequest();
 
         val service = getSamlRegisteredServiceForTestShib();
@@ -58,11 +72,12 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifyBadServiceWithNoMetadata() {
+    void verifyBadServiceWithNoMetadata() {
         val request = new MockHttpServletRequest();
 
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName(service.getServiceId());
         servicesManager.save(service);
 
         request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
@@ -72,7 +87,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(MessageDecodingException.class,
@@ -81,7 +96,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
 
 
     @Test
-    public void verifyBadService() {
+    void verifyBadService() {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, "xxxxxx");
         val response = new MockHttpServletResponse();
@@ -90,7 +105,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
         request.addParameter("CName1", "SomeParameter");

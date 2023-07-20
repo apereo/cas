@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    public void verifyMismatchedClass() {
+    void verifyMismatchedClass() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("otherExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
@@ -36,7 +36,7 @@ public class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTes
     }
 
     @Test
-    public void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("customPgtExpirationPolicy", CasRegisteredService.class);
         defaultSvc.setProxyGrantingTicketExpirationPolicy(new DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy(60));
         servicesManager.save(defaultSvc);

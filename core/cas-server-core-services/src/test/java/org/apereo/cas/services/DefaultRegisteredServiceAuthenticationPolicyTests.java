@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceAuthenticationPolicyTests {
+class DefaultRegisteredServiceAuthenticationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ServiceAuthenticationPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -38,27 +38,27 @@ public class DefaultRegisteredServiceAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyAnySerializeToJson() throws Exception {
+    void verifyAnySerializeToJson() throws Exception {
         val criteria = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setTryAll(true);
         verify(criteria);
     }
 
     @Test
-    public void verifyAllSerializeToJson() throws Exception {
+    void verifyAllSerializeToJson() throws Exception {
         val criteria = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
         verify(criteria);
     }
 
     @Test
-    public void verifyGroovySerializeToJson() throws Exception {
+    void verifyGroovySerializeToJson() throws Exception {
         val criteria = new GroovyRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setScript("groovy { return Optional.empty() }");
         verify(criteria);
     }
 
     @Test
-    public void verifyRestfulerializeToJson() throws Exception {
+    void verifyRestfulerializeToJson() throws Exception {
         val criteria = new RestfulRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setUrl("https://example.org");
         verify(criteria);

@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationMetadata")
-public class SurrogateAuthenticationMetaDataPopulatorTests {
+class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val p = new SurrogateAuthenticationMetaDataPopulator();
         assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
@@ -32,7 +32,7 @@ public class SurrogateAuthenticationMetaDataPopulatorTests {
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         assertThrows(SurrogateAuthenticationException.class,
             () -> p.populateAttributes(builder, mock(AuthenticationTransaction.class)));
-        p.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
+        p.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         val auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));

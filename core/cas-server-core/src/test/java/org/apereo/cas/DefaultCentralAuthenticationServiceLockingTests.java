@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("CAS")
-public class DefaultCentralAuthenticationServiceLockingTests {
+class DefaultCentralAuthenticationServiceLockingTests {
     private static final int REQUEST_IN_BROWSER_CONCURRENCY = 5;
 
     private static final int TICKETS_PER_REQUEST = 10;
@@ -36,9 +36,9 @@ public class DefaultCentralAuthenticationServiceLockingTests {
         "cas.ticket.registry.in-memory.crypto.enabled=true",
         "cas.ticket.registry.core.enable-locking=true"
     })
-    public class WithLockingEnabled extends AbstractCentralAuthenticationServiceTests {
+    class WithLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        public void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -80,9 +80,9 @@ public class DefaultCentralAuthenticationServiceLockingTests {
         "cas.ticket.registry.in-memory.crypto.enabled=true",
         "cas.ticket.registry.core.enable-locking=false"
     })
-    public class WithoutLockingEnabled extends AbstractCentralAuthenticationServiceTests {
+    class WithoutLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        public void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

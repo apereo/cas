@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.access-token.crypto.encryption-enabled=false")
-public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
+class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
                                                                final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()
@@ -39,7 +39,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyEncodingWithoutEncryptionForService() throws Exception {
+    void verifyEncodingWithoutEncryptionForService() throws Exception {
         val accessToken = getAccessToken();
         val registeredService = getOidcRegisteredService(accessToken.getClientId());
         registeredService.setJwtAccessToken(true);
@@ -55,7 +55,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyExtractionAsParameterForService() throws Exception {
+    void verifyExtractionAsParameterForService() throws Exception {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val encoder = getAccessTokenEncoder(accessToken, registeredService);
@@ -67,7 +67,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyEncodingWithNoCiphersForService() throws Exception {
+    void verifyEncodingWithNoCiphersForService() throws Exception {
         val accessToken = getAccessToken(StringUtils.EMPTY, "encoding-service-clientid");
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
 

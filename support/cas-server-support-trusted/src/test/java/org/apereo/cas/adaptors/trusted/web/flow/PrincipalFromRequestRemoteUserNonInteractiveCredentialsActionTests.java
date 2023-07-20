@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("WebflowActions")
-public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
 
     @Autowired
     @Qualifier("principalFromRemoteUserAction")
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    public void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRemoteUser("test");
 
@@ -39,7 +39,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     }
 
     @Test
-    public void verifyRemoteUserDoesntExists() throws Exception {
+    void verifyRemoteUserDoesntExists() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));

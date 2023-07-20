@@ -36,13 +36,13 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowEvents")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("webAuthnAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
@@ -50,6 +50,7 @@ public class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebf
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         val external = new ServletExternalContext(new MockServletContext(), request, response);
         when(context.getExternalContext()).thenReturn(external);

@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("ExpirationPolicy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OidcIdTokenExpirationPolicyBuilderTests extends AbstractOidcTests {
+class OidcIdTokenExpirationPolicyBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcIdTokenExpirationPolicy")
     private ExpirationPolicyBuilder oidcIdTokenExpirationPolicy;
 
     @Test
-    public void verifyTicketType() {
+    void verifyTicketType() {
         assertNotNull(oidcIdTokenExpirationPolicy.buildTicketExpirationPolicy());
     }
 }

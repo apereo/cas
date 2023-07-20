@@ -14,6 +14,8 @@ const assert = require('assert');
         await page.waitForTimeout(2500);
 
         let data = JSON.parse(await cas.innerText(page, "#data"));
+        console.dir(data, {depth: null, colors: true});
+
         assert(data.cas.version !== null);
         assert(data.cas.java.vendor !== null);
         assert(data.cas.java.version !== null);
@@ -21,6 +23,8 @@ const assert = require('assert');
         await cas.goto(page, "http://localhost:8444?endpoint=health");
         await page.waitForTimeout(2500);
         data = JSON.parse(await cas.innerText(page, "#data"));
+        console.dir(data, {depth: null, colors: true});
+
         assert(data.status !== null);
         assert(data.components !== null);
 
@@ -28,5 +32,6 @@ const assert = require('assert');
             console.log('Exiting server...');
             browser.close();
         });
+        await process.exit(0);
     });
 })();

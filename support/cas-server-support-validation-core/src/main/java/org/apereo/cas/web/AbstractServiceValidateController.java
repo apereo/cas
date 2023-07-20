@@ -238,7 +238,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()
             .validateAuthenticationContext(assertion, request, response);
         if (!ctxResult.isSuccess()) {
-            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.service());
+            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
         var proxyIou = StringUtils.EMPTY;
@@ -394,8 +394,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
-        multifactorProvider.ifPresent(provider -> modelAndView.addObject(
-            serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), provider));
+        multifactorProvider.ifPresent(provider -> {
+            val authenticationContextAttribute = serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute)
+                .forEach(attr -> modelAndView.addObject(attr, provider));
+        });
         val augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         modelAndView.addAllObjects(augmentedModelObjects);
         return modelAndView;

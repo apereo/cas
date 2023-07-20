@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.sms-provider.groovy.location=classpath:/GroovySmsSender.groovy")
 @Tag("Groovy")
-public class GroovySmsSenderTests {
+class GroovySmsSenderTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertTrue(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder().from("CAS")
             .to("1234567890").text("Hello CAS").build();

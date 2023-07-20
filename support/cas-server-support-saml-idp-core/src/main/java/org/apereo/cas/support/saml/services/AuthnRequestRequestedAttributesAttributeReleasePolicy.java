@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -48,7 +48,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
         final Map<String, List<Object>> attributes,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val releaseAttributes = new HashMap<String, List<Object>>();
@@ -56,8 +56,8 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
-                    .filter(object -> object instanceof RequestedAttribute)
-                    .map(object -> (RequestedAttribute) object)
+                    .filter(RequestedAttribute.class::isInstance)
+                    .map(RequestedAttribute.class::cast)
                     .filter(attr -> {
                         val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                         LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, context.getRegisteredService().getName());
@@ -81,8 +81,8 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
-                    .filter(object -> object instanceof RequestedAttribute)
-                    .map(object -> (RequestedAttribute) object)
+                    .filter(RequestedAttribute.class::isInstance)
+                    .map(RequestedAttribute.class::cast)
                     .forEach(attr -> {
                         val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                         LOGGER.debug("Found requested attribute [{}] in metadata for [{}]", name, context.getRegisteredService().getName());

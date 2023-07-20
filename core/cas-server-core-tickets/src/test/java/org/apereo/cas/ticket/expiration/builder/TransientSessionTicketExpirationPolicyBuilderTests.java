@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.tst.time-to-kill-in-seconds=5"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class TransientSessionTicketExpirationPolicyBuilderTests {
+class TransientSessionTicketExpirationPolicyBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyType() {
+    void verifyType() {
         val builder = new TransientSessionTicketExpirationPolicyBuilder(casProperties);
         val policy = builder.buildTicketExpirationPolicy();
         assertNotNull(policy);

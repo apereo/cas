@@ -20,13 +20,6 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
 
-## Service Management Web Application
-
-The service management webapp is a standalone web application that may be deployed alongside CAS that provides a GUI
-to manage service registry data. The management web application *MUST* share the same registry configuration as the 
-CAS server itself so the entire system can load the same services data. To learn more about 
-the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
-
 ## Registered Services
 
 Registered services present the following metadata:
@@ -58,8 +51,9 @@ Registered services present the following metadata:
 | `contacts`                  | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.                                                                                                                                                                                                                                                                     |
 | `matchingStrategy`          | Specify the strategy used to match the service definition against an authentication request. See [this guide](Configuring-Service-Matching-Strategy.html) for more info.                                                                                                                                                                                                                                                    |
 | `supportedProtocols`        | Specify supported and allowed protocols for this service. See [this guide](Configuring-Service-Supported-Protocols.html) for more info.                                                                                                                                                                                                                                                                                     |
+| `templateName`              | Name of the [template service definition](Configuring-Service-Template-Definitions.html) to use as a blueprint, when constructing this service definition.                                                                                                                                                                                                                                                                  |
 
-<div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, 
+<div class="alert alert-info">:information_source: <strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, 
 there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always 
 check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
 
@@ -67,24 +61,22 @@ check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML,
 
 The following options may be used to store services in CAS.
 
-| Storage          | Description                                           | Usage
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| Memory           | [See this guide](InMemory-Service-Management.html).   | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts
-| JSON             | [See this guide](JSON-Service-Management.html).       | Store service definitions in flat JSON files. HA deployments require replication of service definitions.
-| YAML             | [See this guide](YAML-Service-Management.html).       | Same as `JSON`.
-| GIT              | [See this guide](Git-Service-Management.html).        | Store service definitions in Git repository. Candidate for HA deployments.
-| MongoDb          | [See this guide](MongoDb-Service-Management.html).    | Store service definitions in MongoDb. Candidate for HA deployments.
-| Redis            | [See this guide](Redis-Service-Management.html).      | Store service definitions in Redis. Candidate for HA deployments.
-| LDAP             | [See this guide](LDAP-Service-Management.html).       | Store service definitions in a directory server. Candidate for HA deployments.
-| JPA              | [See this guide](JPA-Service-Management.html).        | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.
-| Couchbase        | [See this guide](Couchbase-Service-Management.html).  | Store service definitions in Couchbase. Candidate for HA deployments.
-| CouchDB          | [See this guide](CouchDb-Service-Management.html).    | Store service definitions in CouchDb. Candidate for HA deployments.
-| DynamoDb         | [See this guide](DynamoDb-Service-Management.html).   | Store service definitions in DynamoDb. Candidate for HA deployments.
-| Amazon S3        | [See this guide](AmazonS3-Service-Management.html).   | Store service definitions in Amazon S3 buckets. Candidate for HA deployments.
-| CosmosDb         | [See this guide](CosmosDb-Service-Management.html).   | Store service definitions in an Azure CosmosDb. Candidate for HA deployments.
-| Cassandra        | [See this guide](Cassandra-Service-Management.html).  | Store service definitions in an Apache Cassandra. Candidate for HA deployments.
-| REST             | [See this guide](REST-Service-Management.html).       | Design your own service registry implementation as a REST API. Candidate for HA deployments.
-| Custom           | [See this guide](Custom-Service-Management.html).     | Design your own service registry using CAS APIs as an extension. Candidate for HA deployments.
+| Storage       | Description                                          | Usage                                                                                                    |
+|---------------|------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Memory        | [See this guide](InMemory-Service-Management.html).  | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts      |
+| JSON          | [See this guide](JSON-Service-Management.html).      | Store service definitions in flat JSON files. HA deployments require replication of service definitions. |
+| YAML          | [See this guide](YAML-Service-Management.html).      | Same as `JSON`.                                                                                          |
+| GIT           | [See this guide](Git-Service-Management.html).       | Store service definitions in Git repository. Candidate for HA deployments.                               |
+| MongoDb       | [See this guide](MongoDb-Service-Management.html).   | Store service definitions in MongoDb. Candidate for HA deployments.                                      |
+| Redis         | [See this guide](Redis-Service-Management.html).     | Store service definitions in Redis. Candidate for HA deployments.                                        |
+| LDAP          | [See this guide](LDAP-Service-Management.html).      | Store service definitions in a directory server. Candidate for HA deployments.                           |
+| JPA           | [See this guide](JPA-Service-Management.html).       | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.   |
+| DynamoDb      | [See this guide](DynamoDb-Service-Management.html).  | Store service definitions in DynamoDb. Candidate for HA deployments.                                     |
+| Amazon S3     | [See this guide](AmazonS3-Service-Management.html).  | Store service definitions in Amazon S3 buckets. Candidate for HA deployments.                            |
+| CosmosDb      | [See this guide](CosmosDb-Service-Management.html).  | Store service definitions in an Azure CosmosDb. Candidate for HA deployments.                            |
+| Cassandra     | [See this guide](Cassandra-Service-Management.html). | Store service definitions in an Apache Cassandra. Candidate for HA deployments.                          |
+| REST          | [See this guide](REST-Service-Management.html).      | Design your own service registry implementation as a REST API. Candidate for HA deployments.             |
+| Custom        | [See this guide](Custom-Service-Management.html).    | Design your own service registry using CAS APIs as an extension. Candidate for HA deployments.           |
 
 ### How Do I Choose?
 

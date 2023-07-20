@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUserAccountStatusEndpointTests {
+class DuoSecurityUserAccountStatusEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -37,7 +37,7 @@ public class DuoSecurityUserAccountStatusEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyStatusOperation() {
+    void verifyStatusOperation() {
         assertEquals(DuoSecurityUserAccountStatus.AUTH, DuoSecurityUserAccountStatus.from("active"));
         assertEquals(DuoSecurityUserAccountStatus.ALLOW, DuoSecurityUserAccountStatus.from("bypass"));
         assertEquals(DuoSecurityUserAccountStatus.DENY, DuoSecurityUserAccountStatus.from("disabled"));
@@ -45,7 +45,7 @@ public class DuoSecurityUserAccountStatusEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val account = new DuoSecurityUserAccount("casuser");

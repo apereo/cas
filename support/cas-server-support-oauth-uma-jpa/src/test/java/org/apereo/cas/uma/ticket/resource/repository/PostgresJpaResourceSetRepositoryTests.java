@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.jdbc.show-sql=true",
     "cas.authn.oauth.uma.resource-set.jpa.ddl-auto=create-drop"
 })
-public class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
+class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         var r = buildTestResource();
         assertTrue(umaResourceSetRepository.getAll().isEmpty());
         assertFalse(umaResourceSetRepository.getById(r.getId()).isPresent());

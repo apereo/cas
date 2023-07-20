@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
@@ -15,7 +16,7 @@
     "--cas.authn.pac4j.cas[0].display-name=MyCAS",
     "--cas.authn.pac4j.core.name=ExternalCAS",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.web.flow;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
@@ -25,13 +24,10 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     })
 @Tag("WebflowMfaConfig")
 @Getter
-public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
     
     @Override
     protected String getMultifactorEventId() {

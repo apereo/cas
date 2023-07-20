@@ -5,7 +5,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -31,7 +30,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Embeddable
 @Table(name = "UMA_ResourceSetPolicy")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor

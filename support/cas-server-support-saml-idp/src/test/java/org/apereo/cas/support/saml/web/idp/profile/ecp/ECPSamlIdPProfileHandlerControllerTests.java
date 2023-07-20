@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ecpProfileHandlerController")
     private ECPSamlIdPProfileHandlerController controller;
@@ -54,7 +54,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOK() throws Exception {
+    void verifyOK() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -71,7 +71,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyBadAuthn() throws Exception {
+    void verifyBadAuthn() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -90,7 +90,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyNoCredentials() throws Exception {
+    void verifyNoCredentials() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -104,7 +104,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyFailures() throws Exception {
+    void verifyFailures() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val headers = HttpUtils.createBasicAuthHeaders("casuser", "casuser");

@@ -14,10 +14,10 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class FailingResourceU2FDeviceRepositoryTests {
+class FailingResourceU2FDeviceRepositoryTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val failure = mock(BaseResourceU2FDeviceRepository.class);
         when(failure.readDevicesFromResource()).thenThrow(new IllegalStateException());
         doThrow(new IllegalStateException()).when(failure).writeDevicesBackToResource(any());

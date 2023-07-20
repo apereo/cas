@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
+class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAttributeReleasePolicyFactory")
     private OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.EMAIL));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.ADDRESS));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.PHONE));

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.core.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 9092)
-public class RegisteredServiceKafkaDistributedCacheListenerTests {
+class RegisteredServiceKafkaDistributedCacheListenerTests {
     @Autowired
     @Qualifier("registeredServiceKafkaDistributedCacheListener")
     private RegisteredServiceKafkaDistributedCacheListener listener;
@@ -47,7 +47,7 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
     }
 
     @Test
-    public void verifyRemoval() {
+    void verifyRemoval() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val item = new DistributedCacheObject<RegisteredService>(
             Map.of("event", CasRegisteredServiceDeletedEvent.class.getSimpleName()),
@@ -58,7 +58,7 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
     }
 
     @Test
-    public void verifyUpdate() {
+    void verifyUpdate() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val item = new DistributedCacheObject<RegisteredService>(
             Map.of(),

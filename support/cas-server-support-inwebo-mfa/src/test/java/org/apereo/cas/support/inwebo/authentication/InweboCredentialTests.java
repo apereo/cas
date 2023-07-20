@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class InweboCredentialTests {
+class InweboCredentialTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val results = new InweboCredential("user");
         results.setAlreadyAuthenticated(true);
         results.setDeviceName("DeviceName");

@@ -11,16 +11,17 @@ docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 90
   -v "$PWD"/ci/tests/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml \
   -v "$PWD"/ci/tests/cassandra/cqlshrc:/root/.cassandra/cqlshrc \
   -v "$PWD"/ci/tests/cassandra/security:/security \
-  cassandra:4.0.7
+  -e CASSANDRA_USER=cassandra -e CASSANDRA_PASSWORD=cassandra \
+  cassandra:4.1.2
   
 #docker logs -f cassandra &
 
 docker ps | grep "cassandra"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Cassandra docker image is running."
+    echo "Cassandra docker container is running."
 else
-    echo "Cassandra docker image failed to start."
+    echo "Cassandra docker container failed to start."
     exit $retVal
 fi
 
@@ -32,7 +33,7 @@ docker exec cassandra cqlsh --ssl -e "CREATE KEYSPACE cas WITH REPLICATION = {'c
 sleep 5
 
 echo "Creating new super user: cassystem"
-docker exec cassandra cqlsh --ssl -e "CREATE ROLE cassystem WITH PASSWORD = 'RUstriFINFiENtrO' AND SUPERUSER = true AND LOGIN = true"
+docker exec cassandra cqlsh --ssl -u cassandra -p cassandra -e "CREATE ROLE cassystem WITH PASSWORD = 'RUstriFINFiENtrO' AND SUPERUSER = true AND LOGIN = true"
 sleep 5
 
 echo "Creating Cassandra users table"

@@ -7,14 +7,18 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisCompositeKey;
+import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
+import org.apereo.cas.ticket.registry.RedisTicketRegistryCacheEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pub.DefaultRedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListener;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -25,8 +29,10 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,6 +40,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -44,6 +51,8 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
+
+import java.util.Optional;
 
 /**
  * This is {@link RedisTicketRegistryConfiguration}.
@@ -60,7 +69,20 @@ public class RedisTicketRegistryConfiguration {
 
     @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class RedisTicketRegistryCoreConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RedisTicketRegistryCacheEndpoint redisTicketRegistryCacheEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("redisTicketRegistryCache")
+            final Cache<String, Ticket> redisTicketRegistryCache) {
+            return new RedisTicketRegistryCacheEndpoint(casProperties, ticketRegistry, redisTicketRegistryCache);
+        }
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageTopic")
@@ -98,6 +120,7 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListener")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public MessageListener redisTicketRegistryMessageListener(
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
@@ -116,7 +139,7 @@ public class RedisTicketRegistryConfiguration {
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
             @Qualifier("ticketRedisTemplate")
-            final CasRedisTemplate<String, Ticket> ticketRedisTemplate) {
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate) {
             return new DefaultRedisTicketRegistryMessagePublisher(ticketRedisTemplate, redisTicketRegistryMessageIdentifier);
         }
 
@@ -141,7 +164,21 @@ public class RedisTicketRegistryConfiguration {
         @Bean(name = {"redisTemplate", "ticketRedisTemplate"})
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketRedisTemplate")
-        public CasRedisTemplate<String, Ticket> ticketRedisTemplate(
+        public CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("redisTicketConnectionFactory")
+            final RedisConnectionFactory redisTicketConnectionFactory) {
+            return BeanSupplier.of(CasRedisTemplate.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "sessionsRedisTemplate")
+        public CasRedisTemplate<String, String> sessionsRedisTemplate(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("redisTicketConnectionFactory")
             final RedisConnectionFactory redisTicketConnectionFactory) {
@@ -162,24 +199,39 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RedisTicketRegistry.CasRedisTemplates casRedisTemplates(
+            @Qualifier("ticketRedisTemplate")
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate,
+            @Qualifier("sessionsRedisTemplate")
+            final CasRedisTemplate<String, String> sessionsRedisTemplate) {
+            return new RedisTicketRegistry.CasRedisTemplates(ticketRedisTemplate, sessionsRedisTemplate);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier("casRedisTemplates")
+            final RedisTicketRegistry.CasRedisTemplates casRedisTemplates,
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog,
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             @Qualifier("redisTicketRegistryCache")
             final Cache<String, Ticket> redisTicketRegistryCache,
             @Qualifier("redisTicketRegistryMessagePublisher")
             final RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("ticketRedisTemplate")
-            final CasRedisTemplate<String, Ticket> ticketRedisTemplate) {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TicketRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
-                    val registry = new RedisTicketRegistry(ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher);
-                    registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
-                    return registry;
+                    val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
+                    val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
+                    return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+                        casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
                 })
-                .otherwise(DefaultTicketRegistry::new)
+                .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();
         }
     }

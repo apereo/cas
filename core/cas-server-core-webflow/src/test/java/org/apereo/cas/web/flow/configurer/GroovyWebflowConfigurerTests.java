@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @TestPropertySource(properties = "cas.webflow.groovy.location=classpath:/GroovyWebflow.groovy")
-public class GroovyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class GroovyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("groovyWebflowConfigurer")
     private CasWebflowConfigurer groovyWebflowConfigurer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> groovyWebflowConfigurer.initialize());
     }
 

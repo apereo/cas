@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("MFATrigger")
-public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
+class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     private static MultifactorAuthenticationTrigger getMultifactorAuthenticationTrigger() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);
         when(trigger.supports(any(), any(), any(), any())).thenReturn(true);
@@ -32,7 +32,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val trigger = getMultifactorAuthenticationTrigger();
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val result = strategy.resolve(new MockHttpServletRequest(),
@@ -44,7 +44,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyNotSupportingTrigger() {
+    void verifyNotSupportingTrigger() {
         val trigger = getMultifactorAuthenticationTrigger();
         when(trigger.supports(any(), any(), any(), any())).thenReturn(false);
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
@@ -59,7 +59,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     }
 
     @Test
-    public void verifyOperationIgnoringExecution() {
+    void verifyOperationIgnoringExecution() {
         val trigger = getMultifactorAuthenticationTrigger();
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();

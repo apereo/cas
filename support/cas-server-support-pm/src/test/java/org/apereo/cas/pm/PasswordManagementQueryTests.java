@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("PasswordOps")
-public class PasswordManagementQueryTests {
+class PasswordManagementQueryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val uid = UUID.randomUUID().toString();
         val query = PasswordManagementQuery.builder().username(uid).build();
         query.attribute("address1", "Some Address");

@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WebflowActions")
-public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
+class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     private Action action;
 
     @Test
-    public void verifyTerminateAction() throws Exception {
+    void verifyTerminateAction() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
@@ -42,7 +42,7 @@ public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyTerminateActionByCookie() throws Exception {
+    void verifyTerminateActionByCookie() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setCookies(new Cookie("TGC", "TGT-123456-something"));

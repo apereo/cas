@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WSFederationRequestTests {
+class WSFederationRequestTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val request = new MockHttpServletRequest();
         request.addParameter(WSFederationConstants.WTREALM, id);

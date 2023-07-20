@@ -81,15 +81,14 @@ See [this guide](Attribute-Release-Consent-Activation.html) for more details.
 
 User consent decisions may be stored and remembered using one of the following options.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------
-| CouchDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
-| DynamoDb         | [See this guide](Attribute-Release-Consent-Storage-DynamoDb.html).
-| Groovy           | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).
-| JDBC             | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).
-| JSON             | [See this guide](Attribute-Release-Consent-Storage-JSON.html).
-| LDAP             | [See this guide](Attribute-Release-Consent-Storage-LDAP.html).
-| MongoDb          | [See this guide](Attribute-Release-Consent-Storage-MongoDb.html).
-| Redis            | [See this guide](Attribute-Release-Consent-Storage-Redis.html).
-| REST             | [See this guide](Attribute-Release-Consent-Storage-REST.html).
-| Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).
+| Storage     | Description                                                        |
+|-------------|--------------------------------------------------------------------|
+| DynamoDb    | [See this guide](Attribute-Release-Consent-Storage-DynamoDb.html). |
+| Groovy      | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).   |
+| JDBC        | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).     |
+| JSON        | [See this guide](Attribute-Release-Consent-Storage-JSON.html).     |
+| LDAP        | [See this guide](Attribute-Release-Consent-Storage-LDAP.html).     |
+| MongoDb     | [See this guide](Attribute-Release-Consent-Storage-MongoDb.html).  |
+| Redis       | [See this guide](Attribute-Release-Consent-Storage-Redis.html).    |
+| REST        | [See this guide](Attribute-Release-Consent-Storage-REST.html).     |
+| Custom      | [See this guide](Attribute-Release-Consent-Storage-Custom.html).   |

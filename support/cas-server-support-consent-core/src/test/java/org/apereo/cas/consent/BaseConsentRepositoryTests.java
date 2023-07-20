@@ -1,9 +1,10 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
+import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -13,26 +14,26 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import lombok.val;
@@ -72,7 +73,7 @@ public abstract class BaseConsentRepositoryTests {
     public abstract ConsentRepository getRepository();
     
     @Test
-    public void verifyConsentDecisionIsNotFound() throws Exception {
+    void verifyConsentDecisionIsNotFound() throws Exception {
         val user = getUser();
         val repo = getRepository();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -85,7 +86,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsFound() throws Exception {
+    void verifyConsentDecisionIsFound() throws Exception {
         val user = getUser();
         val repo = getRepository();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -106,7 +107,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyDeleteRecordsForPrincipal() throws Exception {
+    void verifyDeleteRecordsForPrincipal() throws Exception {
         val user = getUser();
         val repo = getRepository();
         repo.deleteAll();
@@ -153,6 +154,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreAuditConfiguration.class,

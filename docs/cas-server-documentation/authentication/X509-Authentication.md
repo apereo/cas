@@ -97,7 +97,7 @@ acceptable client certificates.
 
 These settings can be used to turn on and configure CAS to
 extract an X509 certificate from a base64 encoded certificate
-on a HTTP request header (placed there by a proxy in front of CAS).
+on an HTTP request header (placed there by a proxy in front of CAS).
 If this is set to true, it is important that the proxy cannot
 be bypassed by users and that the proxy ensures the header
 never originates from the browser.
@@ -216,7 +216,7 @@ one that issued the server's own identifying certificate. In this configuration,
 every browser will accept and the browser is strongly urged to send only a private institutional 
 certificate that can be mapped to a Principal name.
 
-<div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without 
+<div class="alert alert-info">:information_source: <strong>Almost There</strong><p>If you previously configured CAS without 
 X.509 authentication, then you probably have the <code>keystoreFile</code> already configured and
 loaded with a certificate identifying this server. All you need to add is the <code>truststoreFile</code> part.</p></div>
 

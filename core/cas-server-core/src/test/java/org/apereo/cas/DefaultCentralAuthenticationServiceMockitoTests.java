@@ -73,7 +73,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
+class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     private static final String TGT_ID = "tgt-id";
 
     private static final String TGT2_ID = "tgt2-id";
@@ -202,23 +202,23 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     }
 
     @Test
-    public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(InvalidTicketException.class, () -> cas.createProxyGrantingTicket("bad-st", getAuthenticationContext()));
     }
 
     @Test
-    public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(UnauthorizedServiceException.class, () -> this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext()));
     }
 
     @Test
-    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
+    void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
         assertThrows(UnauthorizedProxyingException.class,
             () -> this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext()));
     }
 
     @Test
-    public void verifyChainedAuthenticationsOnValidation() {
+    void verifyChainedAuthenticationsOnValidation() {
         val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         val st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
@@ -226,11 +226,11 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val assertion = this.cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
 
-        assertEquals(assertion.service(), svc);
-        assertEquals(PRINCIPAL, assertion.primaryAuthentication().getPrincipal().getId());
-        assertSame(2, assertion.chainedAuthentications().size());
-        IntStream.range(0, assertion.chainedAuthentications().size())
-            .forEach(i -> assertEquals(assertion.chainedAuthentications().get(i), authentication));
+        assertEquals(assertion.getService(), svc);
+        assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
+        assertSame(2, assertion.getChainedAuthentications().size());
+        IntStream.range(0, assertion.getChainedAuthentications().size())
+            .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }
 
     private TicketFactory getTicketFactory() {

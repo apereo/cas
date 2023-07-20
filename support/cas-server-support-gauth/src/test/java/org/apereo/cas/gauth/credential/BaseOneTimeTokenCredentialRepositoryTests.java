@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -10,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -17,19 +19,18 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -50,6 +51,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -91,7 +93,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyCreate() {
+    void verifyCreate() {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
@@ -117,7 +119,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
@@ -147,7 +149,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyGet() {
+    void verifyGet() {
         val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
@@ -172,8 +174,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyCaseSensitivity() {
-        val casuser = getUsernameUnderTest().toLowerCase();
+    void verifyCaseSensitivity() {
+        val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
         val repo = getRegistry("verifyCaseSensitivity");
@@ -188,17 +190,17 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         toSave = repo.save(toSave);
         assertNotNull(toSave);
         assertNotNull(repo.get(toSave.getId()));
-        assertNotNull(repo.get(toSave.getUsername().toUpperCase(), toSave.getId()));
+        assertNotNull(repo.get(toSave.getUsername().toUpperCase(Locale.ENGLISH), toSave.getId()));
         assertEquals(1, repo.count());
-        assertEquals(1, repo.count(toSave.getUsername().toUpperCase()));
-        repo.delete(acct.getUsername().toUpperCase());
+        assertEquals(1, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
+        repo.delete(acct.getUsername().toUpperCase(Locale.ENGLISH));
         assertTrue(repo.load().isEmpty());
         assertEquals(0, repo.count());
-        assertEquals(0, repo.count(toSave.getUsername().toUpperCase()));
+        assertEquals(0, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
     }
 
     @Test
-    public void verifyGetWithDecodedSecret() {
+    void verifyGetWithDecodedSecret() {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
@@ -243,6 +245,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreHttpConfiguration.class,

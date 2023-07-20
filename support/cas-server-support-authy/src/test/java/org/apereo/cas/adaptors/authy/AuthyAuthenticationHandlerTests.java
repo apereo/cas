@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFAProvider")
-public class AuthyAuthenticationHandlerTests {
+class AuthyAuthenticationHandlerTests {
     private static AuthyClientInstance configureAuthyClientInstance(final int userStatus,
                                                                     final int tokenStatus, final String message) throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
@@ -54,7 +54,7 @@ public class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val authyInstance = configureAuthyClientInstance(200, 200, Token.VALID_TOKEN_MESSAGE);
         val handler = getAuthyAuthenticationHandler(authyInstance);
 
@@ -73,7 +73,7 @@ public class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val authyInstance = configureAuthyClientInstance(400, 200, Token.VALID_TOKEN_MESSAGE);
         val handler = getAuthyAuthenticationHandler(authyInstance);
 
@@ -89,7 +89,7 @@ public class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsVerify() throws Exception {
+    void verifyFailsVerify() throws Exception {
         val authyInstance = configureAuthyClientInstance(200, 400, "Bad");
         val handler = getAuthyAuthenticationHandler(authyInstance);
 

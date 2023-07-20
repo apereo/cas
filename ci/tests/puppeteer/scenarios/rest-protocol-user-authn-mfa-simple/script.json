@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-simple",
 

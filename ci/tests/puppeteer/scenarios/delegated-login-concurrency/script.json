@@ -1,5 +1,6 @@
 {
   "dependencies": "pac4j-webflow",
+
   "properties": [
     "--cas.authn.pac4j.github.client-name=GitHubClient",
     "--cas.authn.pac4j.github.id=84cfb715b8237728e567",

@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-public class ChainingAuditPrincipalIdProviderTests {
+class ChainingAuditPrincipalIdProviderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());
         chain.addProvider(new DefaultAuditPrincipalIdProvider());
         assertTrue(chain.supports(mock(JoinPoint.class),
@@ -33,7 +33,7 @@ public class ChainingAuditPrincipalIdProviderTests {
     }
 
     @Test
-    public void verifyAll() {
+    void verifyAll() {
         val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());
         chain.addProviders(List.of(new DefaultAuditPrincipalIdProvider()));
         assertTrue(chain.supports(mock(JoinPoint.class), RegisteredServiceTestUtils.getAuthentication(), new Object(), null));

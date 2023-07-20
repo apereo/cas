@@ -38,13 +38,13 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
+class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
     private Action loadSurrogatesListAction;
 
     @Test
-    public void verifyGetListView() throws Exception {
+    void verifyGetListView() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -57,7 +57,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTe
     }
 
     @Test
-    public void verifyAuthenticate() throws Exception {
+    void verifyAuthenticate() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
@@ -86,7 +86,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTe
     }
 
     @Test
-    public void verifyAuthenticateNotAuthorized() throws Exception {
+    void verifyAuthenticateNotAuthorized() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
@@ -115,7 +115,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTe
     }
 
     @Test
-    public void verifySkipAuthenticate() throws Exception {
+    void verifySkipAuthenticate() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);

@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCoreEventsConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.ElectronicFenceWebflowConfiguration;
-import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowConfig")
-public class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

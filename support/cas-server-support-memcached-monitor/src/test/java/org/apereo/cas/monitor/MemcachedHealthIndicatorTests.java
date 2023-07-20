@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
-import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
+import org.apereo.cas.config.MemcachedMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
@@ -42,19 +42,19 @@ import static org.mockito.Mockito.*;
 })
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class MemcachedHealthIndicatorTests {
+class MemcachedHealthIndicatorTests {
     @Autowired
     @Qualifier("memcachedHealthIndicator")
     private HealthIndicator monitor;
 
     @Test
-    public void verifyMonitorNotRunning() {
+    void verifyMonitorNotRunning() {
         val health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 
     @Test
-    public void verifyUnavailableServers() throws Exception {
+    void verifyUnavailableServers() throws Exception {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenReturn(List.of(new InetSocketAddress(1234)));
         when(memcached.getAvailableServers()).thenReturn(List.of(new InetSocketAddress(11212)));
@@ -66,7 +66,7 @@ public class MemcachedHealthIndicatorTests {
     }
 
     @Test
-    public void verifyMonitorError() throws Exception {
+    void verifyMonitorError() throws Exception {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenThrow(new RuntimeException("error"));
         when(memcached.getAvailableServers()).thenThrow(new RuntimeException("error"));
@@ -78,7 +78,7 @@ public class MemcachedHealthIndicatorTests {
     }
 
     @Test
-    public void verifyMonitorSuccess() throws Exception {
+    void verifyMonitorSuccess() throws Exception {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenReturn(List.of());
         val socket = new InetSocketAddress("localhost", 11212);

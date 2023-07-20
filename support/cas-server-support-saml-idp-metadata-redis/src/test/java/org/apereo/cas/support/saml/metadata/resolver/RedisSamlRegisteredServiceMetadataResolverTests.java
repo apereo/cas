@@ -33,16 +33,17 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
+class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        val keys = redisSamlRegisteredServiceMetadataResolverTemplate.scan(key, 0).collect(Collectors.toSet());
-        redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
+        try (val keys = redisSamlRegisteredServiceMetadataResolverTemplate.scan(key, 0)) {
+            redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test
-    public void verifyResolver() throws Exception {
+    void verifyResolver() throws Exception {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -61,7 +62,7 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     }
 
     @Test
-    public void verifyFailsResolver() throws Exception {
+    void verifyFailsResolver() throws Exception {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -76,7 +77,7 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     }
 
     @Test
-    public void verifyResolverDoesNotSupport() {
+    void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
     }
 }

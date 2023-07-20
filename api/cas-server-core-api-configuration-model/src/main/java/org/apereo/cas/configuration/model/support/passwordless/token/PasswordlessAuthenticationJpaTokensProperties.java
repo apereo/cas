@@ -32,5 +32,9 @@ public class PasswordlessAuthenticationJpaTokensProperties extends AbstractJpaPr
      * Settings that control the background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
+
+    public PasswordlessAuthenticationJpaTokensProperties() {
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
+    }
 }

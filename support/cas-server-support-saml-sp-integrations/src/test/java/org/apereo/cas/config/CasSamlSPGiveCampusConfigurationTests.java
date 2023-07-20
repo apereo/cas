@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.give-campus.name-id-attribute=cn",
     "cas.saml-sp.give-campus.name-id-format=transient"
 })
-public class CasSamlSPGiveCampusConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPGiveCampusConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

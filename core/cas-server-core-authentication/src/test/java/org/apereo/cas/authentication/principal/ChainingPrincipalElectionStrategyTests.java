@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ChainingPrincipalElectionStrategyTests {
+class ChainingPrincipalElectionStrategyTests {
     @Test
-    public void verifyOperationWithSingleAuthn() {
+    void verifyOperationWithSingleAuthn() {
         val strategy = new ChainingPrincipalElectionStrategy(new DefaultPrincipalElectionStrategy());
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val principal = strategy.nominate(List.of(authentication), CoreAuthenticationTestUtils.getAttributes());
@@ -32,7 +32,7 @@ public class ChainingPrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyOperationWithMultipleAuthn() {
+    void verifyOperationWithMultipleAuthn() {
         val strategy1 = new DefaultPrincipalElectionStrategy();
         strategy1.setOrder(100);
 
@@ -58,7 +58,7 @@ public class ChainingPrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyOperationWithMultiplePrincipals() {
+    void verifyOperationWithMultiplePrincipals() {
         val strategy1 = new DefaultPrincipalElectionStrategy();
         strategy1.setOrder(100);
 

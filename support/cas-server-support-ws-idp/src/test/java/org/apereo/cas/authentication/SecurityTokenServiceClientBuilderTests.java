@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -50,7 +50,7 @@ public class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityId
     }
 
     @Test
-    public void verifyClientSecurityRequest() {
+    void verifyClientSecurityRequest() {
         val registeredService = getWsFederationRegisteredService();
         assertNotNull(securityTokenServiceClientBuilder.buildClientForSecurityTokenRequests(registeredService));
         val bus = BusFactory.getDefaultBus();
@@ -68,7 +68,7 @@ public class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityId
     }
 
     @Test
-    public void verifyRelyingPartyTokenResponses() {
+    void verifyRelyingPartyTokenResponses() {
         val registeredService = getWsFederationRegisteredService();
         val token = new SecurityToken(UUID.randomUUID().toString());
         assertNotNull(securityTokenServiceClientBuilder.buildClientForRelyingPartyTokenResponses(token, registeredService));

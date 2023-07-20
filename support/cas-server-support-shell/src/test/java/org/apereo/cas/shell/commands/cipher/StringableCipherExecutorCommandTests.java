@@ -21,19 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
+class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
     private static final String SAMPLE_ENCRYPTION_KEY = "AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M";
 
     private static final String SAMPLE_SIGNING_KEY = "cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ";
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val result = assertDoesNotThrow(() -> runShellCommand(() -> () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
     }
 
     @Test
-    public void verifyFile() throws Exception {
+    void verifyFile() throws Exception {
         val file = File.createTempFile("file", "txt");
         FileUtils.write(file, "example", StandardCharsets.UTF_8);
 

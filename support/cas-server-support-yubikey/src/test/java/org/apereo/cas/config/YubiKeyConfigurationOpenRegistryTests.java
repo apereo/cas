@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.json-file="
     })
 @Tag("MFAProvider")
-public class YubiKeyConfigurationOpenRegistryTests {
+class YubiKeyConfigurationOpenRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id));
     }

@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class MultifactorAuthenticationFailureModeEvaluatorTests {
+class MultifactorAuthenticationFailureModeEvaluatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(MultifactorAuthenticationFailureModeEvaluator.class);
         when(input.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());

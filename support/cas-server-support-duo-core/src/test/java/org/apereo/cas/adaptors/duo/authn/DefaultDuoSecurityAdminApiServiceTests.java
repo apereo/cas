@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DefaultDuoSecurityAdminApiServiceTests {
+class DefaultDuoSecurityAdminApiServiceTests {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -63,7 +63,7 @@ public class DefaultDuoSecurityAdminApiServiceTests {
     }
 
     @Test
-    public void verifyCodes() throws Exception {
+    void verifyCodes() throws Exception {
         val service = new DefaultDuoSecurityAdminApiService(this.httpClient, properties);
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-bypassCodes.json"));

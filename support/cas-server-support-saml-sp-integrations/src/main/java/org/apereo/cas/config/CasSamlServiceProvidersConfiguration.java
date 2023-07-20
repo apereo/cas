@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.function.Function;
 
@@ -63,11 +64,12 @@ public class CasSamlServiceProvidersConfiguration {
     }
 
     @Bean
+    @Lazy(false)
     public InitializingBean coreSamlServiceProvidersInitializingBean(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+        @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
         final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
         return () -> {
             val preloadMetadata = (Function<SamlRegisteredService, Void>) service -> {

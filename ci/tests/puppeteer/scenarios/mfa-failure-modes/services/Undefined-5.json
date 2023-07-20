@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "^https://httpbin.org/anything/undefined",
+  "serviceId": "^http://localhost:9889/anything/undefined",
   "name": "Undefined",
   "id": 5,
   "description": "Undefined Service",

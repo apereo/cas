@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasCoreConfigurationUtilsTests {
+class CasCoreConfigurationUtilsTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val map = CasCoreConfigurationUtils.asMap(casProperties.withHolder());
 
         assertEquals("https://sso.example.org", map.get("cas.server.name"));
@@ -46,7 +46,7 @@ public class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    public void verifyMappingByPropertyRef() {
+    void verifyMappingByPropertyRef() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSyncope().setName("SyncopeAuth");
         props.getAuthn().getSyncope().setUrl("https://github.com/apereo/cas");
@@ -63,7 +63,7 @@ public class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    public void verifyMapping() {
+    void verifyMapping() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSyncope().setName("SyncopeAuth");
         props.getAuthn().getSyncope().setUrl("https://github.com/apereo/cas");
@@ -78,7 +78,7 @@ public class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    public void verifyMappingCollections() {
+    void verifyMappingCollections() {
         val props = new CasConfigurationProperties();
         val ldap = new LdapAuthenticationProperties();
         ldap.setLdapUrl("http://localhost:1234");

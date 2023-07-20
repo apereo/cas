@@ -7,14 +7,11 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.PROFILE.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -46,10 +43,11 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val policy = new OidcProfileScopeAttributeReleasePolicy();
+        policy.setAllowedAttributes(CollectionUtils.wrapList("name", "gender"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
@@ -57,6 +55,7 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
         val serializer = new RegisteredServiceJsonSerializer(appCtx);
         val json = serializer.toString(service);
         assertNotNull(json);
-        assertNotNull(serializer.from(json));
+        val read = serializer.from(json);
+        assertEquals(read, service);
     }
 }

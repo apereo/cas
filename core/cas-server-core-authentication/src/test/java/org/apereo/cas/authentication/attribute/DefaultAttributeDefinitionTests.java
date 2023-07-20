@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultAttributeDefinitionTests {
+class DefaultAttributeDefinitionTests {
 
     private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
         return AttributeDefinitionResolutionContext.builder()
@@ -35,7 +35,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyCaseCanonicalizationMode() {
+    void verifyCaseCanonicalizationMode() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
@@ -55,7 +55,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyNoCacheEmbeddedScriptOperation() {
+    void verifyNoCacheEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -70,7 +70,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyBadScript() {
+    void verifyBadScript() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -85,7 +85,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyCachedEmbeddedScriptOperation() {
+    void verifyCachedEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
@@ -103,7 +103,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyNoCachedExternalScriptOperation() {
+    void verifyNoCachedExternalScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -118,7 +118,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyCachedExternalScriptOperation() {
+    void verifyCachedExternalScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
@@ -136,7 +136,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyBadExternalScriptOperation() {
+    void verifyBadExternalScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
@@ -152,7 +152,7 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    public void verifyBadEmbeddedScriptOperation() {
+    void verifyBadEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
@@ -164,6 +164,6 @@ public class DefaultAttributeDefinitionTests {
             .build();
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
-        assertNull(values);
+        assertTrue(values.isEmpty());
     }
 }

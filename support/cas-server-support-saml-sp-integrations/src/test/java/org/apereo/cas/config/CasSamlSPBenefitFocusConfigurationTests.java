@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.benefit-focus.name-id-attribute=cn",
     "cas.saml-sp.benefit-focus.name-id-format=transient"
 })
-public class CasSamlSPBenefitFocusConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPBenefitFocusConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.http-client.host-name-verifier=none"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultCassandraSessionFactoryTests {
+class DefaultCassandraSessionFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -46,7 +46,7 @@ public class DefaultCassandraSessionFactoryTests {
     private CasSSLContext casSslContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cassandra = casProperties.getAuthn().getCassandra();
         val factory = new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
         assertNotNull(factory.getCassandraTemplate());

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationFailureActionTests {
+class MultifactorAuthenticationFailureActionTests {
     private static class BaseMultifactorActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
@@ -58,7 +58,7 @@ public class MultifactorAuthenticationFailureActionTests {
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
 
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
             val event = mfaFailureAction.execute(context);
             assertEquals(transitionId, event.getId());
         }
@@ -66,9 +66,9 @@ public class MultifactorAuthenticationFailureActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnavailableModes extends BaseMultifactorActionTests {
+    class UnavailableModes extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
             executeAction(MultifactorAuthenticationProviderFailureModes.NONE, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
             executeAction(MultifactorAuthenticationProviderFailureModes.UNDEFINED, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
@@ -77,18 +77,18 @@ public class MultifactorAuthenticationFailureActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class OpenMode extends BaseMultifactorActionTests {
+    class OpenMode extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.OPEN, null, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
     }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class PhantomMode extends BaseMultifactorActionTests {
+    class PhantomMode extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED,
                 MultifactorAuthenticationProviderFailureModes.PHANTOM, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }

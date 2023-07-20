@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcResponseModeQueryJwtBuilderTests {
+class OidcResponseModeQueryJwtBuilderTests {
 
     @TestPropertySource(properties = {
         "cas.authn.oidc.response.crypto.signing-enabled=false",
@@ -31,9 +31,9 @@ public class OidcResponseModeQueryJwtBuilderTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DisabledTests extends AbstractOidcTests {
+    class DisabledTests extends AbstractOidcTests {
         @Test
-        public void verifyResponseModeWithoutCrypto() throws Exception {
+        void verifyResponseModeWithoutCrypto() throws Exception {
             val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);
@@ -49,9 +49,9 @@ public class OidcResponseModeQueryJwtBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyResponseModeForService() throws Exception {
+        void verifyResponseModeForService() throws Exception {
             val registeredService = getOidcRegisteredService("client");
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);
@@ -66,7 +66,7 @@ public class OidcResponseModeQueryJwtBuilderTests {
         }
 
         @Test
-        public void verifyResponseModeForDefault() throws Exception {
+        void verifyResponseModeForDefault() throws Exception {
             val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);

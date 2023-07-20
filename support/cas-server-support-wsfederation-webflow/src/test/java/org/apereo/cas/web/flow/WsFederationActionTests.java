@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.wsfed[0].identity-attribute=upn"
     })
 @Tag("WebflowActions")
-public class WsFederationActionTests {
+class WsFederationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WS_FEDERATION)
     protected Action wsFederationAction;
 
     @Test
-    public void verifyRequestOperation() throws Exception {
+    void verifyRequestOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

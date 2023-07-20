@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests {@link InweboCheckUserAction}.
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboCheckUserActionTests extends BaseActionTests {
+class InweboCheckUserActionTests extends BaseInweboActionTests {
 
     private static final String SITE_ALIAS = "7845zesf357dsq89s74za6z4e5df";
     private static final int USER_ID = 123456;
@@ -53,7 +53,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyNoUser() {
+    void verifyNoUser() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, 0));
 
         val event = action.doExecute(requestContext);
@@ -64,7 +64,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyInweboException() {
+    void verifyInweboException() {
         when(service.loginSearchQuery(LOGIN)).thenThrow(new RuntimeException());
 
         val event = action.doExecute(requestContext);
@@ -75,7 +75,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUserBlocked() {
+    void verifyUserBlocked() {
         val loginSearch = loginSearchOk(3, USER_ID);
         loginSearch.setUserStatus(1);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearch);
@@ -88,7 +88,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUserNotRegisteredVA() {
+    void verifyUserNotRegisteredVA() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -99,7 +99,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUserNotRegisteredMA() {
+    void verifyUserNotRegisteredMA() {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
@@ -111,7 +111,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPush() {
+    void verifyPush() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -122,7 +122,19 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUnexpectedStatus2() {
+    void verifyPushAuto() {
+        inwebo.setPushAuto(false);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(SELECT, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(VA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
+    void verifyUnexpectedStatus2() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -133,7 +145,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUnexpectedStatus3() {
+    void verifyUnexpectedStatus3() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -144,7 +156,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyBrowserVA() {
+    void verifyBrowserVA() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -155,7 +167,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyBrowserMA() {
+    void verifyBrowserMA() {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
@@ -167,7 +179,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAndBrowserVA() {
+    void verifyPushAndBrowserVA() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -178,7 +190,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAndBrowserMA() {
+    void verifyPushAndBrowserMA() {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -190,7 +202,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAndBrowserNone() {
+    void verifyPushAndBrowserNone() {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -202,7 +214,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushDisabledAndBrowserVA() {
+    void verifyPushDisabledAndBrowserVA() {
         inwebo.setPushEnabled(false);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -214,7 +226,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushDisabledAndBrowserMA() {
+    void verifyPushDisabledAndBrowserMA() {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
@@ -227,7 +239,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushDisabledAndBrowserNone() {
+    void verifyPushDisabledAndBrowserNone() {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));

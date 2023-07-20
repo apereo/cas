@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
-public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     @Test
-    public void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Exception {
         val resolver = getGroovyResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
@@ -32,7 +32,7 @@ public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    public void verifyResolverDoesNotSupport() throws Exception {
+    void verifyResolverDoesNotSupport() throws Exception {
         val resolver = getGroovyResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setMetadataLocation("file:UnknownFile.xyz");
@@ -40,7 +40,7 @@ public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    public void verifyResolverMissingResource() throws Exception {
+    void verifyResolverMissingResource() throws Exception {
         val resolver = getGroovyResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setMetadataLocation("file:/doesnotexist/UnknownScript.groovy");
@@ -49,7 +49,7 @@ public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Exception {
         val resolver = getGroovyResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setName("TestShib");

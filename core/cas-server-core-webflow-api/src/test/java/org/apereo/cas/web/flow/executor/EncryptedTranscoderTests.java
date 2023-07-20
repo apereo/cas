@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 @Tag("Webflow")
-public class EncryptedTranscoderTests {
+class EncryptedTranscoderTests {
 
     public static Stream<Arguments> getParameters() throws Exception {
         val ksFactory = new KeyStoreFactoryBean();
@@ -80,25 +80,25 @@ public class EncryptedTranscoderTests {
     }
 
     @Test
-    public void verifyBadEncoding() throws Exception {
+    void verifyBadEncoding() throws Exception {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNotNull(encoder.encode(null));
     }
 
     @Test
-    public void verifyNotSerializable() throws Exception {
+    void verifyNotSerializable() throws Exception {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNull(encoder.encode(new Object()));
     }
 
     @Test
-    public void verifyBadDecoding() {
+    void verifyBadDecoding() {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertThrows(IOException.class, () -> encoder.decode(null));
     }
 
     @Test
-    public void verifyBadCipher() {
+    void verifyBadCipher() {
         val bean = mock(CipherBean.class);
         when(bean.decrypt(any())).thenThrow(IllegalArgumentException.class);
         when(bean.encrypt(any())).thenThrow(IllegalArgumentException.class);
@@ -108,7 +108,7 @@ public class EncryptedTranscoderTests {
     }
 
     @Test
-    public void verifyProxy() {
+    void verifyProxy() {
         val bean = mock(CipherBean.class);
         val factory = new ProxyFactoryBean();
         factory.setTargetClass(CipherBean.class);

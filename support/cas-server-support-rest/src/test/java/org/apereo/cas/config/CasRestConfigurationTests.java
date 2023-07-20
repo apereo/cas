@@ -1,14 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.rest.config.CasCoreRestConfiguration;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -57,14 +50,14 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableWebMvc
 @Tag("CasConfiguration")
-public class CasRestConfigurationTests {
+class CasRestConfigurationTests {
 
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
     private TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(ticketGrantingTicketResourceEntityResponseFactory);
     }
 }

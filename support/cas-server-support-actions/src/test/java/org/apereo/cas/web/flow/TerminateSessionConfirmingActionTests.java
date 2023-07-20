@@ -35,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.logout.redirect-url=https://github.com"
 })
 @Tag("WebflowActions")
-public class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests {
+class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     private Action action;
 
     @Test
-    public void verifyTerminateActionConfirmed() throws Exception {
+    void verifyTerminateActionConfirmed() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         Objects.requireNonNull(request.getSession(true)).setAttribute(Pac4jConstants.REQUESTED_URL, "https://github.com");
@@ -52,7 +52,7 @@ public class TerminateSessionConfirmingActionTests extends AbstractWebflowAction
     }
 
     @Test
-    public void verifyTerminateActionRequests() throws Exception {
+    void verifyTerminateActionRequests() throws Exception {
         val tgt = new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication());
         getTicketRegistry().addTicket(tgt);
         val context = new MockRequestContext();
@@ -68,7 +68,7 @@ public class TerminateSessionConfirmingActionTests extends AbstractWebflowAction
     }
 
     @Test
-    public void verifyTerminateActionConfirming() throws Exception {
+    void verifyTerminateActionConfirming() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

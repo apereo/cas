@@ -32,13 +32,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowEvents")
-public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyEmptyOperation() {
+    void verifyEmptyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -91,7 +91,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

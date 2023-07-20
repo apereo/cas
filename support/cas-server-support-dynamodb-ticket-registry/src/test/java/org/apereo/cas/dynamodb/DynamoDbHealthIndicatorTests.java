@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
+class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
 
     @Autowired
     @Qualifier("dynamoDbHealthIndicator")
     private HealthIndicator dynamoDbHealthIndicator;
 
     @Test
-    public void verifyHealthOperation() throws Exception {
+    void verifyHealthOperation() throws Exception {
         val health = dynamoDbHealthIndicator.health();
         val section = health.getDetails();
         assertTrue(section.containsKey("proxyTicketsTable"));

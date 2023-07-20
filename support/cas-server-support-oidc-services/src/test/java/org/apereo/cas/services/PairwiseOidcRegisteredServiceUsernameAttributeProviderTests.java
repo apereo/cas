@@ -16,17 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
+class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     @Test
-    public void verifyNonCompatibleService() {
+    void verifyNonCompatibleService() {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
-        val uid = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"))
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .build();
+        val uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
     }
 
     @Test
-    public void verifyUndefinedOrPublicSubjectType() {
+    void verifyUndefinedOrPublicSubjectType() {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
 
         val registeredService = new OidcRegisteredService();
@@ -36,20 +41,26 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         registeredService.setClientSecret("something");
 
         registeredService.setSubjectType(StringUtils.EMPTY);
-        var uid = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(), registeredService);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .build();
+        var uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
 
         registeredService.setSubjectType(null);
-        uid = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(), registeredService);
+        uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
 
         registeredService.setSubjectType(OidcSubjectTypes.PUBLIC.getType());
-        uid = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(), registeredService);
+        uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
     }
 
     @Test
-    public void verifySubjectType() {
+    void verifySubjectType() {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
         provider.setPersistentIdGenerator(new ShibbolethCompatiblePersistentIdGenerator("cpaOl1pwGZ439!!"));
 
@@ -60,12 +71,18 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
         registeredService.setClientSecret("something");
         registeredService.setSubjectType(OidcSubjectTypes.PAIRWISE.getType());
 
-        val uid = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(), registeredService);
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .build();
+
+        val uid = provider.resolveUsername(usernameContext);
         assertEquals("9IOlxFj2XgfhkNJieynbw+Pm+4E=", uid);
 
         registeredService.setSectorIdentifierUri(null);
         registeredService.setServiceId("https://sso.example.org/oidc");
-        val uid1 = provider.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser"), RegisteredServiceTestUtils.getService(), registeredService);
+        val uid1 = provider.resolveUsername(usernameContext);
         assertEquals(uid1, uid);
     }
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurati
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -28,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -67,14 +67,6 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         return handleProfileRequest(response, request);
     }
 
-    /**
-     * Handle callback profile request post.
-     *
-     * @param response the response
-     * @param request  the request
-     * @return the model and view
-     * @throws Exception the exception
-     */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Exception {
@@ -129,11 +121,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
 
-        val asserted = (Assertion) assertion.getContext().get(Assertion.class.getName());
+        val asserted = assertion.getAssertion();
         Objects.requireNonNull(asserted, "Validation assertion cannot be null");
         return Optional.of(AuthenticatedAssertionContext.builder()
             .name(assertion.getPrincipal().getId())
-            .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.primaryAuthentication().getAuthenticationDate()))
+            .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.getPrimaryAuthentication().getAuthenticationDate()))
             .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
             .build());
     }

@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenCoreConfiguration.class
 })
 @Tag("WebflowConfig")
-public class QRAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class QRAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

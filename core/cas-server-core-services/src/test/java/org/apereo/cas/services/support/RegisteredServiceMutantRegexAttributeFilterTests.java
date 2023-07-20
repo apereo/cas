@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceMutantRegexAttributeFilterTests {
+class RegisteredServiceMutantRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RegisteredServiceMutantRegexAttributeFilterTests.json");
 
@@ -50,7 +50,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifyPatternFilter() {
+    void verifyPatternFilter() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size());
@@ -58,7 +58,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter =
             SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
@@ -66,7 +66,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
+    void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         this.filter.setPatterns(Collections.singletonMap("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
         this.filter.setExcludeUnmappedAttributes(true);
         this.filter.setCaseInsensitive(true);
@@ -76,7 +76,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    public void verifyMutantPatternValues() {
+    void verifyMutantPatternValues() {
         this.filter.setPatterns(Collections.singletonMap("memberOf",
             CollectionUtils.wrapList("^mar(.+)(101) -> prefix$1$2",
                 "^mat(.+)(101) -> postfix$1$2")));

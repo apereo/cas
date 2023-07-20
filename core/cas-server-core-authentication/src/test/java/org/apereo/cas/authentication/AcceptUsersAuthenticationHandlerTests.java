@@ -16,7 +16,6 @@ import javax.security.auth.login.FailedLoginException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class AcceptUsersAuthenticationHandlerTests {
+class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
 
     private static final String RUTGERS = "rutgers";
@@ -45,7 +44,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsSpecialCharacters() throws Exception {
+    void verifySupportsSpecialCharacters() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("brian");
         credential.assignPassword("t�st");
@@ -53,7 +52,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() {
+    void verifySupportsProperUserCredentials() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
         credential.assignPassword(RUTGERS);
@@ -61,7 +60,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDoesntSupportBadUserCredentials() {
+    void verifyDoesntSupportBadUserCredentials() {
         try {
             assertFalse(getAuthenticationHandler()
                 .supports(new HttpBasedServiceCredential(new URL("http://www.rutgers.edu"),
@@ -72,20 +71,20 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticatesUserInMap() {
+    void verifyAuthenticatesUserInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
         credential.assignPassword(RUTGERS);
 
         try {
             assertEquals(SCOTT, getAuthenticationHandler().authenticate(credential, mock(Service.class)).getPrincipal().getId());
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
     }
 
     @Test
-    public void verifyFailsUserNotInMap() {
+    void verifyFailsUserNotInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fds");
         credential.assignPassword(RUTGERS);
@@ -94,7 +93,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserName() {
+    void verifyFailsNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword("user");
@@ -103,7 +102,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserNameAndPassword() {
+    void verifyFailsNullUserNameAndPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword(null);
@@ -112,7 +111,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullPassword() {
+    void verifyFailsNullPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(SCOTT);
         credential.assignPassword(null);
@@ -121,7 +120,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyEmptyUsers() {
+    void verifyEmptyUsers() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of());
         assertThrows(FailedLoginException.class,
@@ -129,7 +128,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoPasswordStrategy() {
+    void verifyNoPasswordStrategy() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
         handler.setPasswordPolicyHandlingStrategy(null);
@@ -139,7 +138,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUserTransforms() {
+    void verifyUserTransforms() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
         handler.setPrincipalNameTransformer(user -> null);
@@ -149,7 +148,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPasswordTransform() {
+    void verifyPasswordTransform() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
         handler.setPasswordEncoder(new PasswordEncoder() {
@@ -169,7 +168,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyCredentialPredicate() {
+    void verifyCredentialPredicate() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
         handler.setCredentialSelectionPredicate(null);

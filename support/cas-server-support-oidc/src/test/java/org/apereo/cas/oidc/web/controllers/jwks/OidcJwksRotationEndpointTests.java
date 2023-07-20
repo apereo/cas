@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("ActuatorEndpoint")
 @Import(AbstractOidcTests.SharedTestConfiguration.class)
-public class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
+class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwksRotationEndpoint")
     private OidcJwksRotationEndpoint jwksRotationEndpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(jwksRotationEndpoint.handleRotation());
         assertNotNull(jwksRotationEndpoint.handleRevocation());
     }

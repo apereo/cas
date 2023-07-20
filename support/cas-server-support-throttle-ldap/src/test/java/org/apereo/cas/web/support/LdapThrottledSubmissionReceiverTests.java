@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
-public class LdapThrottledSubmissionReceiverTests {
+class LdapThrottledSubmissionReceiverTests {
     private static final int LDAP_PORT = 11389;
 
     @Autowired
@@ -50,7 +50,7 @@ public class LdapThrottledSubmissionReceiverTests {
     
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=admin,dc=example,dc=org", "P@ssw0rd");
         LdapIntegrationTestsOperations.populateEntries(localhost,
@@ -60,7 +60,7 @@ public class LdapThrottledSubmissionReceiverTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             val submission = ThrottledSubmission.builder().username("throttled").build();
             ldapThrottledSubmissionReceiver.receive(submission);

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("cxfServlet")
     private ServletRegistrationBean cxfServlet;
@@ -38,12 +38,12 @@ public class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCo
     private ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer;
 
     @Test
-    public void verifyEndpoints() {
+    void verifyEndpoints() {
         assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(cxfServlet);
         assertNotNull(transportSTSProviderBean);
         assertNotNull(casRealm);

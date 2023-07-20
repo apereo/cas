@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.errors.groovy.location=classpath:GroovyCasWebflowAuthenticationExceptionHandler.groovy"
 })
 @Tag("Groovy")
-public class GroovyCasWebflowAuthenticationExceptionHandlerTests {
+class GroovyCasWebflowAuthenticationExceptionHandlerTests {
     @Autowired
     @Qualifier("groovyCasWebflowAuthenticationExceptionHandler")
     private CasWebflowExceptionHandler groovyCasWebflowAuthenticationExceptionHandler;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(groovyCasWebflowAuthenticationExceptionHandler);
 
         val context = new MockRequestContext();

@@ -22,7 +22,7 @@ thirdPartyStartsWith="encrypt.key-store"
 thirdPartyExactMatch="spring.cloud.config.server.encrypt"
 %}
 
-<div class="alert alert-info"><strong>JCE Requirements</strong><p>To use the encryption and decryption
+<div class="alert alert-info">:information_source: <strong>JCE Requirements</strong><p>To use the encryption and decryption
 features you need the full-strength "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files"
 installed in your JVM version (if it’s not there by default).</p></div>
 
@@ -34,7 +34,7 @@ curl -u casuser:Mellon https://config.server.endpoint/encrypt -d sensitiveValue
 
 Then, copy the encrypted setting into your CAS configuration using the method specified below.
 
-<div class="alert alert-info"><strong>URL Encoding</strong><p>Be careful with <code>curl</code>.
+<div class="alert alert-info">:information_source: <strong>URL Encoding</strong><p>Be careful with <code>curl</code>.
 You may have to use <code>--data-urlencode</code> or set an explicit <code>Content-Type: text/plain</code>
 to account for special characters such as <code>+</code>.</p></div>
 

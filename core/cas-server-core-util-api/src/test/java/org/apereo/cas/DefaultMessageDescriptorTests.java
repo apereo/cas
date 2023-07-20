@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Simple")
-public class DefaultMessageDescriptorTests {
+class DefaultMessageDescriptorTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultMessageDescriptorTests.json");
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val d = new DefaultMessageDescriptor("sample.code");
         MAPPER.writeValue(JSON_FILE, d);
         val read = MAPPER.readValue(JSON_FILE, MessageDescriptor.class);

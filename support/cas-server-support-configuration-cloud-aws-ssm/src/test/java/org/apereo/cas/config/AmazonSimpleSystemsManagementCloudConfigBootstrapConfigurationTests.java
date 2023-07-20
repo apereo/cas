@@ -16,6 +16,7 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.ParameterType;
 import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
-public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
+class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
     static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";
@@ -62,16 +63,25 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests
 
         val builder = new AmazonEnvironmentAwareClientBuilder(
             AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val client = builder.build(SsmClient.builder(), SsmClient.class);
-        var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users").value(STATIC_AUTHN_USERS).overwrite(Boolean.TRUE).build();
-        client.putParameter(request);
+        try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
+            var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users")
+                .type(ParameterType.STRING)
+                .value(STATIC_AUTHN_USERS)
+                .overwrite(Boolean.TRUE)
+                .build();
+            client.putParameter(request);
 
-        request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name").value("Example").overwrite(Boolean.TRUE).build();
-        client.putParameter(request);
+            request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name")
+                .type(ParameterType.STRING)
+                .value("Example")
+                .overwrite(Boolean.TRUE)
+                .build();
+            client.putParameter(request);
+        }
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
         assertEquals("Example", casProperties.getAuthn().getAccept().getName());
     }

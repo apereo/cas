@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata",
     "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE"
 })
-public class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;
@@ -54,7 +54,7 @@ public class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests exten
     }
 
     @Test
-    public void verifyPostSignRequest() throws Exception {
+    void verifyPostSignRequest() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ public class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests exten
     }
 
     @Test
-    public void verifyUnknownBindingLocation() throws Exception {
+    void verifyUnknownBindingLocation() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();

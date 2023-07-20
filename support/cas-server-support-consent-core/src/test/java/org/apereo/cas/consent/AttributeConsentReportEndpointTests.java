@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.attributeConsent.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import(CasConsentCoreConfiguration.class)
-public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
+class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -48,7 +48,7 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,
@@ -67,7 +67,7 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
     }
 
     @Test
-    public void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Exception {
         val uid = UUID.randomUUID().toString();
         val toSave = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,
@@ -75,6 +75,6 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
         val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request).getStatusCode());
     }
 }

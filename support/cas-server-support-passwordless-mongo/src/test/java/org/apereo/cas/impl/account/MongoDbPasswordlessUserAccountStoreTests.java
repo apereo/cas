@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTests {
+class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTests {
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val account = PasswordlessUserAccount.builder()
             .email("passwordlessuser@example.org")
             .phone("1234567890")

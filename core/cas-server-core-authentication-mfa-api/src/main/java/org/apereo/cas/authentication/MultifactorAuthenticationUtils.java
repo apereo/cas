@@ -106,15 +106,14 @@ public class MultifactorAuthenticationUtils {
         final MultifactorAuthenticationProvider provider,
         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
-        if (attributeValue instanceof Collection) {
+        if (attributeValue instanceof Collection values) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
-            val values = (Collection<String>) attributeValue;
             val events = new HashSet<Event>();
             values.forEach(value -> {
                 val id = provider.getId();
                 try {
                     LOGGER.trace("Testing attribute value [{}] against multifactor provider [{}]", value, provider);
-                    if (predicate.test(value, provider)) {
+                    if (predicate.test(value.toString(), provider)) {
                         val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
                         LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);
                         val event = validateEventIdForMatchingTransitionInContext(id, context, attributeMap);

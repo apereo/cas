@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")

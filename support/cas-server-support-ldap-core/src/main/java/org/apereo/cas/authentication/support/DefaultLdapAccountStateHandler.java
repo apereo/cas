@@ -12,9 +12,9 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -53,7 +53,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     /**
      * Map of account state error to CAS authentication exception.
      */
-    protected Map<AccountState.Error, LoginException> errorMap;
+    protected final Map<AccountState.Error, LoginException> errorMap;
 
     @Setter
     private Map<String, Class<? extends LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
@@ -201,14 +201,14 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * This handles ad-hoc password policies.
      *
      * @param response the authentication response.
+     * @throws LoginException the login exception
      */
-    @SneakyThrows
-    protected void handlePolicyAttributes(final AuthenticationResponse response) {
+    protected void handlePolicyAttributes(final AuthenticationResponse response) throws LoginException {
         val attributes = response.getLdapEntry().getAttributes();
         for (val attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
                 val clazz = this.attributesToErrorMap.get(attr.getName());
-                throw clazz.getDeclaredConstructor().newInstance();
+                throw Unchecked.supplier(() -> clazz.getDeclaredConstructor().newInstance()).get();
             }
         }
     }

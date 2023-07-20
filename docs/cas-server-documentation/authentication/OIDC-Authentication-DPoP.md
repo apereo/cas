@@ -23,7 +23,7 @@ The SPA authentication flow with a DPoP token can be summarized as such:
 
 - The SPA generates a new RSA or EC key pair in such a way so the private key parameters cannot be exported from the browser.
 - To request a DPoP access token the SPA generates a one-time-use JWT signed with the private key. The function of this JWT is to demonstrate possession of the key. Its header includes the public parameters of the signing key in JWK format. 
-- The SPA makes the usual token request to CAS but to trigger issue of a DPoP access token the proof JWT must be included in a HTTP request header called *DPoP*.
+- The SPA makes the usual token request to CAS but to trigger issue of a DPoP access token the proof JWT must be included in an HTTP request header called *DPoP*.
 - If the DPoP proof is valid and signed with a supported JWS algorithms the token response will appear in the usual format, but with the token type set to *DPoP*.
 
 To access a protected resource with a DPoP token (such as the `profile` endpoint in CAS) the client needs 

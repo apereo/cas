@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceConsentPolicyTests {
+class RegisteredServiceConsentPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new RegisteredServiceConsentPolicy() {
             @Serial
             private static final long serialVersionUID = -4878764188998002053L;

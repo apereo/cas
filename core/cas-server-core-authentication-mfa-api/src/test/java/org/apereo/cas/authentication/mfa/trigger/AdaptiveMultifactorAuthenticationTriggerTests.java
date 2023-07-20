@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 
     @Test
     @Order(0)

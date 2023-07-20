@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
+class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
     private static final String STATE = UUID.randomUUID().toString();
 
     private static final String NONCE = UUID.randomUUID().toString();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
         servicesManager.save(registeredService);
 

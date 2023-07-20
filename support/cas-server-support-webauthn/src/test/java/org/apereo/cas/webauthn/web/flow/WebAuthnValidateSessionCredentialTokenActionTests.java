@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAttestationTrustSourceFidoProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,13 +38,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.mfa.web-authn.core.trust-source.fido.legal-header=" + WebAuthnMultifactorAttestationTrustSourceFidoProperties.DEFAULT_LEGAL_HEADER,
         "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org",
         "cas.authn.mfa.web-authn.core.allow-primary-authentication=true"
     })
-public class WebAuthnValidateSessionCredentialTokenActionTests {
+class WebAuthnValidateSessionCredentialTokenActionTests {
     private static final String SAMPLE_TOKEN = "mO2ST2ZLIZCP6VmGDkiIX-_-VNXfOJQ6TjCwUFSCA3Y";
 
     @Autowired
@@ -63,20 +65,20 @@ public class WebAuthnValidateSessionCredentialTokenActionTests {
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
     
     @Test
-    public void verifyMissingToken() throws Exception {
+    void verifyMissingToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         val result = webAuthnValidateSessionCredentialTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, result.getId());
     }
 
     @Test
-    public void verifyEmptySessionForToken() throws Exception {
+    void verifyEmptySessionForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("token", SAMPLE_TOKEN);
@@ -84,13 +86,13 @@ public class WebAuthnValidateSessionCredentialTokenActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         val result = webAuthnValidateSessionCredentialTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, result.getId());
     }
 
     @Test
-    public void verifyNoUserForToken() throws Exception {
+    void verifyNoUserForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -101,14 +103,14 @@ public class WebAuthnValidateSessionCredentialTokenActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
 
         val result = webAuthnValidateSessionCredentialTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, result.getId());
     }
 
     @Test
-    public void verifySuccessAuthForToken() throws Exception {
+    void verifySuccessAuthForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -134,7 +136,7 @@ public class WebAuthnValidateSessionCredentialTokenActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
 
         val result = webAuthnValidateSessionCredentialTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());

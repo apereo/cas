@@ -1,3 +1,3 @@
-org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration
-org.apereo.cas.web.flow.config.CasWebflowContextConfiguration
-org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration
+org.apereo.cas.config.CasCoreWebflowConfiguration
+org.apereo.cas.config.CasWebflowContextConfiguration
+org.apereo.cas.config.CasWebflowAccountProfileConfiguration

@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class OidcMessageSanitizerTests extends AbstractOidcTests {
+class OidcMessageSanitizerTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier(MessageSanitizer.BEAN_NAME)
     private MessageSanitizer messageSanitizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         var results = messageSanitizer.sanitize("ticket OC-1-abcdefg created");
         assertTrue(results.contains("OC-1-********"));
         results = messageSanitizer.sanitize("ticket AT-1-abcdefg created");

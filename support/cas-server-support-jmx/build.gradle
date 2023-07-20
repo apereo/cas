@@ -1,4 +1,12 @@
 description = "Apereo CAS JMX Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "JMX Monitoring",
+            aliases: ["jmx"]
+    ]
+}
 dependencies {
 
     implementation project(":core:cas-server-core-configuration-api")

@@ -34,19 +34,19 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.jwtTicketSigningPublicKey.enabled=true"
     })
 @Tag("ActuatorEndpoint")
-public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
+class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")
     private JwtTokenCipherSigningPublicKeyEndpoint endpoint;
 
     @Test
-    public void verifyOperationWithoutService() throws Exception {
+    void verifyOperationWithoutService() throws Exception {
         val publicKey = endpoint.fetchPublicKey(StringUtils.EMPTY);
         assertEquals(StringUtils.EMPTY, publicKey);
     }
 
     @Test
-    public void verifyOperationByService() throws Exception {
+    void verifyOperationByService() throws Exception {
         val service = RegisteredServiceTestUtils.getService("https://publickey.service");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 

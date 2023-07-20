@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.azure.cosmos.CosmosContainer;
@@ -11,7 +13,6 @@ import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.google.common.collect.Iterables;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,6 @@ import java.util.stream.StreamSupport;
  * @since 7.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     /**
      * Partition key.
@@ -44,12 +44,16 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     private final List<CosmosContainer> cosmosContainers;
 
-    private final TicketCatalog ticketCatalog;
+    public CosmosDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                  final TicketCatalog ticketCatalog, final List<CosmosContainer> cosmosContainers) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.cosmosContainers = cosmosContainers;
+    }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            val encTicketId = encodeTicketId(ticketId);
+            val encTicketId = digestIdentifier(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
             if (metadata == null || StringUtils.isBlank(encTicketId)) {
                 return null;
@@ -117,9 +121,9 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
-        val encTicketId = encodeTicketId(ticketIdToDelete);
-        val metadata = ticketCatalog.find(ticketIdToDelete);
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
+        val encTicketId = digestIdentifier(ticketToDelete.getId());
+        val metadata = ticketCatalog.find(ticketToDelete);
         val container = getTicketContainer(metadata);
         val result = container.deleteItem(encTicketId, new PartitionKey(metadata.getPrefix()), new CosmosItemRequestOptions());
         return HttpStatus.valueOf(result.getStatusCode()).is2xxSuccessful() ? 1 : 0;
@@ -164,7 +168,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             return CosmosDbTicketDocument.builder()
                 .id(encTicket.getId())
                 .type(metadata.getImplementationClass().getName())
-                .principal(encodeTicketId(getPrincipalIdFrom(ticket)))
+                .principal(digestIdentifier(getPrincipalIdFrom(ticket)))
                 .timeToLive(ttl)
                 .ticket(encTicket)
                 .prefix(metadata.getPrefix())

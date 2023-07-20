@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("Tickets")
-public class ServiceTicketGeneratorAuthorityTests {
+class ServiceTicketGeneratorAuthorityTests {
     @Test
-    public void verifyAllow() {
+    void verifyAllow() {
         val allow = ServiceTicketGeneratorAuthority.allow();
         assertTrue(allow.supports(mock(AuthenticationResult.class), mock(Service.class)));
         assertTrue(allow.shouldGenerate(mock(AuthenticationResult.class), mock(Service.class)));

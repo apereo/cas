@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @NoArgsConstructor
 @Tag("MFATrustedDevices")
-public class ClientIpDeviceFingerprintComponentManagerTests {
+class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
-    public void verifyClientIpFingerprintNotFound() {
+    void verifyClientIpFingerprintNotFound() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
@@ -33,11 +33,11 @@ public class ClientIpDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    public void verifyClientIpFingerprintFound() {
+    void verifyClientIpFingerprintFound() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");
-        val clientInfo = new ClientInfo(request);
+        val clientInfo = ClientInfo.from(request);
         ClientInfoHolder.setClientInfo(clientInfo);
         val ex = new ClientIpDeviceFingerprintComponentManager();
         assertTrue(ex.extractComponent("casuser", request, response).isPresent());

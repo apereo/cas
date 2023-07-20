@@ -13,7 +13,7 @@ to participation in single sign-on sessions, creating SSO cookies, etc.
 
 ## Disable Service SSO Access
 
-Participation in existing single signon sessions can be disabled on a per-application basis. For example,
+Participation in existing single sign-on sessions can be disabled on a per-application basis. For example,
 the following service will be challenged to present credentials every time, thereby not using SSO:
 
 ```json
@@ -55,10 +55,12 @@ Acceptable values for `createCookieOnRenewedAuthentication` are `TRUE`, `FALSE` 
 Additional policies can be assigned to each service definition to control participation of an application in an existing single sign-on session.
 If conditions hold true, CAS shall honor the existing SSO session and will not challenge the user for credentials. If conditions fail, then
 user may be asked for credentials. Such policies can be chained together and executed in order.
+        
+{% tabs ssoservicepolicy %}
 
-### Authentication Date
+{% tab ssoservicepolicy Authentication Date %}
 
-Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge 
+Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge
 the user for credentials and ignore the existing session.
 
 ```json
@@ -84,13 +86,15 @@ the user for credentials and ignore the existing session.
 }
 ```
 
-### Last Used Time
+{% endtab %}
 
-Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the 
+{% tab ssoservicepolicy Last Used Time %}
+
+Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the
 user for credentials and ignore the existing session.
 
 The policy calculation here typically includes evaluating the last-used-time of the ticket-granting ticket linked to the SSO session to check whether
-the ticket continues to actively issue service tickets, etc. 
+the ticket continues to actively issue service tickets, etc.
 
 ```json
 {
@@ -115,7 +119,47 @@ the ticket continues to actively issue service tickets, etc.
 }
 ```
 
-## Custom 
+{% endtab %}
+
+{% tab ssoservicepolicy Attributes %}
+
+The policy calculation here typically includes evaluating all authentication and principal attributes linked to the SSO session to check whether
+the ticket continues to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal
+and authentication attribute and for each match, the attribute value is then examined against the defined pattern in the policy.
+Successful matches allow for SSO participation. The `requireAllAttributes` flag controls whether *all* attribute conditions defined the policy
+must produce successful matches. 
+
+Note that the regular expression matching strategy is defined as *non-eager* and both attribute names
+and value patterns defined in the policy are able to support the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "singleSignOnParticipationPolicy":
+    {
+      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
+      "policies": [ "java.util.ArrayList",
+        [
+          {
+            "@class":"org.apereo.cas.services.AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy",
+            "attributes":{
+                "@class": "java.util.HashMap",
+                "cn": [ "java.util.ArrayList", ["\\d/\\d/\\d"] ]
+            },
+            "requireAllAttributes": false
+          }
+        ]
+      ]
+    }
+}
+```
+
+{% endtab %}
+
+{% tab ssoservicepolicy Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
 
@@ -128,3 +172,6 @@ public SingleSignOnParticipationStrategyConfigurer customSsoConfigurer() {
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
+{% endtab %}
+
+{% endtabs %}

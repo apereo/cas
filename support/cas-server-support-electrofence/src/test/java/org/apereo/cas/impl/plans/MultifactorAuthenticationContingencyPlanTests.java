@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class MultifactorAuthenticationContingencyPlanTests {
+class MultifactorAuthenticationContingencyPlanTests {
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -44,7 +44,7 @@ public class MultifactorAuthenticationContingencyPlanTests {
     }
 
     @Test
-    public void verifyManyProviders() {
+    void verifyManyProviders() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -52,7 +52,7 @@ public class MultifactorAuthenticationContingencyPlanTests {
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(appCtx, new TestMultifactorAuthenticationProvider());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(appCtx, new TestMultifactorAuthenticationProvider("mfa-two"));
-        
+
         val plan = new MultifactorAuthenticationContingencyPlan(props, appCtx);
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

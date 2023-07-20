@@ -5,13 +5,12 @@ import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
@@ -21,10 +20,9 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AmazonWebServices")
-public class CloudWatchAppenderSpecTests {
+class CloudWatchAppenderSpecTests {
     private static DescribeLogStreamsResponse createDescribeLogStreamsResult() {
         val logStream = LogStream.builder().logStreamName("test").uploadSequenceToken("test").build();
         return DescribeLogStreamsResponse.builder().logStreams(logStream).build();
@@ -47,21 +45,21 @@ public class CloudWatchAppenderSpecTests {
 
     private static void createLogGroup(final CloudWatchLogsClient logs, final Boolean value) {
         if (value) {
-            Mockito.verify(logs, Mockito.atLeastOnce()).createLogGroup(Mockito.any(CreateLogGroupRequest.class));
+            verify(logs, atLeastOnce()).createLogGroup(ArgumentMatchers.any(CreateLogGroupRequest.class));
         } else {
-            Mockito.verify(logs, Mockito.never()).createLogGroup(Mockito.any(CreateLogGroupRequest.class));
+            verify(logs, never()).createLogGroup(ArgumentMatchers.any(CreateLogGroupRequest.class));
         }
     }
 
     private static void createLogStream(final CloudWatchLogsClient logs, final Boolean value) {
         if (value) {
-            Mockito.verify(logs, Mockito.atLeastOnce()).createLogStream(Mockito.any(CreateLogStreamRequest.class));
+            verify(logs, atLeastOnce()).createLogStream(ArgumentMatchers.any(CreateLogStreamRequest.class));
         } else {
-            Mockito.verify(logs, Mockito.never()).createLogStream(Mockito.any(CreateLogStreamRequest.class));
+            verify(logs, never()).createLogStream(ArgumentMatchers.any(CreateLogStreamRequest.class));
         }
     }
 
-    public static ArrayList<TestCase> generateTestCases() {
+    public static List<TestCase> generateTestCases() {
         val testCases = new ArrayList<TestCase>();
 
         testCases.add(new TestCase(null, null, null, true, true));
@@ -113,18 +111,18 @@ public class CloudWatchAppenderSpecTests {
     @MethodSource("generateTestCases")
     @DisplayName("making sure incoming parameters are set correctly")
     void specTest(final TestCase tC) {
-        var mock = Mockito.mock(CloudWatchLogsClient.class);
+        var mock = mock(CloudWatchLogsClient.class);
         if (tC.logStreamExists) {
-            when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
+            when(mock.describeLogStreams(ArgumentMatchers.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
         }
         if (tC.logGroupExists) {
-            when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
+            when(mock.describeLogGroups(ArgumentMatchers.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
         }
 
         var appender = new CloudWatchAppender("test", "test", "test", "30", null,
             tC.createIfNeeded, tC.createLogGroupIfNeeded, tC.createLogStreamIfNeeded, mock);
         if (tC.throwsException) {
-            Assertions.assertThrows(RuntimeException.class, appender::initialize);
+            assertThrows(RuntimeException.class, appender::initialize);
         } else {
             appender.initialize();
 

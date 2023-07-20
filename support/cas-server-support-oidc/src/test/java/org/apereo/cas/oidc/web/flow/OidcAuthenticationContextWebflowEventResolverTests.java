@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
 @Import(OidcAuthenticationContextWebflowEventResolverTests.OidcAuthenticationContextTestConfiguration.class)
-public class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
+class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
@@ -60,7 +60,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
         request.setLocalAddr("295.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.addParameter(OAuth20Constants.ACR_VALUES, TestMultifactorAuthenticationProvider.ID);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -76,7 +76,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

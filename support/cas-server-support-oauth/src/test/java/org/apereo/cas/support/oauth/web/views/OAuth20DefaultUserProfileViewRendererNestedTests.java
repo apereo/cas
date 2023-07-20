@@ -26,14 +26,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.core.user-profile-view-type=NESTED")
-public class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
+class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("oauthUserProfileViewRenderer")
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
 
     @Test
-    public void verifyNestedOption() {
+    void verifyNestedOption() {
         val map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
             OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, CollectionUtils.wrap("email", "cas@example.org"),
             "something", CollectionUtils.wrapList("something"));

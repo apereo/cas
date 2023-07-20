@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcPushedAuthorizationRequestTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val profile = new CommonProfile();
         profile.setId("casuser");
 

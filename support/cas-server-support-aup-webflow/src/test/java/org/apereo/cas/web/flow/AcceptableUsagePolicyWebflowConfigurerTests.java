@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(CasAcceptableUsagePolicyWebflowConfiguration.class)
 @Tag("WebflowConfig")
-public class AcceptableUsagePolicyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class AcceptableUsagePolicyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

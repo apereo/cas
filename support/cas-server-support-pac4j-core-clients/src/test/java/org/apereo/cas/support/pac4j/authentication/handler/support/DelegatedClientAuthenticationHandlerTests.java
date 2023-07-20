@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("AuthenticationHandler")
-public class DelegatedClientAuthenticationHandlerTests {
+class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
 
@@ -79,41 +79,41 @@ public class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOk() throws Exception {
+    void verifyOk() throws Exception {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
         val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
     @Test
-    public void verifyMissingClient() {
+    void verifyMissingClient() {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
 
         val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
         assertThrows(PreventedException.class, () -> handler.authenticate(cc, mock(Service.class)));
     }
 
     @Test
-    public void verifyOkWithSimpleIdentifier() throws Exception {
+    void verifyOkWithSimpleIdentifier() throws Exception {
         handler.setTypedIdUsed(false);
 
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
         val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }
 
     @Test
-    public void verifyNoProfile() {
+    void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {
-            fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.empty());
+            fbClient.setProfileCreator((callContext, sessionStore) -> Optional.empty());
             handler.authenticate(clientCredential, mock(Service.class));
         });
     }

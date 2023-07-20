@@ -1,10 +1,17 @@
 description = "Apereo CAS SAML Identity Provider Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Identity Provider",
+            aliases: ["saml2"]
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-monitor")
 
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
@@ -68,6 +75,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-consent-core")
 
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")

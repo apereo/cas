@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("X509")
-public class CompositeX509KeyManagerTests {
+class CompositeX509KeyManagerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         val ks = KeyStore.getInstance("JKS");
         ks.load(null, "changeit".toCharArray());
@@ -33,7 +33,7 @@ public class CompositeX509KeyManagerTests {
         val km = kmf.getKeyManagers();
 
         val managers = Arrays.stream(km)
-            .filter(tm -> tm instanceof X509KeyManager)
+            .filter(X509KeyManager.class::isInstance)
             .map(X509KeyManager.class::cast)
             .collect(Collectors.toList());
 

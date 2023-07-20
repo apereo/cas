@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 
 import org.junit.jupiter.api.Tag;
@@ -32,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.core.init-from-json=true"
     }
 )
-public class DomainServicesManagerConfigurationTests {
+class DomainServicesManagerConfigurationTests {
     @Autowired
     @Qualifier("defaultServicesManagerExecutionPlanConfigurer")
     private ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(domainServicesManagerExecutionPlanConfigurer);
     }
 }

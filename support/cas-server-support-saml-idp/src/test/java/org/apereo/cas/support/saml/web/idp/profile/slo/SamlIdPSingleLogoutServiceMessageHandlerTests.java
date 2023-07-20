@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAMLLogout")
-public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler;
@@ -62,7 +62,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         val ctx = SingleLogoutExecutionRequest.builder().ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build();
@@ -71,7 +71,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySendByPost() {
+    void verifySendByPost() {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
 
@@ -81,7 +81,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifyNoSaml() {
+    void verifyNoSaml() {
         val registeredService = getSamlRegisteredServiceForTestShib();
         servicesManager.save(registeredService);
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
@@ -92,7 +92,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySendByRedirect() {
+    void verifySendByRedirect() {
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
@@ -101,7 +101,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySkipLogoutForOriginator() throws Exception {
+    void verifySkipLogoutForOriginator() throws Exception {
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         
@@ -128,7 +128,7 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
     }
 
     @Test
-    public void verifySoap() {
+    void verifySoap() {
         val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
 
         val registeredService = new SamlRegisteredService();

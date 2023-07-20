@@ -9,6 +9,7 @@ import org.jooq.lambda.Unchecked;
 
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * This is {@link InetAddressUtils}.
@@ -62,7 +63,7 @@ public class InetAddressUtils {
     public static String getCasServerHostAddress(final String name) {
         return Unchecked.supplier(() -> {
             val host = getByName(name);
-            return host != null ? host.getHostAddress() : null;
+            return Optional.ofNullable(host).map(InetAddress::getHostAddress).orElse(null);
         }).get();
     }
 }

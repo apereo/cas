@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     private ConfigurableApplicationContext configurableApplicationContext;
 
@@ -62,9 +62,9 @@ public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMu
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val provider = BaseDuoSecurityTests.getDuoSecurityMultifactorAuthenticationProvider();
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         val event = duoNonWebAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

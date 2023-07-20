@@ -1,6 +1,11 @@
 description = "Apereo CAS Cassandra Service Registry"
 ext {
     terminateCompilerOnWarning=false
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "Apache Cassandra Service Registry"
+    ]
 }
 dependencies {
     implementation libraries.cassandra

@@ -1,10 +1,10 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 
+import org.apereo.cas.config.RedisMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.RedisMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 6379)
 @Getter
-public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
     @Qualifier("redisMfaTrustedAuthnTemplate")
@@ -49,12 +49,13 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = redisMfaTrustedAuthnTemplate.scan(key, 0).collect(Collectors.toSet());
-        redisMfaTrustedAuthnTemplate.delete(keys);
+        try (val keys = redisMfaTrustedAuthnTemplate.scan(key, 0)) {
+            redisMfaTrustedAuthnTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test
-    public void verifySetAnExpireByKey() {
+    void verifySetAnExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -66,7 +67,7 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     }
 
     @Test
-    public void verifyMultipleDevicesPerUser() {
+    void verifyMultipleDevicesPerUser() {
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography bis", "fingerprint bis"));
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser2", "geography2", "fingerprint2"));
@@ -77,7 +78,7 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
 
 
     @Test
-    public void verifyExpireByDate() {
+    void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

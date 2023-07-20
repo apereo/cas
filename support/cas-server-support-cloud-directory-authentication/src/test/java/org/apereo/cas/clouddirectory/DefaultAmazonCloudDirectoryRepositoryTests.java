@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AmazonWebServices")
-public class DefaultAmazonCloudDirectoryRepositoryTests {
+class DefaultAmazonCloudDirectoryRepositoryTests {
     private static DefaultAmazonCloudDirectoryRepository getMockCloudDirectoryRepository(final CloudDirectoryClient cloud,
                                                                                          final ListObjectAttributesRequest request) {
         return new DefaultAmazonCloudDirectoryRepository(cloud, new AmazonCloudDirectoryProperties()) {
@@ -57,7 +57,7 @@ public class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -67,7 +67,7 @@ public class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttachment() {
+    void verifyNoAttachment() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().indexAttachments(List.of()).build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -76,7 +76,7 @@ public class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttributeRequest() {
+    void verifyNoAttributeRequest() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();
@@ -86,7 +86,7 @@ public class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttributeResult() {
+    void verifyNoAttributeResult() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationProducerTests {
+class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
     @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
     private DelegatedClientIdentityProviderConfigurationProducer producer;
@@ -42,7 +42,7 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
     private ServicesManager servicesManager;
     
     @Test
-    public void verifyOperationAutoRedirect() {
+    void verifyOperationAutoRedirect() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Test
-    public void verifyOperationPrimaryProvider() {
+    void verifyOperationPrimaryProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

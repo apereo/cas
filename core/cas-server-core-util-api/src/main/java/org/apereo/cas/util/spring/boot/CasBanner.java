@@ -1,9 +1,11 @@
 package org.apereo.cas.util.spring.boot;
 
+import lombok.val;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 
 import java.util.Formatter;
+import java.util.ServiceLoader;
 
 /**
  * This is {@link CasBanner}.
@@ -29,5 +31,18 @@ public interface CasBanner extends Banner {
     default void injectEnvironmentInfo(final Formatter formatter,
                                        final Environment environment,
                                        final Class<?> sourceClass) {
+    }
+
+    /**
+     * Gets cas banner instance.
+     *
+     * @return the cas banner instance
+     */
+    static CasBanner getInstance() {
+        val subTypes = ServiceLoader.load(CasBanner.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .toList();
+        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
     }
 }

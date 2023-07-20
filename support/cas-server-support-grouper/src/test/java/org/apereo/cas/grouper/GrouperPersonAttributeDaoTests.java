@@ -41,13 +41,13 @@ import static org.mockito.Mockito.*;
     "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
     "cas.authn.attribute-repository.stub.attributes.phone=123456789"
 })
-public class GrouperPersonAttributeDaoTests {
+class GrouperPersonAttributeDaoTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")

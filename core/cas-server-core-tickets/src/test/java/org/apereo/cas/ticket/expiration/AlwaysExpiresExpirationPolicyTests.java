@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0
  */
 @Tag("ExpirationPolicy")
-public class AlwaysExpiresExpirationPolicyTests {
+class AlwaysExpiresExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "alwaysExpiresExpirationPolicy.json");
 
@@ -29,7 +29,7 @@ public class AlwaysExpiresExpirationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
+    void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
         val policyWritten = AlwaysExpiresExpirationPolicy.INSTANCE;
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
@@ -37,7 +37,7 @@ public class AlwaysExpiresExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val policyWritten = AlwaysExpiresExpirationPolicy.INSTANCE;
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, AlwaysExpiresExpirationPolicy.class);

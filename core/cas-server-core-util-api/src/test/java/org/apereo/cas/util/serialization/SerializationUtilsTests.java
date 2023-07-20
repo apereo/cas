@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class SerializationUtilsTests {
+class SerializationUtilsTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val result = SerializationUtils.serialize(100);
         assertThrows(ClassCastException.class,
             () -> SerializationUtils.deserializeAndCheckObject(result, String.class));

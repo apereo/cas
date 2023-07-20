@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("PasswordOps")
-public class AmnesiacPasswordHistoryServiceTests {
+class AmnesiacPasswordHistoryServiceTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = new AmnesiacPasswordHistoryService();
         assertTrue(service.fetchAll().isEmpty());
         assertTrue(service.fetch("casuser").isEmpty());

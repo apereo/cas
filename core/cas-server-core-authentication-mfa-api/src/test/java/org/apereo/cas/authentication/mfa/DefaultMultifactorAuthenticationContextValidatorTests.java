@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFA")
-public class DefaultMultifactorAuthenticationContextValidatorTests {
+class DefaultMultifactorAuthenticationContextValidatorTests {
     private static ConfigurableApplicationContext getStaticApplicationContext() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
@@ -34,7 +34,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyContextFailsValidationWithNoProviders() {
+    void verifyContextFailsValidationWithNoProviders() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
@@ -46,7 +46,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyContextFailsValidationWithMissingProvider() {
+    void verifyContextFailsValidationWithMissingProvider() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -58,7 +58,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyContextPassesValidationWithProvider() {
+    void verifyContextPassesValidationWithProvider() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -71,7 +71,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyContextPassesValidationWithChainProvider() {
+    void verifyContextPassesValidationWithChainProvider() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -103,7 +103,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyTrustedAuthnFoundInContext() {
+    void verifyTrustedAuthnFoundInContext() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -116,7 +116,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyTrustedAuthnFoundFromContext() {
+    void verifyTrustedAuthnFoundFromContext() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);

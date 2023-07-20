@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.easy-iep.name-id-attribute=cn",
     "cas.saml-sp.easy-iep.name-id-format=transient"
 })
-public class CasSamlSPEasyIepConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPEasyIepConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

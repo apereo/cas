@@ -1,5 +1,6 @@
 {
   "dependencies": "gauth,trusted-mfa",
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

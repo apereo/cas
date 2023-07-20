@@ -19,10 +19,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Attributes")
-public class PersonDirectoryAttributeRepositoryPlanTests {
+class PersonDirectoryAttributeRepositoryPlanTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(PersonDirectoryAttributeRepositoryPlan.class);
         doCallRealMethod().when(input).registerAttributeRepositories();
         doReturn(new ArrayList<>()).when(input).getAttributeRepositories();

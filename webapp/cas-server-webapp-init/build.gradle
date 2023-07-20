@@ -5,8 +5,6 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
-    
-    provided project(":webapp:cas-server-webapp-config")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")
@@ -37,4 +35,6 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
+    testImplementation libraries.springbootpropertymigrator
 }

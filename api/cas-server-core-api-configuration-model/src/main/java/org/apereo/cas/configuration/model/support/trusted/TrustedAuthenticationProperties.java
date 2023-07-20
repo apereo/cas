@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.trusted;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -52,6 +53,7 @@ public class TrustedAuthenticationProperties implements Serializable {
      * case insensitive. The pattern should use regular expression groups
      * to extract inner matches from a header value.
      */
+    @RegularExpressionCapable
     private List<String> attributeHeaderPatterns = Stream.of("(.+)->(.+)").toList();
 
     /**

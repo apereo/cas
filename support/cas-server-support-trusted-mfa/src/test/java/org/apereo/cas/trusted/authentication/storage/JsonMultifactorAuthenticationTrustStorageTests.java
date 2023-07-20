@@ -24,7 +24,7 @@ import java.io.File;
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:${java.io.tmpdir}/trusted-device.json")
 @Tag("FileSystem")
 @Getter
-public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @BeforeAll
     @SneakyThrows

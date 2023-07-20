@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("SAML")
-public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     private static String deflateViaStream(final String samlRequest) throws IOException {
         val xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
@@ -35,7 +35,7 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void ensureDeflation() throws Exception {
+    void ensureDeflation() throws Exception {
         val deflator = CompressionUtils.deflate(SAML_REQUEST);
         val deflatorStream = deflateViaStream(SAML_REQUEST);
         assertEquals(deflatorStream, deflator);

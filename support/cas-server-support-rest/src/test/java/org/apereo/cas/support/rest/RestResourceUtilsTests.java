@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.6
  */
 @Tag("RestfulApi")
-public class RestResourceUtilsTests {
+class RestResourceUtilsTests {
     @Test
-    public void verifyCreateResponseEntityForAuthnFailure() {
+    void verifyCreateResponseEntityForAuthnFailure() {
         val request = new MockHttpServletRequest();
         val map = CollectionUtils.<String, Throwable>wrap(
             UnauthorizedAuthenticationException.class.getSimpleName(),

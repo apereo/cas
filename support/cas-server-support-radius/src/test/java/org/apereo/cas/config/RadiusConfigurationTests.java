@@ -3,16 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -66,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -79,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
     })
 @Tag("Radius")
-public class RadiusConfigurationTests {
+class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -99,7 +94,7 @@ public class RadiusConfigurationTests {
     private RadiusServer radiusServer;
 
     @Test
-    public void emptyAddress() {
+    void emptyAddress() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
         val ips = RadiusConfiguration.getClientIps(clientProperties);
@@ -107,7 +102,7 @@ public class RadiusConfigurationTests {
     }
 
     @Test
-    public void someAddressesWithSpaces() {
+    void someAddressesWithSpaces() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
         val ips = RadiusConfiguration.getClientIps(clientProperties);
@@ -117,19 +112,19 @@ public class RadiusConfigurationTests {
     }
 
     @Test
-    public void radiusServer() {
+    void radiusServer() {
         assertNotNull(this.radiusServer);
     }
 
     @Test
-    public void radiusServers() {
+    void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
         assertNotNull(radiusServers);
         assertEquals(2, radiusServers.size());
     }
 
     @Test
-    public void verifyAccessChallengedWebflowEventResolver() {
+    void verifyAccessChallengedWebflowEventResolver() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

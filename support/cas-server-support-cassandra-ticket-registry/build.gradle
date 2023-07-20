@@ -1,6 +1,11 @@
 description = "Apereo CAS Cassandra Ticket Registry"
 ext {
     terminateCompilerOnWarning=false
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Apache Cassandra Ticket Registry"
+    ]
 }
 dependencies {
     implementation libraries.cassandra

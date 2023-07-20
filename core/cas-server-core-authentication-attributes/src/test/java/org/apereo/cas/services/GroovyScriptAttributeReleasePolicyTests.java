@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Groovy")
-public class GroovyScriptAttributeReleasePolicyTests {
+@Tag("GroovyServices")
+class GroovyScriptAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "groovyScriptAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new GroovyScriptAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, GroovyScriptAttributeReleasePolicy.class);
@@ -36,7 +36,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
 
@@ -53,7 +53,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:bad-path.groovy");
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -67,7 +67,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
 
 
     @Test
-    public void verifySystemPropertyInRef() throws Exception {
+    void verifySystemPropertyInRef() throws Exception {
         val file = File.createTempFile("GroovyAttributeRelease", ".groovy");
         try (val is = new ClassPathResource("GroovyAttributeRelease.groovy").getInputStream()) {
             is.transferTo(new FileOutputStream(file));

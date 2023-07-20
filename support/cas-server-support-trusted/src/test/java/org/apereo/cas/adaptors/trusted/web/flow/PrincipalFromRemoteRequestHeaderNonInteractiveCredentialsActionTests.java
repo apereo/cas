@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.trusted.remote-principal-header=cas-header-name")
 @Tag("WebflowActions")
-public class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    public void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Exception {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

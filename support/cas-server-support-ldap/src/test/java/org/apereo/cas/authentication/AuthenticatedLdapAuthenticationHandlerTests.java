@@ -37,12 +37,12 @@ import static org.mockito.Mockito.*;
 })
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAuthentication")
-public class AuthenticatedLdapAuthenticationHandlerTests {
+class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
+    class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
-        public void verifyAuthenticateNotFound() {
+        void verifyAuthenticateNotFound() {
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
@@ -50,7 +50,7 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
         }
 
         @Test
-        public void verifyAuthenticateFailureNotFound() {
+        void verifyAuthenticateFailureNotFound() {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(
@@ -61,7 +61,7 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
     @TestPropertySource(properties = "cas.authn.ldap[0].principal-attribute-id=unknown")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithUnknownCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
+    class WithUnknownCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
     }
 
     @TestPropertySource(properties = {
@@ -70,7 +70,7 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
+    class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
         @Override
         public void verifyAuthenticateSuccess() {
             assertThrows(LoginException.class, super::verifyAuthenticateSuccess);

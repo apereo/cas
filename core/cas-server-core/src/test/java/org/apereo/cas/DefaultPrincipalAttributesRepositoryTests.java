@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Attributes")
-public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
+class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultPrincipalAttributesRepository.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void checkDefaultAttributes() {
+    void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
         val principal = CoreAuthenticationTestUtils.getPrincipal();
         assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(),
@@ -43,7 +43,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     }
 
     @Test
-    public void checkInitialAttributes() {
+    void checkInitialAttributes() {
         val p = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
@@ -53,7 +53,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     }
 
     @Test
-    public void checkAttributesWithRepository() {
+    void checkAttributesWithRepository() {
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
@@ -66,7 +66,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     }
 
     @Test
-    public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
+    void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = new DefaultPrincipalAttributesRepository();
         repositoryWritten.setIgnoreResolvedAttributes(true);
         repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));

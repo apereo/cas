@@ -24,7 +24,7 @@
             <input type="hidden" name="geolocation"/>
             <section class="cas-field form-group my-3 mdc-input-group">
                 <div class="d-flex">
-                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                    <div class="w-100 mdc-input-group-field mdc-input-group-field-append">
                         <div class="d-flex">
                             <input type="hidden" id="accountId" name="accountId" size="25" autocomplete="off" th:field="*{accountId}" />
                     
@@ -86,16 +86,182 @@
             </form>
         </span>
         
-        <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled}">
+        <div th:if="${gauthMultipleDeviceRegistrationEnabled}">
             <p>
             <hr width="75%">
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-            <input type="hidden" name="_eventId_register" value="register"/>
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <button class="mdc-button mdc-button--raised btn btn-primary me-2" id="register" type="submit" name="register" accesskey="r" value="Register">
+            <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="registerButton" id="registerButton">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
             </button>
-        </form>
+
+            <!-- Confirmation Dialog -->
+            <div class="mdc-dialog" id="confirm-reg-dialog" role="alertdialog"
+                 aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+                <form method="post" id="regform" class="fm-v clearfix">
+                    <div class="mdc-dialog__container">
+                        <div class="mdc-dialog__surface">
+                            <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
+                                th:utext="#{screen.authentication.gauth.confirm.title}">
+                                Confirm Account Registration
+                            </h1>
+                            <div class="mdc-dialog__content" id="notif-dialog-content">
+                                <div class="mdc-typography--body1">
+                                    <div class="banner banner-danger alert alert-danger banner-dismissible"
+                                         style="display: none" id="errorPanel">
+                                        <h3>Failure</h3>
+                                        <p th:utext="#{screen.authentication.gauth.invalidtoken}">
+                                    </div>
+
+                                    <p th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
+
+                                    <input type="hidden" name="_eventId_confirm" value="Confirm"/>
+                                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+
+                                    <section class="cas-field form-group my-3 mdc-input-group">
+                                        <div class="mdc-input-group-field mdc-input-group-field-append">
+                                            <div class="d-flex caps-check">
+                                                <label for="token"
+                                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                                    <span class="mdc-notched-outline">
+                                                        <span class="mdc-notched-outline__leading"></span>
+                                                        <span class="mdc-notched-outline__notch">
+                                                            <span class="mdc-floating-label"
+                                                                  th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+
+                                                        </span>
+                                                        <span class="mdc-notched-outline__trailing"></span>
+                                                    </span>
+                                                    <input class="mdc-text-field__input form-control pwd"
+                                                           type="password"
+                                                           name="token"
+                                                           id="token"
+                                                           size="25"
+                                                           aria-required="true"
+                                                           autocomplete="off"
+                                                           required />
+                                                    <div class="mdc-text-field-helper-line invalid-feedback">
+                                                        <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                                            <span th:utext="#{username.required}"></span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                                        tabindex="-1"
+                                                        type="button">
+                                                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
+                                                    <span class="visually-hidden">Toggle Token</span>
+                                                </button>
+                                            </div>
+
+                                            <p/>
+                                            <div th:if="${registeredDevices}">
+                                                <div class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
+                                                    <input type="hidden" name="accountId">
+                                                    <div class="mdc-select__anchor"
+                                                         role="button"
+                                                         aria-required="true"
+                                                         aria-haspopup="listbox"
+                                                         aria-expanded="false">
+                                                        <span class="mdc-line__ripple"></span>
+                                                        <span class="mdc-notched-outline">
+                                                            <span class="mdc-notched-outline__leading"></span>
+                                                            <span class="mdc-notched-outline__notch">
+                                                                <span id="outlined-select-label" class="mdc-floating-label"
+                                                                      th:utext="#{screen.account.mfadevices.title}">Registered Accounts</span>
+                                                            </span>
+                                                            <span class="mdc-notched-outline__trailing"></span>
+                                                        </span>
+                                                        <span class="mdc-select__selected-text-container">
+                                                            <span class="mdc-select__selected-text"/>
+                                                        </span>
+                                                        <span class="mdc-select__dropdown-icon">
+                                                            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                                                 focusable="false">
+                                                                <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                                         fill-rule="evenodd" points="7 10 12 15 17 10">
+                                                                </polygon>
+                                                                <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                                         fill-rule="evenodd" points="7 15 12 10 17 15">
+                                                                </polygon>
+                                                            </svg>
+                                                        </span>
+                                                        <span class="mdc-line-ripple"></span>
+                                                    </div>
+
+                                                    <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                                        <ul class="mdc-list" role="listbox">
+                                                            <li th:each="account,iter : ${registeredDevices}" class="mdc-list-item " th:id="${account.id}"
+                                                                th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
+                                                                th:data-value="${account.id}" role="option">
+                                                                <span class="mdc-list-item__ripple"></span>
+                                                                <span class="mdc-list-item__text" th:utext="${account.name}">Device</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <p/><br/>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                            <footer class="mdc-dialog__actions">
+                                <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="verifyButton" id="verifyButton">
+                                    <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                                </button>
+                                <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                        data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                    <span class="mdc-button__label">Cancel</span>
+                                </button>
+                            </footer>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </form>
+
+                <script type="text/javascript">
+                    let btn = document.getElementById('verifyButton');
+                    btn.addEventListener('click', event => {
+                        if (document.getElementById("regform").reportValidity()) {
+                            let endpoint = $('#regform').attr('action');
+                            event.preventDefault();
+                            $('#errorPanel').hide();
+
+                            let formData = $("#regform").serializeArray();
+                            formData.push({
+                                name: "validate",
+                                value: true
+                            });
+                            $.post(endpoint, formData)
+                                .done((data, status, jqxhr) => {
+                                    $('#errorPanel').hide();
+                                    $("#regform").submit();
+                                })
+                                .fail((data, status, jqxhr) => {
+                                    $('#errorPanel').show("fast", "swing");
+                                });
+                        }
+                    }, false);
+                </script>
+            </div>
+            <!-- Confirmation Dialog -->
+
+            
+            <script type="text/javascript">
+                (material => {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        let element = document.getElementById('confirm-reg-dialog');
+                        let dialog = material.dialog.MDCDialog.attachTo(element);
+                        let btn = document.getElementById('registerButton');
+                        btn.addEventListener('click', event => {
+                            dialog.open();
+                            event.preventDefault();
+                        }, false);
+                    });
+                })(mdc);
+            </script>
+            
+        </div>
         </p>
     </div>
 </main>

@@ -28,21 +28,21 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
-public class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
+@Tag("WebflowAccountActions")
+class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
     protected Action action;
 
     @Test
-    public void verifyBadCaptcha() throws Exception {
+    void verifyBadCaptcha() throws Exception {
         val context = getRequestContext("good", "bad");
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
     }
 
     @Test
-    public void verifyAccountUnlock() throws Exception {
+    void verifyAccountUnlock() throws Exception {
         val context = getRequestContext("good", "good");
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

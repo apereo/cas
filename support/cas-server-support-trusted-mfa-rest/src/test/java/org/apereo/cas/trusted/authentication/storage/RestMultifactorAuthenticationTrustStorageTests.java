@@ -1,14 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.RestMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.trusted.config.RestMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
         
         "cas.authn.mfa.trusted.rest.url=http://localhost:9297"
     })
-public class RestMultifactorAuthenticationTrustStorageTests {
+class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -81,20 +81,18 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyRemovalByKey() throws Exception {
+    void verifyRemovalByKey() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
-            mfaTrustEngine.save(r);
             assertDoesNotThrow(() -> mfaTrustEngine.remove(r.getRecordKey()));
         }
     }
 
     @Test
-    public void verifyRemovalByDate() {
+    void verifyRemovalByDate() {
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -103,7 +101,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyFetchRecords() throws Exception {
+    void verifyFetchRecords() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9297,
@@ -118,7 +116,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifySetAnExpireByKey() throws Exception {
+    void verifySetAnExpireByKey() throws Exception {
         val r =
             MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
@@ -133,7 +131,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyExpireByDate() throws Exception {
+    void verifyExpireByDate() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS).minusDays(2));
 

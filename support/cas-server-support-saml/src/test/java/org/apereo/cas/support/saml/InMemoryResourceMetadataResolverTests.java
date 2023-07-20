@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("SAMLMetadata")
-public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
+class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
 
     @Test
-    public void verifyValidMetadataResource() throws Exception {
+    void verifyValidMetadataResource() throws Exception {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-valid.xml"), configBean);
         resolver.setId(UUID.randomUUID().toString());
         resolver.initialize();
@@ -40,7 +40,7 @@ public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests
     }
 
     @Test
-    public void verifyExpiredValidUntilMetadataResource() throws Exception {
+    void verifyExpiredValidUntilMetadataResource() throws Exception {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-expired.xml"), configBean);
         resolver.setId(UUID.randomUUID().toString());
         resolver.initialize();
@@ -53,7 +53,7 @@ public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests
     }
 
     @Test
-    public void verifyInvalidExpiredMetadataResourceIsOkay() throws Exception {
+    void verifyInvalidExpiredMetadataResourceIsOkay() throws Exception {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-expired.xml"), configBean);
         resolver.setRequireValidMetadata(false);
         resolver.setId(UUID.randomUUID().toString());

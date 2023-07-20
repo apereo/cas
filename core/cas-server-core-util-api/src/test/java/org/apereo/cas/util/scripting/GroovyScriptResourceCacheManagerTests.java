@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Groovy")
-public class GroovyScriptResourceCacheManagerTests {
+class GroovyScriptResourceCacheManagerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val file = File.createTempFile("scripted", ".groovy");
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
         val resource = new WatchableGroovyScriptResource(new FileSystemResource(file));

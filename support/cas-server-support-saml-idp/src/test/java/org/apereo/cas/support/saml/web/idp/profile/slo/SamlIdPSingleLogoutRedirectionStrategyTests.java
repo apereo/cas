@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.logout.send-logout-response=true",
     "cas.authn.saml-idp.logout.sign-logout-response=true"
 })
-public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
     private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
@@ -50,7 +50,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
     private LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy;
 
     @Test
-    public void verifyOperationForPostBinding() throws Exception {
+    void verifyOperationForPostBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -82,7 +82,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
     }
 
     @Test
-    public void verifyOperationForRedirectBinding() throws Exception {
+    void verifyOperationForRedirectBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -111,7 +111,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
     }
 
     @Test
-    public void verifyNoLogoutResponse() throws Exception {
+    void verifyNoLogoutResponse() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -126,7 +126,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
     }
 
     @Test
-    public void verifyLogoutForNonSamlService() {
+    void verifyLogoutForNonSamlService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());

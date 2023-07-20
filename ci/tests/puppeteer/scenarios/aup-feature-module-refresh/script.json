@@ -1,5 +1,6 @@
 {
   "dependencies": "aup-webflow,events-configuration,reports",
+
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.enabled-by-default=true",

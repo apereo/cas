@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.service-registry.core.init-from-json=true"
 )
-public class CasServiceRegistryInitializationConfigurationTests {
+class CasServiceRegistryInitializationConfigurationTests {
     @Autowired
     @Qualifier("serviceRegistryInitializer")
     private ServiceRegistryInitializer serviceRegistryInitializer;
@@ -57,7 +56,7 @@ public class CasServiceRegistryInitializationConfigurationTests {
     @Nested
     public class WithoutServiceRegistryLocation {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());
@@ -71,7 +70,7 @@ public class CasServiceRegistryInitializationConfigurationTests {
     @TestPropertySource(properties = "cas.service-registry.json.location=unknown-bad-location")
     public class WithUnknownServiceRegistryLocation {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());

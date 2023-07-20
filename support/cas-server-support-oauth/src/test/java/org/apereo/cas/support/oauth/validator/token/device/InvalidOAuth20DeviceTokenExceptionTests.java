@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class InvalidOAuth20DeviceTokenExceptionTests {
+class InvalidOAuth20DeviceTokenExceptionTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertThrows(InvalidOAuth20DeviceTokenException.class, () -> {
             throw new InvalidOAuth20DeviceTokenException("bad-ticket-id");
         });

@@ -21,6 +21,7 @@ import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +139,7 @@ public class CasConsentCoreConfiguration {
             }
 
             val groovy = casProperties.getConsent().getGroovy().getLocation();
-            if (groovy != null) {
+            if (groovy != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 return new GroovyConsentRepository(groovy);
             }
 

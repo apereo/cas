@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcPhoneScopeAttributeReleasePolicyTests {
+class OidcPhoneScopeAttributeReleasePolicyTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.core.claims-map.phone_number=cell_phone")
-    public class ClaimMappingsTests extends AbstractOidcTests {
+    class ClaimMappingsTests extends AbstractOidcTests {
         @Test
-        public void verifyMappedToUnknown() {
+        void verifyMappedToUnknown() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
             
@@ -46,7 +46,7 @@ public class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyMapped() {
+        void verifyMapped() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(
                 CollectionUtils.wrap("cell_phone", List.of("12134321245")));
@@ -63,9 +63,9 @@ public class OidcPhoneScopeAttributeReleasePolicyTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.PHONE.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());
@@ -82,7 +82,7 @@ public class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifySerialization() {
+        void verifySerialization() {
             val appCtx = new StaticApplicationContext();
             appCtx.refresh();
             val policy = new OidcPhoneScopeAttributeReleasePolicy();

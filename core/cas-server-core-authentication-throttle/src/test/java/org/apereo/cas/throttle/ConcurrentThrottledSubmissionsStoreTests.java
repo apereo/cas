@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationThrottling")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ConcurrentThrottledSubmissionsStoreTests {
+class ConcurrentThrottledSubmissionsStoreTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val store = new ConcurrentThrottledSubmissionsStore(casProperties);
         val key = UUID.randomUUID().toString();
         store.put(ThrottledSubmission.builder().key(key).build());

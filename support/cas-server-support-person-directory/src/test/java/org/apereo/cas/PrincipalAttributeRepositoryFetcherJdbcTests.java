@@ -34,11 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
 @Tag("JDBC")
-public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
+class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifyOperationWithUsernamePasswordCredentialType() {
+    void verifyOperationWithUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
+            .attributeDefinitionStore(attributeDefinitionStore)
+            .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -47,14 +49,17 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("PersonName"));
     }
 
     @Test
-    public void verifyOperationWithoutUsernamePasswordCredentialType() {
+    void verifyOperationWithoutUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
+            .servicesManager(servicesManager)
+            .attributeDefinitionStore(attributeDefinitionStore)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -64,7 +69,8 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getHttpBasedServiceCredentials();
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNull(p);
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -16,8 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -44,8 +44,6 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
     private final ServiceFactory webApplicationServiceFactory;
 
-    private final SessionStore sessionStore;
-
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     private final OAuth20ClientSecretValidator clientSecretValidator;
@@ -53,12 +51,11 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Override
-    public Optional<Credentials> validate(final Credentials credentials, final WebContext webContext,
-                                          final SessionStore sessionStore) throws CredentialsException {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
         try {
             val upc = (UsernamePasswordCredentials) credentials;
             val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
-            val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(webContext, this.sessionStore);
+            val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(callContext);
             if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
                 throw new CredentialsException("No client credentials could be identified in this request");
             }
@@ -73,7 +70,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
                                                + Objects.requireNonNull(registeredService).getName());
             }
 
-            val redirectUri = webContext.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            val redirectUri = callContext.webContext().getRequestParameter(OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             val service = StringUtils.isNotBlank(redirectUri)
                 ? this.webApplicationServiceFactory.createService(redirectUri)
@@ -93,7 +90,14 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             val attributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy().getAttributes(context);
 
             val profile = new CommonProfile();
-            val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+
+            val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+
+            val id = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);

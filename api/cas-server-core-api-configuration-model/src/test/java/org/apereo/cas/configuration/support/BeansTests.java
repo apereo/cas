@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class BeansTests {
+class BeansTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new PrincipalAttributesProperties();
         props.getStub().setId("helloworld");
         props.getStub().getAttributes().put("name", "true");
@@ -27,7 +27,7 @@ public class BeansTests {
     }
 
     @Test
-    public void verifyDurations() {
+    void verifyDurations() {
         assertNotNull(Beans.newDuration("0"));
         assertNotNull(Beans.newDuration("never"));
         assertNotNull(Beans.newDuration("infinite"));

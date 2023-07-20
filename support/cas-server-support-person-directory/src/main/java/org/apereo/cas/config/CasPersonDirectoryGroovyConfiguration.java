@@ -10,6 +10,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,10 +37,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnMissingGraalVMNativeImage
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfiguration
 public class CasPersonDirectoryGroovyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.groovy[0].location").exists();
+
     @Configuration(value = "GroovyAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GroovyAttributeRepositoryConfiguration {

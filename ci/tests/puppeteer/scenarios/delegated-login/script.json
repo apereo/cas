@@ -3,7 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
     "--cas.authn.pac4j.github.client-name=GitHubClient",
     "--cas.authn.pac4j.github.id=84cfb715b8237728e567",
     "--cas.authn.pac4j.github.secret=71a294b6c9f5b00333f4bfb369bbbafa36a86bad",

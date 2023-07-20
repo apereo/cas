@@ -38,12 +38,12 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestAcceptableUsagePolicyRepositoryTests {
+class RestAcceptableUsagePolicyRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verify() {
+    void verify() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.GERMAN));
@@ -70,7 +70,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.GERMAN));
@@ -97,7 +97,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    public void verifyFetch() throws Exception {
+    void verifyFetch() throws Exception {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9198");

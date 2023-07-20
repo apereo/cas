@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.profile-selection.groovy.location=classpath:GroovyProfileSelection.groovy")
-public class GroovyDelegatedClientAuthenticationCredentialResolverTests {
+class GroovyDelegatedClientAuthenticationCredentialResolverTests {
     @Autowired
     @Qualifier("groovyDelegatedClientAuthenticationCredentialResolver")
     private DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

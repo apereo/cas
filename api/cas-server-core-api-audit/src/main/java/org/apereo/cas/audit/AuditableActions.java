@@ -10,7 +10,7 @@ public interface AuditableActions {
     /**
      * Auditable action {@code MULTIFACTOR_AUTHENTICATION_BYPASS}.
      */
-    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS";
+    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS_EVALUATION";
     /**
      * Auditable action {@code AUTHENTICATION_EVENT}.
      */
@@ -31,10 +31,6 @@ public interface AuditableActions {
      * Auditable action {@code TICKET_GRANTING_TICKET}.
      */
     String TICKET_GRANTING_TICKET = "TICKET_GRANTING_TICKET";
-    /**
-     * Auditable action {@code TICKET_DESTROYED}.
-     */
-    String TICKET_DESTROYED = "TICKET_DESTROYED";
     /**
      * Auditable action {@code PROXY_GRANTING_TICKET}.
      */
@@ -158,4 +154,9 @@ public interface AuditableActions {
      * Auditable action {@code ACCOUNT_REGISTRATION}.
      */
     String ACCOUNT_REGISTRATION = "ACCOUNT_REGISTRATION";
+
+    /**
+     * Auditable action {@code LOGOUT}.
+     */
+    String LOGOUT = "LOGOUT";
 }

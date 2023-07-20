@@ -25,7 +25,7 @@ const YAML = require("yaml");
     console.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class FileAuthenticationHandlerTests {
+class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 
     @BeforeEach
@@ -45,7 +45,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() throws Exception {
+    void verifySupportsProperUserCredentials() throws Exception {
         val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -54,7 +54,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDoesNotSupportBadUserCredentials() {
+    void verifyDoesNotSupportBadUserCredentials() {
         try {
             val credential = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
@@ -65,7 +65,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticatesUserInFileWithDefaultSeparator() throws Exception {
+    void verifyAuthenticatesUserInFileWithDefaultSeparator() throws Exception {
         val credential = new UsernamePasswordCredential();
 
         credential.setUsername("scott");
@@ -75,7 +75,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserNotInFileWithDefaultSeparator() {
+    void verifyFailsUserNotInFileWithDefaultSeparator() {
         val credential = new UsernamePasswordCredential();
 
         credential.setUsername("fds");
@@ -85,7 +85,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserName() {
+    void verifyFailsNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword("user");
@@ -93,7 +93,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullUserNameAndPassword() {
+    void verifyFailsNullUserNameAndPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword(null);
@@ -101,7 +101,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsNullPassword() {
+    void verifyFailsNullPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("scott");
         credential.assignPassword(null);
@@ -109,7 +109,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
+    void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
         val credential = new UsernamePasswordCredential();
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(), new ClassPathResource("authentication2.txt"), ",");
@@ -119,7 +119,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserNotInFileWithCommaSeparator() {
+    void verifyFailsUserNotInFileWithCommaSeparator() {
         val credential = new UsernamePasswordCredential();
 
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
@@ -131,7 +131,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsGoodUsernameBadPassword() {
+    void verifyFailsGoodUsernameBadPassword() {
         val credential = new UsernamePasswordCredential();
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(),
@@ -144,7 +144,7 @@ public class FileAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticateNoFileName() {
+    void verifyAuthenticateNoFileName() {
         val credential = new UsernamePasswordCredential();
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(),

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @Tag("JDBCMFA")
-public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -51,7 +51,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOn
     }
     
     @Test
-    public void verifyCreateUniqueNames() {
+    void verifyCreateUniqueNames() {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
         assertNotNull(acct1);
         val repo = getRegistry("verifyCreate");

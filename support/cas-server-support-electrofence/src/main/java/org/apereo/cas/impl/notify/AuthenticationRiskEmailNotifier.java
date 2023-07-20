@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +36,11 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName);
             if (principal.getAttributes().containsKey(resolvedAttribute)) {
                 val addresses = (List) principal.getAttributes().get(resolvedAttribute);
+                val parameters = CollectionUtils.<String, Object>wrap("authentication", authentication,
+                    "registeredService", registeredService, "riskScore", authenticationRiskScore);
                 val body = EmailMessageBodyBuilder.builder()
                     .properties(mail)
+                    .parameters(parameters)
                     .build()
                     .get();
                 val emailRequest = EmailMessageRequest.builder()

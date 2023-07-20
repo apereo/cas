@@ -3,10 +3,10 @@ package org.apereo.cas.configuration.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -29,7 +29,6 @@ import org.springframework.boot.configurationmetadata.Deprecation;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.ReflectionUtils;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -158,6 +157,13 @@ public class ConfigurationMetadataGenerator {
                                 val propertyHint = new ValueHint();
                                 propertyHint.setDescription(ExpressionLanguageCapable.class.getName());
                                 propertyHint.setValue(toJson(List.of(ExpressionLanguageCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
+
+                            if (f != null && f.isAnnotationPresent(RegularExpressionCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(RegularExpressionCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(RegularExpressionCapable.class.getName())));
                                 hint.getValues().add(propertyHint);
                             }
                         }));
@@ -296,14 +302,14 @@ public class ConfigurationMetadataGenerator {
                                 var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
                                 var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
                                 if (names.contains(propShortName)) {
-                                    variable.getInitializer().ifPresent(exp -> {
+                                    variable.getInitializer().ifPresent(expression -> {
                                         var value = (Object) null;
-                                        if (exp instanceof LiteralStringValueExpr) {
-                                            value = ((LiteralStringValueExpr) exp).getValue();
-                                        } else if (exp instanceof BooleanLiteralExpr) {
-                                            value = ((BooleanLiteralExpr) exp).getValue();
-                                        } else if (exp instanceof FieldAccessExpr) {
-                                            value = ((FieldAccessExpr) exp).getNameAsString();
+                                        if (expression instanceof LiteralStringValueExpr expr) {
+                                            value = expr.getValue();
+                                        } else if (expression instanceof BooleanLiteralExpr expr) {
+                                            value = expr.getValue();
+                                        } else if (expression instanceof FieldAccessExpr expr) {
+                                            value = expr.getNameAsString();
                                         }
                                         prop.setDefaultValue(value);
                                     });
@@ -384,6 +390,7 @@ public class ConfigurationMetadataGenerator {
 
         LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
         MAPPER.writeValue(jsonFile, jsonMap);
+
         val copy = new File(buildDir, jsonFile.getName());
         LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
         MAPPER.writeValue(copy, jsonMap);
@@ -391,8 +398,16 @@ public class ConfigurationMetadataGenerator {
 
     private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
         for (val property : properties) {
-            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
-            val typeFile = new File(typePath);
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
+            var typeFile = new File(typePath);
+            if (!typeFile.exists() && !property.getType().contains(".")) {
+                val clazz = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
+                if (clazz.isPresent()) {
+                    typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
+                    typeFile = new File(typePath);
+                }
+            }
+
             if (typeFile.exists()) {
                 val cu = StaticJavaParser.parse(new File(typePath));
                 for (val type : cu.getTypes()) {

@@ -52,7 +52,7 @@ The expiration policy of the service metadata is controlled using the following 
 
 {% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
 
-<div class="alert alert-info"><strong>Metadata Cache</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Cache</strong><p>
 Note that the state of the cache belongs to the CAS server node's own memory and will not distributed in case you have multiple CAS server nodes in a cluster. 
 In an HA clustered environment, you would need to bypass load balancers, etc to reach the actual CAS server node(s) before the cache can be accessed.
 Otherwise, you run the risk of manipulating and interacting with the metadata cache managed by one CAS server where metadata caches changes would be 
@@ -89,7 +89,7 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
 This capability will require the forceful fetching of the metadata over HTTP to be disabled.
 
-<div class="alert alert-info"><strong>Usage</strong>
+<div class="alert alert-info">:information_source: <strong>Usage</strong>
 <p>
 SAML2 metadata should generally be signed for integrity and authenticity, especially if it’s provided and shared with 
 participants using a URL. Participants and consumers are strongly encouraged to verify the XML signature on the metadata 
@@ -177,7 +177,7 @@ The service providers are registered with the CAS service registry as such:
 }
 ```
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location 
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>The metadata location 
 in the registration record above needs to be specified as <code>json://</code> to signal 
 to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
 
@@ -194,6 +194,5 @@ Service provider metadata can also be managed using any one of the following str
 | MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
 | Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
 | JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
-| CouchDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  |
 | Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
 | Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |

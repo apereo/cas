@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.rocket-chat.name-id-attribute=cn",
     "cas.saml-sp.rocket-chat.name-id-format=transient"
 })
-public class CasSamlSPRocketChatConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPRocketChatConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

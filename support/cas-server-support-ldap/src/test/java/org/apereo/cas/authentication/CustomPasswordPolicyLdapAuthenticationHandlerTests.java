@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("LdapAuthentication")
-public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
+class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @TestPropertySource(properties = {
         "cas.authn.ldap[0].password-policy.enabled=true",
         "cas.authn.ldap[0].password-policy.custom-policy-class=org.apereo.cas.authentication.TestAuthenticationResponseHandler"
@@ -29,9 +29,9 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @EnabledIfListeningOnPort(port = 10389)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
+    class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()
@@ -46,9 +46,9 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @EnabledIfListeningOnPort(port = 10389)
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
+    class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()

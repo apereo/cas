@@ -1,27 +1,28 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -61,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class
 })
 @Tag("Tickets")
-public class DefaultTicketCatalogTests {
+class DefaultTicketCatalogTests {
     @Autowired
     @Qualifier(TicketCatalog.BEAN_NAME)
     private TicketCatalog ticketCatalog;
@@ -71,14 +73,14 @@ public class DefaultTicketCatalogTests {
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Test
-    public void verifyFindAll() {
+    void verifyFindAll() {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
     }
 
     @Test
-    public void verifyByTicketType() {
+    void verifyByTicketType() {
         assertTrue(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyTicket.class).isPresent());
@@ -87,14 +89,14 @@ public class DefaultTicketCatalogTests {
     }
 
     @Test
-    public void verifyUpdateAndFind() {
+    void verifyUpdateAndFind() {
         val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).get();
         ticketCatalog.update(defn);
         assertTrue(ticketCatalog.contains(defn.getPrefix()));
     }
 
     @Test
-    public void verifyContains() {
+    void verifyContains() {
         val tgt = new MockTicketGrantingTicket("casuser");
         assertTrue(ticketCatalog.contains(tgt.getPrefix()));
         assertNotNull(ticketCatalog.find(tgt));

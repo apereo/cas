@@ -38,4 +38,5 @@ public class DuoSecurityUniversalPromptCredential extends AbstractCredential imp
     public String getId() {
         return this.token;
     }
+    
 }

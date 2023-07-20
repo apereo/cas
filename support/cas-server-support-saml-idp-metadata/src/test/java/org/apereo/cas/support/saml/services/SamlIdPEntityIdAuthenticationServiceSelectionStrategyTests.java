@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML2")
-public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
+class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
         val factory = new WebApplicationServiceFactory();
         val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");

@@ -1,7 +1,13 @@
 description = "Apereo CAS REST JWT Tickets Implementation"
-dependencies {
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "REST Protocol",
+            title: "Tokens REST API"
+    ]
+}
 
-    
+dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
     

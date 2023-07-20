@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -21,12 +22,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.config.Config;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,8 +51,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         .singleArrayElementUnwrapped(true).build().toObjectMapper();
 
     private final JwtBuilder jwtBuilder;
-
-    private final ObjectProvider<Config> securityConfiguration;
 
     @Override
     public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
@@ -128,6 +125,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .stream()
             .map(name -> {
                 val values = resolveRequestParameter(context, name)
+                    .map(EncodingUtils::urlDecode)
                     .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
                     .orElseGet(Set::of);
                 return Pair.of(name, values);
@@ -158,7 +156,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                     if (Collection.class.isAssignableFrom(clazz)) {
                         return Optional.of(clazz.cast(CollectionUtils.wrapArrayList(values)));
                     }
-                    return Optional.of(clazz.cast(values[0]));
+                    val singleValue = EncodingUtils.urlDecode(values[0]);
+                    return Optional.of(clazz.cast(singleValue));
                 }
                 return Optional.empty();
             });
@@ -204,18 +203,16 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Pair<String, String> resolveClientIdAndClientSecret(final WebContext webContext,
-                                                               final SessionStore sessionStore) {
+    public Pair<String, String> resolveClientIdAndClientSecret(final CallContext callContext) {
         val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(webContext, sessionStore,
-            securityConfiguration.getObject().getProfileManagerFactory());
+        val upcResult = extractor.extract(callContext);
         if (upcResult.isPresent()) {
             val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());
         }
-        val clientId = resolveRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
+        val clientId = resolveRequestParameter(callContext.webContext(), OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = resolveRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
+        val clientSecret = resolveRequestParameter(callContext.webContext(), OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }

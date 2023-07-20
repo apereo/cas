@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry.queue;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.registry.queue.commands.AddTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
-public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
+class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
-    public void verifyAddTicket() throws Exception {
+    void verifyAddTicket() throws Exception {
         var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(UUID.randomUUID().toString()), ticket)

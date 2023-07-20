@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -10,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -21,9 +23,8 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
@@ -34,6 +35,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -44,6 +46,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -52,7 +55,6 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -66,6 +68,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -78,6 +81,8 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -104,6 +109,9 @@ public abstract class BaseTicketRegistryTests {
 
     private static final String TICKET_SHOULD_BE_NULL_USE_ENCRYPTION = "Ticket should be null. useEncryption[";
 
+    private static final TicketGrantingTicketIdGenerator TICKET_GRANTING_TICKET_ID_GENERATOR =
+        new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
+
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
@@ -112,6 +120,14 @@ public abstract class BaseTicketRegistryTests {
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
+    @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    protected TicketCatalog ticketCatalog;
+
+    @Autowired
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
+    protected TicketSerializationManager ticketSerializationManager;
+    
     protected boolean useEncryption;
 
     protected String ticketGrantingTicketId;
@@ -138,8 +154,7 @@ public abstract class BaseTicketRegistryTests {
 
     @BeforeEach
     public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
-        this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
-            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        this.ticketGrantingTicketId = TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX);
         this.serviceTicketId = new ServiceTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ServiceTicket.PREFIX);
         this.proxyGrantingTicketId = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -158,6 +173,28 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.deleteAll();
             setUpEncryption();
         }
+    }
+
+    @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    public void verifyTicketsWithAuthnAttributes() throws Exception {
+        assumeTrue(isIterableRegistry());
+        val authn = CoreAuthenticationTestUtils.getAuthentication(
+            Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
+                "authn-context", List.of("mfa-example")));
+        val tgt1 = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            authn, NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(tgt1);
+
+        val tgt2 = new TicketGrantingTicketImpl(TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(tgt2);
+
+        val queryAttributes = Map.<String, List<Object>>of("cn", List.of("cn2", "cn1000"),
+            "authn-context", List.of("mfa-example", "mfa-one"));
+        val tickets = ticketRegistry.getSessionsWithAttributes(queryAttributes).toList();
+        assertEquals(1, tickets.size());
+        assertTrue(tickets.contains(tgt1));
     }
 
     @RepeatedTest(2)
@@ -241,6 +278,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyCountSessionsPerUser() throws Exception {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
@@ -257,7 +295,7 @@ public abstract class BaseTicketRegistryTests {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
         for (var i = 0; i < 5; i++) {
-            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            val tgtId = TICKET_GRANTING_TICKET_ID_GENERATOR
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(id),
@@ -319,13 +357,13 @@ public abstract class BaseTicketRegistryTests {
         var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
-        tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
+        tgt.grantServiceTicket("ST-1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertTrue(tgtResult instanceof AuthenticatedServicesAwareTicketGrantingTicket);
         services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
-        assertEquals(Collections.singleton("ST1"), services.keySet());
+        assertEquals(Collections.singleton("ST-1"), services.keySet());
     }
 
     @RepeatedTest(2)
@@ -362,6 +400,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyDeleteNonExistingTicket() throws Exception {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -604,7 +643,10 @@ public abstract class BaseTicketRegistryTests {
         }
     }
 
-    @ImportAutoConfiguration(RefreshAutoConfiguration.class)
+    @ImportAutoConfiguration({
+        ObservationAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
     @SpringBootConfiguration
     @Import({
         CasCoreHttpConfiguration.class,
@@ -631,6 +673,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

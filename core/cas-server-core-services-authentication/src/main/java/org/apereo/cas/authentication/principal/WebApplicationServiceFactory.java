@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             .orElse(StringUtils.EMPTY);
         try {
             if (StringUtils.isNotBlank(format)) {
-                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase());
+                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase(Locale.ENGLISH));
                 webApplicationService.setFormat(formatType);
             }
         } catch (final Exception e) {
@@ -130,8 +131,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return service;
         }
         if (serviceAttribute != null) {
-            if (serviceAttribute instanceof Service) {
-                return ((Service) serviceAttribute).getId();
+            if (serviceAttribute instanceof Service svc) {
+                return svc.getId();
             }
             return serviceAttribute.toString();
         }

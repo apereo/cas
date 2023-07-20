@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apereo.cas.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
 import org.apereo.cas.config.CasCoreEventsConfigEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
-import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasCoreEventsConfigEnvironmentConfiguration.class,
     CasCoreConfigurationWatchConfiguration.class,
-    CasCoreBootstrapStandaloneConfiguration.class,
-    CasCoreEnvironmentConfiguration.class,
+    CasCoreStandaloneBootstrapConfiguration.class,
+    CasCoreEnvironmentBootstrapConfiguration.class,
 
     DispatcherServletAutoConfiguration.class,
     RefreshAutoConfiguration.class
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasConfigurationEventListenerTests {
+class CasConfigurationEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -53,12 +53,12 @@ public class CasConfigurationEventListenerTests {
     private CasConfigurationEventListener casConfigurationEventListener;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(casConfigurationEventListener);
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
-            new CasConfigurationModifiedEvent(this, true)));
+            new CasConfigurationModifiedEvent(this, true, null)));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshScopeRefreshedEvent()));
     }

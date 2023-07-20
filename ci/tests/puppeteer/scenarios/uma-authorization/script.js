@@ -182,7 +182,7 @@ const cas = require('../../cas.js');
         },
         res => {
             assert(res.data.active === true);
-            assert(res.data.grant_type === 'uma_ticket');
+            assert(res.data.grant_type === 'urn:ietf:params:oauth:grant-type:uma-ticket');
             assert(res.data.sub === 'casuser')
         }, error => {
             throw `Introspection operation failed: ${error}`;

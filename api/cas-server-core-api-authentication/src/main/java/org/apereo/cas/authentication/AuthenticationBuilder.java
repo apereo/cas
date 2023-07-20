@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -183,11 +185,24 @@ public interface AuthenticationBuilder extends Serializable {
     /**
      * Merge attribute.
      *
+     * @param toMerge the to merge
+     * @return the authentication builder
+     */
+    @CanIgnoreReturnValue
+    default AuthenticationBuilder mergeAttributes(final Map<String, List<Object>> toMerge) {
+        toMerge.forEach(this::mergeAttribute);
+        return this;
+    }
+    
+    /**
+     * Merge attribute.
+     *
      * @param key   the key
      * @param value the value
      * @return the authentication builder
      */
     AuthenticationBuilder mergeAttribute(String key, Object value);
+
 
     /**
      * Merge attribute.

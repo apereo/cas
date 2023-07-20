@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationHandler")
-public class JaasAuthenticationHandlerTests {
+class JaasAuthenticationHandlerTests {
     private File fileName;
 
     @BeforeEach
@@ -43,7 +43,7 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyWithValidCredentials() throws Exception {
+    void verifyWithValidCredentials() throws Exception {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
@@ -53,7 +53,7 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsCredentials() throws Exception {
+    void verifyFailsCredentials() throws Exception {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
@@ -65,7 +65,7 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyWithValidCredentialsPreDefined() throws Exception {
+    void verifyWithValidCredentialsPreDefined() throws Exception {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");

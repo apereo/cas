@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
     @Order(1)
     public void verify() throws Exception {
@@ -46,7 +46,7 @@ public class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigura
         issuer.setValue(service.getServiceId());
         logoutRequest.setIssuer(issuer);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
             adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI,

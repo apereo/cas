@@ -40,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @Import(CasConsentCoreConfiguration.class)
-public class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
+class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
 
     @Autowired
     @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
     private SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Test
-    public void verifyIdPNeedsConsentOperation() {
+    void verifyIdPNeedsConsentOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

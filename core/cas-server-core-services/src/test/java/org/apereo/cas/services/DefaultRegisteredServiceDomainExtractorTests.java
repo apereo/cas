@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceDomainExtractorTests {
+class DefaultRegisteredServiceDomainExtractorTests {
 
     @Test
-    public void verifyDomains() {
+    void verifyDomains() {
         val ext = new DefaultRegisteredServiceDomainExtractor();
         assertEquals("www.example.org", ext.extract("https://www.example.org"));
         assertEquals("example.org", ext.extract("https://example.org"));

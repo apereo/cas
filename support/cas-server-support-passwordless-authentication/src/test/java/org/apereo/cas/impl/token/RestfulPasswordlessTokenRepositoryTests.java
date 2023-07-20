@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
-public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository passwordlessTokenRepository;
@@ -49,7 +49,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     }
 
     @Test
-    public void verifyFindToken() {
+    void verifyFindToken() {
         val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
         tokens.getRest().setUrl("http://localhost:9306");
         val passwordless = getRepository(tokens);
@@ -66,7 +66,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     }
 
     @Test
-    public void verifyFindTokenFails() {
+    void verifyFindTokenFails() {
         try (val webServer = new MockWebServer(9306,
             new ByteArrayResource("token".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -79,7 +79,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     }
 
     @Test
-    public void verifySaveToken() throws Exception {
+    void verifySaveToken() throws Exception {
         val data = "THE_TOKEN";
         try (val webServer = new MockWebServer(9307,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -101,7 +101,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     }
 
     @Test
-    public void verifyDeleteToken() {
+    void verifyDeleteToken() {
         try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
@@ -112,7 +112,7 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
     }
 
     @Test
-    public void verifyClean() {
+    void verifyClean() {
         try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {

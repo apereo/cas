@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFATrigger")
-public class MultifactorAuthenticationProviderBypassEvaluatorTests {
+class MultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
         when(input.isMultifactorAuthenticationBypassed(any(), anyString())).thenCallRealMethod();
         when(input.getOrder()).thenCallRealMethod();

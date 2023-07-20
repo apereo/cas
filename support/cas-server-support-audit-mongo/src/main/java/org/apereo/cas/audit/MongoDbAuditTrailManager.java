@@ -28,7 +28,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
-    private final transient MongoOperations mongoTemplate;
+    private final MongoOperations mongoTemplate;
     private final String collectionName;
 
     public MongoDbAuditTrailManager(final MongoOperations mongoTemplate, final String collectionName, final boolean asynchronous) {

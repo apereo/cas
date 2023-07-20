@@ -29,13 +29,13 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Authentication")
-public class MultifactorAuthenticationPrincipalResolverTests {
+class MultifactorAuthenticationPrincipalResolverTests {
     @Autowired
     @Qualifier("surrogateMultifactorAuthenticationPrincipalResolver")
     private MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -48,7 +48,7 @@ public class MultifactorAuthenticationPrincipalResolverTests {
     }
 
     @Test
-    public void verifyDefaultOperation() {
+    void verifyDefaultOperation() {
         val resolver = MultifactorAuthenticationPrincipalResolver.identical();
         assertEquals(Ordered.LOWEST_PRECEDENCE, resolver.getOrder());
 

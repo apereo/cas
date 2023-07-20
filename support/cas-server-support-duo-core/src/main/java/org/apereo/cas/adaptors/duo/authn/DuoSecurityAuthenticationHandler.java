@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -31,6 +32,7 @@ import java.util.List;
  * @since 4.2
  */
 @Slf4j
+@Monitorable
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
     implements MultifactorAuthenticationHandler {
     @Getter
@@ -51,8 +53,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     @Override
     public boolean supports(final Credential credential) {
-        if (credential instanceof MultifactorAuthenticationCredential) {
-            val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
+        if (credential instanceof MultifactorAuthenticationCredential mfaCredential) {
+            val id = mfaCredential.getProviderId();
             return multifactorAuthenticationProvider.getObject().matches(id);
         }
         return false;
@@ -117,20 +119,20 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @SneakyThrows
-    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential c) {
+    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential givenCredential) {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val credential = (DuoSecurityUniversalPromptCredential) c;
+            val credential = (DuoSecurityUniversalPromptCredential) givenCredential;
             val result = duoAuthenticationService.authenticate(credential);
             if (result.isSuccess()) {
                 val principal = principalFactory.createPrincipal(result.getUsername(), result.getAttributes());
-                LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
+                LOGGER.debug("Duo Security has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        throw new FailedLoginException("Duo universal prompt authentication has failed");
+        throw new FailedLoginException("Duo Security universal prompt authentication has failed");
     }
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {

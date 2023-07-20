@@ -1,5 +1,6 @@
 {
   "dependencies": "yubikey,gauth",
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
     "--logging.level.org.springframework.webflow=info",

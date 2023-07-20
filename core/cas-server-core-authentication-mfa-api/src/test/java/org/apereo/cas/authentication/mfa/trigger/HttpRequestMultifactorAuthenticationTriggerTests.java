@@ -19,9 +19,9 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperationByHeader() {
+    void verifyOperationByHeader() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestHeader("mfaPolicy");
         this.httpRequest.addHeader("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -31,7 +31,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
     }
 
     @Test
-    public void verifyOperationByParameter() {
+    void verifyOperationByParameter() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestParameter("mfaPolicy");
         this.httpRequest.addParameter("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -41,7 +41,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
     }
 
     @Test
-    public void verifyOperationByAttribute() {
+    void verifyOperationByAttribute() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -51,7 +51,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
     }
 
     @Test
-    public void verifyOperationBySessionAttribute() {
+    void verifyOperationBySessionAttribute() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.getSession(true).setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -61,7 +61,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
     }
 
     @Test
-    public void verifyOperationInvalidProvider() {
+    void verifyOperationInvalidProvider() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", "invalid");

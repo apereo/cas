@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "jvmArgs": "-Daws.accessKeyId=AKIAIPPIGGUNIO74C63Z -Daws.secretAccessKey=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",
   "properties": [
     "--cas.server.name=https://localhost:8443",

@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RenewAuthenticationRequestCheckActionTests {
+class RenewAuthenticationRequestCheckActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -55,7 +55,7 @@ public class RenewAuthenticationRequestCheckActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyProceed() throws Exception {
+    void verifyProceed() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ public class RenewAuthenticationRequestCheckActionTests {
     }
 
     @Test
-    public void verifyRenew() throws Exception {
+    void verifyRenew() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");

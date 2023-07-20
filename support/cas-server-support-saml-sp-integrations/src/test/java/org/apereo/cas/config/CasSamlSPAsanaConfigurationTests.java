@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.asana.name-id-attribute=cn",
     "cas.saml-sp.asana.name-id-format=transient"
 })
-public class CasSamlSPAsanaConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPAsanaConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

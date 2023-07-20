@@ -14,24 +14,31 @@ broker while transparently providing access to multiple services without repetit
 improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
 be considered to achieve suitable security.
 
-<div class="alert alert-info"><strong>Reporting Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
+<div class="alert alert-info">:information_source: <strong>Reporting Issues</strong><p>The security team asks that you 
+please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues 
+properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
 ## Announcements
      
-- [March 6 2022](https://apereo.github.io/2022/03/06/oidc-vuln/)
-- [December 11 2021](https://apereo.github.io/2021/12/11/log4j-vuln/)
-- [October 18 2021](https://apereo.github.io/2021/10/18/restvuln/)
-- [Feb 13 2021](https://apereo.github.io/2021/02/13/gauthvuln/)
-- [Oct 14 2020](https://apereo.github.io/2020/10/14/gauthvuln/)
-- [July 24 2020](https://apereo.github.io/2020/07/24/credvuln/)
-- [Feb 8 2020](https://apereo.github.io/2020/02/08/webflowcrypto/)
-- [Dec 20 2019](https://apereo.github.io/2019/12/20/surrogatevuln/)
-- [Nov 21 2019](https://apereo.github.io/2019/11/24/smfavuln/)
-- [Sep 27 2019](https://apereo.github.io/2019/09/27/numvulndisc/)
-- [Sep 26 2018](https://apereo.github.io/2018/09/26/mfavulndisc/)
-- [Mar 6 2017](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
-- [Oct 24 2016](https://apereo.github.io/2016/10/24/servlvulndisc/)
-- [Apr 8 2016](https://apereo.github.io/2016/04/08/commonsvulndisc/)
+- [February 2023](https://apereo.github.io/2023/02/20/x509-vuln/)
+- [August 2022](https://apereo.github.io/2022/08/03/oidc-vuln/)
+- [July 2022](https://apereo.github.io/2022/07/01/oidc-vuln/)
+- [June 2022](https://apereo.github.io/2022/06/23/oidc-vuln/)
+- [March 2022](https://apereo.github.io/2022/03/31/spring-vuln/)
+- [March 2022](https://apereo.github.io/2022/03/06/oidc-vuln/)
+- [December 2021](https://apereo.github.io/2021/12/11/log4j-vuln/)
+- [October 2021](https://apereo.github.io/2021/10/18/restvuln/)
+- [Feb 2021](https://apereo.github.io/2021/02/13/gauthvuln/)
+- [Oct 2020](https://apereo.github.io/2020/10/14/gauthvuln/)
+- [July 2020](https://apereo.github.io/2020/07/24/credvuln/)
+- [Feb 2020](https://apereo.github.io/2020/02/08/webflowcrypto/)
+- [Dec 2019](https://apereo.github.io/2019/12/20/surrogatevuln/)
+- [Nov 2019](https://apereo.github.io/2019/11/24/smfavuln/)
+- [Sep 2019](https://apereo.github.io/2019/09/27/numvulndisc/)
+- [Sep 2018](https://apereo.github.io/2018/09/26/mfavulndisc/)
+- [Mar 2017](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
+- [Oct 2016](https://apereo.github.io/2016/10/24/servlvulndisc/)
+- [Apr 2016](https://apereo.github.io/2016/04/08/commonsvulndisc/)
 
 ## System Security Considerations
 
@@ -146,7 +153,7 @@ of which specifies the management controls above. The service registry can be co
 a Web user interface, or both. See the [Service Management](../services/Service-Management.html) section for more
 information.
 
-<div class="alert alert-warning"><strong>Authorized Services</strong><p>
+<div class="alert alert-warning">:warning: <strong>Authorized Services</strong><p>
 As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
 to only include the list of known applications that are authorized to use CAS. Leaving the management interface
 open for all applications may create an opportunity for security attacks.
@@ -171,7 +178,7 @@ Please [see this guide](../installation/Password-Policy-Enforcement.html) for mo
 
 Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-<div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
 
 {% include_cached {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
@@ -241,7 +248,7 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.cors" %}
 
 #### Security Response Headers
 
@@ -249,7 +256,7 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.header" %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
@@ -282,8 +289,7 @@ Long term authentication support must be explicitly enabled through
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 
-
-### Warn
+### Warning Before Redirect
 
 CAS supports optional notification of service access during an established SSO session. By default CAS
 transparently requests tickets needed for service access and presents them to the target service for validation,

@@ -1,16 +1,16 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"
 })
 @Tag("SAMLMetadata")
-public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
+class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     private Action samlMetadataUIParserAction;
@@ -55,7 +55,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyEntityIdUIInfoExists() throws Exception {
+    void verifyEntityIdUIInfoExists() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
@@ -68,7 +68,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyEntityIdUIInfoExistsEmbedded() throws Exception {
+    void verifyEntityIdUIInfoExistsEmbedded() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -86,7 +86,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyEntityIdUIInfoNoParam() throws Exception {
+    void verifyEntityIdUIInfoNoParam() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");

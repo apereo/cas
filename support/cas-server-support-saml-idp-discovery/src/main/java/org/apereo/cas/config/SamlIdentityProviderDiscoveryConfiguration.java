@@ -131,10 +131,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
         builtClients.findAllClients()
             .stream()
-            .filter(c -> c instanceof SAML2Client).map(SAML2Client.class::cast)
+            .filter(SAML2Client.class::isInstance)
+            .map(SAML2Client.class::cast)
             .forEach(c -> {
                 c.init();
                 val entity = new SamlIdentityProviderEntity();
+                c.getIdentityProviderMetadataResolver().resolve();
                 entity.setEntityID(c.getIdentityProviderResolvedEntityId());
                 parsers.add(new SamlIdentityProviderEntityParser(entity));
             });

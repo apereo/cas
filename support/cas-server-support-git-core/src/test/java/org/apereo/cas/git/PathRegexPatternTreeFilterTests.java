@@ -17,10 +17,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class PathRegexPatternTreeFilterTests {
+class PathRegexPatternTreeFilterTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val filter = new PathRegexPatternTreeFilter(RegexUtils.createPattern(".+"));
         val walker = mock(TreeWalk.class);
         when(walker.isSubtree()).thenReturn(Boolean.TRUE);

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
+class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
     private Action samlIdPMetadataUIParserAction;
@@ -42,7 +42,7 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -63,7 +63,7 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     }
 
     @Test
-    public void verifyNoEntity() throws Exception {
+    void verifyNoEntity() throws Exception {
         
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

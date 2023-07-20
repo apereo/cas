@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -92,6 +93,7 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryScheduler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public Runnable gitSamlRegisteredServiceRepositoryScheduler(
         @Qualifier("gitSamlRegisteredServiceRepositoryInstance")
         final GitRepository gitSamlRegisteredServiceRepositoryInstance,
@@ -115,7 +117,7 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
         public void run() {
             FunctionUtils.doUnchecked(__ -> {
                 val origin = StringUtils.defaultString(gitRepository.getRepositoryRemote("origin"), "default");
-                LOGGER.debug("Starting to pull SAML registered services...", origin);
+                LOGGER.debug("Starting to pull SAML registered services from [{}]", origin);
                 gitRepository.pull();
             });
         }

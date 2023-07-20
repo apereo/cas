@@ -16,29 +16,29 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class Cas10ProtocolValidationSpecificationTests extends BaseCasCoreTests {
+class Cas10ProtocolValidationSpecificationTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
     private CasProtocolValidationSpecification validationSpecification;
 
     @Test
-    public void verifySatisfiesSpecOfTrue() {
+    void verifySatisfiesSpecOfTrue() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifyNotSatisfiesSpecOfTrue() {
+    void verifyNotSatisfiesSpecOfTrue() {
         validationSpecification.setRenew(true);
         assertFalse(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifySatisfiesSpecOfFalse() {
+    void verifySatisfiesSpecOfFalse() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifySatisfiesSpecOfFalse2() {
+    void verifySatisfiesSpecOfFalse2() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 

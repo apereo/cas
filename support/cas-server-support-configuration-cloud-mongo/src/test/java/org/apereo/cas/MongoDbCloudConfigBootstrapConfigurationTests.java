@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MongoDbCloudConfigBootstrapConfiguration.class
 },
     properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
-public class MongoDbCloudConfigBootstrapConfigurationTests {
+class MongoDbCloudConfigBootstrapConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
@@ -55,7 +55,7 @@ public class MongoDbCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 }

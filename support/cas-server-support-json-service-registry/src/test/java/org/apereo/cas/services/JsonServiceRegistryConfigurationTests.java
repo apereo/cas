@@ -4,8 +4,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.JsonServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
 },
 properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
-public class JsonServiceRegistryConfigurationTests {
+class JsonServiceRegistryConfigurationTests {
     @Autowired
     @Qualifier("jsonServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.serviceRegistry);
     }
 }

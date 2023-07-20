@@ -1,10 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -31,16 +31,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
+class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
     private Action accountProfilePasswordChangeRequestAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
+class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 
@@ -29,37 +29,37 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() {
+    void verifySupportsProperUserCredentials() {
         assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
         assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials().getClass()));
     }
 
     @Test
-    public void verifyDoesntSupportBadUserCredentials() {
+    void verifyDoesntSupportBadUserCredentials() {
         assertFalse(authenticationHandler.supports(
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test2")));
     }
 
     @Test
-    public void verifyAcceptsProperCertificateCredentials() throws Exception {
+    void verifyAcceptsProperCertificateCredentials() throws Exception {
         assertNotNull(authenticationHandler.authenticate(
             RegisteredServiceTestUtils.getHttpBasedServiceCredentials(), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
-    public void verifyRejectsInProperCertificateCredentials() {
+    void verifyRejectsInProperCertificateCredentials() {
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(
             "https://clearinghouse.ja-sig.org"), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
-    public void verifyAcceptsNonHttpsCredentials() throws Exception {
+    void verifyAcceptsNonHttpsCredentials() throws Exception {
         assertNotNull(authenticationHandler.authenticate(
             RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com"), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
-    public void verifyNoAcceptableStatusCode() {
+    void verifyNoAcceptableStatusCode() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"),
@@ -67,7 +67,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoAcceptableStatusCodeButOneSet() {
+    void verifyNoAcceptableStatusCodeButOneSet() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();

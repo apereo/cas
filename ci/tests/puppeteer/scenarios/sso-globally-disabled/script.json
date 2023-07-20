@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.http-client.host-name-verifier=none",

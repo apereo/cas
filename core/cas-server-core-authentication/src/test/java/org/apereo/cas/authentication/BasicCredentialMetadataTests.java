@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0
  */
 @Tag("AuthenticationMetadata")
-public class BasicCredentialMetadataTests {
+class BasicCredentialMetadataTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "basicCredentialMetaData.json");
 
@@ -27,7 +27,7 @@ public class BasicCredentialMetadataTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeABasicCredentialMetaDataToJson() throws Exception {
+    void verifySerializeABasicCredentialMetaDataToJson() throws Exception {
         val credentialMetaDataWritten = new BasicCredentialMetadata(new UsernamePasswordCredential());
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetadata.class);

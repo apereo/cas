@@ -1,5 +1,6 @@
 {
   "dependencies": "webauthn,events-configuration",
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
     

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationHandler")
-public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
+class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
     private RequestContext context;
@@ -63,7 +63,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyServiceUnauthz() throws Exception {
+    void verifyServiceUnauthz() throws Exception {
         assertTrue(handler.supports(new UnauthorizedAuthenticationException("failure"), context));
 
         WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, new URI("https://github.com"));
@@ -75,7 +75,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() {
         val ex = new AuthenticationException(new InvalidLoginLocationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);
@@ -83,7 +83,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyAuthUnauthz() {
+    void verifyAuthUnauthz() {
         val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);

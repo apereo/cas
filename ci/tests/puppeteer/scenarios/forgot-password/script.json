@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.authn.pm.core.enabled=true",

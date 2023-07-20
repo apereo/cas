@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnStartRegistrationActionTests {
+class WebAuthnStartRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION)
     private Action webAuthnStartRegistrationAction;
@@ -57,7 +58,7 @@ public class WebAuthnStartRegistrationActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             this.webAuthnMultifactorAuthenticationProvider, "webAuthnMultifactorAuthenticationProvider");
@@ -66,7 +67,7 @@ public class WebAuthnStartRegistrationActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -78,7 +79,7 @@ public class WebAuthnStartRegistrationActionTests {
 
         val http = new HttpSecurity(mock(ObjectPostProcessor.class),
             new AuthenticationManagerBuilder(mock(ObjectPostProcessor.class)),
-            Map.of());
+            Map.of(ApplicationContext.class, applicationContext));
         assertNotNull(webAuthnProtocolEndpointConfigurer.configure(http));
         assertNotNull(http.getConfigurer(CsrfConfigurer.class));
     }

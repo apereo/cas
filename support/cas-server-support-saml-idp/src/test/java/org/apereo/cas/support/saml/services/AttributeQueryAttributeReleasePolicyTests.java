@@ -27,19 +27,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
 })
-public class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "AttributeQueryAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("a", "b"));
         MAPPER.writeValue(JSON_FILE, filter);
@@ -49,7 +49,7 @@ public class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfig
     }
 
     @Test
-    public void verifyReleasesAttributes() {
+    void verifyReleasesAttributes() {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "cn"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();

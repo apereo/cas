@@ -26,7 +26,7 @@ async function verifyWithService() {
 
     const browser2 = await puppeteer.launch(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
-    await page2.goto("https://localhost:8443/cas/login?service=https://httpbin.org/anything/1");
+    await page2.goto("https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
     await cas.loginWith(page2, "casuser", "Mellon");
     await cas.assertInnerTextStartsWith(page2, "#loginErrorsPanel p",
         "You cannot login at this time, since you have another active single sign-on session in progress");

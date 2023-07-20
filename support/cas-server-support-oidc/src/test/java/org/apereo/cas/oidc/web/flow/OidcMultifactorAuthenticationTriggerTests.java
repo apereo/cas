@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcMultifactorAuthenticationTriggerTests {
+class OidcMultifactorAuthenticationTriggerTests {
 
     @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
     public static class OidcAuthenticationContextTestConfiguration {
@@ -41,9 +41,9 @@ public class OidcMultifactorAuthenticationTriggerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=unknown")
-    public class NoMultifactorProvidersTests extends AbstractOidcTests {
+    class NoMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyAcrMissingMfa() {
+        void verifyAcrMissingMfa() {
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
             request.addParameter(OAuth20Constants.ACR_VALUES, "unknown");
@@ -62,9 +62,9 @@ public class OidcMultifactorAuthenticationTriggerTests {
         "cas.authn.oidc.discovery.acr-values-supported=1,2",
         "cas.authn.oidc.core.authentication-context-reference-mappings=1->mfa-dummy"
     })
-    public class WithMappedMultifactorProvidersTests extends AbstractOidcTests {
+    class WithMappedMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyAcrMfa() {
+        void verifyAcrMfa() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
@@ -77,7 +77,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyUnsupportedAcr() {
+        void verifyUnsupportedAcr() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
@@ -94,9 +94,9 @@ public class OidcMultifactorAuthenticationTriggerTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
-    public class WithMultifactorProvidersTests extends AbstractOidcTests {
+    class WithMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyNoAcr() {
+        void verifyNoAcr() {
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
             val authn = RegisteredServiceTestUtils.getAuthentication();
@@ -106,7 +106,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyAcrMfa() {
+        void verifyAcrMfa() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
             val service = RegisteredServiceTestUtils.getService();
@@ -120,7 +120,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyUrlEncoding() {
+        void verifyUrlEncoding() {
             val url = "https://link.test.edu/web/cas?profile=Example Primo&targetURL=abc";
             val request = new MockHttpServletRequest();
             request.setRequestURI("/cas/login");

@@ -22,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("LdapAttributes")
-public class PrincipalAttributeRepositoryFetcherLdapTests {
+class PrincipalAttributeRepositoryFetcherLdapTests {
 
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={username})(name={username}))")
     @Nested
     @EnabledIfListeningOnPort(port = 10389)
     @SuppressWarnings("ClassCanBeStatic")
-    public class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
+    class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId(UID)
@@ -46,9 +46,9 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={title}))")
     @Nested
     @EnabledIfListeningOnPort(port = 10389)
-    public class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
+    class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of("title", List.of(UID)));
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
@@ -65,9 +65,9 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
     @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={customParameter}))")
     @Nested
     @EnabledIfListeningOnPort(port = 10389)
-    public class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
+    class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of());
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)

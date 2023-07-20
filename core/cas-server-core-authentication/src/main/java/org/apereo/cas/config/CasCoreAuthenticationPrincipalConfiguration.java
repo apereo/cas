@@ -36,6 +36,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -113,7 +114,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
             @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
             return chain -> {
                 val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
                 val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);
@@ -127,7 +128,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
 
-        @ConditionalOnMissingBean(name = "principalFactory")
+        @ConditionalOnMissingBean(name = PrincipalFactory.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory principalFactory() {
@@ -144,7 +145,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
                 LOGGER.warn("Caching for the global principal attribute repository is disabled");
                 return new DefaultPrincipalAttributesRepository();
             }
-            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(Locale.ENGLISH), cacheTime);
         }
 
     }

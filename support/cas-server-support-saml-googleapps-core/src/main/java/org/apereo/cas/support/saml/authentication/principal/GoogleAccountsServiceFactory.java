@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.util.AbstractSamlObjectBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        val document = GoogleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
+        val document = AbstractSamlObjectBuilder.constructDocumentFromXml(xmlRequest);
         if (document == null) {
             LOGGER.warn("Unable to construct XML document from request");
             return null;

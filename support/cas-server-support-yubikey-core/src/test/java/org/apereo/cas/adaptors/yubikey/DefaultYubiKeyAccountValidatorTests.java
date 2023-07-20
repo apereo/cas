@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFAProvider")
 @SuppressWarnings("JavaUtilDate")
-public class DefaultYubiKeyAccountValidatorTests {
+class DefaultYubiKeyAccountValidatorTests {
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val client = mock(YubicoClient.class);
         val r = mock(VerificationResponse.class);
         when(client.verify(anyString())).thenReturn(r);
@@ -33,7 +33,7 @@ public class DefaultYubiKeyAccountValidatorTests {
     }
 
     @Test
-    public void verifyActionFailsStatus() throws Exception {
+    void verifyActionFailsStatus() throws Exception {
         val client = mock(YubicoClient.class);
         val r = mock(VerificationResponse.class);
         when(client.verify(anyString())).thenReturn(r);
@@ -44,14 +44,14 @@ public class DefaultYubiKeyAccountValidatorTests {
     }
 
     @Test
-    public void verifyBadPubKey() {
+    void verifyBadPubKey() {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client);
         assertFalse(v.isValid("casuser", "abcdeyf"));
     }
 
     @Test
-    public void verifyNoPubKey() {
+    void verifyNoPubKey() {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client) {
             @Override

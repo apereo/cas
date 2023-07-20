@@ -40,12 +40,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
 })
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
@@ -55,7 +55,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifyTokenCreationAndParsing() {
+    void verifyTokenCreationAndParsing() {
         val token = passwordChangeService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         assertNotNull(token);
         val result = passwordChangeService.parseToken(token);
@@ -63,7 +63,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifyPasswordChangedFails() {
+    void verifyPasswordChangedFails() {
         val credential = new UsernamePasswordCredential("caspm", "123456");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("Mellon".toCharArray());
@@ -73,7 +73,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("caspm@example.org", email);
         assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
@@ -81,20 +81,20 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifyUnlockAccount() {
+    void verifyUnlockAccount() {
         val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("caspm");
         assertTrue(passwordChangeService.unlockAccount(credential));
     }
 
     @Test
-    public void verifyUser() {
+    void verifyUser() {
         val uid = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("caspm@example.org").build());
         assertEquals("CasPasswordManagement", uid);
         assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().email("unknown").build()));
     }
 
     @Test
-    public void verifyFindPhone() {
+    void verifyFindPhone() {
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("1234567890", ph);
         assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("unknown").build()));
@@ -102,7 +102,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifyFindSecurityQuestions() {
+    void verifyFindSecurityQuestions() {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
@@ -112,7 +112,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     }
 
     @Test
-    public void verifySecurityQuestions() {
+    void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("caspm").build();
         query.securityQuestion("Q1", "A1");
         query.securityQuestion("Q2", "A2");

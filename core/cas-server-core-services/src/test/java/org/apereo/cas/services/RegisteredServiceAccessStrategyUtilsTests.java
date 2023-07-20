@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class RegisteredServiceAccessStrategyUtilsTests {
+class RegisteredServiceAccessStrategyUtilsTests {
 
     @Test
-    public void verifyExpired() {
+    void verifyExpired() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false,
             LocalDate.now(ZoneOffset.UTC).minusDays(1)));
@@ -34,7 +34,7 @@ public class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    public void verifySsoAccess() {
+    void verifySsoAccess() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         val tgt = mock(TicketGrantingTicket.class);
@@ -45,7 +45,7 @@ public class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    public void verifyPrincipalAccess() {
+    void verifyPrincipalAccess() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         assertThrows(PrincipalException.class, () ->

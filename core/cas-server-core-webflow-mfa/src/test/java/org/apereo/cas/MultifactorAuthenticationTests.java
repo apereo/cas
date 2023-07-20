@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
 @Tag("MFA")
-public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
 
@@ -70,7 +70,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
+    void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -79,7 +79,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
+    void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -88,7 +88,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithPassword() {
+    void verifyDeniesAccessToHighSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -96,7 +96,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithOTP() {
+    void verifyDeniesAccessToHighSecurityServiceWithOTP() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -104,7 +104,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE,
             newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
@@ -116,7 +116,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
         val ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
@@ -131,7 +131,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
          * is the one that satisfies security policy
          */
         val assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
-        val authn = assertion.primaryAuthentication();
+        val authn = assertion.getPrimaryAuthentication();
         assertEquals(2, authn.getSuccesses().size());
         assertTrue(authn.getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));

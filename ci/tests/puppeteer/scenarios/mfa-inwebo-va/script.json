@@ -1,5 +1,6 @@
 {
   "dependencies": "inwebo-mfa",
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 

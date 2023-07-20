@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+
   "properties": [
     "--cas.authn.ldap[0].type=AUTHENTICATED",
     "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",

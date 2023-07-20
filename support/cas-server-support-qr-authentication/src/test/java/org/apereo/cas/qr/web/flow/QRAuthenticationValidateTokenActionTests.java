@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationValidateTokenActionTests {
+class QRAuthenticationValidateTokenActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
     private Action qrAuthenticationValidateWebSocketChannelAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

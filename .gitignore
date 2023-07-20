@@ -9,6 +9,7 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.iprof
 *.war
 **/gh-pages/
 *.iml

@@ -4,16 +4,16 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,19 +24,17 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2Web")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
-public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileCallbackHandlerController")
     private SSOSamlIdPProfileCallbackHandlerController controller;
@@ -63,23 +61,23 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @Test
-    public void verifyNoRequest() {
+    void verifyNoRequest() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test
-    public void verifyNoTicketPassiveAuthn() throws Exception {
+    void verifyNoTicketPassiveAuthn() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest(true));
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        val session = request.getSession();
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        session.setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
+
+        storeAuthnRequest(request, response, authnRequest, context);
+
         val mv = controller.handleCallbackProfileRequestGet(response, request);
         assertNull(mv);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -88,23 +86,30 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         assertEquals(StatusCode.NO_PASSIVE, samlResponse.getStatus().getStatusCode().getValue());
     }
 
+    private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
+                                   final AuthnRequest authnRequest, final MessageContext context) throws Exception {
+        request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
+            .store(new JEEContext(request, response), Pair.of(authnRequest, context));
+    }
+
     @Test
-    public void verifyNoTicket() throws Exception {
+    void verifyNoTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        val session = request.getSession();
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        session.setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
+
+        storeAuthnRequest(request, response, authnRequest, context);
+
         val mv = controller.handleCallbackProfileRequestGet(response, request);
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
 
     @Test
-    public void verifyValidationByPost() throws Exception {
+    void verifyValidationByPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -113,11 +118,9 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         val authnRequest = signAuthnRequest(request, response, authn);
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        val session = request.getSession();
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
-        session.setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
+
+        storeAuthnRequest(request, response, authnRequest, context);
+
         val st1 = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
         controller.handleCallbackProfileRequestGet(response, request);
@@ -125,20 +128,19 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @Test
-    public void verifyValidationByRedirect() throws Exception {
+    void verifyValidationByRedirect() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         val authn = getAuthnRequest();
         authn.setProtocolBinding(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
         val authnRequest = signAuthnRequest(request, response, authn);
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
-        val session = request.getSession();
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        session.setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
+
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        session.setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
+
+        storeAuthnRequest(request, response, authnRequest, context);
+
         val st1 = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
         controller.handleCallbackProfileRequestGet(response, request);
@@ -148,7 +150,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
                                           final AuthnRequest authnRequest) throws Exception {
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
@@ -175,6 +177,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         var authnRequest = (AuthnRequest) builder.buildObject();
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) builder.buildObject();

@@ -1,6 +1,8 @@
 ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
+ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
     local {
@@ -23,7 +25,7 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
-            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
+            url "https://build.shibboleth.net/maven/snapshots"
             mavenContent { snapshotsOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -32,6 +34,7 @@ dependencyResolutionManagement {
         }
         maven {
             url "https://build.shibboleth.net/maven/releases/"
+            mavenContent {releasesOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
                 includeGroupByRegex "net\\.shibboleth.*"
@@ -54,15 +57,15 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent {releasesOnly() }
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/milestone"
-            mavenContent {releasesOnly() }
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/snapshot"
-            mavenContent {snapshotsOnly() }
+            mavenContent { snapshotsOnly() }
         }
         maven {
             url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
@@ -74,14 +77,24 @@ dependencyResolutionManagement {
         maven {
             url "https://jitpack.io"
             content {
-                includeGroupByRegex "com.github.mmoayyed.scim2"
-                includeGroupByRegex "com.github.mmoayyed.ws-wss4j"
+                includeGroupByRegex ".*wss4j.*"
             }
             mavenContent { releasesOnly() }
         }
+//        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
+//            maven {
+//                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
+//                content {
+//                    includeGroupByRegex "org.apache.wss4j"
+//                }
+//                credentials {
+//                    username githubPackageRegistryUser
+//                    password githubPackageRegistryPassword
+//                }
+//            }
+//        }
     }
 }
-
 
 rootProject.name = "cas-server"
 
@@ -157,16 +170,12 @@ include "support:cas-server-support-account-mgmt"
 include "support:cas-server-support-acme"
 include "support:cas-server-support-actions-core"
 include "support:cas-server-support-actions"
-include "support:cas-server-support-audit-couchbase"
-include "support:cas-server-support-audit-couchdb"
 include "support:cas-server-support-audit-dynamodb"
 include "support:cas-server-support-audit-jdbc"
 include "support:cas-server-support-audit-mongo"
 include "support:cas-server-support-audit-redis"
 include "support:cas-server-support-audit-rest"
 include "support:cas-server-support-aup-core"
-include "support:cas-server-support-aup-couchbase"
-include "support:cas-server-support-aup-couchdb"
 include "support:cas-server-support-aup-jdbc"
 include "support:cas-server-support-aup-ldap"
 include "support:cas-server-support-aup-mongo"
@@ -196,6 +205,7 @@ include "support:cas-server-support-configuration-cloud-aws-secretsmanager"
 include "support:cas-server-support-configuration-cloud-aws-ssm"
 include "support:cas-server-support-configuration-cloud-azure-keyvault"
 include "support:cas-server-support-configuration-cloud-dynamodb"
+include "support:cas-server-support-configuration-cloud-gcp-secretsmanager"
 include "support:cas-server-support-configuration-cloud-jdbc"
 include "support:cas-server-support-configuration-cloud-kafka"
 include "support:cas-server-support-configuration-cloud-kubernetes"
@@ -205,7 +215,6 @@ include "support:cas-server-support-configuration-cloud-vault"
 include "support:cas-server-support-configuration-cloud-zookeeper"
 include "support:cas-server-support-consent-api"
 include "support:cas-server-support-consent-core"
-include "support:cas-server-support-consent-couchdb"
 include "support:cas-server-support-consent-dynamodb"
 include "support:cas-server-support-consent-jdbc"
 include "support:cas-server-support-consent-ldap"
@@ -217,13 +226,6 @@ include "support:cas-server-support-consul-client"
 include "support:cas-server-support-cosmosdb-core"
 include "support:cas-server-support-cosmosdb-service-registry"
 include "support:cas-server-support-cosmosdb-ticket-registry"
-include "support:cas-server-support-couchbase-authentication"
-include "support:cas-server-support-couchbase-core"
-include "support:cas-server-support-couchbase-service-registry"
-include "support:cas-server-support-couchdb-authentication"
-include "support:cas-server-support-couchdb-core"
-include "support:cas-server-support-couchdb-service-registry"
-include "support:cas-server-support-couchdb-ticket-registry"
 include "support:cas-server-support-discovery-profile"
 include "support:cas-server-support-duo"
 include "support:cas-server-support-duo-core"
@@ -231,9 +233,9 @@ include "support:cas-server-support-duo-core-mfa"
 include "support:cas-server-support-dynamodb-core"
 include "support:cas-server-support-dynamodb-service-registry"
 include "support:cas-server-support-dynamodb-ticket-registry"
+include "support:cas-server-support-elastic"
 include "support:cas-server-support-electrofence"
 include "support:cas-server-support-eureka-client"
-include "support:cas-server-support-events-couchdb"
 include "support:cas-server-support-events-dynamodb"
 include "support:cas-server-support-events-influxdb"
 include "support:cas-server-support-events-jpa"
@@ -243,15 +245,19 @@ include "support:cas-server-support-events-redis"
 include "support:cas-server-support-gauth"
 include "support:cas-server-support-gauth-core"
 include "support:cas-server-support-gauth-core-mfa"
-include "support:cas-server-support-gauth-couchdb"
 include "support:cas-server-support-gauth-dynamodb"
 include "support:cas-server-support-gauth-jpa"
 include "support:cas-server-support-gauth-ldap"
 include "support:cas-server-support-gauth-mongo"
 include "support:cas-server-support-gauth-redis"
+include "support:cas-server-support-gcp-logging"
+include "support:cas-server-support-gcp-pubsub-ticket-registry"
+include "support:cas-server-support-gcp-firestore-ticket-registry"
+include "support:cas-server-support-gcp-firestore-service-registry"
 include "support:cas-server-support-generic"
 include "support:cas-server-support-generic-remote-webflow"
 include "support:cas-server-support-geolocation"
+include "support:cas-server-support-geolocation-azure"
 include "support:cas-server-support-geolocation-googlemaps"
 include "support:cas-server-support-geolocation-maxmind"
 include "support:cas-server-support-geolocation-ip"
@@ -298,6 +304,7 @@ include "support:cas-server-support-ldap-monitor"
 include "support:cas-server-support-ldap-service-registry"
 include "support:cas-server-support-logback"
 include "support:cas-server-support-logging-config-cloudwatch"
+include "support:cas-server-support-logging-config-fluentd"
 include "support:cas-server-support-logging-config-splunk"
 include "support:cas-server-support-logging-config-sqs"
 include "support:cas-server-support-memcached-aws-elasticache"
@@ -311,6 +318,7 @@ include "support:cas-server-support-mongo-core"
 include "support:cas-server-support-mongo-monitor"
 include "support:cas-server-support-mongo-service-registry"
 include "support:cas-server-support-mongo-ticket-registry"
+include "support:cas-server-support-native"
 include "support:cas-server-support-notifications-fcm"
 include "support:cas-server-support-oauth"
 include "support:cas-server-support-oauth-api"
@@ -332,10 +340,10 @@ include "support:cas-server-support-otp-mfa"
 include "support:cas-server-support-otp-mfa-core"
 include "support:cas-server-support-pac4j"
 include "support:cas-server-support-pac4j-api"
-include "support:cas-server-support-pac4j-authentication"
 include "support:cas-server-support-pac4j-core"
 include "support:cas-server-support-pac4j-core-clients"
 include "support:cas-server-support-pac4j-webflow"
+include "support:cas-server-support-palantir"
 include "support:cas-server-support-passwordless-api"
 include "support:cas-server-support-passwordless-authentication"
 include "support:cas-server-support-passwordless-jpa"
@@ -378,7 +386,6 @@ include "support:cas-server-support-saml-idp-core"
 include "support:cas-server-support-saml-idp-discovery"
 include "support:cas-server-support-saml-idp-metadata"
 include "support:cas-server-support-saml-idp-metadata-aws-s3"
-include "support:cas-server-support-saml-idp-metadata-couchdb"
 include "support:cas-server-support-saml-idp-metadata-jpa"
 include "support:cas-server-support-saml-idp-metadata-git"
 include "support:cas-server-support-saml-idp-metadata-mongo"
@@ -417,7 +424,6 @@ include "support:cas-server-support-spnego-webflow"
 include "support:cas-server-support-surrogate-api"
 include "support:cas-server-support-surrogate-core"
 include "support:cas-server-support-surrogate-authentication"
-include "support:cas-server-support-surrogate-authentication-couchdb"
 include "support:cas-server-support-surrogate-authentication-jdbc"
 include "support:cas-server-support-surrogate-authentication-ldap"
 include "support:cas-server-support-surrogate-authentication-rest"
@@ -430,7 +436,6 @@ include "support:cas-server-support-themes-core"
 include "support:cas-server-support-throttle"
 include "support:cas-server-support-throttle-bucket4j"
 include "support:cas-server-support-throttle-core"
-include "support:cas-server-support-throttle-couchdb"
 include "support:cas-server-support-throttle-hazelcast"
 include "support:cas-server-support-throttle-jdbc"
 include "support:cas-server-support-throttle-ldap"
@@ -446,7 +451,6 @@ include "support:cas-server-support-token-webflow"
 include "support:cas-server-support-trusted"
 include "support:cas-server-support-trusted-mfa"
 include "support:cas-server-support-trusted-mfa-core"
-include "support:cas-server-support-trusted-mfa-couchdb"
 include "support:cas-server-support-trusted-mfa-jdbc"
 include "support:cas-server-support-trusted-mfa-mongo"
 include "support:cas-server-support-trusted-mfa-redis"
@@ -455,7 +459,6 @@ include "support:cas-server-support-trusted-mfa-dynamodb"
 include "support:cas-server-support-trusted-webflow"
 include "support:cas-server-support-u2f"
 include "support:cas-server-support-u2f-core"
-include "support:cas-server-support-u2f-couchdb"
 include "support:cas-server-support-u2f-dynamodb"
 include "support:cas-server-support-u2f-jpa"
 include "support:cas-server-support-u2f-mongo"
@@ -471,6 +474,7 @@ include "support:cas-server-support-webauthn-ldap"
 include "support:cas-server-support-webauthn-mongo"
 include "support:cas-server-support-webauthn-redis"
 include "support:cas-server-support-webauthn-rest"
+include "support:cas-server-support-webconfig"
 include "support:cas-server-support-websockets"
 include "support:cas-server-support-ws-idp"
 include "support:cas-server-support-ws-idp-api"
@@ -485,7 +489,6 @@ include "support:cas-server-support-yaml-service-registry"
 include "support:cas-server-support-yubikey"
 include "support:cas-server-support-yubikey-core"
 include "support:cas-server-support-yubikey-core-mfa"
-include "support:cas-server-support-yubikey-couchdb"
 include "support:cas-server-support-yubikey-dynamodb"
 include "support:cas-server-support-yubikey-jpa"
 include "support:cas-server-support-yubikey-mongo"
@@ -494,7 +497,6 @@ include "support:cas-server-support-yubikey-redis"
 include "webapp:cas-server-webapp"
 include "webapp:cas-server-webapp-bootadmin-server"
 include "webapp:cas-server-webapp-resources"
-include "webapp:cas-server-webapp-config"
 include "webapp:cas-server-webapp-config-server"
 include "webapp:cas-server-webapp-eureka-server"
 
@@ -504,6 +506,7 @@ include "webapp:cas-server-webapp-init-config-server"
 include "webapp:cas-server-webapp-init-eureka-server"
 include "webapp:cas-server-webapp-init-tomcat"
 include "webapp:cas-server-webapp-starter-tomcat"
+include "webapp:cas-server-webapp-native"
 
 include "webapp:cas-server-webapp-jetty"
 include "webapp:cas-server-webapp-tomcat"

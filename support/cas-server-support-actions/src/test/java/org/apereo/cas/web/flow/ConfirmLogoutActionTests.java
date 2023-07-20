@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
+class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("confirmLogoutAction")
     private Action action;
 
     @Test
-    public void verifyDoesNothing() throws Exception {
+    void verifyDoesNothing() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -43,7 +43,7 @@ public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyLocateByContext() throws Exception {
+    void verifyLocateByContext() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -59,14 +59,14 @@ public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyByCookie() throws Exception {
+    void verifyByCookie() throws Exception {
         val context = new MockRequestContext();
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader("User-Agent", "agent");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val ticket = new MockTicketGrantingTicket("casuser");

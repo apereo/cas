@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasGeoLocationConfiguration.class
 }, properties = "cas.geo-location.groovy.location=classpath:/GroovyGeoLocation.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyGeoLocationServiceTests {
+class GroovyGeoLocationServiceTests {
 
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var results = geoLocationService.locate(InetAddress.getByName("www.google.com"));
         assertNotNull(results);
         results = geoLocationService.locate(1234D, 1234D);

@@ -17,11 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = {"cas.authn.adaptive.risk.date-time.enabled=true", "cas.authn.adaptive.risk.date-time.window-in-hours=4"})
+@TestPropertySource(properties = {
+    "cas.authn.adaptive.risk.date-time.enabled=true",
+    "cas.authn.adaptive.risk.date-time.window-in-hours=4"
+})
 @Tag("Authentication")
-public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
-    public void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -30,11 +33,12 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
     }
 
     @Test
-    public void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isLowestRisk());
     }
+
 }

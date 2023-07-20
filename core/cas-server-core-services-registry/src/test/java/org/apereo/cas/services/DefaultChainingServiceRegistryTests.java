@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class DefaultChainingServiceRegistryTests {
+class DefaultChainingServiceRegistryTests {
 
     private static RegisteredService newService() {
         val service = mock(RegisteredService.class);
@@ -26,7 +26,7 @@ public class DefaultChainingServiceRegistryTests {
     }
 
     @Test
-    public void verifySync() {
+    void verifySync() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val chain = new DefaultChainingServiceRegistry(appCtx);
@@ -39,7 +39,7 @@ public class DefaultChainingServiceRegistryTests {
     }
 
     @Test
-    public void verifyChainOps() {
+    void verifyChainOps() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

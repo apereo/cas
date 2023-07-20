@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAuthenticationActions")
-public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
+class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -32,7 +32,7 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
     }
 
     @Test
-    public void verifyMissingAction() throws Exception {
+    void verifyMissingAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         WebUtils.putGraphicalUserAuthenticationUsername(context, "casuser");

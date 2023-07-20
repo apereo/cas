@@ -24,14 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RestfulApi")
-public class OidcRestfulWebFingerUserInfoRepositoryTests {
+class OidcRestfulWebFingerUserInfoRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private MockWebServer webServer;
 
     @Test
-    public void verifyBadPayload() throws Exception {
+    void verifyBadPayload() throws Exception {
         try (val webServer = new MockWebServer(9312,
             new ByteArrayResource("-@@-".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             this.webServer = webServer;
@@ -46,7 +46,7 @@ public class OidcRestfulWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    public void verifyFindByEmail() throws Exception {
+    void verifyFindByEmail() throws Exception {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrap("email", "cas@example.org"));
         try (val webServer = new MockWebServer(9312,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -65,7 +65,7 @@ public class OidcRestfulWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    public void verifyFindByUsername() throws Exception {
+    void verifyFindByUsername() throws Exception {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrap("username", "casuser"));
         try (val webServer = new MockWebServer(9312,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {

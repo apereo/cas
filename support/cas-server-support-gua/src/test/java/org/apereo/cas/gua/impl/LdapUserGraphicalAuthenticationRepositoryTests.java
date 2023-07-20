@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapUserGraphicalAuthenticationRepositoryTests {
+class LdapUserGraphicalAuthenticationRepositoryTests {
 
     @Autowired
     @Qualifier("userGraphicalAuthenticationRepository")
@@ -53,7 +54,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val ldap = casProperties.getAuthn().getGua().getLdap();
         val factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val cn = createLdapEntry(factory);
@@ -63,7 +64,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
 
     private static String createLdapEntry(final ConnectionFactory factory) throws Exception {
         val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
-        val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
+        val cn = RandomUtils.randomAlphabetic(6).toLowerCase(Locale.ENGLISH);
         val request = AddRequest.builder()
             .attributes(List.of(
                 new LdapAttribute("objectclass", "top", "person", "inetOrgPerson"),

@@ -33,9 +33,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServicesTests {
+class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServicesTests {
     @Test
-    public void verifyPolicyByEntityCache() throws Exception {
+    void verifyPolicyByEntityCache() throws Exception {
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
 
         val props = new SamlIdPProperties();
@@ -63,7 +63,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
     }
 
     @Test
-    public void verifyPolicyBySpEntityCache() throws Exception {
+    void verifyPolicyBySpEntityCache() throws Exception {
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());

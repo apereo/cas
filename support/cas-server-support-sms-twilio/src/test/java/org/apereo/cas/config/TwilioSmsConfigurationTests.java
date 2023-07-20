@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
    "cas.sms-provider.twilio.token=token"
 })
 @Tag("SMS")
-public class TwilioSmsConfigurationTests {
+class TwilioSmsConfigurationTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(smsSender);
     }
 }

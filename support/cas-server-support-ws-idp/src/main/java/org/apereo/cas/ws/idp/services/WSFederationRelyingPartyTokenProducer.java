@@ -1,6 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.ticket.TicketValidator;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;

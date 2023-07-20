@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-public class DenyAllYubiKeyAccountValidatorTests {
+class DenyAllYubiKeyAccountValidatorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val v = new DenyAllYubiKeyAccountValidator();
         assertFalse(v.isValid("anything", "anything"));
     }

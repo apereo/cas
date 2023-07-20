@@ -21,10 +21,10 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("DuoSecurity")
-public class DuoSecurityHealthIndicatorTests {
+class DuoSecurityHealthIndicatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

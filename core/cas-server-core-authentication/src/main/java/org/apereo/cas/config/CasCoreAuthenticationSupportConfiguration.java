@@ -24,6 +24,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -79,6 +80,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
+        @ConditionalOnMissingGraalVMNativeImage
         public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -115,13 +117,14 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier("authenticationTransactionManager") final AuthenticationTransactionManager authenticationTransactionManager,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy,
             @Qualifier("authenticationResultBuilderFactory") final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
-            @Qualifier("authenticationTransactionFactory") final AuthenticationTransactionFactory authenticationTransactionFactory) {
+            @Qualifier(AuthenticationTransactionFactory.BEAN_NAME) final AuthenticationTransactionFactory authenticationTransactionFactory) {
             return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
                 principalElectionStrategy, authenticationResultBuilderFactory,
-                authenticationTransactionFactory);
+                authenticationTransactionFactory, servicesManager);
         }
     }
 
@@ -132,8 +135,10 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
         public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
                 authenticationServiceSelectionPlan);
         }
@@ -161,6 +166,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {
             return plan -> {

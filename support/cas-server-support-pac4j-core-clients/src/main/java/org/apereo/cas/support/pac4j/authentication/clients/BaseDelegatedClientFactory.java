@@ -12,11 +12,13 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +57,7 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
+import org.pac4j.oidc.metadata.OidcOpMetadataResolver;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
@@ -70,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -134,15 +138,14 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         val customProperties = client.getCustomProperties();
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
-        if (StringUtils.isNotBlank(clientProperties.getPrincipalIdAttribute())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute());
-        }
-        if (StringUtils.isNotBlank(clientProperties.getCssClass())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass());
-        }
-        if (StringUtils.isNotBlank(clientProperties.getDisplayName())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, clientProperties.getDisplayName());
-        }
+
+        FunctionUtils.doIfNotBlank(clientProperties.getPrincipalIdAttribute(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()));
+        FunctionUtils.doIfNotBlank(clientProperties.getCssClass(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()));
+        FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
+
         val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
         LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
@@ -172,7 +175,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-
     protected Collection<IndirectClient> buildGoogleIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
@@ -180,7 +182,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             val client = new Google2Client(google.getId(), google.getSecret());
             configureClient(client, google, casProperties);
             if (StringUtils.isNotBlank(google.getScope())) {
-                client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
+                client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase(Locale.ENGLISH)));
             }
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
@@ -220,7 +222,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-
     protected Collection<IndirectClient> buildGitHubIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val github = pac4jProperties.getGithub();
@@ -234,7 +235,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         return List.of();
     }
-
 
     protected Collection<IndirectClient> buildDropBoxIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
@@ -305,7 +305,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
                 client.setProfileUrl(oauth.getProfileUrl());
-                client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
+                client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase(Locale.ENGLISH)));
                 client.setTokenUrl(oauth.getTokenUrl());
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setScope(oauth.getScope());
@@ -406,9 +406,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (clientProperties.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(clientProperties.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient(generic);
-            configureClient(oc, clientProperties.getGeneric(), casProperties);
-            return oc;
+            val oidcClient = new OidcClient(generic);
+            configureClient(oidcClient, clientProperties.getGeneric(), casProperties);
+            return oidcClient;
         }
         return null;
     }
@@ -427,8 +427,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
-                                                                                 final Class<T> clazz) {
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                          final Class<T> clazz) {
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
         
@@ -439,7 +439,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
         cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase(Locale.ENGLISH)));
         }
         cfg.setMaxClockSkew(Long.valueOf(Beans.newDuration(oidc.getMaxClockSkew()).toSeconds()).intValue());
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
@@ -448,6 +448,18 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         cfg.setAllowUnsignedIdTokens(oidc.isAllowUnsignedIdTokens());
         cfg.setIncludeAccessTokenClaimsInProfile(oidc.isIncludeAccessTokenClaims());
         cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+
+        FunctionUtils.doIfNotBlank(oidc.getSupportedClientAuthenticationMethods(), methods -> {
+            val clientMethods = org.springframework.util.StringUtils.commaDelimitedListToSet(methods)
+                .stream()
+                .map(ClientAuthenticationMethod::parse)
+                .collect(Collectors.toSet());
+            cfg.setSupportedClientAuthenticationMethods(clientMethods);
+        });
+
+        FunctionUtils.doIfNotBlank(oidc.getClientAuthenticationMethod(),
+            method -> cfg.setClientAuthenticationMethod(ClientAuthenticationMethod.parse(method)));
+
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
         }
@@ -458,6 +470,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
+        cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+        val opMetadataResolver = new OidcOpMetadataResolver(cfg);
+        opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+        cfg.setOpMetadataResolver(opMetadataResolver);
+
         return cfg;
     }
 
@@ -468,12 +485,15 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             .stream()
             .filter(saml -> saml.isEnabled()
                             && StringUtils.isNotBlank(saml.getKeystorePath())
-                            && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
-                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
-                            && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
+                            && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
+                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
-                val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+                val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getKeystorePath());
+                val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
+                    .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
+                
+                val cfg = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
+                    saml.getPrivateKeyPassword(), identityProviderMetadataPath);
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
@@ -491,8 +511,14 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
-                cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
-                cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+                val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
+                cfg.setServiceProviderEntityId(serviceProviderEntityId);
+
+                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
+                    val resource = ResourceUtils.getRawResourceFrom(location);
+                    cfg.setServiceProviderMetadataResource(resource);
+                });
+
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
                 cfg.setForceAuth(saml.isForceAuth());
@@ -533,7 +559,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                     __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
-                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
+                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
                     cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
 

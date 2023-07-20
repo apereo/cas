@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.2.0
  */
 @Tag("AuthenticationThrottling")
-public class Bucket4jThrottledRequestExecutorTests {
+class Bucket4jThrottledRequestExecutorTests {
 
     @TestPropertySource(properties = {
         "cas.authn.throttle.bucket4j.bandwidth[0].capacity=2",
@@ -19,7 +19,7 @@ public class Bucket4jThrottledRequestExecutorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class BlockingTests extends BaseBucket4jThrottledRequestTests {
+    class BlockingTests extends BaseBucket4jThrottledRequestTests {
     }
 
     @TestPropertySource(properties = {
@@ -28,6 +28,6 @@ public class Bucket4jThrottledRequestExecutorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class NonBlockingTests extends BaseBucket4jThrottledRequestTests {
+    class NonBlockingTests extends BaseBucket4jThrottledRequestTests {
     }
 }

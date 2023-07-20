@@ -8,37 +8,39 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -58,10 +60,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -134,10 +134,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+    protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService,
         final RequestAbstractType authnRequest) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        return SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
     }
 
@@ -148,9 +148,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param entityId          the entity id
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+    protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService, final String entityId) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        return SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId);
     }
 
@@ -197,8 +197,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .principal(authentication.getPrincipal())
             .build();
         val attributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
-        val principalId = registeredService.getUsernameAttributeProvider()
-            .resolveUsername(authentication.getPrincipal(), service, registeredService);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(authentication.getPrincipal())
+            .build();
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         attributes.putAll(attributesToCombine);
 
         val authnAttributes = configurationContext.getAuthenticationAttributeReleasePolicy()
@@ -271,9 +276,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                final String serviceUrl, final boolean renew,
                                                final boolean gateway) {
         return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
-               + EncodingUtils.urlEncode(serviceUrl)
-               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
-               + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
+            + EncodingUtils.urlEncode(serviceUrl)
+            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
     /**
@@ -285,18 +290,14 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the string
      * @throws Exception the exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request,
-                                         final HttpServletResponse response,
-                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
-        throws Exception {
+    protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
-        val builder = new URLBuilder(configurationContext.getCallbackService().getId());
-
-        builder.getQueryParams().add(
-            new net.shibboleth.shared.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
+        val builder = new URIBuilder(configurationContext.getCallbackService().getId());
+        builder.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        builder.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         storeAuthenticationRequest(request, response, pair);
-        val url = builder.buildURL();
+        val url = builder.build().toURL().toExternalForm();
         LOGGER.trace("Built service callback url [{}]", url);
         return url;
     }
@@ -474,7 +475,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the pair
      * @throws Exception the exception
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> verifySamlAuthenticationRequest(
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> verifySamlAuthenticationRequest(
         final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
         final HttpServletRequest request) throws Exception {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
@@ -483,7 +484,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching SAML2 metadata adaptor for [{}]", issuer);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
 
         if (adaptor.isEmpty()) {
@@ -514,7 +515,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                         final SamlRegisteredService registeredService) throws Exception {
         val ctx = authenticationContext.getValue();
         verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
@@ -533,7 +534,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void verifyAuthenticationContextSignature(final MessageContext ctx,
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                         final SamlRegisteredService registeredService) throws Exception {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("The authentication context is not signed");
@@ -554,7 +555,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request the request
      * @return the registered service and facade
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> getRegisteredServiceAndFacade(
         final AuthnRequest request) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(request);
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
@@ -640,21 +641,25 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     @Synchronized
-    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
-                                                                                                      final HttpServletRequest request) {
+    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
+        final HttpServletResponse response, final HttpServletRequest request) {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
-        return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
-            .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
+        return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
+            .fetch(webContext, AuthnRequest.class)
+            .orElseThrow(() -> new IllegalArgumentException("""
+                SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
+                request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
+                running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
+                """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
     }
 
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
         val webContext = new JEEContext(request, response);
-        SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
-            configurationContext.getSessionStore(), context);
+        SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
+            configurationContext.getSessionStore()).store(webContext, context);
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
@@ -673,4 +678,3 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return binding;
     }
 }
-

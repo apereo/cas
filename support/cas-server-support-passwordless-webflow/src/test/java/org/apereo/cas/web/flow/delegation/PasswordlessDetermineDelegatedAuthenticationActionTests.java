@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessDetermineDelegatedAuthenticationActionTests {
+class PasswordlessDetermineDelegatedAuthenticationActionTests {
     @Nested
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
@@ -47,13 +47,13 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutClients extends BasePasswordlessAuthenticationActionTests {
+    class WithoutClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;
 
         @Test
-        public void verifyNoClients() throws Exception {
+        void verifyNoClients() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -79,13 +79,13 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithClients extends BasePasswordlessAuthenticationActionTests {
+    class WithClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;
 
         @Test
-        public void verifyNoAcct() throws Exception {
+        void verifyNoAcct() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -94,7 +94,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         }
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -110,7 +110,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         }
 
         @Test
-        public void verifyCantDetermineIdP() throws Exception {
+        void verifyCantDetermineIdP() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -126,7 +126,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         }
 
         @Test
-        public void verifyActionByUser() throws Exception {
+        void verifyActionByUser() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -144,7 +144,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         }
 
         @Test
-        public void verifyActionByUserDisallowed() throws Exception {
+        void verifyActionByUserDisallowed() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -162,7 +162,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         }
 
         @Test
-        public void verifyAuthInactive() throws Exception {
+        void verifyAuthInactive() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();

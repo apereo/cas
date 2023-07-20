@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import org.apereo.cas.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
-public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 
@@ -53,7 +53,7 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
     }
 
     @Test
-    public void ensureInflation() {
+    void ensureInflation() {
         val deflator = CompressionUtils.deflate(SAML_REQUEST);
         val builder = new GoogleSaml20ObjectBuilder(configBean);
         val msg = builder.decodeSamlAuthnRequest(deflator);

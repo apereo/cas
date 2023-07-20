@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Hazelcast")
 @Isolated
-public class HazelcastDockerSwarmDiscoveryStrategyTests {
+class HazelcastDockerSwarmDiscoveryStrategyTests {
     private static void assertAllPropsAreValid(final Map<String, Comparable> properties,
                                                final Collection<PropertyDefinition> configurationProperties) {
         for (val propertyDefinition : configurationProperties) {
@@ -45,7 +45,7 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
     }
 
     @Test
-    public void verifyOperationDns() {
+    void verifyOperationDns() {
         val cluster = new HazelcastClusterProperties();
         val swarm = cluster.getDiscovery().getDockerSwarm();
 
@@ -66,7 +66,7 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
     }
 
     @Test
-    public void verifyOperationMembers() {
+    void verifyOperationMembers() {
         val cluster = new HazelcastClusterProperties();
         val swarm = cluster.getDiscovery().getDockerSwarm();
 

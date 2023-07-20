@@ -36,10 +36,12 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -144,13 +146,15 @@ public class CasAccountManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(
+            @Qualifier("httpClient")
+            final HttpClient httpClient,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
                 .when(BeanCondition.on("cas.account-registration.provisioning.rest.url").isUrl().given(applicationContext.getEnvironment()))
                 .supply(() -> () -> {
                     val props = casProperties.getAccountRegistration().getProvisioning().getRest();
-                    return new RestfulAccountRegistrationProvisioner(props);
+                    return new RestfulAccountRegistrationProvisioner(httpClient, props);
                 })
                 .otherwiseProxy()
                 .get();
@@ -159,9 +163,10 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
                 .when(BeanCondition.on("cas.account-registration.provisioning.groovy.location")
                     .exists().given(applicationContext.getEnvironment()))

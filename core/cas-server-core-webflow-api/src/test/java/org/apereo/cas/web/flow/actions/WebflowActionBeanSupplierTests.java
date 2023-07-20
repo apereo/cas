@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class WebflowActionBeanSupplierTests {
+class WebflowActionBeanSupplierTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyUnknownScript() throws Exception {
+    void verifyUnknownScript() throws Exception {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "unknown");
 
@@ -56,7 +56,7 @@ public class WebflowActionBeanSupplierTests {
     }
 
     @Test
-    public void verifyScript() throws Exception {
+    void verifyScript() throws Exception {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "classpath:/GroovyWebflowAction.groovy");
 

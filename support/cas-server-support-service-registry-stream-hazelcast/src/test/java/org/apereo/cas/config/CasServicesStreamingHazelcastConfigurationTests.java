@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.hazelcast.config.cluster.core.instance-name=servicesRegistryStream",
     "cas.service-registry.stream.core.enabled=true"
 })
-public class CasServicesStreamingHazelcastConfigurationTests {
+class CasServicesStreamingHazelcastConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")
     private DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager;
@@ -40,7 +40,7 @@ public class CasServicesStreamingHazelcastConfigurationTests {
     private CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }

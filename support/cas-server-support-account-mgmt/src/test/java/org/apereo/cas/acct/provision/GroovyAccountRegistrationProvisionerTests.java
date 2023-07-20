@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.account-registration.provisioning.groovy.location=classpath:/groovy-provisioner.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Groovy")
-public class GroovyAccountRegistrationProvisionerTests {
+class GroovyAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
@@ -57,7 +57,7 @@ public class GroovyAccountRegistrationProvisionerTests {
     }
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
         assertTrue(results.isSuccess());

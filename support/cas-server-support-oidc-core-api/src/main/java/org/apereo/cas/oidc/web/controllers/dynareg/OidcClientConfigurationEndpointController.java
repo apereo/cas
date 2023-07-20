@@ -63,9 +63,9 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-        if (service instanceof OidcRegisteredService) {
+        if (service instanceof OidcRegisteredService oidcRegisteredService) {
             val prefix = getConfigurationContext().getCasProperties().getServer().getPrefix();
-            val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse((OidcRegisteredService) service, prefix);
+            val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, prefix);
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -104,7 +104,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                     .getClientRegistrationRequestSerializer().from(jsonInput);
                 LOGGER.debug("Received client registration request [{}]", registrationRequest);
-                service = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+                service = getConfigurationContext().getClientRegistrationRequestTranslator()
                     .translate(registrationRequest, Optional.of(service));
             }
             val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()

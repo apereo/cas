@@ -27,21 +27,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("PasswordOps")
-public class NoOpPasswordManagementServiceTests {
+class NoOpPasswordManagementServiceTests {
 
     @Test
-    public void verifyChange() {
+    void verifyChange() {
         val properties = new PasswordManagementProperties();
         val service = new NoOpPasswordManagementService(CipherExecutor.noOpOfSerializableToString(), "CAS", properties);
         assertFalse(service.changeInternal(new PasswordChangeRequest()));
     }
 
     @Test
-    public void verifyTokenParsing() {
+    void verifyTokenParsing() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        val clientInfo = new ClientInfo(request);
+        val clientInfo = ClientInfo.from(request);
         ClientInfoHolder.setClientInfo(clientInfo);
 
         val properties = new PasswordManagementProperties();

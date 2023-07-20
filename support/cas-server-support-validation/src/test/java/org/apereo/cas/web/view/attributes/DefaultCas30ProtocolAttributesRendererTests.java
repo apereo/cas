@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Attributes")
-public class DefaultCas30ProtocolAttributesRendererTests {
+class DefaultCas30ProtocolAttributesRendererTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new DefaultCas30ProtocolAttributesRenderer();
         val results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render((Map) results).isEmpty());

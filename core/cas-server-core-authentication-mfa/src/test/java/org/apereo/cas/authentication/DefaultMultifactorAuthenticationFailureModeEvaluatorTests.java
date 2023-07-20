@@ -25,12 +25,12 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.authn.mfa.core.global-failure-mode=PHANTOM")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
-public class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
+class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperations() {
+    void verifyOperations() {
         executeEvaluation(
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,

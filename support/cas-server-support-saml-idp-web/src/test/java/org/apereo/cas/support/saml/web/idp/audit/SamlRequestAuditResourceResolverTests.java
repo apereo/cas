@@ -19,32 +19,30 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML2")
-public class SamlRequestAuditResourceResolverTests {
+class SamlRequestAuditResourceResolverTests {
     @Test
-    public void verifyActionUnknown() {
-        val r = new SamlRequestAuditResourceResolver();
-        val result = r.resolveFrom(mock(JoinPoint.class), new Object());
+    void verifyActionUnknown() {
+        val resolver = new SamlRequestAuditResourceResolver();
+        val result = resolver.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
         assertEquals(0, result.length);
     }
 
-
     @Test
-    public void verifyAction() {
-        val r = new SamlRequestAuditResourceResolver();
+    void verifyAction() {
+        val resolver = new SamlRequestAuditResourceResolver();
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
         val pair = Pair.of(authnRequest, null);
-        val result = r.resolveFrom(mock(JoinPoint.class), pair);
-        assertNotNull(result);
-        assertTrue(result.length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), pair).length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), authnRequest).length > 0);
     }
 
     @Test
-    public void verifyLogout() {
+    void verifyLogout() {
         val r = new SamlRequestAuditResourceResolver();
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");

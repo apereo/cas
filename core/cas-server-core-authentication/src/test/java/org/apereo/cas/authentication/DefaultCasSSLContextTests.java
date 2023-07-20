@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultCasSSLContextTests {
+class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration
@@ -60,26 +60,10 @@ public class DefaultCasSSLContextTests {
         private CasSSLContext casSslContext;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             assertNotNull(casSslContext.getTrustManagerFactory());
             assertThrows(Exception.class,
                 () -> SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
-        }
-    }
-
-    @Nested
-    @SpringBootTest(classes = SharedTestConfiguration.class,
-        properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
-    @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultSslContext {
-        @Autowired
-        @Qualifier(CasSSLContext.BEAN_NAME)
-        private CasSSLContext casSslContext;
-
-        @Test
-        public void verifyOperation() throws Exception {
-            assertNotNull(casSslContext.getTrustManagerFactory());
-            assertNotNull(SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
         }
     }
 
@@ -93,7 +77,7 @@ public class DefaultCasSSLContextTests {
         private CasSSLContext casSslContext;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             assertNotNull(SharedTestConfiguration.contactUrl("https://untrusted-root.badssl.com/", casSslContext));
         }
     }

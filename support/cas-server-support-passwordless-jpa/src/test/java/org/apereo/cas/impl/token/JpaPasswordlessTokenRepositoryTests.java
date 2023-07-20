@@ -37,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaPasswordlessAuthenticationConfiguration.class
 })
 @TestPropertySource(properties = "cas.jdbc.show-sql=false")
-public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val uid = UUID.randomUUID().toString();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
@@ -61,7 +61,7 @@ public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAcc
 
 
     @Test
-    public void verifyCleaner() {
+    void verifyCleaner() {
         val uid = UUID.randomUUID().toString();
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
         val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();

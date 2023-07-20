@@ -19,15 +19,15 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationMetadata")
-public class AuthenticationDateAttributeMetaDataPopulatorTests {
+class AuthenticationDateAttributeMetaDataPopulatorTests {
     private final AuthenticationDateAttributeMetaDataPopulator populator =
         new AuthenticationDateAttributeMetaDataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE));
         assertFalse(populator.supports(null));
@@ -35,11 +35,11 @@ public class AuthenticationDateAttributeMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyPopulatorMultipleTimes() {
+    void verifyPopulatorMultipleTimes() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         IntStream.range(1, 5)
-            .forEach(i -> populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials)));
+            .forEach(i -> populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials)));
         val auth = builder.build();
         val result = auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE);
         assertNotNull(result);

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     static {
         System.setProperty("DUO_SECURITY_ADMIN_SKEY", UUID.randomUUID().toString());
         System.setProperty("DUO_SECURITY_ADMIN_IKEY", UUID.randomUUID().toString());
@@ -55,7 +55,7 @@ public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifacto
     private DuoSecurityAdminApiEndpoint duoAdminApiEndpoint;
 
     @Test
-    public void verifyAdminEndpoint() {
+    void verifyAdminEndpoint() {
         assertNotNull(duoAdminApiEndpoint);
     }
 

@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-firebase-messaging.registration-token-attribute-name=registrationToken"
 })
 @Tag("Simple")
-public class GoogleFirebaseCloudMessagingNotificationSenderTests {
+class GoogleFirebaseCloudMessagingNotificationSenderTests {
 
     @Autowired
     @Qualifier("firebaseCloudMessagingNotificationSender")
@@ -65,7 +65,7 @@ public class GoogleFirebaseCloudMessagingNotificationSenderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(firebaseCloudMessagingNotificationSender);
         assertNotNull(notificationSender);
         val id = UUID.randomUUID().toString();

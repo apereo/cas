@@ -28,10 +28,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowActions")
-public class ClearWebflowCredentialActionTests {
+class ClearWebflowCredentialActionTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         verifyAction(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         verifyAction(CasWebflowConstants.TRANSITION_ID_ERROR);
     }

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
 })
 @Tag("Attributes")
-public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
+class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
 
@@ -53,7 +53,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     }
 
     @Test
-    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Exception {
+    void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Exception {
         val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
         MAPPER.writeValue(JSON_FILE, repositoryWritten);

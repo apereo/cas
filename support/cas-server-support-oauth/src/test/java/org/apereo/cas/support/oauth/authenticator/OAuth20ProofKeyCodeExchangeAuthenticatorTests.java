@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,6 +16,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.jee.context.JEEContext;
@@ -36,18 +36,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
     @BeforeEach
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext), ticketRegistry,
             defaultPrincipalResolver, oauthRequestParameterResolver, oauth20ClientSecretValidator);
     }
 
     @Test
-    public void verifyNoToken() {
+    void verifyNoToken() {
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
@@ -55,12 +55,12 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(InvalidTicketException.class,
-            () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
 
     @Test
-    public void verifyAuthenticationPlainWithoutSecret() throws Exception {
+    void verifyAuthenticationPlainWithoutSecret() throws Exception {
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(new OAuth20DefaultCode("CODE-1234567890",
@@ -74,13 +74,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyAuthenticationPlainWithSecretTransmittedByFormAuthn() throws Exception {
+    void verifyAuthenticationPlainWithSecretTransmittedByFormAuthn() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(
@@ -95,13 +95,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyAuthenticationPlainWithSecretTransmittedByBasicAuthn() throws Exception {
+    void verifyAuthenticationPlainWithSecretTransmittedByBasicAuthn() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "secret");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(
@@ -115,13 +115,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyAuthenticationHashedWithoutSecret() throws Exception {
+    void verifyAuthenticationHashedWithoutSecret() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -136,13 +136,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyUnknownDigest() throws Exception {
+    void verifyUnknownDigest() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -158,11 +158,11 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
-            () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
-    public void verifyAuthenticationHashedWithSecretTransmittedByFormAuthn() throws Exception {
+    void verifyAuthenticationHashedWithSecretTransmittedByFormAuthn() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -178,13 +178,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyAuthenticationHashedWithSecretTransmittedByBasicFormAuthn() throws Exception {
+    void verifyAuthenticationHashedWithSecretTransmittedByBasicFormAuthn() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -200,13 +200,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
 
     @Test
-    public void verifyAuthenticationNotHashedCorrectly() throws Exception {
+    void verifyAuthenticationNotHashedCorrectly() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-1234567890",
@@ -222,6 +222,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 }

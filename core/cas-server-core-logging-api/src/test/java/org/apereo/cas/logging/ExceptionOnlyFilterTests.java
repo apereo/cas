@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Simple")
 @Slf4j
-public class ExceptionOnlyFilterTests {
+class ExceptionOnlyFilterTests {
 
     private static long getFileSize() {
         var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
@@ -44,7 +44,7 @@ public class ExceptionOnlyFilterTests {
      * Stopping th log system so file is flushed for size check, sleep also works.
      */
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val fileSize = getFileSize();
         LOGGER.error("Testing no exception");
         sleep(1000);
@@ -55,7 +55,7 @@ public class ExceptionOnlyFilterTests {
     }
 
     @Test
-    public void verifyFilters() {
+    void verifyFilters() {
         val filter = new ExceptionOnlyFilter();
         assertEquals(Filter.Result.ACCEPT,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), mock(Message.class), new Throwable()));

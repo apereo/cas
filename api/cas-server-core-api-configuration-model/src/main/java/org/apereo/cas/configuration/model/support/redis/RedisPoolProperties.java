@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -129,7 +130,8 @@ public class RedisPoolProperties implements Serializable {
      * before throwing an exception when the pool is exhausted. Use a negative value
      * to block indefinitely.
      */
-    private int maxWait = -1;
+    @DurationCapable
+    private String maxWait = "PT5S";
 
     /**
      * Enable the pooling configuration.

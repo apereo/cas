@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = CasAcceptableUsagePolicyRedisConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ConditionalOnExpressionNegativeTests {
+class ConditionalOnExpressionNegativeTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyConfigClassLoaded() {
+    void verifyConfigClassLoaded() {
         val beans = applicationContext.getBeanDefinitionNames();
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyTemplate"::equalsIgnoreCase));
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyConnectionFactory"::equalsIgnoreCase));

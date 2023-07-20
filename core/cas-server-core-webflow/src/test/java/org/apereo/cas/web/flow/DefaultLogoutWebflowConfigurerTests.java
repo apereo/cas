@@ -17,15 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowConfig")
-public class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
-        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof CasLocaleChangeInterceptor));
-        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof ResourceUrlProviderExposingInterceptor));
+        assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
+        assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
         val flow = (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_TERMINATE_SESSION));

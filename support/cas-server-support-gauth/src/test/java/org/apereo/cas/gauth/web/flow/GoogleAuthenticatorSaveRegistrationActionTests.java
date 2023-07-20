@@ -46,7 +46,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
     BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
 })
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorSaveRegistrationActionTests {
+class GoogleAuthenticatorSaveRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
     private Action googleSaveAccountRegistrationAction;
@@ -60,7 +60,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         googleAuthenticatorAccountRegistry.deleteAll();
     }
     @Test
-    public void verifyMultipleRegDisabled(@Autowired final CasConfigurationProperties casProperties) throws Exception {
+    void verifyMultipleRegDisabled(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -83,7 +83,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyAccountValidationFails() throws Exception {
+    void verifyAccountValidationFails() throws Exception {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -106,7 +106,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyAccountValidationOnly() throws Exception {
+    void verifyAccountValidationOnly() throws Exception {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())

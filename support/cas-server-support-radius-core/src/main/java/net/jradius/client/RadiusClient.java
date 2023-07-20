@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -88,7 +89,7 @@ public class RadiusClient {
             protocolName = protocolName.substring(0, i);
         }
 
-        protocolName = protocolName.toLowerCase();
+        protocolName = protocolName.toLowerCase(Locale.ENGLISH);
 
         Class<?> c = authenticators.get(protocolName);
 

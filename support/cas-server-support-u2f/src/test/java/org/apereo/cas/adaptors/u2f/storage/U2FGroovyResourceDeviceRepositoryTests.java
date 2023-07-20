@@ -30,16 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.crypto.enabled=false",
         "cas.authn.mfa.u2f.groovy.location=classpath:U2FDeviceRepository.groovy"
     })
-@Tag("Groovy")
+@Tag("GroovyMfa")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 }

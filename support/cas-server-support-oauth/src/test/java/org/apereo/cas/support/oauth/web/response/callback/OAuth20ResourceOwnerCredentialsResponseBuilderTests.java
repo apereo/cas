@@ -25,35 +25,37 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
+class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
+        val clientId = addRegisteredService().getClientId();
         val holder = AccessTokenRequestContext.builder()
-            .clientId(CLIENT_ID)
+            .clientId(clientId)
             .service(CoreAuthenticationTestUtils.getService())
-            .authentication(RegisteredServiceTestUtils.getAuthentication(
-                CoreAuthenticationTestUtils.getPrincipal("casuser")))
-            .registeredService(getRegisteredService(CLIENT_ID, CLIENT_SECRET))
+            .authentication(RegisteredServiceTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser")))
+            .registeredService(getRegisteredService(clientId, CLIENT_SECRET))
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(holder));
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService,
             OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of()));
     }
 
     @Test
-    public void verifyModelAndViewPost() throws Exception {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+    void verifyModelAndViewPost() throws Exception {
+        val clientId = addRegisteredService().getClientId();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));
     }
 
     @Test
-    public void verifyModelAndView() throws Exception {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+    void verifyModelAndView() throws Exception {
+        val clientId = addRegisteredService().getClientId();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));
     }
 }

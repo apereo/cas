@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Authentication")
-public class NullPrincipalTests {
+class NullPrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "nullPrincipal.json");
 
@@ -25,7 +25,7 @@ public class NullPrincipalTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeANullPrincipalToJson() throws Exception {
+    void verifySerializeANullPrincipalToJson() throws Exception {
         val serviceWritten = NullPrincipal.getInstance();
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, NullPrincipal.class);

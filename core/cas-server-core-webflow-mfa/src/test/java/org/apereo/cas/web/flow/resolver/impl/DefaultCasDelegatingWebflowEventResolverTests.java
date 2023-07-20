@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -33,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowEvents")
-public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Test
-    public void verifyOperationNoCredential() {
+    void verifyOperationNoCredential() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -52,7 +53,7 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyAuthFails() {
+    void verifyAuthFails() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -62,6 +63,7 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
 
         val id = UUID.randomUUID().toString();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         servicesManager.save(registeredService);
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(id));
@@ -72,7 +74,7 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyServiceDisallowed() {
+    void verifyServiceDisallowed() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -91,7 +93,7 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyNoAuthn() {
+    void verifyNoAuthn() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

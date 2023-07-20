@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void initialize() {
@@ -47,7 +47,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyAccessTokenAsDefault() {
+    void verifyAccessTokenAsDefault() {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);
@@ -66,7 +66,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyAccessTokenAsJwt() throws Exception {
+    void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
@@ -80,7 +80,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyDPoPAccessTokenAsJwt() throws Exception {
+    void verifyDPoPAccessTokenAsJwt() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
 
         val registeredService = getRegisteredService("example", UUID.randomUUID().toString(), "secret");
@@ -94,7 +94,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
         val verifier = new DPoPTokenRequestVerifier(Set.of(JWSAlgorithm.ES256),
             new URI(mockRequest.getRequestURL().toString()), 30, null);
         
-        val confirmation = verifier.verify(dPopIssuer, signedProof);
+        val confirmation = verifier.verify(dPopIssuer, signedProof, null);
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
             Map.of(OAuth20Constants.DPOP, List.of(signedProof.serialize()),
                 OAuth20Constants.DPOP_CONFIRMATION, List.of(confirmation.getValue().toString())));
@@ -111,7 +111,7 @@ public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAu
 
 
     @Test
-    public void verifyAccessTokenAsJwtPerService() throws Exception {
+    void verifyAccessTokenAsJwtPerService() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
 

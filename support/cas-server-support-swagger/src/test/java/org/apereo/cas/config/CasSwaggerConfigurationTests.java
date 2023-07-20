@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = CasSwaggerConfiguration.class)
 @Tag("CasConfiguration")
-public class CasSwaggerConfigurationTests {
+class CasSwaggerConfigurationTests {
     @Autowired
     @Qualifier("casSwaggerOpenApi")
     private OpenAPI swaggerOpenApi;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(swaggerOpenApi);
     }
 }

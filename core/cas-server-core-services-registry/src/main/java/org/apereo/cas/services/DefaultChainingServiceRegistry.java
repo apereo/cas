@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +39,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService save(final RegisteredService registeredService) {
         var savedService = (RegisteredService) null;
         for (var serviceRegistry : serviceRegistries) {
-            var toSave = savedService == null ? registeredService : savedService;
+            var toSave = Optional.ofNullable(savedService).orElse(registeredService);
             savedService = serviceRegistry.save(toSave);
         }
         return savedService;

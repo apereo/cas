@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("OAuthWeb")
-public class OAuth20RegisteredServiceUIActionTests {
+class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
     private Action oauth20RegisteredServiceUIAction;
@@ -41,7 +41,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyOAuthActionWithoutMDUI() throws Exception {
+    void verifyOAuthActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(ctx, service);
@@ -55,7 +55,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     }
 
     @Test
-    public void verifyOAuthActionWithMDUI() throws Exception {
+    void verifyOAuthActionWithMDUI() throws Exception {
         val svc = new OAuthRegisteredService();
         svc.setClientId("id");
         svc.setName("oauth");

@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.casModules.enabled=true")
 @Tag("ActuatorEndpoint")
-public class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
+class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casRuntimeModulesEndpoint")
     private CasRuntimeModulesEndpoint endpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var modules = endpoint.reportModules();
         assertFalse(modules.isEmpty());
 

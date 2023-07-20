@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertVisibility(page, '#token');
     

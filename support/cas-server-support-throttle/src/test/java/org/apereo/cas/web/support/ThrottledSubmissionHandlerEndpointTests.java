@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class)
 @Tag("ActuatorEndpoint")
-public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
+class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("throttledSubmissionHandlerEndpoint")
     private ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint;
@@ -37,7 +37,7 @@ public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpoint
     private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertTrue(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
 
         val request = new MockHttpServletRequest();
@@ -45,7 +45,7 @@ public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpoint
         request.setLocalAddr("4.5.6.7");
         request.setRemoteUser("cas");
         request.addHeader("User-Agent", "Firefox");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         throttle.recordSubmissionFailure(request);
         assertFalse(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());

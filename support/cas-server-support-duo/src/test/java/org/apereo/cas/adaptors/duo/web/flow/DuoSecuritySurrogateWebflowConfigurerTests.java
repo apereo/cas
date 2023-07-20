@@ -1,20 +1,16 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.adaptors.duo.config.DuoSecurityConfiguration;
-import org.apereo.cas.adaptors.duo.config.DuoSecurityMultifactorProviderBypassConfiguration;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.DuoSecurityConfiguration;
+import org.apereo.cas.config.DuoSecurityMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
-import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,8 +20,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
@@ -33,7 +27,6 @@ import org.springframework.webflow.engine.TransitionableState;
 
 import static org.apereo.cas.web.flow.CasWebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecuritySurrogateWebflowConfigurerTests}.
@@ -42,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("DuoSecurity")
-public class DuoSecuritySurrogateWebflowConfigurerTests {
+class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
         CasCoreMultifactorAuthenticationConfiguration.class,
@@ -54,29 +47,13 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
-    public static class DuoSecurityTestConfiguration {
-
-        @Bean
-        public MultifactorAuthenticationProviderBean
-            <DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean() {
-            val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-            when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.getDuoAuthenticationService()).thenReturn(mock(DuoSecurityAuthenticationService.class));
-            when(provider.matches(anyString())).thenReturn(true);
-            val bean = mock(MultifactorAuthenticationProviderBean.class);
-            when(bean.getProvider(anyString())).thenReturn(provider);
-            return bean;
-        }
-    }
-
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
-    public class DefaultTests extends BaseWebflowConfigurerTests {
+    class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -92,18 +69,17 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import({
-        DuoSecurityTestConfiguration.class,
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
         DuoSecurityMultifactorProviderBypassConfiguration.class,
         DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
-        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosbbinNFEKXHxgXCJEBz",
+        "cas.authn.mfa.duo[0].duo-integration-key=DIOXVRQD3UMZ8XXMNFQ8",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
-    public class DuoSecurityUniversalPromptTests extends BaseWebflowConfigurerTests {
+    class DuoSecurityUniversalPromptTests extends BaseWebflowConfigurerTests {
         @Autowired
         @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         private CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer;
@@ -113,7 +89,7 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
         private CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -132,22 +108,21 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import({
-        DuoSecurityTestConfiguration.class,
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
         DuoSecurityMultifactorProviderBypassConfiguration.class,
         DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
-        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
+        "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosiqinNFEKXHxgXCJEBr",
         "cas.authn.mfa.duo[0].application-key=my134nfd46m89",
-        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-integration-key=SIOXVQQD3UMZ8XXMNZQ8",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
     @Deprecated(since = "6.5.0", forRemoval = true)
-    public class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
+    class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState("mfa-duo");
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

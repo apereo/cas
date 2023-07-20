@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.config.CasCloudBusEventsConfigEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasCloudBusEventsConfigEnvironmentConfiguration.class,
-    CasCoreEnvironmentConfiguration.class,
+    CasCoreEnvironmentBootstrapConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasCloudBusConfigurationEventListenerTests {
+class CasCloudBusConfigurationEventListenerTests {
     @Autowired
     @Qualifier("casCloudBusConfigurationEventListener")
     private DefaultCasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener;
@@ -38,7 +38,7 @@ public class CasCloudBusConfigurationEventListenerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(casCloudBusConfigurationEventListener);
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshRemoteApplicationEvent(this, "service", "destination")));

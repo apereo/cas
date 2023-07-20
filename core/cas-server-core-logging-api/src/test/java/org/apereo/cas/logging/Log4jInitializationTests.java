@@ -13,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
-public class Log4jInitializationTests {
+class Log4jInitializationTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             val init = new Log4jInitialization();
-            init.setMainArguments(new String[]{"--logging.level.org.apereo.cas=debug"});
+            init.initialize(new String[]{"--logging.level.org.apereo.cas=debug"});
         });
     }
 }

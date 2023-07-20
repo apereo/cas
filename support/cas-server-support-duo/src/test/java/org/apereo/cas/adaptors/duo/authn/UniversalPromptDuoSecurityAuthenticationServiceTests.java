@@ -34,12 +34,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFAProvider")
+@Tag("DuoSecurity")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class UniversalPromptDuoSecurityAuthenticationServiceTests {
+class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
     @Test
-    public void verifyPingFails() throws Exception {
+    void verifyPingFails() throws Exception {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenThrow(new RuntimeException());
 
@@ -51,7 +51,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyPing() throws Exception {
+    void verifyPing() throws Exception {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
@@ -62,7 +62,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyAuth() throws Exception {
+    void verifyAuth() throws Exception {
         val state = UUID.randomUUID().toString();
         val credential = new DuoSecurityUniversalPromptCredential(state,
             RegisteredServiceTestUtils.getAuthentication("casuser"));

@@ -23,10 +23,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Web")
-public class SpringAwareMessageMessageInterpolatorTests {
+class SpringAwareMessageMessageInterpolatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         LocaleContextHolder.setLocale(Locale.getDefault());
         val polator = new SpringAwareMessageMessageInterpolator();
         val source = mock(MessageSource.class);

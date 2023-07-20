@@ -1,4 +1,11 @@
 description = "Apereo CAS LDAP Support"
+ext {
+        publishMetadata = true
+        projectMetadata = [
+                category: "Authentication",
+                title: "LDAP & Active Directory Authentication"
+        ]
+}
 dependencies {
         implementation project(":core:cas-server-core-util-api")
         implementation project(":core:cas-server-core-authentication-api")

@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.spnego.host-name-client-action-strategy=" + CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_LDAP,
     "cas.authn.spnego.spnego-attribute-name=mail"
 })
-public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
+class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
     @BeforeAll
     public static void bootstrap() throws Exception {

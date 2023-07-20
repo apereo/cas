@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("CasConfiguration")
-public class JasyptEncryptionParametersTests {
+class JasyptEncryptionParametersTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.ALGORITHM.getDefaultValue());
 
         assertNull(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PROVIDER.getDefaultValue());

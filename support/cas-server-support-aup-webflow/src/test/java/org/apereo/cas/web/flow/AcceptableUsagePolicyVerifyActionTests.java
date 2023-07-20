@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("WebflowActions")
-public class AcceptableUsagePolicyVerifyActionTests {
+@Tag("WebflowAccountActions")
+class AcceptableUsagePolicyVerifyActionTests {
 
     @TestConfiguration(value = "AcceptableUsagePolicyTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -56,13 +56,13 @@ public class AcceptableUsagePolicyVerifyActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(AcceptableUsagePolicyTestConfiguration.class)
-    public class VerificationSkippedTests extends BaseAcceptableUsagePolicyActionTests {
+    class VerificationSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -76,13 +76,13 @@ public class AcceptableUsagePolicyVerifyActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseAcceptableUsagePolicyActionTests {
+    class DefaultTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -94,7 +94,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
         }
 
         @Test
-        public void verifyActionAccepted() throws Exception {
+        void verifyActionAccepted() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -108,7 +108,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
 
 
         @Test
-        public void verifyActionWithService() throws Exception {
+        void verifyActionWithService() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -128,13 +128,13 @@ public class AcceptableUsagePolicyVerifyActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.acceptable-usage-policy.core.enabled=false")
-    public class NoOpSkippedTests extends BaseAcceptableUsagePolicyActionTests {
+    class NoOpSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -146,7 +146,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
         }
 
         @Test
-        public void verifyNoOpRepository() {
+        void verifyNoOpRepository() {
             val context = new MockRequestContext();
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             assertTrue(acceptableUsagePolicyRepository.fetchPolicy(context).isEmpty());

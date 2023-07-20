@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
+class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
 
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")
@@ -41,12 +41,13 @@ public class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataLocator.CAS_PREFIX + '*';
-        val keys = redisSamlIdPMetadataTemplate.scan(key, 0).collect(Collectors.toSet());
-        redisSamlIdPMetadataTemplate.delete(keys);
+        try (val keys = redisSamlIdPMetadataTemplate.scan(key, 0)) {
+            redisSamlIdPMetadataTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test
-    public void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() {
         assertNotNull(redisSamlIdPMetadataTemplate);
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);

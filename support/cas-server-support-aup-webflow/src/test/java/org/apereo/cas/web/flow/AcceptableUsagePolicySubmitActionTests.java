@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("WebflowActions")
-public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
+@Tag("WebflowAccountActions")
+class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_AUP_SUBMIT)
     private Action acceptableUsagePolicySubmitAction;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

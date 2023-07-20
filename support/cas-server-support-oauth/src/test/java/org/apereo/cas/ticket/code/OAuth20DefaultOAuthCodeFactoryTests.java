@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthToken")
-public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
+class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperationWithExpPolicy() {
+    void verifyOperationWithExpPolicy() {
         val registeredService = getRegisteredService("https://code.oauth.org", "clientid-code", "secret-at");
         registeredService.setCodeExpirationPolicy(
             new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
@@ -43,7 +43,7 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyOperationWithoutExpPolicy() {
+    void verifyOperationWithoutExpPolicy() {
         val registeredService = getRegisteredService("https://noexp.oauth.org", "clientid-code-noexp", "secret-at");
         servicesManager.save(registeredService);
         val tgt = new MockTicketGrantingTicket("casuser");

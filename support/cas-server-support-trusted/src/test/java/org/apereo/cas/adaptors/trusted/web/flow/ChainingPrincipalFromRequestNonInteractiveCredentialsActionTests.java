@@ -19,13 +19,13 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowActions")
-public class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("remoteUserAuthenticationAction")
     private PrincipalFromRequestExtractorAction remoteUserAuthenticationAction;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val principal = mock(Principal.class);
         when(principal.getName()).thenReturn("casuser");

@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @Import(CasAccountManagementWebflowConfiguration.class)
-public class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
+class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)
     private Action loadAccountRegistrationPropertiesAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

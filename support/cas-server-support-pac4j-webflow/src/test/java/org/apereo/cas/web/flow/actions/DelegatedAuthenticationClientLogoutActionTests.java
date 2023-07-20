@@ -5,6 +5,7 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -39,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowAuthenticationActions")
-public class DelegatedAuthenticationClientLogoutActionTests {
+@Tag("Delegation")
+class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     private Action delegatedAuthenticationClientLogoutAction;
@@ -50,9 +51,10 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     private LogoutManager logoutManager;
 
     @Test
-    public void verifyOperationWithProfile() throws Exception {
+    void verifyOperationWithProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -77,9 +79,10 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     }
 
     @Test
-    public void verifyOperationWithNoProfile() throws Exception {
+    void verifyOperationWithNoProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         val result = delegatedAuthenticationClientLogoutAction.execute(context);

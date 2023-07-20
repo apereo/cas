@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class ModifyResourceBasedRegisteredServiceWatcherTests {
+class ModifyResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    public void verifyOperationFoundModified() throws Exception {
+    void verifyOperationFoundModified() throws Exception {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {

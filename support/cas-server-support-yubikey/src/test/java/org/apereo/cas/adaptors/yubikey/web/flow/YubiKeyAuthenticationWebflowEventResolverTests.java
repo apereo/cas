@@ -44,16 +44,17 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowEvents")
-public class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("yubikeyAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Test
-    public void verifyOperationFails() {
+    void verifyOperationFails() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());

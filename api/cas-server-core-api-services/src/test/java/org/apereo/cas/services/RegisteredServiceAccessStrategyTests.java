@@ -14,9 +14,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAccessStrategyTests {
+class RegisteredServiceAccessStrategyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val component = mock(RegisteredServiceAccessStrategy.class);
         when(component.getDelegatedAuthenticationPolicy()).thenCallRealMethod();
         when(component.getRequiredAttributes()).thenCallRealMethod();

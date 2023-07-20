@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @TestPropertySource(properties = "cas.authn.oidc.jwks.groovy.location=classpath:GroovyJwksService.groovy")
-public class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
         assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
@@ -35,7 +35,7 @@ public class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidc
     }
 
     @Test
-    public void verifyStoreOperation() throws Exception {
+    void verifyStoreOperation() throws Exception {
         val jwks = new JsonWebKeySet(OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
             casProperties.getAuthn().getOidc(), OidcJsonWebKeyUsage.ENCRYPTION));
         assertNotNull(oidcJsonWebKeystoreGeneratorService.store(jwks));

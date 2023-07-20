@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-public class OktaPersonAttributeDaoTests {
+class OktaPersonAttributeDaoTests {
 
     @TestConfiguration(value = "OktaClientMockConfiguration", proxyBeanMethods = false)
     @SuppressWarnings("JavaUtilDate")
@@ -67,7 +67,7 @@ public class OktaPersonAttributeDaoTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class OktaPersonDirectoryConfigurationTests {
+    class OktaPersonDirectoryConfigurationTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")
         private BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos;
@@ -77,7 +77,7 @@ public class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertEquals(1, oktaPersonAttributeDaos.size());
             assertNull(attributeRepository.getPerson("casuser"));
 
@@ -99,7 +99,7 @@ public class OktaPersonAttributeDaoTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class OktaPersonDirectoryMockTests {
+    class OktaPersonDirectoryMockTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")
         private BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos;
@@ -109,7 +109,7 @@ public class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(oktaPersonAttributeDaos.toList().isEmpty());
             assertNotNull(attributeRepository.getPerson("casuser"));
             assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"),

@@ -18,18 +18,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationMetadata")
-public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
+class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
     private final CredentialCustomFieldsAttributeMetaDataPopulator populator =
         new CredentialCustomFieldsAttributeMetaDataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         credentials.getCustomFields().put("field1", "value1");
         credentials.getCustomFields().put("field2", List.of("value2"));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         assertTrue(populator.supports(credentials));
 
         val auth = builder.build();

@@ -21,9 +21,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WsFederationAuthenticationHandlerTests extends AbstractWsFederationTests {
+class WsFederationAuthenticationHandlerTests extends AbstractWsFederationTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val handler = new WsFederationAuthenticationHandler(UUID.randomUUID().toString(), servicesManager,
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         assertTrue(handler.supports(getCredential()));

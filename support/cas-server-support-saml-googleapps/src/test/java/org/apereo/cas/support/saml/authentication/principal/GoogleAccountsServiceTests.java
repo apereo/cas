@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
-public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
+class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -104,7 +104,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponse() {
+    void verifyResponse() {
         val resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(DefaultResponse.ResponseType.POST, resp.responseType());
@@ -126,7 +126,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void serializeGoogleAccountService() throws Exception {
+    void serializeGoogleAccountService() throws Exception {
         val service = getGoogleAccountsService();
         MAPPER.writeValue(FILE, service);
         val service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);

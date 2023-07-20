@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateSamlIdPMetadataCommandTests extends BaseCasShellCommandTests {
+class GenerateSamlIdPMetadataCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val location = FileUtils.getTempDirectoryPath();
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-idp-metadata --force true --metadataLocation "
             + location + " --subjectAltNames helloworld"));

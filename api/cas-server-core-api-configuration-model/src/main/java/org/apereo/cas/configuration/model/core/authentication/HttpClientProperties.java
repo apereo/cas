@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -37,6 +38,20 @@ public class HttpClientProperties implements Serializable {
     private String connectionTimeout = "PT5S";
 
     /**
+     * Determines the default socket timeout value for I/O operations.
+     */
+    @DurationCapable
+    private String socketTimeout = "PT5S";
+
+    /**
+     * Determines the timeout until arrival of a response from the opposite endpoint.
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * Please note that response timeout may be unsupported by HTTP transports with message multiplexing.
+     */
+    @DurationCapable
+    private String responseTimeout = "PT5S";
+
+    /**
      * Indicates timeout for async operations.
      */
     @DurationCapable
@@ -63,6 +78,7 @@ public class HttpClientProperties implements Serializable {
     /**
      * If specified the regular expression will be used to validate the url's authority.
      */
+    @RegularExpressionCapable
     private String authorityValidationRegex;
 
     /**

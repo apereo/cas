@@ -210,8 +210,8 @@ public class ValidateEndpointCommand {
                  val in = new BufferedReader(reader)) {
                 in.readLine();
 
-                if (conn instanceof HttpURLConnection) {
-                    val code = ((HttpURLConnection) conn).getResponseCode();
+                if (conn instanceof HttpURLConnection instance) {
+                    val code = instance.getResponseCode();
                     LOGGER.info("Response status code received: [{}]", code);
                 }
                 LOGGER.info("Successfully connected to url [{}]", url);

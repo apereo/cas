@@ -1,4 +1,12 @@
 description = "Apereo CAS Google Authenticator Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support",
+            aliases: ["gauth", "googlemfa"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     
@@ -48,6 +56,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-gauth-core", configuration: "tests")
 }

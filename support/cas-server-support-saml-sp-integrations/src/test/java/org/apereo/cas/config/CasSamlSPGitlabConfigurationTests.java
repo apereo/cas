@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.gitlab.name-id-attribute=cn",
     "cas.saml-sp.gitlab.name-id-format=transient"
 })
-public class CasSamlSPGitlabConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPGitlabConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

@@ -44,13 +44,13 @@ import static org.mockito.Mockito.*;
     "cas.http-web-request.cors.max-age=1600",
     "cas.http-web-request.cors.exposed-headers[0]=*"
 })
-public class RegisteredServiceCorsConfigurationSourceTests {
+class RegisteredServiceCorsConfigurationSourceTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
@@ -70,7 +70,7 @@ public class RegisteredServiceCorsConfigurationSourceTests {
     }
 
     @Test
-    public void verifyService() {
+    void verifyService() {
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(),
             new DefaultRegisteredServiceProperty("false"));

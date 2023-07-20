@@ -26,9 +26,9 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class InweboAuthenticationHandlerTests {
+class InweboAuthenticationHandlerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val inweboService = mock(InweboService.class);
 
         val response = new InweboDeviceNameResponse();
@@ -50,7 +50,7 @@ public class InweboAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val inweboService = mock(InweboService.class);
 
         val response = new InweboDeviceNameResponse();

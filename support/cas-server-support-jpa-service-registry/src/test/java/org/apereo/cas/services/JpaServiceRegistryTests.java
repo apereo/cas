@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
 @Getter
-public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
+class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final int COUNT = 10_000;
 
     @Autowired
@@ -54,7 +54,7 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     protected ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifyLargeDataset() {
+    void verifyLargeDataset() {
         newServiceRegistry.save(
             () -> {
                 val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
@@ -72,7 +72,7 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyCompatibilityWithRegex() {
+    void verifyCompatibilityWithRegex() {
         val service = new RegexRegisteredService();
         service.setId(2020);
         service.setServiceId("http://localhost:8080");
@@ -94,7 +94,7 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifySaveInStreams() {
+    void verifySaveInStreams() {
         var servicesToImport = Stream.<RegisteredService>empty();
         for (int i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);

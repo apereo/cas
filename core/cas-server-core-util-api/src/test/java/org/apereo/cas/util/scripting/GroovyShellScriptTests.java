@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class GroovyShellScriptTests {
+class GroovyShellScriptTests {
 
     @Test
-    public void verifyExec() {
+    void verifyExec() {
         val shell = new GroovyShellScript("println 'test'");
         assertNotNull(shell.getGroovyScript());
         assertNotNull(shell.getScript());
@@ -27,7 +27,7 @@ public class GroovyShellScriptTests {
     }
 
     @Test
-    public void verifyUnknownBadScript() {
+    void verifyUnknownBadScript() {
         val shell = new GroovyShellScript("###$$@@@!!!***&&&");
         assertDoesNotThrow(() -> {
             shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);

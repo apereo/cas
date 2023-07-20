@@ -79,9 +79,9 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
     @Override
     public void updateSignatureCount(final AssertionResult result) {
         val username = result.getUsername();
-        val registration = getRegistrationByUsernameAndCredentialId(username, result.getCredentialId())
+        val registration = getRegistrationByUsernameAndCredentialId(username, result.getCredential().getCredentialId())
             .orElseThrow(() -> new NoSuchElementException(String.format("Credential \"%s\" is not registered to user \"%s\"",
-                result.getCredentialId(), username)));
+                result.getCredential().getCredentialId(), username)));
         val registrations = getRegistrationsByUsername(username);
         registrations.remove(registration);
         registrations.add(registration.withCredential(registration.getCredential().toBuilder()

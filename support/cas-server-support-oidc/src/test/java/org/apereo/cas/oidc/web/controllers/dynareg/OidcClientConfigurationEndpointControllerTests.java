@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=PT1H")
-public class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
+class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcClientConfigurationEndpointController")
     protected OidcClientConfigurationEndpointController controller;
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -48,29 +48,30 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
     }
 
     @Test
-    public void verifyServiceNotFoundForUpdate() throws Exception {
+    void verifyServiceNotFoundForUpdate() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleUpdates(clientId, null, request, response).getStatusCodeValue());
+            controller.handleUpdates(clientId, null, request, response).getStatusCode().value());
     }
 
     @Test
-    public void verifyGetOperation() {
+    void verifyGetOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(clientId);
+        service.markAsDynamicallyRegistered();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(
             ZonedDateTime.now(Clock.systemUTC()).toString()));
         servicesManager.save(service);
         assertEquals(HttpStatus.SC_OK,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 
     @Test
-    public void verifyUpdateOperation() throws Exception {
+    void verifyUpdateOperation() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -86,18 +87,18 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
             "grant_types": ["client_credentials"],
             }""";
         val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
-        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCodeValue());
+        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCode().value());
         assertNotNull(responseEntity.getBody());
         service = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
         assertNotEquals(service.getClientSecretExpiration(), clientSecretExpiration);
     }
 
     @Test
-    public void verifyBadRequest() {
+    void verifyBadRequest() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 }

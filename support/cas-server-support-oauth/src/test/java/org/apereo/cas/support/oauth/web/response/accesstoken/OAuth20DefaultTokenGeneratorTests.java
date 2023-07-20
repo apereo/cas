@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.access-token.crypto.enabled=true",
     "cas.authn.oauth.device-token.refresh-interval=PT1S"
 })
-public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void initialize() {
@@ -46,7 +46,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyRequestedClaims() throws Exception {
+    void verifyRequestedClaims() throws Exception {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         servicesManager.save(registeredService);
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -62,7 +62,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyAccessTokenAsJwt() throws Exception {
+    void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
@@ -83,7 +83,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifySlowDown() throws Exception {
+    void verifySlowDown() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
             defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
@@ -101,7 +101,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyUnapproved() throws Exception {
+    void verifyUnapproved() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
             defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
@@ -121,7 +121,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyExpiredUserCode() throws Exception {
+    void verifyExpiredUserCode() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
             defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
@@ -142,7 +142,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyDeviceCodeExpired() throws Exception {
+    void verifyDeviceCodeExpired() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
             defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, ticketRegistry, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(
@@ -162,7 +162,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyAccessTokenIsRefreshed() throws Exception {
+    void verifyAccessTokenIsRefreshed() throws Exception {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);

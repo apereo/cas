@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
-public class OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests extends OAuth20PasswordGrantTypeTokenRequestValidatorTests {
+class OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests extends OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     @Override
     protected OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.CLIENT_CREDENTIALS;

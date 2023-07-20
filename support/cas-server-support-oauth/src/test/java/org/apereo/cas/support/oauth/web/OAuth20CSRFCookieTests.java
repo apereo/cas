@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.csrf-cookie.secure=true",
     "cas.authn.oauth.csrf-cookie.domain=mellon.edu"
 })
-public class OAuth20CSRFCookieTests extends AbstractOAuth20Tests {
+class OAuth20CSRFCookieTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyPropertiesSet() {
+    void verifyPropertiesSet() {
         val csrfCookie = casProperties.getAuthn().getOauth().getCsrfCookie();
         assertEquals(3600, csrfCookie.getMaxAge());
         assertEquals("/cas", csrfCookie.getPath());

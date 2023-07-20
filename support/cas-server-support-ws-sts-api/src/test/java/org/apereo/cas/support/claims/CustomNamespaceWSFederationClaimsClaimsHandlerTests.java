@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WSFederation")
 @SuppressWarnings("CollectionIncompatibleType")
-public class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
+class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
 
     @Test
-    public void verifySupportedClaims() throws Exception {
+    void verifySupportedClaims() throws Exception {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
         assertFalse(handler.getSupportedClaimTypes().isEmpty());
@@ -38,7 +38,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    public void verifySAML2Type() {
+    void verifySAML2Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -61,7 +61,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    public void verifySAML1Type() {
+    void verifySAML1Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 

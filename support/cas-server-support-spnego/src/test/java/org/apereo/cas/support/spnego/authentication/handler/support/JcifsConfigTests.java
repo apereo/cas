@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Spnego")
-public class JcifsConfigTests {
+class JcifsConfigTests {
 
     @Test
-    public void verifyKerbSysConfig() throws Exception {
+    void verifyKerbSysConfig() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -32,7 +32,7 @@ public class JcifsConfigTests {
     }
 
     @Test
-    public void verifyJcifsConfig() {
+    void verifyJcifsConfig() {
         assertDoesNotThrow(() -> {
             val settings = new JcifsConfig.JcifsSettings();
             settings.setJcifsDomain("DOMAIN");

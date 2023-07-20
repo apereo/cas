@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -152,7 +153,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
                     registeredService.getServiceId(),
                     registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
-
+                WebUtils.putWildcardedRegisteredService(context,
+                    RegisteredServiceProperties.WILDCARDED_SERVICE_DEFINITION.isAssignedTo(registeredService));
                 val accessStrategy = registeredService.getAccessStrategy();
                 if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
                     LOGGER.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
@@ -180,7 +182,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context,
                 Optional.ofNullable(auth).map(Authentication::getPrincipal).orElseGet(NullPrincipal::getInstance));
-            clearTicketGrantingCookieFromContext(context, ticketGrantingTicketId);
+            WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         }
     }
 

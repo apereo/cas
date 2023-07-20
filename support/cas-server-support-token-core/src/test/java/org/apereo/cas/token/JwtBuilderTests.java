@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Tickets")
-public class JwtBuilderTests {
+class JwtBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseJwtTokenTicketBuilderTests {
+    class DefaultTests extends BaseJwtTokenTicketBuilderTests {
         @Test
-        public void verifyZonedDateTimeWorks() {
+        void verifyZonedDateTimeWorks() {
             val tgt = new MockTicketGrantingTicket("casuser");
             val jwt = tokenTicketBuilder.build(tgt, Map.of("date-time", List.of(ZonedDateTime.now(Clock.systemUTC()))));
             assertNotNull(jwt);
@@ -39,9 +39,9 @@ public class JwtBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.token.crypto.enabled=false")
-    public class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
+    class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
         @Test
-        public void verifyUnknownJwt() {
+        void verifyUnknownJwt() {
             val jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIm9yZy5hcGVyZW8uY2FzLnNlcnZpY2VzLlJlZ2"
                       + "lzdGVyZWRTZXJ2aWNlIjoiMjEzMzI0ODYyMSIsImtpZCI6IjEyMzQ1Njc4OTAifQ"
                       + ".eyJzdWIiOiJjYXN1c2VyIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvY2FzLmV4Y"

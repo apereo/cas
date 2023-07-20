@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -125,8 +127,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             request.getParameter(OAuth20Constants.TOKEN));
         if (StringUtils.isBlank(accessToken)) {
             val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase()
-                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase() + ' ')) {
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase(Locale.ENGLISH)
+                .startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase(Locale.ENGLISH) + ' ')) {
                 accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
             }
         }

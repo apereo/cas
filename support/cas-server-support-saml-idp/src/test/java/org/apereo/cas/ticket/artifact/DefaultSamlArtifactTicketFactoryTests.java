@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2")
-public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlArtifactTicketFactory")
     private SamlArtifactTicketFactory samlArtifactTicketFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val ticketId = samlArtifactTicketFactory.create(UUID.randomUUID().toString(), tgt.getAuthentication(),
             tgt, casProperties.getAuthn().getSamlIdp().getCore().getEntityId(),

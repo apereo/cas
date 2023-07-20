@@ -20,6 +20,7 @@ import org.thymeleaf.templateresource.StringTemplateResource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -64,7 +65,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .headers(headers)
                 .build();

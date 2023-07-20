@@ -36,14 +36,14 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Delegation")
-public class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogateAuthenticationTests {
+class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogateAuthenticationTests {
 
     @Autowired
     @Qualifier("surrogatePasswordlessAuthenticationPreProcessor")
     private PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val uid = "casuser";
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication(uid));
         val account = PasswordlessUserAccount.builder().username(uid).build();

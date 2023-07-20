@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @Import(OidcServerDiscoverySettingsFactoryTests.OidcAuthenticationContextTestConfiguration.class)
-public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
+class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
 
     @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
     public static class OidcAuthenticationContextTestConfiguration {
@@ -31,7 +31,7 @@ public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         assertTrue(oidcServerDiscoverySettings.isRequestParameterSupported());
         assertTrue(oidcServerDiscoverySettings.isClaimsParameterSupported());
         

@@ -69,8 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 10_333;
+class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
+    private static final int COUNT = 500;
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

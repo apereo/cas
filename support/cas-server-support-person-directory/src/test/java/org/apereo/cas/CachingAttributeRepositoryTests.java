@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.stub.attributes.eppn=eppn"
     })
 @Tag("Attributes")
-public class CachingAttributeRepositoryTests {
+class CachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
     private IPersonAttributeDao cachingAttributeRepository;
 
     @Test
-    public void verifyRepositoryCaching() {
+    void verifyRepositoryCaching() {
         val person1 = cachingAttributeRepository.getPerson("casuser");
         assertEquals("casuser", person1.getName());
         assertEquals(4, person1.getAttributes().size());

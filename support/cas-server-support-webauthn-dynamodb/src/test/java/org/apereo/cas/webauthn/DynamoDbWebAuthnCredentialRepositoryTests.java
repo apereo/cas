@@ -27,7 +27,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
 @Import(DynamoDbWebAuthnConfiguration.class)
-public class DynamoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class DynamoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

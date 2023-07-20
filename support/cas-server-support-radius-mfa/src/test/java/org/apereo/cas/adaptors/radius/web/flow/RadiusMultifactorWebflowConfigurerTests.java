@@ -31,7 +31,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     })
 @Tag("Radius")
 @Getter
-public class RadiusMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class RadiusMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("radiusFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

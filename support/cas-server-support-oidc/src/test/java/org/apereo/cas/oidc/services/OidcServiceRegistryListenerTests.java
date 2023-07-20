@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.oidc.core.user-defined-scopes.SomeCustomScope=name"
 )
-public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
+class OidcServiceRegistryListenerTests extends AbstractOidcTests {
 
     @Test
-    public void verifyMatchingScopeWithPolicyAsChain() {
+    void verifyMatchingScopeWithPolicyAsChain() {
         var service = getOidcRegisteredService();
         val initialPolicy = new OidcPhoneScopeAttributeReleasePolicy();
         initialPolicy.setClaimMappings(Map.of("phone", "my_phone"));
@@ -52,7 +52,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyMatchingScopeWithPolicy() {
+    void verifyMatchingScopeWithPolicy() {
         var service = getOidcRegisteredService();
         val initialPolicy = new OidcPhoneScopeAttributeReleasePolicy();
         initialPolicy.setClaimMappings(Map.of("phone", "my_phone"));
@@ -68,7 +68,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationRecon() {
+    void verifyOperationRecon() {
         var service = getOidcRegisteredService();
         val scopes = service.getScopes();
         scopes.add(OidcConstants.StandardScopes.ADDRESS.getScope());
@@ -86,7 +86,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyCustomScope() {
+    void verifyCustomScope() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
         val scopes = service.getScopes();
@@ -99,7 +99,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyScopeFreeAttributeRelease() {
+    void verifyScopeFreeAttributeRelease() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
 
@@ -114,7 +114,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationEmptyScopes() {
+    void verifyOperationEmptyScopes() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
         val processed = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
@@ -122,7 +122,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationReconAsChain() {
+    void verifyOperationReconAsChain() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
         service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
@@ -135,7 +135,7 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyReleasePolicyStartingWithChain() {
+    void verifyReleasePolicyStartingWithChain() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
         service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());

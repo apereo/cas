@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -15,13 +16,14 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.core.Ordered;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,11 +44,18 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
      */
     protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
+    /**
+     * The logout request bindings.
+     */
+    protected final List<String> logoutRequestBindings;
+
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
                                                       final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                      final UrlValidator urlValidator) {
+                                                      final UrlValidator urlValidator,
+                                                      final SamlIdPProperties samlIdPProperties) {
         super(servicesManager, urlValidator);
         this.samlRegisteredServiceCachingMetadataResolver = resolver;
+        this.logoutRequestBindings = samlIdPProperties.getLogout().getLogoutRequestBindings();
     }
 
     @Override
@@ -89,24 +98,18 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
         LOGGER.trace("Located entity id [{}]", entityID);
 
         val samlRegisteredService = (SamlRegisteredService) registeredService;
-        val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
+        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
         if (adaptorRes.isEmpty()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }
         val adaptor = adaptorRes.get();
 
-        var sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
-        if (sloService != null) {
-            return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
-        }
-        sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-        if (sloService != null) {
-            return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
-        }
-        sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_SOAP11_BINDING_URI);
-        if (sloService != null) {
-            return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
+        for (val binding : this.logoutRequestBindings) {
+            var sloService = adaptor.getSingleLogoutService(binding);
+            if (sloService != null) {
+                return finalizeSingleLogoutUrl(sloService, samlRegisteredService);
+            }
         }
         LOGGER.warn("Cannot find SLO service in metadata for entity id [{}]", entityID);
         return null;

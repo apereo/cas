@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DefaultCasBannerTests {
+class DefaultCasBannerTests {
     @Test
     @Order(1)
     public void verifyOperation() throws Exception {
@@ -31,7 +31,7 @@ public class DefaultCasBannerTests {
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }
@@ -43,7 +43,7 @@ public class DefaultCasBannerTests {
         val banner = new DefaultCasBanner();
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }

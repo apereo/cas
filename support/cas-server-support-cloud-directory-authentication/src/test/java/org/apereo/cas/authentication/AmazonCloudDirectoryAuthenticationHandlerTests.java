@@ -36,12 +36,12 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AmazonWebServices")
-public class AmazonCloudDirectoryAuthenticationHandlerTests {
+class AmazonCloudDirectoryAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));
@@ -51,7 +51,7 @@ public class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoPassAttr() {
+    void verifyNoPassAttr() {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", List.of("casuser")));
         val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
@@ -61,7 +61,7 @@ public class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoMatch() {
+    void verifyNoMatch() {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));

@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,8 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
-public class ReturnAllowedAttributeReleasePolicyTests {
+class ReturnAllowedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -57,6 +57,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
     @SpringBootTest(classes = {
         CasPersonDirectoryTestConfiguration.class,
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class
     },
@@ -64,13 +65,13 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class AttributeDefinitionsTests {
+    class AttributeDefinitionsTests {
         @Autowired
         @Qualifier(AttributeDefinitionStore.BEAN_NAME)
         private AttributeDefinitionStore attributeDefinitionStore;
 
         @Test
-        public void verifyUnresolvedAttributes() {
+        void verifyUnresolvedAttributes() {
             assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
@@ -86,7 +87,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyVirtualAttributesInChain() {
+        void verifyVirtualAttributesInChain() {
             assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
@@ -118,13 +119,13 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class DefaultTests {
+    class DefaultTests {
 
         @Autowired
         private CasConfigurationProperties casProperties;
 
         @Test
-        public void verifySerialization() throws IOException {
+        void verifySerialization() throws IOException {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("attributeOne");
             val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
@@ -135,7 +136,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyInlineGroovy() {
+        void verifyInlineGroovy() {
             buildApplicationContext();
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
@@ -166,7 +167,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyConsentable() {
+        void verifyConsentable() {
             buildApplicationContext();
 
             val allowedAttributes = new ArrayList<String>();
@@ -191,7 +192,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitions() {
+        void verifyRequestedDefinitions() {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("cn");
@@ -207,7 +208,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitionsWithExistingPrincipalAttribute() {
+        void verifyRequestedDefinitionsWithExistingPrincipalAttribute() {
             val applicationContext = buildApplicationContext();
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("custom-name");
@@ -233,7 +234,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitionsWithoutPrincipalAttribute() {
+        void verifyRequestedDefinitionsWithoutPrincipalAttribute() {
             val applicationContext = new StaticApplicationContext();
             applicationContext.refresh();
 
@@ -269,7 +270,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyDefaultAttributes() {
+        void verifyDefaultAttributes() {
             buildApplicationContext();
 
             val policy = new ReturnAllowedAttributeReleasePolicy();
@@ -283,8 +284,8 @@ public class ReturnAllowedAttributeReleasePolicyTests {
                 private static final long serialVersionUID = 6935950848419028873L;
 
                 @Override
-                public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                    return principal.getId();
+                public String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+                    return context.getPrincipal().getId();
                 }
             });
 
@@ -298,6 +299,14 @@ public class ReturnAllowedAttributeReleasePolicyTests {
             assertTrue(attributes.containsKey("principalId"));
             assertTrue(attributes.containsKey("cn"));
             assertTrue(attributes.containsKey("mail"));
+        }
+    }
+
+    @TestConfiguration
+    public static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
+        @Bean
+        public ServicesManager servicesManager() {
+            return mock(ServicesManager.class);
         }
     }
 }

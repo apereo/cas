@@ -23,6 +23,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,13 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
-public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
+class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizeController")
     protected OidcPushedAuthorizeEndpointController oidcPushedAuthorizeController;
 
     @Test
-    public void verifyGetOperationFails() throws Exception {
+    void verifyGetOperationFails() throws Exception {
         assertNotNull(oidcPushedAuthorizeController);
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.GET.name());
@@ -53,13 +54,13 @@ public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTest
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();
         val mockRequest = getHttpRequestForEndpoint(OidcConstants.PUSHED_AUTHORIZE_URL);
         mockRequest.setMethod(HttpMethod.GET.name());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
 

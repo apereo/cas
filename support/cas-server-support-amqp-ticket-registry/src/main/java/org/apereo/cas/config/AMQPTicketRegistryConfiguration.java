@@ -2,16 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.ticket.registry.AMQPDefaultTicketRegistry;
-import org.apereo.cas.ticket.registry.AMQPMessageSerializationHandler;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistryQueueReceiver;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.MessageQueueMessageSerializationHandler;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.registry.queue.AMQPTicketRegistryQueuePublisher;
-import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.nio.charset.StandardCharsets;
@@ -48,65 +45,30 @@ import java.nio.charset.StandardCharsets;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "amqp")
 @AutoConfiguration
 public class AMQPTicketRegistryConfiguration {
-    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PublisherIdentifier messageQueueTicketRegistryIdentifier(
-        final CasConfigurationProperties casProperties) {
-        val bean = new PublisherIdentifier();
-        val amqp = casProperties.getTicket().getRegistry().getAmqp();
-
-        FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
-        return bean;
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
-    public AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final AMQPTicketRegistry ticketRegistry,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
-        final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
-        return new AMQPTicketRegistryQueueReceiver(ticketRegistry, messageQueueTicketRegistryIdentifier);
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "messageQueueCipherExecutor")
-    public CipherExecutor messageQueueCipherExecutor(final CasConfigurationProperties casProperties) {
-        val amqp = casProperties.getTicket().getRegistry().getAmqp();
-        return CoreTicketUtils.newTicketRegistryCipherExecutor(amqp.getCrypto(), "amqp");
-    }
-
+    
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MessageConverter messageQueueTicketRegistryConverter(
-        @Qualifier("messageQueueCipherExecutor")
-        final CipherExecutor messageQueueCipherExecutor) {
+        @Qualifier("defaultTicketRegistryCipherExecutor")
+        final CipherExecutor defaultTicketRegistryCipherExecutor) {
         val converter = new SerializerMessageConverter();
         converter.setDefaultCharset(StandardCharsets.UTF_8.name());
-        converter.setSerializer(new AMQPMessageSerializationHandler(messageQueueCipherExecutor));
-        converter.setDeserializer(new AMQPMessageSerializationHandler(messageQueueCipherExecutor));
+        converter.setSerializer(new MessageQueueMessageSerializationHandler(defaultTicketRegistryCipherExecutor));
+        converter.setDeserializer(new MessageQueueMessageSerializationHandler(defaultTicketRegistryCipherExecutor));
         return converter;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AMQPTicketRegistry ticketRegistry(
-        @Qualifier("messageQueueCipherExecutor")
-        final CipherExecutor messageQueueCipherExecutor,
-        final RabbitTemplate rabbitTemplate,
+    public QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher(
+        @Qualifier("messageQueueTicketRegistryIdentifier")
+        final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
-        final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
+        final RabbitTemplate rabbitTemplate) {
         rabbitTemplate.setMessageConverter(messageQueueTicketRegistryConverter);
         LOGGER.debug("Configuring AMQP ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        val registry = new AMQPDefaultTicketRegistry(new AMQPTicketRegistryQueuePublisher(rabbitTemplate),
-            messageQueueTicketRegistryIdentifier);
-        registry.setCipherExecutor(messageQueueCipherExecutor);
-        return registry;
+        return new AMQPTicketRegistryQueuePublisher(rabbitTemplate);
     }
 
     @Bean
@@ -121,6 +83,7 @@ public class AMQPTicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "amqpTicketRegistryMessageListenerContainer")
+    @Lazy(false)
     public MessageListenerContainer amqpTicketRegistryMessageListenerContainer(
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
@@ -138,9 +101,10 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amqpTicketRegistryListenerAdapter")
+    @Lazy(false)
     public MessageListenerAdapter amqpTicketRegistryListenerAdapter(
         @Qualifier("messageQueueTicketRegistryReceiver")
-        final AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver,
+        final QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter) {
         val adapter = new MessageListenerAdapter(messageQueueTicketRegistryReceiver, "receive");

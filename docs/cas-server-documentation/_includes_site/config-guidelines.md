@@ -27,7 +27,7 @@ forms are accepted by CAS, there are certain components (in CAS and other framew
 this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
 that might be presented to the system via an external library or framework such as Spring Boot, etc.
 
-<div class="alert alert-info"><p>
+<div class="alert alert-info">:information_source: <strong>Note</strong> <p>
 When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
 The only possible exception to this rule is when naming actuator endpoints; The name of the
 actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
@@ -42,8 +42,7 @@ way you intend.
 #### Validation
 
 Configuration properties are automatically validated on CAS startup to report issues with configuration binding, specially if defined CAS settings cannot be
-recognized or validated by the configuration schema. The validation process is on by default and can be skipped on startup using a special system
-property `SKIP_CONFIG_VALIDATION` that should be set to `true`. Additional validation processes are also handled
+recognized or validated by the configuration schema. Additional validation processes are also handled
 via <a href="/{{version}}/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
 startup by Spring Boot and family.
 

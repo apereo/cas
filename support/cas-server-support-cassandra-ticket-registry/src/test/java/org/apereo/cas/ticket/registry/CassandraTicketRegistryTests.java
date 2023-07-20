@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cassandra")
 @EnabledIfListeningOnPort(port = 9042)
 @Getter
-public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
+class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

@@ -83,34 +83,6 @@ networks with limited internet access.
 The Third party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.
 
-For developers modifying CAS, if adding or modifying a 3rd party library, the steps are:
-
-- Add WebJAR dependency to `dependencies.gradle` in the `ext.library.webjars` section.
-- Add dependency version to `gradle.properties` and use it in `dependency.gradle`.
-- Add entry to `core/cas-server-core-web/src/main/resources/cas_common_messages.properties` for each resource (e.g. js or css). 
-- Reference the version from `gradle.properties` in the URL and it will be filtered in at build time).
-
-<div class="alert alert-info"><strong>Resource Caching</strong><p>The build attempts to 
-rebuild all relevant modules again when version numbers change and resources upgraded. If
-you do need to forcefully remove cached artifacts and repackage the application anew, run 
-the build's <code>clean</code> task inside the <code>core/cas-server-core-web</code> module.</p></div>
-
-For example:
-
-```properties
-webjars.zxcvbn.js=/webjars/zxcvbn/dist/zxcvbn.js
-```
-
-Then Reference the entry from `cas_common_messages.properties` in the relevant view (i.e HTML page) where the entry is `webjars.zxcvbn.js`:
-
-```html
-<script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
-```
-     
-Please note that CAS allows you to use version agnostic URLs for Webjars. Using jQuery as an example, 
-accessing `/webjars/jquery/jquery.min.js` results in `/webjars/jquery/x.y.z/jquery.min.js` 
-where `x.y.z` is the webjar version.
-
 #### Building WebJARs
 
 You can search for webjars at http://webjars.org. There are three flavors of WebJARs that you 

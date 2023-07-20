@@ -1,9 +1,0 @@
-{
-  "dependencies": "core",
-  "properties": [
-    "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.audit.engine.enabled=false",
-    "--cas.service-registry.core.init-from-json=true"
-  ]
-}

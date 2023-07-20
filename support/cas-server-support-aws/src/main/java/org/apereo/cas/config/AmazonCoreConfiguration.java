@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -27,9 +28,9 @@ public class AmazonCoreConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnAvailableEndpoint
     public AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint(
-        final CasConfigurationProperties casProperties,
+        final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
-        final RestAuthenticationService restAuthenticationService) {
+        final ObjectProvider<RestAuthenticationService> restAuthenticationService) {
         return new AmazonSecurityTokenServiceEndpoint(casProperties, restAuthenticationService);
     }
 }

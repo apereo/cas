@@ -55,9 +55,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
-public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
-    private static List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
+    private static final List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
@@ -71,7 +71,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 
@@ -106,7 +106,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            public void writeDevicesBackToResource(final ArrayList<U2FDeviceRegistration> devices) {
+            public void writeDevicesBackToResource(final List<U2FDeviceRegistration> devices) {
                 DEVICES.addAll(devices);
             }
 

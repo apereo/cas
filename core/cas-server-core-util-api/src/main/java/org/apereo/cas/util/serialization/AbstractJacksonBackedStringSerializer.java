@@ -2,7 +2,6 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -19,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -159,6 +157,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return readObjectsFromString(jsonString);
     }
 
+    @Override
+    public T merge(final T baseEntity, final T childEntity) {
+        return FunctionUtils.doUnchecked(() -> {
+            val reader = getObjectMapper().readerForUpdating(baseEntity);
+            return reader.readValue(toString(childEntity));
+        });
+    }
+
     /**
      * Gets object mapper and builds on if uninitialized.
      *
@@ -224,9 +230,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             return getObjectMapper().readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
-                         + "in the absence of a configuration/support module that knows how to interpret the fragment, "
-                         + "specially if the fragment describes a CAS registered service definition. "
-                         + "Internal parsing error is [{}]",
+                    + "in the absence of a configuration/support module that knows how to interpret the fragment, "
+                    + "specially if the fragment describes a CAS registered service definition. "
+                    + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }
@@ -240,7 +246,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             return getObjectMapper().readValue(jsonString, expectedType);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into List of type [{}]."
-                         + "Internal parsing error is [{}]",
+                    + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }

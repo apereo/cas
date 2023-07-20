@@ -49,7 +49,7 @@ async function verifyDeviceCode(data) {
     await page.goto(data.verification_uri);
     await page.waitForTimeout(1000);
     console.log(`Page url: ${await page.url()}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.type(page, "#usercode", data.user_code);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();

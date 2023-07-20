@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAuthenticationPrepareLoginActionTests {
+class YubiKeyAuthenticationPrepareLoginActionTests {
     @BeforeEach
     public void setup() {
         val applicationContext = new StaticApplicationContext();
@@ -36,7 +36,7 @@ public class YubiKeyAuthenticationPrepareLoginActionTests {
     }
     
     @Test
-    public void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
         val casProperties = new CasConfigurationProperties();
         val action = new YubiKeyAuthenticationPrepareLoginAction(casProperties);

@@ -9,20 +9,21 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.HazelcastMonitorConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
@@ -56,6 +57,7 @@ import static org.mockito.Mockito.*;
     HazelcastMonitorConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
@@ -77,13 +79,13 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
-public class HazelcastHealthIndicatorTests {
+class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")
     private HealthIndicator hazelcastHealthIndicator;
 
     @Test
-    public void verifyMonitor() {
+    void verifyMonitor() {
         val health = hazelcastHealthIndicator.health();
         val status = health.getStatus();
         assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
@@ -92,19 +94,20 @@ public class HazelcastHealthIndicatorTests {
         val details = health.getDetails();
         assertTrue(details.containsKey("name"));
 
-        details.values().forEach(value -> {
-            if (value instanceof Map map) {
+        details.values().stream()
+            .filter(Map.class::isInstance)
+            .map(Map.class::cast)
+            .forEach(map -> {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
-            }
-        });
+            });
         assertNotNull(hazelcastHealthIndicator.toString());
     }
 
     @Test
-    public void verifyFreeHeapPercentageCalculation() {
+    void verifyFreeHeapPercentageCalculation() {
         val memoryStats = mock(MemoryStats.class);
         when(memoryStats.getFreeHeap()).thenReturn(125_555_248L);
         when(memoryStats.getCommittedHeap()).thenReturn(251_658_240L);

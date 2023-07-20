@@ -49,6 +49,17 @@ public class CheckSpringConfigurationBeanProxying {
                     }
                 }
 
+
+                if (text.contains("@AutoConfiguration") && file.toFile().getAbsolutePath().contains("src/main/java")) {
+                    var packagePattern = Pattern.compile("package (.+);").matcher(text);
+                    if (packagePattern.find()) {
+                        var packageName = packagePattern.group(1);
+                        if (!packageName.equals("org.apereo.cas.config")) {
+                            print("Configuration class %s in package %s must be placed inside the package 'org.apereo.cas.config'%n", file, packageName);
+                            failBuild.set(true);
+                        }
+                    }
+                }
             });
         if (failBuild.get()) {
             System.exit(1);

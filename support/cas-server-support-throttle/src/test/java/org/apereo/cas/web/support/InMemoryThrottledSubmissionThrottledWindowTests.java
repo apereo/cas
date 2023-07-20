@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @Getter
 @Tag("AuthenticationThrottling")
-public class InMemoryThrottledSubmissionThrottledWindowTests
+class InMemoryThrottledSubmissionThrottledWindowTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
@@ -45,7 +45,7 @@ public class InMemoryThrottledSubmissionThrottledWindowTests
 
     @Override
     @Test
-    public void verifyThrottle() throws Exception {
+    void verifyThrottle() throws Exception {
         var success = login("casuser", "Mellon", IP_ADDRESS);
         assertEquals(HttpStatus.SC_OK, success.getStatus());
 

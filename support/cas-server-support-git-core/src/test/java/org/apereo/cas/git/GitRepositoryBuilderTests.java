@@ -4,6 +4,7 @@ package org.apereo.cas.git;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -33,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Git")
-public class GitRepositoryBuilderTests {
+class GitRepositoryBuilderTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyTestPrivateKey() throws Exception {
+    void verifyTestPrivateKey() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
@@ -54,7 +55,7 @@ public class GitRepositoryBuilderTests {
     }
 
     @Test
-    public void verifyBuild() throws Exception {
+    void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -78,7 +79,7 @@ public class GitRepositoryBuilderTests {
      * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
     @Test
-    public void verifyBuildWithFilePrefix() throws Exception {
+    void verifyBuildWithFilePrefix() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -97,7 +98,7 @@ public class GitRepositoryBuilderTests {
      * @throws IOException IO error
      */
     @Test
-    public void verifyBuildWithHttpClientOptions() throws Exception {
+    void verifyBuildWithHttpClientOptions() throws Exception {
         val readonlyDeployToken = "ST8hSZUWDs7ujS83EVnk";
         for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
             val props = casProperties.getServiceRegistry().getGit();
@@ -112,7 +113,7 @@ public class GitRepositoryBuilderTests {
             val gitRepository = builder.build();
             assertTrue(new File(gitRepository.getRepositoryDirectory(), "README.md").exists());
             gitRepository.destroy();
-            PathUtils.deleteDirectory(gitRepository.getRepositoryDirectory().toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(__ -> PathUtils.deleteDirectory(gitRepository.getRepositoryDirectory().toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 

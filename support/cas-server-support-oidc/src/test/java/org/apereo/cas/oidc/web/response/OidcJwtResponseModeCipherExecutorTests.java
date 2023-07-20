@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
+class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
 
     @TestPropertySource(properties = {
         "cas.authn.oidc.response.crypto.signing-enabled=false",
@@ -26,9 +26,9 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class EncryptOnlyTests extends AbstractOidcTests {
+    class EncryptOnlyTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);
@@ -45,9 +45,9 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SignOnlyTests extends AbstractOidcTests {
+    class SignOnlyTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);
@@ -64,9 +64,9 @@ public class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SignAndEncryptTests extends AbstractOidcTests {
+    class SignAndEncryptTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboMustEnrollActionTests extends BaseActionTests {
+class InweboMustEnrollActionTests extends BaseInweboActionTests {
 
     private InweboMustEnrollAction action;
 
@@ -29,7 +29,7 @@ public class InweboMustEnrollActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifySuccess() {
+    void verifySuccess() {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));

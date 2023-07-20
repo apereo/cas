@@ -36,14 +36,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
+class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
 
     @Autowired
     @Qualifier("wsFederationNavigationController")
     private WsFederationNavigationController wsFederationNavigationController;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -54,7 +54,7 @@ public class WsFederationNavigationControllerTests extends AbstractWsFederationT
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val config = wsFederationConfigurations.toList().get(0);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice");
@@ -71,7 +71,7 @@ public class WsFederationNavigationControllerTests extends AbstractWsFederationT
     }
 
     @Test
-    public void verifyMissingId() {
+    void verifyMissingId() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

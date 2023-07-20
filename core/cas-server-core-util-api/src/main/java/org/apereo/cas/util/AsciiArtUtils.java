@@ -17,7 +17,10 @@ import java.io.PrintStream;
  */
 @UtilityClass
 public class AsciiArtUtils {
-    private static final Marker ASCII_ART_LOGGER_MARKER = MarkerFactory.getMarker("AsciiArt");
+    /**
+     * Logger marker element responsible for logging ascii-art.
+     */
+    public static final Marker ASCII_ART_LOGGER_MARKER = MarkerFactory.getMarker("AsciiArt");
 
     private static final String ANSI_RESET = "\u001B[0m";
 

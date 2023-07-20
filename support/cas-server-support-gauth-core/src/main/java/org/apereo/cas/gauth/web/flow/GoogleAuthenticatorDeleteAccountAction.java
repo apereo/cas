@@ -20,9 +20,8 @@ public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction
     private final OneTimeTokenCredentialRepository repository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val id = requestContext.getRequestParameters()
-            .getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
+    protected Event doExecute(final RequestContext requestContext) {
+        val id = requestContext.getRequestParameters().getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
         repository.delete(id);
         return success();
     }

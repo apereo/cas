@@ -26,7 +26,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.BaseJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CollectionUtils;
@@ -61,7 +61,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
+@SpringBootTest(classes = BaseJpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
         "spring.integration.jdbc.initialize-schema=ALWAYS",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
@@ -99,7 +99,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -127,7 +127,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyTransientTicketCleaning() throws Exception {
+    void verifyTransientTicketCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -181,7 +181,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyDeviceCodeAndUserCleaning() throws Exception {
+    void verifyDeviceCodeAndUserCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);

@@ -32,29 +32,31 @@ async function callAuditLog() {
     const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
 
-    const browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.goto(page, "https://localhost:8443/cas/logout");
+    await page.waitForTimeout(6000);
     await page.close();
+    await browser.close();
 
     await callAuditLog();
 
     console.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
-    await page.waitForTimeout(3000);
-
+    await cas.sleep(5000);
     await cas.refreshContext();
 
     console.log("Testing authentication after refresh...");
+    browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
@@ -64,7 +66,7 @@ async function callAuditLog() {
     await callRegisteredServices();
 
     console.log("Waiting for audit log cleaner to resume...");
-    await cas.sleep(2000);
+    await cas.sleep(5000);
     
     await browser.close();
 

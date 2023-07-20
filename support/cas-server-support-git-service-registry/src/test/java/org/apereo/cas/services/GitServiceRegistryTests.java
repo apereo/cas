@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -14,6 +14,7 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,7 @@ import static org.mockito.Mockito.*;
 @Tag("Git")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -89,23 +90,25 @@ import static org.mockito.Mockito.*;
         try {
             val gitRepoSampleDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             if (gitRepoSampleDir.exists()) {
-                PathUtils.delete(gitRepoSampleDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitRepoSampleDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
-                PathUtils.delete(gitDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
-            val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
-            FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            gitSampleRepo.add().addFilepattern("*.txt").call();
-            gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            try (val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call()) {
+                FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                gitSampleRepo.add().addFilepattern("*.txt").call();
+                gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            }
 
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.txt").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.txt").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);
@@ -113,17 +116,23 @@ import static org.mockito.Mockito.*;
     }
 
     @AfterAll
-    public static void cleanUp() throws Exception {
-        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
-        PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
-        if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+    public static void cleanUp() {
+        try {
+            val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+            val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
+            if (gitDir.exists()) {
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
     @Test
-    public void verifyMalformedJsonFile() throws Exception {
+    void verifyMalformedJsonFile() throws Exception {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
 
         FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", CasRegisteredService.FRIENDLY_NAME,
@@ -139,7 +148,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-    public void verifyPullFails() throws Exception {
+    void verifyPullFails() throws Exception {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));
@@ -163,7 +172,7 @@ import static org.mockito.Mockito.*;
      * Second service is copied to two other locations and deleted in order to commit all changes to the repository.
      */
     @Test
-    public void verifyLoadWithRootDirectory() throws IOException {
+    void verifyLoadWithRootDirectory() throws IOException {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);

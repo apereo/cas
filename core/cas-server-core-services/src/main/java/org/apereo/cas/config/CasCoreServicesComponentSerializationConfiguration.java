@@ -53,6 +53,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnStaticAttributeReleasePolicy;
+import org.apereo.cas.services.StaticRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceChainingAttributeFilter;
@@ -115,6 +116,7 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(DefaultRegisteredServiceServiceTicketExpirationPolicy.class);
             plan.registerSerializableClass(PrincipalAttributeRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(AnonymousRegisteredServiceUsernameAttributeProvider.class);
+            plan.registerSerializableClass(StaticRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(GroovyRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(DefaultRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(DefaultRegisteredServiceWebflowInterruptPolicy.class);

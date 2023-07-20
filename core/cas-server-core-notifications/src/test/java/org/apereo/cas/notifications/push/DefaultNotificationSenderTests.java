@@ -32,13 +32,13 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsConfiguration.class
 })
 @Tag("Simple")
-public class DefaultNotificationSenderTests {
+class DefaultNotificationSenderTests {
     @Autowired
     @Qualifier("notificationSender")
     private NotificationSender notificationSender;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertTrue(notificationSender.canSend());
         assertFalse(new DefaultNotificationSender(List.of()).notify(CoreAuthenticationTestUtils.getPrincipal(), Map.of()));
 

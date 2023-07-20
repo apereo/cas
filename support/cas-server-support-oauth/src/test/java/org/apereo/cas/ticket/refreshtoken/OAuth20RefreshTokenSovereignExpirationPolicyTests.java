@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OAuthToken")
-@TestPropertySource(properties = "cas.logout.removeDescendantTickets=false")
-public class OAuth20RefreshTokenSovereignExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=false")
+class OAuth20RefreshTokenSovereignExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
+    void verifyRefreshTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);

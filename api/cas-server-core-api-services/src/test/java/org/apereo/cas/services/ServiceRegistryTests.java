@@ -16,9 +16,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ServiceRegistryTests {
+class ServiceRegistryTests {
     @Test
-    public void verifyFindById() {
+    void verifyFindById() {
         val component = mock(ServiceRegistry.class);
         val service = mock(RegisteredService.class);
         when(component.findServiceById(anyLong())).thenReturn(service);
@@ -28,7 +28,7 @@ public class ServiceRegistryTests {
     }
 
     @Test
-    public void verifyFindByName() {
+    void verifyFindByName() {
         val component = mock(ServiceRegistry.class);
 
         when(component.findServiceByExactServiceName(anyString())).thenReturn(null);

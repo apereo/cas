@@ -28,9 +28,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("LdapAuthentication")
-public class DefaultLdapAccountStateHandlerTests {
+class DefaultLdapAccountStateHandlerTests {
     @Test
-    public void verifyActiveDirectoryErrors() {
+    void verifyActiveDirectoryErrors() {
         val handler = new DefaultLdapAccountStateHandler();
 
         val response = mock(AuthenticationResponse.class);
@@ -55,7 +55,7 @@ public class DefaultLdapAccountStateHandlerTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val handler = new DefaultLdapAccountStateHandler();
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));
 
@@ -64,12 +64,11 @@ public class DefaultLdapAccountStateHandlerTests {
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         when(response.getLdapEntry()).thenReturn(entry);
 
-        assertThrows(AccountLockedException.class, () ->
-            handler.handlePolicyAttributes(response));
+        assertThrows(AccountLockedException.class, () -> handler.handlePolicyAttributes(response));
     }
 
     @Test
-    public void verifyNoAttrs() {
+    void verifyNoAttrs() {
         val handler = new DefaultLdapAccountStateHandler();
         val response = mock(AuthenticationResponse.class);
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));
@@ -82,7 +81,7 @@ public class DefaultLdapAccountStateHandlerTests {
     }
 
     @Test
-    public void verifyNoWarning() {
+    void verifyNoWarning() {
         val handler = new DefaultLdapAccountStateHandler();
         val response = mock(AuthenticationResponse.class);
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));

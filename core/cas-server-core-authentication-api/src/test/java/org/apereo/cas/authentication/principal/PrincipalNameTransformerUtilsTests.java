@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Utility")
-public class PrincipalNameTransformerUtilsTests {
+class PrincipalNameTransformerUtilsTests {
     @Test
-    public void verifyBlockingAction() {
+    void verifyBlockingAction() {
         val properties = new PrincipalTransformationProperties();
         properties.setBlockingPattern(".+@.+\\.com");
         val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
@@ -27,7 +27,7 @@ public class PrincipalNameTransformerUtilsTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val properties = new PrincipalTransformationProperties();
         properties.setPrefix("prefix-");
         properties.setSuffix("-suffix");
@@ -38,7 +38,7 @@ public class PrincipalNameTransformerUtilsTests {
     }
 
     @Test
-    public void verifyGroovyAction() {
+    void verifyGroovyAction() {
         val properties = new PrincipalTransformationProperties();
         properties.getGroovy().setLocation(new ClassPathResource("SomeGroovyScript.groovy"));
         properties.setCaseConversion(PrincipalTransformationProperties.CaseConversion.LOWERCASE);
@@ -47,7 +47,7 @@ public class PrincipalNameTransformerUtilsTests {
     }
 
     @Test
-    public void verifyRegexAction() {
+    void verifyRegexAction() {
         val properties = new PrincipalTransformationProperties();
         properties.setPattern("test.+");
         val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);

@@ -38,7 +38,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>jdbc://</code> to 
 signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>

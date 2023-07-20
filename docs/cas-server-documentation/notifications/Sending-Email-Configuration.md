@@ -93,6 +93,14 @@ The following parameters are passed to the script:
 
 The outcome of the script should be message body text.
 
+Similarly, the email message body may be defined using an inline groovy script. In this case the configuration setting should be defined as:
+
+```groovy
+groovy { return 'This is your email message!' }
+```
+
+The script bindings prior to execution are prepared with a collection of parameters appropriate for that feature.   
+
 {% endtab %}
 
 {% endtabs %}
@@ -101,33 +109,8 @@ The outcome of the script should be message body text.
 
 The following approaches may be used to send emails.
 
-### Default
-    
-The default strategy uses the `JavaMail` API which provides a platform-independent and 
-protocol-independent framework to build mail and messaging applications, primarily using SMTP:
-
-{% include_cached {{ version }}/email-notifications-configuration.md %}
-  
-### Twilio SendGrid
-   
-You may also instruct CAS to use [Twilio SendGrid](https://sendgrid.com/) for sending emails.
-Support is enabled by including the the following module:
-
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sendgrid" %}
-
-{% include_cached casproperties.html thirdPartyStartsWith="spring.sendgrid" %}
-
-### Custom
-
-You may also define your own email sender that would be tasked to submit emails, etc using the following
-bean definition and by implementing `EmailSender`:
-
-```java
-@Bean
-public EmailSender emailSender() {
-    return new MyEmailSender();   
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
-more about how to register configurations into the CAS runtime.
+| Option   | Reference                                                   |
+|----------|-------------------------------------------------------------|
+| Default  | [See this page](Sending-Email-Configuration-Default.html).  |
+| SendGrid | [See this page](Sending-Email-Configuration-SendGrid.html). |
+| Custom   | [See this page](Sending-Email-Configuration-Custom.html).   |

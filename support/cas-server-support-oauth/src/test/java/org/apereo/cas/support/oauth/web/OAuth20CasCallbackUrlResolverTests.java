@@ -27,16 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
-public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
+class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
     private UrlResolver casCallbackUrlResolver;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
+        val registeredService = addRegisteredService();
+
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.NONCE, UUID.randomUUID().toString());

@@ -6,8 +6,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
-public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;

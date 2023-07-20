@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientAuthenticationCredentialResolverTests {
+class DelegatedClientAuthenticationCredentialResolverTests {
     @Autowired
     @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
     private DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

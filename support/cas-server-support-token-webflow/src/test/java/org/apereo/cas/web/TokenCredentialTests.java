@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Authentication")
-public class TokenCredentialTests {
+class TokenCredentialTests {
     @Test
-    public void verifyTokenFromParameter() {
+    void verifyTokenFromParameter() {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
         val metadata = new BasicCredentialMetadata(credential);
         assertNotNull(metadata.getCredentialClass());

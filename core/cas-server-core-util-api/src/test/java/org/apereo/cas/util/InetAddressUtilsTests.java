@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class InetAddressUtilsTests {
+class InetAddressUtilsTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val host = InetAddressUtils.getCasServerHostAddress("https://github.com");
         assertNotNull(host);
     }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-public class CasSSLContextTests {
+class CasSSLContextTests {
     private static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
         val url = new URL(addr);
         val connection = (HttpsURLConnection) url.openConnection();
@@ -33,7 +33,7 @@ public class CasSSLContextTests {
     }
 
     @Test
-    public void verifyOperationBySystem() throws Exception {
+    void verifyOperationBySystem() throws Exception {
         val system = CasSSLContext.system();
         assertNotNull(system.getSslContext());
         assertNotNull(system.getKeyManagers());
@@ -46,7 +46,7 @@ public class CasSSLContextTests {
     }
 
     @Test
-    public void verifyOperationDisabled() throws Exception {
+    void verifyOperationDisabled() throws Exception {
         val disabled = CasSSLContext.disabled();
         assertNotNull(disabled.getSslContext());
         assertNotNull(disabled.getKeyManagers());

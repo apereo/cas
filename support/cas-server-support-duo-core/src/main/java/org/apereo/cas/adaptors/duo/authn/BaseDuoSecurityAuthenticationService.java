@@ -32,6 +32,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -104,7 +105,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         try {
             val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
-            LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
+            LOGGER.debug("Contacting Duo Security to inquire about username [{}]", username);
             val userResponse = getHttpResponse(userRequest);
             val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8);
             LOGGER.debug("Received Duo response [{}]", jsonResponse);
@@ -117,7 +118,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
             if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
-                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
                 account.setStatus(status);
@@ -174,7 +175,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @throws Exception the exception
      */
     protected String getHttpResponse(final Http userRequest) throws Exception {
-        return userRequest.executeHttpRequest().body().string();
+        try (val request = userRequest.executeHttpRequest()) {
+            return Objects.requireNonNull(request.body()).string();
+        }
     }
 
     /**
@@ -205,7 +208,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private Http buildHttpRequest(final String format) throws Exception {
         val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
-        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
+        val request = new CasHttpBuilder(HttpMethod.POST.name(),
             new URI("https://" + originalHost).getHost(),
             String.format(format, AUTH_API_VERSION)).build();
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
@@ -323,5 +326,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LoggingUtils.error(LOGGER, e);
         }
         return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
+    }
+
+    private static class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }

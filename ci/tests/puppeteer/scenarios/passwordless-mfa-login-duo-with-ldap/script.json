@@ -4,6 +4,7 @@
     "env": "DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST",
     "docker": "true"
   },
+
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
 

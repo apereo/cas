@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -71,8 +72,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
-            val registeredService = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+            val registeredService = getConfigurationContext().getClientRegistrationRequestTranslator()
                 .translate(registrationRequest, Optional.empty());
+            registeredService.markAsDynamicallyRegistered();
+            
             val savedService = (OidcRegisteredService) getConfigurationContext().getServicesManager().save(registeredService);
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(savedService,
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
@@ -86,7 +89,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .build()
                 .encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
-            registeredService.setDynamicallyRegistered(true);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

@@ -24,6 +24,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.Ordered;
 
@@ -46,6 +47,7 @@ public class SamlSPUtils {
     /**
      * New saml service provider registration.
      * Precedence of services is lowest so generated service can be overridden by non-generated version.
+     *
      * @param sp       the properties
      * @param resolver the resolver
      * @return the saml registered service
@@ -113,26 +115,25 @@ public class SamlSPUtils {
             val metadataResolver = resolver.resolve(service, criteriaSet).getMetadataResolver();
 
             val resolvers = new ArrayList<MetadataResolver>();
-            if (metadataResolver instanceof ChainingMetadataResolver) {
-                resolvers.addAll(((ChainingMetadataResolver) metadataResolver).getResolvers());
+            if (metadataResolver instanceof ChainingMetadataResolver instance) {
+                resolvers.addAll(instance.getResolvers());
             } else {
                 resolvers.add(metadataResolver);
             }
 
-            resolvers.forEach(r -> {
-                if (r instanceof AbstractBatchMetadataResolver) {
-                    val it = ((AbstractBatchMetadataResolver) r).iterator();
-                    val descriptor =
-                        StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                            .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
-                            .findFirst();
+            resolvers.stream()
+                .filter(AbstractBatchMetadataResolver.class::isInstance)
+                .map(r -> ((Iterable<EntityDescriptor>) r).iterator())
+                .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                    .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
+                    .findFirst())
+                .forEach(descriptor -> {
                     if (descriptor.isPresent()) {
                         entityIDList.add(descriptor.get().getEntityID());
                     } else {
                         LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
                     }
-                }
-            });
+                });
         }
         return entityIDList;
     }
@@ -148,7 +149,7 @@ public class SamlSPUtils {
         servicesManager.load();
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService
-            && registeredService.getServiceId().equals(service.getServiceId())).isEmpty()) {
+                                                               && registeredService.getServiceId().equals(service.getServiceId())).isEmpty()) {
             LOGGER.info("Service [{}] does not exist in the registry and will be added.", service.getServiceId());
             servicesManager.save(service);
             servicesManager.load();

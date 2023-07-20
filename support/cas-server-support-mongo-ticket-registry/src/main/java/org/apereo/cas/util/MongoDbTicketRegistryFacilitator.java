@@ -3,7 +3,7 @@ package org.apereo.cas.util;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.ticket.registry.TicketHolder;
+import org.apereo.cas.ticket.registry.MongoDbTicketDocument;
 
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +44,8 @@ public class MongoDbTicketRegistryFacilitator {
     public void createTicketCollections() {
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            val c = createTicketCollection(t);
-            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
+            val collection = createTicketCollection(t);
+            LOGGER.debug("Created MongoDb collection configuration for [{}]", collection.getNamespace().getFullName());
         });
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
@@ -63,11 +63,11 @@ public class MongoDbTicketRegistryFacilitator {
             }
 
             val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-                .onField(TicketHolder.FIELD_NAME_JSON)
-                .onField(TicketHolder.FIELD_NAME_TYPE)
-                .onField(TicketHolder.FIELD_NAME_ID)
+                .onField(MongoDbTicketDocument.FIELD_NAME_JSON)
+                .onField(MongoDbTicketDocument.FIELD_NAME_TYPE)
+                .onField(MongoDbTicketDocument.FIELD_NAME_ID)
                 .build();
-            val expireIndex = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC);
+            val expireIndex = new Index().on(MongoDbTicketDocument.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC);
             
             val timeout = ticket.getProperties().getStorageTimeout();
             if (timeout > 0 && timeout != Long.MAX_VALUE) {

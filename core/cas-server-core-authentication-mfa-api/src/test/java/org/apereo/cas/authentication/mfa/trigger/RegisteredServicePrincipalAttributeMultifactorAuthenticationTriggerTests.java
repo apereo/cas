@@ -33,9 +33,9 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperationByCompositeProvider() {
+    void verifyOperationByCompositeProvider() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -69,7 +69,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     }
 
     @Test
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
@@ -95,7 +95,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     }
 
     @Test
-    public void verifyOperationByMultipleProviders() {
+    void verifyOperationByMultipleProviders() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -121,7 +121,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     }
 
     @Test
-    public void verifyMismatchAttributesMustDeny() {
+    void verifyMismatchAttributesMustDeny() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
@@ -138,7 +138,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     }
 
     @Test
-    public void verifyMismatchAttributes() {
+    void verifyMismatchAttributes() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
@@ -154,7 +154,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     }
 
     @Test
-    public void verifyPolicyNoAttributes() {
+    void verifyPolicyNoAttributes() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(StringUtils.EMPTY);

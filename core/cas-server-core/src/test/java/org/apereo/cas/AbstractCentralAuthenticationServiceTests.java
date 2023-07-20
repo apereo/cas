@@ -2,6 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -45,7 +47,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -65,6 +67,14 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
+    @Qualifier(PrincipalFactory.BEAN_NAME)
+    private PrincipalFactory principalFactory;
+
+    @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+    private PrincipalResolver defaultPrincipalResolver;
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -26,18 +26,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML2")
-public class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
+@Tag("SAMLResponse")
+class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlAuthNStatementBuilder")
     private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = getAuthnRequestFor(UUID.randomUUID().toString());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

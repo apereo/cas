@@ -21,5 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @Tag("JDBCMFA")
 @Import({JpaWebAuthnConfiguration.class, CasHibernateJpaConfiguration.class})
-public class JpaWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class JpaWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

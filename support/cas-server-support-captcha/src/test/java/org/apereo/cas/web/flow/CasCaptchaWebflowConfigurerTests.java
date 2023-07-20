@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.web.flow.config.CasCaptchaConfiguration;
+import org.apereo.cas.config.CasCaptchaConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -22,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(CasCaptchaConfiguration.class)
 @Tag("WebflowConfig")
-public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         assertTrue(Arrays.stream(state.getActionList().toArray())
-            .filter(r -> r instanceof EvaluateAction)
+            .filter(EvaluateAction.class::isInstance)
             .map(EvaluateAction.class::cast)
             .anyMatch(r -> r.toString().contains(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)));
     }

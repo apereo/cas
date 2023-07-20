@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreEventsConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.ElectronicFenceWebflowConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.risk.response.sms.text=Message",
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })
-public class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfigurerTests {
+class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("riskAwareAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver;
     
     @Test
-    public void verifyNoResolution() {
+    void verifyNoResolution() {
         assertNotNull(riskAwareAuthenticationWebflowEventResolver);
 
         val context = new MockRequestContext();
@@ -65,7 +65,7 @@ public class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflo
     }
 
     @Test
-    public void verifyResolution() {
+    void verifyResolution() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

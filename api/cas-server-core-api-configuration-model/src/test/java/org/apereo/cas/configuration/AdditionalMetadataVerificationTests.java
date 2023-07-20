@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("CasConfiguration")
-public class AdditionalMetadataVerificationTests {
+class AdditionalMetadataVerificationTests {
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -55,7 +55,7 @@ public class AdditionalMetadataVerificationTests {
      * @throws IOException if additional property file is missing
      */
     @Test
-    public void verifyMetaData() throws IOException {
+    void verifyMetaData() throws IOException {
         val resource = CasConfigurationProperties.class.getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(resource);
         val additionalMetadataJsonFile = resourceLoader.getResource(resource.toString());

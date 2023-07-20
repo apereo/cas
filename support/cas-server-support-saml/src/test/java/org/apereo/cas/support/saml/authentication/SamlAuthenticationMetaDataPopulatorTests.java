@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("SAML1")
-public class SamlAuthenticationMetaDataPopulatorTests {
+class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
@@ -32,10 +31,10 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyAuthenticationTypeFound() {
+    void verifyAuthenticationTypeFound() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
@@ -43,16 +42,16 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyAuthenticationTypeFoundByDefault() {
+    void verifyAuthenticationTypeFoundByDefault() {
         val credentials = new CustomCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
     }
 
     @Test
-    public void verifyAuthenticationTypeFoundCustom() {
+    void verifyAuthenticationTypeFoundCustom() {
         val credentials = new CustomCredential();
 
         val added = new HashMap<String, String>();
@@ -61,7 +60,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         this.populator.setUserDefinedMappings(added);
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
 
         assertEquals(

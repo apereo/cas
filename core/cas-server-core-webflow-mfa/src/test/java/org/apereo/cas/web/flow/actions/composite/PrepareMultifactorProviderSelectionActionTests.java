@@ -43,13 +43,13 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("prepareMultifactorProviderSelectionAction")
     private Action action;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

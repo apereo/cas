@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RestfulApi")
-public class TicketStatusResourceTests {
+class TicketStatusResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
 
     @Mock
@@ -53,7 +53,7 @@ public class TicketStatusResourceTests {
     }
 
     @Test
-    public void verifyStatus() throws Exception {
+    void verifyStatus() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
@@ -62,14 +62,14 @@ public class TicketStatusResourceTests {
     }
 
     @Test
-    public void verifyStatusNotFound() throws Exception {
+    void verifyStatusNotFound() throws Exception {
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenThrow(InvalidTicketException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    public void verifyStatusError() throws Exception {
+    void verifyStatusError() throws Exception {
         when(ticketRegistry.getTicket(anyString())).thenThrow(RuntimeException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isInternalServerError());

@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTests {
+class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractOidcTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");

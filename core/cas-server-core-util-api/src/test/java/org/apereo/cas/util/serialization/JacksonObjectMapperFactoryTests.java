@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class JacksonObjectMapperFactoryTests {
+class JacksonObjectMapperFactoryTests {
     @Test
-    public void verifyYamlFactory() throws Exception {
+    void verifyYamlFactory() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()
             .jsonFactory(new YAMLFactory())
             .build()
@@ -42,7 +42,7 @@ public class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    public void verifyXMLFactory() throws Exception {
+    void verifyXMLFactory() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()
             .jsonFactory(new XmlFactory())
             .build()
@@ -54,7 +54,7 @@ public class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    public void verifyInjectableWithoutValue() throws Exception {
+    void verifyInjectableWithoutValue() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false)
             .injectableValues(Map.of("firstName", "CAS"))
@@ -65,7 +65,7 @@ public class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    public void verifyInjectableWithValue() throws Exception {
+    void verifyInjectableWithValue() throws Exception {
         val values = new HashMap<String, Object>();
         values.put("firstName", "CAS");
         values.put("status", "true");
@@ -84,7 +84,7 @@ public class JacksonObjectMapperFactoryTests {
     }
 
     @Test
-    public void verifyEmptyInjectable() throws Exception {
+    void verifyEmptyInjectable() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false)
             .build()

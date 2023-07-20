@@ -14,7 +14,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import jakarta.annotation.Nonnull;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -63,7 +62,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              @Nonnull final HttpServletResponse response,
-                             @Nonnull final Object handler) throws ServletException {
+                             @Nonnull final Object handler) {
         val requestUrl = request.getRequestURL().toString();
         if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
             val locale = Locale.forLanguageTag(casProperties.getObject().getLocale().getDefaultValue());
@@ -82,8 +81,9 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
             }
         }
 
-        val newLocale = request.getParameter(getParamName());
+        var newLocale = request.getParameter(getParamName());
         if (newLocale != null) {
+            newLocale = newLocale.replace('_', '-');
             val locale = Locale.forLanguageTag(newLocale);
             configureLocale(request, response, locale);
         }

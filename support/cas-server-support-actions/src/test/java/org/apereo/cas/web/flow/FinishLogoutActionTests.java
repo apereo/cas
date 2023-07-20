@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
+class FinishLogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String URL = "https://ww.google.com";
 
@@ -34,7 +34,7 @@ public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    public void verifyLogout() throws Exception {
+    void verifyLogout() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -43,7 +43,7 @@ public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyLogoutRedirect() throws Exception {
+    void verifyLogoutRedirect() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -53,7 +53,7 @@ public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyLogoutPost() throws Exception {
+    void verifyLogoutPost() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));

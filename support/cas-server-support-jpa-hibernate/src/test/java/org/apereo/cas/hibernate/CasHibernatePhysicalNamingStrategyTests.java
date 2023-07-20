@@ -32,12 +32,12 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Hibernate")
-public class CasHibernatePhysicalNamingStrategyTests {
+class CasHibernatePhysicalNamingStrategyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyMappedTable() {
+    void verifyMappedTable() {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(
@@ -46,7 +46,7 @@ public class CasHibernatePhysicalNamingStrategyTests {
     }
 
     @Test
-    public void verifyMappedTableViaGroovy() {
+    void verifyMappedTableViaGroovy() {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(Identifier.toIdentifier("GroovyTable"), mock(JdbcEnvironment.class));

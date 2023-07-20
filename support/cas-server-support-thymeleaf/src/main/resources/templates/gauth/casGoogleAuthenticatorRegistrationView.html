@@ -28,6 +28,7 @@
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      style="display: none" id="errorPanel">
+                                    <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
 
@@ -105,25 +106,27 @@
             </form>
 
             <script type="text/javascript">
-                var btn = document.getElementById('registerButton');
-                btn.addEventListener('click', function (event) {
-                    var endpoint = $('#fm1').attr('action');
-                    event.preventDefault();
-                    $('#errorPanel').hide();
+                let btn = document.getElementById('registerButton');
+                btn.addEventListener('click', event => {
+                    if (document.getElementById("fm1").reportValidity()) {
+                        let endpoint = $('#fm1').attr('action');
+                        event.preventDefault();
+                        $('#errorPanel').hide();
 
-                    var formData = $("#fm1").serializeArray();
-                    formData.push({
-                        name: "validate",
-                        value: true
-                    });
-                    $.post(endpoint, formData)
-                        .done(function (data, status, jqxhr) {
-                            $('#errorPanel').hide();
-                            $("#fm1").submit();
-                        })
-                        .fail(function (data, status, jqxhr) {
-                            $('#errorPanel').show("fast", "swing");
+                        let formData = $("#fm1").serializeArray();
+                        formData.push({
+                            name: "validate",
+                            value: true
                         });
+                        $.post(endpoint, formData)
+                            .done((data, status, jqxhr) => {
+                                $('#errorPanel').hide();
+                                $("#fm1").submit();
+                            })
+                            .fail((data, status, jqxhr) => {
+                                $('#errorPanel').show("fast", "swing");
+                            });
+                    }
                 }, false);
             </script>
         </div>
@@ -178,9 +181,9 @@
         <script type="text/javascript">
             (material => {
                 document.addEventListener('DOMContentLoaded', () => {
-                    var element = document.getElementById('confirm-reg-dialog');
-                    var dialog = material.dialog.MDCDialog.attachTo(element);
-                    var btn = document.getElementById('confirm');
+                    let element = document.getElementById('confirm-reg-dialog');
+                    let dialog = material.dialog.MDCDialog.attachTo(element);
+                    let btn = document.getElementById('confirm');
                     btn.addEventListener('click', event => {
                         dialog.open();
                         event.preventDefault();

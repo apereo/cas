@@ -84,7 +84,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
         this.httpRequest.setRemoteAddr("185.86.151.11");
         this.httpRequest.setLocalAddr("185.88.151.12");
         this.httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        var clientInfo = new ClientInfo(this.httpRequest);
+        var clientInfo = ClientInfo.from(this.httpRequest);
         ClientInfoHolder.setClientInfo(clientInfo);
 
         this.httpResponse = new MockHttpServletResponse();

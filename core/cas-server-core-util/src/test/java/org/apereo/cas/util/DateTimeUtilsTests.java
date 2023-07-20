@@ -24,46 +24,46 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @SuppressWarnings("JavaUtilDate")
-public class DateTimeUtilsTests {
+class DateTimeUtilsTests {
 
     @Test
-    public void verifyParsingDateAsLocalDateTime() {
+    void verifyParsingDateAsLocalDateTime() {
         assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test
-    public void verifyParsingDateAsLocalDate() {
+    void verifyParsingDateAsLocalDate() {
         assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test
-    public void verifyParsingDateAsLocalDateString1() {
+    void verifyParsingDateAsLocalDateString1() {
         assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-15"));
     }
 
     @Test
-    public void verifyParsingDateAsLocalDateString2() {
+    void verifyParsingDateAsLocalDateString2() {
         assertNotNull(DateTimeUtils.localDateTimeOf("09/19/2017"));
     }
 
     @Test
-    public void verifyParsingDateAsLocalDateString3() {
+    void verifyParsingDateAsLocalDateString3() {
         assertNotNull(DateTimeUtils.localDateTimeOf("09/19/2017 4:30 pm"));
     }
 
     @Test
-    public void verifyParsingDateAsLocalDateString4() {
+    void verifyParsingDateAsLocalDateString4() {
         assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-12T07:00:00.000Z"));
     }
 
     @Test
-    public void verifyParsingBadDateTime() {
+    void verifyParsingBadDateTime() {
         assertNull(DateTimeUtils.zonedDateTimeOf(UUID.randomUUID().toString()));
         assertNull(DateTimeUtils.localDateTimeOf(UUID.randomUUID().toString()));
     }
 
     @Test
-    public void verifyParsingCalendar() {
+    void verifyParsingCalendar() {
         val calendar = Calendar.getInstance();
         assertNotNull(DateTimeUtils.zonedDateTimeOf(calendar));
     }
@@ -79,7 +79,7 @@ public class DateTimeUtilsTests {
     }
 
     @Test
-    public void verifyParsingChronoUnit() {
+    void verifyParsingChronoUnit() {
         assertEquals(ChronoUnit.DAYS, DateTimeUtils.toChronoUnit(TimeUnit.DAYS));
         assertEquals(ChronoUnit.HOURS, DateTimeUtils.toChronoUnit(TimeUnit.HOURS));
         assertEquals(ChronoUnit.MINUTES, DateTimeUtils.toChronoUnit(TimeUnit.MINUTES));
@@ -91,7 +91,7 @@ public class DateTimeUtilsTests {
     }
 
     @Test
-    public void verifyTimeUnit() {
+    void verifyTimeUnit() {
         assertNull(DateTimeUtils.toTimeUnit(null));
         assertEquals(TimeUnit.DAYS, DateTimeUtils.toTimeUnit(ChronoUnit.DAYS));
         assertEquals(TimeUnit.HOURS, DateTimeUtils.toTimeUnit(ChronoUnit.HOURS));

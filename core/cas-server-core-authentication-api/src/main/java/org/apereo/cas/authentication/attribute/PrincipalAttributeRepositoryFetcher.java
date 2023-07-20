@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +43,8 @@ public class PrincipalAttributeRepositoryFetcher {
 
     private final Principal currentPrincipal;
 
+    private final Service service;
+
     /**
      * Retrieve person attributes.
      *
@@ -66,6 +69,10 @@ public class PrincipalAttributeRepositoryFetcher {
         query.putAll(queryAttributes);
         query.put("username", principalId.trim());
 
+        if (service != null) {
+            query.put("service", service.getId());
+        }
+
         LOGGER.debug("Fetching person attributes for query [{}]", query);
         val people = attributeRepository.getPeople(query, filter);
         if (people == null || people.isEmpty()) {
@@ -75,8 +82,7 @@ public class PrincipalAttributeRepositoryFetcher {
 
         if (people.size() > 1) {
             LOGGER.warn("Multiple records were found for [{}] from attribute repositories for query [{}]. The records are [{}], "
-                        + "and CAS will only pick the first person record from the results.",
-                principalId, query, people);
+                        + "and CAS will only pick the first person record from the results.", principalId, query, people);
         }
 
         val person = people.iterator().next();

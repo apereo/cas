@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-public class TimeoutExpirationPolicyTests {
+class TimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
 
@@ -48,30 +48,30 @@ public class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketIsNull() {
+    void verifyTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    public void verifyTicketIsNotExpired() {
+    void verifyTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyTicketIsExpired() {
+    void verifyTicketIsExpired() {
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 
     @Test
-    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+    void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

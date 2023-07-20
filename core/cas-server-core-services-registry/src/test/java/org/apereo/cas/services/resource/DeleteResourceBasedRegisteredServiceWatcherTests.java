@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class DeleteResourceBasedRegisteredServiceWatcherTests {
+class DeleteResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    public void verifyOperationNotFound() throws Exception {
+    void verifyOperationNotFound() throws Exception {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -49,7 +49,7 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     }
 
     @Test
-    public void verifyOperationFoundDeleted() throws Exception {
+    void verifyOperationFoundDeleted() throws Exception {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -74,7 +74,7 @@ public class DeleteResourceBasedRegisteredServiceWatcherTests {
     }
 
     @Test
-    public void verifyTempFilesIgnored() throws Exception {
+    void verifyTempFilesIgnored() throws Exception {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {

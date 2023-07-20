@@ -1,7 +1,5 @@
 package org.apereo.cas.audit.spi;
 
-import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -32,10 +30,9 @@ public class MockAuditTrailManager implements AuditTrailManager {
     @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
-        val dt = DateTimeUtils.dateOf(localDate);
         return auditRecords
             .stream()
-            .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
+            .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate.atStartOfDay()))
             .collect(Collectors.toSet());
     }
 

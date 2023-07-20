@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
+class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
@@ -54,7 +54,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationOAuth() throws Exception {
+    void verifyOperationOAuth() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -70,7 +70,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationEncryptedAndSigned() throws Exception {
+    void verifyOperationEncryptedAndSigned() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -90,7 +90,7 @@ public class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationSigned() throws Exception {
+    void verifyOperationSigned() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);

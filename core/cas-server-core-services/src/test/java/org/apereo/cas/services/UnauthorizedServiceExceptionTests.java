@@ -11,19 +11,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("Simple")
-public class UnauthorizedServiceExceptionTests {
+class UnauthorizedServiceExceptionTests {
 
     private static final String MESSAGE = "GG";
 
     @Test
-    public void verifyCodeConstructor() {
+    void verifyCodeConstructor() {
         val e = new UnauthorizedServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    public void verifyThrowableConstructorWithCode() {
+    void verifyThrowableConstructorWithCode() {
         val r = new RuntimeException();
         val e = new UnauthorizedServiceException(MESSAGE, r);
 

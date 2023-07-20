@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
+class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "ChainingRegisteredServiceAccessStrategyActivationCriteriaTests.json");
 
@@ -30,7 +30,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyExternalGroovyFile() {
+    void verifyExternalGroovyFile() {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
@@ -40,7 +40,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    public void verifyInlineGroovyFile() {
+    void verifyInlineGroovyFile() {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
@@ -50,7 +50,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    public void verifySerializeToJson() throws Exception {
+    void verifySerializeToJson() throws Exception {
         val strategy = new GroovyRegisteredServiceAccessStrategyActivationCriteria();
         strategy.setGroovyScript("groovy { assert accessRequest != null; return false }");
         MAPPER.writeValue(JSON_FILE, strategy);

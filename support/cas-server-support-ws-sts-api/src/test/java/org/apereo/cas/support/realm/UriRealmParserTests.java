@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class UriRealmParserTests {
+class UriRealmParserTests {
 
     @Test
-    public void verifyToken() {
+    void verifyToken() {
         val properties = new RealmProperties();
         val parser = new UriRealmParser(Map.of("APEREO.ORG", properties));
         assertEquals("APEREO.ORG", parser.parseRealm(Map.of("org.apache.cxf.request.url", "https://apereo.org/cas")));

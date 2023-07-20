@@ -16,7 +16,7 @@ import org.junit.jupiter.api.condition.OS;
  */
 @Tag("Radius")
 @EnabledOnOs(OS.LINUX)
-public class NonBlockingRadiusServerTests extends AbstractRadiusServerTests {
+class NonBlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Override
     public RadiusServer getRadiusServer() {
         val factory = RadiusClientFactory.builder()

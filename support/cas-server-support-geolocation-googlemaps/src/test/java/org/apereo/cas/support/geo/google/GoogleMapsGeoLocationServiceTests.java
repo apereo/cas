@@ -2,7 +2,7 @@ package org.apereo.cas.support.geo.google;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
-import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.config.GoogleMapsGeoCodingConfiguration;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.GeocodingResult;
@@ -32,13 +32,13 @@ import static org.mockito.Mockito.*;
     GoogleMapsGeoCodingConfiguration.class
 }, properties = "cas.geo-location.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 @Tag("GeoLocation")
-public class GoogleMapsGeoLocationServiceTests {
+class GoogleMapsGeoLocationServiceTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNull(geoLocationService.locate("8.8.8.8"));
         assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
@@ -51,7 +51,7 @@ public class GoogleMapsGeoLocationServiceTests {
     }
 
     @Test
-    public void verifyGeocode() {
+    void verifyGeocode() {
         val service = new GoogleMapsGeoLocationService(mock(GeoApiContext.class)) {
             @Override
             protected GeocodingResult[] reverseGeocode(final LatLng latlng) {

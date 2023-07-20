@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.crash-plan.name-id-attribute=cn",
     "cas.saml-sp.crash-plan.name-id-format=transient"
 })
-public class CasSamlSPCrashPlanConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPCrashPlanConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

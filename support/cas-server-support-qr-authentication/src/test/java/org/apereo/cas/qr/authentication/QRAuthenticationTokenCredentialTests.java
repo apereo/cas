@@ -15,16 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class QRAuthenticationTokenCredentialTests {
+class QRAuthenticationTokenCredentialTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val c = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         assertNotNull(c.getId());
         assertNotNull(c.toString());
     }
 
     @Test
-    public void verifyCtor() {
+    void verifyCtor() {
         val c = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         val c1 = new QRAuthenticationTokenCredential();
         c1.setId("token");

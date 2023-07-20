@@ -28,7 +28,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -49,15 +48,14 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,10 +69,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class WebUtils {
-    /**
-     * Flow attribute or request parameter indicating public workstation.
-     */
-    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /**
      * Flow attribute to indicate surrogate authn is requested..
@@ -85,13 +79,6 @@ public class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-
-
-    private static final String PARAMETER_AUTHENTICATION = "authentication";
-
-    private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
-
-    private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
 
     private static final String PARAMETER_CREDENTIAL = "credential";
 
@@ -448,8 +435,8 @@ public class WebUtils {
         }
         if (!clazz.isAssignableFrom(credential.getClass())) {
             throw new ClassCastException("credential [" + credential.getId()
-                                         + " is of type " + credential.getClass()
-                                         + " when we were expecting " + clazz);
+                + " is of type " + credential.getClass()
+                + " when we were expecting " + clazz);
         }
         return (T) credential;
     }
@@ -534,7 +521,7 @@ public class WebUtils {
      * @return true if the cookie value is present
      */
     public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
+        if (ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }
@@ -548,8 +535,8 @@ public class WebUtils {
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (context.getRequestParameters().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
-            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
+        if (context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+            context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE);
         }
     }
 
@@ -578,7 +565,7 @@ public class WebUtils {
      * @param ctx            the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
-        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION, authentication);
+        ctx.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
     }
 
     /**
@@ -588,7 +575,7 @@ public class WebUtils {
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
-        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION, Authentication.class);
+        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
     }
 
     /**
@@ -598,7 +585,7 @@ public class WebUtils {
      * @param ctx     the ctx
      */
     public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
-        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT_BUILDER, builder);
+        ctx.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER, builder);
     }
 
     /**
@@ -635,7 +622,7 @@ public class WebUtils {
      * @return the authentication result builder
      */
     public static AuthenticationResultBuilder getAuthenticationResultBuilder(final RequestContext ctx) {
-        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT_BUILDER, AuthenticationResultBuilder.class);
+        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER, AuthenticationResultBuilder.class);
     }
 
     /**
@@ -645,7 +632,7 @@ public class WebUtils {
      * @param context              the context
      */
     public static void putAuthenticationResult(final AuthenticationResult authenticationResult, final RequestContext context) {
-        context.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT, authenticationResult);
+        context.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT, authenticationResult);
     }
 
     /**
@@ -655,7 +642,7 @@ public class WebUtils {
      * @return the authentication context builder
      */
     public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
-        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
+        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
 
     /**
@@ -755,7 +742,7 @@ public class WebUtils {
             flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
             flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
             flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -860,7 +847,7 @@ public class WebUtils {
      */
     public static <T> T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
         val value = request.getAttribute("logoutRedirectUrl");
-        return value != null ? clazz.cast(value) : null;
+        return Optional.ofNullable(value).map(clazz::cast).orElse(null);
     }
 
     /**
@@ -1344,9 +1331,7 @@ public class WebUtils {
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();
-        return queryString == null
-            ? requestURL.toString()
-            : requestURL.append('?').append(queryString).toString();
+        return Optional.ofNullable(queryString).map(query -> requestURL.append('?').append(query).toString()).orElseGet(requestURL::toString);
     }
 
     /**
@@ -1369,7 +1354,7 @@ public class WebUtils {
      * @param context  request context
      * @param provider the mfa provider
      */
-    public static void putMultifactorAuthenticationProviderIdIntoFlowScope(final RequestContext context, final MultifactorAuthenticationProvider provider) {
+    public static void putMultifactorAuthenticationProvider(final RequestContext context, final MultifactorAuthenticationProvider provider) {
         context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
     }
 
@@ -1379,7 +1364,7 @@ public class WebUtils {
      * @param context request context
      * @return provider id
      */
-    public static String getMultifactorAuthenticationProviderById(final RequestContext context) {
+    public static String getMultifactorAuthenticationProvider(final RequestContext context) {
         return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
     }
 
@@ -1424,6 +1409,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets one time token accounts.
+     *
+     * @param requestContext the request context
+     * @return the one time token accounts
+     */
+    public static Collection getOneTimeTokenAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("registeredDevices", Collection.class);
+    }
+
+    /**
      * Gets one time token account.
      *
      * @param <T>            the type parameter
@@ -1434,6 +1429,7 @@ public class WebUtils {
     public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
         return requestContext.getFlowScope().get("registeredDevice", clazz);
     }
+
 
     /**
      * Put google authenticator multiple device registration enabled.
@@ -1834,5 +1830,56 @@ public class WebUtils {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
+    /**
+     * Put wildcarded registered service.
+     *
+     * @param context the context
+     * @param result  the result
+     */
+    public static void putWildcardedRegisteredService(final RequestContext context, final boolean result) {
+        context.getFlowScope().put("wildcardedRegisteredService", result);
+    }
 
+
+    /**
+     * Put target state.
+     *
+     * @param requestContext the request context
+     * @param target         the target
+     */
+    public static void putTargetTransition(final RequestContext requestContext, final String target) {
+        requestContext.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION, target);
+    }
+
+    /**
+     * Gets target state.
+     *
+     * @param requestContext the request context
+     * @return the target state
+     */
+    public static String getTargetTransition(final RequestContext requestContext) {
+        return requestContext.getFlashScope().get(CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION, String.class);
+    }
+
+    /**
+     * Put password management query.
+     *
+     * @param requestContext the request context
+     * @param query          the query
+     */
+    public static void putPasswordManagementQuery(final RequestContext requestContext, final Serializable query) {
+        requestContext.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY, query);
+    }
+
+    /**
+     * Gets password management query.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the password management query
+     */
+    public static <T> T getPasswordManagementQuery(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY, clazz);
+    }
 }

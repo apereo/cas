@@ -16,17 +16,17 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class Cas10ProxyHandlerTests {
+class Cas10ProxyHandlerTests {
 
     private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
-    public void verifyNoCredentialsOrProxy() {
+    void verifyNoCredentialsOrProxy() {
         assertNull(this.proxyHandler.handle(null, null));
     }
 
     @Test
-    public void verifyCredentialsAndProxy() {
+    void verifyCredentialsAndProxy() {
         val proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(

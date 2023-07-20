@@ -24,10 +24,10 @@ def run(final Object... args) {
     def properties = args[3]
     def appContext = args[4]
 
-    logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
+    logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, username)
     
     // All attribute values must be defined as a collection wrapped in []
-    return [username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:["attribute"] ]
+    return [username:[username], likes:["cheese", "food"], id:[1234,2,3,4,5], another:["attribute"] ]
 }
 ```
 

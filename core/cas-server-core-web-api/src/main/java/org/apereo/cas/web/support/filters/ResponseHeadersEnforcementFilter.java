@@ -209,10 +209,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    @Override
-    public void destroy() {
-    }
-
     /**
      * Prepare filter before execution and provide optional.
      *

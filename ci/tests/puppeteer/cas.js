@@ -21,12 +21,15 @@ const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
-    headless: process.env.CI === "true" || process.env.HEADLESS === "true",
+    headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : false,
     devtools: process.env.CI !== "true",
     defaultViewport: null,
+    timeout: 60000,
+    dumpio: true,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
+
 
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
@@ -92,6 +95,15 @@ exports.innerText = async (page, selector) => {
     return text;
 };
 
+exports.innerTexts = async (page, selector) => {
+    return await page.evaluate((button) => {
+        let results = [];
+        let elements = document.querySelectorAll(button);
+        elements.forEach(entry => results.push(entry.innerText.trim()));
+        return results;
+    }, selector);
+};
+
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
@@ -120,7 +132,11 @@ exports.uploadImage = async (imagePath) => {
     }
 };
 
-exports.loginWith = async (page, user, password,
+exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
+
+exports.loginWith = async (page,
+                           user = "casuser",
+                           password = "Mellon",
                            usernameField = "#username",
                            passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
@@ -177,8 +193,13 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
             let ck = cookies[0];
             console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
         }
-        assert(cookies.length === 0);
-        console.log(`Cookie ${cookieName} cannot be found`);
+        const result = cookies.length === 0;
+        if (result) {
+            await this.logg(`Cookie ${cookieName} can be found`);
+        } else {
+            await this.logr(`Cookie ${cookieName} cannot be found`);
+        }
+        assert(result);
     }
 };
 
@@ -205,9 +226,10 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
     if (page === undefined) {
+        console.log("Opening a new page...");
         page = await browser.newPage();
     }
-    await page.setDefaultNavigationTimeout(0);
+    // await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
     await page.bringToFront();
     page
@@ -256,7 +278,8 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
-exports.doRequest = async (url, method = "GET", headers = {},
+exports.doRequest = async (url, method = "GET",
+                           headers = {},
                            statusCode = 200,
                            requestBody = undefined,
                            callback = undefined) =>
@@ -328,17 +351,17 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
     console.log(`Posting to URL ${colors.green(url)}`);
-    await instance
+    return await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
             console.log(res.data);
-            successHandler(res);
+            return successHandler(res);
         })
         .catch(error => {
             if (error.response !== undefined) {
                 this.logr(error.response.data)
             }
-            failureHandler(error);
+            return failureHandler(error);
         })
 };
 
@@ -408,18 +431,21 @@ exports.shutdownCas = async (baseUrl) => {
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to contain ${value}`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
-}
+};
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
@@ -511,6 +537,15 @@ exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     return decoded;
 };
 
+exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
+    console.log(`Decrypting JWT with key ${secret}`);
+    const buff = jose.base64url.decode(secret);
+    const decoded = await jose.jwtDecrypt(jwt, buff, options);
+    console.log("Verified JWT:");
+    await this.logg(decoded);
+    return decoded;
+};
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
     
@@ -542,9 +577,9 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    if (process.env.CI === "true") {
-        let index = Math.floor(Math.random() * 90000);
-        let filePath = path.join(__dirname, `/screenshot${index}.png`);
+    if (await this.isCiEnvironment()) {
+        let index = Date.now();
+        let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
             let url = await page.url();
             console.log(`Page URL when capturing screenshot: ${url}`);
@@ -560,6 +595,10 @@ exports.screenshot = async (page) => {
         console.log("Capturing screenshots is disabled in non-CI environments");
     }
 };
+
+exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+
+exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
@@ -579,7 +618,8 @@ exports.mockJsonServer = async (pathMappings, port = 8000) => {
     return app;
 };
 
-exports.httpServer = async (root, port = 5432,
+exports.httpServer = async (root,
+                            port = 5432,
                             authEnabled = true,
                             authUser = "restapi",
                             authPassword = "YdCP05HvuhOH^*Z") => {
@@ -604,7 +644,7 @@ exports.httpServer = async (root, port = 5432,
             folder: root
         }
     };
-    new NodeStaticAuth(config);
+    return new NodeStaticAuth(config);
 };
 
 exports.randomNumber = async (min = 1, max = 100) =>

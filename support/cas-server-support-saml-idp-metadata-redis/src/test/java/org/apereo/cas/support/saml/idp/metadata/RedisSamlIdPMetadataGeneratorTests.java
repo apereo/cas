@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTests {
+class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTests {
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")
     protected CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate;
@@ -41,12 +41,13 @@ public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTes
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataGenerator.CAS_PREFIX + '*';
-        val keys = redisSamlIdPMetadataTemplate.scan(key, 0).collect(Collectors.toSet());
-        redisSamlIdPMetadataTemplate.delete(keys);
+        try (val keys = redisSamlIdPMetadataTemplate.scan(key, 0)) {
+            redisSamlIdPMetadataTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -56,7 +57,7 @@ public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTes
     }
 
     @Test
-    public void verifyService() throws Exception {
+    void verifyService() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

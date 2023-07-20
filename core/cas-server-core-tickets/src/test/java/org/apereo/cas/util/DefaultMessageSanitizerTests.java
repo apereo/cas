@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,17 +35,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultMessageSanitizerTests {
+class DefaultMessageSanitizerTests {
 
     @Autowired
     @Qualifier(MessageSanitizer.BEAN_NAME)
     private MessageSanitizer messageSanitizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         var results = messageSanitizer.sanitize("ticket TGT-1-abcdefg created");
         assertTrue(results.contains("TGT-1-********"));
         results = messageSanitizer.sanitize("ticket PGT-1-abcdefg created");

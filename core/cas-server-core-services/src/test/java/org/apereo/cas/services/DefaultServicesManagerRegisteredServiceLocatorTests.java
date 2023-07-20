@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class
 })
-public class DefaultServicesManagerRegisteredServiceLocatorTests {
+class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Autowired
     @Qualifier("defaultServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;
@@ -48,26 +48,29 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test
-    public void verifyDefaultOperation() {
+    void verifyDefaultOperation() {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
         when(input.getOrder()).thenCallRealMethod();
+        when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
         when(input.getName()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
         assertNotNull(input.getName());
+        assertTrue(input.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(defaultServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
             webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
+        assertFalse(defaultServicesManagerRegisteredServiceLocator.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test
-    public void verifyExtendedServices() {
+    void verifyExtendedServices() {
         val service = new ExtendedRegisteredService();
         service.setServiceId("https://\\w+.org.+");
         service.setId(100);
@@ -77,7 +80,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    public void verifyUnmatchedExtendedServices() {
+    void verifyUnmatchedExtendedServices() {
         val service = new ExtendedRegisteredService() {
             @Serial
             private static final long serialVersionUID = 3435937253967470900L;

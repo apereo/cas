@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
@@ -31,20 +32,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowAuthenticationActions")
-public class DelegatedAuthenticationGenerateClientsActionTests {
+@Tag("Delegation")
+class DelegatedAuthenticationGenerateClientsActionTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class MenuSelectionTests {
+    class MenuSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;
 
         @Test
-        public void verifyAuthnFailureProduces() {
+        void verifyAuthnFailureProduces() {
             val context2 = getMockRequestContext();
             WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
             assertDoesNotThrow(() -> delegatedAuthenticationCreateClientsAction.execute(context2));
@@ -52,7 +53,7 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
         }
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val context1 = getMockRequestContext();
             val result = delegatedAuthenticationCreateClientsAction.execute(context1);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
@@ -66,6 +67,7 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
     private static RequestContext getMockRequestContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
@@ -77,13 +79,13 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DynamicSelectionTests {
+    class DynamicSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val context = getMockRequestContext();
 
             val result = delegatedAuthenticationCreateClientsAction.execute(context);

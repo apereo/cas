@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,20 +32,27 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
 
     private final ApplicationContext applicationContext;
 
-    @Override
-    public Event doExecute(final RequestContext context) {
-        var redirectUrl = determineUnauthorizedServiceRedirectUrl(context);
+    private final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
 
+    @Override
+    public Event doExecute(final RequestContext requestContext) {
+        var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         val url = redirectUrl.toString();
-        if (ScriptingUtils.isExternalGroovyScript(url)) {
-            val scriptResource = applicationContext.getResource(url);
-            val registeredService = WebUtils.getRegisteredService(context);
-            val args = new Object[]{registeredService, context, this.applicationContext, LOGGER};
-            redirectUrl = ScriptingUtils.executeGroovyScript(scriptResource, args, URI.class, true);
+        if (ScriptingUtils.isGroovyScript(url)) {
+            val registeredService = WebUtils.getRegisteredService(requestContext);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
+                "authentication", authentication,
+                "requestContext", requestContext,
+                "applicationContext", applicationContext,
+                "logger", LOGGER);
+            val scriptToExec = scriptResourceCacheManager.resolveScriptableResource(url);
+            scriptToExec.setBinding(args);
+            redirectUrl = scriptToExec.execute(args.values().toArray(), URI.class);
         }
 
         LOGGER.debug("Redirecting to unauthorized redirect URL [{}]", redirectUrl);
-        WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, redirectUrl);
+        WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, redirectUrl);
         return null;
     }
 

@@ -40,16 +40,16 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.rest.crypto.enabled=true"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {
+class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var document = new SamlIdPMetadataDocument();
         var entity = MAPPER.writeValueAsString(document);
         try (val webServer = new MockWebServer(9453,

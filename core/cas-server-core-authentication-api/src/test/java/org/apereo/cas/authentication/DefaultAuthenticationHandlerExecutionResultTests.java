@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class DefaultAuthenticationHandlerExecutionResultTests {
+class DefaultAuthenticationHandlerExecutionResultTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val res = new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
             credential, CollectionUtils.wrapList(new DefaultMessageDescriptor("code1")));

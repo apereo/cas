@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Cipher")
-public class RegisteredServiceNoOpCipherExecutorTests {
+class RegisteredServiceNoOpCipherExecutorTests {
 
     private static BaseRegisteredService getService(final String keyLocation) {
         val svc = new CasRegisteredService();
@@ -31,7 +31,7 @@ public class RegisteredServiceNoOpCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipherUnableToEncodeForStringIsTooLong() {
+    void verifyCipherUnableToEncodeForStringIsTooLong() {
         val svc = getService("classpath:keys/RSA1024Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val cipher = RegisteredServiceCipherExecutor.noOp();

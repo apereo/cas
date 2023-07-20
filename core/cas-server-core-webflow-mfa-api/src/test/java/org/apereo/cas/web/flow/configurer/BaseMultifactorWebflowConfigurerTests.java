@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -35,12 +36,15 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+
     /**
      * Ensures that, for every transition within this MFA flow, the target
      * state is present within the flow.
      */
     @Test
-    public void ensureAllTransitionDestinationsExistInFlow() {
+    void ensureAllTransitionDestinationsExistInFlow() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -56,7 +60,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -68,7 +72,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyTrustedDevice() {
+    void verifyTrustedDevice() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());

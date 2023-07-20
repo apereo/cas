@@ -20,6 +20,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -54,11 +55,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
         getAllowedAttributes()
             .entrySet()
             .stream()
-            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase()))
+            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase(Locale.ENGLISH)))
             .forEach(entry -> {
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
-                val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
+                val claim = WSFederationClaims.valueOf(claimName.toUpperCase(Locale.ENGLISH));
                 if (resolvedAttributes.containsKey(claim.getUri())) {
                     attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
                 } else {

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 
 import lombok.val;
@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SamlResponsePostEncoder extends BaseHttpServletAwareSamlObjectEncoder<Response> {
 
     public SamlResponsePostEncoder(final VelocityEngine velocityEngineFactory,
-                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                   final SamlRegisteredServiceMetadataAdaptor adaptor,
                                    final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest) {
         super(velocityEngineFactory, adaptor, httpResponse, httpRequest);

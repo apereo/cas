@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -31,11 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
+class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
-    public void verifyBypassedBySession() throws Exception {
+    void verifyBypassedBySession() throws Exception {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         oauthDistributedSessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
@@ -44,9 +46,10 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedByPrompt() throws Exception {
+    void verifyBypassedByPrompt() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setQueryString(OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
 
         val response = new MockHttpServletResponse();
@@ -58,8 +61,9 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedForPushAuthz() throws Exception {
+    void verifyBypassedForPushAuthz() throws Exception {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -70,7 +74,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyPushedAuthz() throws Exception {
+    void verifyPushedAuthz() throws Exception {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");
@@ -90,6 +94,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something/" + OidcConstants.AUTHORIZE_URL);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.addParameter(OidcConstants.REQUEST_URI, ticket.getId());
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -101,15 +106,19 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedWithoutPrompt() throws Exception {
+    void verifyBypassedWithoutPrompt() throws Exception {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something");
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.markAsDynamicallyRegistered();
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
+        assertTrue(mv.getModel().containsKey("dynamic"));
+        assertTrue(mv.getModel().containsKey("dynamicTime"));
     }
 }

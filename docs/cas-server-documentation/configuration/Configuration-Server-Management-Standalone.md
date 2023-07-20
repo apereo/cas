@@ -86,7 +86,7 @@ that matter and the deployer wishes to avoid overriding embedded configuration f
 
 ## Handling Overrides
 
-<div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. 
 This will only complicate and weaken your deployment.
 Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, 
@@ -94,5 +94,5 @@ override via <code>application.yml</code>, <code>application-standalone.properti
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
-{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config" excludes=".discovery" %}
 

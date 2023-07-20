@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("determineDuoUserAccountAction")
@@ -97,7 +97,7 @@ public class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMu
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
         val event = determineDuoUserAccountAction.execute(context);
@@ -106,7 +106,7 @@ public class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMu
     }
 
     @Test
-    public void verifyOperationEnroll() throws Exception {
+    void verifyOperationEnroll() throws Exception {
         val context = verifyOperation(DuoSecurityUserAccountStatus.ENROLL, CasWebflowConstants.TRANSITION_ID_ENROLL);
         val url = context.getFlowScope().get("duoRegistrationUrl", String.class);
         assertNotNull(url);
@@ -114,22 +114,22 @@ public class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMu
     }
 
     @Test
-    public void verifyOperationAllow() {
+    void verifyOperationAllow() {
         verifyOperation(DuoSecurityUserAccountStatus.ALLOW, CasWebflowConstants.TRANSITION_ID_BYPASS);
     }
 
     @Test
-    public void verifyOperationDeny() {
+    void verifyOperationDeny() {
         verifyOperation(DuoSecurityUserAccountStatus.DENY, CasWebflowConstants.TRANSITION_ID_DENY);
     }
 
     @Test
-    public void verifyOperationUnavailable() {
+    void verifyOperationUnavailable() {
         verifyOperation(DuoSecurityUserAccountStatus.UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
     }
 
     @Test
-    public void verifyOperationAuth() {
+    void verifyOperationAuth() {
         verifyOperation(DuoSecurityUserAccountStatus.AUTH, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

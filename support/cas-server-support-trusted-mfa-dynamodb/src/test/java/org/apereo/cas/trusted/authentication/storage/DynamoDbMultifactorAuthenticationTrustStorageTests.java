@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.config.DynamoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.DynamoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
@@ -47,7 +47,7 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests extends Abstract
     }
 
     @Test
-    public void verifySetAnExpireByKey() {
+    void verifySetAnExpireByKey() {
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser",
             "geography", "fingerprint"));
         val records = getMfaTrustEngine().get("casuser");
@@ -57,7 +57,7 @@ public class DynamoDbMultifactorAuthenticationTrustStorageTests extends Abstract
     }
 
     @Test
-    public void verifyExpireByDate() {
+    void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

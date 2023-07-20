@@ -26,30 +26,30 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
+class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOAuth() {
+    void verifyOAuth() {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
-        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, accessToken);
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(), original, service, accessToken);
         assertEquals(original, principal);
     }
 
     @Test
-    public void verifyOperationFilterWithoutOpenId() {
+    void verifyOperationFilterWithoutOpenId() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
-        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, accessToken);
+        assertFalse(original.getAttributes().isEmpty());
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(), original, service, accessToken);
         assertEquals(original, principal);
+        assertTrue(principal.getAttributes().isEmpty());
     }
 
     @Test
-    public void verifyScopeFreeWithOpenIdScope() {
+    void verifyScopeFreeWithOpenIdScope() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -73,7 +73,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
 
     @Test
-    public void verifyOperationFilterWithOpenId() {
+    void verifyOperationFilterWithOpenId() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -101,7 +101,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationFilterWithServiceDefinedScopes() {
+    void verifyOperationFilterWithServiceDefinedScopes() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -126,7 +126,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationFilterWithServiceDefinedReleasePolicy() {
+    void verifyOperationFilterWithServiceDefinedReleasePolicy() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -151,7 +151,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyByUserInfoClaims() {
+    void verifyByUserInfoClaims() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getClaims()).thenReturn(Map.of("userinfo", Map.of(
@@ -174,7 +174,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyAccessTokenNoScopes() {
+    void verifyAccessTokenNoScopes() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));

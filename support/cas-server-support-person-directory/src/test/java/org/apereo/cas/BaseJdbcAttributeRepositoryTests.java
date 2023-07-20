@@ -1,14 +1,18 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.Cleanup;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,17 +36,24 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     protected DataSource dataSource;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    protected CasConfigurationProperties casProperties;
+
+    @Mock
+    protected ServicesManager servicesManager;
+
+    @Mock
+    protected AttributeDefinitionStore attributeDefinitionStore;
 
     @BeforeEach
     public void setupDatabase() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
         @Cleanup
-        val c = dataSource.getConnection();
+        val connection = dataSource.getConnection();
         @Cleanup
-        val s = c.createStatement();
-        c.setAutoCommit(true);
-        prepareDatabaseTable(s);
+        val statement = connection.createStatement();
+        connection.setAutoCommit(true);
+        prepareDatabaseTable(statement);
     }
 
     public abstract void prepareDatabaseTable(Statement statement) throws Exception;

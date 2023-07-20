@@ -3,13 +3,13 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -71,7 +71,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             return success();
         }
 
-        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects((Map) user.getAttributes());
+        val attributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
         val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
         val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val service = WebUtils.getService(requestContext);

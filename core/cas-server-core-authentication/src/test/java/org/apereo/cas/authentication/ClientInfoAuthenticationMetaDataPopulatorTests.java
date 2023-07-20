@@ -19,21 +19,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("AuthenticationMetadata")
-public class ClientInfoAuthenticationMetaDataPopulatorTests {
+class ClientInfoAuthenticationMetaDataPopulatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val populator = new ClientInfoAuthenticationMetaDataPopulator();
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(populator.supports(c));
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(c));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(c));
         val authn = builder.build();
         val attributes = authn.getAttributes();
         assertTrue(attributes.containsKey(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS));

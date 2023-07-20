@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationServiceSelectionPlanTests {
+class DefaultAuthenticationServiceSelectionPlanTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         assertThrows(ClassCastException.class,
             () -> input.resolveService(CoreAuthenticationTestUtils.getService(), WebApplicationService.class));

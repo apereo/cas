@@ -32,7 +32,7 @@ properties = {
     "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.attribute-repository.ldap[0].bind-credential=password"
 })
-public class BasePrincipalAttributeRepositoryFetcherLdapTests {
+class BasePrincipalAttributeRepositoryFetcherLdapTests {
     protected static final String UID = UUID.randomUUID().toString();
 
     @Autowired

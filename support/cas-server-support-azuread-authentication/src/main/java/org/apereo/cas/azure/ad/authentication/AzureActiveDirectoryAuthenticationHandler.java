@@ -76,6 +76,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     protected IAuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password) throws Exception {
         val clientId = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getClientId());
+        val scopes = org.springframework.util.StringUtils.commaDelimitedListToSet(properties.getScope());
         if (StringUtils.isNotBlank(properties.getClientSecret())) {
             val clientSecret = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getClientSecret());
             val clientCredential = ClientCredentialFactory.createFromSecret(clientSecret);
@@ -85,8 +86,9 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
                 .build();
             val resource = StringUtils.appendIfMissing(properties.getResource(), "/").concat(".default");
             val parameters = ClientCredentialParameters.builder(Set.of(resource))
-                .tenant("2bbf190a-1ee3-487d-b39f-4d5038acf9ad")
+                .tenant(properties.getTenant())
                 .build();
+            LOGGER.debug("Acquiring token for [{}] with tenant [{}] for resource [{}]", username, properties.getTenant(), resource);
             val future = context.acquireToken(parameters);
             return future.get();
         }
@@ -94,9 +96,10 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             .authority(properties.getLoginUrl())
             .validateAuthority(true)
             .build();
-        val parameters = UserNamePasswordParameters.builder(Set.of("openid", "email", "profile", "address"), username, password.toCharArray())
+        val parameters = UserNamePasswordParameters.builder(scopes, username, password.toCharArray())
             .tenant(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getTenant()))
             .build();
+        LOGGER.debug("Acquiring token for [{}] with tenant [{}] scopes [{}]", username, properties.getTenant(), scopes);
         val future = context.acquireToken(parameters);
         return future.get();
     }

@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
+class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
     private UrlResolver casCallbackUrlResolver;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.addParameter(OAuth20Constants.CLIENT_ID, UUID.randomUUID().toString());

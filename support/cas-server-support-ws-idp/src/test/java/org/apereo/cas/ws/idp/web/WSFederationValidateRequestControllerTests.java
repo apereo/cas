@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WSFederation")
-public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("federationValidateRequestController")
     private WSFederationValidateRequestController federationValidateRequestController;
@@ -58,7 +58,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyNoWa() {
+    void verifyNoWa() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(UnauthorizedAuthenticationException.class,
@@ -66,7 +66,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLogoutWithReply() {
+    void verifyLogoutWithReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -86,7 +86,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyUnauthzServicesWithUnknownRealm() {
+    void verifyUnauthzServicesWithUnknownRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService();
@@ -100,7 +100,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyUnauthzServicesWithMismatchedRealm() {
+    void verifyUnauthzServicesWithMismatchedRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService("custom-realm");
@@ -115,7 +115,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
 
 
     @Test
-    public void verifyLogoutWithoutReply() {
+    void verifyLogoutWithoutReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -130,7 +130,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLogin() throws Exception {
+    void verifyLogin() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -152,7 +152,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLoginRenewWithNoToken() throws Exception {
+    void verifyLoginRenewWithNoToken() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -178,7 +178,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLoginRenewDisabled() throws Exception {
+    void verifyLoginRenewDisabled() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -204,7 +204,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLoginRenewWithToken() throws Exception {
+    void verifyLoginRenewWithToken() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

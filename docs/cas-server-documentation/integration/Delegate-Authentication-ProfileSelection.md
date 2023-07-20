@@ -35,7 +35,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 Profile selection rules can be supplied to CAS using an external Groovy script, whose outline should match the following:
 
 ```groovy
-import org.apereo.cas.authentication.principal.*
+import org.apereo.cas.authentication.principal.*   
 import org.apereo.cas.web.*
 import org.pac4j.core.profile.*
 import org.springframework.webflow.execution.*
@@ -57,12 +57,12 @@ def run(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|---------------------------------------------------------------------------------------------------------
-| `requestContext`      | `RequestContext` that represents the Spring Webflow execution context and runtime.
-| `clientCredentials`   | Represents CAS credential and payload received by CAS from the identity provider.
-| `userProfile`         | Points to the *resolved* user profile from the identity provider in exchange for the credential.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                                      |
+|---------------------|--------------------------------------------------------------------------------------------------|
+| `requestContext`    | `RequestContext` that represents the Spring Webflow execution context and runtime.               |
+| `clientCredentials` | Represents CAS credential and payload received by CAS from the identity provider.                |
+| `userProfile`       | Points to the *resolved* user profile from the identity provider in exchange for the credential. |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                      |
 
 {% endtab %}
 
@@ -78,7 +78,7 @@ public DelegatedClientAuthenticationCredentialResolver myResolver() {
 }
 ```
 
-<div class="alert alert-info"><strong>Usage</strong><p>
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 The name of the bean can be of your own choosing. You are also allowed to create multiple bean definitions
 that handle different type of credentials with different resolution rules that may be 
 executed using a specific order.</p></div>

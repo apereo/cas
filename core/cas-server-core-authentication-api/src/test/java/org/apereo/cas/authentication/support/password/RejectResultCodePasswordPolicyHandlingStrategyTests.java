@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("PasswordOps")
-public class RejectResultCodePasswordPolicyHandlingStrategyTests {
+class RejectResultCodePasswordPolicyHandlingStrategyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val s = new RejectResultCodePasswordPolicyHandlingStrategy<>();
         assertFalse(s.supports(null));
         val response = new Object();

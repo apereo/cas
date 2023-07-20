@@ -6,12 +6,20 @@
 def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
 if (!dependencyUpdates) {
     ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
-        def cfg = configurations.findByName(name)
-        cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"
+        configurations.named(name).configure {it.resolutionStrategy.force("org.bouncycastle:bcprov-jdk15on:1.63") }
     })
 }
 
 description = "Apereo CAS RADIUS RSA MFA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "RADIUS",
+            aliases: ["radiusmfa"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")

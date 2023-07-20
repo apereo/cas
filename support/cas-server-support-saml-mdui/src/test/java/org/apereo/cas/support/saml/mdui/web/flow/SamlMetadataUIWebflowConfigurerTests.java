@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIWebflowConfiguration.class
 })
 @Tag("SAMLMetadata")
-public class SamlMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SamlMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

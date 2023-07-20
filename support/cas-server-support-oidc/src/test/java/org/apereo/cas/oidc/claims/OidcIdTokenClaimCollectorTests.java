@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcIdTokenClaimCollectorTests {
+class OidcIdTokenClaimCollectorTests {
     @Test
-    public void verifyDefaultOperation() throws Exception {
+    void verifyDefaultOperation() throws Exception {
         val claims = new JwtClaims();
         val collector = OidcIdTokenClaimCollector.defaultCollector();
         collector.collect(claims, "claim1", List.of("value1"));
@@ -28,7 +28,7 @@ public class OidcIdTokenClaimCollectorTests {
     }
 
     @Test
-    public void verifyListing() throws Exception {
+    void verifyListing() throws Exception {
         val claims = new JwtClaims();
         val collector = OidcIdTokenClaimCollector.listableCollector();
         collector.collect(claims, "claim1", List.of("value1"));

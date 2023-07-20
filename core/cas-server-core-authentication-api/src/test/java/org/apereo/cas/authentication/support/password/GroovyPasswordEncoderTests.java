@@ -18,10 +18,10 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class GroovyPasswordEncoderTests {
+class GroovyPasswordEncoderTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val enc = new GroovyPasswordEncoder(new ClassPathResource("GroovyPasswordEncoder.groovy"), mock(ApplicationContext.class));
         assertTrue(enc.matches("helloworld", "6adfb183a4a2c94a2f92dab5ade762a47889a5a1"));
         assertNotNull(enc.encode("helloworld", "thisIsSalt".getBytes(StandardCharsets.UTF_8)));

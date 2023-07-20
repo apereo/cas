@@ -1,5 +1,6 @@
 {
   "dependencies": "rest-service-registry,reports",
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

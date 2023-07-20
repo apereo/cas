@@ -1,4 +1,11 @@
 description = "Apereo CAS Trusted MFA Browser/Device Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication Trusted Devices",
+            title: "Multifactor Authentication Trusted Devices"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")

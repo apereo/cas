@@ -1,5 +1,9 @@
 {
   "dependencies": "passwordless-webflow,pac4j-webflow,reports",
+
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.lastname=User",

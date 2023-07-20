@@ -1,0 +1,7 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://apereo.github.io.*",
+  "id": 1,
+  "name": "Sample",
+  "templateName": "WithDescription,WithAttributeReleasePolicy"
+}

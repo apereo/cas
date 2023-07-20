@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
+@Tag("GroovyServices")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
 })
-public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void setup() {
@@ -44,7 +44,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
     }
 
     @Test
-    public void verifyUnknownScript() {
+    void verifyUnknownScript() {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:unknown-123456.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -62,7 +62,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
 
 
     @Test
-    public void verifyScriptReleasesSamlAttributes() {
+    void verifyScriptReleasesSamlAttributes() {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -78,7 +78,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
     }
 
     @Test
-    public void verifyScriptReleasesSamlAttributesWithEntityId() {
+    void verifyScriptReleasesSamlAttributesWithEntityId() {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -100,7 +100,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
     }
 
     @Test
-    public void verifyScriptReleasesSamlAttributesWithProviderId() {
+    void verifyScriptReleasesSamlAttributesWithProviderId() {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -122,7 +122,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
     }
 
     @Test
-    public void verifyScriptReleasesSamlAttributesWithSamlRequest() throws Exception {
+    void verifyScriptReleasesSamlAttributesWithSamlRequest() throws Exception {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));

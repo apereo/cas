@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
+class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.cookie.enabled=true")
@@ -70,7 +70,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
                 context.getNativeResponse(), "SAML2Client");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
@@ -79,7 +79,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         }
 
         @Test
-        public void verifyProduceFailingClient() {
+        void verifyProduceFailingClient() {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
                 context.getNativeResponse(), "FailingClient");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
@@ -89,15 +89,15 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class MenuSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+    class MenuSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
-    public class DynamicSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+    class DynamicSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Test
-        public void verifySelectionOperation() {
+        void verifySelectionOperation() {
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
             assertTrue(DelegationWebflowUtils.isDelegatedAuthenticationDynamicProviderSelection(requestContext));

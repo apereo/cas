@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientFactoryTests {
+class DefaultDelegatedClientFactoryTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -39,9 +39,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.dropbox.id=123456",
         "cas.authn.pac4j.dropbox.secret=secret"
     })
-    public class EagerInitialization extends BaseDelegatedClientFactoryTests {
+    class EagerInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyEagerInit() {
+        void verifyEagerInit() {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -99,9 +99,9 @@ public class DefaultDelegatedClientFactoryTests {
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class IdentifiableClients extends BaseDelegatedClientFactoryTests {
+    class IdentifiableClients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyFactoryForIdentifiableClients() {
+        void verifyFactoryForIdentifiableClients() {
             val clients = delegatedClientFactory.build();
             assertEquals(13, clients.size());
         }
@@ -115,9 +115,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.github.secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class GitHubClients extends BaseDelegatedClientFactoryTests {
+    class GitHubClients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyGithubClient() {
+        void verifyGithubClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (GitHubClient) clients.iterator().next();
@@ -132,9 +132,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oauth2[0].secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class OAuth20Clients extends BaseDelegatedClientFactoryTests {
+    class OAuth20Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyFactory() {
+        void verifyFactory() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -150,9 +150,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.cas[0].display-name=My CAS",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class CasClients extends BaseDelegatedClientFactoryTests {
+    class CasClients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyFactoryForCasClientsHavingLoginInDomain() {
+        void verifyFactoryForCasClientsHavingLoginInDomain() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (CasClient) clients.iterator().next();
@@ -169,14 +169,15 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oidc[0].apple.response_type=code id_token",
         "cas.authn.pac4j.oidc[0].apple.response_mode=form_post",
         "cas.authn.pac4j.oidc[0].apple.scope=openid name email",
+        "cas.authn.pac4j.oidc[0].apple.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
         "cas.authn.pac4j.oidc[0].apple.id=pac4j",
         "cas.authn.pac4j.oidc[0].apple.use-nonce=true",
         "cas.authn.pac4j.oidc[0].apple.enabled=true",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class AppleClients extends BaseDelegatedClientFactoryTests {
+    class AppleClients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -193,26 +194,31 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oidc[0].generic.token-expiration-advance=PT5S",
         "cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256",
         "cas.authn.pac4j.oidc[0].generic.discovery-uri=https://dev-425954.oktapreview.com/.well-known/openid-configuration",
+        "cas.authn.pac4j.oidc[0].generic.supported-client-authentication-methods=client_secret_post",
+        "cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_post",
         "cas.authn.pac4j.oidc[0].generic.mapped-claims[0]=claim1->attribute1",
 
         "cas.authn.pac4j.oidc[1].google.id=123",
         "cas.authn.pac4j.oidc[1].google.secret=123",
+        "cas.authn.pac4j.oidc[1].google.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
 
         "cas.authn.pac4j.oidc[2].azure.id=123",
         "cas.authn.pac4j.oidc[2].azure.secret=123",
         "cas.authn.pac4j.oidc[2].azure.tenant=contoso.onmicrosoft.com",
         "cas.authn.pac4j.oidc[2].azure.logout-url=https://example.logout",
+        "cas.authn.pac4j.oidc[2].azure.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
 
         "cas.authn.pac4j.oidc[3].keycloak.id=123",
         "cas.authn.pac4j.oidc[3].keycloak.secret=123",
         "cas.authn.pac4j.oidc[3].keycloak.realm=master",
+        "cas.authn.pac4j.oidc[3].keycloak.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
         "cas.authn.pac4j.oidc[3].keycloak.base-uri=https://dev-425954.oktapreview.com",
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class OidcClients extends BaseDelegatedClientFactoryTests {
+    class OidcClients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(4, clients.size());
         }
@@ -227,9 +233,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.dropbox.secret=secret",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class LazyInitialization extends BaseDelegatedClientFactoryTests {
+    class LazyInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyLaziness() {
+        void verifyLaziness() {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -241,19 +247,19 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
         "cas.authn.pac4j.core.lazy-init=true"
     })
     @Import(SamlMessageStoreTestConfiguration.class)
-    public class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());
@@ -265,18 +271,18 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -286,18 +292,18 @@ public class DefaultDelegatedClientFactoryTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
             "cas.authn.pac4j.saml[0].saml2AttributeConverter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
-            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
             "cas.authn.pac4j.saml[0].keystore-password=1234567890",
             "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-            "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
-            "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+            "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+            "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
             "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
             "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
             "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
 
             val saml2clients = delegatedClientFactory.build();
             assertEquals(1, saml2clients.size());
@@ -326,12 +332,12 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].callback-url-type=NONE",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].service-provider-metadata-path=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.HttpSessionStoreFactory",
         "cas.authn.pac4j.saml[0].name-id-policy-format=transient",
@@ -347,9 +353,9 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.saml[0].force-keystore-generation=true",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2Clients extends BaseDelegatedClientFactoryTests {
+    class Saml2Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyClient() {
+        void verifyClient() {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());

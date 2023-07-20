@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("PasswordOps")
-public class DefaultPasswordEncoderTests {
+class DefaultPasswordEncoderTests {
 
     @Test
-    public void verifyPasswordEncoderByCustomClassName() {
+    void verifyPasswordEncoderByCustomClassName() {
         val p = new PasswordEncoderProperties();
         p.setType(StandardPasswordEncoder.class.getName());
         p.setSecret("SECRET");
@@ -32,7 +32,7 @@ public class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void verifyPasswordEncoderByMD5() {
+    void verifyPasswordEncoderByMD5() {
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
@@ -42,7 +42,7 @@ public class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void verifyPasswordEncoderBySHA1() {
+    void verifyPasswordEncoderBySHA1() {
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("SHA-1");
@@ -52,7 +52,7 @@ public class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void verifyPasswordEncoderBySHA256() {
+    void verifyPasswordEncoderBySHA256() {
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("SHA-256");
@@ -62,14 +62,14 @@ public class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void verifyBadInput() {
+    void verifyBadInput() {
         val encoder = new DefaultPasswordEncoder(null, null);
         assertNull(encoder.encode(null));
         assertNull(encoder.encode("password"));
     }
 
     @Test
-    public void verifyBadAlg() {
+    void verifyBadAlg() {
         val encoder = new DefaultPasswordEncoder("BadAlgorithm", null);
         assertNull(encoder.encode("password"));
     }

@@ -70,13 +70,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
                 if (activationStatus == 1) {
                     val loginQueryResult = consoleAdmin.loginQuery(userId);
                     if ("OK".equals(loginQueryResult.getErr())) {
-                        var hasAuthenticator = false;
-                        for (val maname : loginQueryResult.getManame()) {
-                            if (maname.contains("Authenticator")) {
-                                hasAuthenticator = true;
-                                break;
-                            }
-                        }
+                        var hasAuthenticator = loginQueryResult.getManame().stream().anyMatch(maname -> maname.contains("Authenticator"));
                         if (!hasAuthenticator) {
                             activationStatus = BROWSER_AUTHENTICATION_STATUS;
                         } else if (loginQueryResult.getManame().size() > 2) {
@@ -185,9 +179,8 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
      */
     JsonNode call(final String url) throws Exception {
         val conn = (HttpURLConnection) new URL(url).openConnection();
-        if (conn instanceof HttpsURLConnection) {
-            HttpsURLConnection.class.cast(conn)
-                .setSSLSocketFactory(this.context.getSocketFactory());
+        if (conn instanceof HttpsURLConnection urlConnection) {
+            urlConnection.setSSLSocketFactory(this.context.getSocketFactory());
         }
         conn.setRequestMethod(HttpMethod.GET.name());
         return MAPPER.readTree(conn.getInputStream());

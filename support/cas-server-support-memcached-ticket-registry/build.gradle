@@ -1,4 +1,11 @@
 description = "Apereo CAS Memcached Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Memcached Ticket Registry"
+    ]
+}
 dependencies {
     implementation libraries.kryo
 

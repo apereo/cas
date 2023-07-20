@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -8,6 +9,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -32,9 +34,12 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,32 +68,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
-        val timeout = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
-        val claims = buildJwtClaims(accessToken, timeout, oidcRegisteredService, responseType, grantType);
+        val claims = buildJwtClaims(accessToken, oidcRegisteredService, responseType, grantType);
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 
-    /**
-     * Produce claims as jwt.
-     * As per OpenID Connect Core section 5.4, 'The Claims requested by the profile,
-     * email, address, and phone scope values are returned from the UserInfo Endpoint',
-     * except for response_type=id_token, where they are returned in the id_token
-     * (as there is no access token issued that could be used to access the userinfo endpoint).
-     *
-     * @param accessToken       the access token
-     * @param timeoutInSeconds  the timeoutInSeconds
-     * @param registeredService the service
-     * @param responseType      the response type
-     * @param grantType         the grant type
-     * @return the jwt claims
-     */
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
-                                       final long timeoutInSeconds,
                                        final OidcRegisteredService registeredService,
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
@@ -107,42 +96,23 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setJwtId(jwtId);
 
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
-
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-        claims.setAudience(accessToken.getClientId());
+        val audience = registeredService.getAudience().isEmpty()
+            ? List.of(accessToken.getClientId())
+            : new ArrayList<>(registeredService.getAudience());
+        claims.setAudience(audience);
+        LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
 
-        val expirationDate = NumericDate.now();
-        expirationDate.addSeconds(timeoutInSeconds);
-        claims.setExpirationTime(expirationDate);
-        LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
+        buildExpirationClaim(claims, registeredService);
+
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
-
-        val subject = registeredService.getUsernameAttributeProvider().resolveUsername(principal,
-            accessToken.getService(), registeredService);
-        LOGGER.debug("Calculated ID token subject claim to be [{}]", subject);
         claims.setSubject(principal.getId());
 
-        val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
         val attributes = authentication.getAttributes();
 
-        if (attributes.containsKey(mfa.getCore().getAuthenticationContextAttribute())) {
-            val acrValues = CollectionUtils.toCollection(attributes.get(mfa.getCore().getAuthenticationContextAttribute()));
-            val authnContexts = oidc.getCore().getAuthenticationContextReferenceMappings();
-            val mappings = CollectionUtils.convertDirectedListToMap(authnContexts);
-            val acrMapped = acrValues
-                .stream()
-                .map(acrValue ->
-                    mappings.entrySet()
-                        .stream()
-                        .filter(entry -> entry.getValue().equalsIgnoreCase(acrValue.toString()))
-                        .map(Map.Entry::getKey)
-                        .findFirst()
-                        .orElseGet(acrValue::toString))
-                .collect(Collectors.joining(" "));
-            LOGGER.debug("ID token acr claim calculated as [{}]", acrMapped);
-            claims.setStringClaim(OidcConstants.ACR, acrMapped);
-        }
+        buildAuthenticationContextClassRef(claims, authentication);
+
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
             val val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             LOGGER.debug("ID token amr claim calculated as [{}]", val);
@@ -175,6 +145,61 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
 
         return claims;
+    }
+
+    protected void buildExpirationClaim(final JwtClaims claims, final OidcRegisteredService registeredService) {
+        val expirationPolicy = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy();
+        val timeoutInSeconds = Optional.ofNullable(registeredService.getIdTokenExpirationPolicy())
+            .map(RegisteredServiceOidcIdTokenExpirationPolicy::getTimeToKill)
+            .filter(StringUtils::isNotBlank)
+            .map(ttl -> Beans.newDuration(ttl).getSeconds())
+            .orElseGet(expirationPolicy::getTimeToLive);
+        LOGGER.debug("ID token expiration policy set to expire the ID token in [{}]", timeoutInSeconds);
+
+        val expirationDate = NumericDate.now();
+        expirationDate.addSeconds(timeoutInSeconds);
+        claims.setExpirationTime(expirationDate);
+
+        LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
+    }
+
+    protected void buildAuthenticationContextClassRef(final JwtClaims claims,
+                                                      final Authentication authentication) {
+        val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
+        val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+
+        val attributes = authentication.getAttributes();
+        val mappedAcrValues = org.springframework.util.StringUtils.commaDelimitedListToSet(mfa.getCore().getAuthenticationContextAttribute())
+            .stream()
+            .map(attribute -> {
+                if (attributes.containsKey(attribute)) {
+                    val acrValues = CollectionUtils.toCollection(attributes.get(attribute));
+                    val authnContexts = oidc.getCore().getAuthenticationContextReferenceMappings();
+                    val mappings = CollectionUtils.convertDirectedListToMap(authnContexts);
+                    val acrMapped = acrValues
+                        .stream()
+                        .map(acrValue ->
+                            mappings.entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equalsIgnoreCase(acrValue.toString()))
+                                .map(Map.Entry::getKey)
+                                .findFirst()
+                                .orElseGet(acrValue::toString))
+                        .collect(Collectors.joining(" "));
+                    LOGGER.debug("ID token acr claim calculated as [{}]", acrMapped);
+                    return acrMapped;
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .toList();
+
+        if (!mappedAcrValues.isEmpty()) {
+            FunctionUtils.doIf(mappedAcrValues.size() == 1,
+                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.get(0)),
+                    __ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
+                .accept(mappedAcrValues);
+        }
     }
 
     private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
@@ -251,8 +276,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val streamServices = new LinkedHashMap<String, Service>();
-        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgt).getServices();
+        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket ticket) {
+            val services = ticket.getServices();
             streamServices.putAll(services);
         }
         streamServices.putAll(tgt.getProxyGrantingTickets());
@@ -291,7 +316,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .build()
             .encode(accessToken.getId());
 
-        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
+        val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
+            .getJsonWebKeySigningKey(Optional.of(registeredService));
+
+        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService()
+            .getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
             .encodedAccessToken(encodedAccessToken)
             .algorithm(alg)

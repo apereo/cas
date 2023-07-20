@@ -1,5 +1,6 @@
 {
   "dependencies": "token-tickets",
+
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -13,5 +14,6 @@
     "--cas.authn.token.crypto.signing-enabled=false",
     "--cas.authn.token.crypto.encryption-enabled=true",
     "--cas.authn.token.crypto.strategy-type=SIGN_AND_ENCRYPT"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

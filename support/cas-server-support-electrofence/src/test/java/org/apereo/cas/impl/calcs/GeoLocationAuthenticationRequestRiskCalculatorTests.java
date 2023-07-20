@@ -37,10 +37,10 @@ import static org.mockito.Mockito.*;
     "cas.google-maps.ip-stack-api-access-key=6bde37c76ad15c8a5c828fafad8b0bc4"
 })
 @Tag("GeoLocation")
-public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     
     @Test
-    public void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -49,7 +49,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
     }
 
     @Test
-    public void verifyTestWithGeoLoc() throws Exception {
+    void verifyTestWithGeoLoc() throws Exception {
         val id = UUID.randomUUID().toString();
         MockTicketGrantingTicketCreatedEventProducer.createEvent(id, casEventRepository);
         val authentication = CoreAuthenticationTestUtils.getAuthentication(id);
@@ -61,7 +61,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
     }
 
     @Test
-    public void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() {
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
 
@@ -70,7 +70,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("172.217.11.174");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }

@@ -6,7 +6,7 @@ def isWildcardAuthorized(Object... args) {
     def logger = args[2]
 
     logger.info("Checking wildcard access {}", surrogate)
-    return surrogate.equals("anyone") && principal.id.equals("casadmin")
+    return (surrogate == "anyone" || surrogate == "banderson") && principal.id == "casadmin"
 }
 
 def canAuthenticate(Object... args) {

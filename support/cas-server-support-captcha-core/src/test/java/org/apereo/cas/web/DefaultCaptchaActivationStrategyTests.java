@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Simple")
-public class DefaultCaptchaActivationStrategyTests {
+class DefaultCaptchaActivationStrategyTests {
 
     private static MockRequestContext getRequestContext(final HttpServletRequest request) {
         val context = new MockRequestContext();
@@ -46,7 +46,7 @@ public class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    public void verifyByProps() {
+    void verifyByProps() {
         val strategy = new DefaultCaptchaActivationStrategy(mock(ServicesManager.class));
         val context = getRequestContext(new MockHttpServletRequest());
 
@@ -58,7 +58,7 @@ public class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    public void verifyByIpPattern() {
+    void verifyByIpPattern() {
         val strategy = new DefaultCaptchaActivationStrategy(mock(ServicesManager.class));
         val request = new MockHttpServletRequest();
         val context = getRequestContext(request);
@@ -68,12 +68,12 @@ public class DefaultCaptchaActivationStrategyTests {
             .setActivateForIpAddressPattern("127.+");
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         assertFalse(strategy.shouldActivate(context, properties).isPresent());
     }
 
     @Test
-    public void verifyByIpPatternPerService() {
+    void verifyByIpPatternPerService() {
         val servicesManager = mock(ServicesManager.class);
 
         val strategy = new DefaultCaptchaActivationStrategy(servicesManager);
@@ -81,7 +81,7 @@ public class DefaultCaptchaActivationStrategyTests {
         val context = getRequestContext(request);
         request.setRemoteAddr("185.86.151.99");
         request.setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
@@ -98,7 +98,7 @@ public class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    public void verifyByService() {
+    void verifyByService() {
         val servicesManager = mock(ServicesManager.class);
 
         val strategy = new DefaultCaptchaActivationStrategy(servicesManager);

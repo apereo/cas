@@ -1,11 +1,12 @@
 import org.apereo.cas.web.*
-import org.opensaml.saml.saml2.core.*
 import org.apereo.cas.support.saml.*
+import org.apereo.cas.support.saml.idp.*
+import org.apereo.cas.web.support.*
+import org.apereo.cas.pac4j.*
 import org.apache.commons.lang3.tuple.*
 import org.pac4j.core.context.*
-import org.apereo.cas.pac4j.*
 import org.pac4j.jee.context.*
-import org.apereo.cas.web.support.*
+import org.opensaml.saml.saml2.core.*
 import org.opensaml.core.xml.schema.*
 import java.util.stream.*
 import org.apereo.cas.configuration.model.support.delegation.*
@@ -36,7 +37,7 @@ def run(Object[] args) {
     def request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
     def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)
     def webContext = new JEEContext(request, response)
-    def sessionStore = appContext.getBean(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    def sessionStore = appContext.getBean("samlIdPDistributedSessionStore")
     def openSamlConfigBean = appContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
 
     /**
@@ -44,10 +45,10 @@ def run(Object[] args) {
      so we may examine the requested authn context class, if any.
      */
     logger.info("Locate the SAML2 authentication request sent by the SP...")
-    def result = SamlIdPUtils.retrieveSamlRequest(webContext,
-        sessionStore, openSamlConfigBean, AuthnRequest.class)
+    def result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(webContext, AuthnRequest.class)
             .map(Pair::getLeft)
-            .map(AuthnRequest.class::cast);
+            .map(AuthnRequest.class::cast)
 
     /**
         Locate the two identity providers

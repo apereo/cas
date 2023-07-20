@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -46,6 +47,8 @@ public class CasRestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<AuthenticationHandler> restAuthenticationHandler(
+        @Qualifier("httpClient")
+        final HttpClient httpClient,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("restAuthenticationPrincipalFactory")
@@ -55,7 +58,7 @@ public class CasRestAuthenticationConfiguration {
         val rest = casProperties.getAuthn().getRest();
         return BeanContainer.of(rest.stream()
             .map(prop -> {
-                val handler = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, prop);
+                val handler = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, prop, httpClient);
                 handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(prop.getPasswordEncoder(), applicationContext));
                 handler.setState(prop.getState());
                 return handler;

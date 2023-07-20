@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[1].username=uid"
 })
 @Tag("JDBCAuthentication")
-public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
+class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifyMultiRowAttributeRepository() {
+    void verifyMultiRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);

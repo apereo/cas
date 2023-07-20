@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.
  */
 @Tag("X509")
-public class X509CertificateCredentialTests {
+class X509CertificateCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
+    void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         MAPPER.findAndRegisterModules();
         val certificate = new CasX509Certificate(true);
         val credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});

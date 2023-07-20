@@ -39,7 +39,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
             }
 
             val statuses = Arrays.stream(statistics)
-                .map(AbstractCacheHealthIndicator.this::status)
+                .map(this::status)
                 .collect(Collectors.toSet());
 
             if (statuses.contains(Status.OUT_OF_SERVICE)) {

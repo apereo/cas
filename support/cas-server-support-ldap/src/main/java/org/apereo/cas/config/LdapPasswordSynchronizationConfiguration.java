@@ -6,15 +6,11 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.DisposableListFactoryBean;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +20,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -39,13 +33,7 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class LdapPasswordSynchronizationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.password-sync.enabled").isTrue().evenIfMissing();
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public FactoryBean<List<Object>> ldapPasswordSynchronizationListFactoryBean() {
-        return new DisposableListFactoryBean();
-    }
-
+    
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -65,21 +53,14 @@ public class LdapPasswordSynchronizationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<AuthenticationPostProcessor> ldapPasswordSynchronizers(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("ldapPasswordSynchronizationListFactoryBean")
-        final FactoryBean<List<Object>> ldapPasswordSynchronizationListFactoryBean) {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(BeanContainer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val postProcessorList = FunctionUtils.doUnchecked(ldapPasswordSynchronizationListFactoryBean::getObject);
                 val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
                 val processors = ldap.stream()
                     .filter(LdapPasswordSynchronizationProperties::isEnabled)
-                    .map(instance -> {
-                        val postProcessor = new LdapPasswordSynchronizationAuthenticationPostProcessor(instance);
-                        Objects.requireNonNull(postProcessorList).add(postProcessor);
-                        return postProcessor;
-                    })
+                    .map(LdapPasswordSynchronizationAuthenticationPostProcessor::new)
                     .collect(Collectors.toList());
                 return BeanContainer.of(processors);
             })

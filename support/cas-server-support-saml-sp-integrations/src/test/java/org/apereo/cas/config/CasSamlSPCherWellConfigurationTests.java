@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.cher-well.name-id-attribute=cn",
     "cas.saml-sp.cher-well.name-id-format=transient"
 })
-public class CasSamlSPCherWellConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPCherWellConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

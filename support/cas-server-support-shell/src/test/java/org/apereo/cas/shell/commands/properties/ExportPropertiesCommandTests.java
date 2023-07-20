@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class ExportPropertiesCommandTests extends BaseCasShellCommandTests {
+class ExportPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "export-props --dir /tmp"));
     }
 }

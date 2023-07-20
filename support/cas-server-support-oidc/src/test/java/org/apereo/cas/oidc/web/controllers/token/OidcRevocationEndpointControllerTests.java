@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
+class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcRevocationEndpointController")
     protected OidcRevocationEndpointController oidcRevocationEndpointController;
 
     @Test
-    public void verifyGivenAccessTokenInRegistry() throws Exception {
+    void verifyGivenAccessTokenInRegistry() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.REVOCATION_URL);
         val response = new MockHttpServletResponse();
         val mv = oidcRevocationEndpointController.handleRequest(request, response);
@@ -36,7 +36,7 @@ public class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();

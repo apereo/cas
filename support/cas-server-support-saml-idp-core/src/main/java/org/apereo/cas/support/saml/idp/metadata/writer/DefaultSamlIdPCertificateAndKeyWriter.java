@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.writer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -35,18 +35,18 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Setter
 public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {
     private static final int X509_CERT_BITS_SIZE = 160;
 
-    private int keySize = 2048;
+    private final String hostname;
 
-    private String hostname;
+    private int keySize = 4096;
 
     private String keyType = "RSA";
 
-    private String certificateAlgorithm = "SHA256withRSA";
+    private String certificateAlgorithm = "SHA512withRSA";
 
     private int certificateLifetimeInYears = 20;
 

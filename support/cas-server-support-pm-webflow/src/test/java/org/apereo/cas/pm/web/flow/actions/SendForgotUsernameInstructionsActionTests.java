@@ -31,18 +31,18 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @EnabledIfListeningOnPort(port = 25000)
-public class SendForgotUsernameInstructionsActionTests {
+class SendForgotUsernameInstructionsActionTests {
 
     @Tag("Mail")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BasePasswordManagementActionTests {
+    class DefaultTests extends BasePasswordManagementActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        public void verifyNoEmailOrUser() throws Exception {
+        void verifyNoEmailOrUser() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
@@ -70,7 +70,7 @@ public class SendForgotUsernameInstructionsActionTests {
         }
 
         @Test
-        public void verifyOp() throws Exception {
+        void verifyOp() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
@@ -95,13 +95,13 @@ public class SendForgotUsernameInstructionsActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
-    public class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
+    class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        public void verifyOpWithoutPrincipalResolution() throws Exception {
+        void verifyOpWithoutPrincipalResolution() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 

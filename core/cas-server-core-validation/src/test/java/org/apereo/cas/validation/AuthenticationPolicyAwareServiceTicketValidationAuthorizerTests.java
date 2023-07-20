@@ -24,18 +24,19 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 
@@ -80,6 +81,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
@@ -88,7 +90,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("AuthenticationPolicy")
-public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
+class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -102,7 +104,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
             Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
-        when(assertion.primaryAuthentication()).thenReturn(authentication);
+        when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
         return assertion;
     }
 
@@ -123,7 +125,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
+    void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AllAuthenticationHandlersSucceededAuthenticationPolicy(), handlers);
@@ -135,7 +137,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyAllCredentialsValidatedAuthenticationPolicy() {
+    void verifyAllCredentialsValidatedAuthenticationPolicy() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AllCredentialsValidatedAuthenticationPolicy(), handlers);
@@ -147,7 +149,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyRequiredHandlerAuthenticationPolicy() {
+    void verifyRequiredHandlerAuthenticationPolicy() {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
@@ -160,7 +162,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyRequiredHandlerAuthenticationPolicyTryAll() {
+    void verifyRequiredHandlerAuthenticationPolicyTryAll() {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
@@ -173,7 +175,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyOperationWithHandlersAndAtLeastOneCredential() {
+    void verifyOperationWithHandlersAndAtLeastOneCredential() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(), handlers);
@@ -185,7 +187,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() {
+    void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(true), handlers);
@@ -197,7 +199,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    public void verifyOperationWithExcludedHandlers() {
+    void verifyOperationWithExcludedHandlers() {
         val h1 = getTestOtpAuthenticationHandler();
         val h2 = getSimpleTestAuthenticationHandler();
         val handlers = List.of(h1, getAcceptUsersAuthenticationHandler(), h2);

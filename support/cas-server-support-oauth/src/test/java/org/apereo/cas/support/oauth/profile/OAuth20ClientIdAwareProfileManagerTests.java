@@ -3,6 +3,8 @@ package org.apereo.cas.support.oauth.profile;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,16 +27,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
-
+class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     protected OAuth20ClientIdAwareProfileManager profileManager;
 
     protected JEEContext context;
 
+    protected OAuthRegisteredService registeredService;
+
     @BeforeEach
     public void init() {
+        this.registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
@@ -43,10 +48,10 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyGetProfiles() {
+    void verifyGetProfiles() {
         val profile = new CommonProfile();
         profile.setId(ID);
-        profile.setClientName(CLIENT_ID);
+        profile.setClientName(registeredService.getClientId());
         profileManager.save(true, profile, false);
         val profiles = profileManager.getProfiles();
         assertNotNull(profiles);
@@ -54,12 +59,12 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyGetProfilesWithoutSavedClientId() {
+    void verifyGetProfilesWithoutSavedClientId() {
         val profile = new CommonProfile();
         profile.setId(ID);
-        profile.setClientName(CLIENT_ID);
+        profile.setClientName(registeredService.getClientId());
         val sessionProfiles = new HashMap<String, CommonProfile>(1);
-        sessionProfiles.put(CLIENT_ID, profile);
+        sessionProfiles.put(registeredService.getClientId(), profile);
         oauthDistributedSessionStore.set(context, Pac4jConstants.USER_PROFILES, sessionProfiles);
         val profiles = profileManager.getProfiles();
         assertNotNull(profiles);

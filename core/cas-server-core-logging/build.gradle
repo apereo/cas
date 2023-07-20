@@ -1,4 +1,12 @@
 description = "Apereo CAS Core Logging"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "Apache Log4j",
+            aliases: ["log4j"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-cookie")
     

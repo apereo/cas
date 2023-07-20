@@ -33,6 +33,8 @@ A sample JSON file follows:
 ```
 
 Registered service property values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+        
+Note that you may also extend the CAS configuration schema to define your own [custom properties](../webflow/Webflow-Customization-CustomProperties.html).
 
 ## Supported Properties
 

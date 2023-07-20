@@ -21,9 +21,9 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("AuthenticationMetadata")
-public class MultifactorAuthenticationProviderMetadataPopulatorTests {
+class MultifactorAuthenticationProviderMetadataPopulatorTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val provider = mock(MultifactorAuthenticationProvider.class);
         when(provider.getFailureMode()).thenReturn(MultifactorAuthenticationProviderFailureModes.PHANTOM);
         when(provider.getId()).thenReturn("mfa-dummy");
@@ -37,7 +37,7 @@ public class MultifactorAuthenticationProviderMetadataPopulatorTests {
         assertTrue(populator.supports(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory()
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(new UsernamePasswordCredential()));
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey("contextClass"));

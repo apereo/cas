@@ -13,7 +13,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         bootRun {
             if (project.hasProperty("casWebApplication") && project.ext.casWebApplication) {
                 resources {
-                    srcDirs new File("//etc/cas/templates/"),
+                    srcDirs new File("/etc/cas/templates/"),
                             new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
@@ -40,6 +40,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
 
         tasks.named('bootWar') {
+
+            def gitCommitId = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
@@ -52,7 +54,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 }
 
                 attributes(
-                        "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
+                        "Specification-Version": "${-> gitCommitId}",
                         "Implementation-Version": project.version)
             }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }

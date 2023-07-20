@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.profile-selection.ldap.profile-id-attribute=cn",
     "cas.authn.pac4j.profile-selection.ldap.attributes=sn,givenName,uid,mail,cn"
 })
-public class LdapDelegatedClientAuthenticationCredentialResolverTests {
+class LdapDelegatedClientAuthenticationCredentialResolverTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;
@@ -67,7 +67,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolverTests {
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         val ldif = IOUtils.toString(new ClassPathResource("ldap-pac4j.ldif").getInputStream(), StandardCharsets.UTF_8)
@@ -78,7 +78,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolverTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setAttribute(Credentials.class.getName(), "caspac4j");

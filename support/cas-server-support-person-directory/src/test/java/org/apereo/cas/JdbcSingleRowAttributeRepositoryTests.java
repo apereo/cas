@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
 @Tag("JDBCAuthentication")
-public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
+class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifySingleRowAttributeRepository() {
+    void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -45,7 +45,7 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
 
 
     @Test
-    public void verifyPeopleSingleRowAttributeRepository() {
+    void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val people = attributeRepository.getPeople(Map.of("username", List.of("CASUSER")));
         val person = people.iterator().next();

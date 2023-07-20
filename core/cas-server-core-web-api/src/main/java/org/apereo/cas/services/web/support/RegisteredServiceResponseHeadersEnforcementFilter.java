@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 
@@ -211,8 +212,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         if (service != null) {
             LOGGER.trace("Attempting to resolve service for [{}]", service);
             val resolved = authenticationRequestServiceSelectionStrategies.getObject().resolveService(service);
-            val registeredService = servicesManager.getObject().findServiceBy(resolved);
-            val audit = AuditableContext.builder()
+            val registeredService = NumberUtils.isCreatable(resolved.getId())
+                ? servicesManager.getObject().findServiceBy(Long.parseLong(resolved.getId()))
+                : servicesManager.getObject().findServiceBy(resolved);
+            val audit = AuditableContext
+                .builder()
                 .registeredService(registeredService)
                 .service(service)
                 .build();

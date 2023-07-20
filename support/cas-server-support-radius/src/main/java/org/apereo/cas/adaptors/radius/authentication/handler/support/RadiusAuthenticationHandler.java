@@ -3,11 +3,11 @@ package org.apereo.cas.adaptors.radius.authentication.handler.support;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             val result = RadiusUtils.authenticate(username, credential.toPassword(), this.servers,
                 this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey() && result.getValue().isPresent()) {
-                val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(result.getValue().get());
+                val attributes = CollectionUtils.toMultiValuedMap(result.getValue().get());
                 return createHandlerResult(credential,
                     principalFactory.createPrincipal(username, attributes),
                     new ArrayList<>(0));

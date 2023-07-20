@@ -35,14 +35,14 @@ import static org.mockito.Mockito.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
+class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessDelegatedClientAuthenticationWebflowStateContributor")
     private DelegatedClientAuthenticationWebflowStateContributor contributor;
 
     @Test
-    public void verifyStore() throws Exception {
+    void verifyStore() throws Exception {
         val client = new CasClient();
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
@@ -58,7 +58,7 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
     }
 
     @Test
-    public void verifyRestore() throws Exception {
+    void verifyRestore() throws Exception {
         val client = new CasClient();
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
@@ -78,7 +78,7 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTes
     }
 
     @Test
-    public void verifyRestoreWithoutSessionTicket() throws Exception {
+    void verifyRestoreWithoutSessionTicket() throws Exception {
         val client = new CasClient();
         val context = new MockRequestContext();
         val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());

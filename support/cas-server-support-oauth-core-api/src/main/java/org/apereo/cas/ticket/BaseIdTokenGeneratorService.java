@@ -21,8 +21,7 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Getter
-public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext>
-    implements IdTokenGeneratorService {
+public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext> implements IdTokenGeneratorService {
     private final ObjectProvider<T> configurationContextProvider;
 
     protected T getConfigurationContext() {
@@ -44,7 +43,6 @@ public abstract class BaseIdTokenGeneratorService<T extends OAuth20Configuration
         LOGGER.debug("Received claims for the id token [{}] as [{}]", accessToken, claims);
         val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(registeredService, claims);
         accessToken.setIdToken(idTokenResult);
-
         LOGGER.debug("Updating access token [{}] in ticket registry with ID token [{}]", accessToken.getId(), idTokenResult);
         getConfigurationContext().getTicketRegistry().updateTicket(accessToken);
         return idTokenResult;

@@ -2,11 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAuthenticationHandlerResolverTests {
+class RegisteredServiceAuthenticationHandlerResolverTests {
 
     private ServicesManager defaultServicesManager;
 
@@ -63,6 +65,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         applicationContext.refresh();
 
         val context = ServicesManagerConfigurationContext.builder()
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .serviceRegistry(dao)
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
@@ -80,10 +83,10 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerResolutionDefault() {
+    void checkAuthenticationHandlerResolutionDefault() {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("serviceid1"),
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
@@ -91,9 +94,9 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerResolution() {
+    void checkAuthenticationHandlerResolution() {
         val resolver = new DefaultAuthenticationHandlerResolver();
-        val transaction = new DefaultAuthenticationTransactionFactory()
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid2"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);
@@ -101,10 +104,10 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerExcluded() {
+    void checkAuthenticationHandlerExcluded() {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        val transaction = new DefaultAuthenticationTransactionFactory()
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid3"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val handlers = resolver.resolve(this.authenticationHandlers, transaction);

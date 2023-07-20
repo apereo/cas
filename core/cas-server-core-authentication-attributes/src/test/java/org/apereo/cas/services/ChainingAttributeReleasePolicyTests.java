@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class ChainingAttributeReleasePolicyTests {
+class ChainingAttributeReleasePolicyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -50,7 +49,7 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplaceAndOrder() {
+    void verifyOperationWithReplaceAndOrder() {
         configureChainingReleasePolicy(10, 1);
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -66,7 +65,7 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplace() {
+    void verifyOperationWithReplace() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -88,7 +87,7 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithAdd() {
+    void verifyOperationWithAdd() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -103,7 +102,7 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithMultivalued() {
+    void verifyOperationWithMultivalued() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -119,7 +118,7 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentableAttrs() {
+    void verifyConsentableAttrs() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

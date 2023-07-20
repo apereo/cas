@@ -28,6 +28,11 @@ initSysctl:
 prometheusExporter:
   enabled: false
 
+image:
+  repository: sonarqube
+  tag: lts-community
+  pullPolicy: IfNotPresent
+  
 plugins:
   install:
     - https://github.com/vaulttec/sonar-auth-oidc/releases/download/v2.1.1/sonar-auth-oidc-plugin-2.1.1.jar
@@ -45,3 +50,4 @@ sonarProperties:
   sonar.log.level.app: "info"
   sonar.auth.oidc.allowUsersToSignUp: "true"
   sonar.auth.oidc.loginButtonText: "CAS OpenID Connect"
+  sonar.plugins.risk.consent: "ACCEPTED"

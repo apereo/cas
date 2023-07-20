@@ -40,8 +40,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     private final StandardPBEStringEncryptor jasyptInstance;
 
-    public CasConfigurationJasyptCipherExecutor(final String algorithm, final String password) {
+    static {
         Security.addProvider(new BouncyCastleProvider());
+    }
+    
+    public CasConfigurationJasyptCipherExecutor(final String algorithm, final String password) {
         jasyptInstance = new StandardPBEStringEncryptor();
         setIvGenerator(new RandomIvGenerator());
         setAlgorithm(algorithm);

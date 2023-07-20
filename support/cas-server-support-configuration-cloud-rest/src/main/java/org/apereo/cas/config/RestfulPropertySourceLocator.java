@@ -20,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -71,7 +72,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(basicAuthPassword)
                 .basicAuthUsername(basicAuthUsername)
-                .method(HttpMethod.valueOf(method.toUpperCase()))
+                .method(HttpMethod.valueOf(method.toUpperCase(Locale.ENGLISH)))
                 .url(url)
                 .headers(headers)
                 .build();

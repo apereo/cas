@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.consent.core.crypto.enabled=false",
     "cas.consent.activation-strategy-groovy-script.location=classpath:/ConsentActivationStrategy.groovy"
 })
-public class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
+class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
     @Autowired
     @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
@@ -29,7 +29,7 @@ public class GroovyConsentActivationStrategyTests extends BaseConsentActivationS
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyDestroyOperation() throws Exception {
+    void verifyDestroyOperation() throws Exception {
         assertNotNull(consentActivationStrategy);
         applicationContext.getBeanFactory().destroyBean(consentActivationStrategy);
     }

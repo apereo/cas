@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
+class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests.json");
 
@@ -31,7 +31,7 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTest
 
 
     @Test
-    public void verifySerializeToJson() throws Exception {
+    void verifySerializeToJson() throws Exception {
         val criteria = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
             .setOperator(LogicalOperatorTypes.OR)
             .setAllowIfInactive(true)
@@ -42,7 +42,7 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTest
     }
 
     @Test
-    public void verifyRequiredPlain() {
+    void verifyRequiredPlain() {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("name1")))
@@ -56,7 +56,7 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTest
     }
 
     @Test
-    public void verifyRequiredRegex() {
+    void verifyRequiredRegex() {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("***")))

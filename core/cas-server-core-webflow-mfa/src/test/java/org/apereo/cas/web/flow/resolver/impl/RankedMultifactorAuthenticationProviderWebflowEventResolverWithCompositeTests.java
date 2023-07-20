@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.core.provider-selection-enabled=true",
     "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy1,mfa-dummy2"
 })
-public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests
+class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests
     extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
@@ -60,7 +60,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

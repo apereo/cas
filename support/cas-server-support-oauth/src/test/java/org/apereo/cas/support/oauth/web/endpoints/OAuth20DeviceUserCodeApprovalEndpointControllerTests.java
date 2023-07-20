@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
-public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
+class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("deviceUserCodeApprovalEndpointController")
     private OAuth20DeviceUserCodeApprovalEndpointController callbackAuthorizeController;
@@ -35,7 +35,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyGet() {
+    void verifyGet() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val mv = callbackAuthorizeController.handleGetRequest(request, response);
@@ -45,7 +45,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyPostNoCode() {
+    void verifyPostNoCode() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         var mv = callbackAuthorizeController.handlePostRequest(request, response);
@@ -57,7 +57,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyApproval() throws Exception {
+    void verifyApproval() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());

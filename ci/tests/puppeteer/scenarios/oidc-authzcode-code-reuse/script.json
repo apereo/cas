@@ -1,5 +1,6 @@
 {
   "dependencies": "oidc",
+
   "properties": [
     "--logging.level.org.apereo.cas=info",
     

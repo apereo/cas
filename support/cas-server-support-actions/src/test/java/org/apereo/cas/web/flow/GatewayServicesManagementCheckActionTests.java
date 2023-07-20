@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("WebflowActions")
-public class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTests {
+@Tag("WebflowServiceActions")
+class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GATEWAY_SERVICES_MANAGEMENT)
     private Action action;
@@ -45,7 +45,7 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     }
 
     @Test
-    public void verifyNoServiceFound() {
+    void verifyNoServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -54,7 +54,7 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     }
 
     @Test
-    public void verifyDisabledServiceFound() throws Exception {
+    void verifyDisabledServiceFound() throws Exception {
         val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);

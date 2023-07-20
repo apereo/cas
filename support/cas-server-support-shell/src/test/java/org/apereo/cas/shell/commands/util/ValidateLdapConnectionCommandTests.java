@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
+class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
         assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
     }
 
     @Test
-    public void verifyNoFilterOperation() {
+    void verifyNoFilterOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--userPassword_password_--userAttributes_cn";
         assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
@@ -58,7 +58,7 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
@@ -67,7 +67,7 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
     }
 
     @Test
-    public void verifyBadUrlOperation() {
+    void verifyBadUrlOperation() {
         val cmd = "validate-ldap_--url_ldap://localhost:10399_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
@@ -77,7 +77,7 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
 
 
     @Test
-    public void verifyNoResult() {
+    void verifyNoResult() {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
 

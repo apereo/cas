@@ -43,7 +43,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * A negative value disables the trimming process where the audit
      * functionality no longer substrings the audit record.
      */
-    private int columnLength = 100;
+    private int columnLength = 512;
 
     /**
      * SQL query that provides a template to fetch audit records.
@@ -59,6 +59,13 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      */
     private String dateFormatterPattern;
 
+    /**
+     * A formatter function that receives the formatted date value
+     * and the date pattern as the first and second argument.
+     * Example: {@code TO_DATE('%s', '%s')}.
+     */
+    private String dateFormatterFunction;
+    
     /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */

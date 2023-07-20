@@ -3,9 +3,9 @@ package org.apereo.cas.support.saml.authentication.principal;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SAML2")
 @Deprecated(since = "6.2.0")
-public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
+class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;
@@ -70,12 +70,12 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyNoService() {
+    void verifyNoService() {
         assertNull(factory.createService(new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifyAuthnRequest() {
+    void verifyAuthnRequest() {
         val request = new MockHttpServletRequest();
         val samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

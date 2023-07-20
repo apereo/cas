@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
-@Tag("Groovy")
-public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+@Tag("GroovyMfa")
+class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         passwordlessUserAccountStore.reload();
         val user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());

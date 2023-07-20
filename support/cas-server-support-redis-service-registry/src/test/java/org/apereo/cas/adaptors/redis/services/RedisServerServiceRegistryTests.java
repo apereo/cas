@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
+class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }

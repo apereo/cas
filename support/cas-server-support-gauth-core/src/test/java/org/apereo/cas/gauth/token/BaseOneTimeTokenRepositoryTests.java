@@ -13,6 +13,7 @@ import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.awaitility.Awaitility.*;
@@ -48,7 +49,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
-    public void verifyTokenSave() {
+    void verifyTokenSave() {
         val otp = getRandomOtp();
         var token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -62,14 +63,14 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @RetryingTest(3)
     public void verifyCaseInsensitiveUser() {
         val otp = getRandomOtp();
-        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
+        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase(Locale.ENGLISH));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp)));
-        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp)));
+        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(Locale.ENGLISH), otp)));
+        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(Locale.ENGLISH), otp)));
     }
 
     @Test
-    public void verifyTokensWithUniqueIdsSave() {
+    void verifyTokensWithUniqueIdsSave() {
         val otp1 = getRandomOtp();
         val token = new GoogleAuthenticatorToken(otp1, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -88,7 +89,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
-    public void verifyRemoveByUserAndCode() {
+    void verifyRemoveByUserAndCode() {
         val otp = getRandomOtp();
         val token = new GoogleAuthenticatorToken(otp, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -101,7 +102,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
-    public void verifyRemoveByUser() {
+    void verifyRemoveByUser() {
         val otp = getRandomOtp();
         val token = new GoogleAuthenticatorToken(otp, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -114,7 +115,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
-    public void verifyRemoveByCode() {
+    void verifyRemoveByCode() {
         val otp = getRandomOtp();
         val token = new GoogleAuthenticatorToken(otp, "someone");
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -127,7 +128,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
-    public void verifySize() {
+    void verifySize() {
         val uid = UUID.randomUUID().toString();
         val otp = getRandomOtp();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count());

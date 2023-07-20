@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceTests {
+class OidcRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oidcRegisteredService.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -36,7 +36,7 @@ public class OidcRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    public OidcRegisteredServiceTests() throws Exception {
+    OidcRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -52,7 +52,7 @@ public class OidcRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
+    void checkSaveMethod() {
         val r = new OidcRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
@@ -70,7 +70,7 @@ public class OidcRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
+    void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
         val serviceWritten = new OidcRegisteredService();
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
