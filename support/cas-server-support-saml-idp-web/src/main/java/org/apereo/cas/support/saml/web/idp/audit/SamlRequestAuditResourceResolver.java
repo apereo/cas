@@ -20,19 +20,21 @@ import java.util.HashMap;
 public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
-        if (returnValue instanceof Pair) {
-            return getAuditResourceFromSamlRequest((Pair) returnValue);
+        if (returnValue instanceof Pair context) {
+            return getAuditResourceFromSamlRequest((XMLObject) context.getLeft());
+        }
+        if (returnValue instanceof XMLObject xmlObject) {
+            return getAuditResourceFromSamlRequest(xmlObject);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlRequest(final Pair result) {
-        val returnValue = (XMLObject) result.getLeft();
-        if (returnValue instanceof AuthnRequest) {
-            return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
+    private String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
+        if (returnValue instanceof AuthnRequest authnRequest) {
+            return getAuditResourceFromSamlAuthnRequest(authnRequest);
         }
-        if (returnValue instanceof LogoutRequest) {
-            return getAuditResourceFromSamlLogoutRequest((LogoutRequest) returnValue);
+        if (returnValue instanceof LogoutRequest logoutRequest) {
+            return getAuditResourceFromSamlLogoutRequest(logoutRequest);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
