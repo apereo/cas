@@ -41,11 +41,11 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
         }
         val attributeValues = ObjectUtils.defaultIfNull(attribute.getValues(), new ArrayList<>());
         attributeValues.replaceAll(o -> {
-            if (o instanceof XSString) {
-                return ((XSString) o).getValue();
+            if (o instanceof XSString value) {
+                return value.getValue();
             }
-            if (o instanceof XSURI) {
-                return ((XSURI) o).getURI();
+            if (o instanceof XSURI value) {
+                return value.getURI();
             }
             if (o instanceof Serializable) {
                 return o;

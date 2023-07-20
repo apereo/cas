@@ -106,8 +106,8 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
         return providers
             .stream()
             .map(p -> {
-                if (p instanceof ChainingMultifactorAuthenticationProvider) {
-                    return ((ChainingMultifactorAuthenticationProvider) p).getMultifactorAuthenticationProviders();
+                if (p instanceof ChainingMultifactorAuthenticationProvider chain) {
+                    return chain.getMultifactorAuthenticationProviders();
                 }
                 return List.of(p);
             })

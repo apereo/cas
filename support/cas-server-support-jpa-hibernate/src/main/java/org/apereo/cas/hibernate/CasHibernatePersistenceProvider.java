@@ -38,8 +38,8 @@ public class CasHibernatePersistenceProvider extends HibernatePersistenceProvide
         }
         LOGGER.trace("Filtered entity classes for entity manager are [{}]", filtered);
         val mergedClassesAndPackages = new HashSet<String>(filtered);
-        if (info instanceof SmartPersistenceUnitInfo) {
-            mergedClassesAndPackages.addAll(((SmartPersistenceUnitInfo) info).getManagedPackages());
+        if (info instanceof SmartPersistenceUnitInfo sinfo) {
+            mergedClassesAndPackages.addAll(sinfo.getManagedPackages());
         }
         val persistenceUnit = new CasPersistenceUnitInfoDescriptor(info, new ArrayList<>(mergedClassesAndPackages));
         return new EntityManagerFactoryBuilderImpl(persistenceUnit, properties).build();

@@ -109,8 +109,8 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         val builder = DefaultAuthenticationBuilder.newInstance();
-        if (profile instanceof BasicUserProfile) {
-            val authenticationAttributes = ((BasicUserProfile) profile).getAuthenticationAttributes();
+        if (profile instanceof BasicUserProfile basicUserProfile) {
+            val authenticationAttributes = basicUserProfile.getAuthenticationAttributes();
             builder.addAttributes(authenticationAttributes);
         }
 

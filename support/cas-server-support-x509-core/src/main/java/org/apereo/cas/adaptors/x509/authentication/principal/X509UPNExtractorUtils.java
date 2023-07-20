@@ -63,11 +63,11 @@ public class X509UPNExtractorUtils {
                 () -> primitiveObj);
             val prim = func.apply(primitiveObj);
 
-            if (prim instanceof ASN1OctetString) {
-                return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
+            if (prim instanceof ASN1OctetString instance) {
+                return new String(instance.getOctets(), StandardCharsets.UTF_8);
             }
-            if (prim instanceof ASN1String) {
-                return ((ASN1String) prim).getString();
+            if (prim instanceof ASN1String instance) {
+                return instance.getString();
             }
         }
         return null;

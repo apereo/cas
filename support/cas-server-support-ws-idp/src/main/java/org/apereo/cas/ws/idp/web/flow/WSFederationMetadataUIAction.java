@@ -32,8 +32,7 @@ public class WSFederationMetadataUIAction extends BaseCasWebflowAction {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
-            if (registeredService instanceof WSFederationRegisteredService) {
-                val wsfed = WSFederationRegisteredService.class.cast(registeredService);
+            if (registeredService instanceof WSFederationRegisteredService wsfed) {
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(wsfed));
             }
         }

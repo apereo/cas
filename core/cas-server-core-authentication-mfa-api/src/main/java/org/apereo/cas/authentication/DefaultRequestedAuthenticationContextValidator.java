@@ -117,8 +117,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         val providers = providerResult
             .map(provider -> {
-                if (provider instanceof ChainingMultifactorAuthenticationProvider) {
-                    val chain = ChainingMultifactorAuthenticationProvider.class.cast(provider);
+                if (provider instanceof ChainingMultifactorAuthenticationProvider chain) {
                     return chain.getMultifactorAuthenticationProviders().stream()
                         .filter(p -> p.equals(provider)).collect(Collectors.toList());
                 }

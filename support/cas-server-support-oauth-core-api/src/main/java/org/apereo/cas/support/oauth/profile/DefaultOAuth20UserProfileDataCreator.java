@@ -77,18 +77,6 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
         return principal;
     }
-
-    /*
-    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) {
-        val authentication = accessToken.getAuthentication();
-        val attributes = new HashMap<>(authentication.getAttributes());
-        val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
-            .getAuthenticationAttributesForRelease(authentication, registeredService);
-        attributes.putAll(authnAttributes);
-        return getConfigurationContext().getPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
-    }
-     */
     
     protected void finalizeProfileResponse(final OAuth20AccessToken accessTokenTicket,
                                            final Map<String, Object> modelAttributes,

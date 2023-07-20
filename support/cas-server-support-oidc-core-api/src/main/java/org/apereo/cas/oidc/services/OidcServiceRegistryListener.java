@@ -79,8 +79,8 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
 
     @Override
     public RegisteredService postLoad(final RegisteredService registeredService) {
-        if (registeredService instanceof OidcRegisteredService) {
-            return reconcile((OidcRegisteredService) registeredService);
+        if (registeredService instanceof OidcRegisteredService oidcService) {
+            return reconcile(oidcService);
         }
         return registeredService;
     }

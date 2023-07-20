@@ -276,8 +276,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val streamServices = new LinkedHashMap<String, Service>();
-        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgt).getServices();
+        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket ticket) {
+            val services = ticket.getServices();
             streamServices.putAll(services);
         }
         streamServices.putAll(tgt.getProxyGrantingTickets());

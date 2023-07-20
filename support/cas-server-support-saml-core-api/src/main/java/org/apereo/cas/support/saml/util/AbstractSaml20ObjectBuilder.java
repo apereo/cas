@@ -407,21 +407,21 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         subject.setNameID(null);
         subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
-        if (nameId instanceof NameID) {
-            subject.setNameID((NameID) nameId);
+        if (nameId instanceof NameID instance) {
+            subject.setNameID(instance);
             subject.setEncryptedID(null);
         }
-        if (nameId instanceof EncryptedID) {
+        if (nameId instanceof EncryptedID instance) {
             subject.setNameID(null);
-            subject.setEncryptedID((EncryptedID) nameId);
+            subject.setEncryptedID(instance);
         }
-        if (subjectConfNameId instanceof NameID) {
-            confirmation.setNameID((NameID) subjectConfNameId);
+        if (subjectConfNameId instanceof NameID instance) {
+            confirmation.setNameID(instance);
             confirmation.setEncryptedID(null);
         }
-        if (subjectConfNameId instanceof EncryptedID) {
+        if (subjectConfNameId instanceof EncryptedID instance) {
             confirmation.setNameID(null);
-            confirmation.setEncryptedID((EncryptedID) subjectConfNameId);
+            confirmation.setEncryptedID(instance);
         }
         subject.getSubjectConfirmations().add(confirmation);
 

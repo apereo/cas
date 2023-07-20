@@ -148,11 +148,11 @@ public class JacksonObjectMapperFactory {
     }
 
     private MapperBuilder<?, ?> determineMapperInstance() {
-        if (jsonFactory instanceof YAMLFactory) {
-            return YAMLMapper.builder((YAMLFactory) jsonFactory);
+        if (jsonFactory instanceof YAMLFactory factory) {
+            return YAMLMapper.builder(factory);
         }
-        if (jsonFactory instanceof XmlFactory) {
-            return XmlMapper.builder((XmlFactory) jsonFactory);
+        if (jsonFactory instanceof XmlFactory factory) {
+            return XmlMapper.builder(factory);
         }
         return JsonMapper.builder(jsonFactory);
     }
