@@ -19,7 +19,7 @@ package org.apereo.cas.github;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -264,7 +264,8 @@ public class GitHubTemplate implements GitHubOperations {
         } else if (response.getStatusCode() == HttpStatus.CREATED) {
             log.info("Pull request [{}] is successfully merged with head [{}]", pr, targetBranch);
         } else {
-            log.warn("Unable to handle merge with base; message [{}], status [{}]", response.getBody(), response.getStatusCode().getReasonPhrase());
+            log.warn("Unable to handle merge with base; message [{}], status [{}]",
+                response.getBody(), response.getStatusCode());
         }
         return pr;
     }

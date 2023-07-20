@@ -19,6 +19,7 @@ package org.apereo.cas;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.PullRequest;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -30,6 +31,7 @@ import java.util.List;
  * @author Andy Wilkinson
  */
 @Slf4j
+@RequiredArgsConstructor
 class RepositoryMonitor {
 
     private static final int ONE_MINUTE = 60 * 1000;
@@ -40,12 +42,6 @@ class RepositoryMonitor {
 
     private final List<PullRequestListener> pullRequestListeners;
 
-    RepositoryMonitor(final GitHubOperations gitHub, final MonitoredRepository repository,
-                      final List<PullRequestListener> pullRequestListeners) {
-        this.gitHub = gitHub;
-        this.repository = repository;
-        this.pullRequestListeners = pullRequestListeners;
-    }
 
     @Scheduled(fixedRate = ONE_MINUTE)
     void monitorPullRequests() {

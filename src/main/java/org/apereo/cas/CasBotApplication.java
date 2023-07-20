@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -138,7 +139,7 @@ public class CasBotApplication {
     }
 
     @Configuration
-    @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-    public static class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+    @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+    public static class MethodSecurityConfiguration {
     }
 }
