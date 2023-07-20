@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,7 +56,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
 
     private final Resource jsonResource;
 
-    private Map<String, SamlServiceProviderMetadata> metadataMap;
+    private Map<String, SamlServiceProviderMetadata> metadataMap = new HashMap<>();
 
     private FileWatcherService watcherService;
 

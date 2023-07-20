@@ -6,8 +6,8 @@ import org.apereo.cas.configuration.model.support.account.provision.RestfulAccou
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -18,10 +18,10 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This is {@link RestfulAccountRegistrationProvisioner}.
@@ -36,26 +36,25 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
         .build()
         .toObjectMapper();
 
+    private final HttpClient httpClient;
     private final RestfulAccountManagementRegistrationProvisioningProperties properties;
 
     @Override
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
-        HttpResponse response = null;
+        val response = new AtomicReference<HttpResponse>();
         try {
-            val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-            headers.putAll(properties.getHeaders());
+            response.set(executeRequest(request));
+            return FunctionUtils.doIfNull(response.get(),
+                    AccountRegistrationResponse::new,
+                    () -> buildAccountRegistrationResponse(response.get()))
+                .get();
+        } finally {
+            HttpUtils.close(response.get());
+        }
+    }
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.POST)
-                .url(properties.getUrl())
-                .headers(headers)
-                .entity(MAPPER.writeValueAsString(request))
-                .build();
-            response = HttpUtils.execute(exec);
+    protected AccountRegistrationResponse buildAccountRegistrationResponse(final HttpResponse response) {
+        return FunctionUtils.doUnchecked(() -> {
             if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                 val entity = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val success = AccountRegistrationResponse.success();
@@ -72,8 +71,24 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
             Arrays.stream(response.getHeaders())
                 .forEach(header -> details.put(header.getName(), header.getValue()));
             return new AccountRegistrationResponse(details);
-        } finally {
-            HttpUtils.close(response);
-        }
+        });
+    }
+
+    protected HttpResponse executeRequest(final AccountRegistrationRequest request) throws Exception {
+        val headers = new HashMap<String, String>();
+        headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.putAll(properties.getHeaders());
+
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .basicAuthPassword(properties.getBasicAuthPassword())
+            .basicAuthUsername(properties.getBasicAuthUsername())
+            .method(HttpMethod.POST)
+            .url(properties.getUrl())
+            .headers(headers)
+            .entity(MAPPER.writeValueAsString(request))
+            .httpClient(httpClient)
+            .build();
+        return HttpUtils.execute(exec);
     }
 }
