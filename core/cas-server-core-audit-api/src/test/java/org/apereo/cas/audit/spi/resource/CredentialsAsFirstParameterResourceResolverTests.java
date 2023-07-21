@@ -3,13 +3,11 @@ package org.apereo.cas.audit.spi.resource;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,9 +49,9 @@ class CredentialsAsFirstParameterResourceResolverTests {
     void verifyTransaction() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
-        when(jp.getArgs())
-            .thenReturn(new Object[]{CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"))});
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        when(jp.getArgs()).thenReturn(new Object[]{transaction});
         assertNotNull(resolver.resolveFrom(jp, new Object()));
     }
 
