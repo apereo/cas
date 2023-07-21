@@ -20,6 +20,7 @@ management.health.diskSpace.enabled=true
 management.endpoint.env.enabled=true
 management.endpoint.loggers.enabled=true
 management.health.memoryHealthIndicator.enabled=true
+spring.main.lazy-initialization=false
 EOF
 cat ${configDir}/cas.properties
 }
@@ -62,7 +63,7 @@ testUrl() {
 echo "Building CAS server web application with ${webAppServerType}"
 ./gradlew :webapp:cas-server-webapp-"${webAppServerType}":build \
   -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel
+  --no-configuration-cache --no-daemon --build-cache --configure-on-demand --parallel
 retVal=$?
 if [[ ${retVal} -ne 0 ]]; then
   exit $retVal
@@ -90,7 +91,7 @@ cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \
 exec $cmd  &
 pid=$!
 echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
-sleep 40
+sleep 60
 echo "Testing status of server with pid ${pid}."
 testUrl "/login" "Username"
 retValLogin=$?
