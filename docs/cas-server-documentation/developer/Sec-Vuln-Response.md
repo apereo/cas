@@ -24,7 +24,7 @@ To review the old archives of the application security working group, [please se
 - A patch release is made available to the wider public.
 
 <div class="alert alert-warning">:warning: <strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> 
-'create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community 
+create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community 
 members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
 ### Dependency Upgrades
