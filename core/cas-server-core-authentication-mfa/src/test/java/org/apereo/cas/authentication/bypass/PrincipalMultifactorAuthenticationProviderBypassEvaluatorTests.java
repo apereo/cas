@@ -49,7 +49,7 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         policy.setBypassEnabled(true);
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication,
-            registeredService, provider, new MockHttpServletRequest()));
+            registeredService, provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -71,7 +71,8 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setBypassEnabled(true);
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
-        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -95,6 +96,7 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
-        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 }

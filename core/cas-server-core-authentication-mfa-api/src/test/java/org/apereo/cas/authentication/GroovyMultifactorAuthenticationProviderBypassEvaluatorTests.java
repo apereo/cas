@@ -3,19 +3,17 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +43,8 @@ class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, request, mock(Service.class));
     }
 
     private static Authentication getAuthentication(final String username) {

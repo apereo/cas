@@ -93,7 +93,7 @@ class MultifactorAuthenticationBypassActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_NO, event.getId());
 
             val eval = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
-            when(eval.shouldMultifactorAuthenticationProviderExecute(any(), any(), any(), any())).thenReturn(Boolean.FALSE);
+            when(eval.shouldMultifactorAuthenticationProviderExecute(any(), any(), any(), any(), any())).thenReturn(Boolean.FALSE);
             provider.setBypassEvaluator(eval);
             event = mfaBypassAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());

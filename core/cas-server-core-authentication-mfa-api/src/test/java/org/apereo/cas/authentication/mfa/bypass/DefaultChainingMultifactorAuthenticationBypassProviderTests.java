@@ -58,7 +58,7 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertTrue(res.shouldMultifactorAuthenticationProviderExecute(authentication, service,
-            provider, new MockHttpServletRequest()));
+            provider, new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getService(service.getServiceId())));
     }
 
     @Test
@@ -92,7 +92,8 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
         assertFalse(p.isMultifactorAuthenticationBypassed(authentication, provider.getId()));
 
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
-        assertFalse(p.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request));
+        assertFalse(p.shouldMultifactorAuthenticationProviderExecute(authentication, service,
+            provider, request, MultifactorAuthenticationTestUtils.getService(service.getServiceId())));
 
         assertTrue(p.belongsToMultifactorAuthenticationProvider(provider.getId()).isPresent());
         assertFalse(p.filterMultifactorAuthenticationProviderBypassEvaluatorsBy(provider.getId()).isEmpty());

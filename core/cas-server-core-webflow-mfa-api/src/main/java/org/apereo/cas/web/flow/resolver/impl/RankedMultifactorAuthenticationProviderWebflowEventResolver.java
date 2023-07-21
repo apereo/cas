@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -58,11 +59,13 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
     private static Set<Event> buildEventForMultifactorProvider(
         final RequestContext context,
-        final RegisteredService service,
+        final Service service,
+        final RegisteredService registeredService,
         final Authentication authentication,
         final String id,
         final MultifactorAuthenticationProvider provider) {
-        val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
+        val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
+            Optional.of(service), Optional.of(registeredService), provider);
         LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
         val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
         LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
@@ -82,9 +85,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
-        val service = WebUtils.getRegisteredService(context);
+        val registeredService = WebUtils.getRegisteredService(context);
+        val service = WebUtils.getService(context);
 
-        if (service == null) {
+        if (registeredService == null) {
             LOGGER.debug("No service is available to determine event for principal");
             return resumeFlow(context);
         }
@@ -130,23 +134,23 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             return CollectionUtils.wrapSet(event);
         }
 
-        LOGGER.trace("Validating authentication context for event [{}] and service [{}]", id, service);
-        val result = authenticationContextValidator.validate(authentication, id, Optional.of(service));
+        LOGGER.trace("Validating authentication context for event [{}] and service [{}]", id, registeredService);
+        val result = authenticationContextValidator.validate(authentication, id, Optional.of(registeredService));
         val validatedProvider = result.getProvider();
 
         if (result.isSuccess()) {
-            if (service.getMultifactorAuthenticationPolicy().isForceExecution() && validatedProvider.isPresent()) {
+            if (registeredService.getMultifactorAuthenticationPolicy().isForceExecution() && validatedProvider.isPresent()) {
                 val provider = validatedProvider.get();
-                LOGGER.trace("Multifactor authentication policy for [{}] is set to force execution for [{}]", service, provider);
-                return buildEventForMultifactorProvider(context, service, authentication, id, provider);
+                LOGGER.trace("Multifactor authentication policy for [{}] is set to force execution for [{}]", registeredService, provider);
+                return buildEventForMultifactorProvider(context, service, registeredService, authentication, id, provider);
             }
-            LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
+            LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, registeredService);
             return resumeFlow(context);
         }
 
         if (validatedProvider.isPresent()) {
             val provider = validatedProvider.get();
-            return buildEventForMultifactorProvider(context, service, authentication, id, provider);
+            return buildEventForMultifactorProvider(context, service, registeredService, authentication, id, provider);
         }
 
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
@@ -154,8 +158,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     }
 
     @Audit(action = AuditableActions.AUTHENTICATION_EVENT,
-           actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
-           resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
+        actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

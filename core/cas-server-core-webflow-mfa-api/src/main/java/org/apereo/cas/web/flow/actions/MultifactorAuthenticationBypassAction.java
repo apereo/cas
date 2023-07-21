@@ -23,12 +23,13 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val service = WebUtils.getRegisteredService(requestContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val service = WebUtils.getService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
 
         val bypass = provider.getBypassEvaluator();
         val principal = resolvePrincipal(authentication.getPrincipal());
-        val bypassAllowed = isMultifactorAuthenticationBypass(requestContext, service, provider);
+        val bypassAllowed = isMultifactorAuthenticationBypass(requestContext, registeredService, provider);
         if (bypassAllowed) {
             LOGGER.debug("Bypass triggered by MFA webflow for MFA for user [{}] for provider [{}]",
                 principal.getId(), provider.getId());
@@ -38,7 +39,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
             return yes();
         }
 
-        if (bypass.shouldMultifactorAuthenticationProviderExecute(authentication, service, provider, request)) {
+        if (bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, service)) {
             LOGGER.debug("Bypass rules determined MFA should execute for user [{}] and provider [{}]",
                 principal.getId(), provider.getId());
             bypass.forgetBypass(authentication);

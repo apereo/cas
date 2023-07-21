@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidationResult;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -37,13 +38,14 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
         final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
-        final HttpServletRequest request) {
+        final HttpServletRequest request,
+        final Service service) {
 
         val composite = resolveEvents
             .stream()
             .allMatch(event -> event.getId().equalsIgnoreCase(ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER));
         if (!composite) {
-            return super.filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+            return super.filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request, service);
         }
         val event = resolveEvents.iterator().next();
         val chainingProvider = (ChainingMultifactorAuthenticationProvider)
@@ -68,7 +70,7 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
                     .filter(provider -> {
                         val bypass = provider.getBypassEvaluator();
                         return bypass == null || bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
-                            registeredService, provider, request);
+                            registeredService, provider, request, service);
                     })
                     .collect(Collectors.toList());
                 LOGGER.debug("Finalized set of resolved events are [{}] with providers [{}]", resolveEvents, activeProviders);

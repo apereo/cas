@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
@@ -37,7 +38,8 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
     public Set<Event> resolveEventViaAttribute(final Principal principal,
                                                final Map<String, List<Object>> attributesToExamine,
                                                final Collection<String> attributeNames,
-                                               final RegisteredService service,
+                                               final RegisteredService registeredService,
+                                               final Service service,
                                                final Optional<RequestContext> context,
                                                final Collection<MultifactorAuthenticationProvider> providers,
                                                final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
@@ -59,10 +61,10 @@ public class DefaultMultifactorAuthenticationProviderResolver implements Multifa
 
             for (val provider : providers) {
                 var results = MultifactorAuthenticationUtils.resolveEventViaSingleAttribute(principal, attributeValue,
-                    service, context, provider, predicate);
+                    registeredService, service, context, provider, predicate);
                 if (results == null || results.isEmpty()) {
                     results = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(principal, attributeValue,
-                        service, context, provider, predicate);
+                        registeredService, service, context, provider, predicate);
                 }
                 if (results != null && !results.isEmpty()) {
                     LOGGER.debug("Resolved set of events based on the attribute [{}] are [{}]", attributeName, results);

@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
@@ -41,12 +42,12 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
                                                                   final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                  final HttpServletRequest request,
+                                                                  final Service service) {
 
         return multifactorAuthenticationProviderBypassEvaluators
             .stream()
-            .allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
-                registeredService, provider, request));
+            .allMatch(bypass -> bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, service));
     }
 
     @Override

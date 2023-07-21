@@ -39,7 +39,8 @@ class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
         val request = new MockHttpServletRequest();
-        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request));
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, request, CoreAuthenticationTestUtils.getService()));
 
     }
 
