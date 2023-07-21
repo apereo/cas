@@ -12,14 +12,12 @@ import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
 import org.apereo.cas.github.Workflows;
-
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.StringReader;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -56,7 +54,7 @@ public class MonitoredRepository {
             .filter(milestone -> {
                 val milestoneVersion = Version.valueOf(milestone.getTitle());
                 return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
-                       && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
+                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
             })
             .findFirst();
     }
@@ -159,7 +157,7 @@ public class MonitoredRepository {
             .filter(milestone -> {
                 var masterVersion = Version.valueOf(milestone.getTitle());
                 return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
-                       && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
+                    && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
             })
             .findFirst();
         return result;

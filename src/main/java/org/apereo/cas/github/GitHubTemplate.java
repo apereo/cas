@@ -16,12 +16,12 @@
 
 package org.apereo.cas.github;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -44,8 +44,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -66,9 +66,10 @@ import java.util.TimeZone;
  * @author Andy Wilkinson
  */
 @RequiredArgsConstructor
+@Slf4j
 public class GitHubTemplate implements GitHubOperations {
 
-    private static final Logger log = LoggerFactory.getLogger(GitHubTemplate.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final RestOperations rest;
 
@@ -150,6 +151,20 @@ public class GitHubTemplate implements GitHubOperations {
         val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/files";
         return getPage(url, PullRequestFile[].class);
     }
+
+    @Override
+    @SneakyThrows
+    public void updatePullRequest(final String organization, final String repository,
+                                  final PullRequest pr, final Map<String, ? extends Serializable> payload) {
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber();
+        var uri = URI.create(url);
+        log.info("Closing to pull request {}", uri);
+        var response = this.rest.exchange(new RequestEntity(payload, HttpMethod.PATCH, uri), PullRequest.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            log.warn("Failed to update to pull request. Response status: " + response.getStatusCode());
+        }
+    }
+
 
     @Override
     @SneakyThrows

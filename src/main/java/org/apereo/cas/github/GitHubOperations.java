@@ -16,6 +16,7 @@
 
 package org.apereo.cas.github;
 
+import java.io.Serializable;
 import java.util.Map;
 
 public interface GitHubOperations {
@@ -67,12 +68,12 @@ public interface GitHubOperations {
                               long page);
 
     default Workflows getWorkflowRuns(String organization, String repository, Branch branch,
-                              Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
+                                      Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
         return getWorkflowRuns(organization, repository, branch, event, status, 1);
     }
 
     default Workflows getWorkflowRuns(String organization, String repository,
-                              Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
+                                      Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
         return getWorkflowRuns(organization, repository, null, event, status);
     }
 
@@ -82,7 +83,7 @@ public interface GitHubOperations {
     }
 
     default Workflows getWorkflowRuns(String organization, String repository,
-                                       Workflows.WorkflowRunStatus status) {
+                                      Workflows.WorkflowRunStatus status) {
         return getWorkflowRuns(organization, repository, null, null, status);
     }
 
@@ -125,9 +126,12 @@ public interface GitHubOperations {
                          String context) throws Exception;
 
     boolean cancelWorkflowRun(String organization, String repository,
-                           Workflows.WorkflowRun run) throws Exception;
+                              Workflows.WorkflowRun run) throws Exception;
 
     Page<Branch> getBranches(String organization, String name);
 
     void removeWorkflowRun(String organization, String name, Workflows.WorkflowRun run);
+
+    void updatePullRequest(String organization, String name,
+                           PullRequest pr, Map<String, ? extends Serializable> payload);
 }

@@ -27,6 +27,10 @@ public class CasPullRequestListener implements PullRequestListener {
         val pr = repository.getPullRequest(givenPullRequest.getNumber());
         log.debug("Processing {}", pr);
 
+        if (pr.isWorkInProgress() && !pr.isDraft()) {
+            //repository.convertPullRequestToDraft(pr);
+        }
+
         if (shouldDisregardPullRequest(pr)) {
             log.info("{} is considered invalid and will not be processed", pr);
             return;
@@ -224,10 +228,10 @@ public class CasPullRequestListener implements PullRequestListener {
             if (pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING);
             }
-            if (!pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+            if (!pr.isWorkInProgress()) {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_WIP);
             }
-        } else if (pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+        } else if (pr.isWorkInProgress()) {
             if (pr.isLabeledAs(CasLabels.LABEL_PENDING)) {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING);
             }
