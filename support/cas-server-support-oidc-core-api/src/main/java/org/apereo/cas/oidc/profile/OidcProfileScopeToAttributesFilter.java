@@ -65,7 +65,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                             + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
                             + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
-                return principal;
+                return principalFactory.createPrincipal(profile.getId());
             }
 
             scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
@@ -77,7 +77,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
             filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, principal, attributes);
             LOGGER.debug("Final collection of attributes are [{}]", attributes);
-            return this.principalFactory.createPrincipal(profile.getId(), attributes);
+            return principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
     }
