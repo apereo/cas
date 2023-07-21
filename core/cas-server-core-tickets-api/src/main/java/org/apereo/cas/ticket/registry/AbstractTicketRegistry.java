@@ -59,14 +59,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        Ticket returnTicket = getTicket(ticketId, ticket -> {
+        val returnTicket = getTicket(ticketId, ticket -> {
             if (ticket == null || ticket.isExpired()) {
                 if (ticket == null) {
                     LOGGER.debug("Ticket [{}] not found but will be removed from the ticket registry just in case", ticketId);
                 } else {
-                    val ticketAgeSeconds = ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
+                    val ticketAgeSeconds = getTicketAgeSeconds(ticket);
                     LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
-                        ticketId, ticket.getExpirationPolicy().getClass().getName(), ticketAgeSeconds, ticket.getCountOfUses());
+                        ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
                 }
                 deleteSingleTicket(ticketId);
                 return false;
@@ -74,9 +74,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return true;
         });
         if (returnTicket != null) {
-            val ticketAgeSeconds = ZonedDateTime.now(returnTicket.getExpirationPolicy().getClock()).toEpochSecond() - returnTicket.getCreationTime().toEpochSecond();
+            val ticketAgeSeconds = getTicketAgeSeconds(returnTicket);
             if (ticketAgeSeconds < -1) {
-                LOGGER.warn("Ticket created [{}] seconds in the future. Check time synchronization on all servers", ticketAgeSeconds * -1);
+                LOGGER.warn("Ticket created [{}] second(s) in the future. Check time synchronization on all servers.", ticketAgeSeconds * -1);
             }
         }
         return returnTicket;
@@ -366,5 +366,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
         ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
         updateTicket(ticket.getTicketGrantingTicket());
+    }
+
+    private long getTicketAgeSeconds(@NonNull final Ticket ticket) {
+        return ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
     }
 }

@@ -302,7 +302,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     /**
-     * Excercise block of code in getTicket that runs when get {@code ticketRegistry.getTicket()} called.
+     * Excercise block of code in getTicket that runs when get {@link AbstractTicketRegistry#getTicket(String ticketId)} called.
      * Adds 10 seconds to creation time to simulate time out of sync so warning is logged.
      */
     @RepeatedTest(2)
