@@ -63,7 +63,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 ### AWS Verified Permissions
 
-A new service access strategy is now available to authorization application access based on 
+A new service access strategy is now available to authorize application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
  
 ### Spring Framework Upgrades

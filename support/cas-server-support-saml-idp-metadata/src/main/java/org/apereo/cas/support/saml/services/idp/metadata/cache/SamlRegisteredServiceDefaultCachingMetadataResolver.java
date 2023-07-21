@@ -127,12 +127,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 .valid(true)
                 .build();
         }
-        val md = queryResult.getEntityDescriptor()
+        val entityDescriptor = queryResult.getEntityDescriptor()
             .orElseGet(Unchecked.supplier(() -> queryResult.getResult().getMetadataResolver().resolveSingle(criteriaSet)));
 
-        return MetadataResolutionResult.builder()
-            .valid(md != null && md.isValid())
-            .entityDescriptor(Optional.ofNullable(md))
+        return MetadataResolutionResult
+            .builder()
+            .valid(entityDescriptor != null && entityDescriptor.isValid())
+            .entityDescriptor(Optional.ofNullable(entityDescriptor))
             .result(queryResult.getResult())
             .build();
     }
