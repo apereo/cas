@@ -11,7 +11,7 @@ env:
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-  JDK_CURRENT: 17
+  JDK_CURRENT: 21
   CATEGORY_REGEX: ".*" # Use this to limit which tests run
   
 ##########################################################################
