@@ -26,7 +26,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
      * @param args the args
      * @return the string[]
      */
-    private String[] toResources(final Object[] args) {
+    protected String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof AuthenticationTransaction) {
             val transaction = AuthenticationTransaction.class.cast(object);
@@ -35,7 +35,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return new String[]{toResourceString(CollectionUtils.wrap(object))};
     }
 
-    private String toResourceString(final Object credential) {
+    protected String toResourceString(final Object credential) {
         return auditFormat.serialize(credential);
     }
 

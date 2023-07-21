@@ -31,7 +31,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
+    protected String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
         val objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
@@ -46,7 +46,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getPrincipalIdFromSamlResponse(final Response response) {
+    protected String[] getPrincipalIdFromSamlResponse(final Response response) {
         val values = new HashMap<>();
         values.put("issuer", response.getIssuer().getValue());
         values.put("destination", response.getDestination());
@@ -54,7 +54,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
         return new String[]{auditFormat.serialize(values)};
     }
 
-    private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
+    protected String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
         val values = new HashMap<>();
         values.put("actor", fault.getActor().getURI());
         values.put("message", fault.getMessage().getValue());
