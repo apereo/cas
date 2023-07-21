@@ -31,7 +31,7 @@ public class ServiceAuditResourceResolver implements AuditResourceResolver {
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         val service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         val values = new HashMap<String, String>();
-        values.put("return", retval.toString());
+        values.put("ticket", retval.toString());
         values.put("service", DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength()));
         return new String[]{this.auditFormat.serialize(values)};
     }

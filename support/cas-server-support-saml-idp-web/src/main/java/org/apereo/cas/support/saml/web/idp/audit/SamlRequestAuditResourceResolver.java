@@ -29,7 +29,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
+    protected String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
         if (returnValue instanceof AuthnRequest) {
             return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
         }
@@ -39,13 +39,13 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
+    protected String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         return new String[]{auditFormat.serialize(values)};
     }
 
-    private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
+    protected String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         values.put("binding", returnValue.getProtocolBinding());
