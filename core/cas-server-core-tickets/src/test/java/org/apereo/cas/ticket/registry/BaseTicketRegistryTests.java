@@ -302,8 +302,9 @@ public abstract class BaseTicketRegistryTests {
     }
 
     /**
-     * Excercise block of code in getTicket that runs when get {@link AbstractTicketRegistry#getTicket(String ticketId)} called.
-     * Adds 10 seconds to creation time to simulate time out of sync so warning is logged.
+     * Exercise block of code in {@link AbstractTicketRegistry#getTicket(String ticketId)} that runs when
+     * the method encounters a {@link Ticket} created in the future.
+     * Adds 10 seconds to creation time to simulate time out of sync so warning will be logged.
      */
     @RepeatedTest(2)
     public void verifyGetFutureDatedTicket() throws Exception {
