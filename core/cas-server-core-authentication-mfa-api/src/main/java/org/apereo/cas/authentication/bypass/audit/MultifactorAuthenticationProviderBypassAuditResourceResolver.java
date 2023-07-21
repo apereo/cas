@@ -21,7 +21,7 @@ import java.util.HashMap;
  */
 @Setter
 public class MultifactorAuthenticationProviderBypassAuditResourceResolver implements AuditResourceResolver {
-    private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
+    protected AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
@@ -47,7 +47,7 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolver implem
         return new String[]{toResourceString(values)};
     }
 
-    private String toResourceString(final Object object) {
+    protected String toResourceString(final Object object) {
         return auditFormat.serialize(object);
     }
 }
