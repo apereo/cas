@@ -50,7 +50,8 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
-        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, 
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -76,7 +77,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
-            provider, new MockHttpServletRequest()));
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -101,7 +102,8 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
         policy.setBypassPrincipalAttributeName("cn");
         policy.setBypassPrincipalAttributeValue("^e[x]am.*");
         when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
-        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -120,6 +122,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
-        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, null, provider, new MockHttpServletRequest()));
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, null,
+            provider, new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService()));
     }
 }

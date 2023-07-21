@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -44,9 +45,10 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
     public Set<Event> resolveInternal(final RequestContext context) {
         val resolvedEvents = WebUtils.getResolvedEventsAsAttribute(context);
         val authentication = WebUtils.getAuthentication(context);
+        val service = WebUtils.getService(context);
         val registeredService = resolveRegisteredServiceInRequestContext(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context);
+        return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context, service);
     }
 
     /**
@@ -59,13 +61,15 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      * @param registeredService the registered service
      * @param request           the request
      * @param context           the request context
+     * @param service           the service
      * @return the set of resolved events
      */
     protected Set<Event> resolveEventsInternal(final Collection<Event> resolveEvents,
                                                final Authentication authentication,
                                                final RegisteredService registeredService,
                                                final HttpServletRequest request,
-                                               final RequestContext context) {
+                                               final RequestContext context,
+                                               final Service service) {
         if (resolveEvents.isEmpty()) {
             LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
                 authentication, registeredService);
@@ -74,27 +78,19 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
             resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]",
                 e.getId(), e.getSource().getClass().getName()));
         }
-        val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+        val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request, service);
         return result.map(pair -> {
             WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
             return new HashSet<>(pair.getKey());
         }).orElseGet(HashSet::new);
     }
 
-    /**
-     * Filter events by multifactor authentication providers.
-     *
-     * @param resolveEvents     the resolve events
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param request           the request
-     * @return the set of events
-     */
     protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
-        final HttpServletRequest request) {
+        final HttpServletRequest request,
+        final Service service) {
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(

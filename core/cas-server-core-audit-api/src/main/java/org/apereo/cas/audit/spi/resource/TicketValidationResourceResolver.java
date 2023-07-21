@@ -10,7 +10,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from
@@ -26,8 +26,8 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     }
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        val results = new LinkedHashMap<String, Object>();
+    public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
+        val results = new HashMap<String, Object>();
 
         val args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
         if (args != null && args.length > 0) {
@@ -35,7 +35,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             results.put("ticket", ticketId);
         }
 
-        if (object instanceof Assertion assertion) {
+        if (returnValue instanceof Assertion assertion) {
             val authn = assertion.getPrimaryAuthentication();
             results.put("principal", authn.getPrincipal().getId());
             val attributes = new HashMap<String, Object>(authn.getAttributes());
@@ -46,6 +46,11 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
         val auditFormat = AuditTrailManager.AuditFormats.valueOf(properties.getAuditFormat().name());
         return results.isEmpty()
             ? ArrayUtils.EMPTY_STRING_ARRAY
-            : new String[]{auditFormat.serialize(results)};
+            : new String[]{auditFormat.serialize(finalizeResources(results, joinPoint, returnValue))};
+    }
+
+    protected Map<String, Object> finalizeResources(final Map<String, Object> results,
+                                                    final JoinPoint joinPoint, final Object returnValue) {
+        return results;
     }
 }

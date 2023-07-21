@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.core.Ordered;
@@ -36,12 +37,14 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
      * @param registeredService the registered service in question
      * @param provider          the provider
      * @param request           the request
+     * @param service           the service
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication,
                                                            RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
-                                                           HttpServletRequest request);
+                                                           HttpServletRequest request,
+                                                           Service service);
 
 
     /**
