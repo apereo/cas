@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<EntityDescriptor entityID="https://httpbin.org/shibboleth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+<EntityDescriptor entityID="https://localhost:9859/shibboleth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
     <Extensions xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi">
         <mdrpi:RegistrationInfo registrationAuthority="https://incommon.org"/>
         <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
@@ -49,10 +49,10 @@
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>
-        <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://httpbin.org/post" index="1"/>
+        <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://localhost:9859/post" index="1"/>
         <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" Location="https://saml.example.org/Shibboleth.sso/SAML/Artifact" index="2"/>
   
-        <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://httpbin.org/post" index="5"/>
+        <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:9859/post" index="5"/>
         <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://saml.example.org/Shibboleth.sso/SAML2/Artifact" index="6"/>
         
         <AttributeConsumingService xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" index="1">

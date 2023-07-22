@@ -65,7 +65,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         final String id,
         final MultifactorAuthenticationProvider provider) {
         val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
-            Optional.of(service), Optional.of(registeredService), provider);
+            Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
         LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
         val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
         LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
