@@ -1,6 +1,6 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://httpbin.org/shibboleth",
+  "serviceId" : "https://localhost:9859/shibboleth",
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,

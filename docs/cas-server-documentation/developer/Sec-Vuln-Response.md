@@ -77,7 +77,7 @@ urgency, please consider negotiating a professional support agreement with Apere
  
 ### Security Fixes
 
-The CAS application security group encourages all reporters to not include instructions and steps to reproduce and verify a reported issue, but
+The CAS application security group encourages all reporters to not only include instructions and steps to reproduce and verify a reported issue, but
 to also include and propose fixes in form of patch files that are shared privately with the group in the same issue report. Most, if not all, security 
 fixes that are applied to the CAS codebase, regardless of contribution type (i.e. direct developer commit or outsider contribution), are almost always
 made privately. The details of the fix and application of the patch are kept privately, and are not exposed in the public 
@@ -95,7 +95,7 @@ If you wish to volunteer to become a point person to get the CVE creation proces
 
 ## Community Notification
 
-Once the release is made available, the following procedure may be observed:
+Once the security release is made available, the following procedure may be observed:
 
 - Community members [are notified](/cas/Mailing-Lists.html) about the release availability.
 - The notification message SHOULD discuss:
@@ -103,9 +103,18 @@ Once the release is made available, the following procedure may be observed:
     - The severity of the security issue and nature of the patch release.
     - Affected CAS versions
     - Recommended guidelines for upgrades and applications of the patch.
-- At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
+- At the end of a grace period (see below), a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
 <div class="alert alert-info">:information_source: <strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Committee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
+
+## Grace Period
+                  
+Once the security release is made available and the initial version of the security vulnerability becomes public, CAS will observe
+a four-week grace period to allow community members and deployers to transition and upgrade to the security release. During this period,
+no additional details (i.e. steps to reproduce, severity and impact, etc) about the security issue are made public and fixes and 
+commits to the codebase are kept privately. As a result, all release tags and other modifications to the CAS codebase related to the security fix
+are put on hold until the grace period is over. At the end of the grace period, details about the security vulnerability are made public and the 
+actual patch, commit and release tags are then pushed to the CAS codebase available to anyone.
 
 ### Trusted Contacts
 
