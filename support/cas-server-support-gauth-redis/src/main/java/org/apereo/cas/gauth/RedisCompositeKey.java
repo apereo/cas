@@ -20,8 +20,6 @@ import java.util.Locale;
 @AllArgsConstructor
 @With
 public class RedisCompositeKey {
-    private static final String KEY_SEPARATOR = ":";
-
     private static final String CAS_PREFIX_TOKEN_ACCOUNT = "CAS_TOKEN_ACCOUNT";
 
     private static final String CAS_PREFIX_TOKEN_PRINCIPAL = "CAS_TOKEN_PRINCIPAL";
@@ -49,23 +47,52 @@ public class RedisCompositeKey {
         return RedisCompositeKey.builder().prefix(CAS_PREFIX_TOKEN_ACCOUNT).build();
     }
 
+    /**
+     * For principals redis composite key.
+     *
+     * @return the redis composite key
+     */
     public static RedisCompositeKey forPrincipals() {
         return RedisCompositeKey.builder().prefix(CAS_PREFIX_TOKEN_PRINCIPAL).build();
     }
 
+    /**
+     * With principal redis composite key.
+     *
+     * @param account the account
+     * @return the redis composite key
+     */
     public RedisCompositeKey withPrincipal(final OneTimeTokenAccount account) {
         return withPrincipal(account.getUsername());
     }
 
+    /**
+     * With principal redis composite key.
+     *
+     * @param account the account
+     * @return the redis composite key
+     */
     public RedisCompositeKey withPrincipal(final String account) {
         val username = account.trim().toLowerCase(Locale.ENGLISH);
         return RedisCompositeKey.forPrincipals().withQuery(username);
     }
 
+    /**
+     * With account redis composite key.
+     *
+     * @param account the account
+     * @return the redis composite key
+     */
     public RedisCompositeKey withAccount(final OneTimeTokenAccount account) {
         return withAccount(account.getId());
     }
 
+    /**
+     * With account redis composite key.
+     *
+     * @param account the account
+     * @return the redis composite key
+     */
     public RedisCompositeKey withAccount(final long account) {
         return RedisCompositeKey.forAccounts().withQuery(String.valueOf(account));
     }
