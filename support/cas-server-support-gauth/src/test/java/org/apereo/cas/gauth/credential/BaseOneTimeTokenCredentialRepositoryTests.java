@@ -55,6 +55,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -106,8 +107,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
             .scratchCodes(acct.getScratchCodes())
             .name(casuser)
             .build();
-        toSave = repo.save(toSave);
-        assertNotNull(toSave);
+        repo.save(Stream.of(toSave));
         assertNotNull(repo.get(toSave.getId()));
         assertNotNull(repo.get(toSave.getUsername(), toSave.getId()));
         assertEquals(1, repo.count());
@@ -131,21 +131,21 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
             .name(casuser)
             .build();
         repo.save(toSave);
-        var s = repo.get(acct.getUsername()).iterator().next();
-        assertNotNull(s, "Account not found");
-        assertNotNull(s.getRegistrationDate());
-        assertEquals(acct.getValidationCode(), s.getValidationCode());
-        assertEquals(acct.getSecretKey(), s.getSecretKey());
-        s.setSecretKey("newSecret");
-        s.setValidationCode(999666);
-        repo.update(s);
+        var account = repo.get(acct.getUsername()).iterator().next();
+        assertNotNull(account, "Account not found");
+        assertNotNull(account.getRegistrationDate());
+        assertEquals(acct.getValidationCode(), account.getValidationCode());
+        assertEquals(acct.getSecretKey(), account.getSecretKey());
+        account.setSecretKey("newSecret");
+        account.setValidationCode(999666);
+        repo.update(account);
         val accts = repo.get(casuser);
-        s = accts.iterator().next();
-        assertEquals(999666, s.getValidationCode());
-        assertEquals("newSecret", s.getSecretKey());
+        account = accts.iterator().next();
+        assertEquals(999666, account.getValidationCode());
+        assertEquals("newSecret", account.getSecretKey());
 
-        repo.delete(s.getId());
-        assertNull(repo.get(s.getId()));
+        repo.delete(account.getId());
+        assertNull(repo.get(account.getId()));
     }
 
     @Test
