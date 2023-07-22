@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -95,6 +96,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public Ticket getTicket(final String ticketId) {
+        val returnTicket = getTicket(ticketId, ticket -> {
+            if (ticket.isExpired()) {
+                val ticketAgeSeconds = getTicketAgeSeconds(ticket);
+                LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
+                    ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
+                deleteSingleTicket(ticket);
+                return false;
+            }
+            return true;
+        });
+        if (returnTicket != null) {
+            val ticketAgeSeconds = getTicketAgeSeconds(returnTicket);
+            if (ticketAgeSeconds < -1) {
+                LOGGER.warn("Ticket created [{}] second(s) in the future. Check time synchronization on all servers.", ticketAgeSeconds * -1);
+            }
+        }
+        return returnTicket;
+    }
+
+    @Override
     public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
         val ticket = getTicket(ticketId);
         if (ticket == null) {
@@ -106,20 +128,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                                          + ticket.getClass() + " when we were expecting " + clazz);
         }
         return clazz.cast(ticket);
-    }
-
-    @Override
-    public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
-            if (ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
-                return FunctionUtils.doUnchecked(() -> {
-                    deleteTicket(ticket);
-                    return false;
-                });
-            }
-            return true;
-        });
     }
 
     @Override
@@ -367,5 +375,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
         ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
         updateTicket(ticket.getTicketGrantingTicket());
+    }
+
+    private long getTicketAgeSeconds(@NonNull final Ticket ticket) {
+        return ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
     }
 }
