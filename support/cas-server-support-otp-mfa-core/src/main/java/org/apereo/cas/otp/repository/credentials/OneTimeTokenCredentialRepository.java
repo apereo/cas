@@ -2,7 +2,9 @@ package org.apereo.cas.otp.repository.credentials;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 
+import org.jooq.lambda.Unchecked;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OneTimeTokenCredentialRepository}.
@@ -50,6 +52,15 @@ public interface OneTimeTokenCredentialRepository {
      * @return one time token account
      */
     OneTimeTokenAccount save(OneTimeTokenAccount account);
+
+    /**
+     * Save in bulk.
+     *
+     * @param toSave the to save
+     */
+    default void save(final Stream<? extends OneTimeTokenAccount> toSave) {
+        toSave.forEach(Unchecked.consumer(this::save));
+    }
 
     /**
      * Create one time token account.

@@ -57,7 +57,7 @@ public class GoogleAuthenticatorRedisConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -70,11 +70,25 @@ public class GoogleAuthenticatorRedisConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorTemplate")
-    public CasRedisTemplate redisGoogleAuthenticatorTemplate(
+    @ConditionalOnMissingBean(name = "redisAccountsGoogleAuthenticatorTemplate")
+    public CasRedisTemplate redisAccountsGoogleAuthenticatorTemplate(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisGoogleAuthenticatorConnectionFactory")
-        final RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory) throws Exception {
+        final RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory) {
+        return BeanSupplier.of(CasRedisTemplate.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> RedisObjectFactory.newRedisTemplate(redisGoogleAuthenticatorConnectionFactory))
+            .otherwiseProxy()
+            .get();
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    @ConditionalOnMissingBean(name = "redisPrincipalsGoogleAuthenticatorTemplate")
+    public CasRedisTemplate redisPrincipalsGoogleAuthenticatorTemplate(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("redisGoogleAuthenticatorConnectionFactory")
+        final RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory) {
         return BeanSupplier.of(CasRedisTemplate.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> RedisObjectFactory.newRedisTemplate(redisGoogleAuthenticatorConnectionFactory))
@@ -92,16 +106,19 @@ public class GoogleAuthenticatorRedisConfiguration {
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
         final CipherExecutor googleAuthenticatorScratchCodesCipherExecutor,
-        @Qualifier("redisGoogleAuthenticatorTemplate")
-        final CasRedisTemplate redisGoogleAuthenticatorTemplate,
-        final CasConfigurationProperties casProperties) throws Exception {
+        @Qualifier("redisAccountsGoogleAuthenticatorTemplate")
+        final CasRedisTemplate redisAccountsGoogleAuthenticatorTemplate,
+        @Qualifier("redisPrincipalsGoogleAuthenticatorTemplate")
+        final CasRedisTemplate redisPrincipalsGoogleAuthenticatorTemplate,
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(OneTimeTokenCredentialRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-                redisGoogleAuthenticatorTemplate,
-                googleAuthenticatorAccountCipherExecutor,
-                googleAuthenticatorScratchCodesCipherExecutor,
-                casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount()))
+            .supply(() -> {
+                val redisTemplates = new RedisGoogleAuthenticatorTokenCredentialRepository.CasRedisTemplates(
+                    redisAccountsGoogleAuthenticatorTemplate, redisPrincipalsGoogleAuthenticatorTemplate);
+                return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, redisTemplates,
+                    googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
+            })
             .otherwiseProxy()
             .get();
 
@@ -112,13 +129,15 @@ public class GoogleAuthenticatorRedisConfiguration {
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("redisGoogleAuthenticatorTemplate")
-        final CasRedisTemplate redisGoogleAuthenticatorTemplate) throws Exception {
+        @Qualifier("redisAccountsGoogleAuthenticatorTemplate")
+        final CasRedisTemplate redisAccountsGoogleAuthenticatorTemplate) {
         return BeanSupplier.of(OneTimeTokenRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate,
-                casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize(),
-                casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount()))
+            .supply(() -> {
+                val gauth = casProperties.getAuthn().getMfa().getGauth();
+                return new GoogleAuthenticatorRedisTokenRepository(redisAccountsGoogleAuthenticatorTemplate,
+                    gauth.getCore().getTimeStepSize(), gauth.getRedis().getScanCount());
+            })
             .otherwiseProxy()
             .get();
     }
