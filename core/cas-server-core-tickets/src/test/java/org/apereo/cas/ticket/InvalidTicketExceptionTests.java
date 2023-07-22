@@ -16,6 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InvalidTicketExceptionTests {
 
     @Test
+    public void verifyCodeOnlyMessageNotNull() {
+        val t = new InvalidTicketException("ST-InvalidTicketId");
+        assertEquals("INVALID_TICKET", t.getCode());
+        assertNotNull(t.getMessage());
+    }
+
+    @Test
     public void verifyCodeNoThrowable() {
         val t = new InvalidTicketException(new IllegalArgumentException("FailsOp"), "InvalidTicket");
         assertEquals("INVALID_TICKET", t.getCode());
