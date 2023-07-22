@@ -75,7 +75,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         });
         val clientId = credentials.getUsername();
         if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), clientId)) {
-            LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or is not related to the client [{}]", token, clientId);
+            LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or does not belong to the client [{}]", token, clientId);
             throw new CredentialsException("Invalid token: " + token);
         }
     }
