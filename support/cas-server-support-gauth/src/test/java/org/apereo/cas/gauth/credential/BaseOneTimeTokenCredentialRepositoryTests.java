@@ -55,7 +55,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -107,15 +106,15 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
             .scratchCodes(acct.getScratchCodes())
             .name(casuser)
             .build();
-        repo.save(Stream.of(toSave));
-        assertNotNull(repo.get(toSave.getId()));
-        assertNotNull(repo.get(toSave.getUsername(), toSave.getId()));
+        var stored = repo.save(toSave);
+        assertNotNull(repo.get(stored.getId()));
+        assertNotNull(repo.get(toSave.getUsername(), stored.getId()));
         assertEquals(1, repo.count());
-        assertEquals(1, repo.count(toSave.getUsername()));
+        assertEquals(1, repo.count(stored.getUsername()));
         repo.delete(acct.getUsername());
         assertTrue(repo.load().isEmpty());
         assertEquals(0, repo.count());
-        assertEquals(0, repo.count(toSave.getUsername()));
+        assertEquals(0, repo.count(stored.getUsername()));
     }
 
     @Test

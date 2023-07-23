@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.transforms.BlockingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -32,7 +33,7 @@ public class PrincipalNameTransformerUtils {
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
         val chain = new ChainingPrincipalNameTransformer();
 
-        if (p.getGroovy().getLocation() != null) {
+        if (p.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             val t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
             chain.addTransformer(t);
         }

@@ -116,7 +116,7 @@ public class CasConsentCoreConfiguration {
             final ConsentEngine consentEngine,
             final CasConfigurationProperties casProperties) {
             val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
-            if (location != null) {
+            if (location != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 return new GroovyConsentActivationStrategy(location, consentEngine, casProperties);
             }
             return new DefaultConsentActivationStrategy(consentEngine, casProperties);

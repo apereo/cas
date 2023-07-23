@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -69,7 +70,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
                 attributesToRelease.put(attr, resolvedAttributes.get(attr));
             } else {
                 val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attr);
-                if (matcherInline.find()) {
+                if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     val inlineGroovy = matcherInline.group(1);
                     try (val executableScript = new GroovyShellScript(inlineGroovy)) {
                         val args = CollectionUtils.<String, Object>wrap(

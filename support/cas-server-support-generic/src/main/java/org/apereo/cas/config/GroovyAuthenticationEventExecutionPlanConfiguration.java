@@ -39,12 +39,14 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "groovyPrincipalFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingGraalVMNativeImage
     public PrincipalFactory groovyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
+    @ConditionalOnMissingGraalVMNativeImage
     public AuthenticationHandler groovyResourceAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         @Qualifier("groovyPrincipalFactory")
@@ -61,6 +63,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "groovyResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingGraalVMNativeImage
     public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("groovyResourceAuthenticationHandler")

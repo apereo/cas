@@ -9,13 +9,13 @@ import org.springframework.mock.env.MockEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link BeanPropertyPropertyConditionTests}.
+ * This is {@link BeanConditionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("Utility")
-class BeanPropertyPropertyConditionTests {
+class BeanConditionTests {
 
     @Test
     void verifyExpressionLanguageEmbedded() {
@@ -108,11 +108,18 @@ class BeanPropertyPropertyConditionTests {
     }
 
     @Test
+    void verifyBooleanValue() {
+        val env = new MockEnvironment();
+        assertFalse(BeanCondition.alwaysTrue().and(() -> false).given(env).get());
+    }
+
+    @Test
     void verifyMatchMissing() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.on("cas.property.other-name")
             .evenIfMissing()
+            .and(() -> true)
             .given(env)
             .get();
         assertTrue(condition);

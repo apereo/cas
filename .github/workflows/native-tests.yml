@@ -34,14 +34,14 @@ env:
   JDK_CURRENT: 17
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
-  RETRY_MINUTES: 35
+  RETRY_MINUTES: 45
   SCENARIO_REGEX: ".*"
 
 on:
 #  push:
 #    branches: [ master ]
   schedule:
-    - cron: '0 17 * * 6'
+    - cron: '0 14 * * 5'
 
 ##########################################################################
 
