@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesR
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -172,11 +173,11 @@ public class CasCoreAuthenticationSupportConfiguration {
             return plan -> {
                 val engine = casProperties.getAuthn().getCore().getEngine();
                 val preResource = engine.getGroovyPreProcessor().getLocation();
-                if (preResource != null) {
+                if (preResource != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     plan.registerAuthenticationPreProcessor(new GroovyAuthenticationPreProcessor(preResource));
                 }
                 val postResource = engine.getGroovyPostProcessor().getLocation();
-                if (postResource != null) {
+                if (postResource != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     plan.registerAuthenticationPostProcessor(new GroovyAuthenticationPostProcessor(postResource));
                 }
             };

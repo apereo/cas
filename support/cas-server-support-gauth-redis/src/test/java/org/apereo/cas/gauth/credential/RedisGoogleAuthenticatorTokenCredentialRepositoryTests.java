@@ -128,8 +128,8 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
                         .name(UUID.randomUUID().toString())
                         .build();
                 })
-            .limit(2000);
-        executedTimedOperation("Adding accounts", __ -> registry.save(allAccounts));
+            .limit(1000);
+        executedTimedOperation("Adding accounts", __ -> allAccounts.forEach(registry::save));
         executedTimedOperation("Getting accounts",
             Unchecked.consumer(__ -> {
                 val accounts = registry.load();

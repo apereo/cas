@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -187,6 +188,8 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         when(token.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(token.getTicketGrantingTicket()).thenReturn(tgt);
         when(token.getClientId()).thenReturn(clientId);
+        when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+
         ticketRegistry.addTicket(token);
     }
 }

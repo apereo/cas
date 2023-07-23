@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -79,14 +78,6 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
             .filter(Objects::nonNull)
             .map(this::decode)
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void save(final Stream<? extends OneTimeTokenAccount> toSave) {
-        casRedisTemplates.getAccountsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
-            StreamSupport.stream(toSave.spliterator(), false).forEach(this::update);
-            return null;
-        });
     }
 
     @Override
