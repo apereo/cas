@@ -24,6 +24,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -189,7 +191,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         when(token.getTicketGrantingTicket()).thenReturn(tgt);
         when(token.getClientId()).thenReturn(clientId);
         when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-
+        when(token.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         ticketRegistry.addTicket(token);
     }
 }

@@ -28,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -226,6 +227,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
         when(sts.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(sts.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
 
         ticketRegistry.addTicket(sts);
 

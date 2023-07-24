@@ -136,6 +136,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -372,7 +373,6 @@ public abstract class AbstractOAuth20Tests {
     protected static OAuth20AccessToken getAccessToken() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService();
-
         val clientId = UUID.randomUUID().toString();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getId()).thenReturn(OAuth20AccessToken.PREFIX + "-123456");
@@ -381,6 +381,7 @@ public abstract class AbstractOAuth20Tests {
         when(accessToken.getService()).thenReturn(service);
         when(accessToken.getClientId()).thenReturn(clientId);
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         return accessToken;
     }
 

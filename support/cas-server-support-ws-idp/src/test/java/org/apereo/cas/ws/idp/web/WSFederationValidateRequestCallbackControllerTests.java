@@ -29,6 +29,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,6 +87,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
         when(sts.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(sts.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
 
         ticketRegistry.addTicket(sts);
 
