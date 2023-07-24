@@ -159,6 +159,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
             val update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
+            update.set(TicketHolder.FIELD_NAME_EXPIRE_AT, holder.getExpireAt());
             val result = this.mongoTemplate.updateFirst(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}] with result [{}]", ticket, result);
             return result.getMatchedCount() > 0 ? ticket : null;
