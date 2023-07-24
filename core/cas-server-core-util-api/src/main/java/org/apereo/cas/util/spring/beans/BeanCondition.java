@@ -1,21 +1,8 @@
 package org.apereo.cas.util.spring.beans;
 
-import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.PropertyResolver;
-
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link BeanCondition}.
