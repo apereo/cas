@@ -9,7 +9,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -22,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 
@@ -101,5 +105,51 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
         when(catalog.find(anyString())).thenThrow(new RuntimeException());
         assertNull(registry.getTicket(ticket.getId()));
+    }
+
+    @RepeatedTest(1)
+    @SuppressWarnings("JavaUtilDate")
+    public void verifyExpireAtTicketTimeoutExpirationPolicy() throws Exception {
+        val ticket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new TimeoutExpirationPolicy(60000));
+        newTicketRegistry.addTicket(ticket);
+
+        val collectionName = "ticketGrantingTicketsCollection";
+
+        val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticket.getId()));
+        val d = mongoDbTicketRegistryTemplate.findOne(query, TicketHolder.class, collectionName);
+        val creationExpireAt = d.getExpireAt();
+
+        Thread.sleep(5);
+
+        newTicketRegistry.updateTicket(ticket);
+        val dd = mongoDbTicketRegistryTemplate.findOne(query, TicketHolder.class, collectionName);
+        val updateExpireAt = dd.getExpireAt();
+
+        assertTrue(updateExpireAt.after(creationExpireAt));
+    }
+
+    @RepeatedTest(1)
+    @SuppressWarnings("JavaUtilDate")
+    public void verifyExpireAtTicketHardTimeoutExpirationPolicy() throws Exception {
+        val ticket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new HardTimeoutExpirationPolicy(60000));
+        newTicketRegistry.addTicket(ticket);
+
+        val collectionName = "ticketGrantingTicketsCollection";
+
+        val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticket.getId()));
+        val d = mongoDbTicketRegistryTemplate.findOne(query, TicketHolder.class, collectionName);
+        val creationExpireAt = d.getExpireAt();
+
+        Thread.sleep(5);
+
+        newTicketRegistry.updateTicket(ticket);
+        val dd = mongoDbTicketRegistryTemplate.findOne(query, TicketHolder.class, collectionName);
+        val updateExpireAt = dd.getExpireAt();
+
+        assertEquals(updateExpireAt, creationExpireAt);
     }
 }
