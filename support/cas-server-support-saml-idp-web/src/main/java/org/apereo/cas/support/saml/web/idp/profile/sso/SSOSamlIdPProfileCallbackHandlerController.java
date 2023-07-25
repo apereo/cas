@@ -86,7 +86,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && !authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && !authnRequest.isPassive()) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
@@ -110,7 +110,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         throws Exception {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
             LOGGER.info("Unable to establish authentication context for passive authentication request");
             return Optional.empty();
         }

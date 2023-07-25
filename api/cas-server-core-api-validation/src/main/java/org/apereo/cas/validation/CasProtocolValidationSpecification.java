@@ -39,7 +39,7 @@ public interface CasProtocolValidationSpecification extends Ordered {
      *
      * @param value the value
      */
-    default void setRenew(boolean value) {
+    default void setRenew(final boolean value) {
     }
 
     enum CasProtocolVersions {

@@ -49,7 +49,7 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
 
     private long getExpiration(final OidcJsonWebKeyCacheKey givenService) {
         LOGGER.trace("Attempting to determine JWKS cache expiration value for [{}]", givenService);
-        if (givenService.getRegisteredService() instanceof OidcRegisteredService service) {
+        if (givenService.getRegisteredService() instanceof final OidcRegisteredService service) {
             if (StringUtils.isNotBlank(service.getJwksCacheDuration())) {
                 val expiration = Beans.newDuration(service.getJwksCacheDuration()).toNanos();
                 LOGGER.trace("JWKS cache expiration value for service [{}] is set to [{}]", service, expiration);

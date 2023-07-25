@@ -21,10 +21,10 @@ import java.util.HashMap;
 public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
-        if (returnValue instanceof Response value) {
+        if (returnValue instanceof final Response value) {
             return getPrincipalIdFromSamlResponse(value);
         }
-        if (returnValue instanceof Envelope value) {
+        if (returnValue instanceof final Envelope value) {
             return getPrincipalIdFromSamlEcpResponse(value);
         }
         LOGGER.error("Could not determine the SAML response in the returned value");
@@ -37,10 +37,10 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         val object = objects.get(0);
-        if (object instanceof Response response) {
+        if (object instanceof final Response response) {
             return getPrincipalIdFromSamlResponse(response);
         }
-        if (object instanceof Fault fault) {
+        if (object instanceof final Fault fault) {
             return getPrincipalIdFromSamlEcpFault(fault);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;

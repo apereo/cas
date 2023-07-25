@@ -151,7 +151,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
                 if (NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
                     val nameIdObject = samlNameIdBuilder.build(context);
-                    if (nameIdObject instanceof NameID nameId) {
+                    if (nameIdObject instanceof final NameID nameId) {
                         val nameID = newSamlObject(NameID.class);
                         nameID.setFormat(nameId.getFormat());
                         nameID.setNameQualifier(nameId.getNameQualifier());

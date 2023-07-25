@@ -74,7 +74,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         protected HttpAction redirectToOriginallyRequestedUrl(final CallContext callContext,
                                                               final String defaultUrl) {
             val result = getSavedRequestHandler().restore(callContext, defaultUrl);
-            if (result instanceof WithLocationAction locationAction) {
+            if (result instanceof final WithLocationAction locationAction) {
                 redirectUrl = locationAction.getLocation();
             }
             return result;

@@ -46,11 +46,11 @@ public class Attestation implements Serializable {
 
     @JsonCreator
     private Attestation(
-        @JsonProperty("metadataIdentifier")
+        @JsonProperty("metadataIdentifier") final
         String metadataIdentifier,
-        @JsonProperty("vendorProperties")
+        @JsonProperty("vendorProperties") final
         Map<String, String> vendorProperties,
-        @JsonProperty("deviceProperties")
+        @JsonProperty("deviceProperties") final
         Map<String, String> deviceProperties) {
         this.metadataIdentifier = metadataIdentifier;
         this.vendorProperties = vendorProperties;
@@ -104,7 +104,7 @@ public class Attestation implements Serializable {
 
         @CanIgnoreReturnValue
         public AttestationBuilder vendorProperties(
-            @NonNull Optional<Map<String, String>> vendorProperties) {
+            @NonNull final Optional<Map<String, String>> vendorProperties) {
             return this.vendorProperties(vendorProperties.orElse(null));
         }
 

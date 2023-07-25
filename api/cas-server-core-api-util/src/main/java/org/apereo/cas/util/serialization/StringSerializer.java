@@ -28,7 +28,7 @@ public interface StringSerializer<T> extends Serializable {
      * @param elem the elem
      * @return collection
      */
-    private static <T> Collection<T> makeCollectionOf(T elem) {
+    private static <T> Collection<T> makeCollectionOf(final T elem) {
         if (elem != null) {
             val list = new ArrayList<T>(1);
             list.add(elem);

@@ -18,7 +18,7 @@ public interface CaptchaValidator {
      * @param googleRecaptcha the google recaptcha
      * @return the instance
      */
-    static CaptchaValidator getInstance(GoogleRecaptchaProperties googleRecaptcha) {
+    static CaptchaValidator getInstance(final GoogleRecaptchaProperties googleRecaptcha) {
         if (googleRecaptcha.getVersion() == RecaptchaVersions.GOOGLE_RECAPTCHA_V2) {
             return new GoogleCaptchaV2Validator(googleRecaptcha);
         }

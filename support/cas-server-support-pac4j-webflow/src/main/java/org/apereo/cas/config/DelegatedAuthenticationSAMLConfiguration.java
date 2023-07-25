@@ -85,7 +85,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
         public DelegatedClientFactoryCustomizer delegatedSaml2ClientJdbcMetadataCustomizer(
             final CasConfigurationProperties casProperties) {
             return client -> {
-                if (client instanceof SAML2Client saml2Client) {
+                if (client instanceof final SAML2Client saml2Client) {
                     val configuration = saml2Client.getConfiguration();
                     casProperties.getAuthn().getPac4j().getSaml()
                         .stream()
@@ -116,7 +116,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
             return client -> {
-                if (client instanceof SAML2Client saml2Client) {
+                if (client instanceof final SAML2Client saml2Client) {
                     val configuration = saml2Client.getConfiguration();
                     casProperties.getAuthn().getPac4j().getSaml()
                         .stream()

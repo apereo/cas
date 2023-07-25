@@ -205,7 +205,7 @@ class CasAuthenticationEventListenerTests {
             futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
         }
         var maxThread = -1;
-        for (var future : futureList) {
+        for (val future : futureList) {
             var currentThread = future.get();
             if (currentThread > maxThread) {
                 maxThread = currentThread;

@@ -31,13 +31,13 @@ public class ProtocolSpecificationValidationAuditResourceResolver extends Parame
     protected String[] createResource(final Object[] args) {
         val results = new LinkedHashMap<>();
         Arrays.stream(args).forEach(arg -> {
-            if (arg instanceof HttpServletRequest request) {
+            if (arg instanceof final HttpServletRequest request) {
                 results.put(CasProtocolConstants.PARAMETER_RENEW,
                     StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_RENEW), "false"));
                 results.put(CasProtocolConstants.PARAMETER_GATEWAY,
                     StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_GATEWAY), "false"));
             }
-            if (arg instanceof Assertion assertion) {
+            if (arg instanceof final Assertion assertion) {
                 val authn = assertion.getPrimaryAuthentication();
                 results.put("principal", authn.getPrincipal().getId());
                 results.put("service", DigestUtils.abbreviate(assertion.getService().getId(),

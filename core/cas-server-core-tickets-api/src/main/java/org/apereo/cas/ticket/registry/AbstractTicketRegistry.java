@@ -77,7 +77,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private static Map<String, List<Object>> getCombinedTicketAttributes(final Ticket ticket) {
-        if (ticket instanceof AuthenticationAwareTicket authnTicket) {
+        if (ticket instanceof final AuthenticationAwareTicket authnTicket) {
             val authentication = authnTicket.getAuthentication();
             if (authentication != null) {
                 val attributes = new HashMap<>(authentication.getAttributes());
@@ -147,10 +147,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public int deleteTicket(final Ticket ticket) throws Exception {
         val count = new AtomicLong(0);
-        if (ticket instanceof TicketGrantingTicket tgt) {
+        if (ticket instanceof final TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             count.getAndAdd(deleteChildren(tgt));
-            if (ticket instanceof ProxyGrantingTicket pgt) {
+            if (ticket instanceof final ProxyGrantingTicket pgt) {
                 deleteProxyGrantingTicketFromParent(pgt);
             } else {
                 deleteLinkedProxyGrantingTickets(count, tgt);
@@ -186,7 +186,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long countSessionsFor(final String principalId) {
         val ticketPredicate = (Predicate<Ticket>) t -> {
-            if (t instanceof TicketGrantingTicket ticket) {
+            if (t instanceof final TicketGrantingTicket ticket) {
                 return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
             }
             return false;
@@ -219,7 +219,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         return getTickets(ticket -> {
-            if (ticket instanceof TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
+            if (ticket instanceof final TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
                 && ticketGrantingTicket.getAuthentication() != null) {
                 val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
 
@@ -271,7 +271,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
+        if (ticket instanceof final AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
             val services = authTicket.getServices();
             if (services != null && !services.isEmpty()) {
                 services.keySet()
@@ -321,7 +321,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.warn("Ticket passed is null and cannot be decoded");
             return null;
         }
-        if (!(ticketToProcess instanceof EncodedTicket encodedTicket)) {
+        if (!(ticketToProcess instanceof final EncodedTicket encodedTicket)) {
             LOGGER.warn("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;

@@ -112,7 +112,7 @@ public class HttpUtils {
      * @param response the response to close
      */
     public void close(final HttpResponse response) {
-        if (response instanceof CloseableHttpResponse closeableHttpResponse) {
+        if (response instanceof final CloseableHttpResponse closeableHttpResponse) {
             try {
                 closeableHttpResponse.close();
             } catch (final Exception e) {

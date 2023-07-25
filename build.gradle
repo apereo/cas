@@ -63,6 +63,7 @@ ext {
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/org/apereo/inspektr/**',
         '**/net/jradius/**',
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
@@ -420,7 +421,6 @@ subprojects {
         api libraries.slf4j
         api libraries.guava
         api libraries.commons
-        api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
         api libraries.jackson

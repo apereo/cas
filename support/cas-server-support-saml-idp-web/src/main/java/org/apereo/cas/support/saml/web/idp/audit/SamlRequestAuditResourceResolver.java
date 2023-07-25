@@ -20,20 +20,20 @@ import java.util.HashMap;
 public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
-        if (returnValue instanceof Pair context) {
+        if (returnValue instanceof final Pair context) {
             return getAuditResourceFromSamlRequest((XMLObject) context.getLeft());
         }
-        if (returnValue instanceof XMLObject xmlObject) {
+        if (returnValue instanceof final XMLObject xmlObject) {
             return getAuditResourceFromSamlRequest(xmlObject);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     protected String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
-        if (returnValue instanceof AuthnRequest authnRequest) {
+        if (returnValue instanceof final AuthnRequest authnRequest) {
             return getAuditResourceFromSamlAuthnRequest(authnRequest);
         }
-        if (returnValue instanceof LogoutRequest logoutRequest) {
+        if (returnValue instanceof final LogoutRequest logoutRequest) {
             return getAuditResourceFromSamlLogoutRequest(logoutRequest);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;

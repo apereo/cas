@@ -48,7 +48,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService service) {
+        if (svc instanceof final OidcRegisteredService service) {
             if (!service.isSignIdToken()) {
                 LOGGER.trace("Service [{}] does not require ID token to be signed", svc.getServiceId());
                 return false;
@@ -71,7 +71,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService service) {
+        if (svc instanceof final OidcRegisteredService service) {
             if (service.isEncryptIdToken() && AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())) {
                 if (!discoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
                     LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm, "
@@ -98,7 +98,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     @Override
     protected String encryptToken(final OAuthRegisteredService service, final String innerJwt) {
-        if (service instanceof OidcRegisteredService svc) {
+        if (service instanceof final OidcRegisteredService svc) {
             val jsonWebKey = getJsonWebKeyForEncryption(svc);
 
             return JsonWebTokenEncryptor.builder()

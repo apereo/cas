@@ -51,7 +51,7 @@ class PropertyBeanCondition implements BeanCondition {
     @Override
     @CanIgnoreReturnValue
     public BeanCondition evenIfMissing() {
-        if (conditionList.peek() instanceof PropertyCondition condition) {
+        if (conditionList.peek() instanceof final PropertyCondition condition) {
             condition.setMatchIfMissing(true);
         }
         return this;
@@ -60,7 +60,7 @@ class PropertyBeanCondition implements BeanCondition {
     @Override
     @CanIgnoreReturnValue
     public BeanCondition withDefaultValue(final String value) {
-        if (conditionList.peek() instanceof PropertyCondition condition) {
+        if (conditionList.peek() instanceof final PropertyCondition condition) {
             condition.setDefaultValue(value);
         }
         return this;
@@ -69,7 +69,7 @@ class PropertyBeanCondition implements BeanCondition {
     @Override
     @CanIgnoreReturnValue
     public BeanCondition havingValue(final Serializable value) {
-        if (conditionList.peek() instanceof PropertyCondition condition) {
+        if (conditionList.peek() instanceof final PropertyCondition condition) {
             condition.setHavingValue(value);
         }
         return this;
@@ -78,7 +78,7 @@ class PropertyBeanCondition implements BeanCondition {
     @Override
     @CanIgnoreReturnValue
     public BeanCondition exists() {
-        if (conditionList.peek() instanceof PropertyCondition condition) {
+        if (conditionList.peek() instanceof final PropertyCondition condition) {
             condition.setExists(true);
         }
         return this;
@@ -87,7 +87,7 @@ class PropertyBeanCondition implements BeanCondition {
     @Override
     @CanIgnoreReturnValue
     public BeanCondition isUrl() {
-        if (conditionList.peek() instanceof PropertyCondition condition) {
+        if (conditionList.peek() instanceof final PropertyCondition condition) {
             condition.setUrl(true);
         }
         return this;
@@ -111,7 +111,7 @@ class PropertyBeanCondition implements BeanCondition {
         return () -> conditionList
             .stream()
             .allMatch(cond -> {
-                if (cond instanceof PropertyCondition condition) {
+                if (cond instanceof final PropertyCondition condition) {
                     if (condition.isMatchIfMissing() && !propertyResolver.containsProperty(condition.getPropertyName())) {
                         return true;
                     }
@@ -127,7 +127,7 @@ class PropertyBeanCondition implements BeanCondition {
                     }
                     return StringUtils.isNotBlank(result);
                 }
-                if (cond instanceof BooleanCondition condition) {
+                if (cond instanceof final BooleanCondition condition) {
                     return BooleanUtils.toBoolean(condition.getValue());
                 }
                 return false;

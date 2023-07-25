@@ -100,7 +100,7 @@ class GitRepositoryBuilderTests {
     @Test
     void verifyBuildWithHttpClientOptions() throws Exception {
         val readonlyDeployToken = "ST8hSZUWDs7ujS83EVnk";
-        for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
+        for (final BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
             val props = casProperties.getServiceRegistry().getGit();
             props.setHttpClientType(type);
             props.setRepositoryUrl("https://gitlab.com/hdeadman-bah/cas-git-auth-test.git");

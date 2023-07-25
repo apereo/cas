@@ -61,7 +61,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
             ? applicationContext.getBean(viewName, View.class)
             : delegate.resolveViewName(viewName, locale);
 
-        if (view instanceof AbstractThymeleafView thymeleafView) {
+        if (view instanceof final AbstractThymeleafView thymeleafView) {
             configureTemplateThemeDefaultLocation(thymeleafView);
 
             thymeleafViewResolverConfigurers.stream()

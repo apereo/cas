@@ -133,7 +133,7 @@ that can control SSO participation on a per-application basis based on presence 
 - New CAS actuator endpoints are available to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
 - CAS documentation has switched to use a Dark Theme by default to make life slightly easier on the eyes.
 - Many small improvements around auditing facilities, making it easier internally to capture and/or tweak audited fields recorded by the audit log.
-- [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support public/private keypairs.
+- [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support RSA public/private keypairs.
 - CAS is now able to conditionally geolocate client sessions when building and pinning [SSO Cookies](../authentication/Configuring-SSO-Cookie.html).
 
 ## Library Upgrades

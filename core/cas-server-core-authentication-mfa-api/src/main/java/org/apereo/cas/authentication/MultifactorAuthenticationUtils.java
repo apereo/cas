@@ -112,7 +112,7 @@ public class MultifactorAuthenticationUtils {
         final MultifactorAuthenticationProvider provider,
         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
-        if (attributeValue instanceof Collection values) {
+        if (attributeValue instanceof final Collection values) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val events = new HashSet<Event>();
             values.forEach(value -> {

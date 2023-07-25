@@ -88,10 +88,10 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
             val result = finalAssertion.get();
-            if (result instanceof EncryptedAssertion encrypted) {
+            if (result instanceof final EncryptedAssertion encrypted) {
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
                 samlResponse.getEncryptedAssertions().add(encrypted);
-            } else if (result instanceof Assertion nonEncryptedAssertion){
+            } else if (result instanceof final Assertion nonEncryptedAssertion){
                 customizers.stream()
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
                     .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
@@ -125,7 +125,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     protected Status determineResponseStatus(final SamlProfileBuilderContext context) {
         if (context.getAuthenticatedAssertion().isEmpty()) {
-            if (context.getSamlRequest() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+            if (context.getSamlRequest() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
                 val message = """
                     SAML2 authentication request from %s indicated a passive authentication request, \
                     but CAS is unable to satify and support this requirement, likely because \

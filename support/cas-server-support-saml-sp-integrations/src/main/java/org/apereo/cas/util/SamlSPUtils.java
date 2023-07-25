@@ -115,7 +115,7 @@ public class SamlSPUtils {
             val metadataResolver = resolver.resolve(service, criteriaSet).getMetadataResolver();
 
             val resolvers = new ArrayList<MetadataResolver>();
-            if (metadataResolver instanceof ChainingMetadataResolver instance) {
+            if (metadataResolver instanceof final ChainingMetadataResolver instance) {
                 resolvers.addAll(instance.getResolvers());
             } else {
                 resolvers.add(metadataResolver);

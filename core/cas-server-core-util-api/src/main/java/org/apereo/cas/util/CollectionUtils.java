@@ -148,10 +148,10 @@ public class CollectionUtils {
         val resultingSet = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
-        } else if (obj instanceof Collection values) {
+        } else if (obj instanceof final Collection values) {
             resultingSet.addAll(values);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
-        } else if (obj instanceof Map map) {
+        } else if (obj instanceof final Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
             resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
@@ -161,11 +161,11 @@ public class CollectionUtils {
                 resultingSet.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
-        } else if (obj instanceof Iterator it) {
+        } else if (obj instanceof final Iterator it) {
             while (it.hasNext()) {
                 resultingSet.add(it.next());
             }
-        } else if (obj instanceof Enumeration it) {
+        } else if (obj instanceof final Enumeration it) {
             while (it.hasMoreElements()) {
                 resultingSet.add(it.nextElement());
             }
@@ -466,7 +466,7 @@ public class CollectionUtils {
     public static <T> List<T> wrap(final T source) {
         val list = new ArrayList<T>();
         if (source != null) {
-            if (source instanceof Collection values) {
+            if (source instanceof final Collection values) {
                 val it = values.iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());

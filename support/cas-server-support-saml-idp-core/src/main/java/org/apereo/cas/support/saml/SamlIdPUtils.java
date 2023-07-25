@@ -210,13 +210,13 @@ public class SamlIdPUtils {
      * @return the issuer from saml object
      */
     public static String getIssuerFromSamlObject(final SAMLObject object) {
-        if (object instanceof RequestAbstractType instance) {
+        if (object instanceof final RequestAbstractType instance) {
             return instance.getIssuer().getValue();
         }
-        if (object instanceof StatusResponseType instance) {
+        if (object instanceof final StatusResponseType instance) {
             return instance.getIssuer().getValue();
         }
-        if (object instanceof Assertion instance) {
+        if (object instanceof final Assertion instance) {
             return instance.getIssuer().getValue();
         }
         return null;
@@ -260,7 +260,7 @@ public class SamlIdPUtils {
      * @return the name id policy
      */
     public static Optional<NameIDPolicy> getNameIDPolicy(final RequestAbstractType authnRequest) {
-        if (authnRequest instanceof AuthnRequest instance) {
+        if (authnRequest instanceof final AuthnRequest instance) {
             return Optional.ofNullable(instance.getNameIDPolicy());
         }
         return Optional.empty();
@@ -269,7 +269,7 @@ public class SamlIdPUtils {
     private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request,
                                                                                    final String binding,
                                                                                    final SamlRegisteredServiceMetadataAdaptor adapter) {
-        if (request instanceof AuthnRequest authnRequest) {
+        if (request instanceof final AuthnRequest authnRequest) {
             var acsUrl = authnRequest.getAssertionConsumerServiceURL();
             val acsIndex = authnRequest.getAssertionConsumerServiceIndex();
             if (StringUtils.isBlank(acsUrl) && acsIndex == null) {

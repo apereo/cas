@@ -38,7 +38,7 @@ public class OAuth20RegisteredServiceUIAction extends BaseCasWebflowAction imple
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
-            if (registeredService instanceof OAuthRegisteredService oauthService) {
+            if (registeredService instanceof final OAuthRegisteredService oauthService) {
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

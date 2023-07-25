@@ -140,10 +140,10 @@ public class WebAuthnRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.DECLARED_FIELDS,
             MemberCategory.PUBLIC_FIELDS};
         entries.forEach(el -> {
-            if (el instanceof Class clazz) {
+            if (el instanceof final Class clazz) {
                 hints.reflection().registerType(clazz, memberCategories);
             }
-            if (el instanceof TypeReference reference) {
+            if (el instanceof final TypeReference reference) {
                 hints.reflection().registerType(reference, memberCategories);
             }
         });

@@ -73,7 +73,7 @@ public class LoginSearch {
      *
      * @param value the user id
      */
-    public void setUserid(long value) {
+    public void setUserid(final long value) {
         this.userid = value;
     }
 
@@ -91,7 +91,7 @@ public class LoginSearch {
      *
      * @param value the service id
      */
-    public void setServiceid(long value) {
+    public void setServiceid(final long value) {
         this.serviceid = value;
     }
 
@@ -111,7 +111,7 @@ public class LoginSearch {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setLoginname(String value) {
+    public void setLoginname(final String value) {
         this.loginname = value;
     }
 
@@ -129,7 +129,7 @@ public class LoginSearch {
      *
      * @param value the exact match
      */
-    public void setExactmatch(long value) {
+    public void setExactmatch(final long value) {
         this.exactmatch = value;
     }
 
@@ -147,7 +147,7 @@ public class LoginSearch {
      *
      * @param value the offset
      */
-    public void setOffset(long value) {
+    public void setOffset(final long value) {
         this.offset = value;
     }
 
@@ -165,7 +165,7 @@ public class LoginSearch {
      *
      * @param value the max
      */
-    public void setNmax(long value) {
+    public void setNmax(final long value) {
         this.nmax = value;
     }
 
@@ -183,7 +183,7 @@ public class LoginSearch {
      *
      * @param value the sort
      */
-    public void setSort(long value) {
+    public void setSort(final long value) {
         this.sort = value;
     }
 

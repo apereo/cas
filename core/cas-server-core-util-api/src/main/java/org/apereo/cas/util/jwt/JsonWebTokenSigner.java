@@ -86,7 +86,7 @@ public class JsonWebTokenSigner {
         jws.setAlgorithmConstraints(getAlgorithmConstraints());
         jws.setHeader("typ", "JWT");
 
-        if (this.key instanceof IdentifiableKey idk) {
+        if (this.key instanceof final IdentifiableKey idk) {
             jws.setKey(idk.getKey());
             jws.setKeyIdHeaderValue(idk.getId());
         } else {

@@ -60,7 +60,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                             final RegisteredService registeredService,
                             final OAuth20AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, accessToken);
-        if (registeredService instanceof OidcRegisteredService oidcService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService) {
             val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Access token scopes [{}] cannot identify an OpenID Connect request with a [{}] scope. "
