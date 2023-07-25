@@ -27,7 +27,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -59,24 +58,18 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      */
     private static Date getExpireAt(final Ticket ticket) {
         val expirationPolicy = ticket.getExpirationPolicy();
-        if (expirationPolicy.getTimeToIdle() <= 0) {
-            val ttl = expirationPolicy.getTimeToLive(ticket);
-            if (ttl < 1 || ttl == Long.MAX_VALUE) {
-                LOGGER.trace("Expiration date is undefined for tti value [{}]", ttl);
-                return null;
-            }
-            val creationTime = ticket.getCreationTime();
-            val exp = creationTime.plus(ttl, ChronoUnit.SECONDS);
-            return DateTimeUtils.dateOf(exp);
-        } else {
-            val tti = expirationPolicy.getTimeToIdle();
-            if (tti < 1 || tti == Long.MAX_VALUE) {
-                LOGGER.trace("Expiration date is undefined for tti value [{}]", tti);
-                return null;
-            }
-            val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tti);
-            return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
+        val ttl = expirationPolicy.getTimeToLive(ticket);
+        val tti = expirationPolicy.getTimeToIdle();
+        val expireAtTti = tti>0 && tti != Long.MAX_VALUE ? System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tti) : -1;
+        val expireAtTtl = ttl>0 && ttl != Long.MAX_VALUE ? ticket.getCreationTime().toInstant().toEpochMilli() + TimeUnit.SECONDS.toMillis(ttl) : -1;
+        val maxExpireAt = Math.max(expireAtTti, expireAtTtl);
+        if (maxExpireAt == -1) {
+            LOGGER.trace("Expiration date for [{}] is undefined for tti value [{}] / ttl value [{}]", ticket.getId(), tti, ttl);
+            return null;
         }
+        val expireAt = DateTimeUtils.dateOf(Instant.ofEpochMilli(maxExpireAt));
+        LOGGER.trace("Expiration date for [{}] : [{}]", ticket.getId(), expireAt);
+        return DateTimeUtils.dateOf(Instant.ofEpochMilli(maxExpireAt));
     }
 
     @Override
