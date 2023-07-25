@@ -30,7 +30,7 @@ public interface DelegatedClientNameExtractor {
      * @param context the context
      * @return the optional
      */
-    default Optional<String> extract(WebContext context) {
+    default Optional<String> extract(final WebContext context) {
         return extract(JEEContext.class.cast(context).getNativeRequest());
     }
 

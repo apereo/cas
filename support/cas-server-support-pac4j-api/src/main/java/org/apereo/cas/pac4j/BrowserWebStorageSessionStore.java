@@ -62,7 +62,7 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
     @Override
     public Optional<SessionStore> buildFromTrackableSession(final WebContext context,
                                                             final Object trackableSession) {
-        val encoded = trackableSession instanceof BrowserSessionStorage storage
+        val encoded = trackableSession instanceof final BrowserSessionStorage storage
             ? storage.getPayload().getBytes(StandardCharsets.UTF_8)
             : trackableSession.toString().getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);

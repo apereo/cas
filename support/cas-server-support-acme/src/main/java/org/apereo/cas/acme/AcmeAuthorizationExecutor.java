@@ -39,7 +39,7 @@ public interface AcmeAuthorizationExecutor {
      * @return the order
      * @throws Exception the exception
      */
-    default Order execute(Order order, CSRBuilder builder) throws Exception {
+    default Order execute(final Order order, final CSRBuilder builder) throws Exception {
         order.execute(builder.getEncoded());
         return order;
     }

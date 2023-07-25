@@ -243,7 +243,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
             if (resultingCredentials.containsKey(key)) {
                 val current = resultingCredentials.get(key);
 
-                if (current instanceof MutableCredential currentMutable && credential instanceof MutableCredential credentialMutable) {
+                if (current instanceof final MutableCredential currentMutable && credential instanceof final MutableCredential credentialMutable) {
                     FunctionUtils.doIfNull(credential.getCredentialMetadata(), __ -> credentialMutable.setCredentialMetadata(new BasicCredentialMetadata(credentialMutable)));
                     FunctionUtils.doIfNull(current.getCredentialMetadata(), __ -> currentMutable.setCredentialMetadata(new BasicCredentialMetadata(currentMutable)));
                     current.getCredentialMetadata().putProperties(credential.getCredentialMetadata().getProperties());

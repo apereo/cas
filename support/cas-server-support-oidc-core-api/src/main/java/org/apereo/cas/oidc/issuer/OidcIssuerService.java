@@ -48,7 +48,7 @@ public interface OidcIssuerService {
      * @param endpoint   the endpoint
      * @return true/false
      */
-    default boolean validateIssuer(WebContext webContext, String endpoint) {
+    default boolean validateIssuer(final WebContext webContext, final String endpoint) {
         return true;
     }
 }

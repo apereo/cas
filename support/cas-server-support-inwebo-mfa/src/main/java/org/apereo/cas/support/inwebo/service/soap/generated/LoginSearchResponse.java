@@ -49,7 +49,7 @@ public class LoginSearchResponse {
      * @param value allowed object is
      *              {@link LoginSearchResult }
      */
-    public void setLoginSearchReturn(LoginSearchResult value) {
+    public void setLoginSearchReturn(final LoginSearchResult value) {
         this.loginSearchReturn = value;
     }
 

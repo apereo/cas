@@ -331,7 +331,7 @@ public class WebAuthnServer {
             attestationCert = Optional.ofNullable(
                     response.credential().getResponse().getAttestation().getAttestationStatement().get("x5c")
                 ).map(certs -> certs.get(0))
-                .flatMap((JsonNode certDer) -> {
+                .flatMap((final JsonNode certDer) -> {
                     try {
                         return Optional.of(new ByteArray(certDer.binaryValue()));
                     } catch (final IOException e) {
@@ -453,7 +453,7 @@ public class WebAuthnServer {
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
                 .flatMap(cert -> {
-                    if (rp.getAttestationTrustSource().get() instanceof AttestationMetadataSource source) {
+                    if (rp.getAttestationTrustSource().get() instanceof final AttestationMetadataSource source) {
                         return source.findMetadata(cert);
                     }
                     return Optional.empty();

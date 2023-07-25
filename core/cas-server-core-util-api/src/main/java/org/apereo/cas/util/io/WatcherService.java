@@ -32,6 +32,6 @@ public interface WatcherService extends Closeable {
      *
      * @param name the name
      */
-    default void start(String name) {
+    default void start(final String name) {
     }
 }

@@ -40,7 +40,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
      */
     private String[] toResources(final Object[] args) {
         val object = args[0];
-        if (object instanceof AuthenticationTransaction transaction) {
+        if (object instanceof final AuthenticationTransaction transaction) {
             return new String[]{tranactionToResourceString(transaction)};
         }
         return new String[]{toResourceString(CollectionUtils.wrap(object))};
@@ -48,7 +48,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
 
     protected String tranactionToResourceString(final AuthenticationTransaction transaction) {
         val payload = CollectionUtils.wrap("credential", transaction.getCredentials());
-        if (transaction instanceof RegisteredServiceAwareAuthenticationTransaction rsat) {
+        if (transaction instanceof final RegisteredServiceAwareAuthenticationTransaction rsat) {
             FunctionUtils.doIfNotNull(rsat.getRegisteredService(), registeredService -> {
                 payload.put("registeredServiceId", registeredService.getServiceId());
                 payload.put("registeredServiceName", registeredService.getName());

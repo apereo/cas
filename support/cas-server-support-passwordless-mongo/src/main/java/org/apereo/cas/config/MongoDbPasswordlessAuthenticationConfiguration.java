@@ -13,11 +13,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.val;
-import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,8 +49,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MongoOperations mongoDbPasswordlessAuthenticationTemplate(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext) {
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
             val mongo = casProperties.getAuthn().getPasswordless().getAccounts().getMongo();
             val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
             val mongoTemplate = factory.buildMongoTemplate(mongo);
@@ -62,13 +60,13 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordlessUserAccountStore passwordlessUserAccountStore(
-            @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
-            final MongoOperations mongoDbPasswordlessAuthenticationTemplate,
+            @Qualifier("mongoDbPasswordlessAuthenticationTemplate") final MongoOperations mongoDbPasswordlessAuthenticationTemplate,
             final CasConfigurationProperties casProperties) {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
             return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo());
         }
     }
+
     @Configuration(value = "MongoDbPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MongoDbPasswordlessAuthenticationRepositoryConfiguration {
@@ -78,8 +76,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MongoOperations mongoDbPasswordlessAuthenticationTokensTemplate(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext) {
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
             val mongo = casProperties.getAuthn().getPasswordless().getTokens().getMongo();
             val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
             val mongoTemplate = factory.buildMongoTemplate(mongo);
@@ -90,10 +87,8 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordlessTokenRepository passwordlessTokenRepository(
-            @Qualifier("mongoDbPasswordlessAuthenticationTokensTemplate")
-            final MongoOperations mongoDbPasswordlessAuthenticationTokensTemplate,
-            @Qualifier("passwordlessCipherExecutor")
-            final CipherExecutor passwordlessCipherExecutor,
+            @Qualifier("mongoDbPasswordlessAuthenticationTokensTemplate") final MongoOperations mongoDbPasswordlessAuthenticationTokensTemplate,
+            @Qualifier("passwordlessCipherExecutor") final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
             val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
@@ -112,8 +107,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @Lazy(false)
         public Cleanable mongoPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
-            final PasswordlessTokenRepository passwordlessTokenRepository) {
+            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final PasswordlessTokenRepository passwordlessTokenRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.passwordless.tokens.mongo.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))

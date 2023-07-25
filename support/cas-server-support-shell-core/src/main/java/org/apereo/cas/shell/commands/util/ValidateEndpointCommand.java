@@ -50,7 +50,7 @@ public class ValidateEndpointCommand {
         val trustManagers = trustManagerFactory.getTrustManagers();
         val x509TrustManagers = new ArrayList<X509TrustManager>(trustManagers.length);
         for (val trustManager : trustManagers) {
-            if (trustManager instanceof X509TrustManager x509TrustManager) {
+            if (trustManager instanceof final X509TrustManager x509TrustManager) {
                 LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);
                 x509TrustManagers.add(x509TrustManager);
             }
@@ -89,7 +89,7 @@ public class ValidateEndpointCommand {
     private static void testBadTlsConnection(final String url, final String proxy) {
         try {
             val urlConnection = createConnection(url, proxy);
-            if (!(urlConnection instanceof HttpsURLConnection httpsConnection)) {
+            if (!(urlConnection instanceof final HttpsURLConnection httpsConnection)) {
                 LOGGER.info("Not an TLS connection.");
                 return;
             }
@@ -210,7 +210,7 @@ public class ValidateEndpointCommand {
                  val in = new BufferedReader(reader)) {
                 in.readLine();
 
-                if (conn instanceof HttpURLConnection instance) {
+                if (conn instanceof final HttpURLConnection instance) {
                     val code = instance.getResponseCode();
                     LOGGER.info("Response status code received: [{}]", code);
                 }

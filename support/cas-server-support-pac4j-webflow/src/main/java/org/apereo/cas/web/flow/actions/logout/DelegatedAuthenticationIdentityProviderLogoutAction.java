@@ -49,8 +49,8 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
         val clientCredential = WebUtils.getCredential(requestContext, ClientCredential.class);
         if (clientCredential != null
             && HttpMethod.POST.matches(request.getMethod())
-            && clientCredential.getCredentials() instanceof SAML2Credentials saml2Credentials
-            && saml2Credentials.getContext().getMessageContext().getMessage() instanceof LogoutRequest logoutRequest) {
+            && clientCredential.getCredentials() instanceof final SAML2Credentials saml2Credentials
+            && saml2Credentials.getContext().getMessageContext().getMessage() instanceof final LogoutRequest logoutRequest) {
             return removeSsoSessionsForSessionIndexes(request, response, logoutRequest);
         }
         return new Event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);

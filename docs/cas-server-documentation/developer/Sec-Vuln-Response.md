@@ -114,9 +114,9 @@ a four-week grace period to allow community members and deployers to transition 
 no additional details (i.e. steps to reproduce, severity and impact, etc) about the security issue are made public and fixes and 
 commits to the codebase are kept privately. As a result, all release tags and other modifications to the CAS codebase related to the security fix
 are put on hold until the grace period is over. At the end of the grace period, details about the security vulnerability are made public and the 
-actual patch, commit and release tags are then pushed to the CAS codebase available to anyone.
+actual patch, commit and release tags are then pushed to the CAS codebase, available to anyone.
 
-### Trusted Contacts
+## Trusted Contacts
 
 Please note that the CAS project cannot disclose details about the security issue and its effects to private individuals without first verifying
 their identity and Apereo foundation membership status. If you consider yourself a trusted contact for your institution who is registered and vetted

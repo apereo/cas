@@ -304,11 +304,11 @@ public class ConfigurationMetadataGenerator {
                                 if (names.contains(propShortName)) {
                                     variable.getInitializer().ifPresent(expression -> {
                                         var value = (Object) null;
-                                        if (expression instanceof LiteralStringValueExpr expr) {
+                                        if (expression instanceof final LiteralStringValueExpr expr) {
                                             value = expr.getValue();
-                                        } else if (expression instanceof BooleanLiteralExpr expr) {
+                                        } else if (expression instanceof final BooleanLiteralExpr expr) {
                                             value = expr.getValue();
-                                        } else if (expression instanceof FieldAccessExpr expr) {
+                                        } else if (expression instanceof final FieldAccessExpr expr) {
                                             value = expr.getNameAsString();
                                         }
                                         prop.setDefaultValue(value);

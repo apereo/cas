@@ -53,7 +53,7 @@ public class OidcUnmetAuthenticationRequirementWebflowExceptionHandler implement
 
     @Override
     public boolean supports(final Exception exception, final RequestContext requestContext) {
-        return exception instanceof AuthenticationException e
+        return exception instanceof final AuthenticationException e
                && e.getHandlerErrors().containsKey(MultifactorAuthenticationProviderAbsentException.class.getSimpleName());
     }
 }

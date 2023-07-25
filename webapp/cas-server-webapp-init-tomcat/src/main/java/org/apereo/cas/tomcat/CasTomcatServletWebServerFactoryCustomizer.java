@@ -71,7 +71,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                     case "HTTP/1.1" -> new Http11NioProtocol();
                     default -> new AjpNioProtocol();
                 };
-                if (protocolHandlerInstance instanceof AbstractAjpProtocol ajp) {
+                if (protocolHandlerInstance instanceof final AbstractAjpProtocol ajp) {
                     ajp.setSecretRequired(proxy.isSecure());
                     ajp.setSecret(proxy.getSecret());
                 }
@@ -88,7 +88,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
     @Override
     public void customize(final ConfigurableServletWebServerFactory factory) {
-        if (factory instanceof TomcatServletWebServerFactory tomcat) {
+        if (factory instanceof final TomcatServletWebServerFactory tomcat) {
             configureAjp(tomcat);
             configureHttp(tomcat);
             configureHttpProxy(tomcat);

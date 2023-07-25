@@ -131,7 +131,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return service;
         }
         if (serviceAttribute != null) {
-            if (serviceAttribute instanceof Service svc) {
+            if (serviceAttribute instanceof final Service svc) {
                 return svc.getId();
             }
             return serviceAttribute.toString();

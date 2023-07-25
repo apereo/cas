@@ -151,7 +151,7 @@ public class ConfigurationMetadataPropertyCreator {
                     val valueType = resultingValue.getClass();
                     if (valueType.isArray()) {
                         prop.setDefaultValue(Arrays.toString((Object[]) resultingValue));
-                    } else if (resultingValue instanceof Collection<?> results) {
+                    } else if (resultingValue instanceof final Collection<?> results) {
                         if (!results.isEmpty()) {
                             val values = results.stream()
                                 .map(Object::toString)
@@ -162,7 +162,7 @@ public class ConfigurationMetadataPropertyCreator {
                                || PRIMITIVES.containsKey(valueType.getSimpleName())
                                || PRIMITIVES.containsKey(elementTypeStr)) {
                         prop.setDefaultValue(resultingValue.toString());
-                    } else if (resultingValue instanceof Map<?, ?> mappedValue) {
+                    } else if (resultingValue instanceof final Map<?, ?> mappedValue) {
                         if (!mappedValue.isEmpty()) {
                             LOGGER.warn("Found configuration property as a Map: [{}]:[{}] with values [{}]",
                                 variable.getNameAsString(), valueType.getName(), mappedValue);
@@ -174,11 +174,11 @@ public class ConfigurationMetadataPropertyCreator {
                 }
             } catch (final Exception e) {
                 LOGGER.error("Processing [{}]:[{}]. Error [{}]", parentClass, name, e);
-                if (exp instanceof LiteralStringValueExpr ex) {
+                if (exp instanceof final LiteralStringValueExpr ex) {
                     prop.setDefaultValue(ex.getValue());
-                } else if (exp instanceof BooleanLiteralExpr ex) {
+                } else if (exp instanceof final BooleanLiteralExpr ex) {
                     prop.setDefaultValue(ex.getValue());
-                } else if (exp instanceof FieldAccessExpr ex) {
+                } else if (exp instanceof final FieldAccessExpr ex) {
                     prop.setDefaultValue(ex.getNameAsString());
                 }
             }
@@ -214,7 +214,7 @@ public class ConfigurationMetadataPropertyCreator {
             if (obj == this) {
                 return true;
             }
-            if (!(obj instanceof ConfigurationMetadataProperty rhs)) {
+            if (!(obj instanceof final ConfigurationMetadataProperty rhs)) {
                 return false;
             }
             return new EqualsBuilder().append(getId(), rhs.getId()).isEquals();
