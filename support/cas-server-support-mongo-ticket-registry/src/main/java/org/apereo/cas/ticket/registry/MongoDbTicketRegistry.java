@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -58,13 +59,24 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      */
     private static Date getExpireAt(final Ticket ticket) {
         val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = expirationPolicy.getTimeToLive(ticket);
-        if (ttl < 1 || ttl == Long.MAX_VALUE) {
-            LOGGER.trace("Expiration date is undefined for ttl value [{}]", ttl);
-            return null;
+        if (expirationPolicy.getTimeToIdle() <= 0) {
+            val ttl = expirationPolicy.getTimeToLive(ticket);
+            if (ttl < 1 || ttl == Long.MAX_VALUE) {
+                LOGGER.trace("Expiration date is undefined for tti value [{}]", ttl);
+                return null;
+            }
+            val creationTime = ticket.getCreationTime();
+            val exp = creationTime.plus(ttl, ChronoUnit.SECONDS);
+            return DateTimeUtils.dateOf(exp);
+        } else {
+            val tti = expirationPolicy.getTimeToIdle();
+            if (tti < 1 || tti == Long.MAX_VALUE) {
+                LOGGER.trace("Expiration date is undefined for tti value [{}]", tti);
+                return null;
+            }
+            val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tti);
+            return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
         }
-        val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
-        return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
     }
 
     @Override
