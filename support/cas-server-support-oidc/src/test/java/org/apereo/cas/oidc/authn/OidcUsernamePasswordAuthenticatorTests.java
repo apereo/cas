@@ -94,7 +94,6 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
             handler.putAttribute("family_name", List.of("Apereo"))
                 .putAttribute("given_name", List.of("CAS"))
                 .putAttribute("email", List.of("cas@apereo.org"));
-            ;
             plan.registerAuthenticationHandler(handler);
         }
     }

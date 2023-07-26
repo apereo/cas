@@ -153,7 +153,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
 
             assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
             assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
-            assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
+            assertNotNull(credentials.getUserProfile().getAttribute("groupMembership"));
         }
     }
 
