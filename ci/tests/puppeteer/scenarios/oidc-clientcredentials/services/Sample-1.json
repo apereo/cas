@@ -6,5 +6,6 @@
   "name": "Sample",
   "id": 1,
   "jwtAccessToken": "true",
-  "scopes" : [ "java.util.HashSet", ["openid", "MyCustomScope"]]
+  "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ],
+  "scopes" : [ "java.util.HashSet", ["openid", "profile", "MyCustomScope"]]
 }

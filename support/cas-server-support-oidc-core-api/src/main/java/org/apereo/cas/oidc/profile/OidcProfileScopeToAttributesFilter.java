@@ -23,6 +23,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.util.ClassUtils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -107,11 +108,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                 final RegisteredService registeredService,
                                                                 final OAuth20AccessToken accessToken) {
         if (scopes.isEmpty()) {
-            val attributes = principal.getAttributes();
-            LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
-                         + "CAS will authorize the collection of resolved attributes [{}] for release to [{}]",
-                registeredService.getServiceId(), attributes, service.getId());
-            return attributes;
+            LOGGER.info("No defined scopes are available to instruct attribute release policies for [{}]. "
+                        + "CAS will NOT authorize the collection of resolved attributes for release to [{}]",
+                registeredService.getServiceId(), service.getId());
+            return new HashMap<>();
         }
 
         val attributes = new LinkedHashMap<String, List<Object>>();
