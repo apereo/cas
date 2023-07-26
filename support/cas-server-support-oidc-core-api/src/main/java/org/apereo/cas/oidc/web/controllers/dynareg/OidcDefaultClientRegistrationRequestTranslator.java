@@ -133,6 +133,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         }
 
         processIdTokenSigningAndEncryption(registrationRequest, registeredService);
+        processIntrospectionSigningAndEncryption(registrationRequest, registeredService);
         processContacts(registrationRequest, registeredService);
         processClientSecretExpiration(context, registeredService);
 
@@ -162,8 +163,8 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static void processUserInfoSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                             final OidcRegisteredService registeredService) {
-        if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
-            registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
+        if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedResponseAlg())) {
+            registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedResponseAlg());
         }
         registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
         if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
@@ -173,6 +174,21 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             } else {
                 registeredService.setUserInfoEncryptedResponseEncoding(registrationRequest.getUserInfoEncryptedResponseEncoding());
             }
+        }
+    }
+
+    private static void processIntrospectionSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
+                                                                 final OidcRegisteredService registeredService) {
+        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionSignedResponseAlg())) {
+            registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg());
+        }
+
+        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg())) {
+            registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg());
+        }
+
+        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding())) {
+            registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding());
         }
     }
 
