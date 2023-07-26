@@ -173,7 +173,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public ServiceRegistryListener oidcServiceRegistryListener(
-            @Qualifier("oidcAttributeReleasePolicyFactory")
+            @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
             return new OidcServiceRegistryListener(oidcAttributeReleasePolicyFactory);
         }
@@ -304,7 +304,7 @@ public class OidcConfiguration {
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
-            @Qualifier("oidcAttributeReleasePolicyFactory")
+            @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory,
             final CasConfigurationProperties casProperties) {
             return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory,
@@ -827,7 +827,7 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcAttributeReleasePolicyFactory")
+        @ConditionalOnMissingBean(name = OidcAttributeReleasePolicyFactory.BEAN_NAME)
         public OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory(
             final CasConfigurationProperties casProperties) {
             return new DefaultOidcAttributeReleasePolicyFactory(casProperties);

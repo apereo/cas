@@ -179,17 +179,14 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static void processIntrospectionSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                                  final OidcRegisteredService registeredService) {
-        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionSignedResponseAlg())) {
-            registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg());
-        }
+        FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionSignedResponseAlg(),
+            __ -> registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg()));
 
-        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg())) {
-            registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg());
-        }
-
-        if (StringUtils.isNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding())) {
-            registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding());
-        }
+        FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg(),
+            __ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()));
+        
+        FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding(),
+            __ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
     }
 
     private static void processIdTokenSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,

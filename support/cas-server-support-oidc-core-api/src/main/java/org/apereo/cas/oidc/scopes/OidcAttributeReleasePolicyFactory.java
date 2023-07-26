@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.scopes;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-
+import org.apereo.cas.services.OidcRegisteredService;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 public interface OidcAttributeReleasePolicyFactory {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oidcAttributeReleasePolicyFactory";
+
     /**
      * Get attribute release policy.
      *
@@ -66,4 +71,12 @@ public interface OidcAttributeReleasePolicyFactory {
      * @return the user defined scopes
      */
     Collection<OidcCustomScopeAttributeReleasePolicy> getUserDefinedScopes();
+
+    /**
+     * Resolve policies map per scope.
+     *
+     * @param registeredService the registered service
+     * @return the map
+     */
+    Map<String, BaseOidcScopeAttributeReleasePolicy> resolvePolicies(OidcRegisteredService registeredService);
 }

@@ -69,7 +69,7 @@ public class OidcJsonWebKeyStoreUtils {
                     LOGGER.trace("Loading JSON web key from [{}]", serviceJwks);
                     val resource = getJsonWebKeySetResource(service, resourceLoader);
                     if (resource == null) {
-                        LOGGER.info("No JSON web keys or keystore resource could be found for [{}]", service.getServiceId());
+                        LOGGER.debug("No JSON web keys or keystore resource could be found for [{}]", service.getServiceId());
                         return Optional.empty();
                     }
                     val requestedKid = Optional.ofNullable(service.getJwksKeyId());
