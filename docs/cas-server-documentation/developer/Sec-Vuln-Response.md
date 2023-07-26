@@ -17,17 +17,17 @@ To review the old archives of the application security working group, [please se
 
 ## Response Model
 
-- Security issues are [privately reported to Apereo](/cas/Mailing-Lists.html) via `cas-appsec-private@apereo.org`.
-- Project members acknowledge the issue and ascertain its merits. All discussion **MUST** happen privately on the [appropriate mailing list](/cas/Mailing-Lists.html).
+- Security issues are privately reported to CAS [via the appropriate mailing list](/cas/Mailing-Lists.html).
+- Project members acknowledge the issue and internally and privately work with the reporters to ascertain the merits of the issue.
 - A fix is planned, produced and made available privately as a *direct commit* to the codebase.
 - Project members or the original reporter **SHOULD** verify and confirm that the produced patch does indeed fix the issue.
-- A patch release is made available to the wider public.
+- A security or patch release is published for public consumption.
 
-<div class="alert alert-warning">:warning: <strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> 
+<div class="alert alert-warning">:warning: <strong>List Etiquette</strong><p>CAS asks that you <strong>DO NOT</strong> 
 create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community 
 members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
-### Dependency Upgrades
+## Dependency Upgrades
 
 Given the amount of effort involved in planning and releasing a security patch and disclosing the issue, communicating descriptions, intent, 
 attack window and fixes, etc it is generally best to keep security releases reserved for issues that **actually can be reproduced** based on a 
@@ -46,12 +46,12 @@ your CAS build to substitute, remove, upgrade or replace affected libraries and 
 may jeopardize the stability of your CAS build and deployment and most likely will make your upgrades quite difficult
 as you might run into various dependency and library conflicts with newer versions. 
 
-### Security Bounty
+## Security Bounty
 
 Apereo CAS project does *not* provide a bounty or reward for discovering and reporting security issues. Security reports are received
 on an as-is basis without any warranties, guarantees, or promises of any kind.
 
-### Report Format
+## Report Format
 
 When you are preparing to communicate a security issue to the appropriate channel privately, please make sure your 
 report contains enough diagnostics data to expedite reviews and feedback:
@@ -67,7 +67,7 @@ Before posting a possible security issue, please make sure the affected CAS rele
 is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases that are 
 considered EOL will not receive further updates and/or attention from designated project members.
 
-### Time to Fix
+## Time to Fix
 
 Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official 
 meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent 
@@ -75,7 +75,7 @@ on individuals' availability and willingness. We strongly recommend that you stu
 on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of 
 urgency, please consider negotiating a professional support agreement with Apereo commercial [service/support providers](/cas/Support.html).
  
-### Security Fixes
+## Security Fixes
 
 The CAS application security group encourages all reporters to not only include instructions and steps to reproduce and verify a reported issue, but
 to also include and propose fixes in form of patch files that are shared privately with the group in the same issue report. Most, if not all, security 
@@ -109,8 +109,8 @@ Once the security release is made available, the following procedure may be obse
 
 ## Grace Period
                   
-Once the security release is made available and the initial version of the security vulnerability becomes public, CAS will observe
-a four-week grace period to allow community members and deployers to transition and upgrade to the security release. During this period,
+Once the security release is published and the initial version of the security vulnerability becomes public, CAS will observe
+a **four-week grace period** to allow community members and deployers to transition and upgrade to the security release. During this period,
 no additional details (i.e. steps to reproduce, severity and impact, etc) about the security issue are made public and fixes and 
 commits to the codebase are kept privately. As a result, all release tags and other modifications to the CAS codebase related to the security fix
 are put on hold until the grace period is over. At the end of the grace period, details about the security vulnerability are made public and the 
