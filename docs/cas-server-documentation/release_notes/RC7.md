@@ -121,7 +121,14 @@ The following docker containers, used for integration tests, are now upgraded:
 ### Attribute-based SSO Participation
 
 A new [single sign-on participation policy](../services/Configuring-Service-SSO-Policy.html) is now available
-that can control SSO participation on a per-application basis based on presence or absense of user attributes. 
+that can control SSO participation on a per-application basis based on presence or absence of user attributes. 
+
+### Google Authenticator w/ Redis
+
+Support for [Google Authenticator backed by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now reworked
+to remove a number of performance issues, all of which have had to do with redis `SCAN` operations and the use of wildcard in query patterns.
+Performance fixes alter the structure of records and keys and as a result are not backwards compatible. You will need to export existing records
+from redis and then import them back via CAS-provided facilities and dedicated endpoints.
 
 ## Other Stuff
 
@@ -164,4 +171,5 @@ that can control SSO participation on a per-application basis based on presence 
 - Spring Integration
 - Spring RabbitMQ
 - Lettuce
+- jQuery
 - Apache ZooKeeper

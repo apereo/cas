@@ -144,7 +144,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(callContext);
         if (grantType == OAuth20GrantTypes.REFRESH_TOKEN
             && StringUtils.isNotBlank(clientIdAndSecret.getKey())
-            && StringUtils.isNotBlank(clientIdAndSecret.getValue())) {
+            && StringUtils.isBlank(clientIdAndSecret.getValue())) {
             LOGGER.debug("Skipping client credential authentication to use refresh token authentication");
             return false;
         }
