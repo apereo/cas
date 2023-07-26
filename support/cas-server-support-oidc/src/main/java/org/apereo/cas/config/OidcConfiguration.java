@@ -674,7 +674,7 @@ public class OidcConfiguration {
             final OAuth20TokenGenerator oauthTokenGenerator,
             @Qualifier("oauthCasAuthenticationBuilder")
             final OAuth20CasAuthenticationBuilder authenticationBuilder,
-            @Qualifier("profileScopeToAttributesFilter")
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport,

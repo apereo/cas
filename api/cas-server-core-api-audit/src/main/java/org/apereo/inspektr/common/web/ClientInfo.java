@@ -1,6 +1,7 @@
 package org.apereo.inspektr.common.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -123,6 +124,7 @@ public class ClientInfo implements Serializable {
      * @param headers the headers
      * @return the headers
      */
+    @CanIgnoreReturnValue
     public ClientInfo setHeaders(final Map<String, String> headers) {
         this.headers = headers;
         return this;
@@ -134,6 +136,7 @@ public class ClientInfo implements Serializable {
      * @param serverIpAddress the server ip address
      * @return the server ip address
      */
+    @CanIgnoreReturnValue
     public ClientInfo setServerIpAddress(final String serverIpAddress) {
         this.serverIpAddress = serverIpAddress;
         return this;
@@ -145,6 +148,7 @@ public class ClientInfo implements Serializable {
      * @param clientIpAddress the client ip address
      * @return the client ip address
      */
+    @CanIgnoreReturnValue
     public ClientInfo setClientIpAddress(final String clientIpAddress) {
         this.clientIpAddress = clientIpAddress;
         return this;
@@ -156,6 +160,7 @@ public class ClientInfo implements Serializable {
      * @param geoLocation the geo location
      * @return the geo location
      */
+    @CanIgnoreReturnValue
     public ClientInfo setGeoLocation(final String geoLocation) {
         this.geoLocation = geoLocation;
         return this;
@@ -167,6 +172,7 @@ public class ClientInfo implements Serializable {
      * @param userAgent the user agent
      * @return the user agent
      */
+    @CanIgnoreReturnValue
     public ClientInfo setUserAgent(final String userAgent) {
         this.userAgent = userAgent;
         return this;
@@ -178,6 +184,7 @@ public class ClientInfo implements Serializable {
      * @param locale the locale
      * @return the locale
      */
+    @CanIgnoreReturnValue
     public ClientInfo setLocale(final Locale locale) {
         this.locale = locale;
         return this;
@@ -197,6 +204,7 @@ public class ClientInfo implements Serializable {
      *
      * @param extraInfo the extra info
      */
+    @CanIgnoreReturnValue
     public ClientInfo setExtraInfo(final Map<String, Serializable> extraInfo) {
         this.extraInfo = extraInfo;
         return this;
@@ -218,6 +226,7 @@ public class ClientInfo implements Serializable {
      * @param value the value
      * @return the client info
      */
+    @CanIgnoreReturnValue
     public ClientInfo include(final String name, final Serializable value) {
         this.extraInfo.put(name, value);
         return this;

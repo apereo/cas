@@ -68,10 +68,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Authentication date.
      */
     private ZonedDateTime authenticationDate;
-
-    /**
-     * Creates a new instance using the current date for the authentication date.
-     */
+    
     public DefaultAuthenticationBuilder() {
         this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
@@ -105,6 +102,16 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     public static AuthenticationBuilder newInstance() {
         return new DefaultAuthenticationBuilder();
+    }
+
+    /**
+     * New instance authentication builder with a principal.
+     *
+     * @param principal the principal
+     * @return the authentication builder
+     */
+    public static AuthenticationBuilder newInstance(final Principal principal) {
+        return new DefaultAuthenticationBuilder(principal);
     }
 
     /**
