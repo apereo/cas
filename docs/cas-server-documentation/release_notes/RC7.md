@@ -73,7 +73,7 @@ and Spring Boot `3.2.x` milestone builds.
 
 The Spring framework `6.1.x` generation presents with the following feature themes:
 
-- Embracing JDK 21 LTS
+- Embracing JDK `21` LTS
 - Virtual Threads (Project Loom)
 - JVM Checkpoint Restore (Project CRaC)
 - Data Binding and Validation, revisited
@@ -129,6 +129,11 @@ Support for [Google Authenticator backed by Redis](../mfa/GoogleAuthenticator-Au
 to remove a number of performance issues, all of which have had to do with redis `SCAN` operations and the use of wildcard in query patterns.
 Performance fixes alter the structure of records and keys and as a result are not backwards compatible. You will need to export existing records
 from redis and then import them back via CAS-provided facilities and dedicated endpoints.
+                                                                                                                                                    
+### Releasing OpenID Connect Claims
+
+The claim release rules for specific grant types, namely `client_credentials` and `password`, are revisited to ensure claims, whether custom or standard,
+can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests. 
 
 ## Other Stuff
 

@@ -11,7 +11,8 @@
       "gender" : [ "java.util.List", ["Female"]],
       "locale" : [ "java.util.List", ["english"]],
       "website" : [ "java.util.List", ["https://github.com/apereo/cas"]],
-      "given_name" : [ "java.util.List", ["CAS"]]
+      "given_name" : [ "java.util.List", ["CAS"]],
+      "organization" : [ "java.util.List", ["ApereoFoundation"]]
     }
   }
 }

@@ -2,12 +2,15 @@ package org.apereo.cas.oidc.scopes;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
+import java.util.List;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     @Autowired
-    @Qualifier("oidcAttributeReleasePolicyFactory")
+    @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
     private OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
 
     @Test
@@ -29,7 +32,31 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.PHONE));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.ADDRESS));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.OPENID));
+        assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.OFFLINE_ACCESS));
+    }
 
-        assertNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.OFFLINE_ACCESS));
+    @Test
+    void verifyEffectivePolicies() {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setAttributeReleasePolicy(
+            new OidcCustomScopeAttributeReleasePolicy("eduPerson", List.of("uid")));
+        val policies = oidcAttributeReleasePolicyFactory.resolvePolicies(registeredService);
+        assertTrue(policies.containsKey("eduPerson"));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.EMAIL.getScope()));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.PROFILE.getScope()));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.OPENID.getScope()));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.ADDRESS.getScope()));
+    }
+
+    @Test
+    void verifyEffectivePoliciesWithChain() {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val chain = new ChainingAttributeReleasePolicy()
+            .addPolicies(new OidcCustomScopeAttributeReleasePolicy("eduPerson", List.of("uid")));
+        registeredService.setAttributeReleasePolicy(chain);
+        val policies = oidcAttributeReleasePolicyFactory.resolvePolicies(registeredService);
+        assertTrue(policies.containsKey("eduPerson"));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.EMAIL.getScope()));
+        assertTrue(policies.containsKey(OidcConstants.StandardScopes.PROFILE.getScope()));
     }
 }

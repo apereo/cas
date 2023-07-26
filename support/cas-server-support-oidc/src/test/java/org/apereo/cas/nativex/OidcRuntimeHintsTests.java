@@ -1,5 +1,7 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import lombok.val;
@@ -25,5 +27,8 @@ class OidcRuntimeHintsTests {
         new OidcRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcRegisteredService.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcJwtAccessTokenCipherExecutor.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(OidcCustomScopeAttributeReleasePolicy.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.serialization().onType(OidcOpenIdScopeAttributeReleasePolicy.class).test(hints));
     }
 }

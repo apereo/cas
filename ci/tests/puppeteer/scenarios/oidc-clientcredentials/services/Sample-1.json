@@ -7,5 +7,19 @@
   "id": 1,
   "jwtAccessToken": "true",
   "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ],
-  "scopes" : [ "java.util.HashSet", ["openid", "profile", "MyCustomScope"]]
+  "scopes" : [ "java.util.HashSet", ["openid", "profile", "MyCustomScope", "eduPerson"]],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy",
+          "order": 1,
+          "scopeName": "eduPerson",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "organization" ] ]
+        }
+      ]
+    ]
+  }
 }
