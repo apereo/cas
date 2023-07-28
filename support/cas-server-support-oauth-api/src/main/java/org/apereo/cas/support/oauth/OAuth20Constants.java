@@ -266,7 +266,7 @@ public interface OAuth20Constants {
     /**
      * Header value to signal JWT responses for token introspection payloads.
      */
-    String INTROSPECTION_JWT_HEADER = "application/token-introspection+jwt";
+    String INTROSPECTION_JWT_HEADER_CONTENT_TYPE = "application/token-introspection+jwt";
     
     /**
      * The callback authorize url.

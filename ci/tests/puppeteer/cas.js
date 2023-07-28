@@ -328,7 +328,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         config["responseType"] = responseType
     }
     console.log(`Sending GET request to ${url}`);
-    await instance
+    return await instance
         .get(url, config)
         .then(res => {
             if (responseType !== "blob" && responseType !== "stream") {
@@ -336,10 +336,10 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
                 console.dir(res.data, {depth: null, colors: true});
                 // console.log(res.data);
             }
-            successHandler(res);
+            return successHandler(res);
         })
         .catch(error => {
-            failureHandler(error);
+            return failureHandler(error);
         })
 };
 
