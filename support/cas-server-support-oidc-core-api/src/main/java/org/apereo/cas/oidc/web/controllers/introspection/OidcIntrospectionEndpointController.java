@@ -58,9 +58,13 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @return the response entity
      */
     @GetMapping(consumes = {
+        OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MediaType.APPLICATION_JSON_VALUE
-    }, produces = MediaType.APPLICATION_JSON_VALUE,
+    }, produces = {
+        OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
+        MediaType.APPLICATION_JSON_VALUE,
+    },
         value = {
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
@@ -85,9 +89,13 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @return the response entity
      */
     @PostMapping(consumes = {
+        OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
         MediaType.APPLICATION_JSON_VALUE,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    }, produces = MediaType.APPLICATION_JSON_VALUE,
+    }, produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE
+    },
         value = {
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
@@ -119,7 +127,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                                                               final OAuth20IntrospectionAccessTokenSuccessResponse introspect) {
         val responseEntity = super.buildIntrospectionEntityResponse(context, introspect);
         return context.getRequestHeader("Accept")
-            .filter(headerValue -> StringUtils.equalsAnyIgnoreCase(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER))
+            .filter(headerValue -> StringUtils.equalsAnyIgnoreCase(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
             .map(headerValue -> {
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                     getConfigurationContext().getServicesManager(), introspect.getClientId());
@@ -170,12 +178,12 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     private static ResponseEntity<String> buildResponseEntity(final String result,
                                                               final OAuthRegisteredService registeredService) {
         val context = CollectionUtils.<String, Object>wrap(
-            "Content-Type", OAuth20Constants.INTROSPECTION_JWT_HEADER,
+            "Content-Type", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
             "Client ID", registeredService.getClientId(),
             "Service", registeredService.getName());
         LoggingUtils.protocolMessage("OpenID Connect Introspection Response", context, result);
         val headers = new HttpHeaders();
-        headers.put("Content-Type", CollectionUtils.wrapList(OAuth20Constants.INTROSPECTION_JWT_HEADER));
+        headers.put("Content-Type", CollectionUtils.wrapList(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE));
         return ResponseEntity.ok().headers(headers).body(result);
     }
 }

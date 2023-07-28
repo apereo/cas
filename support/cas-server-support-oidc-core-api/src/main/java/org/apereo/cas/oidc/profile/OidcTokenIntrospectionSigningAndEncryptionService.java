@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.token.BaseOidcJsonWebKeyTokenSigningAndEncryptionService;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
@@ -46,7 +45,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
 
     @Override
     protected String getSigningMediaType() {
-        return MediaType.parseMediaType(OAuth20Constants.INTROSPECTION_JWT_HEADER).getSubtype();
+        return MediaType.parseMediaType(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE).getSubtype();
     }
 
     @Override
