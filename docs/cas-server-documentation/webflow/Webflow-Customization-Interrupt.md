@@ -62,10 +62,12 @@ Each interrupt strategy is ultimately tasked to produce a response that contains
 Authentication interrupts and notifications are executed in the overall flow using one of the following strategies. The
 trigger strategy is defined globally via CAS settings.
 
-### After Authentication
+{% tabs interrupttriggermodes %}
+
+{% tab interrupttriggermodes After Authentication %}
 
 This is the default strategy that allows the interrupt query to execute after the
-primary authentication event and before the single sign-on event. This means an authenticated user has been 
+primary authentication event and before the single sign-on event. This means an authenticated user has been
 identified by CAS and by extension is made available to the interrupt, and interrupt has the ability to
 decide whether a single sign-on session can be established for the user.
 
@@ -80,18 +82,24 @@ specially if single sign-on isn't already established. Remember that
 interrupt notifications typically execute after the authentication step 
 and before any single sign-on session is created.</p></div>
 
-### After Single Sign-on
+{% endtab %}
+
+{% tab interrupttriggermodes After Single Sign-on %}
 
 Alternatively, the interrupt query can execute once the single sign-on session has been established.
 In this mode, the authenticated user has been identified by CAS and linked to the single sign-on session. Note that
-interrupt here loses the ability to decide whether a single sign-on session can be established for the user, and interrupt 
-responses indicating this option will have no impact, since the query and interrupt responses 
+interrupt here loses the ability to decide whether a single sign-on session can be established for the user, and interrupt
+responses indicating this option will have no impact, since the query and interrupt responses
 happen after the creation of the SSO session.
 
 <div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
 Yes. In this strategy, links to external applications presented by the interrupt response
 should be able to take advantage of the established single sign-on session.</p>
 </div>
+
+{% endtab %}
+
+{% endtabs %}
 
 ## Interrupt Strategies
 
@@ -118,40 +126,18 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
   "webflowInterruptPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
     "enabled": true,
-    "forceExecution": "TRUE"
+    "forceExecution": "TRUE",
+    "attributeName": "mem...of",
+    "attributeValue": "^st[a-z]ff$"
   }
 }
 ```
-  
+
 The following policy settings are supported:
 
-| Field            | Description                                                                                                                                          |
-|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `enabled`        | Whether interrupt notifications are enabled for this application. Default is `true`.                                                                 |
-| `forceExecution` | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`. |
-
-## Skipping Interrupts
-
-<div class="alert alert-warning">:warning: <strong>Usage</strong>
-<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>.</p>
-</div>
-
-Interrupt notifications may be disabled on a per-service basis. A sample JSON file follows:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.CasRegisteredService",
-  "serviceId" : "^https://.+",
-  "name" : "sample service",
-  "id" : 100,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "skipInterrupt" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "true" ] ]
-    }
-  }
-}
-```
-
-{% include_cached registeredserviceproperties.html groups="INTERRUPTS" %}
+| Field             | Description                                                                                                       |
+|-------------------|-------------------------------------------------------------------------------------------------------------------|
+| `enabled`         | Whether interrupt notifications are enabled for this application. Default is `true`.                              |
+| `forceExecution`  | Whether execution should proceed anyway, regardless. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.          |
+| `attributeName`   | Regular expression pattern to compare against authentication and principal attribute names to trigger interrupt.  |
+| `attributeValue`  | Regular expression pattern to compare against authentication and principal attribute values to trigger interrupt. |

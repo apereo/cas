@@ -30,4 +30,20 @@ public interface RegisteredServiceWebflowInterruptPolicy extends Serializable {
      * @return true/false/undefined
      */
     TriStateBoolean getForceExecution();
+
+    /**
+     * Gets principal attribute name that must exist
+     * before interrupt can be triggered for this service.
+     *
+     * @return the attribute name
+     */
+    String getAttributeName();
+
+    /**
+     * Gets principal attribute value that must exist
+     * before interrupt can be triggered for this service.
+     *
+     * @return the attribute value
+     */
+    String getAttributeValue();
 }
