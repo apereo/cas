@@ -63,7 +63,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
 
         if (!isGrantTypeSupportedBy(registeredService, grantType)) {
             LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]",
-                getGrantType(), Objects.requireNonNull(registeredService).getServiceId());
+                grantType, Objects.requireNonNull(registeredService).getServiceId());
             return false;
         }
 
