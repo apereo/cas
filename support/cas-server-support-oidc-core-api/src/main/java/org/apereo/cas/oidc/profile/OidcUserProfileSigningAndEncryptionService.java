@@ -44,24 +44,23 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        if (svc instanceof final OidcRegisteredService oidcService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService) {
             return oidcService.getUserInfoSigningAlg();
         }
-        return super.getJsonWebKeySigningAlgorithm(svc, jsonWebKey);
+        return super.getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
     }
 
     @Override
-    public boolean shouldSignToken(final OAuthRegisteredService svc) {
-        if (svc instanceof final OidcRegisteredService service) {
-
+    public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
+        if (registeredService instanceof final OidcRegisteredService service) {
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoSigningAlg())
                 && !discoverySettings.getUserInfoSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
                 LOGGER.error("Service [{}] has defined 'none' for user-info signing algorithm, "
                              + "yet CAS is configured to support the following signing algorithms: [{}]. "
-                             + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                    svc.getServiceId(), discoverySettings.getUserInfoSigningAlgValuesSupported());
+                             + "This is quite likely due to misconfiguration of the CAS server or the service definition.",
+                    registeredService.getServiceId(), discoverySettings.getUserInfoSigningAlgValuesSupported());
                 throw new IllegalArgumentException("Unable to use 'none' as user-info signing algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
@@ -71,15 +70,15 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
-        if (svc instanceof final OidcRegisteredService service) {
+    public boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
+        if (registeredService instanceof final OidcRegisteredService service) {
 
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg())
                 && !discoverySettings.getUserInfoEncryptionAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
                 LOGGER.error("Service [{}] has defined 'none' for user-info encryption algorithm, "
                              + "yet CAS is configured to support the following encryption algorithms: [{}]. "
                              + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                    svc.getServiceId(), discoverySettings.getUserInfoEncryptionAlgValuesSupported());
+                    registeredService.getServiceId(), discoverySettings.getUserInfoEncryptionAlgValuesSupported());
                 throw new IllegalArgumentException("Unable to use 'none' as user-info encryption algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())
@@ -89,7 +88,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService registeredService) {
         return this.discoverySettings.getUserInfoSigningAlgValuesSupported();
     }
 

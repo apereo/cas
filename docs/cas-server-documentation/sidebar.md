@@ -492,6 +492,7 @@ layout: null
             *   [Response/Grant Types](/cas/{{ version }}/authentication/OAuth-Authentication-Clients-ResponsesGrants.html)
             *   [CSRF](/cas/{{ version }}/authentication/OAuth-Authentication-CSRF.html)
             *   [JWT Access Tokens](/cas/{{ version }}/authentication/OAuth-Authentication-JWT-AccessTokens.html)
+            *   [Token Introspection](/cas/{{ version }}/authentication/OAuth-Authentication-TokenIntrospection.html)
             *   [User Profiles](/cas/{{ version }}/authentication/OAuth-Authentication-UserProfiles.html)
             *   [Expiration Policies](/cas/{{ version }}/authentication/OAuth-Authentication-TokenExpirationPolicy.html)
             *   [User-Managed Access](/cas/{{ version }}/protocol/OAuth-UMA-Protocol.html)

@@ -13,11 +13,12 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
@@ -27,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -55,8 +55,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @return the response entity
      */
     private static ResponseEntity<OAuth20IntrospectionAccessTokenFailureResponse> buildUnauthorizedResponseEntity(
-        final String code,
-        final boolean isAuthenticationFailure) {
+        final String code, final boolean isAuthenticationFailure) {
         val response = new OAuth20IntrospectionAccessTokenFailureResponse();
         response.setError(code);
         val headers = new LinkedMultiValueMap<String, String>();
@@ -99,55 +98,62 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @return the response entity
      */
     @PostMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
-    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                                   final HttpServletResponse response) {
-        ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> result;
+    public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val authExtractor = new BasicAuthExtractor();
-
             val context = new JEEContext(request, response);
-            val callContext = new CallContext(context, getConfigurationContext().getSessionStore(),
-                getConfigurationContext().getOauthConfig().getProfileManagerFactory());
-            val credentialsResult = authExtractor.extract(callContext);
-
+            val credentialsResult = extractCredentials(context);
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
             val credentials = (UsernamePasswordCredentials) credentialsResult.get();
-            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), credentials.getUsername());
-            if (service == null) {
+            if (registeredService == null) {
                 LOGGER.warn("Unable to locate service definition by client id [{}]", credentials.getUsername());
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
-            val validationError = validateIntrospectionRequest(service, credentials, request);
+            val validationError = validateIntrospectionRequest(registeredService, credentials, request);
             if (validationError.isPresent()) {
-                result = validationError.get();
-            } else {
-                val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
-                    request.getParameter(OAuth20Constants.ACCESS_TOKEN));
-
-                LOGGER.debug("Located access token [{}] in the request", accessToken);
-                OAuth20Token ticket = null;
-                try {
-                    val token = extractAccessTokenFrom(accessToken);
-                    ticket = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
-                } catch (final InvalidTicketException e) {
-                    LOGGER.trace(e.getMessage(), e);
-                    LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
-                }
-                val introspect = createIntrospectionValidResponse(accessToken, ticket);
-                introspect.setToken(accessToken);
-                result = new ResponseEntity<>(introspect, HttpStatus.OK);
+                return validationError.get();
             }
+
+            val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.TOKEN),
+                request.getParameter(OAuth20Constants.ACCESS_TOKEN));
+
+            LOGGER.debug("Located access token [{}] in the request", accessToken);
+
+            val protocolMap = CollectionUtils.<String, Object>wrap(
+                "Token", accessToken,
+                "Client ID", registeredService.getClientId(),
+                "Service", registeredService.getName());
+            LoggingUtils.protocolMessage("OpenID Connect Introspection Request", protocolMap);
+
+            OAuth20Token ticket = null;
+            try {
+                val token = extractAccessTokenFrom(accessToken);
+                ticket = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
+            } catch (final InvalidTicketException e) {
+                LOGGER.trace(e.getMessage(), e);
+                LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
+            }
+            val introspect = createIntrospectionValidResponse(accessToken, ticket);
+            introspect.setToken(accessToken);
+
+            return buildIntrospectionEntityResponse(context, introspect);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            result = buildBadRequestResponseEntity(OAuth20Constants.INVALID_REQUEST);
         }
-        return result;
+        return buildBadRequestResponseEntity(OAuth20Constants.INVALID_REQUEST);
+    }
+
+    protected Optional<Credentials> extractCredentials(final JEEContext context) {
+        val authExtractor = new BasicAuthExtractor();
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore(),
+            getConfigurationContext().getOauthConfig().getProfileManagerFactory());
+        return authExtractor.extract(callContext);
     }
 
     protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
@@ -189,11 +195,10 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     }
 
     private Optional<ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(
-        final OAuthRegisteredService registeredService,
-        final UsernamePasswordCredentials credentials,
+        final OAuthRegisteredService registeredService, final UsernamePasswordCredentials credentials,
         final HttpServletRequest request) {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
-                          || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
+            || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 
         if (!tokenExists) {
             LOGGER.warn("Access token cannot be found in the request");
@@ -214,5 +219,10 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         LOGGER.warn("Unable to match client secret for registered service [{}] with client id [{}]",
             registeredService.getName(), registeredService.getClientId());
         return Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true));
+    }
+
+    protected ResponseEntity buildIntrospectionEntityResponse(
+        final WebContext context, final OAuth20IntrospectionAccessTokenSuccessResponse introspect) {
+        return new ResponseEntity<>(introspect, HttpStatus.OK);
     }
 }

@@ -37,20 +37,20 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     }
 
     @Override
-    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService service,
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        val svc = OidcRegisteredService.class.cast(service);
+        val svc = OidcRegisteredService.class.cast(registeredService);
         if (StringUtils.isBlank(svc.getIdTokenSigningAlg())) {
-            return super.getJsonWebKeySigningAlgorithm(service, jsonWebKey);
+            return super.getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
         }
         return svc.getIdTokenSigningAlg();
     }
 
     @Override
-    public boolean shouldSignToken(final OAuthRegisteredService svc) {
-        if (svc instanceof final OidcRegisteredService service) {
+    public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
+        if (registeredService instanceof final OidcRegisteredService service) {
             if (!service.isSignIdToken()) {
-                LOGGER.trace("Service [{}] does not require ID token to be signed", svc.getServiceId());
+                LOGGER.trace("Service [{}] does not require ID token to be signed", registeredService.getServiceId());
                 return false;
             }
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg())) {
@@ -58,10 +58,10 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
                     LOGGER.error("Service [{}] has defined 'none' for ID token signing algorithm, "
                             + "yet CAS is configured to support the following signing algorithms: [{}]. "
                             + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                        svc.getServiceId(), discoverySettings.getIdTokenSigningAlgValuesSupported());
+                        registeredService.getServiceId(), discoverySettings.getIdTokenSigningAlgValuesSupported());
                     throw new IllegalArgumentException("Unable to use 'none' as ID token signing algorithm");
                 }
-                LOGGER.error("Service [{}] has defined 'none' for ID token signing algorithm", svc.getServiceId());
+                LOGGER.error("Service [{}] has defined 'none' for ID token signing algorithm", registeredService.getServiceId());
                 return false;
             }
             return true;
@@ -70,17 +70,17 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     }
 
     @Override
-    public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
-        if (svc instanceof final OidcRegisteredService service) {
+    public boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
+        if (registeredService instanceof final OidcRegisteredService service) {
             if (service.isEncryptIdToken() && AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())) {
                 if (!discoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
                     LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm, "
                             + "yet CAS is configured to support the following encryption algorithms: [{}]. "
                             + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                        svc.getServiceId(), discoverySettings.getIdTokenEncryptionAlgValuesSupported());
+                        registeredService.getServiceId(), discoverySettings.getIdTokenEncryptionAlgValuesSupported());
                     throw new IllegalArgumentException("Unable to use 'none' as ID token encryption algorithm");
                 }
-                LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm", svc.getServiceId());
+                LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm", registeredService.getServiceId());
                 return false;
             }
 
@@ -92,7 +92,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     }
 
     @Override
-    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService registeredService) {
         return this.discoverySettings.getIdTokenSigningAlgValuesSupported();
     }
 
