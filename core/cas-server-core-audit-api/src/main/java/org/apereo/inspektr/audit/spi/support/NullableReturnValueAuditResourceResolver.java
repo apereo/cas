@@ -29,11 +29,11 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
 
     @Override
     @SuppressWarnings("JavaUtilDate")
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {
-        if (o == null) {
+    public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
+        if (returnValue == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
-        if (o instanceof final Event event) {
+        if (returnValue instanceof final Event event) {
             val sourceName = event.getSource().getClass().getSimpleName();
             val values = new HashMap<String, String>();
             values.put("event", event.getId());
@@ -51,7 +51,7 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
             }
             return resourcePostProcessor.apply(new String[]{values.toString()});
         }
-        return resourcePostProcessor.apply(this.delegate.resolveFrom(joinPoint, o));
+        return resourcePostProcessor.apply(this.delegate.resolveFrom(joinPoint, returnValue));
     }
 
     @Override
