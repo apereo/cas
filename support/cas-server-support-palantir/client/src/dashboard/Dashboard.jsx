@@ -2,13 +2,14 @@ import React, { Fragment } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import { materialRenderers } from '@jsonforms/material-renderers';
 import { useDispatch } from 'react-redux';
-import { useGetSchemaQuery } from '../store/SchemaApi';
+import { useGetSchemaQuery, useGetUiSchemaQuery } from '../store/SchemaApi';
 
 import { updateService, useServiceData } from '../store/ServiceSlice';
 
 export function Dashboard () {
 
     const { data: schema } = useGetSchemaQuery('service');
+    const { data: uiSchema } = useGetUiSchemaQuery('service');
     const dispatch = useDispatch();
 
     const service = useServiceData();
@@ -24,6 +25,7 @@ export function Dashboard () {
             { schema &&
                 <JsonForms
                     renderers={materialRenderers}
+                    uischema={uiSchema}
                     schema={schema}
                     data={service}
                     onChange={({ errors, data }) => update(data)}

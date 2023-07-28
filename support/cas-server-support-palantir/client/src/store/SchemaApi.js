@@ -9,9 +9,12 @@ export const schemaApi = createApi({
         getSchema: builder.query({
             query: (type) => `data/${type}-schema.json`,
         }),
+        getUiSchema: builder.query({
+            query: (type) => `data/${type}-ui-schema.json`,
+        }),
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetSchemaQuery } = schemaApi;
+export const { useGetSchemaQuery, useGetUiSchemaQuery } = schemaApi;

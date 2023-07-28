@@ -11,15 +11,21 @@ import Layout from './Layout';
 
 import { dashboardRoutes } from './dashboard/routes';
 
+import { API_PATH } from './App.constant';
+
 const router = createBrowserRouter([
     ...dashboardRoutes
 ]);
 
 function App() {
+
+    console.log(import.meta.env.API_PATH)
+
     return (
         <Provider store={store}>
             <CasThemeProvider>
                 <Layout>
+                    { API_PATH }
                     <RouterProvider router={router} />
                 </Layout>
             </CasThemeProvider>
@@ -27,4 +33,4 @@ function App() {
     )
 }
 
-export default App
+export default App;
