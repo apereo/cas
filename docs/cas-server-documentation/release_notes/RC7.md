@@ -133,7 +133,11 @@ from redis and then import them back via CAS-provided facilities and dedicated e
 ### Releasing OpenID Connect Claims
 
 The claim release rules for specific grant types, namely `client_credentials` and `password`, are revisited to ensure claims, whether custom or standard,
-can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests. 
+can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests.
+
+### JWT Response for OAuth Token Introspection
+
+OAuth Token Introspection responses can now be [produced as JWTs](../authentication/OAuth-Authentication-TokenIntrospection.html).
 
 ## Other Stuff
 
