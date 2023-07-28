@@ -41,7 +41,7 @@ It's worth pointing out some important characteristics of this architecture:
 * Dependent systems can tolerate up to N-1 node failures. (Where N is the total number of nodes.)
 * CAS itself can tolerate up to N-1 node failures.
 * Loss of a cache node DOES NOT cause loss of SSO state data (i.e. tickets) in replicating caches.
-* Loss of a cache node MAY cause loss of SSO state data in non-replicating caches (e.g. memcached).
+* Loss of a cache node MAY cause loss of SSO state data in non-replicating caches.
 * Loss of SSO state data is always graceful: users re-authenticate.
 
 Before proceeding into a detailed discussion of various aspects of the recommended architecture, we offer a guiding
@@ -208,15 +208,8 @@ expertise to troubleshoot when problems invariably arise.
 The technology considerations of the various storage components merit some discussion since there are notable
 differences that impact availability and performance characteristics. Cache systems like Hazelcast
 offer a distributed cache that presents a single, consistent view of entries regardless
-of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
-store the ticket on exactly 1 node and use a deterministic algorithm to locate the node containing the ticket:
-
-    N' = f(h(T), N1, N2, N3, ... Nm)
-
-where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes, and _N'_ is member of _N ... Nm_.
-
-These sorts of cache systems do not require replication and generally provide for simplicity at the expense of some
-durability.
+of the node contacted. Distributed caches rely on replication to provide for consistency. These sorts of cache systems 
+do not require replication and generally provide for simplicity at the expense of some durability.
 
 ### Secure Cache Replication
 

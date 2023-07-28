@@ -26,9 +26,11 @@ import java.util.function.Predicate;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.3
+ * @deprecated Since 7.0.0
  */
 @SuppressWarnings("FutureReturnValueIgnored")
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class MemcachedTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     private static final int THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30;
 

@@ -13,7 +13,6 @@ by encrypting and signing tickets:
 
 * [Hazelcast](../ticketing/Hazelcast-Ticket-Registry.html)
 * [Ignite](../ticketing/Ignite-Ticket-Registry.html)
-* [Memcached](../ticketing/Memcached-Ticket-Registry.html)
 * [Redis](../ticketing/Redis-Ticket-Registry.html)
 * [MongoDb](../ticketing/MongoDb-Ticket-Registry.html)
 

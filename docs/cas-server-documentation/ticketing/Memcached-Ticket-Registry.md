@@ -12,6 +12,10 @@ Memcached integration is enabled by including the following dependency in the WA
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-ticket-registry" %}
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
 Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
 or otherwise share data between nodes. A deterministic function is used to locate the node, _N'_, on which to store

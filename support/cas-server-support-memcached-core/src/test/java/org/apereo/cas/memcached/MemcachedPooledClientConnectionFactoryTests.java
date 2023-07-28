@@ -14,9 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 7.0.0
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
+@Deprecated(since = "7.0.0")
 class MemcachedPooledClientConnectionFactoryTests {
 
     @Test
