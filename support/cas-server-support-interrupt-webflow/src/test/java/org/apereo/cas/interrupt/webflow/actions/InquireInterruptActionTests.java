@@ -16,7 +16,6 @@ import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,10 +29,8 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +48,40 @@ class InquireInterruptActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
+    void verifyInterruptedByServicePrincipalAttribute() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+
+        val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+        val webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy()
+            .setAttributeName("mem...of").setAttributeValue("^st[a-z]ff$");
+        registeredService.setWebflowInterruptPolicy(webflowInterruptPolicy);
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        val interrupt = getInterruptInquirer(InterruptResponse.interrupt());
+
+        val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
+        var event = action.doExecute(context);
+        assertNotNull(InterruptUtils.getInterruptFrom(context));
+        assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
+    }
+
+    private static InterruptInquirer getInterruptInquirer(final InterruptResponse interruptResponse) {
+        val interrupt = mock(InterruptInquirer.class);
+        when(interrupt.inquire(any(Authentication.class),
+            any(RegisteredService.class), any(Service.class),
+            any(Credential.class), any(RequestContext.class)))
+            .thenReturn(interruptResponse);
+        return interrupt;
+    }
+
+    @Test
     void verifyInterrupted() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -66,10 +97,7 @@ class InquireInterruptActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        val interrupt = mock(InterruptInquirer.class);
-        when(interrupt.inquire(any(Authentication.class), any(RegisteredService.class),
-            any(Service.class), any(Credential.class), any(RequestContext.class)))
-            .thenReturn(InterruptResponse.interrupt());
+        val interrupt = getInterruptInquirer(InterruptResponse.interrupt());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         var event = action.doExecute(context);
@@ -97,10 +125,7 @@ class InquireInterruptActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        val interrupt = mock(InterruptInquirer.class);
-        when(interrupt.inquire(any(Authentication.class), any(RegisteredService.class),
-            any(Service.class), any(Credential.class), any(RequestContext.class)))
-            .thenReturn(InterruptResponse.none());
+        val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
@@ -122,10 +147,7 @@ class InquireInterruptActionTests {
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         WebUtils.putInterruptAuthenticationFlowFinalized(context);
 
-        val interrupt = mock(InterruptInquirer.class);
-        when(interrupt.inquire(any(Authentication.class), any(RegisteredService.class),
-            any(Service.class), any(Credential.class), any(RequestContext.class)))
-            .thenReturn(InterruptResponse.none());
+        val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
@@ -145,10 +167,7 @@ class InquireInterruptActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        val interrupt = mock(InterruptInquirer.class);
-        when(interrupt.inquire(any(Authentication.class), any(RegisteredService.class),
-            any(Service.class), any(Credential.class), any(RequestContext.class)))
-            .thenReturn(InterruptResponse.none());
+        val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
@@ -169,10 +188,7 @@ class InquireInterruptActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        val interrupt = mock(InterruptInquirer.class);
-        when(interrupt.inquire(any(Authentication.class), any(RegisteredService.class),
-            any(Service.class), any(Credential.class), any(RequestContext.class)))
-            .thenReturn(InterruptResponse.none());
+        val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
         val event = action.doExecute(context);

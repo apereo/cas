@@ -4,8 +4,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -141,5 +141,20 @@ public class RegexUtils {
      */
     public static boolean find(final String pattern, final String value) {
         return StringUtils.isNotBlank(value) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(value).find();
+    }
+
+    /**
+     * Find first in the list of items provided.
+     *
+     * @param pattern  the regex pattern
+     * @param elements the elements
+     * @return the optional
+     */
+    public static Optional<String> findFirst(final String pattern, final Collection elements) {
+        val compiledPattern = createPattern(pattern);
+        return elements
+            .stream()
+            .filter(entry -> find(compiledPattern, entry.toString()))
+            .findFirst();
     }
 }
