@@ -18,7 +18,7 @@ public class DefaultAuditActionResolver extends AbstractSuffixAwareAuditActionRe
     }
 
     public DefaultAuditActionResolver(final String successSuffix) {
-        super(successSuffix, StringUtils.EMPTY);
+        this(successSuffix, StringUtils.EMPTY);
     }
 
     public DefaultAuditActionResolver(final String successSuffix, final String failureSuffix) {

@@ -20,7 +20,6 @@ import java.util.function.Function;
 @Setter
 public class FirstParameterAuditResourceResolver implements AuditResourceResolver {
 
-
     protected Function<String[], String[]> resourcePostProcessor = Function.identity();
 
     private String resourceString;
