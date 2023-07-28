@@ -25,9 +25,11 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "7.0.0")
 public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
 
     private final BaseMemcachedProperties memcachedProperties;

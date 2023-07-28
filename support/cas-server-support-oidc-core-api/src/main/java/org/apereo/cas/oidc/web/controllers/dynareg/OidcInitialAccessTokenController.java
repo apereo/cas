@@ -15,7 +15,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,10 +34,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -68,11 +65,8 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             val authenticator = new InMemoryProfileService<>(objects -> authProfile);
             authenticator.setPasswordEncoder(new SpringSecurityPasswordEncoder(NoOpPasswordEncoder.getInstance()));
             authenticator.init();
-            authenticator.create(authProfile,
-                StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(),
-                    RandomUtils.randomAlphabetic(8)));
-
-
+            authenticator.create(authProfile, StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(),
+                RandomUtils.randomAlphabetic(8)));
             accessTokenClient.setAuthenticator(authenticator);
             accessTokenClient.setName(UUID.randomUUID().toString());
             accessTokenClient.init();

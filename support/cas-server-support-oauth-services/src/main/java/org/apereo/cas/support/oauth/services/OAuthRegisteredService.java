@@ -62,6 +62,12 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String responseMode;
 
+    private String introspectionSignedResponseAlg = "RS512";
+
+    private String introspectionEncryptedResponseAlg;
+
+    private String introspectionEncryptedResponseEncoding;
+    
     @JsonIgnore
     @Override
     public String getFriendlyName() {

@@ -133,7 +133,11 @@ from redis and then import them back via CAS-provided facilities and dedicated e
 ### Releasing OpenID Connect Claims
 
 The claim release rules for specific grant types, namely `client_credentials` and `password`, are revisited to ensure claims, whether custom or standard,
-can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests. 
+can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests.
+
+### JWT Response for OAuth Token Introspection
+
+OAuth Token Introspection responses can now be [produced as JWTs](../authentication/OAuth-Authentication-TokenIntrospection.html).
 
 ## Other Stuff
 
@@ -147,6 +151,7 @@ can be correctly released based on the scopes authorized by the service definiti
 - Many small improvements around auditing facilities, making it easier internally to capture and/or tweak audited fields recorded by the audit log.
 - [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support RSA public/private keypairs.
 - CAS is now able to conditionally geolocate client sessions when building and pinning [SSO Cookies](../authentication/Configuring-SSO-Cookie.html).
+- [Memcached functionality and overall support](../ticketing/Memcached-Ticket-Registry.html) is now deprecated, and is scheduled to be removed in future releases.
 
 ## Library Upgrades
 

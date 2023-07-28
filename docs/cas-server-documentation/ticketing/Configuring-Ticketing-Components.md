@@ -39,7 +39,6 @@ deployments. Components for the following caching technologies are provided:
 * [Default](Default-Ticket-Registry.html)
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ignite](Ignite-Ticket-Registry.html)
-* [Memcached](Memcached-Ticket-Registry.html)
 
 ### Message-based Ticket Registries
 

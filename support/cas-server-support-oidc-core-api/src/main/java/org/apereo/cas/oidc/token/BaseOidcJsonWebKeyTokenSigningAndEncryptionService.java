@@ -52,37 +52,37 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected final OidcIssuerService issuerService;
 
     @Override
-    public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
+    public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) {
         return FunctionUtils.doUnchecked(() -> {
-            LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", service, claims.toJson());
-            var innerJwt = signTokenIfNecessary(claims, service);
-            if (shouldEncryptToken(service)) {
-                innerJwt = encryptToken(service, innerJwt);
+            LOGGER.trace("Attempting to produce token generated for service [{}] with claims [{}]", registeredService, claims.toJson());
+            var innerJwt = signTokenIfNecessary(claims, registeredService);
+            if (shouldEncryptToken(registeredService)) {
+                innerJwt = encryptToken(registeredService, innerJwt);
             }
             return innerJwt;
         });
     }
 
     @Override
-    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> registeredService) {
         return Unchecked.supplier(() -> {
-            if (service.isPresent()) {
+            if (registeredService.isPresent()) {
                 val jwt = JWTParser.parse(token);
                 if (jwt instanceof EncryptedJWT) {
-                    val encryptionKey = getJsonWebKeyForEncryption(service.get());
+                    val encryptionKey = getJsonWebKeyForEncryption(registeredService.get());
                     val decoded = EncodingUtils.decryptJwtValue(encryptionKey.getPrivateKey(), token);
-                    return super.decode(decoded, service);
+                    return super.decode(decoded, registeredService);
                 }
             }
-            return super.decode(token, service);
+            return super.decode(token, registeredService);
         }, throwable -> {
             throw new IllegalArgumentException(throwable);
         }).get();
     }
 
     @Override
-    public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
-        val filter = service
+    public String resolveIssuer(final Optional<OAuthRegisteredService> registeredService) {
+        val filter = registeredService
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
             .stream()
@@ -93,8 +93,8 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected abstract String encryptToken(OAuthRegisteredService svc, String token);
 
     @Override
-    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> serviceResult) {
-        val servicePassed = serviceResult
+    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> registeredService) {
+        val servicePassed = registeredService
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
             .stream()
@@ -102,7 +102,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         val iss = issuerService.determineIssuer(servicePassed);
         LOGGER.trace("Using issuer [{}] to locate JWK signing key", iss);
         val jwks = defaultJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(iss, OidcJsonWebKeyUsage.SIGNING));
-        return getJsonWebKeySigningKeyFrom(jwks, serviceResult);
+        return getJsonWebKeySigningKeyFrom(jwks, registeredService);
     }
 
     protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final Optional<JsonWebKeySet> jwks,

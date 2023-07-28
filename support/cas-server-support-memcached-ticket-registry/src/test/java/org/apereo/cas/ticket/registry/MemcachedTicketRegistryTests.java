@@ -48,6 +48,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Middleware Services
  * @since 3.0.0
+ * @deprecated Since 7.0.0
  */
 @Import({
     MemcachedTicketRegistryConfiguration.class,
@@ -71,6 +72,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 11211)
 @Tag("Memcached")
 @Getter
+@Deprecated(since = "7.0.0")
 class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -141,7 +143,8 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration(value = "MemcachedTicketRegistryTestConfiguration", proxyBeanMethods = false)
-    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
+    @Deprecated(since = "7.0.0")
+    static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);
