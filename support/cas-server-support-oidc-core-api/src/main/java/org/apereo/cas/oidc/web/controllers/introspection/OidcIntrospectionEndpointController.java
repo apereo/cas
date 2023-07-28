@@ -63,7 +63,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         MediaType.APPLICATION_JSON_VALUE
     }, produces = {
         OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
-        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_JSON_VALUE
     },
         value = {
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
