@@ -12,12 +12,14 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -31,8 +33,11 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -112,12 +117,12 @@ public class SamlIdPUtils {
         }
         if (endpoint == null) {
             throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
-                                    + " is not available or does not define a binding for " + binding);
+                + " is not available or does not define a binding for " + binding);
         }
         val missingLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
         if (StringUtils.isBlank(endpoint.getBinding()) || missingLocation) {
             throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
-                                    + " does not define a binding or location for binding " + binding);
+                + " does not define a binding or location for binding " + binding);
         }
         return endpoint;
     }
@@ -326,6 +331,24 @@ public class SamlIdPUtils {
             .get();
         LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
         return nameQualifier;
+    }
+
+    /**
+     * Does entity descriptor match entity attribute boolean.
+     *
+     * @param entityDescriptor the entity descriptor
+     * @param candidates       the candidates
+     * @return the boolean
+     */
+    public static boolean doesEntityDescriptorMatchEntityAttribute(final EntityDescriptor entityDescriptor,
+                                                                   final List<Triple<String, String, ? extends Collection<String>>> candidates) {
+        val attributes = candidates.stream().map(entry -> {
+            val attr = new EntityAttributesPredicate.Candidate(entry.getLeft(), entry.getMiddle());
+            attr.setValues(entry.getRight());
+            return attr;
+        }).toList();
+        val predicate = new EntityAttributesPredicate(attributes, true);
+        return predicate.test(entityDescriptor);
     }
 }
 
