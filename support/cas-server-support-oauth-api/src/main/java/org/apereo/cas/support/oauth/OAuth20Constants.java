@@ -264,6 +264,11 @@ public interface OAuth20Constants {
     String INTROSPECTION_URL = "introspect";
 
     /**
+     * Header value to signal JWT responses for token introspection payloads.
+     */
+    String INTROSPECTION_JWT_HEADER = "application/token-introspection+jwt";
+    
+    /**
      * The callback authorize url.
      */
     String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";

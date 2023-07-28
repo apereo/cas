@@ -71,12 +71,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private long clientSecretExpiration;
 
-    private String introspectionSignedResponseAlg;
-
-    private String introspectionEncryptedResponseAlg;
-
-    private String introspectionEncryptedResponseEncoding;
-
     private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
     /**

@@ -33,9 +33,9 @@ import java.util.UUID;
 @Getter
 public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
     @Override
-    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> registeredService) {
         return FunctionUtils.doUnchecked(() -> {
-            val jsonWebKey = getJsonWebKeySigningKey(service);
+            val jsonWebKey = getJsonWebKeySigningKey(registeredService);
             FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
                 () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
@@ -46,7 +46,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             FunctionUtils.throwIf(StringUtils.isBlank(claims.getIssuer()),
                 () -> new IllegalArgumentException("Claims do not contain an issuer"));
 
-            validateIssuerClaim(claims, service);
+            validateIssuerClaim(claims, registeredService);
 
             FunctionUtils.throwIf(StringUtils.isBlank(claims.getStringClaim(OAuth20Constants.CLIENT_ID)),
                 () -> new IllegalArgumentException("Claims do not contain a client id claim"));
@@ -58,10 +58,10 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
      * Gets allowed signing algorithms.
      * Returning an empty collection indicates that all algorithms should be supported, except none.
      *
-     * @param svc the svc
+     * @param registeredService the svc
      * @return the allowed signing algorithms
      */
-    public abstract Set<String> getAllowedSigningAlgorithms(OAuthRegisteredService svc);
+    public abstract Set<String> getAllowedSigningAlgorithms(OAuthRegisteredService registeredService);
 
     protected void validateIssuerClaim(final JWTClaimsSet claims, final Optional<OAuthRegisteredService> service) {
         LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
@@ -72,10 +72,10 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
                 + claims.getIssuer() + " does not match " + iss));
     }
 
-    protected String signToken(final OAuthRegisteredService service,
+    protected String signToken(final OAuthRegisteredService registeredService,
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
-        LOGGER.debug("Service [{}] is set to sign id tokens", service.getServiceId());
+        LOGGER.debug("Service [{}] is set to sign id tokens", registeredService.getServiceId());
         return JsonWebTokenSigner.builder()
             .key(Optional.ofNullable(jsonWebKey)
                 .map(PublicJsonWebKey::getPrivateKey)
@@ -83,10 +83,15 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             .keyId(Optional.ofNullable(jsonWebKey)
                 .map(PublicJsonWebKey::getKeyId)
                 .orElseGet(() -> UUID.randomUUID().toString()))
-            .algorithm(getJsonWebKeySigningAlgorithm(service, jsonWebKey))
-            .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(service)))
+            .algorithm(getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey))
+            .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
+            .mediaType(getSigningMediaType())
             .build()
             .sign(claims);
+    }
+
+    protected String getSigningMediaType() {
+        return "JWT";
     }
 
     protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService svc) {
