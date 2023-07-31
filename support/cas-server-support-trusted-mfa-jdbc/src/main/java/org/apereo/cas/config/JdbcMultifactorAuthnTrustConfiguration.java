@@ -49,6 +49,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     public static class JdbcMultifactorAuthnTrustEngineConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jpaMfaTrustEngine")
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustCipherExecutor")
