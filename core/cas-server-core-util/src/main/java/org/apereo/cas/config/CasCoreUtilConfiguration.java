@@ -76,10 +76,10 @@ public class CasCoreUtilConfiguration {
         @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
                 final ConfigurableApplicationContext applicationContext,
-                final List<Converter> allConveters) {
+                final List<Converter> allConverters) {
             return () -> {
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
-                allConveters.forEach(converter -> {
+                allConverters.forEach(converter -> {
                     registry.addConverter(converter);
                     applicationContext.getEnvironment().getConversionService().addConverter(converter);
                 });

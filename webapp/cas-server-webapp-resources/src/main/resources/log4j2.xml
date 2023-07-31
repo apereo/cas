@@ -154,6 +154,8 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.web.socket" level="warn"/>
         <Logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace"/>
 
+        <Logger name="de.codecentric.boot" level="info" />
+
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>
@@ -169,9 +171,9 @@ or override log42.component.properties to turn off async
         <Logger name="net.jradius" level="warn"/>
         <Logger name="org.ldaptive" level="${sys:ldap.log.level}"/>
         <Logger name="com.hazelcast" level="${sys:hazelcast.log.level}" />
-        <Logger name="org.jasig.spring" level="warn" />
         <Logger name="org.apache.cxf" level="warn" />
         <Logger name="org.apache.http" level="warn" />
+
 
         <Root level="warn" includeLocation="${sys:log.include.location}">
             <AppenderRef ref="casFile"/>

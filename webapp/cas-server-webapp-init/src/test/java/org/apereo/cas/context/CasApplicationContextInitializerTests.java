@@ -2,6 +2,7 @@ package org.apereo.cas.context;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ class CasApplicationContextInitializerTests {
     @Test
     void verifyOperation() {
         assertNotNull(applicationContext);
-        assertEquals(Boolean.FALSE.toString(),
-            System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
+        val validateConfig = System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS);
+        assertEquals(Boolean.FALSE.toString(), validateConfig);
     }
 }

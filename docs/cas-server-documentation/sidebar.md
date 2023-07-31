@@ -39,7 +39,7 @@ layout: null
     *   [Troubleshooting Guide](/cas/{{ version }}/installation/Troubleshooting-Guide.html)
 
 * [Administration](#casdashboard)
-    *   [Overview](/cas/{{ version }}/installation/Palantir-Admin-Dashboard.html)  
+    *   [Overview](/cas/{{ version }}/installation/Admin-Dashboard.html)  
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/cas/{{ version }}/configuration/Configuration-Management.html)
@@ -609,7 +609,7 @@ layout: null
 
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
-    *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
+    *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-SpringBootAdmin.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Elastic APM](/cas/{{ version }}/monitoring/Configuring-Monitoring-ElasticAPM.html)
     *   [Sentry](/cas/{{ version }}/logging/Logging-Sentry.html)
