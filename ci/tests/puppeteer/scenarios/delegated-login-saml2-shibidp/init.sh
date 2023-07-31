@@ -3,6 +3,8 @@ echo -e "Removing previous running containers, if any, for ${SCENARIO}"
 docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
 docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
+${PWD}/ci/tests/cas/run-cas-server.sh
+
 VERSION="4.3.0"
 BASE_URL="https://github.com/Unicon/shib-cas-authn/releases/download/${VERSION}"
 SHIBCAS_AUTHN_DIR="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/shibcasauthn"
