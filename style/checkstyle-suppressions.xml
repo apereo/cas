@@ -23,6 +23,7 @@
     <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
 
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="FinalClass" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="IllegalCatch" files="(.*Aspect)\.java"/>
     <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="Indentation" files="(.*Tests*|Mock.*|Test.*)\.java"/>

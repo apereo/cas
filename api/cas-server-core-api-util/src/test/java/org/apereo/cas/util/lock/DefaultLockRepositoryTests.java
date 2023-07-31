@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class DefaultLockRepositoryTests {
     @Test
-    void verifyNoOp() throws Exception {
+    void verifyNoOp() {
         val repository = LockRepository.noOp();
         val lockKey = UUID.randomUUID().toString();
         val result = repository.execute(lockKey, () -> lockKey);
@@ -30,7 +30,7 @@ class DefaultLockRepositoryTests {
     }
 
     @Test
-    void verifyDefault() throws Exception {
+    void verifyDefault() {
         val repository = LockRepository.asDefault();
         val lockKey = UUID.randomUUID().toString();
 
@@ -60,7 +60,7 @@ class DefaultLockRepositoryTests {
         assertEquals(10, container.values.get(lockKey).size());
     }
 
-    private static final class Container {
+    private static class Container {
         private final Map<String, List<String>> values = new HashMap<>();
     }
 }

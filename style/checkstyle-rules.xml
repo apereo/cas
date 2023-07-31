@@ -345,6 +345,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="FinalClass">
+            <property name="id" value="finalClass"/>
             <property name="severity" value="error"/>
         </module>
         <!--
