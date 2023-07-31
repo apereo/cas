@@ -120,8 +120,7 @@ class WebAuthnControllerTests {
         val assertionJson = "{\"id\":\"ibE9wQddsF806g8uL9hDzgwLJipKhS9esD07Jmj0N98\","
                             + "\"response\":{\"authenticatorData\":\"SZYN5YgOjGh0NBcPZHZgW4_krrmihjLHmVzzuoMdl2MBAAAFOQ\","
                             + "\"clientDataJSON\":\"eyJjaGFsbGVuZ2UiOiJOM0xqSTJKNXlseVdlM0VENU9UNFhITFJxSHdtX0o0OF9EX2hvSk9GZjMwIiwib3JpZ2"
-                            +
-                            "luIjoiaHR0cHM6Ly9sb2NhbGhvc3QiLCJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwidG9rZW5CaW5kaW5nIjp7InN0YXR1cyI6InN1cHBvcnRlZCJ9LCJjbGllbnRFeHRlbnNpb25zIjp7fX0\","
+                            + "luIjoiaHR0cHM6Ly9sb2NhbGhvc3QiLCJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwidG9rZW5CaW5kaW5nIjp7InN0YXR1cyI6InN1cHBvcnRlZCJ9LCJjbGllbnRFeHRlbnNpb25zIjp7fX0\","
                             + "\"signature\":\"-8AKZkFZSNUemUihJhsUp8LqXFHgVTjfCuKVvf1kbIkuwz5ClZK2u562C8rkUnIorxtzD7ujYh1z4FstXKyRDg\"},"
                             + "\"clientExtensionResults\":{},\"type\":\"public-key\"}";
         val publicKeyCredential = PublicKeyCredential.parseAssertionResponseJson(assertionJson);

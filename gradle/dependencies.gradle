@@ -3339,6 +3339,10 @@ ext.libraries = [
                 }
         ],
         springws                   : [
+                dependencies.create("xerces:xercesImpl:$xercesVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")

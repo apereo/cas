@@ -120,6 +120,7 @@ graalvmNative {
             buildArgs.add('-H:+TraceSecurityServices')
             buildArgs.add('-H:+BuildReport')
 //            buildArgs.add('-H:+IncludeAllLocales')
+            buildArgs.add('-H:+AddAllCharsets')
 
             buildArgs.add('-J-Xmx8G')
             buildArgs.add('-J-Xms4G')

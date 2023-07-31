@@ -48,7 +48,7 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractMultifa
 
         flowScope.put(FLOW_SCOPE_ATTR_ACCOUNT, keyAccount);
 
-        val qrCodeBase64 = QRUtils.generateQRCode(keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
+        val qrCodeBase64 = QRUtils.generateQRCode(keyUri, QRUtils.SIZE, QRUtils.SIZE);
         flowScope.put(FLOW_SCOPE_ATTR_QR_IMAGE_BASE64, qrCodeBase64);
 
         LOGGER.debug("Registration key URI is [{}]", keyUri);

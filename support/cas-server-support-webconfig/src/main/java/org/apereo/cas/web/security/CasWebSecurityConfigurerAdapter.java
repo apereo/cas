@@ -10,7 +10,6 @@ import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 import org.apereo.cas.web.security.authentication.IpAddressAuthorizationManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,7 +33,6 @@ import org.springframework.security.config.annotation.web.configurers.RequestCac
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -160,6 +158,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         http.requestCache(RequestCacheConfigurer::disable);
 
         protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
+
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
             val endpoint = EndpointRequest.to(key);
@@ -185,6 +184,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         }
 
         http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
+        protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.finish(http)));
         return http;
     }
 
