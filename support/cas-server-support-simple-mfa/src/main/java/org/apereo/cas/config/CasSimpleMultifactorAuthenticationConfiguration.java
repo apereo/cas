@@ -261,7 +261,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             };
         }
 
-        private static class CasSimpleMultifactorAuthenticationTicketStringSerializer
+        private static final class CasSimpleMultifactorAuthenticationTicketStringSerializer
             extends AbstractJacksonBackedStringSerializer<CasSimpleMultifactorAuthenticationTicketImpl> {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
@@ -350,7 +350,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
         }
 
-        private static class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
+        private static final class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             SurrogateWebflowConfigurer(
                 final FlowBuilderServices flowBuilderServices,
                 final FlowDefinitionRegistry mainFlowDefinitionRegistry,

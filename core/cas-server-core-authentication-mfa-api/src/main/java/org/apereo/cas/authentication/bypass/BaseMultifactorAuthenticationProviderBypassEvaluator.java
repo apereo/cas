@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -107,7 +108,8 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {
+                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request,
+                                                                  final Service service) {
         return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
     }
 

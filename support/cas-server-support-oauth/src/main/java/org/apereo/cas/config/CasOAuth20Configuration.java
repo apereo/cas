@@ -287,7 +287,7 @@ public class CasOAuth20Configuration {
             final PrincipalFactory oauthPrincipalFactory,
             @Qualifier("callbackAuthorizeViewResolver")
             final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
-            @Qualifier("profileScopeToAttributesFilter")
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig,
@@ -833,7 +833,7 @@ public class CasOAuth20Configuration {
             return OAuth20CallbackAuthorizeViewResolver.asDefault();
         }
 
-        @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
+        @ConditionalOnMissingBean(name = OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
@@ -1398,7 +1398,7 @@ public class CasOAuth20Configuration {
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("oauthPrincipalFactory")
             final PrincipalFactory oauthPrincipalFactory,
-            @Qualifier("profileScopeToAttributesFilter")
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -1412,6 +1412,10 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthClientAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
@@ -1432,13 +1436,19 @@ public class CasOAuth20Configuration {
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oAuthProofKeyCodeExchangeAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
@@ -1459,13 +1469,19 @@ public class CasOAuth20Configuration {
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oAuthRefreshTokenAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
@@ -1486,13 +1502,19 @@ public class CasOAuth20Configuration {
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oauthUserAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthUserAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -1511,7 +1533,9 @@ public class CasOAuth20Configuration {
                 webApplicationServiceFactory,
                 oauthRequestParameterResolver,
                 oauth20ClientSecretValidator,
-                authenticationAttributeReleasePolicy);
+                authenticationAttributeReleasePolicy,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")

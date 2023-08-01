@@ -110,7 +110,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
 
     @SuperBuilder
     @Getter
-    private static class AuthorizationRequestEntity {
+    private static final class AuthorizationRequestEntity {
         private final String principal;
 
         private final String service;

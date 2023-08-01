@@ -67,6 +67,7 @@ class MultifactorAuthenticationUtilsTests {
         assertNotNull(MultifactorAuthenticationUtils.evaluateEventForProviderInContext(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             MultifactorAuthenticationTestUtils.getRegisteredService(),
+            MultifactorAuthenticationTestUtils.getService("service"),
             Optional.of(context),
             null));
     }
@@ -114,6 +115,7 @@ class MultifactorAuthenticationUtilsTests {
 
         val result = MultifactorAuthenticationUtils.resolveEventViaSingleAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             List.of("mfa-value1"), MultifactorAuthenticationTestUtils.getRegisteredService(),
+            MultifactorAuthenticationTestUtils.getService("service"),
             Optional.of(context), provider, (s, mfaProvider) -> RegexUtils.find("mismatch-.+", s));
         assertNull(result);
     }
@@ -139,6 +141,7 @@ class MultifactorAuthenticationUtilsTests {
 
         val result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             List.of("mfa-value"), MultifactorAuthenticationTestUtils.getRegisteredService(),
+            MultifactorAuthenticationTestUtils.getService("service"),
             Optional.of(context), provider, (s, mfaProvider) -> RegexUtils.find("mfa-.+", s));
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -158,7 +161,8 @@ class MultifactorAuthenticationUtilsTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         var result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            List.of("some-value"), MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
+            List.of("some-value"), MultifactorAuthenticationTestUtils.getRegisteredService(),
+            MultifactorAuthenticationTestUtils.getService("service"), Optional.of(context), provider,
             (s, mfaProvider) -> {
                 throw new RuntimeException("Bad Predicate");
             });
@@ -166,7 +170,8 @@ class MultifactorAuthenticationUtilsTests {
         assertTrue(result.isEmpty());
 
         result = MultifactorAuthenticationUtils.resolveEventViaMultivaluedAttribute(MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
-            "some-value", MultifactorAuthenticationTestUtils.getRegisteredService(), Optional.of(context), provider,
+            "some-value", MultifactorAuthenticationTestUtils.getRegisteredService(),
+            MultifactorAuthenticationTestUtils.getService("service"), Optional.of(context), provider,
             (s, mfaProvider) -> {
                 throw new RuntimeException("Bad Predicate");
             });

@@ -180,17 +180,11 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.OPENID.getScope()));
         service.setAttributeReleasePolicy(new OidcProfileScopeAttributeReleasePolicy());
-
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, accessToken);
-        assertTrue(principal.getAttributes().containsKey("name"));
-        assertTrue(principal.getAttributes().containsKey("gender"));
-        assertTrue(principal.getAttributes().containsKey("address"));
-        assertTrue(principal.getAttributes().containsKey("phone"));
-        assertTrue(principal.getAttributes().containsKey("email"));
-
+        assertTrue(principal.getAttributes().isEmpty());
     }
 }

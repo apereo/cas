@@ -41,7 +41,6 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
-
 import jakarta.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -77,10 +76,10 @@ public class CasCoreUtilConfiguration {
         @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
                 final ConfigurableApplicationContext applicationContext,
-                final List<Converter> allConveters) {
+                final List<Converter> allConverters) {
             return () -> {
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
-                allConveters.forEach(converter -> {
+                allConverters.forEach(converter -> {
                     registry.addConverter(converter);
                     applicationContext.getEnvironment().getConversionService().addConverter(converter);
                 });

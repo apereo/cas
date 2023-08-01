@@ -39,7 +39,7 @@ layout: null
     *   [Troubleshooting Guide](/cas/{{ version }}/installation/Troubleshooting-Guide.html)
 
 * [Administration](#casdashboard)
-    *   [Overview](/cas/{{ version }}/installation/Palantir-Admin-Dashboard.html)  
+    *   [Overview](/cas/{{ version }}/installation/Admin-Dashboard.html)  
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/cas/{{ version }}/configuration/Configuration-Management.html)
@@ -411,7 +411,7 @@ layout: null
                 *   [Google Cloud](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Docker-GCP.html)
                 *   [Kubernetes](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Kubernetes.html)
                 *   [Multicast](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Multicast.html)
-        *   [Memcached](/cas/{{ version }}/ticketing/Memcached-Ticket-Registry.html)
+        *   [~~Memcached~~](/cas/{{ version }}/ticketing/Memcached-Ticket-Registry.html)
         *   [JPA](/cas/{{ version }}/ticketing/JPA-Ticket-Registry.html)
         *   [Ignite](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
         *   [CosmosDb](/cas/{{ version }}/ticketing/CosmosDb-Ticket-Registry.html)
@@ -492,6 +492,7 @@ layout: null
             *   [Response/Grant Types](/cas/{{ version }}/authentication/OAuth-Authentication-Clients-ResponsesGrants.html)
             *   [CSRF](/cas/{{ version }}/authentication/OAuth-Authentication-CSRF.html)
             *   [JWT Access Tokens](/cas/{{ version }}/authentication/OAuth-Authentication-JWT-AccessTokens.html)
+            *   [Token Introspection](/cas/{{ version }}/authentication/OAuth-Authentication-TokenIntrospection.html)
             *   [User Profiles](/cas/{{ version }}/authentication/OAuth-Authentication-UserProfiles.html)
             *   [Expiration Policies](/cas/{{ version }}/authentication/OAuth-Authentication-TokenExpirationPolicy.html)
             *   [User-Managed Access](/cas/{{ version }}/protocol/OAuth-UMA-Protocol.html)
@@ -608,7 +609,7 @@ layout: null
 
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
-    *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
+    *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-SpringBootAdmin.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Elastic APM](/cas/{{ version }}/monitoring/Configuring-Monitoring-ElasticAPM.html)
     *   [Sentry](/cas/{{ version }}/logging/Logging-Sentry.html)
@@ -618,7 +619,7 @@ layout: null
         *   [Custom](/cas/{{ version }}/monitoring/Configuring-Metrics-Custom.html)
     *   [Monitors](#monitorsoverview)
         *   [Overview](/cas/{{ version }}/monitoring/Configuring-Monitoring.html)
-        *   [Memcached](/cas/{{ version }}/monitoring/Configuring-Monitoring-Memcached.html)
+        *   [~~Memcached~~](/cas/{{ version }}/monitoring/Configuring-Monitoring-Memcached.html)
         *   [MongoDb](/cas/{{ version }}/monitoring/Configuring-Monitoring-MongoDb.html)
         *   [Hazelcast](/cas/{{ version }}/monitoring/Configuring-Monitoring-Hazelcast.html)
         *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)

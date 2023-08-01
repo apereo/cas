@@ -20,29 +20,29 @@ public interface OAuth20TokenSigningAndEncryptionService {
     /**
      * Sign id token.
      *
-     * @param service the service
+     * @param registeredService the service
      * @param claims  the claims
      * @return the string
      */
-    String encode(OAuthRegisteredService service, JwtClaims claims);
+    String encode(OAuthRegisteredService registeredService, JwtClaims claims);
 
     /**
      * Decode jwt claims.
      *
      * @param token   the token
-     * @param service the service
+     * @param registeredService the service
      * @return the jwt claims
      */
-    JwtClaims decode(String token, Optional<OAuthRegisteredService> service);
+    JwtClaims decode(String token, Optional<OAuthRegisteredService> registeredService);
 
     /**
      * Gets json web key signing algorithm.
      *
-     * @param svc        the svc
+     * @param registeredService        the svc
      * @param signingKey the signing key
      * @return the json web key signing algorithm
      */
-    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
+    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                  final JsonWebKey signingKey) {
         var defaultAlgorithm = AlgorithmIdentifiers.RSA_USING_SHA256;
         if (signingKey instanceof EllipticCurveJsonWebKey) {
@@ -54,36 +54,36 @@ public interface OAuth20TokenSigningAndEncryptionService {
     /**
      * Gets json web key used as the signing key.
      *
-     * @param serviceResult the service result
+     * @param registeredService the service result
      * @return the json web key signing key
      */
-    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> serviceResult);
+    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> registeredService);
 
     /**
      * Should sign token for service?
      *
-     * @param svc the svc
+     * @param registeredService the svc
      * @return true/false
      */
-    default boolean shouldSignToken(final OAuthRegisteredService svc) {
+    default boolean shouldSignToken(final OAuthRegisteredService registeredService) {
         return false;
     }
 
     /**
      * Should encrypt token for service?
      *
-     * @param svc the svc
+     * @param registeredService the svc
      * @return true/false
      */
-    default boolean shouldEncryptToken(final OAuthRegisteredService svc) {
+    default boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
         return false;
     }
 
     /**
      * Resolve issuer string.
      *
-     * @param service the service
+     * @param registeredService the service
      * @return the string
      */
-    String resolveIssuer(Optional<OAuthRegisteredService> service);
+    String resolveIssuer(Optional<OAuthRegisteredService> registeredService);
 }

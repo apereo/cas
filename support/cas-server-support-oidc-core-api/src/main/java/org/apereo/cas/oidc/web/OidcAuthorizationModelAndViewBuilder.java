@@ -39,7 +39,7 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
     protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,
                                         final String redirectUrl, final Map<String, String> parameters) throws Exception {
         val discovery = casProperties.getAuthn().getOidc().getDiscovery();
-        if (registeredService instanceof OidcRegisteredService oidcService && discovery.isAuthorizationResponseIssuerParameterSupported()) {
+        if (registeredService instanceof final OidcRegisteredService oidcService && discovery.isAuthorizationResponseIssuerParameterSupported()) {
             val issuer = issuerService.determineIssuer(Optional.of(oidcService));
             parameters.put(OidcConstants.ISS, issuer);
             return new URIBuilder(redirectUrl)

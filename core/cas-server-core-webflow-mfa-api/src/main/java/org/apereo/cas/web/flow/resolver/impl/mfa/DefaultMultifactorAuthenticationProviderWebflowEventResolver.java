@@ -54,7 +54,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
             .map(provider -> {
                 LOGGER.trace("Building event based on the authentication provider [{}] and service [{}]", provider, registeredService);
                 val eventMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(),
-                    Optional.ofNullable(registeredService), provider);
+                    Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
                 eventMap.put(MultifactorAuthenticationTrigger.class.getSimpleName(), multifactorAuthenticationTrigger.getName());
                 val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(
                     provider.getId(), Optional.of(context), eventMap);

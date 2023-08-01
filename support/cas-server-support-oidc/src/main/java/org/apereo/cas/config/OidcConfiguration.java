@@ -37,6 +37,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
+import org.apereo.cas.oidc.profile.OidcTokenIntrospectionSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
@@ -173,7 +174,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public ServiceRegistryListener oidcServiceRegistryListener(
-            @Qualifier("oidcAttributeReleasePolicyFactory")
+            @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
             return new OidcServiceRegistryListener(oidcAttributeReleasePolicyFactory);
         }
@@ -304,7 +305,7 @@ public class OidcConfiguration {
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
-            @Qualifier("oidcAttributeReleasePolicyFactory")
+            @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory,
             final CasConfigurationProperties casProperties) {
             return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory,
@@ -452,6 +453,23 @@ public class OidcConfiguration {
                 oidcServerDiscoverySettingsFactory.getObject());
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcTokenIntrospectionSigningAndEncryptionService")
+        public OAuth20TokenSigningAndEncryptionService oidcTokenIntrospectionSigningAndEncryptionService(
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
+            @Qualifier("oidcServiceJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
+            @Qualifier("oidcDefaultJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) throws Exception {
+            return new OidcTokenIntrospectionSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
+                oidcServiceJsonWebKeystoreCache,
+                oidcIssuerService,
+                oidcServerDiscoverySettingsFactory.getObject());
+        }
     }
 
     @Configuration(value = "OidcCryptoConfiguration", proxyBeanMethods = false)
@@ -646,6 +664,8 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier("oidcTokenIntrospectionSigningAndEncryptionService")
+            final OAuth20TokenSigningAndEncryptionService oidcTokenIntrospectionSigningAndEncryptionService,
             @Qualifier("oidcClientRegistrationRequestTranslator")
             final OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator,
             @Qualifier("oidcResponseModeJwtBuilder")
@@ -674,7 +694,7 @@ public class OidcConfiguration {
             final OAuth20TokenGenerator oauthTokenGenerator,
             @Qualifier("oauthCasAuthenticationBuilder")
             final OAuth20CasAuthenticationBuilder authenticationBuilder,
-            @Qualifier("profileScopeToAttributesFilter")
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport,
@@ -730,6 +750,7 @@ public class OidcConfiguration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
+                .tokenIntrospectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
                 .argumentExtractor(argumentExtractor)
                 .responseModeJwtBuilder(oidcResponseModeJwtBuilder)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
@@ -827,7 +848,7 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcAttributeReleasePolicyFactory")
+        @ConditionalOnMissingBean(name = OidcAttributeReleasePolicyFactory.BEAN_NAME)
         public OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory(
             final CasConfigurationProperties casProperties) {
             return new DefaultOidcAttributeReleasePolicyFactory(casProperties);

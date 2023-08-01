@@ -99,23 +99,23 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
                 builder.append("state", appender.getState());
                 builder.append("layoutFormat", appender.getLayout().getContentFormat());
                 builder.append("layoutContentType", appender.getLayout().getContentType());
-                if (appender instanceof FileAppender app) {
+                if (appender instanceof final FileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
-                if (appender instanceof RandomAccessFileAppender app) {
+                if (appender instanceof final RandomAccessFileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
-                if (appender instanceof RollingFileAppender app) {
+                if (appender instanceof final RollingFileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, app.getFilePattern());
                 }
-                if (appender instanceof MemoryMappedFileAppender app) {
+                if (appender instanceof final MemoryMappedFileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, "(none)");
                 }
-                if (appender instanceof RollingRandomAccessFileAppender app) {
+                if (appender instanceof final RollingRandomAccessFileAppender app) {
                     builder.append(FILE_PARAM, app.getFileName());
                     builder.append(FILE_PATTERN_PARAM, app.getFilePattern());
                 }

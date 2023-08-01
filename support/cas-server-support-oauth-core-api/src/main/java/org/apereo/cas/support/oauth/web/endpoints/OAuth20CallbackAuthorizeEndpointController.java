@@ -67,14 +67,14 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     }
 
     @Getter
-    private static class OAuth20CallbackLogic extends DefaultCallbackLogic {
+    private static final class OAuth20CallbackLogic extends DefaultCallbackLogic {
         private String redirectUrl;
 
         @Override
         protected HttpAction redirectToOriginallyRequestedUrl(final CallContext callContext,
                                                               final String defaultUrl) {
             val result = getSavedRequestHandler().restore(callContext, defaultUrl);
-            if (result instanceof WithLocationAction locationAction) {
+            if (result instanceof final WithLocationAction locationAction) {
                 redirectUrl = locationAction.getLocation();
             }
             return result;

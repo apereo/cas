@@ -154,8 +154,8 @@ public class GoogleCloudAppender extends AbstractAppender {
         if (buildMessage) {
             val messagSanitizer = ApplicationContextProvider.getMessageSanitizer().orElseGet(MessageSanitizer::disabled);
             messagePayload.put("text", messagSanitizer.sanitize(logEvent.getMessage().getFormattedMessage()));
-            if (logEvent.getMessage() instanceof ObjectMessage objectMessage) {
-                if (objectMessage.getParameter() instanceof Map parameters) {
+            if (logEvent.getMessage() instanceof final ObjectMessage objectMessage) {
+                if (objectMessage.getParameter() instanceof final Map parameters) {
                     collectMessageParameters(messagePayload, messagSanitizer, parameters);
                 } else {
                     try {

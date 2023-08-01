@@ -1,9 +1,9 @@
 {
   "dependencies": "wsfederation-webflow",
   "conditions": {
-    "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
+    "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD",
+    "docker": "true"
   },
-
   "properties": [
     "--spring.main.lazy-initialization=false",
 

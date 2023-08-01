@@ -63,7 +63,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();
             if (bypassEvaluator != null) {
-                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, service)) {
                     LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
                     bypassEvaluator.rememberBypass(authentication, provider);
                     return toSuccessfulResult();
@@ -117,7 +117,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         val providers = providerResult
             .map(provider -> {
-                if (provider instanceof ChainingMultifactorAuthenticationProvider chain) {
+                if (provider instanceof final ChainingMultifactorAuthenticationProvider chain) {
                     return chain.getMultifactorAuthenticationProviders().stream()
                         .filter(p -> p.equals(provider)).collect(Collectors.toList());
                 }

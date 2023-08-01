@@ -401,7 +401,7 @@ public class FunctionUtils {
                     LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
-                    if (ex instanceof RuntimeException re) {
+                    if (ex instanceof final RuntimeException re) {
                         throw re;
                     }
                     throw new IllegalArgumentException(ex);

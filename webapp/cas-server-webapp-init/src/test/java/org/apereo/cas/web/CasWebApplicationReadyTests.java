@@ -2,13 +2,13 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.config.CasWebApplicationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,6 +33,12 @@ class CasWebApplicationReadyTests {
     @Test
     void verifyOperation() {
         assertEquals(Boolean.FALSE.toString(), System.getProperty(CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
+    }
+
+    @Test
+    void verifyWebApplication() {
+        val sources = CasWebApplication.getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY);
+        assertEquals(1, sources.size());
     }
 }
 

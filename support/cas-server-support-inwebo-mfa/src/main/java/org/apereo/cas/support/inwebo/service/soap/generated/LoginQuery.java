@@ -35,7 +35,7 @@ public class LoginQuery {
      * Définit la valeur de la propriété userid.
      * 
      */
-    public void setUserid(long value) {
+    public void setUserid(final long value) {
         this.userid = value;
     }
 
@@ -51,7 +51,7 @@ public class LoginQuery {
      * Définit la valeur de la propriété loginid.
      * 
      */
-    public void setLoginid(long value) {
+    public void setLoginid(final long value) {
         this.loginid = value;
     }
 

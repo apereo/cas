@@ -33,7 +33,7 @@ public interface TicketFactory {
      * @return ticket factory object
      */
     @CanIgnoreReturnValue
-    default TicketFactory get(Class<? extends Ticket> clazz) {
+    default TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
     }
 

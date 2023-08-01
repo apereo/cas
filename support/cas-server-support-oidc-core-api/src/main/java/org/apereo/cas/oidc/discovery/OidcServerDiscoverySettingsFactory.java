@@ -4,12 +4,10 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,6 +53,13 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionAlgValuesSupported()));
         discovery.setIdTokenEncryptionEncodingValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported()));
+
+        discovery.setIntrospectionSignedResponseAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIntrospectionSignedResponseAlgValuesSupported()));
+        discovery.setIntrospectionEncryptedResponseAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIntrospectionEncryptedResponseAlgValuesSupported()));
+        discovery.setIntrospectionEncryptedResponseEncodingValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIntrospectionEncryptedResponseEncodingValuesSupported()));
 
         discovery.setBackchannelLogoutSupported(oidc.getLogout().isBackchannelLogoutSupported());
         discovery.setFrontchannelLogoutSupported(oidc.getLogout().isFrontchannelLogoutSupported());

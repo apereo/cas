@@ -41,7 +41,7 @@ public class SamlIdPTicketSerializationConfiguration {
         };
     }
 
-    private static class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+    private static final class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -51,7 +51,7 @@ public class SamlIdPTicketSerializationConfiguration {
         }
     }
 
-    private static class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+    private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 

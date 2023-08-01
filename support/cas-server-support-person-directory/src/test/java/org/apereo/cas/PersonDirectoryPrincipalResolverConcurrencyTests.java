@@ -91,7 +91,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
             val allExecutorThreadsReady = new CountDownLatch(numThreads);
             val afterInitBlocker = new CountDownLatch(1);
             val allDone = new CountDownLatch(numThreads);
-            for (val submittedTestRunnable : runnables) {
+            for (final val submittedTestRunnable : runnables) {
                 threadPool.execute(() -> {
                     allExecutorThreadsReady.countDown();
                     try {

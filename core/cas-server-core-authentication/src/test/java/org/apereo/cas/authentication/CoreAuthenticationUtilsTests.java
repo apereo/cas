@@ -308,7 +308,7 @@ class CoreAuthenticationUtilsTests {
         assertEquals("principalAttribute", principalResolutionContext4.getPrincipalAttributeNames());
     }
 
-    public static class PredicateExample implements Predicate<Credential> {
+    static class PredicateExample implements Predicate<Credential> {
         @Override
         public boolean test(final Credential credential) {
             return true;

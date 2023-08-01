@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersPr
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
@@ -928,7 +929,8 @@ public class LdapUtils {
         }
 
         val location = properties.getPasswordPolicy().getGroovy().getLocation();
-        if (properties.getPasswordPolicy().getStrategy() == PasswordPolicyHandlingOptions.GROOVY && location != null) {
+        if (properties.getPasswordPolicy().getStrategy() == PasswordPolicyHandlingOptions.GROOVY
+            && location != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
         }

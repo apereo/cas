@@ -471,7 +471,7 @@ public class EncodingUtils {
      */
     public static String decryptJwtValue(final Key givenKey, final String value) {
         try {
-            val realKey = givenKey instanceof IdentifiableKey idk ? idk.getKey() : givenKey;
+            val realKey = givenKey instanceof final IdentifiableKey idk ? idk.getKey() : givenKey;
             val jwe = new JsonWebEncryption();
             jwe.setKey(realKey);
             jwe.setCompactSerialization(value);

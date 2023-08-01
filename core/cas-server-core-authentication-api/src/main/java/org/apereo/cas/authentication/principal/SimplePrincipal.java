@@ -79,7 +79,7 @@ public class SimplePrincipal implements Principal {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof SimplePrincipal rhs)) {
+        if (!(obj instanceof final SimplePrincipal rhs)) {
             return false;
         }
         return StringUtils.equalsIgnoreCase(id, rhs.getId());

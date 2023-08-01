@@ -5,16 +5,17 @@ category: Attributes
 ---
 {% include variables.html %}
 
-
 # SAML2 Attribute Release
 
 Attribute filtering and release policies are defined per 
 SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-## InCommon Research and Scholarship
+{% tabs saml2attrrel %}
 
-A specific attribute release policy is available to release 
-the attribute bundles needed for InCommon Research and Scholarship service providers using the entity 
+{% tab saml2attrrel InCommon Research and Scholarship %}
+
+A specific attribute release policy is available to release
+the attribute bundles needed for InCommon Research and Scholarship service providers using the entity
 attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json
@@ -38,13 +39,15 @@ attribute value `http://id.incommon.org/category/research-and-scholarship`:
 }
 ```
 
-Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `email`, `displayName`, 
+Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPersonTargetedID`, `email`, `displayName`,
 `givenName`, `surname`, `eduPersonScopedAffiliation`.
 
-## REFEDS Research and Scholarship
+{% endtab %}
+
+{% tab saml2attrrel REFEDS Research and Scholarship %}
 
 A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/research-and-scholarship)
-needed for REFEDS Research and Scholarship service providers using 
+needed for REFEDS Research and Scholarship service providers using
 the entity attribute value `http://refeds.org/category/research-and-scholarship`:
 
 ```json
@@ -67,9 +70,11 @@ the entity attribute value `http://refeds.org/category/research-and-scholarship`
 
 This policy is an extension of `InCommonRSAttributeReleasePolicy` that operates based on different entity attribute value.
 
-## Releasing `eduPersonTargetedID`
+{% endtab %}
 
-If you do not have pre-calculated values for the `eduPersonTargetedID` attribute to fetch before release, 
+{% tab saml2attrrel eduPersonTargetedID %}
+
+If you do not have pre-calculated values for the `eduPersonTargetedID` attribute to fetch before release,
 you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at release time using the following policy:
 
 ```json
@@ -88,11 +93,13 @@ you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at rel
 }
 ```
 
-The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, 
-the authenticated principal id is used. You can also control whether the final generated attribute should be named 
+The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found,
+the authenticated principal id is used. You can also control whether the final generated attribute should be named
 `urn:oid:1.3.6.1.4.1.5923.1.1.1.10` or `eduPersonTargetedID` via the `useUniformResourceName` setting.
 
-## Groovy Script
+{% endtab %}
+
+{% tab saml2attrrel Groovy %}
 
 This policy allows a Groovy script to calculate the collection of released attributes.
 
@@ -110,7 +117,7 @@ This policy allows a Groovy script to calculate the collection of released attri
 }
 ```
 
-The configuration of this component qualifies to use 
+The configuration of this component qualifies to use
 the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 The outline of the script may be designed as:
@@ -152,7 +159,7 @@ import java.util.*
 import org.apereo.cas.support.saml.services.*
 import org.apereo.cas.support.saml.*
 
-def Map<String, Object> run(final Object... args) {
+def run(final Object... args) {
     def attributes = args[0]
     def service = args[1]
     def resolver = args[2]
@@ -168,9 +175,11 @@ def Map<String, Object> run(final Object... args) {
 }
 ```
 
-## Pattern Matching Entity Ids
+{% endtab %}
 
-In the event that an aggregate is defined containing multiple entity ids, the below attribute release 
+{% tab saml2attrrel Pattern Matching Entity Ids %}
+
+In the event that an aggregate is defined containing multiple entity ids, the below attribute release
 policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
 
 ```json
@@ -190,9 +199,11 @@ policy may be used to release a collection of allowed attributes to entity ids g
 }
 ```
 
-## Entity Attributes Filter
+{% endtab %}
 
-This attribute release policy authorizes the release of defined attributes, provided the accompanying 
+{% tab saml2attrrel Entity Attributes %}
+
+This attribute release policy authorizes the release of defined attributes, provided the accompanying
 metadata for the service provider contains attributes that match certain values.
 
 ```json
@@ -214,9 +225,11 @@ metadata for the service provider contains attributes that match certain values.
 
 The specification of `entityAttributeFormat` is optional.
 
-## Metadata Requested Attributes
+{% endtab %}
 
-This attribute release policy authorizes the release of defined attributes, based on the accompanying 
+{% tab saml2attrrel Metadata Requested Attributes %}
+
+This attribute release policy authorizes the release of defined attributes, based on the accompanying
 metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
 
 ```json
@@ -235,7 +248,9 @@ metadata for the service provider having requested attributes as part of its `At
 
 The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
 
-## Metadata Registration Authority
+{% endtab %}
+
+{% tab saml2attrrel Metadata Registration Authority %}
 
 This attribute release policy authorizes the release of a subset of attributes if the registration authority
 specified as a metadata extension produces a successful match.
@@ -255,14 +270,15 @@ specified as a metadata extension produces a successful match.
 }
 ```
 
-The `registrationAuthority` is a regular expression that is matched against the registration authority of the 
+The `registrationAuthority` is a regular expression that is matched against the registration authority of the
 `RegistrationInfo` element to authorize release of allowed attributes.
 
+{% endtab %}
 
-## Authentication Request Requested Attributes Filter
+{% tab saml2attrrel Authentication Request Requested Attributes %}
 
 This attribute release policy authorizes the release of a subset of attributes requested as extensions of
-the SAML2 authentication request. The intersection of requested attributes and those allowed by 
+the SAML2 authentication request. The intersection of requested attributes and those allowed by
 the attribute release policy explicitly is evaluated for the final attribute release phase:
 
 ```json
@@ -280,3 +296,7 @@ the attribute release policy explicitly is evaluated for the final attribute rel
 ```
 
 The `useFriendlyName` allows the filter to compare the requested attribute’s friendly name with the resolved attribute.
+
+{% endtab %}
+
+{% endtabs %}

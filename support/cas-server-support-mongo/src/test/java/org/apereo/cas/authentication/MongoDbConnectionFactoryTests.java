@@ -65,5 +65,5 @@ class MongoDbConnectionFactoryTests {
     }
 
     @Document
-    public static class SampleDocument {}
+    static class SampleDocument {}
 }

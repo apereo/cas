@@ -47,7 +47,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
                 MultifactorAuthenticationTestUtils.getRegisteredService(), provider,
-                new MockHttpServletRequest());
+                new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getService("service"));
             assertTrue(res);
         }
     }
@@ -64,7 +64,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
                 MultifactorAuthenticationTestUtils.getRegisteredService(), null,
-                new MockHttpServletRequest());
+                new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getService("service"));
             assertTrue(res);
         }
     }
@@ -83,7 +83,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val request = new MockHttpServletRequest();
             val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
-                registeredService, provider, request);
+                registeredService, provider, request, MultifactorAuthenticationTestUtils.getService("service"));
 
             val recordedRequestUrl = webServer.takeRequest().getRequestUrl();
             assertEquals("casuser", recordedRequestUrl.queryParameter("principal"));

@@ -127,12 +127,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 .valid(true)
                 .build();
         }
-        val md = queryResult.getEntityDescriptor()
+        val entityDescriptor = queryResult.getEntityDescriptor()
             .orElseGet(Unchecked.supplier(() -> queryResult.getResult().getMetadataResolver().resolveSingle(criteriaSet)));
 
-        return MetadataResolutionResult.builder()
-            .valid(md != null && md.isValid())
-            .entityDescriptor(Optional.ofNullable(md))
+        return MetadataResolutionResult
+            .builder()
+            .valid(entityDescriptor != null && entityDescriptor.isValid())
+            .entityDescriptor(Optional.ofNullable(entityDescriptor))
             .result(queryResult.getResult())
             .build();
     }
@@ -174,7 +175,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     @SuperBuilder
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static class MetadataResolutionResult {
+    private static final class MetadataResolutionResult {
         private final boolean valid;
 
         private final Optional<EntityDescriptor> entityDescriptor;
@@ -206,7 +207,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @SuperBuilder
     @Getter
-    private static class MetadataResolverCacheQueryResult {
+    private static final class MetadataResolverCacheQueryResult {
         private final CachedMetadataResolverResult result;
 
         @Builder.Default

@@ -20,10 +20,6 @@ case "$1" in
         sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
         ;;
-    bootadmin-server)
-        project="cas-server-webapp-bootadmin-server"
-        url=""
-        ;;
     discovery-server)
         project="cas-server-webapp-eureka-server"
         url=""

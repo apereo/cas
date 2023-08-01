@@ -35,7 +35,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         setMixInAnnotation(AccessTokenType.class, AccessTokenTypeMixin.class);
     }
 
-    private static class AccessTokenTypeMixin {
+    private static final class AccessTokenTypeMixin {
         @JsonCreator
         AccessTokenTypeMixin(
             @JsonProperty("value")
@@ -43,7 +43,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class ScopeValueMixin extends Scope.Value {
+    private static final class ScopeValueMixin extends Scope.Value {
         @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
@@ -55,7 +55,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class ScopeMixin extends Scope {
+    private static final class ScopeMixin extends Scope {
         @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
@@ -67,7 +67,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class RefreshTokenMixin extends Token {
+    private static final class RefreshTokenMixin extends Token {
         @Serial
         private static final long serialVersionUID = 867184690952714608L;
 
@@ -90,7 +90,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class BearerAccessTokenMixin extends BearerAccessToken {
+    private static final class BearerAccessTokenMixin extends BearerAccessToken {
         @Serial
         private static final long serialVersionUID = -7042673498464860693L;
 
@@ -112,7 +112,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class CodeVerifierMixin extends CodeVerifier {
+    private static final class CodeVerifierMixin extends CodeVerifier {
         @Serial
         private static final long serialVersionUID = -5587339765097722026L;
 

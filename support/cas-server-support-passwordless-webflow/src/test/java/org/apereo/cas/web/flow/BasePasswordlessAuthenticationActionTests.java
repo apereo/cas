@@ -101,7 +101,7 @@ public abstract class BasePasswordlessAuthenticationActionTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    public static class TestAuthenticationConfiguration {
+    static class TestAuthenticationConfiguration {
         @Bean
         public PasswordlessAuthenticationPreProcessor testPasswordlessAuthenticationPreProcessor() {
             return (builder, principal, service, credential, token) -> builder;

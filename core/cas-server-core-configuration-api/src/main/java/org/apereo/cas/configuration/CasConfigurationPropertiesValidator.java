@@ -86,7 +86,7 @@ public class CasConfigurationPropertiesValidator {
                 configBinder.bind(annotation.prefix(), target, handler);
             } catch (final BindException e) {
                 var message = "\n".concat(e.getMessage()).concat("\n");
-                if (e.getCause() instanceof UnboundConfigurationPropertiesException ucpe) {
+                if (e.getCause() instanceof final UnboundConfigurationPropertiesException ucpe) {
                     message += ucpe.getUnboundProperties()
                         .stream()
                         .map(property -> String.format("%n\t%s = %s (Origin: %s)", property.getName(), property.getValue(), property.getOrigin()))

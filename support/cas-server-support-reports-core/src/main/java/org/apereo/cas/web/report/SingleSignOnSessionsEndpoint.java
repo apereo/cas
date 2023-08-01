@@ -367,7 +367,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             }
         }
 
-        if (tgt instanceof AuthenticatedServicesAwareTicketGrantingTicket ticket) {
+        if (tgt instanceof final AuthenticatedServicesAwareTicketGrantingTicket ticket) {
             val services = ticket.getServices();
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), services);
         }

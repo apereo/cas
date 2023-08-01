@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureMode
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -56,7 +57,7 @@ import static org.mockito.Mockito.*;
 class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorTestConfiguration {
+    static class MultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();
@@ -64,7 +65,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     }
 
     @TestConfiguration(value = "MultifactorBypassTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorBypassTestConfiguration {
+    static class MultifactorBypassTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             val provider = new TestMultifactorAuthenticationProvider();
@@ -121,7 +122,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
             val mfa = new TestMultifactorAuthenticationProvider();
             val bypass = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
             when(bypass.shouldMultifactorAuthenticationProviderExecute(any(Authentication.class), any(RegisteredService.class),
-                any(MultifactorAuthenticationProvider.class), any(HttpServletRequest.class))).thenReturn(true);
+                any(MultifactorAuthenticationProvider.class), any(HttpServletRequest.class), any(Service.class))).thenReturn(true);
             mfa.setBypassEvaluator(bypass);
             provider.addMultifactorAuthenticationProvider(mfa);
 

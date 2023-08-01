@@ -79,6 +79,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -335,6 +336,23 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
+        val ticket = ticketRegistry.getTicket(ticketGrantingTicketId);
+        assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+    }
+
+    /**
+     * Exercise block of code in {@link AbstractTicketRegistry#getTicket(String ticketId)} that runs when
+     * the method encounters a {@link Ticket} created in the future.
+     * Adds 10 seconds to creation time to simulate time out of sync so warning will be logged.
+     */
+    @RepeatedTest(2)
+    public void verifyGetFutureDatedTicket() throws Exception {
+        val addTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(),
+            NeverExpiresExpirationPolicy.INSTANCE);
+        addTicket.setCreationTime(ZonedDateTime.now(addTicket.getExpirationPolicy().getClock()).plusSeconds(10));
+        ticketRegistry.addTicket(addTicket);
         val ticket = ticketRegistry.getTicket(ticketGrantingTicketId);
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
         assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
@@ -673,6 +691,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

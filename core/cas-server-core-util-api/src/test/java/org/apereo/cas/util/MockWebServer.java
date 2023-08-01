@@ -202,7 +202,7 @@ public class MockWebServer implements Closeable {
     /**
      * Worker class handles request processing.
      */
-    private static class Worker implements Runnable {
+    private static final class Worker implements Runnable {
 
         /**
          * Separates HTTP header from body.

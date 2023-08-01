@@ -102,7 +102,7 @@ public final class CasCoreConfigurationUtils {
         return asMap(withHolder, new SimpleFilterProvider().setFailOnUnknownId(false));
     }
 
-    private static class ResourceSerializer extends StdSerializer<Resource> {
+    private static final class ResourceSerializer extends StdSerializer<Resource> {
         @Serial
         private static final long serialVersionUID = 7971411664567411958L;
 

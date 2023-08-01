@@ -158,6 +158,6 @@ public abstract class BasePasswordManagementActionTests {
         CasWebflowContextConfiguration.class,
         CasPersonDirectoryTestConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

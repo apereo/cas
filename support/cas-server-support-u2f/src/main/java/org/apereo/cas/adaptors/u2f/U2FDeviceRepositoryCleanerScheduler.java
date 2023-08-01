@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.u2f;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.inspektr.common.Cleanable;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**

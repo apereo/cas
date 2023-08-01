@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(DisplayBeforePasswordlessAuthenticationActionTests.PasswordlessAuthenticationActionTestConfiguration.class)
 class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @TestConfiguration(value = "PasswordlessAuthenticationActionTestConfiguration", proxyBeanMethods = false)
-    public static class PasswordlessAuthenticationActionTestConfiguration {
+    static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

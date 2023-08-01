@@ -139,7 +139,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @TestConfiguration(value = "GoogleAuthenticatorSaveRegistrationActionTests", proxyBeanMethods = false)
-    public static class GoogleAuthenticatorSaveRegistrationActionTestConfiguration {
+    static class GoogleAuthenticatorSaveRegistrationActionTestConfiguration {
         @Bean
         public IGoogleAuthenticator googleAuthenticatorInstance() {
             val auth = mock(IGoogleAuthenticator.class);

@@ -78,7 +78,7 @@ class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends Base
     }
 
     @TestConfiguration(value = "GroovyMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class GroovyMultifactorTestConfiguration {
+    static class GroovyMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

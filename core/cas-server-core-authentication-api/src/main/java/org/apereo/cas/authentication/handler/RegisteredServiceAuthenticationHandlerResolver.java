@@ -115,7 +115,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
-            val registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
             if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);

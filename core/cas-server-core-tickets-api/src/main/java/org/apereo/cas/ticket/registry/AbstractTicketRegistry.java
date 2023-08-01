@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -76,7 +77,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     private static Map<String, List<Object>> getCombinedTicketAttributes(final Ticket ticket) {
-        if (ticket instanceof AuthenticationAwareTicket authnTicket) {
+        if (ticket instanceof final AuthenticationAwareTicket authnTicket) {
             val authentication = authnTicket.getAuthentication();
             if (authentication != null) {
                 val attributes = new HashMap<>(authentication.getAttributes());
@@ -95,6 +96,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public Ticket getTicket(final String ticketId) {
+        val returnTicket = getTicket(ticketId, ticket -> {
+            if (ticket.isExpired()) {
+                val ticketAgeSeconds = getTicketAgeSeconds(ticket);
+                LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
+                    ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
+                deleteSingleTicket(ticket);
+                return false;
+            }
+            return true;
+        });
+        if (returnTicket != null) {
+            val ticketAgeSeconds = getTicketAgeSeconds(returnTicket);
+            if (ticketAgeSeconds < -1) {
+                LOGGER.warn("Ticket created [{}] second(s) in the future. Check time synchronization on all servers.", ticketAgeSeconds * -1);
+            }
+        }
+        return returnTicket;
+    }
+
+    @Override
     public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
         val ticket = getTicket(ticketId);
         if (ticket == null) {
@@ -106,20 +128,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                                          + ticket.getClass() + " when we were expecting " + clazz);
         }
         return clazz.cast(ticket);
-    }
-
-    @Override
-    public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
-            if (ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
-                return FunctionUtils.doUnchecked(() -> {
-                    deleteTicket(ticket);
-                    return false;
-                });
-            }
-            return true;
-        });
     }
 
     @Override
@@ -139,10 +147,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public int deleteTicket(final Ticket ticket) throws Exception {
         val count = new AtomicLong(0);
-        if (ticket instanceof TicketGrantingTicket tgt) {
+        if (ticket instanceof final TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             count.getAndAdd(deleteChildren(tgt));
-            if (ticket instanceof ProxyGrantingTicket pgt) {
+            if (ticket instanceof final ProxyGrantingTicket pgt) {
                 deleteProxyGrantingTicketFromParent(pgt);
             } else {
                 deleteLinkedProxyGrantingTickets(count, tgt);
@@ -178,7 +186,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long countSessionsFor(final String principalId) {
         val ticketPredicate = (Predicate<Ticket>) t -> {
-            if (t instanceof TicketGrantingTicket ticket) {
+            if (t instanceof final TicketGrantingTicket ticket) {
                 return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
             }
             return false;
@@ -211,7 +219,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         return getTickets(ticket -> {
-            if (ticket instanceof TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
+            if (ticket instanceof final TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
                 && ticketGrantingTicket.getAuthentication() != null) {
                 val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
 
@@ -263,7 +271,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
+        if (ticket instanceof final AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
             val services = authTicket.getServices();
             if (services != null && !services.isEmpty()) {
                 services.keySet()
@@ -313,7 +321,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.warn("Ticket passed is null and cannot be decoded");
             return null;
         }
-        if (!(ticketToProcess instanceof EncodedTicket encodedTicket)) {
+        if (!(ticketToProcess instanceof final EncodedTicket encodedTicket)) {
             LOGGER.warn("Ticket passed is not an encoded ticket: [{}], no decoding is necessary.",
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;
@@ -367,5 +375,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
         ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
         updateTicket(ticket.getTicketGrantingTicket());
+    }
+
+    private static long getTicketAgeSeconds(@NonNull final Ticket ticket) {
+        return ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
     }
 }

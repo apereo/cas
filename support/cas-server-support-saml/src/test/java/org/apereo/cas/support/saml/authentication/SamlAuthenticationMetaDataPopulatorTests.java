@@ -68,7 +68,7 @@ class SamlAuthenticationMetaDataPopulatorTests {
             auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
     }
 
-    private static class CustomCredential implements Credential {
+    private static final class CustomCredential implements Credential {
 
         @Serial
         private static final long serialVersionUID = 8040541789035593268L;

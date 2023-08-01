@@ -52,7 +52,7 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
         val httpAction = (HttpAction) request.getAttribute(HttpAction.class.getName());
         if (httpAction != null) {
             context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
-            if (httpAction instanceof WithContentAction withContentAction) {
+            if (httpAction instanceof final WithContentAction withContentAction) {
                 context.getFlowScope().put(DynamicHtmlView.class.getName(), withContentAction.getContent());
             }
         }

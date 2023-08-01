@@ -328,7 +328,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
     }
 
-    private static class CasHttpBuilder extends Http.HttpBuilder {
+    private static final class CasHttpBuilder extends Http.HttpBuilder {
         CasHttpBuilder(final String method, final String host, final String uri) {
             super(method, host, uri);
         }

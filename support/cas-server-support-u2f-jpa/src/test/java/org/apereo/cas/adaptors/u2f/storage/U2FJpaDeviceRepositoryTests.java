@@ -4,11 +4,10 @@ import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FJpaConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
-
+import org.apereo.cas.util.thread.Cleanable;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.Getter;
 import lombok.val;
-import org.apereo.inspektr.common.Cleanable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +18,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

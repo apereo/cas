@@ -24,6 +24,7 @@ import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultif
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -417,7 +418,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             final CasConfigurationProperties casProperties) {
             val mfa = casProperties.getAuthn().getMfa();
             val script = mfa.getCore().getProviderSelectorGroovyScript();
-            if (script.getLocation() != null) {
+            if (script.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 return new GroovyScriptMultifactorAuthenticationProviderSelector(script.getLocation());
             }
             if (mfa.getCore().isProviderSelectionEnabled()) {

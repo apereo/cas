@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client2",
   "clientSecret": "secret2",
-  "serviceId": "^https://httpbin.org/anything/mapped",
+  "serviceId": "^https://localhost:9859/anything/mapped",
   "name": "Sample",
   "id": 2,
   "supportedGrantTypes": [

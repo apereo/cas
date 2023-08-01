@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -38,19 +39,22 @@ import java.util.stream.Stream;
 public class MultifactorAuthenticationUtils {
 
     /**
-     * Build event attribute map map.
+     * Build event attribute map.
      *
-     * @param principal the principal
-     * @param service   the service
-     * @param provider  the provider
+     * @param principal         the principal
+     * @param service           the service
+     * @param registeredService the service
+     * @param provider          the provider
      * @return the map
      */
     public static Map<String, Object> buildEventAttributeMap(final Principal principal,
-                                                             final Optional<RegisteredService> service,
+                                                             final Optional<Service> service,
+                                                             final Optional<RegisteredService> registeredService,
                                                              final MultifactorAuthenticationProvider provider) {
         val map = new HashMap<String, Object>();
         map.put(Principal.class.getName(), principal);
-        service.ifPresent(svc -> map.put(RegisteredService.class.getName(), svc));
+        registeredService.ifPresent(svc -> map.put(RegisteredService.class.getName(), svc));
+        service.ifPresent(svc -> map.put(Service.class.getName(), svc));
         map.put(MultifactorAuthenticationProvider.class.getName(), provider);
         return map;
     }
@@ -90,37 +94,40 @@ public class MultifactorAuthenticationUtils {
     /**
      * Resolve event via multivalued attribute set.
      *
-     * @param principal      the principal
-     * @param attributeValue the attribute value
-     * @param service        the service
-     * @param context        the context
-     * @param provider       the provider
-     * @param predicate      the predicate
+     * @param principal         the principal
+     * @param attributeValue    the attribute value
+     * @param registeredService the service
+     * @param service           the service
+     * @param context           the context
+     * @param provider          the provider
+     * @param predicate         the predicate
      * @return the set
      */
     public static Set<Event> resolveEventViaMultivaluedAttribute(
         final Principal principal,
         final Object attributeValue,
-        final RegisteredService service,
+        final RegisteredService registeredService,
+        final Service service,
         final Optional<RequestContext> context,
         final MultifactorAuthenticationProvider provider,
         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
-        if (attributeValue instanceof Collection values) {
+        if (attributeValue instanceof final Collection values) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val events = new HashSet<Event>();
             values.forEach(value -> {
-                val id = provider.getId();
+                val providerId = provider.getId();
                 try {
                     LOGGER.trace("Testing attribute value [{}] against multifactor provider [{}]", value, provider);
                     if (predicate.test(value.toString(), provider)) {
-                        val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
+                        val attributeMap = buildEventAttributeMap(principal,
+                            Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
                         LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);
-                        val event = validateEventIdForMatchingTransitionInContext(id, context, attributeMap);
+                        val event = validateEventIdForMatchingTransitionInContext(providerId, context, attributeMap);
                         events.add(event);
                     }
                 } catch (final Exception e) {
-                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}]", value, id);
+                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}]", value, providerId);
                 }
             });
             return events
@@ -144,7 +151,7 @@ public class MultifactorAuthenticationUtils {
         final Collection<String> requestMfaMethod) {
         return providers.values()
             .stream()
-            .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
+            .filter(provider -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(provider::matches))
             .findFirst();
     }
 
@@ -167,6 +174,7 @@ public class MultifactorAuthenticationUtils {
      *
      * @param principal              the principal
      * @param providedAttributeValue the attribute value
+     * @param registeredService      the service
      * @param service                the service
      * @param context                the context
      * @param provider               the provider
@@ -176,7 +184,8 @@ public class MultifactorAuthenticationUtils {
     public static Set<Event> resolveEventViaSingleAttribute(
         final Principal principal,
         final Object providedAttributeValue,
-        final RegisteredService service,
+        final RegisteredService registeredService,
+        final Service service,
         final Optional<RequestContext> context,
         final MultifactorAuthenticationProvider provider,
         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
@@ -187,7 +196,7 @@ public class MultifactorAuthenticationUtils {
                 LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
                 if (predicate.test(attributeValue, provider)) {
                     LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
-                    return evaluateEventForProviderInContext(principal, service, context, provider);
+                    return evaluateEventForProviderInContext(principal, registeredService, service, context, provider);
                 }
                 LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
             }
@@ -247,21 +256,24 @@ public class MultifactorAuthenticationUtils {
     /**
      * Evaluate event for provider in context set.
      *
-     * @param principal the principal
-     * @param service   the service
-     * @param context   the context
-     * @param provider  the provider
+     * @param principal         the principal
+     * @param registeredService the service
+     * @param service           the service
+     * @param context           the context
+     * @param provider          the provider
      * @return the set
      */
     public static Set<Event> evaluateEventForProviderInContext(final Principal principal,
-                                                               final RegisteredService service,
+                                                               final RegisteredService registeredService,
+                                                               final Service service,
                                                                final Optional<RequestContext> context,
                                                                final MultifactorAuthenticationProvider provider) {
-        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
+        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, registeredService);
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
             val id = provider.getId();
-            val eventAttrMap = MultifactorAuthenticationUtils.buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
+            val eventAttrMap = MultifactorAuthenticationUtils.buildEventAttributeMap(principal,
+                Optional.ofNullable(service), Optional.ofNullable(registeredService), provider);
             val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, context, eventAttrMap);
             return CollectionUtils.wrapSet(event);
         }
@@ -301,7 +313,7 @@ public class MultifactorAuthenticationUtils {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()
-            .filter(p -> p.matches(providerId))
+            .filter(provider -> provider.matches(providerId))
             .findFirst();
     }
 }

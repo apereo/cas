@@ -34,14 +34,14 @@ env:
   JDK_CURRENT: 17
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
-  RETRY_MINUTES: 35
+  RETRY_MINUTES: 45
   SCENARIO_REGEX: ".*"
 
 on:
 #  push:
 #    branches: [ master ]
   schedule:
-    - cron: '0 17 * * 6'
+    - cron: '0 14 * * 5'
 
 ##########################################################################
 
@@ -151,6 +151,8 @@ jobs:
           shell: bash
           command: |
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - uses: docker-practice/actions-setup-docker@v1
+        timeout-minutes: 15
       - name: Run Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
@@ -211,6 +213,8 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - uses: docker-practice/actions-setup-docker@v1
+        timeout-minutes: 15
       - name: Run Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}

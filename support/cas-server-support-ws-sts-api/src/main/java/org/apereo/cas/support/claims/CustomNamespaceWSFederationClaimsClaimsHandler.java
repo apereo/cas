@@ -33,7 +33,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
     }
 
     @RequiredArgsConstructor
-    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
+    private static final class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
         @Serial
         private static final long serialVersionUID = 8368878016992806802L;
 
@@ -42,7 +42,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
         @Override
         public boolean contains(final Object o) {
             var uri = StringUtils.EMPTY;
-            if (o instanceof URI instance) {
+            if (o instanceof final URI instance) {
                 uri = instance.toASCIIString();
             } else {
                 uri = o.toString();

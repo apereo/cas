@@ -34,7 +34,7 @@ public class ExtensionMatcher implements DeviceMatcher {
     private static final String EXTENSION_VALUE_TYPE_HEX = "hex";
 
     @Override
-    public boolean matches(X509Certificate attestationCertificate, JsonNode parameters) {
+    public boolean matches(final X509Certificate attestationCertificate, final JsonNode parameters) {
         String matchKey = parameters.get(EXTENSION_KEY).asText();
         JsonNode matchValue = parameters.get(EXTENSION_VALUE);
         byte[] extensionValue = attestationCertificate.getExtensionValue(matchKey);
@@ -52,7 +52,7 @@ public class ExtensionMatcher implements DeviceMatcher {
                     } else if (matchValue.isTextual()) {
                         if (matchStringValue(matchKey, matchValue, value)) return true;
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     LOGGER.error(
                         "Failed to parse extension value as ASN1: {}",
                         new ByteArray(extensionValue).getHex(),
@@ -63,7 +63,7 @@ public class ExtensionMatcher implements DeviceMatcher {
         return false;
     }
 
-    private static boolean matchStringValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
+    private static boolean matchStringValue(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
         if (value instanceof DEROctetString) {
             final String readValue = new String(((ASN1OctetString) value).getOctets(), CHARSET);
             return matchValue.asText().equals(readValue);
@@ -72,7 +72,7 @@ public class ExtensionMatcher implements DeviceMatcher {
         return false;
     }
 
-    private static boolean matchTypedValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
+    private static boolean matchTypedValue(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
         final String extensionValueType = matchValue.get(EXTENSION_VALUE_TYPE).textValue();
         return switch (extensionValueType) {
             case EXTENSION_VALUE_TYPE_HEX -> matchHex(matchKey, matchValue, value);
@@ -88,16 +88,16 @@ public class ExtensionMatcher implements DeviceMatcher {
         final ByteArray matchBytes;
         try {
             matchBytes = ByteArray.fromHex(matchValueString);
-        } catch (HexException e) {
+        } catch (final HexException e) {
             throw new IllegalArgumentException(
                 String.format("Bad hex value in extension %s: %s", matchKey, matchValueString));
         }
 
         final ASN1Primitive innerValue;
-        if (value instanceof DEROctetString instance) {
+        if (value instanceof final DEROctetString instance) {
             try {
                 innerValue = ASN1Primitive.fromByteArray(instance.getOctets());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.debug("Failed to parse {} extension value as ASN1: {}", matchKey, value);
                 return false;
             }
@@ -106,7 +106,7 @@ public class ExtensionMatcher implements DeviceMatcher {
             return false;
         }
 
-        if (innerValue instanceof DEROctetString octetString) {
+        if (innerValue instanceof final DEROctetString octetString) {
             val readBytes = new ByteArray(octetString.getOctets());
             return matchBytes.equals(readBytes);
         } else {

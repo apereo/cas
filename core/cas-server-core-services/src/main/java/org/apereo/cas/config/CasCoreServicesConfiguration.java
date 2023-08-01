@@ -388,7 +388,7 @@ public class CasCoreServicesConfiguration {
             final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
 
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.service-registry.schedule.enabled").isTrue().evenIfMissing()

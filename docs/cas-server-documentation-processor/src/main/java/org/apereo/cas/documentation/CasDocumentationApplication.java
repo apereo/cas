@@ -270,7 +270,7 @@ public class CasDocumentationApplication {
             }
 
             var methods = new LinkedHashMap();
-            for (var method : clazz.getDeclaredMethods()) {
+            for (final var method : clazz.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(ShellMethod.class)) {
                     var annotInstance = method.getAnnotation(ShellMethod.class);
                     var cmd = new ShellCommand();
@@ -307,7 +307,7 @@ public class CasDocumentationApplication {
     }
 
     @Getter
-    private static class ShellCommand {
+    private static final class ShellCommand {
         public String name;
 
         public String description;
@@ -355,7 +355,7 @@ public class CasDocumentationApplication {
         subTypes.forEach(clazz -> {
             var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
             Arrays.stream(features).forEach(feature -> {
-                for (var featureDefn : feature.feature()) {
+                for (final var featureDefn : feature.feature()) {
                     var propName = featureDefn.toProperty(feature.module());
                     if (!allToggleProps.contains(propName)) {
                         allToggleProps.add(propName);
@@ -861,7 +861,7 @@ public class CasDocumentationApplication {
         serviceProps.mkdirs();
         var servicePropsFile = new File(serviceProps, "config.yml");
         var properties = new ArrayList<Map<?, ?>>();
-        for (var property : RegisteredServiceProperty.RegisteredServiceProperties.values()) {
+        for (final var property : RegisteredServiceProperty.RegisteredServiceProperties.values()) {
             var map = new LinkedHashMap<String, Object>();
             map.put("name", property.getPropertyName());
             map.put("defaultValue", property.getDefaultValue());

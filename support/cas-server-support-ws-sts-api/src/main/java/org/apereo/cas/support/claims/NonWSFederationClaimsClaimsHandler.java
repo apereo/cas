@@ -36,7 +36,7 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
         return new NonWSFederationClaimsList();
     }
 
-    private static class NonWSFederationClaimsList extends ArrayList<String> {
+    private static final class NonWSFederationClaimsList extends ArrayList<String> {
         @Serial
         private static final long serialVersionUID = -50278523307446738L;
 

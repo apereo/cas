@@ -62,6 +62,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             }
         };
     }
+
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean

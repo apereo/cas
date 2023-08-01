@@ -172,7 +172,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setErr(String value) {
+    public void setErr(final String value) {
         this.err = value;
     }
 
@@ -192,7 +192,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setLogin(String value) {
+    public void setLogin(final String value) {
         this.login = value;
     }
 
@@ -212,7 +212,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -226,7 +226,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété status.
      */
-    public void setStatus(long value) {
+    public void setStatus(final long value) {
         this.status = value;
     }
 
@@ -240,7 +240,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété role.
      */
-    public void setRole(long value) {
+    public void setRole(final long value) {
         this.role = value;
     }
 
@@ -260,7 +260,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setFirstname(String value) {
+    public void setFirstname(final String value) {
         this.firstname = value;
     }
 
@@ -280,7 +280,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -300,7 +300,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setMail(String value) {
+    public void setMail(final String value) {
         this.mail = value;
     }
 
@@ -320,7 +320,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setPhone(String value) {
+    public void setPhone(final String value) {
         this.phone = value;
     }
 
@@ -340,7 +340,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setExtrafields(String value) {
+    public void setExtrafields(final String value) {
         this.extrafields = value;
     }
 
@@ -354,7 +354,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété createdby.
      */
-    public void setCreatedby(long value) {
+    public void setCreatedby(final long value) {
         this.createdby = value;
     }
 
@@ -368,7 +368,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété lastauthdate.
      */
-    public void setLastauthdate(long value) {
+    public void setLastauthdate(final long value) {
         this.lastauthdate = value;
     }
 
@@ -382,7 +382,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété nca.
      */
-    public void setNca(long value) {
+    public void setNca(final long value) {
         this.nca = value;
     }
 
@@ -531,7 +531,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété nma.
      */
-    public void setNma(long value) {
+    public void setNma(final long value) {
         this.nma = value;
     }
 
@@ -680,7 +680,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété nmac.
      */
-    public void setNmac(long value) {
+    public void setNmac(final long value) {
         this.nmac = value;
     }
 
@@ -829,7 +829,7 @@ public class LoginQueryResult {
     /**
      * Définit la valeur de la propriété nva.
      */
-    public void setNva(long value) {
+    public void setNva(final long value) {
         this.nva = value;
     }
 
@@ -957,7 +957,7 @@ public class LoginQueryResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setLongcode(String value) {
+    public void setLongcode(final String value) {
         this.longcode = value;
     }
 

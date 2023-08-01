@@ -49,7 +49,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public void remove(final ZonedDateTime expirationDate) {
         val value = DateTimeUtils.dateOf(expirationDate);
         LOGGER.trace("Removing expired records on or after [{}]", value);
-        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
+        val count = entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
             .setParameter("expirationDate", value)
             .executeUpdate();
         LOGGER.info("Found and removed [{}] records", count);
@@ -62,7 +62,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @Override
     public void remove(final String key) {
-        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.recordKey = :key")
+        val count = entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.recordKey = :key")
             .setParameter("key", key)
             .executeUpdate();
         LOGGER.info("Found and removed [{}] records", count);
@@ -71,7 +71,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
         remove();
-        val query = this.entityManager
+        val query = entityManager
             .createQuery("SELECT r FROM " + ENTITY_NAME + " r", getEntityFactory().getType());
         val results = query.getResultList();
         return new HashSet<>(results);
@@ -80,7 +80,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
         remove();
-        val query = this.entityManager
+        val query = entityManager
             .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.recordDate >= :date", getEntityFactory().getType())
             .setParameter("date", onOrAfterDate);
         val results = query.getResultList();
@@ -90,7 +90,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         remove();
-        val query = this.entityManager
+        val query = entityManager
             .createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.principal = :principal", getEntityFactory().getType())
             .setParameter("principal", principal);
         val results = query.getResultList();
@@ -101,7 +101,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public MultifactorAuthenticationTrustRecord get(final long id) {
         try {
             remove();
-            val query = this.entityManager
+            val query = entityManager
                 .createQuery("SELECT r FROM " + ENTITY_NAME + " r WHERE r.id >= :id", getEntityFactory().getType())
                 .setParameter("id", id)
                 .setMaxResults(1);
@@ -118,7 +118,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
             val destination = getEntityFactory().newInstance();
             BeanUtils.copyProperties(destination, record);
             LOGGER.trace("Saving multifactor authentication trust record [{}]", destination);
-            return this.entityManager.merge(destination);
+            return entityManager.merge(destination);
         });
     }
 

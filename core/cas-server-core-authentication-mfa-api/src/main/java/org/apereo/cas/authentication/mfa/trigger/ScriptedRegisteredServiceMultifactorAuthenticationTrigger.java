@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -87,7 +88,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mfaScript);
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mfaScript);
 
-            if (matcherInline.find()) {
+            if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val script = new GroovyShellScript(matcherInline.group(1));
                 scriptCache.put(mfaScript, script);
                 LOGGER.trace("Caching multifactor authentication trigger script as an executable shell script");

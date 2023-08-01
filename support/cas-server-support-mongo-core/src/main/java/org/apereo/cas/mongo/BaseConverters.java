@@ -295,7 +295,7 @@ public abstract class BaseConverters {
             return null;
         }
         @SuppressWarnings("JavaUtilDate")
-        private static class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
+        private static final class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
             @Override
             public ZonedDateTime decode(final BsonReader reader, final DecoderContext decoderContext) {
                 val stamp = reader.readTimestamp();

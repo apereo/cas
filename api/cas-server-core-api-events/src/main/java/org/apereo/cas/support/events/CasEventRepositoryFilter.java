@@ -25,7 +25,7 @@ public interface CasEventRepositoryFilter {
      * @param event the event
      * @return true/false
      */
-    default boolean shouldSaveEvent(CasEvent event) {
+    default boolean shouldSaveEvent(final CasEvent event) {
         return true;
     }
 

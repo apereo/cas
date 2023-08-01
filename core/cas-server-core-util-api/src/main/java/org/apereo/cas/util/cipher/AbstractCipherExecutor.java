@@ -180,8 +180,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             return value;
         }
         try {
-            val activeSigningKey = givenKey instanceof IdentifiableKey idk ? idk.getKey() : givenKey;
-            if (activeSigningKey instanceof RSAPrivateKey privKey) {
+            val activeSigningKey = givenKey instanceof final IdentifiableKey idk ? idk.getKey() : givenKey;
+            if (activeSigningKey instanceof final RSAPrivateKey privKey) {
                 val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
                 val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
                 return EncodingUtils.verifyJwsSignature(pubKey, value);

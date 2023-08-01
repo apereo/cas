@@ -70,7 +70,7 @@ public class JsonWebTokenEncryptor {
             jwe.setContentEncryptionAlgorithmConstraints(getContentEncryptionAlgorithmConstraints());
             jwe.setContentTypeHeaderValue("JWT");
             jwe.setHeader("typ", "JWT");
-            if (this.key instanceof IdentifiableKey idk) {
+            if (this.key instanceof final IdentifiableKey idk) {
                 jwe.setKeyIdHeaderValue(idk.getId());
                 jwe.setKey(idk.getKey());
             } else {

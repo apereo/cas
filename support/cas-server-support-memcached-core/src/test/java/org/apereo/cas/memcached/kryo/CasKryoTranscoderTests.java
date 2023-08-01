@@ -348,7 +348,7 @@ class CasKryoTranscoderTests {
      * Class for testing Kryo unregistered class handling.
      */
     @ToString(callSuper = true)
-    private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+    private static final class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
         @Serial
         private static final long serialVersionUID = -1704993954986738308L;
 
