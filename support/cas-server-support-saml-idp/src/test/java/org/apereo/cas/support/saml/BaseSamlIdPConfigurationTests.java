@@ -377,6 +377,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreUtilSerializationConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }
