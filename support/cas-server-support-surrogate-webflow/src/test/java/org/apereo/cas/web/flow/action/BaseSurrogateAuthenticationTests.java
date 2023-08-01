@@ -92,7 +92,7 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
