@@ -1,7 +1,7 @@
 package org.apereo.cas.sba;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasSpringBootAdminServerConfiguration;
+import org.apereo.cas.config.CasSpringBootAdminConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
@@ -10,6 +10,8 @@ import de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration;
 import de.codecentric.boot.admin.server.config.AdminServerInstanceWebClientConfiguration;
 import de.codecentric.boot.admin.server.config.AdminServerMarkerConfiguration;
 import de.codecentric.boot.admin.server.config.AdminServerWebConfiguration;
+import de.codecentric.boot.admin.server.domain.values.Registration;
+import de.codecentric.boot.admin.server.services.InstanceIdGenerator;
 import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -52,8 +54,9 @@ import static org.mockito.Mockito.*;
 
     SpringBootAdminClientAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasSpringBootAdminServerConfiguration.class
+    CasSpringBootAdminConfiguration.class
 }, properties = {
+    "cas.host.name=CASInstance",
     "spring.main.allow-bean-definition-overriding=true",
     "spring.boot.admin.client.url=https://localhost:8443/cas",
     "spring.boot.admin.client.username=casuser",
@@ -73,6 +76,10 @@ public class CasSpringBootAdminServerTests {
     @Qualifier("registrationClient")
     private RegistrationClient registrationClient;
 
+    @Autowired
+    @Qualifier("instanceIdGenerator")
+    private InstanceIdGenerator instanceIdGenerator;
+
     @Test
     void verifyOperation() throws Exception {
         assertNotNull(springBootAdminEndpointConfigurer);
@@ -85,5 +92,15 @@ public class CasSpringBootAdminServerTests {
         when(http.logout(any())).thenReturn(http);
         val cfg = springBootAdminEndpointConfigurer.finish(http);
         assertNotNull(cfg);
+    }
+
+    @Test
+    void verifyInstanceIdGeneration() {
+        val registration1 = Registration.create("Cas1", "https://localhost:8443/cas/actuator/health")
+            .metadata("name", "CASInstance").build();
+        val registration2 = Registration.create("Cas2", "https://localhost:8443/cas/actuator/health").build();
+        val id1 = instanceIdGenerator.generateId(registration1);
+        val id2 = instanceIdGenerator.generateId(registration2);
+        assertEquals(id1, id2);
     }
 }
