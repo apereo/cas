@@ -26,6 +26,8 @@
     "--logging.level.org.pac4j=warn",
     "--logging.level.org.opensaml=warn",
 
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
