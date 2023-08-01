@@ -98,7 +98,7 @@ class JacksonObjectMapperFactoryTests {
     @NoArgsConstructor
     @Accessors(chain = true)
     @EqualsAndHashCode
-    private static class Payload implements Serializable {
+    private static final class Payload implements Serializable {
         @Serial
         private static final long serialVersionUID = -4319570781108105888L;
 

@@ -73,7 +73,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
         val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
         if (providerResult.isPresent()) {
             val clientConfig = providerResult.get();
-            if (clientConfig instanceof DelegatedClientIdentityProviderConfiguration client) {
+            if (clientConfig instanceof final DelegatedClientIdentityProviderConfiguration client) {
                 DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, client);
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
                 request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());

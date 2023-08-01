@@ -92,11 +92,11 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    public static class TestAuthenticationConfiguration {
+    static class TestAuthenticationConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

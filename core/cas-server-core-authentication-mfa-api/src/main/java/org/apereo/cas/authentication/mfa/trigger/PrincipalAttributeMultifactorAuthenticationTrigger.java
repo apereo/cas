@@ -65,7 +65,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         }
 
         val principal = getPrincipalForMultifactorAuthentication(authentication);
-        val result = resolveMultifactorAuthenticationProvider(Optional.empty(), registeredService, principal);
+        val result = resolveMultifactorAuthenticationProvider(Optional.empty(), registeredService, service, principal);
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
             return id.flatMap(o -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(o.toString(), applicationContext));
@@ -88,17 +88,18 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
      * Resolve multifactor authentication provider set.
      *
      * @param context   the context
-     * @param service   the service
+     * @param registeredService   the service
      * @param principal the principal
      * @return the set
      */
     protected Set<Event> resolveMultifactorAuthenticationProvider(final Optional<RequestContext> context,
-                                                                  final RegisteredService service,
+                                                                  final RegisteredService registeredService,
+                                                                  final Service service,
                                                                   final Principal principal) {
-        val events = determineMultifactorAuthenticationEvent(context, service, principal);
+        val events = determineMultifactorAuthenticationEvent(context, registeredService, service, principal);
         val deny = casProperties.getAuthn().getMfa().getTriggers().getPrincipal().isDenyIfUnmatched();
         if (deny && (events == null || events.isEmpty())) {
-            throw new AuthenticationException(new MultifactorAuthenticationRequiredException(service, principal));
+            throw new AuthenticationException(new MultifactorAuthenticationRequiredException(registeredService, principal));
         }
         return events;
     }
@@ -106,54 +107,62 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     /**
      * Determine multifactor authentication event.
      *
-     * @param context   the context
-     * @param service   the service
-     * @param principal the principal
+     * @param context           the context
+     * @param registeredService the service
+     * @param service           the service
+     * @param principal         the principal
      * @return the set
      */
     protected Set<Event> determineMultifactorAuthenticationEvent(final Optional<RequestContext> context,
-                                                                 final RegisteredService service,
+                                                                 final RegisteredService registeredService,
+                                                                 final Service service,
                                                                  final Principal principal) {
         val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val providers = providerMap.values();
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
-            return resolveSingleMultifactorProvider(context, service, principal, providers);
+            return resolveSingleMultifactorProvider(context, registeredService, service, principal, providers);
         }
 
-        return resolveMultifactorProviderViaPredicate(context, service, principal, providers);
+        return resolveMultifactorProviderViaPredicate(context, registeredService, service, principal, providers);
     }
 
     /**
      * Resolve multifactor provider by regex predicate set.
      *
-     * @param context   the context
-     * @param service   the service
-     * @param principal the principal
-     * @param providers the providers
+     * @param context           the context
+     * @param registeredService the service
+     * @param service           the service
+     * @param principal         the principal
+     * @param providers         the providers
      * @return the set
      */
     protected Set<Event> resolveMultifactorProviderViaPredicate(final Optional<RequestContext> context,
-                                                                final RegisteredService service,
+                                                                final RegisteredService registeredService,
+                                                                final Service service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
-        return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
+        return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(
+            principal, attributeNames, registeredService, service, context, providers,
             (attributeValue, provider) -> attributeValue != null && provider.matches(attributeValue));
     }
 
     /**
      * Resolve single multifactor provider set.
      *
-     * @param context   the context
-     * @param service   the service
-     * @param principal the principal
-     * @param providers the providers
+     * @param context           the context
+     * @param registeredService the service
+     * @param service           the service
+     * @param principal         the principal
+     * @param providers         the providers
      * @return the set
      */
-    protected Set<Event> resolveSingleMultifactorProvider(final Optional<RequestContext> context, final RegisteredService service,
+    protected Set<Event> resolveSingleMultifactorProvider(final Optional<RequestContext> context,
+                                                          final RegisteredService registeredService,
+                                                          final Service service,
                                                           final Principal principal,
                                                           final Collection<MultifactorAuthenticationProvider> providers) {
         val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
@@ -162,7 +171,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         LOGGER.trace("Found a single multifactor provider [{}] in the application context", provider);
         val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
-        return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
+        return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(
+            principal, attributeNames, registeredService, service, context, providers,
             (attributeValue, mfaProvider) -> attributeValue != null && RegexUtils.find(globalPrincipalAttributeValueRegex, attributeValue));
     }
 }

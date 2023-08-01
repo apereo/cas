@@ -191,7 +191,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
-    public static class DatabaseTestConfiguration {
+    static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
@@ -200,7 +200,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
 
     @SuppressWarnings("unused")
     @Entity(name = "casusers")
-    public static class UsersTable {
+    static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;

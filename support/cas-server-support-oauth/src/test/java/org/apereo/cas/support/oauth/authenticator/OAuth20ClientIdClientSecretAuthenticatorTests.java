@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
-    public static class NullPrincipalTestConfiguration {
+    static class NullPrincipalTestConfiguration {
         @Bean
         public PrincipalResolver defaultPrincipalResolver() {
             val mockPrincipalResolver = mock(PrincipalResolver.class);
@@ -153,7 +153,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
 
             assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
             assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
-            assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
+            assertNotNull(credentials.getUserProfile().getAttribute("groupMembership"));
         }
     }
 

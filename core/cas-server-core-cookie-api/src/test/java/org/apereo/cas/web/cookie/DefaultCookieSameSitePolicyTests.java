@@ -66,7 +66,7 @@ class DefaultCookieSameSitePolicyTests {
         return DefaultCookieSameSitePolicy.INSTANCE.build(new MockHttpServletRequest(), new MockHttpServletResponse(), context);
     }
 
-    public static class CustomCookieSameSitePolicy implements CookieSameSitePolicy {
+    static class CustomCookieSameSitePolicy implements CookieSameSitePolicy {
         @Override
         public Optional<String> build(final HttpServletRequest request, final HttpServletResponse response, final CookieGenerationContext cookieGenerationContext) {
             return Optional.of("SameSite=Something;");

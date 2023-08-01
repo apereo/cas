@@ -85,7 +85,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         LOGGER.debug("Resolved multifactor providers are [{}]", providers);
         val result = multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
-            registeredService, Optional.empty(), providers,
+            registeredService, service, Optional.empty(), providers,
             (attributeValue, mfaProvider) ->
                 attributeValue != null && RegexUtils.find(policy.getPrincipalAttributeValueToMatch(), attributeValue));
 
@@ -94,7 +94,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
                 .map(Event.class::cast)
                 .map(event -> {
                     val provider = CollectionUtils.firstElement(providers, MultifactorAuthenticationProvider.class).orElseThrow();
-                    if (provider instanceof ChainingMultifactorAuthenticationProvider chain && provider.getId().equals(event.getId())) {
+                    if (provider instanceof final ChainingMultifactorAuthenticationProvider chain && provider.getId().equals(event.getId())) {
                         val matched = chain.getMultifactorAuthenticationProviders()
                             .stream()
                             .map(p -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(p.getId(), applicationContext))

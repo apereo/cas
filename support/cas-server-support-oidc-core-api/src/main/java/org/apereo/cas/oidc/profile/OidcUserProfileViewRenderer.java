@@ -103,7 +103,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         claims.setIssuer(signingAndEncryptionService.resolveIssuer(Optional.of(registeredService)));
 
         LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
-        val result = this.signingAndEncryptionService.encode(registeredService, claims);
+        val result = signingAndEncryptionService.encode(registeredService, claims);
         LOGGER.debug("Finalized user profile is [{}]", result);
 
         response.setContentType(OidcConstants.CONTENT_TYPE_JWT);

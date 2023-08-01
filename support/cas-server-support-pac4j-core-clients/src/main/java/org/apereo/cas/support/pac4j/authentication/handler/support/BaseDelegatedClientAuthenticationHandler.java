@@ -67,7 +67,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         credentials.setTypedIdUsed(isTypedIdUsed);
         val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
         attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
-        if (profile instanceof BasicUserProfile bup) {
+        if (profile instanceof final BasicUserProfile bup) {
             attributes.putAll(CollectionUtils.toMultiValuedMap(bup.getAuthenticationAttributes()));
         }
         val initialPrincipal = principalFactory.createPrincipal(id, attributes);

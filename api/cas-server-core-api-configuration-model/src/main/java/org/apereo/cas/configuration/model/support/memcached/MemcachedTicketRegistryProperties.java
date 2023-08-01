@@ -15,11 +15,13 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @RequiresModule(name = "cas-server-support-memcached-ticket-registry")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {
 
     @Serial

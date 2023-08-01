@@ -51,7 +51,7 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
 
     public MockServiceTicket(final String id, final Service service,
                              final TicketGrantingTicket parent) {
-        this(id, service, parent, null);
+        this(id, service, parent, NeverExpiresExpirationPolicy.INSTANCE);
     }
 
     public MockServiceTicket(final String id,

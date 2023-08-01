@@ -157,7 +157,7 @@ public class SamlIdPSessionManager {
     @Setter
     @NoArgsConstructor
     @Accessors(chain = true)
-    private static class SamlIdPSessionEntry implements Serializable {
+    private static final class SamlIdPSessionEntry implements Serializable {
         @Serial
         private static final long serialVersionUID = 8119055575574523810L;
 

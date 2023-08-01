@@ -62,13 +62,13 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.DECLARED_FIELDS,
             MemberCategory.PUBLIC_FIELDS};
         entries.forEach(el -> {
-            if (el instanceof String clazz) {
+            if (el instanceof final String clazz) {
                 hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
             }
-            if (el instanceof Class clazz) {
+            if (el instanceof final Class clazz) {
                 hints.reflection().registerType(clazz, memberCategories);
             }
-            if (el instanceof TypeReference reference) {
+            if (el instanceof final TypeReference reference) {
                 hints.reflection().registerType(reference, memberCategories);
             }
         });

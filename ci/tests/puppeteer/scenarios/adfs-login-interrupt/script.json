@@ -1,9 +1,9 @@
 {
   "dependencies": "interrupt-webflow,wsfederation-webflow",
   "conditions": {
-    "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
+    "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD",
+    "docker": "true"
   },
-
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",

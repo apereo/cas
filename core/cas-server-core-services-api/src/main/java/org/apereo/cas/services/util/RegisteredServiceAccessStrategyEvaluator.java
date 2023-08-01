@@ -3,6 +3,7 @@ package org.apereo.cas.services.util;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -160,7 +161,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
         val results = new ArrayList<>();
         for (val requiredValue : requiredValues) {
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(requiredValue);
-            if (matcherInline.find()) {
+            if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 try (val executableScript = new GroovyShellScript(matcherInline.group(1))) {
                     val args = CollectionUtils.<String, Object>wrap(
                         "principalId", request.getPrincipalId(),

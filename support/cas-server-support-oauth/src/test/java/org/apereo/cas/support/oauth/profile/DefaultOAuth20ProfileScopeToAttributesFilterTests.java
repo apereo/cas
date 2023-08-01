@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("profileScopeToAttributesFilter")
+    @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
     private OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Test

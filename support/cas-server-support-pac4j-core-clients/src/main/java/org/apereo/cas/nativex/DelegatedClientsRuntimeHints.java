@@ -39,7 +39,7 @@ public class DelegatedClientsRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.PUBLIC_FIELDS
         };
         clazzes.forEach(entry -> {
-            if (entry instanceof Class clazz) {
+            if (entry instanceof final Class clazz) {
                 hints.reflection().registerType(clazz, memberCategories);
             }
         });

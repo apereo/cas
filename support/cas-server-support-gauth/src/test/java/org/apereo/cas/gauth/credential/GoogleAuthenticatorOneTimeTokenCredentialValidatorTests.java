@@ -153,7 +153,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @TestConfiguration(value = "GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration", proxyBeanMethods = false)
-    public static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
+    static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
         @Bean
         public IGoogleAuthenticator googleAuthenticatorInstance() {
             val auth = mock(IGoogleAuthenticator.class);

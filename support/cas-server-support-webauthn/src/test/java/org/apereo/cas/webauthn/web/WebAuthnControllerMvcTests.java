@@ -113,7 +113,7 @@ class WebAuthnControllerMvcTests {
         /* Authenticated requests with the right role should pass */
         executeRequest(endpoint, csrfResult.getRequest(), false, HttpStatus.SC_BAD_REQUEST);
 
-        /* Ensure security conext does not intefere with actuator endpoint security */
+        /* Ensure security context does not interfere with actuator endpoint security */
         mvc.perform(get("/cas/actuator/env"))
             .andExpect(status().isUnauthorized());
         mvc.perform(get("/cas/actuator/env")

@@ -38,6 +38,9 @@
     <!-- ============== Logging Categories and Levels ============== -->
     <!-- =========================================================== -->
 
+    <logger name="net.unicon.idp" level="DEBUG"/>
+    <logger name="org.jasig.cas.client" level="DEBUG"/>
+
     <!-- Logs IdP, but not OpenSAML, messages -->
     <logger name="net.shibboleth.idp" level="${idp.loglevel.idp:INFO}"/>
 
@@ -51,7 +54,7 @@
     <logger name="org.apache.http" level="${idp.loglevel.httpclient}"/>
 
     <!-- Logs inbound and outbound protocols messages at DEBUG level -->
-    <logger name="PROTOCOL_MESSAGE" level="${idp.loglevel.messages:DEBUG}" />
+    <logger name="PROTOCOL_MESSAGE" level="${idp.loglevel.messages:INFO}" />
 
     <!-- Logs unencrypted SAML at DEBUG level -->
     <logger name="org.opensaml.saml.saml2.encryption.Encrypter" level="${idp.loglevel.encryption}" />

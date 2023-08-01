@@ -1,8 +1,8 @@
-FROM i2incommon/shib-idp:4.3.0_20230118_rocky8_multiarch
+FROM i2incommon/shib-idp:4.3.1_20230706_rocky8_multiarch
 
 COPY shibcasauthn/no-conversation-state.jsp /opt/shibboleth-idp/edit-webapp
-COPY shibcasauthn/cas-client-core-3.6.0.jar /opt/shibboleth-idp/edit-webapp/WEB-INF/lib
-COPY shibcasauthn/shib-cas-authenticator-4.3.0.jar /opt/shibboleth-idp/edit-webapp/WEB-INF/lib
+COPY shibcasauthn/cas-client-core-3.6.4.jar /opt/shibboleth-idp/edit-webapp/WEB-INF/lib
+COPY shibcasauthn/shib-cas-authenticator-4.3.1.jar /opt/shibboleth-idp/edit-webapp/WEB-INF/lib
 
 COPY idp/web.xml /opt/shibboleth-idp/edit-webapp/WEB-INF
 COPY idp/authn.properties /opt/shibboleth-idp/conf/authn

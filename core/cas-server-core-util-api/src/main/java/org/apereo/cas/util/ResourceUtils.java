@@ -327,7 +327,7 @@ public class ResourceUtils {
      */
     public static boolean isJarResource(final Resource resource) {
         try {
-            return (resource instanceof ClassPathResource cp && cp.getPath().startsWith("jar:"))
+            return (resource instanceof final ClassPathResource cp && cp.getPath().startsWith("jar:"))
                 || "jar".equals(resource.getURI().getScheme());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

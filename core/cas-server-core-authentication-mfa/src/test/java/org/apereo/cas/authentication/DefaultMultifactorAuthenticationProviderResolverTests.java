@@ -139,7 +139,8 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
             CollectionUtils.wrap("authlevel", List.of(provider.getId())));
         val results = resolver.resolveEventViaAuthenticationAttribute(authentication,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(provider), (input, mfaProvider) -> input.equalsIgnoreCase(provider.getId()));
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(provider), (input, __) -> input.equalsIgnoreCase(provider.getId()));
         assertNotNull(results);
         assertEquals(provider.getId(), results.iterator().next().getId());
     }
@@ -160,18 +161,21 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("authlevel", List.of(provider.getId())));
         var results = resolver.resolveEventViaPrincipalAttribute(principal,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(provider), (input, mfaProvider) -> input.equalsIgnoreCase(provider.getId()));
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(provider), (input, __) -> input.equalsIgnoreCase(provider.getId()));
         assertNotNull(results);
         assertEquals(provider.getId(), results.iterator().next().getId());
 
         results = resolver.resolveEventViaPrincipalAttribute(principal,
             List.of("authlevel"), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(), (input, mfaProvider) -> input.equalsIgnoreCase(provider.getId()));
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(), (input, __) -> input.equalsIgnoreCase(provider.getId()));
         assertNull(results);
 
         results = resolver.resolveEventViaPrincipalAttribute(principal,
             List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(), (input, mfaProvider) -> input.equalsIgnoreCase(provider.getId()));
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(), (input, __) -> input.equalsIgnoreCase(provider.getId()));
         assertNull(results);
     }
 
@@ -186,7 +190,8 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
         val results = resolver.resolveEventViaAttribute(principal,
             Map.of("authlevel", List.of("strong")),
             List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(), (s, mfaProvider) -> false);
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(), (__, mfaProvider) -> false);
         assertNull(results);
     }
 
@@ -205,7 +210,8 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
         val results = resolver.resolveEventViaAttribute(principal,
             Map.of("authlevel", List.of("strong")),
             List.of(), CoreAuthenticationTestUtils.getRegisteredService(),
-            Optional.of(context), List.of(provider), (s, mfaProvider) -> false);
+            CoreAuthenticationTestUtils.getService(),
+            Optional.of(context), List.of(provider), (__, mfaProvider) -> false);
         assertNull(results);
     }
 }

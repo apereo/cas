@@ -52,7 +52,7 @@ class ChainingPrincipalAttributesRepositoryTests {
     }
 
     @TestConfiguration
-    public static class ChainingPrincipalAttributesRepositoryTestConfiguration {
+    static class ChainingPrincipalAttributesRepositoryTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {
            return mock(ServicesManager.class);

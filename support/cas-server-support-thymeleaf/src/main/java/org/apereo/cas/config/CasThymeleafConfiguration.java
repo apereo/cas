@@ -19,7 +19,6 @@ import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -59,7 +58,6 @@ import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -115,8 +113,7 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver(
         final ThymeleafProperties thymeleafProperties,
-        @Qualifier("themeResolver")
-        final ThemeResolver themeResolver,
+        @Qualifier("themeResolver") final ThemeResolver themeResolver,
         final CasConfigurationProperties casProperties) {
         val chain = new ChainingTemplateViewResolver();
         val rest = casProperties.getView().getRest();
@@ -129,8 +126,8 @@ public class CasThymeleafConfiguration {
         templatePrefixes.forEach(prefix -> {
             try {
                 val prefixPath = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
-                        ? prefix
-                        : ResourceUtils.getFile(prefix).getCanonicalPath();
+                    ? prefix
+                    : ResourceUtils.getFile(prefix).getCanonicalPath();
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
@@ -144,7 +141,7 @@ public class CasThymeleafConfiguration {
                 chain.addResolver(template);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER,
-                        String.format("Could not add template prefix '%s' to resolver: [%s]", prefix, e.getMessage()), e);
+                    String.format("Could not add template prefix '%s' to resolver: [%s]", prefix, e.getMessage()), e);
             }
         });
         val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver);
@@ -192,8 +189,7 @@ public class CasThymeleafConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasThymeleafTemplatesDirector casThymeleafTemplatesDirector(
-            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
-            final CasWebflowExecutionPlan webflowExecutionPlan) {
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan) {
             return new CasThymeleafTemplatesDirector(webflowExecutionPlan);
         }
     }
@@ -217,8 +213,10 @@ public class CasThymeleafConfiguration {
         @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasProtocolViewFactory casProtocolThymeleafViewFactory(final SpringTemplateEngine springTemplateEngine,
-                                                                      final ThymeleafProperties thymeleafProperties) {
+        public CasProtocolViewFactory casProtocolThymeleafViewFactory(
+            @Qualifier("templateEngine")
+            final SpringTemplateEngine springTemplateEngine,
+            final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         }
 
@@ -239,10 +237,8 @@ public class CasThymeleafConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ViewResolver registeredServiceViewResolver(
-            @Qualifier("themeResolver")
-            final ThemeResolver themeResolver,
-            @Qualifier("themeViewResolverFactory")
-            final ThemeViewResolverFactory themeViewResolverFactory) {
+            @Qualifier("themeResolver") final ThemeResolver themeResolver,
+            @Qualifier("themeViewResolverFactory") final ThemeViewResolverFactory themeViewResolverFactory) {
             val resolver = new ThemeBasedViewResolver(themeResolver, themeViewResolverFactory);
             resolver.setOrder(THYMELEAF_VIEW_RESOLVER_ORDER - 1);
             return resolver;
@@ -251,21 +247,25 @@ public class CasThymeleafConfiguration {
         @ConditionalOnMissingBean(name = "themeViewResolverFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ThemeViewResolverFactory themeViewResolverFactory(final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties,
-                                                                 final ConfigurableApplicationContext applicationContext,
-                                                                 @Qualifier("thymeleafViewResolver")
-                                                                 final ThymeleafViewResolver thymeleafViewResolver,
-                                                                 final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
-            val factory = new ThemeViewResolver.Factory(thymeleafViewResolver, thymeleafProperties, casProperties, thymeleafViewResolverConfigurers);
+        public ThemeViewResolverFactory themeViewResolverFactory(
+            final ThymeleafProperties thymeleafProperties,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("thymeleafViewResolver") final ThymeleafViewResolver thymeleafViewResolver,
+            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
+            val factory = new ThemeViewResolver.Factory(thymeleafViewResolver, thymeleafProperties,
+                casProperties, thymeleafViewResolverConfigurers);
             factory.setApplicationContext(applicationContext);
             return factory;
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ThymeleafViewResolver thymeleafViewResolver(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties,
-                                                           final ConfigurableApplicationContext applicationContext,
-                                                           final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
+        public ThymeleafViewResolver thymeleafViewResolver(
+            @Qualifier("templateEngine") final SpringTemplateEngine springTemplateEngine,
+            final ThymeleafProperties thymeleafProperties,
+            final ConfigurableApplicationContext applicationContext,
+            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
             val resolver = new ThymeleafViewResolver();
             resolver.setProducePartialOutputWhileProcessing(thymeleafProperties.getServlet().isProducePartialOutputWhileProcessing());
             resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());

@@ -129,7 +129,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
     }
 
     @TestConfiguration(value = "DefaultRelyingPartyTokenProducerTestConfiguration", proxyBeanMethods = false)
-    public static class DefaultRelyingPartyTokenProducerTestConfiguration {
+    static class DefaultRelyingPartyTokenProducerTestConfiguration {
         @Bean
         public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() throws Exception {
             val client = mock(SecurityTokenServiceClient.class);

@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -9,26 +11,27 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -75,9 +78,9 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     public Assertion build(final SamlProfileBuilderContext context) throws Exception {
 
         val statements = new ArrayList<Statement>();
-        val authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(context);
+        val authnStatement = samlProfileSamlAuthNStatementBuilder.build(context);
         statements.add(authnStatement);
-        val attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(context);
+        val attrStatement = samlProfileSamlAttributeStatementBuilder.build(context);
 
         if (!attrStatement.getAttributes().isEmpty() || !attrStatement.getEncryptedAttributes().isEmpty()) {
             statements.add(attrStatement);
@@ -97,8 +100,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
         val id = '_' + String.valueOf(RandomUtils.nextLong());
         val assertion = newAssertion(statements, issuerId, ZonedDateTime.now(ZoneOffset.UTC), id);
-        assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(context));
-        assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(context));
+        assertion.setSubject(samlProfileSamlSubjectBuilder.build(context));
+        assertion.setConditions(samlProfileSamlConditionsBuilder.build(context));
         signAssertion(assertion, context);
         return assertion;
     }
@@ -114,6 +117,12 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlProfileBuilderContext context) throws Exception {
         var signAssertions = (context.getRegisteredService().getSignAssertions() == TriStateBoolean.UNDEFINED && context.getAdaptor().isWantAssertionsSigned())
                              || context.getRegisteredService().getSignAssertions().isTrue();
+        if (!signAssertions) {
+            signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+                List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
+                    Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
+        }
+        
         if (signAssertions) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", context.getAdaptor().getEntityId());
             samlObjectSigner.encode(assertion, context.getRegisteredService(), context.getAdaptor(),

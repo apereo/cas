@@ -59,7 +59,41 @@ We recommend reading the following documentation in order to plan and execute a 
 
 CAS development is powered by the following tools, projects and services.
 
-{:.list-group}
-* {:.list-group-item} <a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="150"></a>
-* {:.list-group-item} <a href="https://github.com/spring-projects/spring-boot"><img width="130" src="https://user-images.githubusercontent.com/1205228/32322526-0b58ac44-bfda-11e7-822e-ad763eb80faf.png"></a>
-* {:.list-group-item} <a href="https://www.yourkit.com"><img src="https://user-images.githubusercontent.com/1205228/38207124-f6c6db34-36c1-11e8-9bbf-8dee5bd199c4.png" width="130"></a><br/>YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent tools for profiling Java and .NET applications.
+<div class="row">
+  <div class="col-sm-2 d-flex align-items-stretch">
+    <div class="card" style="width: 15rem;">
+      <a href="https://www.jetbrains.com/idea/">
+      <img src="https://github.com/apereo/cas/assets/1205228/11d83496-1abe-4f5a-b1e2-e313607cd595" class="card-img-top">
+      </a>
+      <div class="card-body">
+        <p class="card-text">The IDE that makes development a more productive and enjoyable experience</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2 d-flex align-items-stretch">
+    <div class="card" style="width: 15rem;">
+      <a href="https://github.com/spring-projects/spring-boot/">
+      <img src="https://github.com/apereo/cas/assets/1205228/854849e9-1b02-4218-8cf7-a4fa4e2b9aa2" class="card-img-top mt-2 ms-2 pe-4">
+      </a>
+      <div class="card-body">
+        <p class="card-text">Spring Boot is Spring's convention-over-configuration solution for creating production-grade 
+Spring applications.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-2 d-flex align-items-stretch">
+    <div class="card" style="width: 16rem;">
+      <a href="https://www.yourkit.com">
+      <img src="https://github.com/apereo/cas/assets/1205228/81bf79a8-3771-4439-bcb4-34cfbb94467c" class="card-img-top mt-2 ms-2 pe-4">
+      </a>
+      <div class="card-body">
+        <p class="card-text">
+        YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> 
+and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent 
+tools for profiling Java and .NET applications.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

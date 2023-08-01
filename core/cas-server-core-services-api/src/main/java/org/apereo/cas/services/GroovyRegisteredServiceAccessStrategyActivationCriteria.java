@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -73,7 +74,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
             this.executableScript = new WatchableGroovyScriptResource(resource);
         }
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
-        if (matcherInline.find()) {
+        if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
             this.executableScript = new GroovyShellScript(matcherInline.group(1));
         }
     }

@@ -580,7 +580,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
-        if (def.getExecutionCriteria() instanceof TransitionCriteriaChain chain) {
+        if (def.getExecutionCriteria() instanceof final TransitionCriteriaChain chain) {
             val field = ReflectionUtils.findField(chain.getClass(), "criteriaChain");
             Assert.notNull(field, "criteriaChain cannot be null");
             ReflectionUtils.makeAccessible(field);

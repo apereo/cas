@@ -142,7 +142,7 @@ class CloudWatchAppenderSpecTests {
 
     }
 
-    private static class TestCase {
+    private static final class TestCase {
         private final Boolean createIfNeeded;
 
         private final Boolean createLogGroupIfNeeded;

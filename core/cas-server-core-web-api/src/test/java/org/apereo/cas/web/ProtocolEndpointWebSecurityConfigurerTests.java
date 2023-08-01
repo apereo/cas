@@ -21,6 +21,7 @@ class ProtocolEndpointWebSecurityConfigurerTests {
         val cfg = new ProtocolEndpointWebSecurityConfigurer<>() {
         };
         assertEquals(cfg, cfg.configure(new Object()));
+        assertEquals(cfg, cfg.finish(new Object()));
         assertEquals(Ordered.LOWEST_PRECEDENCE, cfg.getOrder());
         assertTrue(cfg.getIgnoredEndpoints().isEmpty());
     }

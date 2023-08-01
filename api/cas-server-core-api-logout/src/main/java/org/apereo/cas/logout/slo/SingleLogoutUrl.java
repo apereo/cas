@@ -53,7 +53,7 @@ public class SingleLogoutUrl implements Serializable {
      * @return the list
      */
     public static List<SingleLogoutUrl> from(final RegisteredService service) {
-        if (service instanceof WebBasedRegisteredService registeredService) {
+        if (service instanceof final WebBasedRegisteredService registeredService) {
             if (StringUtils.hasText(registeredService.getLogoutUrl())) {
                 return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
                     .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))

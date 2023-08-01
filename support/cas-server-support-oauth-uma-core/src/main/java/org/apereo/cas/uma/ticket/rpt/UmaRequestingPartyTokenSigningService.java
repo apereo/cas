@@ -46,18 +46,18 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     }
 
     @Override
-    public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
+    public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) {
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
-        return signTokenIfNecessary(claims, service);
+        return signTokenIfNecessary(claims, registeredService);
     }
 
     @Override
-    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+    public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService registeredService) {
         return JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE;
     }
 
     @Override
-    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> serviceResult) {
+    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> registeredService) {
         val jwks = jsonWebKeySet.getJsonWebKeys();
         FunctionUtils.throwIf(jwks.isEmpty(),
             () -> new IllegalArgumentException("Json web keystore is empty and contains no keys"));
@@ -65,7 +65,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     }
 
     @Override
-    public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
+    public String resolveIssuer(final Optional<OAuthRegisteredService> registeredService) {
         return casProperties.getAuthn().getOauth().getUma().getCore().getIssuer();
     }
 }

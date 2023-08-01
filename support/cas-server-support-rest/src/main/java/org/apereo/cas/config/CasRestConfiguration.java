@@ -33,7 +33,6 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +52,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import javax.annotation.Nonnull;
 import java.util.List;
 
@@ -76,11 +74,11 @@ public class CasRestConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
         public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService) {
             return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
         }
     }
+
     @Configuration(value = "CasRestResponseFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasRestResponseFactoryConfiguration {
@@ -134,13 +132,11 @@ public class CasRestConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
-            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull
-                    final InterceptorRegistry registry) {
+                    @Nonnull final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         LOGGER.debug("Activating authentication throttling for REST endpoints...");
@@ -160,25 +156,19 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketStatusResource ticketStatusResource(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             return new TicketStatusResource(ticketRegistry);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketResource serviceTicketResource(
-            @Qualifier("serviceTicketResourceEntityResponseFactory")
-            final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
-            @Qualifier("restHttpRequestCredentialFactory")
-            final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("serviceTicketResourceEntityResponseFactory") final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
+            @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor) {
+            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor) {
             return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
                 argumentExtractor, serviceTicketResourceEntityResponseFactory, restHttpRequestCredentialFactory, applicationContext);
         }
@@ -186,15 +176,11 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketGrantingTicketResource ticketGrantingTicketResource(
-            @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
-            final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
+            @Qualifier("ticketGrantingTicketResourceEntityResponseFactory") final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
-            final RestAuthenticationService restAuthenticationService,
-            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
-            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME) final RestAuthenticationService restAuthenticationService,
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME) final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return new TicketGrantingTicketResource(restAuthenticationService,
                 centralAuthenticationService, ticketGrantingTicketResourceEntityResponseFactory,
                 applicationContext, defaultSingleLogoutRequestExecutor);
@@ -203,11 +189,9 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UserAuthenticationResource userAuthenticationRestController(
-            @Qualifier("userAuthenticationResourceEntityResponseFactory")
-            final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,
+            @Qualifier("userAuthenticationResourceEntityResponseFactory") final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
-            final RestAuthenticationService restAuthenticationService) {
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME) final RestAuthenticationService restAuthenticationService) {
             return new UserAuthenticationResource(restAuthenticationService, userAuthenticationResourceEntityResponseFactory, applicationContext);
         }
     }

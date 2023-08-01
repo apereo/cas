@@ -56,7 +56,7 @@ class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration(value = "AMQPTicketRegistryTestConfiguration", proxyBeanMethods = false)
-    public static class AMQPTicketRegistryTestConfiguration {
+    static class AMQPTicketRegistryTestConfiguration {
         @Bean
         public Clock testClock() {
             return new MockClock();

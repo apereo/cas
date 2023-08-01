@@ -25,7 +25,7 @@ public class QRAuthenticationGenerateCodeAction extends BaseCasWebflowAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val id = UUID.randomUUID().toString();
         LOGGER.debug("Generating QR code with channel id [{}]", id);
-        val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
+        val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.SIZE, QRUtils.SIZE);
         val flowScope = requestContext.getFlowScope();
         flowScope.put("qrCode", qrCodeBase64);
         flowScope.put("qrChannel", id);

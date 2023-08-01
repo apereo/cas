@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +16,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class RootCasException extends RuntimeException {
 
@@ -28,6 +25,11 @@ public class RootCasException extends RuntimeException {
     private final String code;
 
     private final List<Object> args = new ArrayList<>(0);
+
+    protected RootCasException(final String code) {
+        super(code);
+        this.code = code;
+    }
 
     protected RootCasException(final String code, final String msg) {
         super(msg);

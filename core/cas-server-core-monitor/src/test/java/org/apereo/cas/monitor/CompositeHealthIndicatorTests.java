@@ -31,7 +31,7 @@ class CompositeHealthIndicatorTests {
     }
 
     @RequiredArgsConstructor
-    public static class DownHealthIndicator extends AbstractHealthIndicator {
+    static class DownHealthIndicator extends AbstractHealthIndicator {
         private final Status status;
 
         @Override

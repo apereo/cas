@@ -95,7 +95,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
         val principalAttributes = new LinkedHashMap<>(attributes);
         LOGGER.trace("Principal attributes to convert to person attributes are [{}]", principalAttributes);
         principalAttributes.forEach((key, values) -> {
-            if (values instanceof Collection collection) {
+            if (values instanceof final Collection collection) {
                 val uniqueValues = new LinkedHashSet<Object>(collection);
                 val listedValues = new ArrayList<Object>(uniqueValues);
                 convertedAttributes.put(key, listedValues);

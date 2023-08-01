@@ -162,9 +162,11 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
     protected OAuth20ResponseModeFactory oauthResponseModeFactory;
+
     @Autowired
     @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
+
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
@@ -242,7 +244,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
 
     @Autowired
-    @Qualifier("profileScopeToAttributesFilter")
+    @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Autowired

@@ -55,7 +55,7 @@ public interface OidcAttributeToScopeClaimMapper {
      * @param registeredService the registered service
      * @return the string
      */
-    default String toMappedClaimName(final String claimName, RegisteredService registeredService) {
+    default String toMappedClaimName(final String claimName, final RegisteredService registeredService) {
         return containsMappedAttribute(claimName, registeredService)
             ? getMappedAttribute(claimName, registeredService)
             : claimName;

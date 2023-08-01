@@ -28,7 +28,7 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      * @param filter the filter
      * @return the stream
      */
-    default Stream<IPersonAttributeDao> findAttributeRepositories(Predicate<IPersonAttributeDao> filter) {
+    default Stream<IPersonAttributeDao> findAttributeRepositories(final Predicate<IPersonAttributeDao> filter) {
         return getAttributeRepositories().stream().filter(filter);
     }
 

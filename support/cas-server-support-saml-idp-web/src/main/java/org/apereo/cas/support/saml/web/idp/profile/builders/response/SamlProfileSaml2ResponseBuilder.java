@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -11,17 +12,18 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.CookieUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
@@ -31,10 +33,10 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -82,16 +84,16 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             .getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled()) {
             storeAttributeQueryTicketInRegistry(assertion, context);
         }
-        
+
         val customizers = configurationContext.getApplicationContext()
             .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
             val result = finalAssertion.get();
-            if (result instanceof EncryptedAssertion encrypted) {
+            if (result instanceof final EncryptedAssertion encrypted) {
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
                 samlResponse.getEncryptedAssertions().add(encrypted);
-            } else if (result instanceof Assertion nonEncryptedAssertion){
+            } else if (result instanceof final Assertion nonEncryptedAssertion) {
                 customizers.stream()
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
                     .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
@@ -120,12 +122,15 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
-        return context.getRegisteredService().getSignResponses().isTrue();
+        return context.getRegisteredService().getSignResponses().isTrue()
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
+                Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 
     protected Status determineResponseStatus(final SamlProfileBuilderContext context) {
         if (context.getAuthenticatedAssertion().isEmpty()) {
-            if (context.getSamlRequest() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+            if (context.getSamlRequest() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
                 val message = """
                     SAML2 authentication request from %s indicated a passive authentication request, \
                     but CAS is unable to satify and support this requirement, likely because \

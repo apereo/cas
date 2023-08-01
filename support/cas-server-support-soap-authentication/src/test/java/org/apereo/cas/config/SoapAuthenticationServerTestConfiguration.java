@@ -41,7 +41,7 @@ import java.util.Properties;
 @ComponentScan("org.apereo.cas")
 public class SoapAuthenticationServerTestConfiguration {
     @Endpoint
-    public static class CasSoapEndpoint {
+    static class CasSoapEndpoint {
         /**
          * The namespace URI.
          */

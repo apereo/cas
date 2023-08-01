@@ -70,7 +70,7 @@ class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfig
     }
 
     @TestConfiguration(value = "PasswordlessAuthenticationTestConfiguration", proxyBeanMethods = false)
-    public static class PasswordlessAuthenticationTestConfiguration {
+    static class PasswordlessAuthenticationTestConfiguration {
         @Bean
         public CasMultifactorWebflowConfigurer dummyCasMultifactorWebflowConfigurer() {
             val registry = mock(FlowDefinitionRegistry.class);

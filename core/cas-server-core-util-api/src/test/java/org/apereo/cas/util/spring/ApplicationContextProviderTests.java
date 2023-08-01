@@ -41,7 +41,7 @@ class ApplicationContextProviderTests {
     }
 
     @Getter
-    private static class HoldingBeanContainer {
+    private static final class HoldingBeanContainer {
         @Autowired
         @Qualifier("beanContainer")
         private BeanContainer<String> container;

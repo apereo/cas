@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
@@ -44,22 +45,24 @@ public interface MultifactorAuthenticationProviderResolver {
     /**
      * Resolve event via authentication attribute set.
      *
-     * @param authentication the authentication
-     * @param attributeNames the attribute name
-     * @param service        the service
-     * @param context        the context
-     * @param providers      the providers
-     * @param predicate      the predicate
+     * @param authentication    the authentication
+     * @param attributeNames    the attribute name
+     * @param registeredService the service
+     * @param service           the service
+     * @param context           the context
+     * @param providers         the providers
+     * @param predicate         the predicate
      * @return the set of resolved events
      */
     default Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
                                                               final Collection<String> attributeNames,
-                                                              final RegisteredService service,
+                                                              final RegisteredService registeredService,
+                                                              final Service service,
                                                               final Optional<RequestContext> context,
                                                               final Collection<MultifactorAuthenticationProvider> providers,
                                                               final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
         return resolveEventViaAttribute(authentication.getPrincipal(), authentication.getAttributes(),
-            attributeNames, service, context, providers, predicate);
+            attributeNames, registeredService, service, context, providers, predicate);
     }
 
     /**
@@ -68,6 +71,7 @@ public interface MultifactorAuthenticationProviderResolver {
      * @param principal           the principal
      * @param attributesToExamine the attributes to examine
      * @param attributeNames      the attribute names
+     * @param registeredService   the service
      * @param service             the service
      * @param context             the context
      * @param providers           the providers
@@ -77,7 +81,8 @@ public interface MultifactorAuthenticationProviderResolver {
     Set<Event> resolveEventViaAttribute(Principal principal,
                                         Map<String, List<Object>> attributesToExamine,
                                         Collection<String> attributeNames,
-                                        RegisteredService service,
+                                        RegisteredService registeredService,
+                                        Service service,
                                         Optional<RequestContext> context,
                                         Collection<MultifactorAuthenticationProvider> providers,
                                         BiPredicate<String, MultifactorAuthenticationProvider> predicate);
@@ -85,17 +90,19 @@ public interface MultifactorAuthenticationProviderResolver {
     /**
      * Resolve event via principal attribute set.
      *
-     * @param principal      the principal
-     * @param attributeNames the attribute name
-     * @param service        the service
-     * @param context        the context
-     * @param providers      the providers
-     * @param predicate      the predicate
+     * @param principal         the principal
+     * @param attributeNames    the attribute name
+     * @param registeredService the service
+     * @param service           the service
+     * @param context           the context
+     * @param providers         the providers
+     * @param predicate         the predicate
      * @return the set of resolved events
      */
     default Set<Event> resolveEventViaPrincipalAttribute(final Principal principal,
                                                          final Collection<String> attributeNames,
-                                                         final RegisteredService service,
+                                                         final RegisteredService registeredService,
+                                                         final Service service,
                                                          final Optional<RequestContext> context,
                                                          final Collection<MultifactorAuthenticationProvider> providers,
                                                          final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
@@ -113,7 +120,7 @@ public interface MultifactorAuthenticationProviderResolver {
         LOGGER.debug("Multifactor authentication principal [{}] to evaluate for [{}] using attributes [{}]",
             resolvedPrincipal, providers, attributeNames);
         return resolveEventViaAttribute(principal, resolvedPrincipal.getAttributes(),
-            attributeNames, service, context, providers, predicate);
+            attributeNames, registeredService, service, context, providers, predicate);
     }
 
     /**

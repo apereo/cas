@@ -73,7 +73,7 @@ public class RadiusClient {
      * @param name The authentication protocol name
      * @param c    The RadiusAuthenticator class that implements the protocol
      */
-    public static void registerAuthenticator(String name, Class<?> c) {
+    public static void registerAuthenticator(final String name, final Class<?> c) {
         authenticators.put(name, c);
     }
 
@@ -99,7 +99,7 @@ public class RadiusClient {
 
         try {
             auth = (RadiusAuthenticator) c.getConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             RadiusLog.error("Invalid auth protocol", e);
             return null;
         }
@@ -142,7 +142,7 @@ public class RadiusClient {
                         }
                         try {
                             m.invoke(auth, new Object[]{valueObject});
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             RadiusLog.error("Error setting attribute " + name + " for authenticator " + protocolName, e);
                         }
                     }
@@ -190,7 +190,7 @@ public class RadiusClient {
         return this.transport.getAcctPort();
     }
 
-    public void setAcctPort(int acctPort) {
+    public void setAcctPort(final int acctPort) {
         this.transport.setAcctPort(acctPort);
     }
 
@@ -198,7 +198,7 @@ public class RadiusClient {
         return this.transport.getAuthPort();
     }
 
-    public void setAuthPort(int authPort) {
+    public void setAuthPort(final int authPort) {
         this.transport.setAuthPort(authPort);
     }
 
@@ -206,7 +206,7 @@ public class RadiusClient {
         return this.transport.getSocketTimeout();
     }
 
-    public void setSocketTimeout(int socketTimeout) {
+    public void setSocketTimeout(final int socketTimeout) {
         this.transport.setSocketTimeout(socketTimeout);
     }
 
@@ -214,7 +214,7 @@ public class RadiusClient {
         return this.transport.getRemoteInetAddress();
     }
 
-    public void setRemoteInetAddress(InetAddress remoteInetAddress) {
+    public void setRemoteInetAddress(final InetAddress remoteInetAddress) {
         this.transport.setRemoteInetAddress(remoteInetAddress);
     }
 
@@ -222,14 +222,14 @@ public class RadiusClient {
         return this.transport.getLocalInetAddress();
     }
 
-    public void setLocalInetAddress(InetAddress localInetAddress) {
+    public void setLocalInetAddress(final InetAddress localInetAddress) {
     }
 
     public String getSharedSecret() {
         return this.transport.getSharedSecret();
     }
 
-    public void setSharedSecret(String sharedSecret) {
+    public void setSharedSecret(final String sharedSecret) {
         this.transport.setSharedSecret(sharedSecret);
     }
 

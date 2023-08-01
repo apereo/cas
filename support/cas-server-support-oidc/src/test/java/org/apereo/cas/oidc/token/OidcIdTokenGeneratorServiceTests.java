@@ -61,7 +61,7 @@ class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
-    private static class MockOAuthRegisteredService extends OAuthRegisteredService {
+    private static final class MockOAuthRegisteredService extends OAuthRegisteredService {
         @Serial
         private static final long serialVersionUID = 8152953800891665827L;
     }

@@ -985,33 +985,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                 }
         ],
-        inspektr                   : [
-                dependencies.create("org.apereo.inspektr:inspektr-audit:$inspektrVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "javax.validation", module: "validation-api")
-                    exclude(group: "org.aspectj", module: "aspectjrt")
-                    exclude(group: "org.hjson", module: "hjson")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
-                dependencies.create("org.apereo.inspektr:inspektr-support-spring:$inspektrVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.hjson", module: "hjson")
-                    exclude(group: "javax.validation", module: "validation-api")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-jdbc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.aspectj", module: "aspectjrt")
-                    exclude(group: "javax.validation", module: "validation-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                }
-        ],
         jakarta                    : [
                 dependencies.create("jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"),
                 dependencies.create("jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion") {
@@ -3366,6 +3339,10 @@ ext.libraries = [
                 }
         ],
         springws                   : [
+                dependencies.create("xerces:xercesImpl:$xercesVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")

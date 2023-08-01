@@ -30,33 +30,14 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
 
     private final boolean override;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source the source
-     * @param file   the file
-     */
     public CasConfigurationModifiedEvent(final Object source, final Path file, final ClientInfo clientInfo) {
         this(source, file, false, clientInfo);
     }
 
-    /**
-     * Instantiates a new CAS configuration modified event.
-     *
-     * @param source   the source
-     * @param override the override
-     */
     public CasConfigurationModifiedEvent(final Object source, final boolean override, final ClientInfo clientInfo) {
         this(source, null, override, clientInfo);
     }
 
-    /**
-     * Instantiates a new CAS configuration modified event.
-     *
-     * @param source   the source
-     * @param file     the file
-     * @param override the override
-     */
     public CasConfigurationModifiedEvent(final Object source, final Path file, final boolean override, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.file = file;
@@ -73,6 +54,6 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
             return true;
         }
         val fileName = getFile().toFile().getName();
-        return getFile() != null && CONFIG_FILE_PATTERN.matcher(fileName).find();
+        return CONFIG_FILE_PATTERN.matcher(fileName).find();
     }
 }

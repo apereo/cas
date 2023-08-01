@@ -15,11 +15,13 @@ import java.io.Serializable;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-memcached-core")
+@Deprecated(since = "7.0.0")
 public class BaseMemcachedProperties implements Serializable {
 
     @Serial

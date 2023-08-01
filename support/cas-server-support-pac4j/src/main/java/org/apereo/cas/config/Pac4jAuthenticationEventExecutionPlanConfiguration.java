@@ -338,7 +338,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         public AuditResourceResolver delegatedAuthenticationAuditResourceResolver() {
             return new DelegatedAuthenticationAuditResourceResolver();
         }
-
     }
 
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanAuditPlanConfiguration", proxyBeanMethods = false)

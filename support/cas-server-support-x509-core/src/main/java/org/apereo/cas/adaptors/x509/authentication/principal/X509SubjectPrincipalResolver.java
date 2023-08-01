@@ -111,7 +111,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         return sb.toString();
     }
 
-    private static class AttributeContext {
+    private static final class AttributeContext {
 
         private final Object[] values;
         private int currentIndex;

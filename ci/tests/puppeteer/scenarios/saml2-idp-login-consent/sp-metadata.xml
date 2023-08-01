@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<EntityDescriptor entityID="https://httpbin.org/shibboleth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+<EntityDescriptor entityID="https://localhost:9859/shibboleth" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
     <Extensions xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi">
         <mdrpi:RegistrationInfo registrationAuthority="https://incommon.org"/>
         <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">

@@ -77,7 +77,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
         assertFalse(newServiceRegistry.delete(null));
     }
 
-    public static class DisposingTestExecutionListener implements TestExecutionListener {
+    static class DisposingTestExecutionListener implements TestExecutionListener {
         @Override
         public void afterTestClass(final TestContext testContext) throws Exception {
             var registry = testContext.getApplicationContext().getBean("cassandraServiceRegistry", ServiceRegistry.class);

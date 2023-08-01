@@ -13,11 +13,9 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -73,10 +71,10 @@ public class CasCoreTicketsSchedulingConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Lazy(false)
-    public Cleanable ticketRegistryCleanerScheduler(
+    public Runnable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
-        return BeanSupplier.of(Cleanable.class)
+        @Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) {
+        return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))
             .supply(() -> new TicketRegistryCleanerScheduler(ticketRegistryCleaner))
@@ -93,13 +91,13 @@ public class CasCoreTicketsSchedulingConfiguration {
      * with transaction semantics of the cleaner.
      */
     @RequiredArgsConstructor
-    public static class TicketRegistryCleanerScheduler implements Cleanable {
+    public static class TicketRegistryCleanerScheduler implements Runnable {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         @Override
-        public void clean() {
+        public void run() {
             FunctionUtils.doAndHandle(__ -> ticketRegistryCleaner.clean());
         }
     }

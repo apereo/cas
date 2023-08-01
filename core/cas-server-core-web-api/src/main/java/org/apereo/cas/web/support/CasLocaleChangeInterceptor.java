@@ -72,7 +72,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
             val registeredService = servicesManager.getObject().findServiceBy(service);
-            if (registeredService instanceof WebBasedRegisteredService webRegisteredService) {
+            if (registeredService instanceof final WebBasedRegisteredService webRegisteredService) {
                 if (StringUtils.isNotBlank(webRegisteredService.getLocale())) {
                     val locale = Locale.forLanguageTag(SpringExpressionLanguageValueResolver.getInstance()
                         .resolve(webRegisteredService.getLocale()));

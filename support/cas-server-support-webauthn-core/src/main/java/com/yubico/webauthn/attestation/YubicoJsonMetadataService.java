@@ -101,7 +101,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                 for (val device : metadata.getDevices()) {
                     if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
                         ImmutableMap.Builder<String, String> devicePropertiesBuilder = ImmutableMap.builder();
-                        for (Map.Entry<String, JsonNode> deviceEntry : Lists.newArrayList(device.fields())) {
+                        for (final Map.Entry<String, JsonNode> deviceEntry : Lists.newArrayList(device.fields())) {
                             val value = deviceEntry.getValue();
                             if (value.isTextual()) {
                                 devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());
@@ -127,7 +127,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
     }
 
     private boolean deviceMatches(
-        final JsonNode selectors, @NonNull X509Certificate attestationCertificate) {
+        final JsonNode selectors, @NonNull final X509Certificate attestationCertificate) {
         if (selectors == null || selectors.isNull()) {
             return true;
         } else {

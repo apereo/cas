@@ -110,7 +110,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     @SuperBuilder
     @Getter
-    private static class AuthorizationRequestEntity {
+    private static final class AuthorizationRequestEntity {
         private final String user;
 
         private final String relation;

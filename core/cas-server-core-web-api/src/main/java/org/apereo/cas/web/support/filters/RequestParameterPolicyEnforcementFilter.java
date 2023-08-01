@@ -370,7 +370,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
         throws IOException, ServletException {
         try {
-            if (request instanceof HttpServletRequest httpServletRequest) {
+            if (request instanceof final HttpServletRequest httpServletRequest) {
                 val parameterMap = httpServletRequest.getParameterMap();
 
                 blockRequestIfNecessary(httpServletRequest);

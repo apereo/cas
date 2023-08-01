@@ -92,7 +92,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             val unmarshaller = getConfigurationContext().getOpenSamlConfigBean()
                 .getUnmarshallerFactory().getUnmarshaller(documentElement);
             val xmlObject = Objects.requireNonNull(unmarshaller).unmarshall(documentElement);
-            if (xmlObject instanceof SignableXMLObject root && !root.isSigned()) {
+            if (xmlObject instanceof final SignableXMLObject root && !root.isSigned()) {
                 val signingParameters = new SignatureSigningParameters();
                 val credential = new BasicX509Credential(signingCertificate, privateKey);
                 val mgmr = DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager();

@@ -17,8 +17,10 @@ import java.util.List;
  *
  * @author Marvin S. Addison
  * @since 3.5.1
+ * @deprecated Since 7.0.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     private final ObjectPool<MemcachedClientIF> connectionPool;
 

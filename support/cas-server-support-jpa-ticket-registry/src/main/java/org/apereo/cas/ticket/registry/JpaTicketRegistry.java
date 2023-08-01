@@ -74,7 +74,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public void addTicketInternal(final Ticket ticket) {
         transactionTemplate.executeWithoutResult(Unchecked.consumer(status -> {
             val ticketEntity = getTicketEntityFrom(ticket);
-            if (ticket instanceof TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
+            if (ticket instanceof final TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
                 val parentId = digestIdentifier(grantingTicketAware.getTicketGrantingTicket().getId());
                 ticketEntity.setParentId(parentId);
             }

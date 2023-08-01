@@ -31,7 +31,7 @@ public class QRUtils {
     /**
      * Large width size.
      */
-    public static final int WIDTH_LARGE = 250;
+    public static final int SIZE = 250;
 
     /**
      * Generate qr code.

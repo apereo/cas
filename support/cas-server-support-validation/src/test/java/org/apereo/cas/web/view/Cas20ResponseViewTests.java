@@ -203,7 +203,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @TestConfiguration(value = "Cas20ResponseViewTestConfiguration", proxyBeanMethods = false)
-    public static class Cas20ResponseViewTestConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
+    static class Cas20ResponseViewTestConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
         @Override
         public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
             val authz = mock(ServiceTicketValidationAuthorizer.class);

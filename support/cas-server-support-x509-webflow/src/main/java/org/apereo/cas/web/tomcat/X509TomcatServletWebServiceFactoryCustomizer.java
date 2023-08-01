@@ -35,7 +35,7 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
     @Override
     public void customize(final ConfigurableServletWebServerFactory factory) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
-        if (factory instanceof TomcatServletWebServerFactory tomcat && webflow.getPort() > 0) {
+        if (factory instanceof final TomcatServletWebServerFactory tomcat && webflow.getPort() > 0) {
 
             LOGGER.debug("Creating X509 configuration for the tomcat container...");
             val connector = new Connector("HTTP/1.1");

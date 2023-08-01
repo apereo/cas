@@ -40,7 +40,7 @@ class GeoLocationServiceTests {
         assertNotNull(svc.locate("1.2.3.4", new GeoLocationRequest(1, 1)));
     }
 
-    private static class DummyGeoLocationService extends AbstractGeoLocationService {
+    private static final class DummyGeoLocationService extends AbstractGeoLocationService {
         @Override
         public GeoLocationResponse locate(final InetAddress address) {
             return new GeoLocationResponse()

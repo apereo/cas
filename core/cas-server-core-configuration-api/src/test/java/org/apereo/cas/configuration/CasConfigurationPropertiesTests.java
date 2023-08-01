@@ -37,6 +37,6 @@ class CasConfigurationPropertiesTests {
 
     @TestConfiguration(value = "CasPropertiesTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPropertiesTestConfiguration {
+    static class CasPropertiesTestConfiguration {
     }
 }

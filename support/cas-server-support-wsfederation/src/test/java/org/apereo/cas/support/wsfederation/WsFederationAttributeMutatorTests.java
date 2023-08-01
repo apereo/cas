@@ -42,7 +42,7 @@ class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
         assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).get(0).toString()));
     }
 
-    private static class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {
+    private static final class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {
         @Serial
         private static final long serialVersionUID = -1858140387002752668L;
 
