@@ -49,7 +49,7 @@ The following items are new improvements and enhancements presented in this rele
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `421` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `422` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Graal VM Native Images
@@ -65,25 +65,6 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 A new service access strategy is now available to authorize application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
- 
-### Spring Framework Upgrades
-
-Starting with this release candidate and going forward, CAS will switch to building against Spring Framework `6.1.x`
-and Spring Boot `3.2.x` milestone builds.
-
-The Spring framework `6.1.x` generation presents with the following feature themes:
-
-- Embracing JDK `21` LTS
-- Virtual Threads (Project Loom)
-- JVM Checkpoint Restore (Project CRaC)
-- Data Binding and Validation, revisited
-
-Note that Spring Framework `6.1` provides a first-class experience on JDK `21` and Jakarta EE 10 at 
-runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of 
-Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
-
-As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
-in the next few release candidates. 
 
 ### Google Authenticator Device Registration
 

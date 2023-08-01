@@ -570,13 +570,6 @@
             <property name="message" value="Use the Lombok @Slf4j annotation to obtain a logger object instead."/>
         </module>
         <module name="RegexpSinglelineJava">
-            <property name="id" value="finalNonUtilClass"/>
-            <metadata name="net.sf.eclipsecs.core.comment" value="final non-utility classes"/>
-            <property name="severity" value="error"/>
-            <property name="format" value="(public\s)*(static\s)*final\s+class\s+\w+"/>
-            <property name="message" value="Non-utility class should not be marked as final"/>
-        </module>
-        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Qualifying logger with the &quot;this&quot; keyword"/>
             <property name="severity" value="error"/>
             <property name="format" value="((this\.logger)|(super\.logger))\.\w+\("/>

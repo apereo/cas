@@ -270,7 +270,7 @@ class LdapUtilsTests {
         });
     }
 
-    private static class Ldap extends AbstractLdapAuthenticationProperties {
+    private static final class Ldap extends AbstractLdapAuthenticationProperties {
         @Serial
         private static final long serialVersionUID = 7979417317490698363L;
     }

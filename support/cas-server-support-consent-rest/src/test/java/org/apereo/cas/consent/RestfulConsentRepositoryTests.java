@@ -70,7 +70,7 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Getter
-    private static class RestConsentRepositoryStorage {
+    private static final class RestConsentRepositoryStorage {
         private final Map<String, List<ConsentDecision>> records = new HashMap<>();
     }
 

@@ -244,7 +244,7 @@ public class JdbcAuditTrailManager extends NamedParameterJdbcDaoSupport implemen
     }
 
     @RequiredArgsConstructor
-    private class LoggingTask implements Runnable {
+    private final class LoggingTask implements Runnable {
 
         private final AuditActionContext auditActionContext;
 

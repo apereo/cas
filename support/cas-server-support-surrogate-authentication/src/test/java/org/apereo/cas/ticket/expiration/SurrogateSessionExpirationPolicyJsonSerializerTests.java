@@ -30,7 +30,7 @@ class SurrogateSessionExpirationPolicyJsonSerializerTests {
         assertEquals(policy, newPolicy);
     }
 
-    private static class SurrogateSessionExpirationPolicyJsonSerializer extends AbstractJacksonBackedStringSerializer<ExpirationPolicy> {
+    private static final class SurrogateSessionExpirationPolicyJsonSerializer extends AbstractJacksonBackedStringSerializer<ExpirationPolicy> {
         @Serial
         private static final long serialVersionUID = -7883370764375218898L;
 

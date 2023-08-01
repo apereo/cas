@@ -137,12 +137,12 @@ class PropertyBeanCondition implements BeanCondition {
     private interface Condition {}
 
     @Data
-    private static class BooleanCondition implements Condition {
+    private static final class BooleanCondition implements Condition {
         private final Boolean value;
     }
 
     @Data
-    private static class PropertyCondition implements Condition {
+    private static final class PropertyCondition implements Condition {
         private final String propertyName;
 
         private boolean matchIfMissing;

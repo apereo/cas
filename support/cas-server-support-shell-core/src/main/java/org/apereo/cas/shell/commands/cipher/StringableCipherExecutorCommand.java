@@ -119,7 +119,7 @@ public class StringableCipherExecutorCommand {
         return null;
     }
 
-    private static class ShellStringCipherExecutor extends BaseStringCipherExecutor {
+    private static final class ShellStringCipherExecutor extends BaseStringCipherExecutor {
         ShellStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                   final boolean encryptionEnabled, final boolean signingEnabled,
                                   final int signingKeySize, final int encryptionKeySize) {

@@ -57,7 +57,7 @@ class BrowserWebStorageSessionStoreTests {
         assertTrue(store.get(ctx, "dummy").isPresent());
     }
 
-    private static class Dummy implements Serializable {
+    private static final class Dummy implements Serializable {
         @Serial
         private static final long serialVersionUID = 7015295901443767970L;
     }

@@ -197,7 +197,7 @@ public class ConfigurationMetadataPropertyCreator {
         return prop;
     }
 
-    private static class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {
+    static final class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {
         @Serial
         private static final long serialVersionUID = -7924691650447203471L;
 

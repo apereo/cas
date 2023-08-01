@@ -29,7 +29,7 @@ class CasFeatureModuleTests {
     @Getter
     @Setter
     @SuppressWarnings("UnusedMethod")
-    private static class CasFeatureModuleUnderTest implements CasFeatureModule {
+    private static final class CasFeatureModuleUnderTest implements CasFeatureModule {
         @RequiredProperty
         private final String name = "value";
 

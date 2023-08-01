@@ -421,7 +421,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     }
 
     @Getter
-    private static class ChainingAuthenticationPolicyExecutionResult {
+    private static final class ChainingAuthenticationPolicyExecutionResult {
         private final List<AuthenticationPolicyExecutionResult> results = new ArrayList<>();
 
         private final Set<Throwable> failures = new HashSet<>();

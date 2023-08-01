@@ -54,7 +54,7 @@ public class CasMongoDbThrottlingConfiguration {
         return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, mongoTemplate, mongo.getCollection());
     }
 
-    private static class AuditActionContextConverter extends BaseConverters.NullConverter<Document, AuditActionContext> {
+    private static final class AuditActionContextConverter extends BaseConverters.NullConverter<Document, AuditActionContext> {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
 

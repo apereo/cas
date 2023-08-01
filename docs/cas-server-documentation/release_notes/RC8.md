@@ -41,7 +41,25 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-  
+
+### Spring Framework Upgrades
+
+Starting with this release candidate and going forward, CAS will switch to building against Spring Framework `6.1.x`
+and Spring Boot `3.2.x` milestone builds.
+
+The Spring framework `6.1.x` generation presents with the following feature themes:
+
+- Embracing JDK `21` LTS
+- Virtual Threads (Project Loom)
+- JVM Checkpoint Restore (Project CRaC)
+- Data Binding and Validation, revisited
+
+Note that Spring Framework `6.1` provides a first-class experience on JDK `21` and Jakarta EE 10 at
+runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of
+Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
+
+As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
+in the next few release candidates.
 
 ## Other Stuff
 

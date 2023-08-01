@@ -46,7 +46,7 @@ public class CasHibernatePersistenceProvider extends HibernatePersistenceProvide
     }
 
     @Getter
-    private static class CasPersistenceUnitInfoDescriptor extends PersistenceUnitInfoDescriptor {
+    private static final class CasPersistenceUnitInfoDescriptor extends PersistenceUnitInfoDescriptor {
         private final List<String> managedClassNames;
 
         CasPersistenceUnitInfoDescriptor(final PersistenceUnitInfo info, final List<String> mergedClassesAndPackages) {
