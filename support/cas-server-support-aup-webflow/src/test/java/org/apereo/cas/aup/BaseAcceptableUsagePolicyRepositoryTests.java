@@ -179,6 +179,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreServicesConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }
