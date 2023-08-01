@@ -7,6 +7,18 @@ ext {
             aliases: ["palantir", "adminui", "management"]
     ]
 }
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.github.node-gradle:gradle-node-plugin:5.0.0"
+    }
+}
+
+apply plugin: "com.github.node-gradle.node"
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-protocol")
@@ -66,4 +78,26 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+}
+
+
+node {
+    version = '16.14.2'
+    yarnVersion = ''
+    download = true
+}
+
+def yarn = tasks.named("yarn")
+
+tasks.register("build-ui", NpxTask) {
+    command = "react-scripts"
+    args = [
+            "build"
+    ]
+    dependsOn(build, yarn)
+    inputs.dir(fileTree("src").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
+    inputs.dir("node_modules")
+    inputs.dir("client/public")
+    outputs.dir("${buildDir}")
+    environment = ["BUILD_PATH": "${buildDir}"]
 }
