@@ -267,6 +267,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

@@ -51,7 +51,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     }
 
     @TestConfiguration(value = "SamlIdPLocatorFailsTestConfiguration", proxyBeanMethods = false)
-    public static class SamlIdPLocatorFailsTestConfiguration {
+    static class SamlIdPLocatorFailsTestConfiguration {
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
             val locator = mock(SamlIdPMetadataLocator.class);

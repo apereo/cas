@@ -70,7 +70,7 @@ import static org.mockito.Mockito.*;
 class DelegatedClientAuthenticationActionTests {
 
     @TestConfiguration(proxyBeanMethods = false)
-    public static class CredentialTestConfiguration {
+    static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(
             @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)

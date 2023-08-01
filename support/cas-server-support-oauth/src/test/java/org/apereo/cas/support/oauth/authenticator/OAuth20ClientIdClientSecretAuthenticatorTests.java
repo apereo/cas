@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
-    public static class NullPrincipalTestConfiguration {
+    static class NullPrincipalTestConfiguration {
         @Bean
         public PrincipalResolver defaultPrincipalResolver() {
             val mockPrincipalResolver = mock(PrincipalResolver.class);

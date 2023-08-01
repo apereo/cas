@@ -77,7 +77,7 @@ class AuthenticationTransactionTests {
         }
     }
 
-    public static class TestCredentialType1 extends BaseTestCredential {
+    static class TestCredentialType1 extends BaseTestCredential {
         @Serial
         private static final long serialVersionUID = -2785558255024055757L;
 
@@ -87,7 +87,7 @@ class AuthenticationTransactionTests {
         }
     }
 
-    public static class TestCredentialType2 implements Credential {
+    static class TestCredentialType2 implements Credential {
         @Serial
         private static final long serialVersionUID = -4137096818705980020L;
 

@@ -78,7 +78,7 @@ class RefreshableHandlerInterceptorTests {
 
     @TestConfiguration(value = "RefreshableHandlerInterceptorTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class RefreshableHandlerInterceptorTestConfiguration {
+    static class RefreshableHandlerInterceptorTestConfiguration {
 
         @Bean
         public HandlerInterceptor localeChangeHandlerInterceptor() {

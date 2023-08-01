@@ -88,6 +88,6 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

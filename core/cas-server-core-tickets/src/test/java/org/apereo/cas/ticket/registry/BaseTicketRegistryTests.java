@@ -691,6 +691,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

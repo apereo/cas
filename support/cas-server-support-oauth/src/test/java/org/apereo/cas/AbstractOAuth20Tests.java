@@ -735,7 +735,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)
-    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
+    static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
 

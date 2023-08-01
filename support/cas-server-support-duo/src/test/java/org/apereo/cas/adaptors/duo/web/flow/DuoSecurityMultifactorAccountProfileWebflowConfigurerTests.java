@@ -91,7 +91,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
         assertEquals(1, devices.size());
     }
     @TestConfiguration("DuoSecurityTestConfiguration")
-    public static class DuoSecurityTestConfiguration {
+    static class DuoSecurityTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider dummyDuoSecurityProvider() throws Exception {
             val acct = new DuoSecurityUserAccount(UUID.randomUUID().toString());

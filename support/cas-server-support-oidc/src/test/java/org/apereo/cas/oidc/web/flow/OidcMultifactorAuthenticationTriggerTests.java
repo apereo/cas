@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcMultifactorAuthenticationTriggerTests {
 
     @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
-    public static class OidcAuthenticationContextTestConfiguration {
+    static class OidcAuthenticationContextTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

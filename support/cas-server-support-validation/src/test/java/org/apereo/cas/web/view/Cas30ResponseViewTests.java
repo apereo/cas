@@ -206,7 +206,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
-    public static class AttributeRepositoryTestConfiguration {
+    static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {
             val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),

@@ -90,7 +90,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     }
 
     @TestConfiguration(value = "AdaptiveMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class AdaptiveMultifactorTestConfiguration {
+    static class AdaptiveMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

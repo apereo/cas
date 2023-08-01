@@ -103,7 +103,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         WsFedAuthenticationEventExecutionPlanConfiguration.class,
         AbstractOpenSamlTests.SharedTestConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 
 }

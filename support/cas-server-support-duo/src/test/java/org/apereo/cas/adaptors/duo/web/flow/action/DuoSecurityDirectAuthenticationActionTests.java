@@ -70,7 +70,7 @@ class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifact
     }
 
     @TestConfiguration(value = "DuoMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class DuoMultifactorTestConfiguration {
+    static class DuoMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider duoProvider() {
             return BaseDuoSecurityTests.getDuoSecurityMultifactorAuthenticationProvider();

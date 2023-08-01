@@ -101,7 +101,7 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @TestConfiguration(value = "WebTestConfiguration", proxyBeanMethods = false)
-    public static class WebTestConfiguration {
+    static class WebTestConfiguration {
 
         @RestController("TestController")
         @RequestMapping("/oidc/accessToken")

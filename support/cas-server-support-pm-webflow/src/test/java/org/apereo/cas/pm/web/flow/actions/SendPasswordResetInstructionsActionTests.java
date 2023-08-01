@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 class SendPasswordResetInstructionsActionTests {
 
     @TestConfiguration(value = "PasswordManagementTestConfiguration", proxyBeanMethods = false)
-    public static class PasswordManagementTestConfiguration {
+    static class PasswordManagementTestConfiguration {
         @Bean
         @Autowired
         public PasswordManagementService passwordChangeService() {

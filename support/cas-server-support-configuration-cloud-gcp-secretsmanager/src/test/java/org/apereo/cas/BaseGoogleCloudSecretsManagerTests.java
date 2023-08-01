@@ -41,7 +41,7 @@ public abstract class BaseGoogleCloudSecretsManagerTests {
     protected Environment environment;
 
     @TestConfiguration(value = "BaseGoogleCloudSecretsManagerTestConfiguration", proxyBeanMethods = false)
-    public static class BaseGoogleCloudSecretsManagerTestConfiguration {
+    static class BaseGoogleCloudSecretsManagerTestConfiguration {
         @Bean
         public CredentialsProvider googleCloudSecretsManagerCredentialProvider() {
             return new NoCredentialsProvider();

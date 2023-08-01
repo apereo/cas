@@ -111,7 +111,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     }
 
     @TestConfiguration(value = "DelegatedAuthenticationWebflowTestConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationWebflowTestConfiguration {
+    static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
         public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
             return BeanSupplier.of(DelegatedClientWebflowCustomizer.class)

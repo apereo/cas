@@ -225,7 +225,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasOAuth20ServicesConfiguration.class,
         CasOAuth20TicketSerializationConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 
     protected static OAuth20AccessToken getAccessToken() {
