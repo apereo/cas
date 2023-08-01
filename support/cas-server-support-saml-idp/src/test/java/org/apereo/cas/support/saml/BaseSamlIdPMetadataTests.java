@@ -98,6 +98,6 @@ public abstract class BaseSamlIdPMetadataTests {
         CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }
