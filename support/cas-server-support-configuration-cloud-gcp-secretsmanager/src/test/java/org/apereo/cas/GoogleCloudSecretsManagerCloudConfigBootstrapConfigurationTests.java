@@ -53,7 +53,7 @@ class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
         }
 
         @TestConfiguration(value = "GoogleCloudSecretsManagerTestConfiguration", proxyBeanMethods = false)
-        public static class GoogleCloudSecretsManagerTestConfiguration {
+        static class GoogleCloudSecretsManagerTestConfiguration {
             @Bean
             public SecretManagerTemplate googleCloudSecretsManagerTemplate() {
                 val secretResponse = AccessSecretVersionResponse

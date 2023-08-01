@@ -264,7 +264,7 @@ class CasAuthenticationEventListenerTests {
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     @EnableAsync
-    public static class EventTestConfiguration implements AsyncConfigurer {
+    static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {

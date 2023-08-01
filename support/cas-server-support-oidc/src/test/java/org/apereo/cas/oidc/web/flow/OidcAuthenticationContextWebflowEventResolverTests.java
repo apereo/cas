@@ -83,7 +83,7 @@ class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTes
     }
 
     @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
-    public static class OidcAuthenticationContextTestConfiguration {
+    static class OidcAuthenticationContextTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

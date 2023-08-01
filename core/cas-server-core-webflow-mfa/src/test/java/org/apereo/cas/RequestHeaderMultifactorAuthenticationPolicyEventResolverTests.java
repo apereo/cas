@@ -69,7 +69,7 @@ class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests extends Bas
     }
 
     @TestConfiguration(value = "RequestHeaderMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class RequestHeaderMultifactorTestConfiguration {
+    static class RequestHeaderMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

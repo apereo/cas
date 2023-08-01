@@ -60,7 +60,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
     }
 
     @TestConfiguration(value = "AcmeTestConfiguration", proxyBeanMethods = false)
-    public static class AcmeTestConfiguration {
+    static class AcmeTestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AcmeAuthorizationExecutor acmeAuthorizationExecutor() throws Exception {

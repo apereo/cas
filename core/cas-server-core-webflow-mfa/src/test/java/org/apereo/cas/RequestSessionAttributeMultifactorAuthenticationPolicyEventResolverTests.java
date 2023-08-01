@@ -68,7 +68,7 @@ class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests e
     }
 
     @TestConfiguration(value = "RequestSessionMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class RequestSessionMultifactorTestConfiguration {
+    static class RequestSessionMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

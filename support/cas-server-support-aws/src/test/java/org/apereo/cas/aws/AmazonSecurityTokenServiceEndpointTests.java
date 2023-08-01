@@ -49,7 +49,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         CasCoreRestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class
     })
-    public static class BaseAmazonSecurityTokenServiceEndpointTests extends AbstractCasEndpointTests {
+    static class BaseAmazonSecurityTokenServiceEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Nested

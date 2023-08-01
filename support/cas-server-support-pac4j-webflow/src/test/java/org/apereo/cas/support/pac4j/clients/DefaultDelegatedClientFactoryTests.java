@@ -313,7 +313,7 @@ class DefaultDelegatedClientFactoryTests {
         }
     }
 
-    public static class CustomAttributeConverterForTest implements AttributeConverter {
+    static class CustomAttributeConverterForTest implements AttributeConverter {
 
         @Override
         public Object convert(final Object o) {
@@ -322,7 +322,7 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @TestConfiguration(value = "SamlMessageStoreTestConfiguration", proxyBeanMethods = false)
-    public static class SamlMessageStoreTestConfiguration {
+    static class SamlMessageStoreTestConfiguration {
         @Bean
         public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory() {
             return mock(SAMLMessageStoreFactory.class);

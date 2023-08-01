@@ -65,7 +65,7 @@ class InMemoryThrottledSubmissionThrottledWindowTests
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    public static class TestAuthenticationConfiguration {
+    static class TestAuthenticationConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

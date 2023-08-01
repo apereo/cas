@@ -102,6 +102,6 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

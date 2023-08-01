@@ -68,7 +68,7 @@ class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTes
     }
 
     @TestConfiguration(proxyBeanMethods = false)
-    public static class PopulateSpringSecurityContextActionTestConfiguration {
+    static class PopulateSpringSecurityContextActionTestConfiguration {
         @Bean
         public SecurityContextRepository securityContextRepository() {
             return new DelegatingSecurityContextRepository(

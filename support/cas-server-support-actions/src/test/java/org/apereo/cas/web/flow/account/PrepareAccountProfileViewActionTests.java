@@ -92,7 +92,7 @@ class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @TestConfiguration(value = "AuditTestConfiguration", proxyBeanMethods = false)
-    public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
+    static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override
         public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {
             plan.registerAuditTrailManager(new MockAuditTrailManager());

@@ -84,7 +84,7 @@ class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebf
     }
 
     @TestConfiguration(value = "TimedMultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class TimedMultifactorTestConfiguration {
+    static class TimedMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

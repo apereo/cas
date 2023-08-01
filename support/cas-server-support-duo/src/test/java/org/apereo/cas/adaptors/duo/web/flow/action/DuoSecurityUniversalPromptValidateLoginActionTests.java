@@ -164,7 +164,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     }
 
     @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)
-    public static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
+    static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
         public Client duoUniversalPromptAuthenticationClient() throws Exception {
             val token = new Token();

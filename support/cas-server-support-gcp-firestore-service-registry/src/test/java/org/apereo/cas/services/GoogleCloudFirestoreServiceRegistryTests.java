@@ -70,7 +70,7 @@ class GoogleCloudFirestoreServiceRegistryTests extends AbstractServiceRegistryTe
 
 
     @TestConfiguration(value = "GoogleCloudFirestoreTestConfiguration", proxyBeanMethods = false)
-    public static class GoogleCloudFirestoreTestConfiguration {
+    static class GoogleCloudFirestoreTestConfiguration {
 
         @Bean
         public GcpProjectIdProvider gcpProjectIdProvider(final GcpFirestoreProperties properties) {

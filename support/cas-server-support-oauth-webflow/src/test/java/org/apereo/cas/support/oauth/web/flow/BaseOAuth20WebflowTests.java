@@ -44,6 +44,6 @@ public abstract class BaseOAuth20WebflowTests {
         CasOAuth20ServicesConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

@@ -125,7 +125,7 @@ class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends 
     }
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorAuthenticationTestConfiguration {
+    static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

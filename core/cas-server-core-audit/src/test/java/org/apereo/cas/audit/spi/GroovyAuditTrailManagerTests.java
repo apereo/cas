@@ -56,7 +56,7 @@ class GroovyAuditTrailManagerTests {
     }
 
     @TestConfiguration(value = "GroovyAuditTrailManagerTestConfiguration", proxyBeanMethods = false)
-    public static class GroovyAuditTrailManagerTestConfiguration {
+    static class GroovyAuditTrailManagerTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {
             val mock = mock(GeoLocationService.class);

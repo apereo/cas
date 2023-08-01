@@ -59,7 +59,7 @@ class ApplicationUtilsTests {
         assertEquals("Custom", results);
     }
 
-    public static class CustomBanner extends AbstractCasBanner {
+    static class CustomBanner extends AbstractCasBanner {
         @Override
         public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
             out.print(getTitle());

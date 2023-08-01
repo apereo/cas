@@ -151,7 +151,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
-    public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
+    static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);
