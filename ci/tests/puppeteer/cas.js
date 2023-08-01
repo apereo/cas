@@ -437,7 +437,7 @@ exports.assertInnerTextStartsWith = async (page, selector, value) => {
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    console.log(`Checking ${header} to contain ${value}`);
+    console.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
 };
 
