@@ -8,15 +8,6 @@ ext {
     ]
 }
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath "com.github.node-gradle:gradle-node-plugin:5.0.0"
-    }
-}
-
 apply plugin: "com.github.node-gradle.node"
 
 dependencies {
@@ -55,7 +46,7 @@ dependencies {
     implementation libraries.jsonschema
 
     testImplementation libraries.springboottomcat
-    
+
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core-services")
@@ -82,22 +73,18 @@ dependencies {
 
 
 node {
-    version = '16.14.2'
+    version = '18.17.0'
     yarnVersion = ''
     download = true
+    distBaseUrl = null
+    nodeProjectDir = new File("${project.projectDir}", "client")
 }
-
-def yarn = tasks.named("yarn")
 
 tasks.register("build-ui", NpxTask) {
     command = "react-scripts"
-    args = [
-            "build"
-    ]
-    dependsOn(build, yarn)
-    inputs.dir(fileTree("src").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
-    inputs.dir("node_modules")
-    inputs.dir("client/public")
+    args = [ "build" ]
+    dependsOn(build, tasks.named("yarn"))
+    inputs.files('client/package.json', 'client/vite.config.js')
     outputs.dir("${buildDir}")
     environment = ["BUILD_PATH": "${buildDir}"]
 }
