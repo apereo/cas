@@ -33,7 +33,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
     }
 
     @RequiredArgsConstructor
-    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
+    private static final class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
         @Serial
         private static final long serialVersionUID = 8368878016992806802L;
 

@@ -59,7 +59,7 @@ public class CasSupportMongoDbAuditConfiguration {
         return plan -> plan.registerAuditTrailManager(mongoDbAuditTrailManager);
     }
 
-    private static class AuditActionContextConverter extends BaseConverters.NullConverter<Document, AuditActionContext> {
+    private static final class AuditActionContextConverter extends BaseConverters.NullConverter<Document, AuditActionContext> {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
 

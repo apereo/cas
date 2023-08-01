@@ -192,7 +192,7 @@ public class MultifactorAuthnTrustConfiguration {
     }
 
     @Slf4j
-    private static class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
+    private static final class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
 
         @Override
         public long expireAfterCreate(

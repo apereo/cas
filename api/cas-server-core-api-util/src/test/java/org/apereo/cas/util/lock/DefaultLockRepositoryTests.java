@@ -60,7 +60,7 @@ class DefaultLockRepositoryTests {
         assertEquals(10, container.values.get(lockKey).size());
     }
 
-    private static class Container {
+    private static final class Container {
         private final Map<String, List<String>> values = new HashMap<>();
     }
 }

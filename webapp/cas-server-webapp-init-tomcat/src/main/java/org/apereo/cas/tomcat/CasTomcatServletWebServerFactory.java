@@ -182,7 +182,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     @Getter
     @ToString
-    private static class ClusterMemberDesc {
+    private static final class ClusterMemberDesc {
         private static final int UNIQUE_ID_LIMIT = 255;
 
         private static final int UNIQUE_ID_ITERATIONS = 16;

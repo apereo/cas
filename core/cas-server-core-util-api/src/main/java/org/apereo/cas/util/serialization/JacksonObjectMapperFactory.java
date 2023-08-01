@@ -163,7 +163,7 @@ public class JacksonObjectMapperFactory {
         return casModule;
     }
 
-    private static class URIDeserializer extends StdDeserializer<URI> {
+    private static final class URIDeserializer extends StdDeserializer<URI> {
         @Serial
         private static final long serialVersionUID = -7547162569192932415L;
 

@@ -76,7 +76,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
         }
     }
 
-    private static class MockHttp01Challenge extends Http01Challenge {
+    private static final class MockHttp01Challenge extends Http01Challenge {
         @Serial
         private static final long serialVersionUID = -5555468598931902011L;
 

@@ -410,7 +410,7 @@ public class WebAuthnServer {
         boolean accountDeleted;
     }
 
-    private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
+    private static final class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
         @Override
         public void serialize(final AuthenticatorData value, final JsonGenerator gen,
                               final SerializerProvider serializers) throws IOException {

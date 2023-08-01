@@ -67,7 +67,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     }
 
     @Getter
-    private static class OAuth20CallbackLogic extends DefaultCallbackLogic {
+    private static final class OAuth20CallbackLogic extends DefaultCallbackLogic {
         private String redirectUrl;
 
         @Override

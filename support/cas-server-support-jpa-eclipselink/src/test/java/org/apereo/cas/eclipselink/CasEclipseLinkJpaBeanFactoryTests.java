@@ -73,7 +73,7 @@ class CasEclipseLinkJpaBeanFactoryTests {
     @Getter
     @NoArgsConstructor
     @SuppressWarnings("UnusedMethod")
-    private static class SampleEntity {
+    private static final class SampleEntity {
         @Id
         private long id;
     }

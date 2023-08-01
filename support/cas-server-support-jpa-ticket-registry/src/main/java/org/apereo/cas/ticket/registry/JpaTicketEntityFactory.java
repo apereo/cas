@@ -37,7 +37,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
         super(dialect);
     }
 
-    private static class ThreadSafeHolder {
+    private static final class ThreadSafeHolder {
         private static final TicketSerializationManager TICKET_SERIALIZATION_MANAGER =
             ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
     }

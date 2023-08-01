@@ -65,7 +65,7 @@ public class SchemaController {
         return generator.generateSchema(mainTargetType);
     }
 
-    private static class ClassGraphSubtypeResolver implements SubtypeResolver {
+    private static final class ClassGraphSubtypeResolver implements SubtypeResolver {
         private final ClassGraph classGraphConfig;
         private ScanResult scanResult;
 

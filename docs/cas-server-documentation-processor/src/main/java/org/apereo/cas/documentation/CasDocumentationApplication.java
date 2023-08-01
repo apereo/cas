@@ -307,7 +307,7 @@ public class CasDocumentationApplication {
     }
 
     @Getter
-    private static class ShellCommand {
+    private static final class ShellCommand {
         public String name;
 
         public String description;
