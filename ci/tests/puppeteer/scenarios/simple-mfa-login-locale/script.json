@@ -3,8 +3,9 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
+    "--spring.main.lazy-initialization=false",
+
     "--cas.audit.engine.enabled=false",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -28,6 +29,10 @@
     "--spring.mail.port=25000",
 
     "--cas.authn.mfa.simple.trusted-device-enabled=true",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--cas.authn.mfa.simple.mail.html=false",
     "--cas.authn.mfa.simple.mail.from=cas@example.com",

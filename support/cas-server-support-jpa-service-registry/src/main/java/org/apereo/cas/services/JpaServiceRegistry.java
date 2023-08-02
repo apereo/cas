@@ -48,7 +48,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        transactionTemplate.executeWithoutResult(status -> {
+        transactionTemplate.executeWithoutResult(__ -> {
             val entity = fromRegisteredService(registeredService);
             if (entityManager.contains(entity)) {
                 entityManager.remove(entity);
@@ -57,12 +57,11 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             }
         });
         return true;
-
     }
 
     @Override
     public void deleteAll() {
-        transactionTemplate.executeWithoutResult(status -> {
+        transactionTemplate.executeWithoutResult(__ -> {
             val query = String.format("DELETE FROM %s s", JpaRegisteredServiceEntity.ENTITY_NAME);
             entityManager.createQuery(query).executeUpdate();
         });
@@ -89,7 +88,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     public Long save(final Supplier<RegisteredService> supplier,
                      final Consumer<RegisteredService> andThenConsume,
                      final long countExclusive) {
-        return transactionTemplate.execute(status ->
+        return transactionTemplate.execute(__ ->
             LongStream.range(0, countExclusive)
                 .mapToObj(count -> supplier.get())
                 .filter(Objects::nonNull)
@@ -106,7 +105,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return transactionTemplate.execute(status ->
+        return transactionTemplate.execute(__ ->
             Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
                 .map(this::toRegisteredService)
                 .stream()
@@ -117,7 +116,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceBy(final String id) {
-        return transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(__ -> {
             val query = String.format("SELECT r FROM %s r WHERE r.serviceId LIKE :serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
             val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
                 .setParameter("serviceId", '%' + id + '%')
@@ -135,7 +134,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(__ -> {
             val query = String.format("SELECT r FROM %s r WHERE r.serviceId=:serviceId", JpaRegisteredServiceEntity.ENTITY_NAME);
             val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
                 .setParameter("serviceId", id)
@@ -152,7 +151,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        return transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(__ -> {
             val query = String.format("SELECT r FROM %s r WHERE r.name=:name", JpaRegisteredServiceEntity.ENTITY_NAME);
             val results = entityManager.createQuery(query, JpaRegisteredServiceEntity.class)
                 .setParameter("name", name)
