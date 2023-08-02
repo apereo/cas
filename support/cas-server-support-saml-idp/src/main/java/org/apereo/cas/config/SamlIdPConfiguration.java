@@ -62,6 +62,8 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.opensaml.saml.common.SAMLObject;
@@ -507,21 +509,75 @@ public class SamlIdPConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "samlResponseAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver samlResponseAuditResourceResolver() {
+            return new SamlResponseAuditResourceResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlRequestAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver samlRequestAuditResourceResolver() {
+            return new SamlRequestAuditResourceResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlMetadataResolutionAuditActionResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditActionResolver samlMetadataResolutionAuditActionResolver() {
+            return new DefaultAuditActionResolver();
+        }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlMetadataResolutionAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver samlMetadataResolutionAuditResourceResolver() {
+            return new SamlMetadataResolverAuditResourceResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlRequestAuditActionResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditActionResolver samlRequestAuditActionResolver() {
+            return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
+                AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlResponseAuditActionResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditActionResolver samlResponseAuditActionResolver() {
+            return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
+                AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED);
+        }
+
+        @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casSamlIdPAuditTrailRecordResolutionPlanConfigurer")
-        public AuditTrailRecordResolutionPlanConfigurer casSamlIdPAuditTrailRecordResolutionPlanConfigurer() {
+        public AuditTrailRecordResolutionPlanConfigurer casSamlIdPAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("samlMetadataResolutionAuditResourceResolver")
+            final AuditResourceResolver samlMetadataResolutionAuditResourceResolver,
+            @Qualifier("samlResponseAuditActionResolver")
+            final AuditActionResolver samlResponseAuditActionResolver,
+            @Qualifier("samlRequestAuditActionResolver")
+            final AuditActionResolver samlRequestAuditActionResolver,
+            @Qualifier("samlResponseAuditResourceResolver")
+            final AuditResourceResolver samlResponseAuditResourceResolver,
+            @Qualifier("samlRequestAuditResourceResolver")
+            final AuditResourceResolver samlRequestAuditResourceResolver,
+            @Qualifier("samlMetadataResolutionAuditActionResolver")
+            final AuditActionResolver samlMetadataResolutionAuditActionResolver) {
             return plan -> {
-                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER, new SamlResponseAuditResourceResolver());
-                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER, samlResponseAuditResourceResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER, samlResponseAuditActionResolver);
 
-                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER, new SamlRequestAuditResourceResolver());
-                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER, samlRequestAuditResourceResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER, samlRequestAuditActionResolver);
 
-                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER,
-                    new SamlMetadataResolverAuditResourceResolver());
-                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER, new DefaultAuditActionResolver());
+                plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER, samlMetadataResolutionAuditResourceResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER, samlMetadataResolutionAuditActionResolver);
             };
         }
     }
