@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.function.Supplier;
 
 /**
- * This is {@link Pac4jAuthenticationProvisioningConfiguration}.
+ * This is {@link DelegatedAuthenticationProvisioningConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -36,12 +36,12 @@ import java.util.function.Supplier;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
-public class Pac4jAuthenticationProvisioningConfiguration {
-    @Configuration(value = "Pac4jAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
+public class DelegatedAuthenticationProvisioningConfiguration {
+    @Configuration(value = "DelegatedAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "pac4j")
-    public static class Pac4jAuthenticationScimProvisioningConfiguration {
+    public static class DelegatedAuthenticationScimProvisioningConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
@@ -58,9 +58,9 @@ public class Pac4jAuthenticationProvisioningConfiguration {
         }
     }
 
-    @Configuration(value = "Pac4jAuthenticationEventExecutionPlanProvisionerConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class Pac4jAuthenticationEventExecutionPlanProvisionerConfiguration {
+    public static class DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

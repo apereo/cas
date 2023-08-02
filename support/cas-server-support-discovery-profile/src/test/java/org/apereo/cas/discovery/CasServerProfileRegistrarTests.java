@@ -21,7 +21,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDiscoveryProfileConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasDiscoveryProfileConfiguration.class,
     CasCoreNotificationsConfiguration.class,

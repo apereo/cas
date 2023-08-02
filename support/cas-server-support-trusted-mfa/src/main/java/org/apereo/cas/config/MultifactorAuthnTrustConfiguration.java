@@ -15,7 +15,7 @@ import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustReportEndpoint;
+import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustedDevicesReportEndpoint;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -184,10 +184,10 @@ public class MultifactorAuthnTrustConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(
+        public MultifactorAuthenticationTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
-            return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
+            return new MultifactorAuthenticationTrustedDevicesReportEndpoint(casProperties, mfaTrustEngine);
         }
     }
 

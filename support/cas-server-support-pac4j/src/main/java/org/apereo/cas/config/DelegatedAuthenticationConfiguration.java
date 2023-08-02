@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import java.io.Serial;
 
 /**
- * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
+ * This is {@link DelegatedAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -42,11 +42,11 @@ import java.io.Serial;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
-public class Pac4jDelegatedAuthenticationConfiguration {
+public class DelegatedAuthenticationConfiguration {
 
-    @Configuration(value = "Pac4jDelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "DelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class Pac4jDelegatedAuthenticationBaseConfiguration {
+    public static class DelegatedAuthenticationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
@@ -63,9 +63,9 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         }
     }
 
-    @Configuration(value = "Pac4jDelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "DelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class Pac4jDelegatedAuthenticationAuthorizerConfiguration {
+    public static class DelegatedAuthenticationAuthorizerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
@@ -86,9 +86,9 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         }
     }
 
-    @Configuration(value = "Pac4jDelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "DelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class Pac4jDelegatedAuthenticationSingleSignOnConfiguration {
+    public static class DelegatedAuthenticationSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")

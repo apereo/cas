@@ -3,13 +3,12 @@ package org.apereo.cas.web.flow.pac4j;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationDelegationConfiguration;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,11 +24,9 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,8 +39,8 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 @SpringBootTest(classes = {
     SurrogateAuthenticationDelegationConfiguration.class,
-    Pac4jDelegatedAuthenticationConfiguration.class,
-    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationConfiguration.class,
+    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")

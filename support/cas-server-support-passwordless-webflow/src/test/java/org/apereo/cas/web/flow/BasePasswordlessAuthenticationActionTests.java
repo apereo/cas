@@ -31,12 +31,11 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -66,8 +65,8 @@ import org.springframework.context.annotation.Bean;
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
-    Pac4jDelegatedAuthenticationConfiguration.class,
-    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationConfiguration.class,
+    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
