@@ -126,7 +126,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param attributes           the attributes
      * @return the pair
      */
-    @SuppressWarnings("unchecked")
     protected PrincipalResolutionResult convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                            final Optional<Principal> currentPrincipal,
                                                                            final Map<String, List<Object>> attributes) {
