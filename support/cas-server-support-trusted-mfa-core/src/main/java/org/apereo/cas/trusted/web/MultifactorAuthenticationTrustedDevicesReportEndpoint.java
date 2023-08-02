@@ -17,16 +17,16 @@ import org.springframework.http.HttpStatus;
 import java.util.Set;
 
 /**
- * This is {@link MultifactorAuthenticationTrustReportEndpoint}.
+ * This is {@link MultifactorAuthenticationTrustedDevicesReportEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
-public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuatorEndpoint {
+public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine;
 
-    public MultifactorAuthenticationTrustReportEndpoint(
+    public MultifactorAuthenticationTrustedDevicesReportEndpoint(
         final CasConfigurationProperties casProperties,
         final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
         super(casProperties);

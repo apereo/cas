@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.config.CasScimConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationProvisioningConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationProvisioningConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 9666)
 @Import({
     CasScimConfiguration.class,
-    Pac4jAuthenticationProvisioningConfiguration.class
+    DelegatedAuthenticationProvisioningConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.scim.target=http://localhost:9666/scim/v2",

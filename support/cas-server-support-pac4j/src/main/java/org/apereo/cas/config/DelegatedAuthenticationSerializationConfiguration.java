@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link Pac4jDelegatedAuthenticationSerializationConfiguration}.
+ * This is {@link DelegatedAuthenticationSerializationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
-public class Pac4jDelegatedAuthenticationSerializationConfiguration {
+public class DelegatedAuthenticationSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "pac4jComponentSerializationPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

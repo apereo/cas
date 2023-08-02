@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MultifactorAuthenticationTrustReportEndpointTests}.
+ * This is {@link MultifactorAuthenticationTrustedDevicesReportEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.enabled=true")
 @Tag("MFATrustedDevices")
 @ImportAutoConfiguration(MultifactorAuthnTrustConfiguration.class)
-class MultifactorAuthenticationTrustReportEndpointTests extends AbstractCasEndpointTests {
+class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("mfaTrustedDevicesReportEndpoint")
-    private MultifactorAuthenticationTrustReportEndpoint endpoint;
+    private MultifactorAuthenticationTrustedDevicesReportEndpoint endpoint;
 
     @Autowired
     @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)

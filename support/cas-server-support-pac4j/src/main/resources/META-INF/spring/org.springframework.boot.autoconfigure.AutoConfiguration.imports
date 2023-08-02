@@ -1,4 +1,4 @@
-org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration
-org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration
-org.apereo.cas.config.Pac4jAuthenticationProvisioningConfiguration
+org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration
+org.apereo.cas.config.DelegatedAuthenticationConfiguration
+org.apereo.cas.config.DelegatedAuthenticationSerializationConfiguration
+org.apereo.cas.config.DelegatedAuthenticationProvisioningConfiguration
