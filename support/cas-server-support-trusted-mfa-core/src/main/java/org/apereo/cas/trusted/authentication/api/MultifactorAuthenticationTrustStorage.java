@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import org.apereo.cas.util.crypto.CipherExecutor;
+import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -85,4 +87,11 @@ public interface MultifactorAuthenticationTrustStorage {
      * @return the multifactor authentication trust record
      */
     MultifactorAuthenticationTrustRecord save(MultifactorAuthenticationTrustRecord record);
+
+    /**
+     * Gets cipher executor.
+     *
+     * @return the cipher executor
+     */
+    CipherExecutor<Serializable, String> getCipherExecutor();
 }

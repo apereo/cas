@@ -3,15 +3,20 @@ package org.apereo.cas.trusted.web;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFATrustedDevices")
 @ImportAutoConfiguration(MultifactorAuthnTrustConfiguration.class)
 class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends AbstractCasEndpointTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
     @Qualifier("mfaTrustedDevicesReportEndpoint")
@@ -44,5 +51,19 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
         endpoint.revoke(record.getRecordKey());
         assertTrue(endpoint.devices().isEmpty());
         assertTrue(endpoint.devicesForUser("casuser").isEmpty());
+    }
+
+    @Test
+    void verifyImportExport() throws Exception {
+        var record = MultifactorAuthenticationTrustRecord.newInstance(
+            UUID.randomUUID().toString(), "london", "fingerprint");
+        val request = new MockHttpServletRequest();
+        val content = MAPPER.writeValueAsString(record);
+        request.setContent(content.getBytes(StandardCharsets.UTF_8));
+        assertEquals(HttpStatus.CREATED, endpoint.importDevice(request).getStatusCode());
+        var entity = endpoint.export();
+        assertEquals("attachment", entity.getHeaders().getContentDisposition().getType());
+        entity = endpoint.exportUserDevices(record.getPrincipal());
+        assertEquals("attachment", entity.getHeaders().getContentDisposition().getType());
     }
 }
