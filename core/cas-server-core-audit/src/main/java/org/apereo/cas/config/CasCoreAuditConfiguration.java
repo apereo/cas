@@ -352,6 +352,7 @@ public class CasCoreAuditConfiguration {
             configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .forEach(configurer -> {
                     LOGGER.trace("Registering audit trail manager [{}]", configurer.getName());
                     configurer.configureAuditTrailRecordResolutionPlan(plan);
