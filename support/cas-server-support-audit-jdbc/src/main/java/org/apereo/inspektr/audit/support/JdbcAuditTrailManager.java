@@ -38,18 +38,20 @@ import java.util.stream.Collectors;
 
 /**
  * <p>Implementation of {@link AuditTrailManager} to persist the
- * audit trail to the  AUDIT_TRAIL table in the Oracle data base.
+ * audit trail to the {@code AUDIT_TRAIL} table in the Oracle data base.
  * </p>
  * <pre>
  * CREATE TABLE COM_AUDIT_TRAIL
  * (
- *  AUD_USER      VARCHAR2(100) NOT NULL,
- *  AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
- *  AUD_SERVER_IP VARCHAR(15)   NOT NULL,
- *  AUD_RESOURCE  VARCHAR2(100) NOT NULL,
- *  AUD_ACTION    VARCHAR2(100) NOT NULL,
- *  APPLIC_CD     VARCHAR2(5)   NOT NULL,
- *  AUD_DATE      TIMESTAMP     NOT NULL
+ *  AUD_USER      VARCHAR2(100)  NOT NULL,
+ *  AUD_CLIENT_IP VARCHAR(15)    NOT NULL,
+ *  AUD_SERVER_IP VARCHAR(15)    NOT NULL,
+ *  AUD_RESOURCE  VARCHAR2(1024) NOT NULL,
+ *  AUD_ACTION    VARCHAR2(100)  NOT NULL,
+ *  APPLIC_CD     VARCHAR2(5)    NOT NULL,
+ *  AUD_DATE      TIMESTAMP      NOT NULL,
+ *  AUD_GEOLOCATION   VARCHAR2(100)   NOT NULL,
+ *  AUD_USERAGENT     VARCHAR2(100)   NOT NULL
  * )
  * </pre>
  *
