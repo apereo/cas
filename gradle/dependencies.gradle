@@ -3247,7 +3247,7 @@ ext.libraries = [
                 }
         ],
         springwebflow              : [
-                dependencies.create("org.apereo.springwebflow:spring-webflow:$springWebflowVersion") {
+                dependencies.create("org.springframework.webflow:spring-webflow:$springWebflowVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3256,7 +3256,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                 },
-                dependencies.create("org.apereo.springwebflow:spring-binding:$springWebflowVersion") {
+                dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-web")
