@@ -161,7 +161,10 @@ public class CasConsentCoreConfiguration {
             final AuditResourceResolver returnValueResourceResolver) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.VERIFY_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
+
                 plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
+                plan.registerAuditResourceResolver(AuditResourceResolvers.VERIFY_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
             };
         }
     }

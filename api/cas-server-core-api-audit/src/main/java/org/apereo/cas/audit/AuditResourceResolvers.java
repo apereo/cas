@@ -28,6 +28,11 @@ public interface AuditResourceResolvers {
     String SAVE_CONSENT_RESOURCE_RESOLVER = "SAVE_CONSENT_RESOURCE_RESOLVER";
 
     /**
+     * Resource resolver id {@code VERIFY_CONSENT_RESOURCE_RESOLVER}.
+     */
+    String VERIFY_CONSENT_RESOURCE_RESOLVER = "VERIFY_CONSENT_RESOURCE_RESOLVER";
+
+    /**
      * Resource resolver id {@code AUP_VERIFY_RESOURCE_RESOLVER}.
      */
     String AUP_VERIFY_RESOURCE_RESOLVER = "AUP_VERIFY_RESOURCE_RESOLVER";

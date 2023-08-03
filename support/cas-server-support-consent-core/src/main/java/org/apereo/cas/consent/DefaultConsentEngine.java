@@ -119,29 +119,34 @@ public class DefaultConsentEngine implements ConsentEngine {
         return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
     }
 
+    @Audit(action = AuditableActions.VERIFY_CONSENT,
+        actionResolverName = AuditActionResolvers.VERIFY_CONSENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.VERIFY_CONSENT_RESOURCE_RESOLVER)
     @Override
     public ConsentQueryResult isConsentRequiredFor(final Service service,
                                                    final RegisteredService registeredService,
                                                    final Authentication authentication) {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
-            return ConsentQueryResult.ignored();
+            return ConsentQueryResult.ignored()
+                .withService(service).withAuthentication(authentication);
         }
 
         LOGGER.debug("Locating consent decision for service [{}]", service);
         val decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return ConsentQueryResult.required();
+            return ConsentQueryResult.required()
+                .withService(service).withAuthentication(authentication);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
         if (consentDecisionBuilder.doesAttributeReleaseRequireConsent(decision, attributes)) {
             LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
                 decision, registeredService.getName());
-            return ConsentQueryResult.required(decision);
+            return ConsentQueryResult.required().withService(service)
+                .withConsentDecision(decision).withAuthentication(authentication);
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
@@ -152,10 +157,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {
             LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
-            return ConsentQueryResult.required(decision);
+            return ConsentQueryResult.required().withService(service)
+                .withConsentDecision(decision).withAuthentication(authentication);
         }
 
         LOGGER.debug("Consent is not required for service [{}]", service);
-        return ConsentQueryResult.ignored();
+        return ConsentQueryResult.ignored()
+            .withService(service).withAuthentication(authentication);
     }
 }
