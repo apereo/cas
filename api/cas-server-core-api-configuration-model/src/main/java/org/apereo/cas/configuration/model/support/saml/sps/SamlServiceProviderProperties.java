@@ -184,11 +184,6 @@ public class SamlServiceProviderProperties implements Serializable {
     private AdobeCloud adobeCloud = new AdobeCloud();
 
     /**
-     * Settings related to Academic Works acting as a SAML service provider.
-     */
-    private AcademicWorks academicWorks = new AcademicWorks();
-
-    /**
      * Settings related to Easy IEP acting as a SAML service provider.
      */
     private EasyIep easyIep = new EasyIep();
@@ -703,20 +698,6 @@ public class SamlServiceProviderProperties implements Serializable {
         public AdobeCloud() {
             addAttributes(CommonAttributeNames.FIRST_NAME.getAttributeName(), CommonAttributeNames.LAST_NAME.getAttributeName(),
                 CommonAttributeNames.EMAIL.getAttributeName());
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class AcademicWorks extends AbstractSamlSPProperties {
-
-        @Serial
-        private static final long serialVersionUID = 5855725238963607605L;
-
-        public AcademicWorks() {
-            addAttributes(CommonAttributeNames.DISPLAY_NAME.getAttributeName(), CommonAttributeNames.EMAIL.getAttributeName());
         }
     }
 

@@ -1,5 +1,6 @@
 {
   "dependencies": "wsfederation-webflow",
+  "enabled": false,
   "conditions": {
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD",
     "docker": "true"

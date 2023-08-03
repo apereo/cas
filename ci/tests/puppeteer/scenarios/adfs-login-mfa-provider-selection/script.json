@@ -4,6 +4,7 @@
     "docker": "true",
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
   },
+  "enabled": false,
   "properties": [
     "--spring.main.lazy-initialization=false",
     
