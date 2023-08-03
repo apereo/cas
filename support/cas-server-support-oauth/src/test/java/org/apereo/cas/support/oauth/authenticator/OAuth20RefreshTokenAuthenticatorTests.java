@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     @Autowired
-    @Qualifier("oAuthRefreshTokenAuthenticator")
+    @Qualifier("oauthRefreshTokenAuthenticator")
     private Authenticator authenticator;
 
     @RetryingTest(3)

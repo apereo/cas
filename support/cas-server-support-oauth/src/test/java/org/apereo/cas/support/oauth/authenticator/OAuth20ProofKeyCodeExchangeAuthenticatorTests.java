@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     @Autowired
-    @Qualifier("oAuthProofKeyCodeExchangeAuthenticator")
+    @Qualifier("oauthProofKeyCodeExchangeAuthenticator")
     private Authenticator authenticator;
 
     @Test
