@@ -80,9 +80,6 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://helpx.adobe.com/enterprise/kb/configure_shibboleth_idp_for_use_with_Adobe_SSO.html">
 <img src="https://user-images.githubusercontent.com/1205228/233797023-8d3dd298-d35e-474f-9692-e3a268e83957.png" height="48" width="90"></a>
 
-<a href="https://www.academicworks.com/why-academicworks/user-authentication/">
-<img src="https://user-images.githubusercontent.com/1205228/233797042-6b84d587-654e-4086-b168-b431898d1850.png" height="48" width="200"></a>
-
 <a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/233797059-4dd4895b-870e-4b8f-ab16-7712fc52ae08.png" height="48" width="120"></a>
 
