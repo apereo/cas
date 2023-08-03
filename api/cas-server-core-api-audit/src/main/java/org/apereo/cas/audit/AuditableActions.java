@@ -97,6 +97,10 @@ public interface AuditableActions {
      * Auditable action {@code SAVE_CONSENT}.
      */
     String SAVE_CONSENT = "SAVE_CONSENT";
+    /**
+     * Auditable action {@code VERIFY_CONSENT}.
+     */
+    String VERIFY_CONSENT = "VERIFY_CONSENT";
 
     /**
      * Auditable action {@code SAML2_RESPONSE}.
