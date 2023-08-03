@@ -313,8 +313,7 @@ class DefaultDelegatedClientFactoryTests {
         }
     }
 
-    static class CustomAttributeConverterForTest implements AttributeConverter {
-
+    public static class CustomAttributeConverterForTest implements AttributeConverter {
         @Override
         public Object convert(final Object o) {
             return null;

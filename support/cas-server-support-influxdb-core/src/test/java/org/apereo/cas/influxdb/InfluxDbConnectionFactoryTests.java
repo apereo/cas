@@ -65,7 +65,7 @@ class InfluxDbConnectionFactoryTests {
     @Getter
     @Setter
     @ToString
-    static class InfluxEvent implements Serializable {
+    public static class InfluxEvent implements Serializable {
         @Serial
         private static final long serialVersionUID = -7065491678170232623L;
 
