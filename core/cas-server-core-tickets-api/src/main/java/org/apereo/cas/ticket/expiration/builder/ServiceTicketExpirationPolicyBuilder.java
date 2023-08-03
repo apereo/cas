@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration.builder;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -34,9 +35,8 @@ public record ServiceTicketExpirationPolicyBuilder(CasConfigurationProperties ca
      */
     public ExpirationPolicy toServiceTicketExpirationPolicy() {
         val st = casProperties.getTicket().getSt();
-        return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-            st.getNumberOfUses(),
-            st.getTimeToKillInSeconds());
+        val timeToKillInSeconds = Beans.newDuration(st.getTimeToKillInSeconds()).toSeconds();
+        return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(st.getNumberOfUses(), timeToKillInSeconds);
     }
 
 }
