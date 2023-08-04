@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.Ordered;
@@ -45,7 +47,8 @@ public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigur
                                                           final TicketDefinition metadata,
                                                           final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlArtifactsCacheStorageName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        val timeToKillInSeconds = Beans.newDuration(casProperties.getTicket().getSt().getTimeToKillInSeconds()).toSeconds();
+        metadata.getProperties().setStorageTimeout(timeToKillInSeconds);
         registerTicketDefinition(plan, metadata);
     }
 
@@ -53,7 +56,8 @@ public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigur
                                                                 final TicketDefinition metadata,
                                                                 final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlAttributeQueryCacheStorageName());
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        val timeToKillInSeconds = Beans.newDuration(casProperties.getTicket().getSt().getTimeToKillInSeconds()).toSeconds();
+        metadata.getProperties().setStorageTimeout(timeToKillInSeconds);
         registerTicketDefinition(plan, metadata);
     }
 }
