@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -68,7 +69,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * if attribute resolution is enabled.
      * The list here may include identifiers separated by comma.
      */
-    private String activeAttributeRepositoryIds;
+    private String activeAttributeRepositoryIds = IPersonAttributeDao.WILDCARD;
 
     /**
      * In the event that the principal resolution engine resolves

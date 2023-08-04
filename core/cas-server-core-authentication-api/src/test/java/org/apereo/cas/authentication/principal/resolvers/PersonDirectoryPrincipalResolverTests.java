@@ -8,15 +8,18 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
-import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -406,11 +410,56 @@ class PersonDirectoryPrincipalResolverTests {
             .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context)).forEach(resolver -> {
                 val credential = mock(Credential.class);
                 val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
-                val p = resolver.resolve(credential, Optional.of(principal),
+                val resolved = resolver.resolve(credential, Optional.of(principal),
                     Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
                     Optional.of(CoreAuthenticationTestUtils.getService()));
-                assertNotNull(p);
-                assertEquals("customUserId", p.getId());
+                assertNotNull(resolved);
+                assertEquals("customUserId", resolved.getId());
+            });
+
+    }
+
+    @Test
+    void verifyAttributeRepositoryByService() {
+        Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
+            .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
+                .returnNullIfNoAttributes(true)
+                .principalAttributeNames("custom:attribute")
+                .useCurrentPrincipalId(true)
+                .resolveAttributes(true)
+                .build())
+            .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context)).forEach(resolver -> {
+                val credential = mock(Credential.class);
+                val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
+
+                val attributePolicy = new RegisteredServiceAttributeReleasePolicy() {
+                    @Serial
+                    private static final long serialVersionUID = 6118477243447737445L;
+
+                    @Override
+                    public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
+                        val repo = mock(RegisteredServicePrincipalAttributesRepository.class);
+                        when(repo.getAttributeRepositoryIds()).thenReturn(Set.of("StubPersonAttributeDao"));
+                        return repo;
+                    }
+
+                    @Override
+                    public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+                        return context.getPrincipal().getAttributes();
+                    }
+                };
+
+                val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+                val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+                when(registeredService.getAttributeReleasePolicy()).thenReturn(attributePolicy);
+
+                when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+                
+                val resolved = resolver.resolve(credential, Optional.of(principal),
+                    Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+                    Optional.of(service));
+                assertNotNull(resolved);
+                assertEquals("customUserId", resolved.getId());
             });
 
     }
