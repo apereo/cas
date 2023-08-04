@@ -8,7 +8,6 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,9 +35,8 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
-    @SneakyThrows
     @Override
-    public ResourceBasedServiceRegistry getNewServiceRegistry() {
+    public ResourceBasedServiceRegistry getNewServiceRegistry() throws Exception {
         this.newServiceRegistry = buildResourceBasedServiceRegistry(RESOURCE);
         return newServiceRegistry;
     }

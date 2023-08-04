@@ -30,7 +30,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -109,8 +108,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
 
-    @SneakyThrows
-    protected void failLoop(final int trials, final int period, final int expected) {
+    protected void failLoop(final int trials, final int period, final int expected) throws Exception {
         /* Seed with something to compare against */
 
         login("mog", "badpassword", IP_ADDRESS);
@@ -123,11 +121,9 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
             }
         }));
     }
-
-    @SneakyThrows
     protected MockHttpServletResponse login(final String username,
                                             final String password,
-                                            final String fromAddress) {
+                                            final String fromAddress) throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setMethod("POST");

@@ -4,7 +4,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.support.StaticApplicationContext;
@@ -21,8 +20,7 @@ import java.util.ArrayList;
 class YamlServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Override
-    @SneakyThrows
-    public ResourceBasedServiceRegistry getNewServiceRegistry() {
+    public ResourceBasedServiceRegistry getNewServiceRegistry() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         newServiceRegistry = new YamlServiceRegistry(RESOURCE,

@@ -47,7 +47,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyAccessTokenAsDefault() {
+    void verifyAccessTokenAsDefault() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);

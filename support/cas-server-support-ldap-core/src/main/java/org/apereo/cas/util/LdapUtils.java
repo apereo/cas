@@ -28,7 +28,6 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.google.common.collect.Multimap;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -1097,9 +1096,8 @@ public class LdapUtils {
     @SuppressWarnings("UnusedVariable")
     private record ChainingLdapDnResolver(List<? extends DnResolver> resolvers) implements DnResolver {
         @Override
-        @SneakyThrows
         public String resolve(final User user) {
-            return resolvers()
+            return resolvers
                 .stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
                         () -> resolver.resolve(user),
@@ -1110,7 +1108,7 @@ public class LdapUtils {
                     .get())
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new AccountNotFoundException("Unable to resolve user dn for " + user.getIdentifier()));
+                .orElseThrow(() -> new RuntimeException(new AccountNotFoundException("Unable to resolve user dn for " + user.getIdentifier())));
         }
     }
 

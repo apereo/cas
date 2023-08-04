@@ -3,7 +3,6 @@ package org.apereo.cas.pm;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -44,8 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+        public static void bootstrap() {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 

@@ -6,7 +6,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,9 +90,8 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             private RestConsentRepositoryStorage storage;
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
             public ResponseEntity<String> find(@RequestHeader(value = "principal", required = false) final String principal,
-                                               @RequestHeader(value = "service", required = false) final String service) {
+                                               @RequestHeader(value = "service", required = false) final String service) throws Exception {
                 if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
                     val results = storage.getRecords().get(principal)
                         .stream()

@@ -44,8 +44,6 @@ import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.support.WebUtils;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -73,8 +71,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -83,7 +79,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -137,8 +132,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    @SneakyThrows(IOException.class)
-    protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
+    protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) throws Exception {
         val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
         try (val reader = new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)) {
             assertEquals(IOUtils.toString(reader), nativeResponse.getContentAsString());

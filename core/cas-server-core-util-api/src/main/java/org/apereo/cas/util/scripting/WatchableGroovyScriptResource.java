@@ -66,7 +66,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        return Optional.ofNullable(this.groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, args, clazz, failOnError)).orElse(null);
+        return Optional.ofNullable(this.groovyScript)
+            .map(Unchecked.function(script -> ScriptingUtils.executeGroovyScript(script, args, clazz, failOnError)))
+            .orElse(null);
     }
 
     @Override
@@ -85,7 +87,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @return the t
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
-        return Optional.ofNullable(groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, methodName, args, clazz, failOnError)).orElse(null);
+        return Optional.ofNullable(groovyScript)
+            .map(Unchecked.function(script -> ScriptingUtils.executeGroovyScript(script, methodName, args, clazz, failOnError)))
+            .orElse(null);
     }
 
 

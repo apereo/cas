@@ -3,7 +3,6 @@ package org.apereo.cas.util.http;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
@@ -35,8 +34,7 @@ class SimpleHttpClientTests {
         return new SimpleHttpClientFactoryBean().getObject();
     }
 
-    @SneakyThrows
-    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() {
+    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         val trm = new X509TrustManager() {
             @Override
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
@@ -114,7 +112,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        void verifyBypassedInvalidHttpsUrl() {
+        void verifyBypassedInvalidHttpsUrl() throws Exception {
             val clientFactory = new SimpleHttpClientFactoryBean();
             clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
             clientFactory.setHostnameVerifier(new NoopHostnameVerifier());

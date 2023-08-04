@@ -8,15 +8,13 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import com.google.common.collect.ArrayListMultimap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.lang3.RandomUtils;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +26,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junitpioneer.jupiter.RetryingTest;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -43,7 +40,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -488,7 +484,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyServiceRemovals(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val list = IntStream.range(1, 5)
-            .mapToObj(i -> buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass))
+            .mapToObj(i -> buildRegisteredServiceInstance(org.apereo.cas.util.RandomUtils.nextInt(), registeredServiceClass))
             .map(r -> serviceRegistry.save(r))
             .collect(Collectors.toCollection(() -> new ArrayList<>(5)));
 
@@ -503,7 +499,7 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void checkForAuthorizationStrategy(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        val r = buildRegisteredServiceInstance(org.apereo.cas.util.RandomUtils.nextInt(), registeredServiceClass);
         val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
 
         val attrs = new HashMap<String, Set<String>>();
@@ -517,7 +513,6 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(r2, r3);
     }
 
-    @SneakyThrows
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyAccessStrategyWithStarEndDate(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
@@ -532,7 +527,6 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(r2, r3);
     }
 
-    @SneakyThrows
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyAccessStrategyWithEndpoint(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
@@ -628,8 +622,9 @@ public abstract class AbstractServiceRegistryTests {
      * return the ServiceRegistry they wish to test.
      *
      * @return the ServiceRegistry we wish to test
+     * @throws Exception the exception
      */
-    protected abstract ServiceRegistry getNewServiceRegistry();
+    protected abstract ServiceRegistry getNewServiceRegistry() throws Exception;
 
     /**
      * Method to prepare the service registry for testing.

@@ -17,7 +17,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -63,7 +62,6 @@ class DefaultLogoutManagerTests {
         MockitoAnnotations.openMocks(this).close();
     }
 
-    @SneakyThrows
     public static BaseRegisteredService getRegisteredService(final String id) {
         val s = new CasRegisteredService();
         s.setServiceId(id);

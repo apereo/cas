@@ -16,7 +16,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -47,7 +46,6 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
-    @SneakyThrows
     public BaseRegisteredService getRegisteredService(final String id) {
         val s = new CasRegisteredService();
         s.setServiceId(id);

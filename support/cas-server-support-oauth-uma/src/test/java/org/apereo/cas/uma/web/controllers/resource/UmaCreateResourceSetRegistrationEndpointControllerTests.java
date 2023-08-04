@@ -31,7 +31,7 @@ class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyBadInput() {
+    void verifyBadInput() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body ="###";
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -39,7 +39,7 @@ class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyRegistrationOperation() {
+    void verifyRegistrationOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

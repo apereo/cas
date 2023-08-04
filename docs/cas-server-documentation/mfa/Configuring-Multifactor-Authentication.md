@@ -33,7 +33,6 @@ The following multifactor providers are supported by CAS.
 | RSA/RADIUS           | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
 | WiKID                | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
 | Google Authenticator | `mfa-gauth`    | [See this guide](GoogleAuthenticator-Authentication.html). |
-| FIDO U2F             | `mfa-u2f`      | [See this guide](FIDO-U2F-Authentication.html).            |
 | FIDO2 WebAuthN       | `mfa-webauthn` | [See this guide](FIDO2-WebAuthn-Authentication.html).      |
 | CAS Simple           | `mfa-simple`   | [See this guide](Simple-Multifactor-Authentication.html).  |
 | Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |

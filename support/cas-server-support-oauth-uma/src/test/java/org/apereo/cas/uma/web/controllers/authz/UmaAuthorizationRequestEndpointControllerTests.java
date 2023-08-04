@@ -124,7 +124,7 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    private String getPermissionTicketWith(final List<String> scopes) {
+    private String getPermissionTicketWith(final List<String> scopes) throws Exception {
         var results = authenticateUmaRequestWithProtectionScope();
 
         var body = createUmaResourceRegistrationRequest(1000, scopes).toJson();

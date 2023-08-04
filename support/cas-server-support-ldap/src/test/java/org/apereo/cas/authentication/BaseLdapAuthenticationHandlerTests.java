@@ -112,7 +112,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         return new String[]{"cn", "description"};
     }
 
-    String getUsername() {
+    String getUsername() throws Exception {
         return "admin";
     }
 
