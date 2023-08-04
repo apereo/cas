@@ -4,7 +4,8 @@ import org.apereo.cas.configuration.model.core.authentication.AttributeRepositor
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
-
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
@@ -12,13 +13,10 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.time.Duration;
 import java.util.Arrays;

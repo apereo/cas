@@ -85,7 +85,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
             final List<IPersonAttributeDao> repositories) {
-            return plan -> repositories.forEach(plan::registerAttributeRepository);
+            return plan -> repositories.stream().filter(IPersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository);
         }
 
     }
