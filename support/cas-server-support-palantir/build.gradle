@@ -81,10 +81,13 @@ node {
 }
 
 tasks.register("build-ui", NpxTask) {
-    command = "react-scripts"
+    command = "vite"
     args = [ "build" ]
     dependsOn(build, tasks.named("yarn"))
-    inputs.files('client/package.json', 'client/vite.config.js')
+    inputs.files(
+        'client/package.json',
+        'client/vite.config.js'
+    )
     outputs.dir("${buildDir}")
     environment = ["BUILD_PATH": "${buildDir}"]
 }

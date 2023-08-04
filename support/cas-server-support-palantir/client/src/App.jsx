@@ -18,9 +18,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-
-    console.log(import.meta.env.API_PATH)
-
     return (
         <Provider store={store}>
             <CasThemeProvider>
