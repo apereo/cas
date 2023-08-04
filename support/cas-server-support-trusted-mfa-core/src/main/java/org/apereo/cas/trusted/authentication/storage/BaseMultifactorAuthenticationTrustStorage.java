@@ -63,7 +63,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
+            val decodedKey = cipherExecutor.decode(entry.getRecordKey());
             val currentKey = keyGenerationStrategy.generate(entry);
             return StringUtils.isBlank(decodedKey) || !decodedKey.equals(currentKey);
         });

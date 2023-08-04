@@ -118,7 +118,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     protected ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
     @TestConfiguration(value = "TicketResourceTestConfiguration", proxyBeanMethods = false)
-    public static class TicketResourceTestConfiguration implements InitializingBean {
+    static class TicketResourceTestConfiguration implements InitializingBean {
 
         @Autowired
         @Qualifier("inMemoryRegisteredServices")

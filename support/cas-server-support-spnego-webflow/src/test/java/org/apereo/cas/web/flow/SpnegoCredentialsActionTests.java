@@ -84,7 +84,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
     
     @TestConfiguration(value = "SpnegoAuthenticationTestConfiguration", proxyBeanMethods = false)
-    public static class SpnegoAuthenticationTestConfiguration {
+    static class SpnegoAuthenticationTestConfiguration {
         @Bean
         public BlockingQueue<List<Authentication>> spnegoAuthenticationsPool() {
             val queue = new ArrayBlockingQueue<List<Authentication>>(1);

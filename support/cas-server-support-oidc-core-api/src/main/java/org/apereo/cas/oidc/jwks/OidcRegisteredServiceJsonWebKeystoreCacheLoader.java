@@ -26,11 +26,11 @@ public class OidcRegisteredServiceJsonWebKeystoreCacheLoader
     @Override
     public Optional<JsonWebKeySet> load(final OidcJsonWebKeyCacheKey cacheKey) {
         val service = cacheKey.getRegisteredService();
-        if (service instanceof OidcRegisteredService oidcService) {
+        if (service instanceof final OidcRegisteredService oidcService) {
             val jwks = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(oidcService,
                 applicationContext, Optional.of(cacheKey.getUsage()));
             if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
-                LOGGER.info("Could not determine JSON web keys for service [{}]", oidcService);
+                LOGGER.debug("Could not determine JSON web keys for service [{}]", oidcService);
                 return Optional.empty();
             }
             val requestedKid = Optional.ofNullable(oidcService.getJwksKeyId());

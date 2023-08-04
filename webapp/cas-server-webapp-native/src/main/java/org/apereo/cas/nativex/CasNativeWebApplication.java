@@ -1,7 +1,7 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.app.ApplicationUtils;
 import org.apereo.cas.util.spring.boot.CasBanner;
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -50,7 +50,7 @@ public class CasNativeWebApplication {
             .banner(banner)
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
-            .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
+            .applicationStartup(ApplicationUtils.getApplicationStartup())
             .run(args);
     }
 }

@@ -77,7 +77,7 @@ class CasThymeleafViewResolverConfigurerTests {
     }
 
     @TestConfiguration(value = "CasThymeleafViewResolverConfigurerTestConfiguration", proxyBeanMethods = false)
-    public static class CasThymeleafViewResolverConfigurerTestConfiguration {
+    static class CasThymeleafViewResolverConfigurerTestConfiguration {
         @Autowired
         @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
         private CasProtocolViewFactory casProtocolViewFactory;

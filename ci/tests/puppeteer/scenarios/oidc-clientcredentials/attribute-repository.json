@@ -1,0 +1,25 @@
+{
+  "client2": {
+    "given_name": [
+      "CAS"
+    ],
+    "family_name": [
+      "Apereo"
+    ],
+    "gender": [
+      "Female"
+    ],
+    "name": [
+      "ApereoCAS"
+    ],
+    "website": [
+      "https://apereo.github.io"
+    ],
+    "uid": [
+      "casuser"
+    ],
+    "organization": [
+      "ApereoFoundation"
+    ]
+  }
+}

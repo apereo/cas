@@ -8,6 +8,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicket;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -28,6 +29,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -83,6 +86,8 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         when(sts.getId()).thenReturn(id);
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
+        when(sts.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(sts.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
 
         ticketRegistry.addTicket(sts);
 
@@ -146,7 +151,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
-    public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
+    static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);

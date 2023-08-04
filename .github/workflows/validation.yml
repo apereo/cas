@@ -165,7 +165,6 @@ jobs:
           - cas-server
           - config-server
           - discovery-server
-          - bootadmin-server
     name: external tomcat - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v3
@@ -247,32 +246,3 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate Eureka Discovery Server
         run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
-
-##########################################################################
-
-  validate-spring-boot-admin-server:
-    runs-on: macos-latest
-    needs: [initialize]
-    continue-on-error: false
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Validate Spring Boot Admin Server
-        run: ./ci/tests/webapp/validate-bootadmin-webapp.sh

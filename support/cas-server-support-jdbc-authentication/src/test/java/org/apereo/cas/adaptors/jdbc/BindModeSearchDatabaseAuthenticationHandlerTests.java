@@ -56,7 +56,7 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
-    public static class DatabaseTestConfiguration {
+    static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
             return new JpaPersistenceProviderContext();

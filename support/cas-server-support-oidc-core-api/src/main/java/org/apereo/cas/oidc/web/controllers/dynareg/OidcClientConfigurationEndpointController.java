@@ -63,7 +63,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-        if (service instanceof OidcRegisteredService oidcRegisteredService) {
+        if (service instanceof final OidcRegisteredService oidcRegisteredService) {
             val prefix = getConfigurationContext().getCasProperties().getServer().getPrefix();
             val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, prefix);
             return new ResponseEntity<>(regResponse, HttpStatus.OK);

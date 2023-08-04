@@ -61,9 +61,9 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private static Collection<String> getStringValues(final List<?> items) {
         val list = new ArrayList<String>(items.size());
         items.forEach(d -> {
-            if (d instanceof XSURI value) {
+            if (d instanceof final XSURI value) {
                 list.add(value.getURI());
-            } else if (d instanceof XSString value) {
+            } else if (d instanceof final XSString value) {
                 list.add(value.getValue());
             }
         });
@@ -86,13 +86,13 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         if (!items.isEmpty()) {
             val item = items.get(0);
             var value = StringUtils.EMPTY;
-            if (item instanceof LocalizedName instance) {
+            if (item instanceof final LocalizedName instance) {
                 value = instance.getValue();
             }
-            if (item instanceof LocalizedURI instance) {
+            if (item instanceof final LocalizedURI instance) {
                 value = instance.getURI();
             }
-            if (item instanceof XSString instance) {
+            if (item instanceof final XSString instance) {
                 value = instance.getValue();
             }
             LOGGER.trace("Loading first available locale [{}]", value);

@@ -39,7 +39,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
 
     private Set<String> requiredScopes = new LinkedHashSet<>();
 
-    private String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
+    protected String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
             .build()

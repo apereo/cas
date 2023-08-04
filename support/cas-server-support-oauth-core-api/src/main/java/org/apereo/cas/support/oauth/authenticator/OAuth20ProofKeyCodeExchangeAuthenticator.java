@@ -5,9 +5,11 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
@@ -36,9 +38,12 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         final TicketRegistry ticketRegistry,
         final PrincipalResolver principalResolver,
         final OAuth20RequestParameterResolver requestParameterResolver,
-        final OAuth20ClientSecretValidator clientSecretValidator) {
+        final OAuth20ClientSecretValidator clientSecretValidator,
+        final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+        final TicketFactory ticketFactory) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-            ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator);
+            ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator,
+            profileScopeToAttributesFilter, ticketFactory);
     }
 
     private static String calculateCodeVerifierHash(final String method, final String codeVerifier) {

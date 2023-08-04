@@ -133,6 +133,6 @@ class TicketRegistrySessionStoreTests {
         assertTrue(sessionStore.getSessionId(webContext, false).isPresent());
     }
 
-    private static class NoSerializable {
+    private static final class NoSerializable {
     }
 }

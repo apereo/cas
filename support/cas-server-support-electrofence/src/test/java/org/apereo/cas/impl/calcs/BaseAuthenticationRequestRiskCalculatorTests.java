@@ -98,7 +98,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     }
 
     @TestConfiguration(value = "ElectronicFenceTestConfiguration", proxyBeanMethods = false)
-    public static class ElectronicFenceTestConfiguration {
+    static class ElectronicFenceTestConfiguration {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();
@@ -147,6 +147,6 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreEventsConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

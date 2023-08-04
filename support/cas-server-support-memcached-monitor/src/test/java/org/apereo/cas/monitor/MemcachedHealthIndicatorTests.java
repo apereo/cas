@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 7.0.0
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
+@Deprecated(since = "7.0.0")
 class MemcachedHealthIndicatorTests {
     @Autowired
     @Qualifier("memcachedHealthIndicator")

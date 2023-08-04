@@ -137,10 +137,10 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -174,7 +174,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -202,11 +201,11 @@ public class CasOAuth20Configuration {
 
             val enabled = FunctionUtils.doIf(
                     !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
-                    && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+                        && StringUtils.isNotBlank(crypto.getSigning().getKey()),
                     () -> {
                         LOGGER.warn("Default encryption/signing is not enabled explicitly for OAuth access tokens as JWTs if necessary, "
-                                    + "yet signing/encryption keys are defined for operations. CAS will proceed to enable "
-                                    + "the token encryption/signing functionality.");
+                            + "yet signing/encryption keys are defined for operations. CAS will proceed to enable "
+                            + "the token encryption/signing functionality.");
                         return Boolean.TRUE;
                     },
                     crypto::isEnabled)
@@ -216,7 +215,7 @@ public class CasOAuth20Configuration {
                 return CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20JwtAccessTokenCipherExecutor.class);
             }
             LOGGER.info("OAuth access token encryption/signing is turned off for JWTs, if/when needed. This "
-                        + "MAY NOT be safe in a production environment.");
+                + "MAY NOT be safe in a production environment.");
             return CipherExecutor.noOp();
         }
 
@@ -232,12 +231,9 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtBuilder accessTokenJwtBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
-            final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
-            @Qualifier("oauthAccessTokenJwtCipherExecutor")
-            final CipherExecutor oauthAccessTokenJwtCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor") final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
+            @Qualifier("oauthAccessTokenJwtCipherExecutor") final CipherExecutor oauthAccessTokenJwtCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20JwtBuilder(oauthAccessTokenJwtCipherExecutor, servicesManager,
                 oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
         }
@@ -249,65 +245,38 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
-            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
-            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("oAuth2UserProfileDataCreator")
-            final OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator,
-            @Qualifier("oauthDistributedSessionCookieGenerator")
-            final CasCookieBuilder oauthDistributedSessionCookieGenerator,
-            @Qualifier("oauthUserProfileViewRenderer")
-            final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("oAuth2UserProfileDataCreator") final OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator,
+            @Qualifier("oauthDistributedSessionCookieGenerator") final CasCookieBuilder oauthDistributedSessionCookieGenerator,
+            @Qualifier("oauthUserProfileViewRenderer") final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor,
-            @Qualifier("oauthPrincipalFactory")
-            final PrincipalFactory oauthPrincipalFactory,
-            @Qualifier("callbackAuthorizeViewResolver")
-            final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
-            @Qualifier("profileScopeToAttributesFilter")
-            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig,
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
+            @Qualifier("oauthRegisteredServiceCipherExecutor") final CipherExecutor oauthRegisteredServiceCipherExecutor,
+            @Qualifier("oauthPrincipalFactory") final PrincipalFactory oauthPrincipalFactory,
+            @Qualifier("callbackAuthorizeViewResolver") final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier("oauthSecConfig") final Config oauthSecConfig,
             final ObjectProvider<List<OAuth20TokenRequestValidator>> oauthTokenRequestValidators,
-            @Qualifier("deviceTokenExpirationPolicy")
-            final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
-            @Qualifier("oauthInvalidAuthorizationBuilder")
-            final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder,
-            @Qualifier("consentApprovalViewResolver")
-            final ConsentApprovalViewResolver consentApprovalViewResolver,
-            @Qualifier("accessTokenResponseGenerator")
-            final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
-            @Qualifier("oauthCasAuthenticationBuilder")
-            final OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            @Qualifier("deviceTokenExpirationPolicy") final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
+            @Qualifier("oauthInvalidAuthorizationBuilder") final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder,
+            @Qualifier("consentApprovalViewResolver") final ConsentApprovalViewResolver consentApprovalViewResolver,
+            @Qualifier("accessTokenResponseGenerator") final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
+            @Qualifier("oauthCasAuthenticationBuilder") final OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder,
+            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor,
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-            @Qualifier("oauthTokenGenerator")
-            final OAuth20TokenGenerator oauthTokenGenerator) {
+            @Qualifier("oauthTokenGenerator") final OAuth20TokenGenerator oauthTokenGenerator) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .requestParameterResolver(oauthRequestParameterResolver)
@@ -353,8 +322,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
             return new OAuth20ConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
         }
@@ -363,8 +331,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator(
-            @Qualifier("oauth20ConfigurationContext")
-            final ObjectProvider<OAuth20ConfigurationContext> context) {
+            @Qualifier("oauth20ConfigurationContext") final ObjectProvider<OAuth20ConfigurationContext> context) {
             return new DefaultOAuth20UserProfileDataCreator(context);
         }
     }
@@ -376,16 +343,11 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenGenerator oauthTokenGenerator(
-            @Qualifier("defaultDeviceUserCodeFactory")
-            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
-            @Qualifier("defaultDeviceTokenFactory")
-            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
-            @Qualifier("defaultRefreshTokenFactory")
-            final OAuth20RefreshTokenFactory defaultRefreshTokenFactory,
-            @Qualifier("defaultAccessTokenFactory")
-            final OAuth20AccessTokenFactory defaultAccessTokenFactory,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier("defaultDeviceUserCodeFactory") final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
+            @Qualifier("defaultDeviceTokenFactory") final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
+            @Qualifier("defaultRefreshTokenFactory") final OAuth20RefreshTokenFactory defaultRefreshTokenFactory,
+            @Qualifier("defaultAccessTokenFactory") final OAuth20AccessTokenFactory defaultAccessTokenFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultTokenGenerator(
                 defaultAccessTokenFactory, defaultDeviceTokenFactory,
@@ -397,8 +359,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator(
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder, casProperties);
         }
@@ -412,21 +373,14 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client oauthCasClient(
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext,
-            @Qualifier("oauthCasClientRedirectActionBuilder")
-            final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
-            @Qualifier("casCallbackUrlResolver")
-            final UrlResolver casCallbackUrlResolver,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("oauthCasClientRedirectActionBuilder") final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
+            @Qualifier("casCallbackUrlResolver") final UrlResolver casCallbackUrlResolver,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
-            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             val server = casProperties.getServer();
             val cfg = new CasConfiguration(server.getLoginUrl());
             val validator = new InternalTicketValidator(centralAuthenticationService,
@@ -456,8 +410,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client basicAuthClient(
-            @Qualifier("oauthClientAuthenticator")
-            final Authenticator oauthClientAuthenticator) {
+            @Qualifier("oauthClientAuthenticator") final Authenticator oauthClientAuthenticator) {
             val basicAuthClient = new DirectBasicAuthClient(oauthClientAuthenticator);
             basicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
             basicAuthClient.init();
@@ -467,8 +420,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client directFormClient(
-            @Qualifier("oauthClientAuthenticator")
-            final Authenticator oauthClientAuthenticator) {
+            @Qualifier("oauthClientAuthenticator") final Authenticator oauthClientAuthenticator) {
             val directFormClient = new DirectFormClient(oauthClientAuthenticator);
             directFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM);
             directFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
@@ -480,9 +432,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client pkceAuthnFormClient(
-            @Qualifier("oAuthProofKeyCodeExchangeAuthenticator")
-            final Authenticator oAuthProofKeyCodeExchangeAuthenticator) {
-            val pkceAuthnFormClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator);
+            @Qualifier("oauthProofKeyCodeExchangeAuthenticator") final Authenticator oauthProofKeyCodeExchangeAuthenticator) {
+            val pkceAuthnFormClient = new DirectFormClient(oauthProofKeyCodeExchangeAuthenticator);
             pkceAuthnFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM_PROOF_KEY_CODE_EXCHANGE_AUTHN);
             pkceAuthnFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
             pkceAuthnFormClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
@@ -493,9 +444,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client pkceBasicAuthClient(
-            @Qualifier("oAuthProofKeyCodeExchangeAuthenticator")
-            final Authenticator oAuthProofKeyCodeExchangeAuthenticator) {
-            val pkceBasicAuthClient = new DirectBasicAuthClient(oAuthProofKeyCodeExchangeAuthenticator);
+            @Qualifier("oauthProofKeyCodeExchangeAuthenticator") final Authenticator oauthProofKeyCodeExchangeAuthenticator) {
+            val pkceBasicAuthClient = new DirectBasicAuthClient(oauthProofKeyCodeExchangeAuthenticator);
             pkceBasicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_PROOF_KEY_CODE_EXCHANGE_AUTHN);
             pkceBasicAuthClient.init();
             return pkceBasicAuthClient;
@@ -504,9 +454,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client refreshTokenFormClient(
-            @Qualifier("oAuthRefreshTokenAuthenticator")
-            final Authenticator oAuthRefreshTokenAuthenticator) {
-            val refreshTokenFormClient = new DirectFormClient(oAuthRefreshTokenAuthenticator);
+            @Qualifier("oauthRefreshTokenAuthenticator") final Authenticator oauthRefreshTokenAuthenticator) {
+            val refreshTokenFormClient = new DirectFormClient(oauthRefreshTokenAuthenticator);
             refreshTokenFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_FORM_REFRESH_TOKEN_AUTHN);
             refreshTokenFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
             refreshTokenFormClient.setPasswordParameter(OAuth20Constants.REFRESH_TOKEN);
@@ -517,8 +466,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client userFormClient(
-            @Qualifier("oauthUserAuthenticator")
-            final Authenticator oauthUserAuthenticator) {
+            @Qualifier("oauthUserAuthenticator") final Authenticator oauthUserAuthenticator) {
             val userFormClient = new DirectFormClient(oauthUserAuthenticator);
             userFormClient.setName(Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
             userFormClient.init();
@@ -528,8 +476,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client accessTokenClient(
-            @Qualifier("oauthAccessTokenAuthenticator")
-            final Authenticator oauthAccessTokenAuthenticator) {
+            @Qualifier("oauthAccessTokenAuthenticator") final Authenticator oauthAccessTokenAuthenticator) {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
             accessTokenClient.setAuthenticator(oauthAccessTokenAuthenticator);
@@ -542,22 +489,14 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthSecConfigClients")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<Client> oauthSecConfigClients(
-            @Qualifier("basicAuthClient")
-            final Client basicAuthClient,
-            @Qualifier("directFormClient")
-            final Client directFormClient,
-            @Qualifier("pkceAuthnFormClient")
-            final Client pkceAuthnFormClient,
-            @Qualifier("pkceBasicAuthClient")
-            final Client pkceBasicAuthClient,
-            @Qualifier("refreshTokenFormClient")
-            final Client refreshTokenFormClient,
-            @Qualifier("oauthCasClient")
-            final Client oauthCasClient,
-            @Qualifier("userFormClient")
-            final Client userFormClient,
-            @Qualifier("accessTokenClient")
-            final Client accessTokenClient,
+            @Qualifier("basicAuthClient") final Client basicAuthClient,
+            @Qualifier("directFormClient") final Client directFormClient,
+            @Qualifier("pkceAuthnFormClient") final Client pkceAuthnFormClient,
+            @Qualifier("pkceBasicAuthClient") final Client pkceBasicAuthClient,
+            @Qualifier("refreshTokenFormClient") final Client refreshTokenFormClient,
+            @Qualifier("oauthCasClient") final Client oauthCasClient,
+            @Qualifier("userFormClient") final Client userFormClient,
+            @Qualifier("accessTokenClient") final Client accessTokenClient,
             final ObjectProvider<List<OAuth20AuthenticationClientProvider>> providers) {
             val clientProviders = Optional.ofNullable(providers.getIfAvailable()).orElseGet(ArrayList::new);
             AnnotationAwareOrderComparator.sort(clientProviders);
@@ -579,12 +518,9 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthSecProfileManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProfileManagerFactory oauthSecProfileManagerFactory(
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
             return (webContext, sessionStore) ->
                 new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
                     servicesManager, oauthRequestParameterResolver);
@@ -594,14 +530,10 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthSecConfig")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Config oauthSecConfig(
-            @Qualifier("oauthSecProfileManagerFactory")
-            final ProfileManagerFactory oauthSecProfileManagerFactory,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
-            @Qualifier("oauthSecCsrfTokenMatcher")
-            final Matcher oauthSecCsrfTokenMatcher,
-            @Qualifier("oauthSecConfigClients")
-            final BeanContainer<Client> oauthSecConfigClients,
+            @Qualifier("oauthSecProfileManagerFactory") final ProfileManagerFactory oauthSecProfileManagerFactory,
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
+            @Qualifier("oauthSecCsrfTokenMatcher") final Matcher oauthSecCsrfTokenMatcher,
+            @Qualifier("oauthSecConfigClients") final BeanContainer<Client> oauthSecConfigClients,
             final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
@@ -621,48 +553,42 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(context);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenAuthorizationCodeGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenAuthorizationCodeGrantRequestExtractor(context);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenRefreshTokenGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenRefreshTokenGrantRequestExtractor(context);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenPasswordGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenPasswordGrantRequestExtractor(context);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenClientCredentialsGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenClientCredentialsGrantRequestExtractor(context);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenDeviceCodeResponseRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new AccessTokenDeviceCodeResponseRequestExtractor(context);
         }
     }
@@ -684,7 +610,7 @@ public class CasOAuth20Configuration {
                     if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
                         && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
                         LOGGER.warn("Encryption/Signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
-                                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
+                            + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
                         enabled = true;
                     }
                     return enabled
@@ -698,10 +624,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder oauthDistributedSessionCookieGenerator(
-            @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService,
-            @Qualifier("oauthDistributedSessionCookieCipherExecutor")
-            final CipherExecutor oauthDistributedSessionCookieCipherExecutor,
+            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier("oauthDistributedSessionCookieCipherExecutor") final CipherExecutor oauthDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
@@ -713,12 +637,9 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore oauthDistributedSessionStore(
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier("oauthDistributedSessionCookieGenerator")
-            final CasCookieBuilder oauthDistributedSessionCookieGenerator,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier("oauthDistributedSessionCookieGenerator") final CasCookieBuilder oauthDistributedSessionCookieGenerator,
             final CasConfigurationProperties casProperties) {
             val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
             if (replicate) {
@@ -738,8 +659,7 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LogoutExecutionPlanConfigurer oauthLogoutExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore) {
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore) {
             return plan -> {
                 val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
                 if (replicate) {
@@ -764,8 +684,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder) {
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder) {
             return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder);
         }
 
@@ -780,8 +699,7 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthAuthorizationModelAndViewBuilder")
         public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
-            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
-            final OAuth20ResponseModeFactory oauthResponseModeFactory) {
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME) final OAuth20ResponseModeFactory oauthResponseModeFactory) {
             return new DefaultOAuth20AuthorizationModelAndViewBuilder(oauthResponseModeFactory);
         }
 
@@ -819,8 +737,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultUserProfileViewRenderer(servicesManager,
                 casProperties.getAuthn().getOauth());
@@ -833,7 +750,7 @@ public class CasOAuth20Configuration {
             return OAuth20CallbackAuthorizeViewResolver.asDefault();
         }
 
-        @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
+        @ConditionalOnMissingBean(name = OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
@@ -850,7 +767,7 @@ public class CasOAuth20Configuration {
                     !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
                     () -> {
                         LOGGER.warn("Secret encryption/signing is not enabled explicitly in the configuration for OAuth/OIDC services, yet signing/encryption keys "
-                                    + "are defined for operations. CAS will proceed to enable the encryption/signing functionality.");
+                            + "are defined for operations. CAS will proceed to enable the encryption/signing functionality.");
                         return Boolean.TRUE;
                     },
                     crypto::isEnabled)
@@ -860,8 +777,8 @@ public class CasOAuth20Configuration {
                 return CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20RegisteredServiceCipherExecutor.class);
             }
             LOGGER.info("Relying party secret encryption/signing is turned off for OAuth/OIDC services. This "
-                        + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
-                        + "signing and verification of relying party secrets.");
+                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                + "signing and verification of relying party secrets.");
             return CipherExecutor.noOp();
         }
 
@@ -877,8 +794,7 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCallbackUrlResolver")
         public UrlResolver casCallbackUrlResolver(final CasConfigurationProperties casProperties,
-                                                  @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-                                                  final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
+                                                  @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             return new OAuth20CasCallbackUrlResolver(callbackUrl, oauthRequestParameterResolver);
         }
@@ -912,8 +828,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = OAuth20ClientSecretValidator.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            @Qualifier("oauthRegisteredServiceCipherExecutor") final CipherExecutor oauthRegisteredServiceCipherExecutor) {
             return new DefaultOAuth20ClientSecretValidator(oauthRegisteredServiceCipherExecutor);
         }
 
@@ -921,8 +836,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             val grantTypesSupported = context.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()))
@@ -935,8 +849,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthAuthorizationCodeGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthAuthorizationCodeGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()))
@@ -950,12 +863,9 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(responseTypesSupported.contains(OAuth20ResponseTypes.DEVICE_CODE.getType()))
@@ -969,12 +879,9 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthRevocationRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthRevocationRequestValidator(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20RevocationRequestValidator(servicesManager,
                 oauthDistributedSessionStore, oauthRequestParameterResolver);
         }
@@ -983,8 +890,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.REFRESH_TOKEN.getType()))
@@ -997,8 +903,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.PASSWORD.getType()))
@@ -1011,8 +916,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthClientCredentialsGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()))
@@ -1026,14 +930,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
                 .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
@@ -1048,14 +948,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
                 .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
@@ -1070,14 +966,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
 
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
@@ -1093,14 +985,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
                 .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.ID_TOKEN.getType()))
@@ -1115,14 +1003,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
                 .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()))
@@ -1141,8 +1025,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultRefreshTokenFactoryConfigurer(
-            @Qualifier("defaultRefreshTokenFactory")
-            final OAuth20RefreshTokenFactory defaultRefreshTokenFactory) {
+            @Qualifier("defaultRefreshTokenFactory") final OAuth20RefreshTokenFactory defaultRefreshTokenFactory) {
             return () -> defaultRefreshTokenFactory;
         }
 
@@ -1150,8 +1033,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultDeviceUserCodeFactoryConfigurer(
-            @Qualifier("defaultDeviceUserCodeFactory")
-            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory) {
+            @Qualifier("defaultDeviceUserCodeFactory") final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory) {
             return () -> defaultDeviceUserCodeFactory;
         }
 
@@ -1159,8 +1041,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultAccessTokenFactoryConfigurer(
-            @Qualifier("defaultAccessTokenFactory")
-            final OAuth20AccessTokenFactory defaultAccessTokenFactory) {
+            @Qualifier("defaultAccessTokenFactory") final OAuth20AccessTokenFactory defaultAccessTokenFactory) {
             return () -> defaultAccessTokenFactory;
         }
 
@@ -1168,8 +1049,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultDeviceTokenFactoryConfigurer(
-            @Qualifier("defaultDeviceTokenFactory")
-            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory) {
+            @Qualifier("defaultDeviceTokenFactory") final OAuth20DeviceTokenFactory defaultDeviceTokenFactory) {
             return () -> defaultDeviceTokenFactory;
         }
 
@@ -1178,8 +1058,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer defaultOAuthCodeFactoryConfigurer(
-            @Qualifier("defaultOAuthCodeFactory")
-            final OAuth20CodeFactory defaultOAuthCodeFactory) {
+            @Qualifier("defaultOAuthCodeFactory") final OAuth20CodeFactory defaultOAuthCodeFactory) {
             return () -> defaultOAuthCodeFactory;
         }
 
@@ -1247,12 +1126,9 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultRefreshTokenFactory")
         public OAuth20RefreshTokenFactory defaultRefreshTokenFactory(
-            @Qualifier("refreshTokenIdGenerator")
-            final UniqueTicketIdGenerator refreshTokenIdGenerator,
-            @Qualifier("refreshTokenExpirationPolicy")
-            final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier("refreshTokenIdGenerator") final UniqueTicketIdGenerator refreshTokenIdGenerator,
+            @Qualifier("refreshTokenExpirationPolicy") final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
                 refreshTokenExpirationPolicy, servicesManager);
         }
@@ -1261,14 +1137,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
         public OAuth20AccessTokenFactory defaultAccessTokenFactory(
-            @Qualifier("accessTokenIdGenerator")
-            final UniqueTicketIdGenerator accessTokenIdGenerator,
-            @Qualifier("accessTokenExpirationPolicy")
-            final ExpirationPolicyBuilder accessTokenExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder) {
+            @Qualifier("accessTokenIdGenerator") final UniqueTicketIdGenerator accessTokenIdGenerator,
+            @Qualifier("accessTokenExpirationPolicy") final ExpirationPolicyBuilder accessTokenExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder) {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator,
                 accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager);
         }
@@ -1277,12 +1149,9 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
         public OAuth20DeviceTokenFactory defaultDeviceTokenFactory(
-            @Qualifier("deviceTokenExpirationPolicy")
-            final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
-            @Qualifier("deviceTokenIdGenerator")
-            final UniqueTicketIdGenerator deviceTokenIdGenerator,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            @Qualifier("deviceTokenExpirationPolicy") final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
+            @Qualifier("deviceTokenIdGenerator") final UniqueTicketIdGenerator deviceTokenIdGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultDeviceTokenFactory(deviceTokenIdGenerator, deviceTokenExpirationPolicy,
                 casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(), servicesManager);
@@ -1292,12 +1161,9 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultDeviceUserCodeFactory")
         public OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory(
-            @Qualifier("deviceTokenExpirationPolicy")
-            final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
-            @Qualifier("deviceTokenIdGenerator")
-            final UniqueTicketIdGenerator deviceTokenIdGenerator,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            @Qualifier("deviceTokenExpirationPolicy") final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
+            @Qualifier("deviceTokenIdGenerator") final UniqueTicketIdGenerator deviceTokenIdGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultDeviceUserCodeFactory(deviceTokenIdGenerator, deviceTokenExpirationPolicy,
                 casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(), servicesManager);
@@ -1307,14 +1173,10 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultOAuthCodeFactory")
         public OAuth20CodeFactory defaultOAuthCodeFactory(
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier("oAuthCodeIdGenerator")
-            final UniqueTicketIdGenerator oAuthCodeIdGenerator,
-            @Qualifier("oAuthCodeExpirationPolicy")
-            final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier("oAuthCodeIdGenerator") final UniqueTicketIdGenerator oAuthCodeIdGenerator,
+            @Qualifier("oAuthCodeExpirationPolicy") final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator,
                 oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor);
         }
@@ -1327,10 +1189,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder(
-            @Qualifier("oauthAuthorizationModelAndViewBuilder")
-            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauthAuthorizationModelAndViewBuilder") final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20ResourceOwnerCredentialsResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
         }
@@ -1339,10 +1199,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder(
-            @Qualifier("oauthAuthorizationModelAndViewBuilder")
-            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauthAuthorizationModelAndViewBuilder") final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20ClientCredentialsResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
         }
@@ -1351,10 +1209,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder(
-            @Qualifier("oauthAuthorizationModelAndViewBuilder")
-            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
+            @Qualifier("oauthAuthorizationModelAndViewBuilder") final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20TokenAuthorizationResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
         }
@@ -1363,10 +1219,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder(
-            @Qualifier("oauthAuthorizationModelAndViewBuilder")
-            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext context) {
+            @Qualifier("oauthAuthorizationModelAndViewBuilder") final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
             return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(context,
                 oauthAuthorizationModelAndViewBuilder);
         }
@@ -1375,12 +1229,9 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder(
-            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
-            final OAuth20ResponseModeFactory oauthResponseModeFactory,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME) final OAuth20ResponseModeFactory oauthResponseModeFactory,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager,
                 oauthRequestParameterResolver, oauthResponseModeFactory);
         }
@@ -1394,14 +1245,10 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier("oauthPrincipalFactory")
-            final PrincipalFactory oauthPrincipalFactory,
-            @Qualifier("profileScopeToAttributesFilter")
-            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier("oauthPrincipalFactory") final PrincipalFactory oauthPrincipalFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultCasAuthenticationBuilder(oauthPrincipalFactory,
                 webApplicationServiceFactory, profileScopeToAttributesFilter,
@@ -1412,116 +1259,103 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthClientAuthenticator(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20ClientIdClientSecretAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
-        @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
+        @ConditionalOnMissingBean(name = "oauthProofKeyCodeExchangeAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthProofKeyCodeExchangeAuthenticator(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+        public Authenticator oauthProofKeyCodeExchangeAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
-        @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
+        @ConditionalOnMissingBean(name = "oauthRefreshTokenAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Authenticator oAuthRefreshTokenAuthenticator(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+        public Authenticator oauthRefreshTokenAuthenticator(
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20RefreshTokenAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
                 ticketRegistry,
                 defaultPrincipalResolver,
                 oauthRequestParameterResolver,
-                oauth20ClientSecretValidator);
+                oauth20ClientSecretValidator,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oauthUserAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthUserAuthenticator(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
-            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
-            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
-            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new OAuth20UsernamePasswordAuthenticator(
                 authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
                 oauthRequestParameterResolver,
                 oauth20ClientSecretValidator,
-                authenticationAttributeReleasePolicy);
+                authenticationAttributeReleasePolicy,
+                profileScopeToAttributesFilter,
+                ticketFactory);
         }
 
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthAccessTokenAuthenticator(
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
+            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         }
     }
@@ -1537,34 +1371,61 @@ public class CasOAuth20Configuration {
             return new AccessTokenGrantAuditableRequestExtractor(accessTokenGrantRequestExtractors);
         }
 
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthUserProfileDataAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver oauthUserProfileDataAuditResourceResolver() {
+            return new OAuth20UserProfileDataAuditResourceResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthAccessTokenGrantRequestAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver() {
+            return new OAuth20AccessTokenGrantRequestAuditResourceResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthAccessTokenResponseAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver(final CasConfigurationProperties casProperties) {
+            return new OAuth20AccessTokenResponseAuditResourceResolver(casProperties.getAudit().getEngine());
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthAuthorizationResponseAuditResourceResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver(final CasConfigurationProperties casProperties) {
+            return new OAuth20AuthorizationResponseAuditResourceResolver(casProperties.getAudit().getEngine());
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer(final CasConfigurationProperties casProperties) {
+        public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("oauthUserProfileDataAuditResourceResolver") final AuditResourceResolver oauthUserProfileDataAuditResourceResolver,
+            @Qualifier("oauthAccessTokenGrantRequestAuditResourceResolver") final AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver,
+            @Qualifier("oauthAccessTokenResponseAuditResourceResolver") final AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver,
+            @Qualifier("oauthAuthorizationResponseAuditResourceResolver") final AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver,
+            final CasConfigurationProperties casProperties) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
-                        AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER,
-                    new OAuth20UserProfileDataAuditResourceResolver());
+                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER, oauthUserProfileDataAuditResourceResolver);
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
-                        AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER,
-                    new OAuth20AccessTokenGrantRequestAuditResourceResolver());
+                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER, oauthAccessTokenGrantRequestAuditResourceResolver);
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                         AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER,
-                    new OAuth20AccessTokenResponseAuditResourceResolver(casProperties.getAudit().getEngine()));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER, oauthAccessTokenResponseAuditResourceResolver);
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
-                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
-                        AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER,
-                    new OAuth20AuthorizationResponseAuditResourceResolver(casProperties.getAudit().getEngine()));
+                    new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+                plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER, oauthAuthorizationResponseAuditResourceResolver);
             };
         }
     }

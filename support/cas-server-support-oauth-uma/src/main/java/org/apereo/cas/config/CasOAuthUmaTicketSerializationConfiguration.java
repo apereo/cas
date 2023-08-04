@@ -36,7 +36,7 @@ public class CasOAuthUmaTicketSerializationConfiguration {
         };
     }
 
-    private static class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
+    private static final class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 

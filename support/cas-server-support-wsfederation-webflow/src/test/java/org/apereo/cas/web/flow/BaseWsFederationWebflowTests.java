@@ -81,6 +81,6 @@ class BaseWsFederationWebflowTests {
         WsFederationAuthenticationWebflowConfiguration.class,
         WsFederationAuthenticationConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

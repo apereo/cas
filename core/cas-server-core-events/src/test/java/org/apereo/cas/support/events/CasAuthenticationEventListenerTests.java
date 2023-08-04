@@ -205,7 +205,7 @@ class CasAuthenticationEventListenerTests {
             futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
         }
         var maxThread = -1;
-        for (var future : futureList) {
+        for (val future : futureList) {
             var currentThread = future.get();
             if (currentThread > maxThread) {
                 maxThread = currentThread;
@@ -264,7 +264,7 @@ class CasAuthenticationEventListenerTests {
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     @EnableAsync
-    public static class EventTestConfiguration implements AsyncConfigurer {
+    static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {

@@ -163,7 +163,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
 
                 val currentCredential = WebUtils.getCredential(context);
-                if (currentCredential instanceof ClientCredential clientCredential) {
+                if (currentCredential instanceof final ClientCredential clientCredential) {
                     return Optional.of(clientCredential);
                 }
                 return populateContextWithClientCredential(client, context);

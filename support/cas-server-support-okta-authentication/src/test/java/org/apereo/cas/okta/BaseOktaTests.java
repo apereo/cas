@@ -63,6 +63,6 @@ public abstract class BaseOktaTests {
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

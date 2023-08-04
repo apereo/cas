@@ -49,7 +49,7 @@ public final class DuoWeb {
 		try {
 			duo_sig = signVals(skey, username, ikey, DUO_PREFIX, DUO_EXPIRE, time);
 			app_sig = signVals(akey, username, ikey, APP_PREFIX, APP_EXPIRE, time);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return ERR_UNKNOWN;
 		}
 

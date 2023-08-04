@@ -81,7 +81,7 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String jwksUri;
 
     @JsonProperty("userinfo_signed_response_alg")
-    private String userInfoSignedReponseAlg;
+    private String userInfoSignedResponseAlg;
 
     @JsonProperty("userinfo_encrypted_response_alg")
     private String userInfoEncryptedResponseAlg;
@@ -104,4 +104,13 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("post_logout_redirect_uris")
     private List<String> postLogoutRedirectUris = new ArrayList<>(0);
+
+    @JsonProperty("introspection_signed_response_alg")
+    private String introspectionSignedResponseAlg;
+
+    @JsonProperty("introspection_encrypted_response_alg")
+    private String introspectionEncryptedResponseAlg;
+
+    @JsonProperty("introspection_encrypted_response_enc")
+    private String introspectionEncryptedResponseEncoding;
 }

@@ -30,7 +30,7 @@ public interface QueueableTicketRegistryMessagePublisher {
      * Default implementation is do nothing.
      * @param cmd the cmd
      */
-    default void publishMessageToQueue(BaseMessageQueueCommand cmd) {
+    default void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
     }
 
     /**

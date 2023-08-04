@@ -4,12 +4,9 @@ package org.apereo.cas.git;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.file.PathUtils;
-import org.apache.commons.io.file.StandardDeleteOption;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -20,7 +17,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,6 +57,7 @@ class GitRepositoryBuilderTests {
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
+        props.setHttpClientType(BaseGitProperties.HttpClientTypes.HTTP_CLIENT);
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
             FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
         props.setPrivateKeyPassphrase("something");
@@ -90,31 +87,4 @@ class GitRepositoryBuilderTests {
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }
-
-    /**
-     * This test uses a dummy private repo on gitlab and the username password is a read-only deploy token.
-     * Tests client auth of https and cloning repositories with multiple jgit http client implementations.
-     *
-     * @throws IOException IO error
-     */
-    @Test
-    void verifyBuildWithHttpClientOptions() throws Exception {
-        val readonlyDeployToken = "ST8hSZUWDs7ujS83EVnk";
-        for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
-            val props = casProperties.getServiceRegistry().getGit();
-            props.setHttpClientType(type);
-            props.setRepositoryUrl("https://gitlab.com/hdeadman-bah/cas-git-auth-test.git");
-            props.setUsername("cas-app");
-            props.setPassword(readonlyDeployToken);
-            props.setBranchesToClone("master");
-            val cloneDir = "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID();
-            props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(cloneDir));
-            val builder = GitRepositoryBuilder.newInstance(props);
-            val gitRepository = builder.build();
-            assertTrue(new File(gitRepository.getRepositoryDirectory(), "README.md").exists());
-            gitRepository.destroy();
-            FunctionUtils.doAndHandle(__ -> PathUtils.deleteDirectory(gitRepository.getRepositoryDirectory().toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
-        }
-    }
-
 }

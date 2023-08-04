@@ -68,7 +68,7 @@ class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests {
     }
 
     @TestConfiguration(value = "OidcLogoutMatcherTestConfiguration", proxyBeanMethods = false)
-    public static class OidcLogoutMatcherTestConfiguration {
+    static class OidcLogoutMatcherTestConfiguration {
         @Bean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
         public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
             return String::matches;

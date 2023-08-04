@@ -67,7 +67,7 @@ public class LoggingUtils {
             builder.append(StringUtils.repeat('=', CHAR_REPEAT_ACCOUNT));
             builder.append('\n');
             context.forEach((key, value) -> {
-                val toLog = value.toString();
+                val toLog = DigestUtils.abbreviate(value.toString());
                 if (StringUtils.isNotBlank(toLog)) {
                     builder.append(String.format("%s: %s\n", key, toLog));
                 }

@@ -120,7 +120,7 @@ public class LoginSearchResult {
      * @param value allowed object is
      *              {@link String }
      */
-    public void setErr(String value) {
+    public void setErr(final String value) {
         this.err = value;
     }
 
@@ -138,7 +138,7 @@ public class LoginSearchResult {
      *
      * @param value the n property
      */
-    public void setN(int value) {
+    public void setN(final int value) {
         this.n = value;
     }
 
@@ -504,7 +504,7 @@ public class LoginSearchResult {
      *
      * @param value the count
      */
-    public void setCount(long value) {
+    public void setCount(final long value) {
         this.count = value;
     }
 

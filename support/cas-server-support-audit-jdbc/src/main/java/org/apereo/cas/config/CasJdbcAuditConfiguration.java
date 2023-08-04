@@ -14,13 +14,13 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
-import org.apereo.inspektr.common.Cleanable;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -218,7 +218,7 @@ public class CasJdbcAuditConfiguration {
         public Cleanable inspektrAuditTrailCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("jdbcAuditTrailManager")
-            final AuditTrailManager jdbcAuditTrailManager) throws Exception {
+            final AuditTrailManager jdbcAuditTrailManager) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.audit.jdbc.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))

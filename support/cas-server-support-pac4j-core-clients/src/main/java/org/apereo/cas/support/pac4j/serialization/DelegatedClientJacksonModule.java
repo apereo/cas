@@ -32,7 +32,7 @@ public class DelegatedClientJacksonModule extends SimpleModule {
     }
 
     @RequiredArgsConstructor
-    private static class CommonProfileSerializer<T extends CommonProfile> extends JsonSerializer<T> {
+    private static final class CommonProfileSerializer<T extends CommonProfile> extends JsonSerializer<T> {
         private final Class<T> typeToHandle;
 
         private void serialize(final T value, final JsonGenerator gen) throws IOException {

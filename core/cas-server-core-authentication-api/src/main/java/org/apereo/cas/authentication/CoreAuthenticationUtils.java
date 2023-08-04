@@ -29,6 +29,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.validation.Assertion;
 
@@ -251,7 +252,7 @@ public class CoreAuthenticationUtils {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
-            if (selectionCriteria.endsWith(".groovy")) {
+            if (selectionCriteria.endsWith(".groovy") && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
                 val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
@@ -283,7 +284,8 @@ public class CoreAuthenticationUtils {
         }
 
         val location = properties.getGroovy().getLocation();
-        if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+        if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY
+            && location != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy<>(location, applicationContext);
         }
@@ -435,7 +437,7 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
         }
 
-        if (!policyProps.getGroovy().isEmpty()) {
+        if (!policyProps.getGroovy().isEmpty() && CasRuntimeHintsRegistrar.notInNativeImage()) {
             LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
             return policyProps.getGroovy()
                 .stream()
@@ -470,7 +472,7 @@ public class CoreAuthenticationUtils {
         if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
             return new RestfulIPAddressIntelligenceService(adaptive);
         }
-        if (intel.getGroovy().getLocation() != null) {
+        if (intel.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             return new GroovyIPAddressIntelligenceService(adaptive);
         }
         if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {

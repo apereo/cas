@@ -173,7 +173,7 @@ class TokenAuthenticationHandlerTests {
     }
 
     @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
-    public static class TestTokenAuthenticationConfiguration {
+    static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             val services = new ArrayList<RegisteredService>();

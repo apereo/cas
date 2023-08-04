@@ -87,7 +87,7 @@ class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    public static class RestfulServiceRegistryTestConfiguration {
+    static class RestfulServiceRegistryTestConfiguration {
 
         @Autowired
         public void configureJackson(final ObjectMapper objectMapper) {
@@ -98,7 +98,7 @@ class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
 
         @RestController("deviceRepositoryController")
         @RequestMapping("/")
-        public static class DeviceRepositoryController {
+        static class DeviceRepositoryController {
 
             @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public void removeAll() {

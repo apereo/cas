@@ -396,7 +396,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                     return finalizeSigningCredential(new BasicCredential(credential.getPublicKey(), privateKey), credential);
                 }
                 case X509 -> {
-                    if (credential instanceof BasicX509Credential value) {
+                    if (credential instanceof final BasicX509Credential value) {
                         val certificate = value.getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);

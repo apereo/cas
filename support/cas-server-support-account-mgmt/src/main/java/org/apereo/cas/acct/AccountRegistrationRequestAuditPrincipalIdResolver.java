@@ -28,7 +28,7 @@ public class AccountRegistrationRequestAuditPrincipalIdResolver implements Audit
     @Override
     public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
                                      final Object resultValue, final Exception exception) {
-        if (resultValue instanceof AccountRegistrationRequest request) {
+        if (resultValue instanceof final AccountRegistrationRequest request) {
             return request.getUsername();
         }
         val context = RequestContextHolder.getRequestContext();

@@ -5,6 +5,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class PasswordEncoderUtils {
             return NoOpPasswordEncoder.getInstance();
         }
 
-        if (type.endsWith(".groovy")) {
+        if (type.endsWith(".groovy") && CasRuntimeHintsRegistrar.notInNativeImage()) {
             LOGGER.trace("Creating Groovy-based password encoder at [{}]", type);
             val resource = applicationContext.getResource(type);
             return new GroovyPasswordEncoder(resource, applicationContext);

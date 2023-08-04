@@ -1,0 +1,74 @@
+package org.apereo.inspektr.audit.spi.support;
+
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import lombok.Setter;
+import lombok.val;
+import org.aspectj.lang.JoinPoint;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Function;
+
+/**
+ * Implementation of {@link AuditResourceResolver} that uses the toString version of the return value
+ * as the resource.
+ *
+ * @author Scott Battaglia
+ * @since 1.0
+ */
+@Setter
+public class ReturnValueAsStringResourceResolver implements AuditResourceResolver {
+
+    protected AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
+
+    protected Function<String[], String[]> resourcePostProcessor = Function.identity();
+
+    @Override
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
+        if (retval instanceof final Collection collection) {
+            val size = collection.size();
+            val returnValues = new String[size];
+            var i = 0;
+            for (var iter = collection.iterator(); iter.hasNext() && i < size; i++) {
+                val o = iter.next();
+                if (o != null) {
+                    returnValues[i] = toResourceString(o);
+                }
+            }
+
+            return returnValues;
+        }
+
+        if (retval instanceof final Object[] vals) {
+            return Arrays.stream(vals).map(this::toResourceString).toArray(String[]::new);
+        }
+
+        return new String[]{toResourceString(retval)};
+    }
+
+    @Override
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Exception exception) {
+        val message = exception.getMessage();
+        if (message != null) {
+            return new String[]{toResourceString(message)};
+        }
+        return new String[]{toResourceString(exception)};
+    }
+
+    /**
+     * To resource string.
+     *
+     * @param arg the arg
+     * @return the string
+     */
+    public String toResourceString(final Object arg) {
+        if (auditFormat == AuditTrailManager.AuditFormats.JSON) {
+            return postProcess(AuditTrailManager.toJson(arg));
+        }
+        return postProcess(arg.toString());
+    }
+
+    protected String postProcess(final String value) {
+        return resourcePostProcessor.apply(new String[]{value})[0];
+    }
+}

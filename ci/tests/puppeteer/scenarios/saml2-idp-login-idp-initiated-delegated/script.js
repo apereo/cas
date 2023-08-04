@@ -5,7 +5,7 @@ const assert = require("assert");
 
 async function startFlow(context, clientName) {
     const page = await cas.newPage(context);
-    const entityId = encodeURI("https://httpbin.org/shibboleth");
+    const entityId = encodeURI("https://localhost:9859/shibboleth");
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}&CName=${clientName}`;
     console.log(`Navigating to ${url} for client ${clientName}`);

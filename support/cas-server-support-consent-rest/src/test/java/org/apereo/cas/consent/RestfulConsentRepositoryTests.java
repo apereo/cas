@@ -70,12 +70,12 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Getter
-    private static class RestConsentRepositoryStorage {
+    private static final class RestConsentRepositoryStorage {
         private final Map<String, List<ConsentDecision>> records = new HashMap<>();
     }
 
     @TestConfiguration(value = "RestConsentRepositoryTestConfiguration", proxyBeanMethods = false)
-    public static class RestConsentRepositoryTestConfiguration {
+    static class RestConsentRepositoryTestConfiguration {
 
         @Bean
         public RestConsentRepositoryStorage restConsentRepositoryStorage() {
@@ -84,7 +84,7 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
 
         @RestController("consentController")
         @RequestMapping("/")
-        public static class ConsentController {
+        static class ConsentController {
 
             @Autowired
             @Qualifier("restConsentRepositoryStorage")

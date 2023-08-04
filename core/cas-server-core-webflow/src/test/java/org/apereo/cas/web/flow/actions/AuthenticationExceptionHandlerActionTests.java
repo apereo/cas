@@ -126,7 +126,7 @@ class AuthenticationExceptionHandlerActionTests {
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
     }
 
-    private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
+    private static final class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
         @Override
         public Object getContext() {
             return null;

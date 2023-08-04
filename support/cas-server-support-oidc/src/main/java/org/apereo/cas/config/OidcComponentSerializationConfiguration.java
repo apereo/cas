@@ -66,7 +66,7 @@ public class OidcComponentSerializationConfiguration {
         };
     }
 
-    private static class OidcPushedAuthorizationRequestSerializer extends
+    private static final class OidcPushedAuthorizationRequestSerializer extends
         AbstractJacksonBackedStringSerializer<OidcDefaultPushedAuthorizationRequest> {
         @Serial
         private static final long serialVersionUID = -6298623586274810263L;

@@ -21,13 +21,13 @@ public final class FingerprintMatcher implements DeviceMatcher {
     private static final String FINGERPRINTS_KEY = "fingerprints";
 
     @Override
-    public boolean matches(X509Certificate attestationCertificate, JsonNode parameters) {
+    public boolean matches(final X509Certificate attestationCertificate, final JsonNode parameters) {
         val fingerprints = parameters.get(FINGERPRINTS_KEY);
         if (fingerprints.isArray()) {
             try {
                 String fingerprint =
                     Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase(Locale.ENGLISH);
-                for (JsonNode candidate : fingerprints) {
+                for (final JsonNode candidate : fingerprints) {
                     if (fingerprint.equals(candidate.asText().toLowerCase(Locale.ENGLISH))) {
                         return true;
                     }

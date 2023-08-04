@@ -54,7 +54,6 @@ The project selection is indicated using a `type` parameter. The following types
 | Type                           | Description                                                                                                     | Template Repository                                                        |
 |--------------------------------|-----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
 | `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                          | [See this repository](https://github.com/apereo/cas-overlay-template).     |
-| `cas-bootadmin-server-overlay` | WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       | Not available yet.                                                         |
 | `cas-config-server-overlay`    | WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). | [See this repository](https://github.com/apereo/cas-configserver-overlay). |
 | `cas-discovery-server-overlay` | WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            | Not available yet.                                                         |
 

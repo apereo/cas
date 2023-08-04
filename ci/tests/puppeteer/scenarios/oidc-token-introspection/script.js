@@ -50,4 +50,23 @@ async function introspect(token) {
             'Authorization': authzHeader,
             'Content-Type': 'application/json'
         });
+
+    console.log(`Introspecting token ${token} as JWT`);
+    let jwt = await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
+        res => res.data, error => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            'Authorization': authzHeader,
+            'Content-Type': 'application/json',
+            'Accept': 'application/token-introspection+jwt'
+        });
+    let decoded = await cas.decodeJwt(jwt);
+    assert(decoded.iss === "https://localhost:8443/cas/oidc");
+    assert(decoded.aud === "client");
+    assert(decoded.iat !== undefined);
+    assert(decoded.jti !== undefined);
+    assert(decoded.token_introspection.active === true);
+    assert(decoded.token_introspection.aud === "client");
+    assert(decoded.token_introspection.sub === "client");
+    assert(decoded.token_introspection.token === token);
 }

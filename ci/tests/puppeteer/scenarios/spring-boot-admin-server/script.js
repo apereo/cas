@@ -1,0 +1,36 @@
+const puppeteer = require('puppeteer');
+const cas = require('../../cas.js');
+const assert = require("assert");
+
+async function gotoPage(page, instanceId, pageId) {
+    let response = await cas.goto(page, `https://localhost:8443/cas/sba/instances/${instanceId}/${pageId}`);
+    await page.waitForTimeout(1000);
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
+}
+
+(async () => {
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.goto(page, "https://localhost:8443/cas/sba");
+    await cas.screenshot(page);
+    await cas.loginWith(page, "s#kiooritea", "p@$$W0rd");
+    await cas.screenshot(page);
+    await page.waitForTimeout(2000);
+    await cas.click(page, "div header div div");
+    await page.waitForTimeout(2000);
+    await cas.click(page, "div#CAS li");
+    await page.waitForTimeout(2000);
+    let url = await page.url();
+    console.log(url);
+    const pathArray = url.split('/');
+    const instanceId = pathArray[pathArray.length - 2];
+    console.log(`Instance ID ${instanceId}`);
+
+    await gotoPage(page, instanceId, "metrics");
+    await gotoPage(page, instanceId, "env");
+    await gotoPage(page, instanceId, "beans");
+    await gotoPage(page, instanceId, "configProps");
+
+    await browser.close();
+})();

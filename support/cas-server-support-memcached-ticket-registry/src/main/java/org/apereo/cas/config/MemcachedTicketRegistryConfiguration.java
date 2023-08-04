@@ -30,10 +30,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "memcached")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class MemcachedTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")

@@ -141,7 +141,7 @@ public class GitRepositoryBuilder {
      */
     protected TransportConfigCallback buildTransportConfigCallback() {
         return transport -> {
-            if (transport instanceof SshTransport sshTransport) {
+            if (transport instanceof final SshTransport sshTransport) {
                 val sshSessionFactory = new JschConfigSessionFactory() {
                     @Override
                     protected void configure(final OpenSshConfig.Host host, final Session session) {

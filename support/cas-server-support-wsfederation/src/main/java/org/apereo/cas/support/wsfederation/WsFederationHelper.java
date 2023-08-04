@@ -220,7 +220,7 @@ public class WsFederationHelper {
                                                                               final Collection<WsFederationConfiguration> config,
                                                                               final Service service) {
         val securityToken = getSecurityTokenFromRequestedToken(reqToken, config);
-        if (securityToken instanceof Assertion assertion) {
+        if (securityToken instanceof final Assertion assertion) {
             LOGGER.debug("Extracted assertion successfully: [{}]", assertion);
             val configuration = config.stream()
                 .filter(cfg -> StringUtils.isNotBlank(cfg.getIdentityProviderIdentifier()))

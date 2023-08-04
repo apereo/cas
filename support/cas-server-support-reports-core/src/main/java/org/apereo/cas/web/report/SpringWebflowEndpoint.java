@@ -63,7 +63,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (action instanceof EvaluateAction) {
             return convertEvaluateActionToString(action);
         }
-        if (action instanceof AnnotatedAction eval) {
+        if (action instanceof final AnnotatedAction eval) {
             if (eval.getTargetAction() instanceof EvaluateAction) {
                 return convertEvaluateActionToString(eval.getTargetAction());
             }
@@ -130,7 +130,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             stateMap.put("isEndState", Boolean.TRUE);
         }
 
-        if (state instanceof SubflowState subflowState) {
+        if (state instanceof final SubflowState subflowState) {
             var field = ReflectionUtils.findField(subflowState.getClass(), "subflow");
             ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
             val subflowExpr = (Expression) ReflectionUtils.getField(field, subflowState);
@@ -168,8 +168,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 ReflectionUtils.makeAccessible(field);
                 val exp = (Expression) ReflectionUtils.getField(field, viewState.getViewFactory());
                 stateMap.put("viewId", StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
-            } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory factory) {
-                if (factory.getAction() instanceof ExternalRedirectAction redirect) {
+            } else if (viewState.getViewFactory() instanceof final ActionExecutingViewFactory factory) {
+                if (factory.getAction() instanceof final ExternalRedirectAction redirect) {
                     val uri = ReflectionUtils.findField(redirect.getClass(), "resourceUri");
                     ReflectionUtils.makeAccessible(Objects.requireNonNull(uri));
                     val exp = (Expression) ReflectionUtils.getField(uri, redirect);
@@ -182,7 +182,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             }
         }
 
-        if (state instanceof TransitionableState stDef) {
+        if (state instanceof final TransitionableState stDef) {
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());

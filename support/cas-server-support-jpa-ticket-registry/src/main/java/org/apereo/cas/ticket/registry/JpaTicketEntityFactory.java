@@ -37,7 +37,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
         super(dialect);
     }
 
-    private static class ThreadSafeHolder {
+    private static final class ThreadSafeHolder {
         private static final TicketSerializationManager TICKET_SERIALIZATION_MANAGER =
             ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
     }
@@ -63,11 +63,11 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
      */
     public BaseTicketEntity fromTicket(final Ticket ticket) {
         val jsonBody = getTicketSerializationManager().serializeTicket(ticket);
-        val authentication = ticket instanceof AuthenticationAwareTicket authAware
+        val authentication = ticket instanceof final AuthenticationAwareTicket authAware
             ? authAware.getAuthentication()
             : null;
 
-        val parentTicket = ticket instanceof TicketGrantingTicketAwareTicket tgtAware
+        val parentTicket = ticket instanceof final TicketGrantingTicketAwareTicket tgtAware
             ? tgtAware.getTicketGrantingTicket()
             : null;
 

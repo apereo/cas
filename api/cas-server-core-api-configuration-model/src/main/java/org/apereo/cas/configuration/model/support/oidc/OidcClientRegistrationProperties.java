@@ -53,7 +53,7 @@ public class OidcClientRegistrationProperties implements Serializable {
     /**
      * The password used in a basic-auth scheme to request an initial access token
      * that would then be used to dynamically register clients
-     * in  {@link DynamicClientRegistrationModes#PROTECTED} mode.
+     * in {@link DynamicClientRegistrationModes#PROTECTED} mode.
      */
     private String initialAccessTokenPassword;
 

@@ -119,7 +119,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
 
     @SuperBuilder
     @Getter
-    private static class PasswordResetRequest {
+    private static final class PasswordResetRequest {
         private final String username;
 
         private final TransientSessionTicket passwordResetTicket;

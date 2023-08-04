@@ -29,6 +29,9 @@ security issue. That is, `2.5.0.1` would be `2.5.0` with a minimal change to pat
 All adopters are strongly urged to upgrade to a SECURITY releases as soon as possible.
 CAS overlays should build with no changes, unless required and highlighted in the release notes.
 
+No third-party library updates take place in a security release, unless there exists is solid evidence to demonstrate and require
+the need and the effort for a package upgrade. [See this guide](Sec-Vuln-Response.html) for more info.
+
 ## PATCH
 
 A conservative incremental improvement that includes bug fixes, enhancements and new features
@@ -37,6 +40,9 @@ MINOR release. (i.e. `2.4.15` is a drop in replacement for `2.4.14`, `2.4.13`, `
 Adopters can expect that major APIs, integration points, default behavior, and general
 configuration is mostly the same. CAS overlays should build with little to no changes,
 unless required and highlighted in the release notes and change logs.
+
+No third-party library updates take place in a patch release, unless there exists is solid evidence to demonstrate and require
+the need and the effort for a package upgrade. [See this guide](Sec-Vuln-Response.html) for more info.
 
 ## FEATURE
 
@@ -52,6 +58,9 @@ been deprecated, default behavior and configuration may have changed.
 While implementation APIs may change, [CAS APIs](https://github.com/apereo/cas/tree/master/api)
 will remain unchanged between FEATURE release versions.
 
+Third-party library updates are acceptable for feature releases. However, library updates that lead to a change
+in platform requirements (i.e. Java, OS, Server Container) are ignored.
+
 ## MAJOR
 
 A *revolutionary* change accommodating sweeping architecture, approach, and
@@ -60,3 +69,6 @@ Significant changes in APIs, default behavior, and configuration can be expected
 Overlays may require significant changes and possibly a complete reworking.
 Overall the CAS server code line may looked markedly different and integration
 points may require reworking. 
+
+Third-party library updates are acceptable for feature releases, including changes that might lead to an upgrade
+of platform requirements (i.e. Java, OS, Server Container).

@@ -83,7 +83,6 @@ public class CasSamlServiceProvidersConfiguration {
 
             val samlSp = casProperties.getSamlSp();
             processSamlServiceProvider(samlSp.getAcademicHealthPlans(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getAcademicWorks(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getAdobeCloud(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getAmazon(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getAppDynamics(), servicesManager, samlRegisteredServiceCachingMetadataResolver);

@@ -1,13 +1,20 @@
 {
-  "dependencies": "pac4j-webflow",
+  "dependencies": "pac4j-webflow,jpa-util",
   "conditions": {
     "docker": "true"
   },
+  "environmentVariables": [
+    "SQL_QUERY=SELECT * FROM simple_table1 WHERE {0}"
+  ],
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.slf4j.use-single-line=true",
 
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",
 
@@ -15,6 +22,8 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.http-client.host-name-verifier=none",
+
+    "--cas.person-directory.use-existing-principal-id=true",
 
     "--cas.authn.pac4j.oidc[0].generic.principal-id-attribute=email",
     "--cas.authn.pac4j.oidc[0].generic.id=kc_client",
@@ -24,8 +33,20 @@
     "--cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_basic",
     "--cas.authn.pac4j.oidc[0].generic.supported-client-authentication-methods=client_secret_basic,client_secret_post",
     "--cas.authn.pac4j.oidc[0].generic.client-name=Keycloak",
-    "--cas.authn.pac4j.oidc[0].generic.display-name=KeycloakClient"
+    "--cas.authn.pac4j.oidc[0].generic.display-name=KeycloakClient",
 
+    "--cas.authn.attribute-repository.jdbc[0].query-attributes.username=username",
+    "--cas.authn.attribute-repository.jdbc[0].sql=${#environmentVars['SQL_QUERY']}",
+    "--cas.authn.attribute-repository.jdbc[0].user=postgres",
+    "--cas.authn.attribute-repository.jdbc[0].password=password",
+    "--cas.authn.attribute-repository.jdbc[0].driver-class=org.postgresql.Driver",
+    "--cas.authn.attribute-repository.jdbc[0].url=jdbc:postgresql://localhost:5432/users",
+    "--cas.authn.attribute-repository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "--cas.authn.attribute-repository.jdbc[0].case-canonicalization=LOWER",
+    "--cas.authn.attribute-repository.jdbc[0].require-all-attributes=true",
+    "--cas.authn.attribute-repository.jdbc[0].single-row=true",
+    "--cas.authn.attribute-repository.jdbc[0].attributes.department=department",
+    "--cas.authn.attribute-repository.jdbc[0].attributes.role=cas_role"
   ],
-  "initScript": "${PWD}/ci/tests/oidc/run-keycloak-server.sh"
+  "initScript": "${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
 }

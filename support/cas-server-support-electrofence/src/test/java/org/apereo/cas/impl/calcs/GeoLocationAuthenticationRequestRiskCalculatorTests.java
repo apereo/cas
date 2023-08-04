@@ -76,7 +76,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
     }
 
     @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
-    public static class GeoLocationServiceTestConfiguration {
+    static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {
             val service = mock(GeoLocationService.class);

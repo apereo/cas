@@ -179,7 +179,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
      */
     JsonNode call(final String url) throws Exception {
         val conn = (HttpURLConnection) new URL(url).openConnection();
-        if (conn instanceof HttpsURLConnection urlConnection) {
+        if (conn instanceof final HttpsURLConnection urlConnection) {
             urlConnection.setSSLSocketFactory(this.context.getSocketFactory());
         }
         conn.setRequestMethod(HttpMethod.GET.name());

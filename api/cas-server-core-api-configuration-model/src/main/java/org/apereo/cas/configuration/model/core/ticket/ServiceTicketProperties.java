@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -34,7 +35,8 @@ public class ServiceTicketProperties implements Serializable {
     /**
      * Time in seconds that service tickets should be considered live in CAS server.
      */
-    private long timeToKillInSeconds = 10;
+    @DurationCapable
+    private String timeToKillInSeconds = "PT10S";
 
     /**
      * Maximum length of generated service tickets.

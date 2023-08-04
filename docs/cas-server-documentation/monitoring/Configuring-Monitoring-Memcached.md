@@ -10,6 +10,10 @@ category: Monitoring & Statistics
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 {% include_cached casproperties.html properties="cas.monitor.memcached" %}
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.

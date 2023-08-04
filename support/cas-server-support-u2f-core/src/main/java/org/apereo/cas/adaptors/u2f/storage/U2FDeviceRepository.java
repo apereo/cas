@@ -122,7 +122,7 @@ public interface U2FDeviceRepository {
      * @param registration the registration
      * @return the u2f device registration
      */
-    default U2FDeviceRegistration decode(U2FDeviceRegistration registration) {
+    default U2FDeviceRegistration decode(final U2FDeviceRegistration registration) {
         val record = registration.clone();
         val data = getCipherExecutor().decode(record.getRecord());
         record.setRecord(data);

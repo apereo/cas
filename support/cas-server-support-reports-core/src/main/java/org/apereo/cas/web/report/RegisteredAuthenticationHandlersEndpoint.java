@@ -76,7 +76,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
     @SuperBuilder
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static class AuthenticationHandlerDetails implements Serializable {
+    private static final class AuthenticationHandlerDetails implements Serializable {
         @Serial
         private static final long serialVersionUID = 6755362844006190415L;
 

@@ -175,7 +175,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     @SuperBuilder
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static class MetadataResolutionResult {
+    private static final class MetadataResolutionResult {
         private final boolean valid;
 
         private final Optional<EntityDescriptor> entityDescriptor;
@@ -207,7 +207,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @SuperBuilder
     @Getter
-    private static class MetadataResolverCacheQueryResult {
+    private static final class MetadataResolverCacheQueryResult {
         private final CachedMetadataResolverResult result;
 
         @Builder.Default

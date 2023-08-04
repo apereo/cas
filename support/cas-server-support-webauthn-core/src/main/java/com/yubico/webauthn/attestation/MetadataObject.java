@@ -64,7 +64,7 @@ public class MetadataObject {
     private final List<JsonNode> devices;
 
     @JsonCreator
-    public MetadataObject(JsonNode data) {
+    public MetadataObject(final JsonNode data) {
         this.data = data;
         try {
             vendorInfo =
@@ -72,7 +72,7 @@ public class MetadataObject {
             trustedCertificates =
                 OBJECT_MAPPER.readValue(data.get("trustedCertificates").traverse(), LIST_STRING_TYPE);
             devices = OBJECT_MAPPER.readValue(data.get("devices").traverse(), LIST_JSONNODE_TYPE);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Invalid JSON data", e);
         }
 
@@ -88,7 +88,7 @@ public class MetadataObject {
         return readMetadata("/preview-metadata.json");
     }
 
-    public static MetadataObject readMetadata(String path) {
+    public static MetadataObject readMetadata(final String path) {
         return FunctionUtils.doUnchecked(() -> {
             try (val is = MetadataObject.class.getResourceAsStream(path)) {
                 return readMetadata(is);
@@ -107,7 +107,7 @@ public class MetadataObject {
     @JsonIgnore
     public List<X509Certificate> getParsedTrustedCertificates() throws CertificateException {
         List<X509Certificate> list = new ArrayList<>();
-        for (String trustedCertificate : trustedCertificates) {
+        for (final String trustedCertificate : trustedCertificates) {
             X509Certificate x509Certificate = CertificateParser.parsePem(trustedCertificate);
             list.add(x509Certificate);
         }

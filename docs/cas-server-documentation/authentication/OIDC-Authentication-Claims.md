@@ -147,7 +147,7 @@ The inline script receives the following parameters for its execution:
 | `attributes` | `Map` of attributes that are currently resolved.                                                       |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.                            |
       
-Note that the outcome of the script execution must be a list of a values.
+Note that the outcome of the script execution must be a `List` of a values.
 
 {% endtab %}
 

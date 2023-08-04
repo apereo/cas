@@ -3,13 +3,12 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,9 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,8 +39,8 @@ import static org.mockito.Mockito.*;
     CoreSamlConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
-    Pac4jDelegatedAuthenticationConfiguration.class,
-    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
+    DelegatedAuthenticationConfiguration.class,
+    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,
     PasswordlessAuthenticationConfiguration.class,
     PasswordlessAuthenticationWebflowConfiguration.class
@@ -70,7 +67,7 @@ class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfig
     }
 
     @TestConfiguration(value = "PasswordlessAuthenticationTestConfiguration", proxyBeanMethods = false)
-    public static class PasswordlessAuthenticationTestConfiguration {
+    static class PasswordlessAuthenticationTestConfiguration {
         @Bean
         public CasMultifactorWebflowConfigurer dummyCasMultifactorWebflowConfigurer() {
             val registry = mock(FlowDefinitionRegistry.class);

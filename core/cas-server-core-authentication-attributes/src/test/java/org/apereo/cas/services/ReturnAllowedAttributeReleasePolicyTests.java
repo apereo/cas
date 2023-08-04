@@ -303,7 +303,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
     }
 
     @TestConfiguration
-    public static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
+    static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {
             return mock(ServicesManager.class);

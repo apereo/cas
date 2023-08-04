@@ -68,10 +68,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Authentication date.
      */
     private ZonedDateTime authenticationDate;
-
-    /**
-     * Creates a new instance using the current date for the authentication date.
-     */
+    
     public DefaultAuthenticationBuilder() {
         this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
@@ -105,6 +102,16 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     public static AuthenticationBuilder newInstance() {
         return new DefaultAuthenticationBuilder();
+    }
+
+    /**
+     * New instance authentication builder with a principal.
+     *
+     * @param principal the principal
+     * @return the authentication builder
+     */
+    public static AuthenticationBuilder newInstance(final Principal principal) {
+        return new DefaultAuthenticationBuilder(principal);
     }
 
     /**
@@ -243,7 +250,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
             if (resultingCredentials.containsKey(key)) {
                 val current = resultingCredentials.get(key);
 
-                if (current instanceof MutableCredential currentMutable && credential instanceof MutableCredential credentialMutable) {
+                if (current instanceof final MutableCredential currentMutable && credential instanceof final MutableCredential credentialMutable) {
                     FunctionUtils.doIfNull(credential.getCredentialMetadata(), __ -> credentialMutable.setCredentialMetadata(new BasicCredentialMetadata(credentialMutable)));
                     FunctionUtils.doIfNull(current.getCredentialMetadata(), __ -> currentMutable.setCredentialMetadata(new BasicCredentialMetadata(currentMutable)));
                     current.getCredentialMetadata().putProperties(credential.getCredentialMetadata().getProperties());

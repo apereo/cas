@@ -117,7 +117,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static class AccountAuditActionContext extends AuditActionContext {
+    private static final class AccountAuditActionContext extends AuditActionContext {
         @Serial
         private static final long serialVersionUID = 8935451143814878214L;
 

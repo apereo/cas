@@ -57,7 +57,7 @@ class CasJdbcSessionConfigurationTests {
     }
 
     @TestConfiguration(value = "TransactionTestConfiguration", proxyBeanMethods = false)
-    public static class TransactionTestConfiguration {
+    static class TransactionTestConfiguration {
         @Autowired
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

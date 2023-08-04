@@ -43,7 +43,7 @@ async function checkTicketValidationAcrossNodes(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
 
-    const service = `https://httpbin.org/anything/100`;
+    const service = `https://localhost:9859/anything/100`;
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -90,7 +90,7 @@ async function checkSessionsAreSynced(browser) {
     const page = await cas.newPage(browser);
     await logoutEverywhere(page);
 
-    const s1 = `https://httpbin.org/anything/1`;
+    const s1 = `https://localhost:9859/anything/1`;
     const s2 = `https://apereo.github.io`;
     const s3 = `https://example.org`;
 

@@ -20,7 +20,7 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
     @Override
     public boolean canHandleToken(final ReceivedToken delegateTarget) {
         val token = delegateTarget.getToken();
-        if (token instanceof Element tokenElement) {
+        if (token instanceof final Element tokenElement) {
             val namespace = tokenElement.getNamespaceURI();
             val localname = tokenElement.getLocalName();
             return WSS4JConstants.SIG_NS.equals(namespace) && WSS4JConstants.X509_DATA_LN.equals(localname);

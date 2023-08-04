@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.loader;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -57,7 +58,7 @@ public class ConfigurationPropertiesLoaderFactory {
         if (filename.endsWith(".properties")) {
             return new SimpleConfigurationPropertiesLoader(this.configurationCipherExecutor, name, resource);
         }
-        if (filename.endsWith(".groovy")) {
+        if (filename.endsWith(".groovy") && CasRuntimeHintsRegistrar.notInNativeImage()) {
             return new GroovyConfigurationPropertiesLoader(this.configurationCipherExecutor, name,
                 getApplicationProfiles(environment), resource);
         }

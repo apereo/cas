@@ -68,6 +68,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -223,7 +225,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasOAuth20ServicesConfiguration.class,
         CasOAuth20TicketSerializationConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 
     protected static OAuth20AccessToken getAccessToken() {
@@ -232,6 +234,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getService()).thenReturn(service);
@@ -245,6 +248,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService();
         val oauthCode = mock(OAuth20Code.class);
+        when(oauthCode.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(oauthCode.getId()).thenReturn(UUID.randomUUID().toString());
         when(oauthCode.getTicketGrantingTicket()).thenReturn(tgt);
         when(oauthCode.getAuthentication()).thenReturn(tgt.getAuthentication());
@@ -257,6 +261,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         val tgt = new MockTicketGrantingTicket("casuser");
 
         val refreshToken = mock(OAuth20RefreshToken.class);
+        when(refreshToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(refreshToken.getId()).thenReturn("ABCD");
         when(refreshToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(refreshToken.getAuthentication()).thenReturn(tgt.getAuthentication());

@@ -6,10 +6,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -40,9 +42,12 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         final TicketRegistry ticketRegistry,
         final PrincipalResolver principalResolver,
         final OAuth20RequestParameterResolver requestParameterResolver,
-        final OAuth20ClientSecretValidator clientSecretValidator) {
+        final OAuth20ClientSecretValidator clientSecretValidator,
+        final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+        final TicketFactory ticketFactory) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-            ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator);
+            ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator,
+            profileScopeToAttributesFilter, ticketFactory);
     }
 
     @Override
@@ -75,7 +80,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
         });
         val clientId = credentials.getUsername();
         if (refreshToken == null || refreshToken.isExpired() || !StringUtils.equals(refreshToken.getClientId(), clientId)) {
-            LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or is not related to the client [{}]", token, clientId);
+            LOGGER.error("Refresh token [{}] is either not found in the ticket registry, has expired or does not belong to the client [{}]", token, clientId);
             throw new CredentialsException("Invalid token: " + token);
         }
     }

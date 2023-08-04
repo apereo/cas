@@ -102,7 +102,7 @@ public class MongoDbPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @AllArgsConstructor
     @SuperBuilder
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    private static class MongoDbPasswordlessAuthenticationEntity {
+    private static final class MongoDbPasswordlessAuthenticationEntity {
         @Id
         private String id;
 

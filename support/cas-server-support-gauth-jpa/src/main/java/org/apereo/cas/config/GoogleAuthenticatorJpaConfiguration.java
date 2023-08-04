@@ -59,9 +59,9 @@ public class GoogleAuthenticatorJpaConfiguration {
         public PlatformTransactionManager transactionManagerGoogleAuthenticator(
             @Qualifier("googleAuthenticatorEntityManagerFactory")
             final EntityManagerFactory emf) {
-            val mgmr = new JpaTransactionManager();
-            mgmr.setEntityManagerFactory(emf);
-            return mgmr;
+            val manager = new JpaTransactionManager();
+            manager.setEntityManagerFactory(emf);
+            return manager;
         }
 
     }

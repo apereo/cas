@@ -55,7 +55,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     public boolean supports(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val registeredService = WebUtils.getRegisteredService(request);
-        if (registeredService instanceof SamlRegisteredService samlRegisteredService) {
+        if (registeredService instanceof final SamlRegisteredService samlRegisteredService) {
             val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
             val sloRequest = WebUtils.getSingleLogoutRequest(request);
             val async = new AtomicBoolean(false);

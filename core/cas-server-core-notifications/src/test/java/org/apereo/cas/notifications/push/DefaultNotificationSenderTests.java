@@ -52,7 +52,7 @@ class DefaultNotificationSenderTests {
     }
 
     @TestConfiguration(value = "DefaultNotificationSenderTestConfiguration", proxyBeanMethods = false)
-    public static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
+    static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Override
         public NotificationSender configureNotificationSender() {
             return NotificationSender.noOp();

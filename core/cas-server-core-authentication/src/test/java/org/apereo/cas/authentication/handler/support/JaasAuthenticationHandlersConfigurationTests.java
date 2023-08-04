@@ -104,7 +104,7 @@ class JaasAuthenticationHandlersConfigurationTests {
     }
 
     @TestConfiguration(value = "JaasAuthenticationHandlersConfigurationTestConfiguration", proxyBeanMethods = false)
-    public static class JaasAuthenticationHandlersConfigurationTestConfiguration {
+    static class JaasAuthenticationHandlersConfigurationTestConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)

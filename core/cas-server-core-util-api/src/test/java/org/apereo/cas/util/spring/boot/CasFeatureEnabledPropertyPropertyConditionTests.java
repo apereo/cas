@@ -31,7 +31,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     })
     @TestConfiguration(value = "CasFeatureModuleMultipleConditionsTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasFeatureModuleMultipleConditionsTestConfiguration {
+    static class CasFeatureModuleMultipleConditionsTestConfiguration {
         @Bean
         public String beanMultiple() {
             return "beanMultiple";
@@ -42,7 +42,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         module = "feature3", enabledByDefault = false)
     @TestConfiguration(value = "CasFeatureModuleDisabledByDefaultTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasFeatureModuleDisabledByDefaultTestConfiguration {
+    static class CasFeatureModuleDisabledByDefaultTestConfiguration {
         @Bean
         public String bean1() {
             return "Bean1";
@@ -52,7 +52,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature1")
     @TestConfiguration(value = "CasFeatureModuleTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasFeatureModuleFeature1TestConfiguration {
+    static class CasFeatureModuleFeature1TestConfiguration {
         @Bean
         public String bean1() {
             return "Bean1";

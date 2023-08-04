@@ -55,6 +55,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
     private final List<MessageDescriptor> warnings = new ArrayList<>();
+    private final Map<String, List<Object>> userAttributes = new HashMap<>();
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
         this(StringUtils.EMPTY);
@@ -66,6 +67,16 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
 
     public void addMessageDescriptor(final MessageDescriptor msg) {
         this.warnings.add(msg);
+    }
+
+    public SimpleTestUsernamePasswordAuthenticationHandler putAttribute(final String name, final List<Object> values) {
+        this.userAttributes.put(name, values);
+        return this;
+    }
+
+    public SimpleTestUsernamePasswordAuthenticationHandler putAttributes(final Map<String, List<Object>> attributes) {
+        this.userAttributes.putAll(attributes);
+        return this;
     }
 
     @Override
@@ -88,15 +99,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         }
         if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
-                exception.getClass().getName(),
-                exception);
+                exception.getClass().getName(), exception);
         }
 
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)
             && (username.equals(password) || password.equals(StringUtils.reverse(username)))) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this,
-                credential, principalFactory.createPrincipal(username), this.warnings);
+                credential, principalFactory.createPrincipal(username, this.userAttributes), this.warnings);
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

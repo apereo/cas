@@ -27,7 +27,7 @@
           "consentPolicy": {
             "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
             "status": "TRUE",
-            "excludedServices": [ "java.util.LinkedHashSet",[ "https:\/\/httpbin.org\/shibboleth" ] ]
+            "excludedServices": [ "java.util.LinkedHashSet",[ "https:\/\/localhost:9859\/shibboleth" ] ]
           }
         }
       ]

@@ -57,7 +57,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val responseTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf)
-            .filter(responseTypesSupport::contains)
+            .filter(typeName -> responseTypesSupport.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -72,7 +72,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         val grantTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
         val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
-            .filter(grantTypesSupport::contains)
+            .filter(typeName -> grantTypesSupport.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20GrantTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(grantType))
@@ -84,10 +84,10 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public OAuth20ResponseModeTypes resolveResponseModeType(final WebContext context) {
-        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseModesSupported();
+        val supportedResponseModes = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseModesSupported();
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
             .map(String::valueOf)
-            .filter(supported::contains)
+            .filter(typeName -> supportedResponseModes.stream().anyMatch(supported -> supported.equalsIgnoreCase(typeName)))
             .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseModeTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))

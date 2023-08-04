@@ -290,7 +290,7 @@ public abstract class BaseSamlIdPConfigurationTests {
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration",
                        proxyBeanMethods = false)
-    public static class SamlIdPMetadataTestConfiguration {
+    static class SamlIdPMetadataTestConfiguration {
 
         @Bean
         public AuthenticationEventExecutionPlanConfigurer samlIdPTestAuthenticationEventExecutionPlanConfigurer(

@@ -116,7 +116,7 @@ public class CasConsentCoreConfiguration {
             final ConsentEngine consentEngine,
             final CasConfigurationProperties casProperties) {
             val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
-            if (location != null) {
+            if (location != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 return new GroovyConsentActivationStrategy(location, consentEngine, casProperties);
             }
             return new DefaultConsentActivationStrategy(consentEngine, casProperties);
@@ -161,7 +161,10 @@ public class CasConsentCoreConfiguration {
             final AuditResourceResolver returnValueResourceResolver) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.VERIFY_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
+
                 plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
+                plan.registerAuditResourceResolver(AuditResourceResolvers.VERIFY_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
             };
         }
     }

@@ -37,7 +37,7 @@ public interface RegisteredServiceChainingAttributeReleasePolicy extends Registe
      * @return the registered service chaining attribute release policy
      */
     @CanIgnoreReturnValue
-    default RegisteredServiceChainingAttributeReleasePolicy addPolicies(Collection<RegisteredServiceAttributeReleasePolicy> policies) {
+    default RegisteredServiceChainingAttributeReleasePolicy addPolicies(final Collection<RegisteredServiceAttributeReleasePolicy> policies) {
         addPolicies(policies.toArray(new RegisteredServiceAttributeReleasePolicy[0]));
         return this;
     }

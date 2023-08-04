@@ -204,7 +204,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             : null;
     }
 
-    private static class CasHttpBuilder extends Http.HttpBuilder {
+    private static final class CasHttpBuilder extends Http.HttpBuilder {
         CasHttpBuilder(final String method, final String host, final String uri) {
             super(method, host, uri);
         }

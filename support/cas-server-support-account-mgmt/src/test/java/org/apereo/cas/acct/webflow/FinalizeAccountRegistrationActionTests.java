@@ -73,7 +73,7 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     }
 
     @TestConfiguration(value = "FinalizeAccountRegistrationActionTestConfiguration", proxyBeanMethods = false)
-    public static class FinalizeAccountRegistrationActionTestConfiguration {
+    static class FinalizeAccountRegistrationActionTestConfiguration {
         @Bean
         public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Exception {
             val response = new AccountRegistrationResponse();

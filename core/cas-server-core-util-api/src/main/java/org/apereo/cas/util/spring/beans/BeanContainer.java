@@ -175,10 +175,10 @@ public interface BeanContainer<T> extends DisposableBean {
         @Override
         public void destroy() throws Exception {
             items.forEach(Unchecked.consumer(entry -> {
-                if (entry instanceof DisposableBean disposable) {
+                if (entry instanceof final DisposableBean disposable) {
                     disposable.destroy();
                 }
-                if (entry instanceof Closeable closeable) {
+                if (entry instanceof final Closeable closeable) {
                     IOUtils.closeQuietly(closeable);
                 }
             }));
