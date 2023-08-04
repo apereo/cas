@@ -113,7 +113,7 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
-        val webAuthn = casProperties.getAuthn().getMfa().getU2f();
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val props = webAuthn.getBypass();
         return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, webAuthn.getId());
     }
