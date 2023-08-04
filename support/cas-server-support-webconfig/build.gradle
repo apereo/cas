@@ -22,6 +22,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-authentication-api")
 
     compileOnly project(":support:cas-server-support-jpa-util")
@@ -41,7 +42,6 @@ dependencies {
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
-    testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-logout-api")

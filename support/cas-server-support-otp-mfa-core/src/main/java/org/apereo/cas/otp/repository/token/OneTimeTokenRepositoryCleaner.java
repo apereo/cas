@@ -1,10 +1,10 @@
 package org.apereo.cas.otp.repository.token;
 
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.inspektr.common.Cleanable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

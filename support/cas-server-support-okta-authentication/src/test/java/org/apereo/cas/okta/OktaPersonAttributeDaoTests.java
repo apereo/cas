@@ -38,7 +38,7 @@ class OktaPersonAttributeDaoTests {
 
     @TestConfiguration(value = "OktaClientMockConfiguration", proxyBeanMethods = false)
     @SuppressWarnings("JavaUtilDate")
-    public static class OktaClientMockTestConfiguration {
+    static class OktaClientMockTestConfiguration {
         @Bean
         public Client oktaPersonDirectoryClient() {
             val profile = mock(UserProfile.class);

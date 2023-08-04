@@ -225,6 +225,7 @@ public class CasEvent implements Serializable {
      * @param location the location
      * @return the cas event
      */
+    @CanIgnoreReturnValue
     public CasEvent putGeoLocation(final GeoLocationRequest location) {
         putGeoAccuracy(location.getAccuracy());
         putGeoLatitude(location.getLatitude());

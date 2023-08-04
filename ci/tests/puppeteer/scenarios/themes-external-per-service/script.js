@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, "#password");
 
     console.log("Trying second app with a fancy theme");
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://httpbin.org/anything/fancy");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/anything/fancy");
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
@@ -37,7 +37,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, "#password");
 
     console.log("Trying third app with a default theme");
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://httpbin.org/anything/default");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/anything/default");
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
     console.log("Listing all stylesheet links for third app");

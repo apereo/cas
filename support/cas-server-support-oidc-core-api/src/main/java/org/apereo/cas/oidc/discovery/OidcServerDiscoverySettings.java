@@ -115,6 +115,15 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("frontchannel_logout_supported")
     private boolean frontchannelLogoutSupported;
 
+    @JsonProperty("introspection_signing_alg_values_supported")
+    private Set<String> introspectionSignedResponseAlgValuesSupported;
+
+    @JsonProperty("introspection_encryption_alg_values_supported")
+    private Set<String> introspectionEncryptedResponseAlgValuesSupported;
+
+    @JsonProperty("introspection_encryption_enc_values_supported")
+    private Set<String> introspectionEncryptedResponseEncodingValuesSupported;
+    
     @JsonProperty("authorization_endpoint")
     public String getAuthorizationEndpoint() {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.AUTHORIZE_URL);

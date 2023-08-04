@@ -86,7 +86,7 @@ class ClientFlowExecutionRepositoryTests {
     }
 
     @TestConfiguration(value = "WebflowTestConfiguration", proxyBeanMethods = false)
-    public static class WebflowTestConfiguration {
+    static class WebflowTestConfiguration {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

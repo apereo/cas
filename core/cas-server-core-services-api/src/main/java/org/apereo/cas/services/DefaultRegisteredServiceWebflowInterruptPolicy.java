@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,4 +32,12 @@ public class DefaultRegisteredServiceWebflowInterruptPolicy implements Registere
     private boolean enabled = true;
 
     private TriStateBoolean forceExecution = TriStateBoolean.UNDEFINED;
+
+    @ExpressionLanguageCapable
+    @RegularExpressionCapable
+    private String attributeName;
+
+    @ExpressionLanguageCapable
+    @RegularExpressionCapable
+    private String attributeValue;
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -103,6 +104,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
         when(oauthCode.getId()).thenReturn(name);
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        when(oauthCode.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(oauthCode);
     }
 }

@@ -75,6 +75,6 @@ public abstract class BaseSessionStoreTests {
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

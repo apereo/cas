@@ -71,19 +71,19 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
             .stream()
             .map(IndirectClient.class::cast)
             .forEach(client -> {
-                if (client instanceof CasClient instance) {
+                if (client instanceof final CasClient instance) {
                     clientsMap.put(client.getName(),
                         fetchCasConfiguration(instance.getConfiguration()));
                 }
-                if (client instanceof SAML2Client instance) {
+                if (client instanceof final SAML2Client instance) {
                     clientsMap.put(client.getName(),
                         fetchSaml2Configuration(instance.getConfiguration()));
                 }
-                if (client instanceof OidcClient instance) {
+                if (client instanceof final OidcClient instance) {
                     clientsMap.put(client.getName(),
                         fetchOidcConfiguration(instance.getConfiguration()));
                 }
-                if (client instanceof OAuth20Client instance) {
+                if (client instanceof final OAuth20Client instance) {
                     clientsMap.put(client.getName(),
                         fetchOauthConfiguration(instance.getConfiguration()));
                 }

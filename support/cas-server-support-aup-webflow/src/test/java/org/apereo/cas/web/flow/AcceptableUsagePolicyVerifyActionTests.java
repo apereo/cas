@@ -44,7 +44,7 @@ class AcceptableUsagePolicyVerifyActionTests {
 
     @TestConfiguration(value = "AcceptableUsagePolicyTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class AcceptableUsagePolicyTestConfiguration {
+    static class AcceptableUsagePolicyTestConfiguration {
         
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

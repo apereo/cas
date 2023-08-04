@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,7 +18,6 @@ import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -51,12 +49,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * System properties take precedence over environment variables (similarly to spring boot behaviour).
      */
     private static PropertySource<?> loadEnvironmentAndSystemProperties() {
-        val environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
-        environmentAndSystemProperties.addPropertySource(
-            new PropertiesPropertySource(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
-        environmentAndSystemProperties.addPropertySource(
-            new SystemEnvironmentPropertySource(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
-        return environmentAndSystemProperties;
+        val source = new CompositePropertySource("environmentAndSystemProperties");
+        source.addPropertySource(new PropertiesPropertySource(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
+        source.addPropertySource(new SystemEnvironmentPropertySource(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
+        return source;
     }
 
     /**
@@ -140,7 +136,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                     .collect(Collectors.toList()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()))
-            .flatMap(List::stream).toList());
+            .flatMap(List::stream)
+            .toList());
 
         val groovyFile = new File(configDirectory, appNameLowerCase.concat(".groovy"));
         FunctionUtils.doIf(groovyFile.exists(), o -> fileNames.add(groovyFile)).accept(groovyFile);
@@ -154,8 +151,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * @param profiles Profiles that are active
      * @return List of files to be processed in order where last one processed overrides others
      */
-    private List<Resource> scanForConfigurationResources(final Environment environment, final File config,
-                                                         final List<String> profiles) {
+    private static List<Resource> scanForConfigurationResources(final Environment environment, final File config,
+                                                                final List<String> profiles) {
         val possibleFiles = getAllPossibleExternalConfigDirFilenames(environment, config, profiles);
         return possibleFiles.stream()
             .filter(File::exists)
@@ -172,18 +169,16 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * @param config      Location of config files
      * @return Merged properties
      */
-    private CompositePropertySource loadSettingsByApplicationProfiles(final Environment environment,
-                                                                      final File config) {
+    private CompositePropertySource loadSettingsByApplicationProfiles(final Environment environment, final File config) {
         val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
         val resources = scanForConfigurationResources(environment, config, profiles);
         val composite = new CompositePropertySource("applicationProfilesCompositeProperties");
         LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, resources, profiles);
-        resources.forEach(Unchecked.consumer(f -> {
-            LOGGER.debug("Loading configuration file [{}]", f);
-            val loader = configurationPropertiesLoaderFactory.getLoader(f, "applicationProfilesProperties-" + f.getFilename());
+        resources.forEach(Unchecked.consumer(resource -> {
+            LOGGER.debug("Loading configuration file [{}]", resource);
+            val loader = configurationPropertiesLoaderFactory.getLoader(resource, "applicationProfilesProperties-" + resource.getFilename());
             composite.addFirstPropertySource(loader.load());
         }));
-
         return composite;
     }
 

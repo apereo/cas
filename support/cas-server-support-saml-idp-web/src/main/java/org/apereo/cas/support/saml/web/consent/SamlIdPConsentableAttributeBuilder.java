@@ -28,7 +28,7 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
     @Override
     public CasConsentableAttribute build(final CasConsentableAttribute attribute) {
         val result = attributeDefinitionStore.locateAttributeDefinition(defn -> {
-            if (defn instanceof SamlIdPAttributeDefinition samlAttr) {
+            if (defn instanceof final SamlIdPAttributeDefinition samlAttr) {
                 return (StringUtils.equalsIgnoreCase(samlAttr.getKey(), attribute.getName())
                        || StringUtils.equalsIgnoreCase(samlAttr.getUrn(), attribute.getName()))
                           && StringUtils.isNotBlank(samlAttr.getFriendlyName());
@@ -41,10 +41,10 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
         }
         val attributeValues = ObjectUtils.defaultIfNull(attribute.getValues(), new ArrayList<>());
         attributeValues.replaceAll(o -> {
-            if (o instanceof XSString value) {
+            if (o instanceof final XSString value) {
                 return value.getValue();
             }
-            if (o instanceof XSURI value) {
+            if (o instanceof final XSURI value) {
                 return value.getURI();
             }
             if (o instanceof Serializable) {

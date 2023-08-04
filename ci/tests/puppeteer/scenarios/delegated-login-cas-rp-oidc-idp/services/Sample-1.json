@@ -7,6 +7,6 @@
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "authorizedToReleaseAuthenticationAttributes": false,
-    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "name" ] ]
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "name", "preferred_username", "department", "cas_role" ] ]
   }
 }

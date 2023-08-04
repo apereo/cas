@@ -126,7 +126,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @TestConfiguration(value = "ShibbolethServicesTestConfiguration", proxyBeanMethods = false)
-    public static class ShibbolethServicesTestConfiguration {
+    static class ShibbolethServicesTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             val l = new ArrayList<RegisteredService>();

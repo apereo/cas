@@ -76,7 +76,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     }
 
     @Getter(AccessLevel.PROTECTED)
-    private static class ClientInfoRemoteAddrFilter extends RequestFilter {
+    private static final class ClientInfoRemoteAddrFilter extends RequestFilter {
         //CHECKSTYLE:OFF
         private final Log logger = LogFactory.getLog(ClientInfoRemoteAddrFilter.class);
         //CHECKSTYLE:ON

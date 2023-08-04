@@ -331,10 +331,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.PUBLIC_FIELDS
         };
         clazzes.forEach(entry -> {
-            if (entry instanceof String clazzName) {
+            if (entry instanceof final String clazzName) {
                 hints.reflection().registerTypeIfPresent(getClass().getClassLoader(), clazzName, memberCategories);
             }
-            if (entry instanceof Class clazz) {
+            if (entry instanceof final Class clazz) {
                 hints.reflection().registerType(clazz, memberCategories);
             }
         });

@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.util.app.ApplicationUtils;
 import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 import org.apereo.cas.util.spring.boot.CasBanner;
 
@@ -17,7 +17,7 @@ public class CasWebApplicationServletInitializer extends AbstractCasSpringBootSe
     public CasWebApplicationServletInitializer() {
         super(List.of(CasWebApplication.class),
             CasBanner.getInstance(),
-            CasEmbeddedContainerUtils.getApplicationStartup());
+            ApplicationUtils.getApplicationStartup());
     }
 }
 

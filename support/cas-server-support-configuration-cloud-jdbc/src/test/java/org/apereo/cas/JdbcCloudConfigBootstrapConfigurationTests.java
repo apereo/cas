@@ -55,7 +55,7 @@ class JdbcCloudConfigBootstrapConfigurationTests {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 
-    public static class Jpa extends AbstractJpaProperties {
+    static class Jpa extends AbstractJpaProperties {
         @Serial
         private static final long serialVersionUID = 1210163210567513705L;
     }

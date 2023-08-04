@@ -125,7 +125,7 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @TestConfiguration(value = "GoogleCloudPubSubTestConfiguration", proxyBeanMethods = false)
-    public static class GoogleCloudTestConfiguration {
+    static class GoogleCloudTestConfiguration {
 
         @Bean
         public TransportChannelProvider publisherTransportChannelProvider(final GcpPubSubProperties properties) {

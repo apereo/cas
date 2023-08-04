@@ -40,7 +40,7 @@ public class LoginQueryResponse {
      *     {@link LoginQueryResult }
      *     
      */
-    public void setLoginQueryReturn(LoginQueryResult value) {
+    public void setLoginQueryReturn(final LoginQueryResult value) {
         this.loginQueryReturn = value;
     }
 

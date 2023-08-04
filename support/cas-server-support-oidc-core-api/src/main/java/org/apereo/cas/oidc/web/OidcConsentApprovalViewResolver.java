@@ -71,7 +71,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
                                             final WebContext webContext,
                                             final OAuthRegisteredService registeredService) throws Exception {
         super.prepareApprovalViewModel(model, webContext, registeredService);
-        if (registeredService instanceof OidcRegisteredService oidcRegisteredService) {
+        if (registeredService instanceof final OidcRegisteredService oidcRegisteredService) {
 
             val dynamicRegistrationPropName = RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName();
             if (oidcRegisteredService.getProperties().containsKey(dynamicRegistrationPropName)) {

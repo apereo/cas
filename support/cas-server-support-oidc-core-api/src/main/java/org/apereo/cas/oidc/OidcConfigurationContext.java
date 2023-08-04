@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequest
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.Getter;
@@ -45,4 +46,6 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
     private final JwtBuilder responseModeJwtBuilder;
 
     private final OidcClientRegistrationRequestTranslator clientRegistrationRequestTranslator;
+
+    private final OAuth20TokenSigningAndEncryptionService tokenIntrospectionSigningAndEncryptionService;
 }

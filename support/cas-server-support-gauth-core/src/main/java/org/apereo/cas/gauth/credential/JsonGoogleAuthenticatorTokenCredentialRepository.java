@@ -172,7 +172,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         return accounts.containsKey(username.trim().toLowerCase(Locale.ENGLISH)) ? accounts.get(username.trim().toLowerCase(Locale.ENGLISH)).size() : 0;
     }
 
-    private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
+    private static final class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
         @Serial
         private static final long serialVersionUID = 1466569521275630254L;
 

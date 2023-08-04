@@ -3,24 +3,27 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDType;
-
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -110,6 +113,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     }
 
     protected boolean encryptAssertionFor(final SamlProfileBuilderContext context) {
-        return context.getRegisteredService().isEncryptAssertions();
+        return context.getRegisteredService().isEncryptAssertions()
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS.getName(),
+                Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 }

@@ -13,11 +13,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.val;
-import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -33,7 +32,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
-
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Set;
@@ -52,17 +50,14 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Configuration(value = "JpaPasswordlessAuthenticationEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationEntityConfiguration {
-        
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<EntityManagerFactory> passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaPasswordlessVendorAdapter")
-            final JpaVendorAdapter jpaPasswordlessVendorAdapter,
-            @Qualifier("passwordlessDataSource")
-            final DataSource passwordlessDataSource,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier("jpaPasswordlessVendorAdapter") final JpaVendorAdapter jpaPasswordlessVendorAdapter,
+            @Qualifier("passwordlessDataSource") final DataSource passwordlessDataSource,
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
 
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaPasswordlessVendorAdapter)
@@ -77,12 +72,11 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaPasswordlessVendorAdapter(final CasConfigurationProperties casProperties,
-                                                             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-                                                             final JpaBeanFactory jpaBeanFactory) {
+                                                             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
     }
-    
+
     @Configuration(value = "JpaPasswordlessAuthenticationDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationDataConfiguration {
@@ -101,22 +95,20 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager passwordlessTransactionManager(
-            @Qualifier("passwordlessEntityManagerFactory")
-            final EntityManagerFactory emf) {
+            @Qualifier("passwordlessEntityManagerFactory") final EntityManagerFactory emf) {
             val mgmr = new JpaTransactionManager();
             mgmr.setEntityManagerFactory(emf);
             return mgmr;
         }
     }
-    
+
     @Configuration(value = "JpaPasswordlessAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordlessTokenRepository passwordlessTokenRepository(
-            @Qualifier("passwordlessCipherExecutor")
-            final CipherExecutor passwordlessCipherExecutor,
+            @Qualifier("passwordlessCipherExecutor") final CipherExecutor passwordlessCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn().getPasswordless().getTokens();
             val expiration = Beans.newDuration(tokens.getCore().getExpiration()).toSeconds();
@@ -127,15 +119,14 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Configuration(value = "JpaPasswordlessAuthenticationCleanerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationCleanerConfiguration {
-        
+
         @ConditionalOnMissingBean(name = "jpaPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public Cleanable jpaPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
-            final PasswordlessTokenRepository passwordlessTokenRepository) {
+            @Qualifier(PasswordlessTokenRepository.BEAN_NAME) final PasswordlessTokenRepository passwordlessTokenRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.passwordless.tokens.jpa.cleaner.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))

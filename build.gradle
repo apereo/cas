@@ -63,6 +63,7 @@ ext {
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/org/apereo/inspektr/**',
         '**/net/jradius/**',
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
@@ -363,7 +364,7 @@ subprojects {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
-            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF']
+            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF', '-Xep:NotJavadoc:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
@@ -420,7 +421,6 @@ subprojects {
         api libraries.slf4j
         api libraries.guava
         api libraries.commons
-        api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
         api libraries.jackson

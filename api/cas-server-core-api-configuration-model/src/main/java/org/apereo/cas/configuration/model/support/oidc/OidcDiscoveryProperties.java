@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -144,6 +142,30 @@ public class OidcDiscoveryProperties implements Serializable {
      * Supported encoding strategies for id token encryption.
      */
     private List<String> idTokenEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
+        "A128GCM", "A192GCM", "A256GCM").toList();
+
+    /**
+     * Accepted values containing a list of the JWS signing algorithms
+     * supported by the introspection endpoint to sign the response.
+     */
+    private List<String> introspectionSignedResponseAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+        "RS512", "PS256", "PS384",
+        "PS512", "ES256", "ES384",
+        "ES512", "HS256", "HS384", "HS512").toList();
+
+    /**
+     * Accepted values containing a list of the JWE encryption algorithms ({@code alg} values)
+     * supported by the introspection endpoint to encrypt the content encryption key for introspection response.
+     */
+    private List<String> introspectionEncryptedResponseAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
+        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+        "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW").toList();
+
+    /**
+     * Accepted values containing a list of the JWE encryption algorithms ({@code enc} values)
+     * supported by the introspection endpoint to encrypt the introspection response.
+     */
+    private List<String> introspectionEncryptedResponseEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
         "A128GCM", "A192GCM", "A256GCM").toList();
 
     /**

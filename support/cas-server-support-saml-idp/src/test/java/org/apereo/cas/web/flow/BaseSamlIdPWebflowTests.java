@@ -65,7 +65,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-    public static class SamlIdPMetadataTestConfiguration {
+    static class SamlIdPMetadataTestConfiguration {
         @Autowired
         @Qualifier("samlIdPMetadataCache")
         private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;

@@ -42,6 +42,9 @@ public class JsonWebTokenSigner {
     private final String algorithm;
 
     @Builder.Default
+    private final String mediaType = "JWT";
+    
+    @Builder.Default
     private final Map<String, Object> headers = new LinkedHashMap<>();
 
     private final Key key;
@@ -84,9 +87,9 @@ public class JsonWebTokenSigner {
         }
         jws.setAlgorithmHeaderValue(this.algorithm);
         jws.setAlgorithmConstraints(getAlgorithmConstraints());
-        jws.setHeader("typ", "JWT");
+        jws.setHeader("typ", mediaType);
 
-        if (this.key instanceof IdentifiableKey idk) {
+        if (this.key instanceof final IdentifiableKey idk) {
             jws.setKey(idk.getKey());
             jws.setKeyIdHeaderValue(idk.getId());
         } else {

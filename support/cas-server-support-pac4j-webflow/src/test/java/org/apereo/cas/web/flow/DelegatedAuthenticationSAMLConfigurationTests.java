@@ -52,7 +52,7 @@ class DelegatedAuthenticationSAMLConfigurationTests {
     }
 
     @TestConfiguration(value = "SAMLTestConfiguration", proxyBeanMethods = false)
-    public static class SAMLTestConfiguration {
+    static class SAMLTestConfiguration {
         @Bean(destroyMethod = "shutdown")
         public HazelcastInstance casTicketRegistryHazelcastInstance() {
             val hz = new BaseHazelcastProperties();

@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Class that exposes relevant constants and parameters to
  * the SAML IdP.
@@ -117,5 +120,28 @@ public interface SamlIdPConstants {
      * The SAML2 authentication request identifier.
      */
     String AUTHN_REQUEST_ID = "srid";
+
+    /**
+     * Structure to catalog known entity attributes
+     * that drive SAML2 behavior in CAS.
+     */
+    @RequiredArgsConstructor
+    @Getter
+    enum KnownEntityAttributes {
+        /**
+         * If present, will enable signing operations for SAML2 assertions.
+         */
+        SHIBBOLETH_SIGN_ASSERTIONS("http://shibboleth.net/ns/profiles/saml2/sso/browser/signAssertions"),
+        /**
+         * If present, will enable signing operations for SAML2 responses.
+         */
+        SHIBBOLETH_SIGN_RESPONSES("http://shibboleth.net/ns/profiles/saml2/sso/browser/signResponses"),
+        /**
+         * If present, will enable encryption operations for SAML2 assertions.
+         */
+        SHIBBOLETH_ENCRYPT_ASSERTIONS("http://shibboleth.net/ns/profiles/encryptAssertions");
+
+        private final String name;
+    }
 }
 

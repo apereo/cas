@@ -1,6 +1,8 @@
 {
   "dependencies": "reports,interrupt-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.audit.engine.enabled=false",
 

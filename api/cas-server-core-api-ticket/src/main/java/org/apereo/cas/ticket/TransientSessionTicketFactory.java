@@ -56,7 +56,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param properties the properties
      * @return the transient session ticket
      */
-    default T create(String id, Map<String, Serializable> properties) {
+    default T create(final String id, final Map<String, Serializable> properties) {
         return create(id, null, properties);
     }
 

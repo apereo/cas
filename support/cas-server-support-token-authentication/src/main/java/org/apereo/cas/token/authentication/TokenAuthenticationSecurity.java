@@ -266,7 +266,7 @@ public class TokenAuthenticationSecurity {
 
     @Data
     @Setter
-    private static class RegisteredServiceSecurityConfiguration {
+    private static final class RegisteredServiceSecurityConfiguration {
         private SignatureConfiguration signatureConfiguration;
         private EncryptionConfiguration encryptionConfiguration;
     }

@@ -64,7 +64,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
 
     @SuperBuilder
     @Getter
-    private static class AccountProfileConsentDecision implements Serializable {
+    private static final class AccountProfileConsentDecision implements Serializable {
         @Serial
         private static final long serialVersionUID = -5211708226232415390L;
 

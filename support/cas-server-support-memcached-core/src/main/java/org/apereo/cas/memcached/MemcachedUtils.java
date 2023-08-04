@@ -20,9 +20,11 @@ import java.util.Collection;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
 @UtilityClass
+@Deprecated(since = "7.0.0")
 public class MemcachedUtils {
 
     /**

@@ -61,16 +61,16 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         val ticket = storeDelegatedClientAuthenticationRequest(webContext, requestContext, client);
         rememberSelectedClientIfNecessary(webContext, client);
 
-        if (client instanceof SAML2Client instance) {
+        if (client instanceof final SAML2Client instance) {
             trackSessionIdForSAML2Client(webContext, ticket, instance);
         }
-        if (client instanceof OAuth20Client instance) {
+        if (client instanceof final OAuth20Client instance) {
             trackSessionIdForOAuth20Client(webContext, instance, ticket);
         }
-        if (client instanceof OidcClient instance) {
+        if (client instanceof final OidcClient instance) {
             trackSessionIdForOidcClient(webContext, instance, ticket);
         }
-        if (client instanceof CasClient instance) {
+        if (client instanceof final CasClient instance) {
             trackSessionIdForCasClient(webContext, ticket, instance);
         }
         if (client instanceof OAuth10Client) {

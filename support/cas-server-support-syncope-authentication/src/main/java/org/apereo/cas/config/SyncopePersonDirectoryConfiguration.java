@@ -69,6 +69,7 @@ public class SyncopePersonDirectoryConfiguration {
     public PersonDirectoryAttributeRepositoryPlanConfigurer syncopeAttributeRepositoryPlanConfigurer(
         @Qualifier("syncopePersonAttributeDaos")
         final BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos) {
-        return plan -> syncopePersonAttributeDaos.toList().forEach(plan::registerAttributeRepository);
+        return plan -> syncopePersonAttributeDaos.toList().stream()
+            .filter(IPersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository);
     }
 }

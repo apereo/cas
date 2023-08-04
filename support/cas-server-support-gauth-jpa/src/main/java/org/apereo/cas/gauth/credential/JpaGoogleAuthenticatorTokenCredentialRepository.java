@@ -2,7 +2,6 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigInteger;
@@ -38,7 +36,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     private EntityManager entityManager;
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
-        final CipherExecutor<Number, Number> scratchCodesCipher, final IGoogleAuthenticator googleAuthenticator) {
+                                                           final CipherExecutor<Number, Number> scratchCodesCipher,
+                                                           final IGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
     }
 
@@ -50,7 +49,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
         return entityManager.createQuery("SELECT r FROM "
-            + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
+                + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
             .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .setParameter("id", id)
             .getSingleResult();
@@ -90,7 +89,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes()
                 .stream()
-                .map(c -> BigInteger.valueOf(c.longValue()))
+                .map(code -> BigInteger.valueOf(code.longValue()))
                 .collect(Collectors.toList()));
             ac.setSecretKey(account.getSecretKey());
             val encoded = encode(ac);
@@ -133,7 +132,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     @Override
     public long count(final String username) {
         val count = (Number) entityManager.createQuery(
-            "SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r WHERE r.username=:username")
+                "SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r WHERE r.username=:username")
             .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .getSingleResult();
         LOGGER.debug("Counted [{}] record(s) for [{}]", count, username);
@@ -142,7 +141,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
         return entityManager.createQuery("SELECT r FROM "
-            + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
+                + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
             .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .getResultList();
     }

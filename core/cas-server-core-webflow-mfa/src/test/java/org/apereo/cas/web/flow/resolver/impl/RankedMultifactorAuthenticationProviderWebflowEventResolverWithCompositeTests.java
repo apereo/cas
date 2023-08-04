@@ -85,7 +85,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTe
     }
 
     @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorTestConfiguration {
+    static class MultifactorTestConfiguration {
 
         @Bean
         public MultifactorAuthenticationProvider dummyProvider1() {

@@ -38,7 +38,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         var savedService = (RegisteredService) null;
-        for (var serviceRegistry : serviceRegistries) {
+        for (val serviceRegistry : serviceRegistries) {
             var toSave = Optional.ofNullable(savedService).orElse(registeredService);
             savedService = serviceRegistry.save(toSave);
         }

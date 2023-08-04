@@ -97,7 +97,7 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
-    public static class DatabaseTestConfiguration {
+    static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(SearchModeSearchDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
@@ -106,7 +106,7 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
 
     @SuppressWarnings("unused")
     @Entity(name = "cassearchusers")
-    public static class UsersTable {
+    static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;

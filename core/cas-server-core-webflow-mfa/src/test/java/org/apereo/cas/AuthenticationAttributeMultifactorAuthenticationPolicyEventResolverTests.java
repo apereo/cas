@@ -80,7 +80,7 @@ class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests e
     }
 
     @TestConfiguration(value = "AuthenticationAttributeTestConfiguration", proxyBeanMethods = false)
-    public static class AuthenticationAttributeTestConfiguration {
+    static class AuthenticationAttributeTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();

@@ -28,16 +28,15 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.DelegatedClientWebflowCustomizer;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -72,9 +71,9 @@ public abstract class BaseDelegatedAuthenticationTests {
     @Import({
         DelegatedAuthenticationWebflowTestConfiguration.class,
         DelegatedAuthenticationClientsTestConfiguration.class,
-        Pac4jDelegatedAuthenticationConfiguration.class,
-        Pac4jAuthenticationEventExecutionPlanConfiguration.class,
-        Pac4jDelegatedAuthenticationSerializationConfiguration.class,
+        DelegatedAuthenticationConfiguration.class,
+        DelegatedAuthenticationEventExecutionPlanConfiguration.class,
+        DelegatedAuthenticationSerializationConfiguration.class,
         DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class,
         DelegatedAuthenticationWebflowConfiguration.class,
 
@@ -111,7 +110,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     }
 
     @TestConfiguration(value = "DelegatedAuthenticationWebflowTestConfiguration", proxyBeanMethods = false)
-    public static class DelegatedAuthenticationWebflowTestConfiguration {
+    static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
         public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
             return BeanSupplier.of(DelegatedClientWebflowCustomizer.class)

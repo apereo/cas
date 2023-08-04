@@ -69,7 +69,7 @@ public class TicketRegistrySessionStore implements SessionStore {
             });
 
         val properties = new HashMap<String, Serializable>();
-        if (value instanceof Serializable serializable) {
+        if (value instanceof final Serializable serializable) {
             properties.put(key, serializable);
         } else if (value != null) {
             LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);

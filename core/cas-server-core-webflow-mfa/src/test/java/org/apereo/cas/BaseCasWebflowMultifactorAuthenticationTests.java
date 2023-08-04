@@ -129,7 +129,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-    public static class TestAuthenticationConfiguration {
+    static class TestAuthenticationConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));
@@ -137,7 +137,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     }
 
     @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
-    public static class GeoLocationServiceTestConfiguration {
+    static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {
             val service = mock(GeoLocationService.class);

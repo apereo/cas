@@ -2,11 +2,11 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.thread.Cleanable;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.inspektr.common.Cleanable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;

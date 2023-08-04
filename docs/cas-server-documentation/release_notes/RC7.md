@@ -49,7 +49,7 @@ The following items are new improvements and enhancements presented in this rele
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `415` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `422` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Graal VM Native Images
@@ -65,25 +65,6 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 A new service access strategy is now available to authorize application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
- 
-### Spring Framework Upgrades
-
-Starting with this release candidate and going forward, CAS will switch to building against Spring Framework `6.1.x`
-and Spring Boot `3.2.x` milestone builds.
-
-The Spring framework `6.1.x` generation presents with the following feature themes:
-
-- Embracing JDK 21 LTS
-- Virtual Threads (Project Loom)
-- JVM Checkpoint Restore (Project CRaC)
-- Data Binding and Validation, revisited
-
-Note that Spring Framework `6.1` provides a first-class experience on JDK `21` and Jakarta EE 10 at 
-runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of 
-Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
-
-As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
-in the next few release candidates. 
 
 ### Google Authenticator Device Registration
 
@@ -121,7 +102,23 @@ The following docker containers, used for integration tests, are now upgraded:
 ### Attribute-based SSO Participation
 
 A new [single sign-on participation policy](../services/Configuring-Service-SSO-Policy.html) is now available
-that can control SSO participation on a per-application basis based on presence or absense of user attributes. 
+that can control SSO participation on a per-application basis based on presence or absence of user attributes. 
+
+### Google Authenticator w/ Redis
+
+Support for [Google Authenticator backed by Redis](../mfa/GoogleAuthenticator-Authentication-Registration-Redis.html) is now reworked
+to remove a number of performance issues, all of which have had to do with redis `SCAN` operations and the use of wildcard in query patterns.
+Performance fixes alter the structure of records and keys and as a result are not backwards compatible. You will need to export existing records
+from redis and then import them back via CAS-provided facilities and dedicated endpoints.
+                                                                                                                                                    
+### Releasing OpenID Connect Claims
+
+The claim release rules for specific grant types, namely `client_credentials` and `password`, are revisited to ensure claims, whether custom or standard,
+can be correctly released based on the scopes authorized by the service definition as well as those requested by the relying party in authorization and token requests.
+
+### JWT Response for OAuth Token Introspection
+
+OAuth Token Introspection responses can now be [produced as JWTs](../authentication/OAuth-Authentication-TokenIntrospection.html).
 
 ## Other Stuff
 
@@ -133,8 +130,9 @@ that can control SSO participation on a per-application basis based on presence 
 - New CAS actuator endpoints are available to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
 - CAS documentation has switched to use a Dark Theme by default to make life slightly easier on the eyes.
 - Many small improvements around auditing facilities, making it easier internally to capture and/or tweak audited fields recorded by the audit log.
-- [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support public/private keypairs.
+- [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support RSA public/private keypairs.
 - CAS is now able to conditionally geolocate client sessions when building and pinning [SSO Cookies](../authentication/Configuring-SSO-Cookie.html).
+- [Memcached functionality and overall support](../ticketing/Memcached-Ticket-Registry.html) is now deprecated, and is scheduled to be removed in future releases.
 
 ## Library Upgrades
 
@@ -164,4 +162,5 @@ that can control SSO participation on a per-application basis based on presence 
 - Spring Integration
 - Spring RabbitMQ
 - Lettuce
+- jQuery
 - Apache ZooKeeper

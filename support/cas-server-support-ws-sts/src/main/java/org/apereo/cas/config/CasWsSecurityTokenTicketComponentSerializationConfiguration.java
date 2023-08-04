@@ -43,7 +43,7 @@ public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
         return plan -> plan.registerSerializableClass(DefaultSecurityTokenTicket.class);
     }
 
-    private static class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {
+    private static final class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {
         @Serial
         private static final long serialVersionUID = -3198623586274810263L;
 

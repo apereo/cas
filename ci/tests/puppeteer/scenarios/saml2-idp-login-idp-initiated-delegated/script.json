@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
@@ -35,5 +34,5 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
-  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

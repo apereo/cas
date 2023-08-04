@@ -54,7 +54,7 @@ public class MultifactorAuthenticationUtils {
         val map = new HashMap<String, Object>();
         map.put(Principal.class.getName(), principal);
         registeredService.ifPresent(svc -> map.put(RegisteredService.class.getName(), svc));
-        service.ifPresent(svc -> map.put(Service.class.getName(), service));
+        service.ifPresent(svc -> map.put(Service.class.getName(), svc));
         map.put(MultifactorAuthenticationProvider.class.getName(), provider);
         return map;
     }
@@ -112,7 +112,7 @@ public class MultifactorAuthenticationUtils {
         final MultifactorAuthenticationProvider provider,
         final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
-        if (attributeValue instanceof Collection values) {
+        if (attributeValue instanceof final Collection values) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val events = new HashSet<Event>();
             values.forEach(value -> {

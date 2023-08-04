@@ -59,7 +59,7 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
     }
 
     @TestConfiguration(value = "SpringWebflowEndpointTestConfiguration", proxyBeanMethods = false)
-    public static class SpringWebflowEndpointTestConfiguration {
+    static class SpringWebflowEndpointTestConfiguration {
 
         @Autowired
         private CasConfigurationProperties casProperties;

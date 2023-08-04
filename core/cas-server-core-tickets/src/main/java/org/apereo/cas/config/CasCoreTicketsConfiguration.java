@@ -198,7 +198,7 @@ public class CasCoreTicketsConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier("messageQueueTicketRegistryIdentifier")
             final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
-            return ticketRegistry instanceof QueueableTicketRegistry queueableTicketRegistry
+            return ticketRegistry instanceof final QueueableTicketRegistry queueableTicketRegistry
                 ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier)
                 : QueueableTicketRegistryMessageReceiver.noOp();
         }

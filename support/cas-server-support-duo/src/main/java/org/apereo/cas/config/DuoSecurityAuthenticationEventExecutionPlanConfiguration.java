@@ -488,7 +488,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .get();
         }
 
-        private static class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
+        private static final class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             SurrogateWebflowConfigurer(
                 final FlowBuilderServices flowBuilderServices,
                 final FlowDefinitionRegistry mainFlowDefinitionRegistry,

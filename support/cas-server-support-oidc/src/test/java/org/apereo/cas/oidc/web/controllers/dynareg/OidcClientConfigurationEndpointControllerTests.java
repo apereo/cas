@@ -85,6 +85,9 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
             "client_name": "Apereo Blog",
             "contacts": ["cas@example.org"],
             "grant_types": ["client_credentials"],
+            "introspection_signed_response_alg": "RS256",
+            "introspection_encrypted_response_alg": "RSA1_5",
+            "introspection_encrypted_response_enc": "A128CBC-HS256"
             }""";
         val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
         assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCode().value());

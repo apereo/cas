@@ -104,7 +104,8 @@ public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfigura
     @ConditionalOnMissingBean(name = "googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
+    public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass(
+        final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
         return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId());

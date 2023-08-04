@@ -4,14 +4,12 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class DefaultLockRepositoryTests {
     @Test
-    void verifyNoOp() throws Exception {
+    void verifyNoOp() {
         val repository = LockRepository.noOp();
         val lockKey = UUID.randomUUID().toString();
         val result = repository.execute(lockKey, () -> lockKey);
@@ -32,7 +30,7 @@ class DefaultLockRepositoryTests {
     }
 
     @Test
-    void verifyDefault() throws Exception {
+    void verifyDefault() {
         val repository = LockRepository.asDefault();
         val lockKey = UUID.randomUUID().toString();
 
@@ -62,7 +60,7 @@ class DefaultLockRepositoryTests {
         assertEquals(10, container.values.get(lockKey).size());
     }
 
-    private static class Container {
+    private static final class Container {
         private final Map<String, List<String>> values = new HashMap<>();
     }
 }

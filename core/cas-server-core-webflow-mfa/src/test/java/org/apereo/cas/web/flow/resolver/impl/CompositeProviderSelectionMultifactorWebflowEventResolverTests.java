@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
 class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorTestConfiguration {
+    static class MultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();
@@ -65,7 +65,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     }
 
     @TestConfiguration(value = "MultifactorBypassTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorBypassTestConfiguration {
+    static class MultifactorBypassTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             val provider = new TestMultifactorAuthenticationProvider();

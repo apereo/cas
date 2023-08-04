@@ -10,9 +10,11 @@ import org.springframework.test.context.TestPropertySource;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated Since 7.0.0
  */
 @EnabledIfListeningOnPort(port = 11211)
 @Tag("Memcached")
 @TestPropertySource(properties = "cas.ticket.registry.memcached.transcoder=WHALINV1")
+@Deprecated(since = "7.0.0")
 class MemcachedTicketRegistryWhalinV1TranscoderTests extends MemcachedTicketRegistryTests {
 }

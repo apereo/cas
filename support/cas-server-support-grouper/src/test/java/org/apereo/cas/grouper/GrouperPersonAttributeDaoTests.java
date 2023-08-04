@@ -59,7 +59,7 @@ class GrouperPersonAttributeDaoTests {
     }
 
     @TestConfiguration(value = "GrouperPersonAttributeDaoTestConfiguration", proxyBeanMethods = false)
-    public static class GrouperPersonAttributeDaoTestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+    static class GrouperPersonAttributeDaoTestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
         @Override
         public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {

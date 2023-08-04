@@ -66,7 +66,7 @@ class OAuth20LogoutReplicateSessionTests {
     }
 
     @TestConfiguration(value = "OAuthDistributedSessionTestConfiguration", proxyBeanMethods = false)
-    public static class OAuthDistributedSessionTestConfiguration {
+    static class OAuthDistributedSessionTestConfiguration {
 
         private static final SessionStore SESSION_STORE = mock(SessionStore.class);
 

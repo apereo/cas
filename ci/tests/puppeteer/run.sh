@@ -264,7 +264,7 @@ fi
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
-  printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and enable the test."
+  printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and re-enable the test."
   exit 0
 fi
 

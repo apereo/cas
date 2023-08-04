@@ -118,6 +118,6 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CoreWsSecuritySecurityTokenTicketConfiguration.class,
         CoreWsSecuritySecurityTokenServiceSamlConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    static class SharedTestConfiguration {
     }
 }

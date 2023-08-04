@@ -3,7 +3,10 @@ echo -e "Removing previous running containers, if any, for ${SCENARIO}"
 docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
 docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
-VERSION="4.3.0"
+chmod +x ${PWD}/ci/tests/cas/run-cas-server.sh
+${PWD}/ci/tests/cas/run-cas-server.sh
+
+VERSION="4.3.1"
 BASE_URL="https://github.com/Unicon/shib-cas-authn/releases/download/${VERSION}"
 SHIBCAS_AUTHN_DIR="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/shibcasauthn"
 
@@ -15,7 +18,7 @@ rm -Rf ${SHIBCAS_AUTHN_DIR} >/dev/null 2>&1
 mkdir ${SHIBCAS_AUTHN_DIR} >/dev/null 2>&1
 
 echo -e "Fetching shib-cas-authn release artifacts for v${VERSION}"
-wget "${BASE_URL}/cas-client-core-3.6.0.jar" -P ${SHIBCAS_AUTHN_DIR}  >/dev/null 2>&1
+wget "${BASE_URL}/cas-client-core-3.6.4.jar" -P ${SHIBCAS_AUTHN_DIR}  >/dev/null 2>&1
 wget "${BASE_URL}/no-conversation-state.jsp" -P ${SHIBCAS_AUTHN_DIR}  >/dev/null 2>&1
 wget "${BASE_URL}/shib-cas-authenticator-${VERSION}.jar" -P ${SHIBCAS_AUTHN_DIR}  >/dev/null 2>&1
 
@@ -27,8 +30,7 @@ docker build \
   "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}"
 
 echo -e "Running Shibboleth IdP..."
-docker run --name shibidp -d --rm -p 9443:443 cas/shibidp:latest
-clear
+docker run --name shibidp -d --rm -p 9443:443 --network casserver-network cas/shibidp:latest
 docker logs -f shibidp &
 echo -e "Waiting for Shibboleth IdP..."
 until curl -k -L --output /dev/null --silent --fail https://localhost:9443/idp/shibboleth; do
