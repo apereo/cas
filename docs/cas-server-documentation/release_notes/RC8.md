@@ -62,6 +62,9 @@ As stated above, it is likely that CAS `7` would switch to using JDK `21` as its
 in the next few release candidates.
 
 ## Other Stuff
+                          
 
 
 ## Library Upgrades
+   
+- Spring Boot Admin Server
