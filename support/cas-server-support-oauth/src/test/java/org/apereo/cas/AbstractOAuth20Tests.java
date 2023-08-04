@@ -93,10 +93,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -131,9 +129,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -148,7 +144,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -161,7 +156,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
         "spring.main.allow-bean-definition-overriding=true",
-        
+
         "cas.audit.engine.audit-format=JSON",
         "cas.audit.slf4j.use-single-line=true",
 
@@ -487,16 +482,14 @@ public abstract class AbstractOAuth20Tests {
         servicesManager.load();
     }
 
-    @SneakyThrows
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
-                                                  final boolean refreshToken) {
+                                                  final boolean refreshToken) throws Exception {
         return assertClientOK(service, refreshToken, null);
     }
 
-    @SneakyThrows
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
                                                   final boolean refreshToken,
-                                                  final String scopes) {
+                                                  final String scopes) throws Exception {
         val principal = createPrincipal();
         val code = addCode(principal, service);
         LOGGER.debug("Added code [{}] for principal [{}]", code, principal);
@@ -628,8 +621,7 @@ public abstract class AbstractOAuth20Tests {
         return accessToken;
     }
 
-    @SneakyThrows
-    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) throws Exception {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
         return assertRefreshTokenOk(service, refreshToken, principal);
@@ -677,8 +669,9 @@ public abstract class AbstractOAuth20Tests {
      *
      * @param registeredService the registered service
      * @return the model and view
+     * @throws Exception the exception
      */
-    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) {
+    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) throws Exception {
         return generateAccessTokenResponseAndGetModelAndView(registeredService,
             RegisteredServiceTestUtils.getAuthentication("casuser"), OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
@@ -686,18 +679,17 @@ public abstract class AbstractOAuth20Tests {
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
-        final OAuth20GrantTypes grantType) {
+        final OAuth20GrantTypes grantType) throws Exception {
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         return generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, grantType, mockRequest);
     }
 
-    @SneakyThrows
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
         final OAuth20GrantTypes grantType,
-        final HttpServletRequest mockRequest) {
+        final HttpServletRequest mockRequest) throws Exception {
 
         val mockResponse = new MockHttpServletResponse();
 

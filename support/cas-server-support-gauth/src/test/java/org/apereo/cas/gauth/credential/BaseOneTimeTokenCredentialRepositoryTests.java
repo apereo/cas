@@ -93,7 +93,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCreate() {
+    void verifyCreate() throws Exception {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
@@ -118,7 +118,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() throws Exception {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
@@ -148,7 +148,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() {
+    void verifyGet() throws Exception {
         val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
@@ -173,7 +173,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCaseSensitivity() {
+    void verifyCaseSensitivity() throws Exception {
         val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
@@ -199,7 +199,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetWithDecodedSecret() {
+    void verifyGetWithDecodedSecret() throws Exception {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
@@ -225,7 +225,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         return UUID.randomUUID().toString();
     }
 

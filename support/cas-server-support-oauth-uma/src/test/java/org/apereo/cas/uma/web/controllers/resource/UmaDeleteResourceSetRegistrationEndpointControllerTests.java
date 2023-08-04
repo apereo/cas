@@ -43,14 +43,14 @@ class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyEmpty() {
+    void verifyEmpty() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(-1, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void verifyBadClientId() {
+    void verifyBadClientId() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

@@ -5,7 +5,6 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
-import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Getter
 public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -41,6 +39,11 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     public void tearDownServiceRegistry() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
         super.tearDownServiceRegistry();
+    }
+
+    @Override
+    protected ServiceRegistry getNewServiceRegistry() throws Exception {
+        return newServiceRegistry;
     }
 
     @ParameterizedTest

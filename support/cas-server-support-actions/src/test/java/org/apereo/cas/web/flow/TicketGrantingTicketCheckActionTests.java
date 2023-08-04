@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();
         getServicesManager().save(services.stream());
     }

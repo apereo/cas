@@ -5,14 +5,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -61,8 +59,7 @@ class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTe
     }
 
     @Override
-    @SneakyThrows
-    String getUsername() {
+    String getUsername() throws Exception {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
         @Cleanup
         val connection = new LDAPConnection("localhost", 11389,

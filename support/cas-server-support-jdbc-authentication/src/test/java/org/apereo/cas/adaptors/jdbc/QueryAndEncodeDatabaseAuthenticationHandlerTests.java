@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuth
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -82,8 +81,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         return String.format(SQL, "username=?;");
     }
 
-    @SneakyThrows
-    private static String genPassword(final String psw, final String salt, final int iter) {
+        private static String genPassword(final String psw, final String salt, final int iter) {
         val hash = new DefaultHashService();
         hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
         hash.setHashIterations(iter);

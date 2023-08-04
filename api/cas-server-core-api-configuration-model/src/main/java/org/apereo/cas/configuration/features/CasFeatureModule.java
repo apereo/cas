@@ -231,10 +231,6 @@ public interface CasFeatureModule {
          */
         PasswordlessAuthn,
         /**
-         * U2F MFA.
-         */
-        U2F,
-        /**
          * YubiKey MFA.
          */
         YubiKey,

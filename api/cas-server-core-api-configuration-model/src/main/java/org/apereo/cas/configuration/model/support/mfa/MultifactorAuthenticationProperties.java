@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -55,12 +54,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovyScript = new SpringResourceProperties();
-
-    /**
-     * Activate and configure a multifactor authentication provider via U2F FIDO.
-     */
-    @NestedConfigurationProperty
-    private U2FMultifactorAuthenticationProperties u2f = new U2FMultifactorAuthenticationProperties();
 
     /**
      * Activate and configure a multifactor authentication with the capability to trust and remember devices.

@@ -4,7 +4,6 @@ import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class EncodingUtilsTests {
 
-    @SneakyThrows
-    private static PrivateKey getPrivateKey() {
+    private static PrivateKey getPrivateKey() throws Exception {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
@@ -39,9 +37,7 @@ class EncodingUtilsTests {
         assertSame(PrivateKey.class, factory.getObjectType());
         return factory.getObject();
     }
-
-    @SneakyThrows
-    private static PublicKey getPublicKey() {
+    private static PublicKey getPublicKey() throws Exception {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         assertSame(PublicKey.class, factory.getObjectType());
@@ -60,7 +56,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyRsaKeyForJwtSigning() {
+    void verifyRsaKeyForJwtSigning() throws Exception {
         val value = "ThisValue";
         val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
@@ -81,7 +77,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyRsaKeyForJwtEncryption() {
+    void verifyRsaKeyForJwtEncryption() throws Exception {
         val value = "ThisValue";
         val found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
         val jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);

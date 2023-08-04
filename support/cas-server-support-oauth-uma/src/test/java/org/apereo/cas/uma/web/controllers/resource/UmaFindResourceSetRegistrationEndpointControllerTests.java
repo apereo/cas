@@ -57,7 +57,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyFailsToFind() {
+    void verifyFailsToFind() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

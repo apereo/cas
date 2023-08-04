@@ -12,7 +12,6 @@ import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.UserIdentity;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,9 +48,7 @@ class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("webAuthnCredentialRepository")
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
-
-    @SneakyThrows
-    private static CredentialRegistration getCredentialRegistration(final Authentication authn) {
+    private static CredentialRegistration getCredentialRegistration(final Authentication authn) throws Exception {
         return CredentialRegistration.builder()
             .userIdentity(UserIdentity.builder()
                 .name(authn.getPrincipal().getId())

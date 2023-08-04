@@ -15,7 +15,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -60,7 +59,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyExecutionFails() {
+    void verifyGroovyExecutionFails() throws Throwable {
         var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
         assertNull(result);
 
@@ -78,7 +77,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceFileExecution() throws IOException {
+    void verifyGroovyResourceFileExecution() throws Throwable {
         val file = File.createTempFile("test", ".groovy");
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
@@ -88,7 +87,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyReturnTypeMismatch() throws IOException {
+    void verifyGroovyReturnTypeMismatch() throws Throwable {
         val file = File.createTempFile("test", ".groovy");
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
@@ -98,7 +97,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceFileNotFound() {
+    void verifyGroovyResourceFileNotFound() throws Throwable{
         val resource = new FileSystemResource(new File("missing.groovy"));
 
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
@@ -106,7 +105,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceClasspathExecution() {
+    void verifyGroovyResourceClasspathExecution() throws Throwable {
         val resource = new ClassPathResource("ScriptingUtilsTestGroovyScript.groovy");
 
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
@@ -114,7 +113,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceClasspathNotFound() {
+    void verifyGroovyResourceClasspathNotFound() throws Throwable {
         val resource = new ClassPathResource("missing.groovy");
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
         assertNull(result);

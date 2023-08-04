@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflat
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -220,11 +219,9 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, mv.getViewName());
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
-
-    @SneakyThrows
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
-                                          final AuthnRequest authnRequest) {
+                                          final AuthnRequest authnRequest) throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();

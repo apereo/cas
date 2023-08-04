@@ -45,7 +45,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Exception {
         val registeredService = getRegisteredService("example2", "secret", new LinkedHashSet<>());
         servicesManager.save(registeredService);
 

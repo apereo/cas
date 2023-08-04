@@ -17,8 +17,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,10 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.LinkedHashSet;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -80,8 +76,7 @@ class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPolicyFailsUserFoundOnce() {
+    public void verifyPolicyFailsUserFoundOnce() throws Exception {
         this.ticketRegistry.deleteAll();
         val ticket = new TicketGrantingTicketImpl("TGT-1",
             CoreAuthenticationTestUtils.getAuthentication("casuser"),

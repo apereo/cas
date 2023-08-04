@@ -20,8 +20,6 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
@@ -40,14 +38,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.view.RedirectView;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -299,7 +295,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         properties.getAuthn().getOauth().getSessionReplication().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
-        
+
         val profile = buildCasProfile();
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -670,7 +666,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
-        
+
         val profile = buildCasProfile();
 
         val session = new MockHttpSession();
@@ -708,8 +704,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
-    @SneakyThrows
-    protected CasProfile buildCasProfile() {
+    protected CasProfile buildCasProfile() throws Exception {
         val profile = new CasProfile();
         profile.setId(ID);
         val attributes = new HashMap<String, Object>();

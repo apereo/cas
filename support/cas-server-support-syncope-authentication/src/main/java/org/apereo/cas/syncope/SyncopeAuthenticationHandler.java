@@ -1,6 +1,7 @@
 package org.apereo.cas.syncope;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -11,11 +12,10 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +24,8 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
-
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,9 +56,9 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     }
 
     @Override
-    @SneakyThrows
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential, final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();
@@ -76,7 +76,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) throws Exception {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/self");
@@ -90,13 +90,19 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
             if (response.getCode() == HttpStatus.SC_OK) {
-                val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
-                LOGGER.debug("Received user object as [{}]", result);
-                return Optional.of(MAPPER.readTree(result));
+                return parseResponseResults((HttpEntityContainer) response);
             }
         } finally {
             HttpUtils.close(response);
         }
         return Optional.empty();
+    }
+
+    private static Optional<JsonNode> parseResponseResults(final HttpEntityContainer response) {
+        return FunctionUtils.doUnchecked(() -> {
+            val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received user object as [{}]", result);
+            return Optional.of(MAPPER.readTree(result));
+        });
     }
 }
