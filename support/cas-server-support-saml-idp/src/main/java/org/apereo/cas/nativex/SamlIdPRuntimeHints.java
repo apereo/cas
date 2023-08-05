@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.idp.SamlIdPDistributedSessionCookieCipherExec
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolver;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -29,6 +30,7 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("metadata/*.xml");
 
         hints.serialization()
+            .registerType(JsonResourceMetadataResolver.SamlServiceProviderMetadata.class)
             .registerType(SamlRegisteredService.class)
             .registerType(SamlArtifactTicketImpl.class)
             .registerType(SamlAttributeQueryTicketImpl.class);
