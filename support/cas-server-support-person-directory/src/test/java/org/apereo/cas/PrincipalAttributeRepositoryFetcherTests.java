@@ -2,8 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

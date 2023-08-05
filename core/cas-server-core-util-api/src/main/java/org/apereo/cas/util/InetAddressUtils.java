@@ -30,7 +30,7 @@ public class InetAddressUtils {
     public static InetAddress getByName(final String urlAddr) {
         return FunctionUtils.doAndHandle(() -> {
             val url = new URL(urlAddr);
-            return InetAddress.getByName(url.getHost());
+            return InetAddress.getAllByName(url.getHost())[0];
         }, e -> {
             LOGGER.trace("Host name could not be determined automatically.", e);
             return null;

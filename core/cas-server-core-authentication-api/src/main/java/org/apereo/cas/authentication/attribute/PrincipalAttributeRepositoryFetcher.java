@@ -2,8 +2,6 @@ package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public class PrincipalAttributeRepositoryFetcher {
             }
 
             val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
-            LOGGER.trace("Active attribute repository identifiers [{}] to compare with [{}}",
+            LOGGER.trace("Active attribute repository identifiers [{}] to compare with [{}]",
                 activeAttributeRepositoryIdentifiers, repository.getId());
             val result = Arrays.stream(repository.getId()).anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
                 || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
