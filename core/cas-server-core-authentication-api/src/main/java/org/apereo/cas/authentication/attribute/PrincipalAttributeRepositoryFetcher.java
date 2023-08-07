@@ -80,7 +80,7 @@ public class PrincipalAttributeRepositoryFetcher {
     }
 
     @RequiredArgsConstructor(staticName = "of")
-    private static class PrincipalAttributeRepositoryFilter implements IPersonAttributeDaoFilter {
+    private static final class PrincipalAttributeRepositoryFilter implements IPersonAttributeDaoFilter {
         private final PrincipalAttributeRepositoryFetcher fetcher;
 
         @Override
