@@ -296,9 +296,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected void enforceTicketValidationAuthorizationFor(final HttpServletRequest request, final Service service, final Assertion assertion) {
         val authorizers = serviceValidateConfigurationContext.getValidationAuthorizers().getAuthorizers();
-        for (val a : authorizers) {
+        for (val authorizer : authorizers) {
             try {
-                a.authorize(request, service, assertion);
+                authorizer.authorize(request, service, assertion);
             } catch (final Exception e) {
                 throw new UnauthorizedServiceTicketValidationException(service);
             }

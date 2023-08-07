@@ -16,6 +16,6 @@ public class ApplicationEntrypointInitializerTests {
     @Test
     void verifyOperation() {
         ApplicationEntrypointInitializer.noOp().initialize(ArrayUtils.EMPTY_STRING_ARRAY);
-        assertTrue(ApplicationEntrypointInitializer.noOp().getApplicationSources().isEmpty());
+        assertTrue(ApplicationEntrypointInitializer.noOp().getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY).isEmpty());
     }
 }

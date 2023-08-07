@@ -671,7 +671,6 @@ layout: null
         *   [JMeter](/cas/{{ version }}/high_availability/Performance-Testing-JMeter.html)
     *   [Service Discovery](#servicediscovery)
         *   [Overview](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
-        *   [Eureka Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Eureka.html)
         *   [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)
 
 * [Notifications](#casnotifications)

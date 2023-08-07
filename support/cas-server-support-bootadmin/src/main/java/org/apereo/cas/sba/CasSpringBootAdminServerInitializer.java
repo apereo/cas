@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class CasSpringBootAdminServerInitializer implements ApplicationEntrypointInitializer {
     @Override
-    public List<Class> getApplicationSources() {
+    public List<Class> getApplicationSources(final String[] args) {
         return List.of(CasSpringBootAdminServer.class);
     }
 

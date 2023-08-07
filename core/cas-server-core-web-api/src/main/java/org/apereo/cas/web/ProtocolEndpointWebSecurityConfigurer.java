@@ -12,7 +12,11 @@ import java.util.List;
  * @since 6.3.0
  */
 public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
-
+    /**
+     * Endpoint url used for admin-level form-login of endpoints.
+     */
+    String ENDPOINT_URL_ADMIN_FORM_LOGIN = "/adminlogin";
+    
     /**
      * Get order of this configurer.
      *
