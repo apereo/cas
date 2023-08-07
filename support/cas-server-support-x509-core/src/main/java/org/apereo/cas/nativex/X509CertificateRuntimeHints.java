@@ -6,7 +6,6 @@ import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link X509CertificateRuntimeHints}.
