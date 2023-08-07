@@ -78,11 +78,9 @@ public class CasWebAppSecurityConfiguration {
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addViewControllers(
-                    @Nonnull
-                    final ViewControllerRegistry registry) {
+                public void addViewControllers(@Nonnull final ViewControllerRegistry registry) {
                     if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
-                        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                        registry.addViewController(ProtocolEndpointWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                             .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
                         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
                     }
