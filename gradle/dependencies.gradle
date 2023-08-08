@@ -2843,6 +2843,63 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                 }
         ],
+        springcloudeureka          : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$springCloudEurekaVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "com.netflix.eureka", module: "eureka-client")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
+                }
+        ],
+        eurekaclient               : [
+                dependencies.create("com.netflix.eureka:eureka-client:$eurekaClientVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                },
+                dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "javax.servlet", module: "servlet-api")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                }
+        ],
         springcloudzookeeper       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-zookeeper-config:$springCloudZookeeperVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")

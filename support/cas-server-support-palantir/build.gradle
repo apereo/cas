@@ -83,12 +83,11 @@ node {
 tasks.register("build-ui", NpxTask) {
     command = "vite"
     args = [ "build", "--outDir", "../src/main/resources/static/assets"]
-    dependsOn(build, tasks.named("yarn"))
+    dependsOn(tasks.named("yarn"))
     inputs.files(
         'client/package.json',
         'client/vite.config.js'
     )
-    outputs.dir("${buildDir}")
     environment = ["BUILD_PATH": "${buildDir}"]
 }
-build.finalizedBy("build-ui")
+processResources.finalizedBy(tasks.named("build-ui"))
