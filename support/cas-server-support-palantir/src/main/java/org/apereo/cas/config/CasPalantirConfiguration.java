@@ -65,10 +65,8 @@ public class CasPalantirConfiguration {
                 successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);
                 http.authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers(
-                            new AntPathRequestMatcher(PalantirConstants.URL_PATH_PALANTIR + "/assets/**")).permitAll()
-                        .requestMatchers(
-                            new AntPathRequestMatcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/assets/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
                     )
                     .formLogin(customizer -> customizer.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .permitAll().successHandler(successHandler));
