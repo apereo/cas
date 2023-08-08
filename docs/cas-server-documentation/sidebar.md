@@ -672,6 +672,7 @@ layout: null
     *   [Service Discovery](#servicediscovery)
         *   [Overview](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
         *   [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)
+        *   [Eureka Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Eureka.html)
 
 * [Notifications](#casnotifications)
     *   [Sending Email](#sendingemail)
