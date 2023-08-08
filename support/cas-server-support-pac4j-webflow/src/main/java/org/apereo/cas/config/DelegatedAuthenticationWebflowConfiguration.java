@@ -34,9 +34,9 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.DelegatedAuthenticationCookieGenerator;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
@@ -81,7 +81,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
@@ -109,7 +108,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -631,8 +629,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedClientEndpointConfigurer")
-        public ProtocolEndpointWebSecurityConfigurer<Void> delegatedClientEndpointConfigurer() {
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+        public CasWebSecurityConfigurer<Void> delegatedClientEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(StringUtils.prependIfMissing(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, "/"),

@@ -6,9 +6,15 @@
         <title th:text="#{cas.login.pagetitle}">CAS Admin Console</title>
         <link href="/cas/static/style.css" rel="stylesheet" th:remove="tag"/>
     </head>
-    <body class="login mdc-typography">
-        <div id="root" class="d-flex justify-content-center">
-        </div>
-        <script src="/palantir.es.js" module></script>
+
+    <body>         
+        <main role="main" class="container mt-3 mb-3">
+            <div layout:fragment="content">
+                <div class="login mdc-typography">
+                    <div id="root" class="d-flex justify-content-center"></div>
+                    <script th:src="@{/assets/palantir.es.js}" module></script>
+                </div>
+            </div>
+        </main>
     </body>
 </html>

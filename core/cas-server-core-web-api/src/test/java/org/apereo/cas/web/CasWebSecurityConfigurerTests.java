@@ -8,17 +8,17 @@ import org.springframework.core.Ordered;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link ProtocolEndpointWebSecurityConfigurerTests}.
+ * This is {@link CasWebSecurityConfigurerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
  */
 @Tag("Web")
-class ProtocolEndpointWebSecurityConfigurerTests {
+class CasWebSecurityConfigurerTests {
 
     @Test
     void verifyOperation() throws Exception {
-        val cfg = new ProtocolEndpointWebSecurityConfigurer<>() {
+        val cfg = new CasWebSecurityConfigurer<>() {
         };
         assertEquals(cfg, cfg.configure(new Object()));
         assertEquals(cfg, cfg.finish(new Object()));

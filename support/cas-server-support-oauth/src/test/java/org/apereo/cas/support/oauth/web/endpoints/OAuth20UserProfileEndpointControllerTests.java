@@ -17,7 +17,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Reg
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer;
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")

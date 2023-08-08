@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("samlIdPProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer;
 
     @Test
     void verifyEndpoints() {

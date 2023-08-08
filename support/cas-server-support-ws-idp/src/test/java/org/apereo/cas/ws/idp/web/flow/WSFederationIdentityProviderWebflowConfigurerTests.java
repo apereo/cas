@@ -7,7 +7,7 @@ import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("wsFederationProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
     
     @Test
     void verifyOperation() {

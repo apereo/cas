@@ -23,8 +23,8 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasWebSecurityConstants;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
@@ -472,13 +472,13 @@ public class WebAuthnConfiguration {
             @Bean
             @ConditionalOnMissingBean(name = "webAuthnProtocolEndpointConfigurer")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
+            public CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
                 @Qualifier("webAuthnCsrfTokenRepository") final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
-                return new ProtocolEndpointWebSecurityConfigurer<>() {
+                return new CasWebSecurityConfigurer<>() {
                     @Override
                     @CanIgnoreReturnValue
                     @SuppressWarnings("UnnecessaryMethodReference")
-                    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                    public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                         http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
                             val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
                             val delegate = new XorCsrfTokenRequestAttributeHandler();

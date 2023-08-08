@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
@@ -120,8 +120,8 @@ public class CasWebflowAccountProfileConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountProfileFlowEndpointConfigurer")
-    public ProtocolEndpointWebSecurityConfigurer<Void> accountProfileFlowEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+    public CasWebSecurityConfigurer<Void> accountProfileFlowEndpointConfigurer() {
+        return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(CasWebflowConfigurer.FLOW_ID_ACCOUNT, "/"));

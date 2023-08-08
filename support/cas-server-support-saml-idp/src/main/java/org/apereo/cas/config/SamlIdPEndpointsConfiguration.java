@@ -63,7 +63,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieUtils;
@@ -458,8 +458,8 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+        public CasWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
