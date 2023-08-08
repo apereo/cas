@@ -10,7 +10,7 @@ import org.apereo.cas.config.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.SamlServiceFactoryConfiguration;
 import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -53,7 +53,7 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("samlProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
     void verifyEndpoints() {

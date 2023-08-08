@@ -6,12 +6,12 @@ import org.springframework.core.Ordered;
 import java.util.List;
 
 /**
- * This is {@link ProtocolEndpointWebSecurityConfigurer}.
+ * This is {@link CasWebSecurityConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
+public interface CasWebSecurityConfigurer<T> extends Ordered {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
      */
@@ -44,7 +44,7 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      * @throws Exception the exception
      */
     @CanIgnoreReturnValue
-    default ProtocolEndpointWebSecurityConfigurer<T> configure(final T object) throws Exception {
+    default CasWebSecurityConfigurer<T> configure(final T object) throws Exception {
         return this;
     }
 
@@ -54,7 +54,7 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      * @param http the http
      */
     @CanIgnoreReturnValue
-    default ProtocolEndpointWebSecurityConfigurer<T> finish(final T http) throws Exception {
+    default CasWebSecurityConfigurer<T> finish(final T http) throws Exception {
         return this;
     }
 

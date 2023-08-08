@@ -76,7 +76,7 @@ public interface CasFeatureModule {
          * Dashboard and administrative console
          * to manage CAS services, configuration, etc.
          */
-        AdminConsole,
+        Palantir,
         /**
          * Just-in-time provisioning users to external systems
          * and identity management solutions.

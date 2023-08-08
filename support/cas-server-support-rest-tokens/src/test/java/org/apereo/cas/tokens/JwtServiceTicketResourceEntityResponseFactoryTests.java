@@ -3,7 +3,7 @@ package org.apereo.cas.tokens;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
@@ -26,7 +26,7 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
 
     @Autowired
     @Qualifier("restProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
 
     @Test
     void verifyEndpoints() {

@@ -73,7 +73,7 @@ dependencies {
 
 
 node {
-    version = '18.17.0'
+    version = "${nodeVersion}"
     yarnVersion = ''
     download = true
     distBaseUrl = null
@@ -82,7 +82,7 @@ node {
 
 tasks.register("build-ui", NpxTask) {
     command = "vite"
-    args = [ "build" ]
+    args = [ "build", "--outDir", "../src/main/resources/static/assets"]
     dependsOn(build, tasks.named("yarn"))
     inputs.files(
         'client/package.json',
@@ -91,3 +91,4 @@ tasks.register("build-ui", NpxTask) {
     outputs.dir("${buildDir}")
     environment = ["BUILD_PATH": "${buildDir}"]
 }
+build.finalizedBy("build-ui")

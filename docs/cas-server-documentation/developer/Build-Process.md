@@ -16,6 +16,11 @@ WAR Overlay method described in the project documentation for a specific CAS ver
 CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
 </p></div>
 
+## Requirements
+
+See the [installation requirements](../planning/Installation-Requirements.html) to learn about the required
+JDK version, etc.
+
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
@@ -97,7 +102,7 @@ CAS development may be carried out using any modern IDE that supports Gradle.
 
 The following IDEA settings for Gradle may also be useful:
 
-![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
+![image](https://github.com/apereo/cas/assets/1205228/ab73a45a-44d8-4880-bfc6-105dfd52c3a9)
 
 <div class="alert alert-info">:information_source: <strong>Note</strong><p>
 You should always use the latest version of the Intellij IDEA.
@@ -311,14 +316,14 @@ function bc() {
     --configure-on-demand --build-cache \
     --parallel -x test -x javadoc -x check -DenableRemoteDebugging=true \
     --stacktrace -DskipNestedConfigMetadataGen=true \
-    -DremoteDebuggingSuspend=false \
+    -DremoteDebuggingSuspend=false --no-configuration-cache \
     -DcasModules=${casmodules}
 }
 
 # Install JARs/WARs for use with a CAS overlay project
 alias bci='clear; cas; \
     ./gradlew clean build publishToMavenLocal \ 
-    --configure-on-demand \
+    --configure-on-demand --no-configuration-cache \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \

@@ -3,7 +3,7 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -52,7 +52,7 @@ class WebAuthnStartRegistrationActionTests {
 
     @Autowired
     @Qualifier("webAuthnProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
