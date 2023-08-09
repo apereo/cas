@@ -32,10 +32,10 @@ class CasUndertowBannerTests {
     private Environment environment;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Exception {
         val banner = new CasUndertowBanner();
         val writer = new StringWriter();
-        val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        val out = WriterOutputStream.builder().setWriter(writer).get();
         try (val stream = new PrintStream(out, true, StandardCharsets.UTF_8)) {
             banner.printBanner(environment, CasUndertowBanner.class, stream);
         }

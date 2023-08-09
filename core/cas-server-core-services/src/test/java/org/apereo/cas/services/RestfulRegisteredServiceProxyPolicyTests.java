@@ -14,7 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +51,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
             val policy = new RestfulRegisteredServiceProxyPolicy();
             policy.setEndpoint("http://localhost:9222");
             policy.setHeaders(CollectionUtils.wrap("header", "value"));
-            assertTrue(policy.isAllowedProxyCallbackUrl(service, new URL("https://proxy.example.org")));
+            assertTrue(policy.isAllowedProxyCallbackUrl(service, new URI("https://proxy.example.org").toURL()));
         }
     }
 
@@ -64,7 +64,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
             val policy = new RestfulRegisteredServiceProxyPolicy();
             policy.setEndpoint("http://localhost:9222");
             policy.setHeaders(CollectionUtils.wrap("header", "value"));
-            assertFalse(policy.isAllowedProxyCallbackUrl(service, new URL("https://proxy.example.org")));
+            assertFalse(policy.isAllowedProxyCallbackUrl(service, new URI("https://proxy.example.org").toURL()));
         }
     }
 }

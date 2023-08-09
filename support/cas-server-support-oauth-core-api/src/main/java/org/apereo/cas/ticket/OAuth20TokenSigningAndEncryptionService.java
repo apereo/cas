@@ -48,7 +48,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
         if (signingKey instanceof EllipticCurveJsonWebKey) {
             defaultAlgorithm = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;
         }
-        return StringUtils.defaultString(signingKey.getAlgorithm(), defaultAlgorithm);
+        return StringUtils.defaultIfBlank(signingKey.getAlgorithm(), defaultAlgorithm);
     }
 
     /**

@@ -118,7 +118,7 @@ public class CookieUtils {
         final CookieProperties cookie) {
         return CookieGenerationContext.builder()
             .name(cookie.getName())
-            .path(StringUtils.defaultString(cookie.getPath(), "/"))
+            .path(StringUtils.defaultIfBlank(cookie.getPath(), "/"))
             .maxAge(cookie.getMaxAge())
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())

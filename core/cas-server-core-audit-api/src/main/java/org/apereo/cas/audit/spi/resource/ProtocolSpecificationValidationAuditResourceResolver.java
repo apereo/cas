@@ -33,9 +33,9 @@ public class ProtocolSpecificationValidationAuditResourceResolver extends Parame
         Arrays.stream(args).forEach(arg -> {
             if (arg instanceof final HttpServletRequest request) {
                 results.put(CasProtocolConstants.PARAMETER_RENEW,
-                    StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_RENEW), "false"));
+                    StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_RENEW), "false"));
                 results.put(CasProtocolConstants.PARAMETER_GATEWAY,
-                    StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_GATEWAY), "false"));
+                    StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_GATEWAY), "false"));
             }
             if (arg instanceof final Assertion assertion) {
                 val authn = assertion.getPrimaryAuthentication();

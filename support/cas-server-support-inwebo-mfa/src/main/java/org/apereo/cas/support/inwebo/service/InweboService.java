@@ -19,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
 import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
 
@@ -178,7 +178,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
      * @throws Exception the exception
      */
     JsonNode call(final String url) throws Exception {
-        val conn = (HttpURLConnection) new URL(url).openConnection();
+        val conn = (HttpURLConnection) new URI(url).toURL().openConnection();
         if (conn instanceof final HttpsURLConnection urlConnection) {
             urlConnection.setSSLSocketFactory(this.context.getSocketFactory());
         }

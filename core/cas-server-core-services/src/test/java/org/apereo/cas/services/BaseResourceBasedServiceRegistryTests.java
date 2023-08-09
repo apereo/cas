@@ -3,11 +3,11 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -49,7 +49,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     @ParameterizedTest
     @MethodSource("getParameters")
     public void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        val r = buildRegisteredServiceInstance(org.apereo.cas.util.RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
         assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(r));
     }

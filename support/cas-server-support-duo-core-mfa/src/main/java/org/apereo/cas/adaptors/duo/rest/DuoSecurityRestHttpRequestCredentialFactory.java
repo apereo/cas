@@ -53,7 +53,7 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
         val username = FunctionUtils.throwIfBlank(requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
         val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_PASSCODE));
 
-        val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
+        val providerId = StringUtils.defaultIfBlank(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         val source = new DuoSecurityPasscodeCredential(username, token, providerId);
         source.setCredentialMetadata(new BasicCredentialMetadata(source));

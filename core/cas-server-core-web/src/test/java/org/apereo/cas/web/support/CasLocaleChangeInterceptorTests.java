@@ -101,7 +101,7 @@ class CasLocaleChangeInterceptorTests {
         val resolver = new SessionLocaleResolver();
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
         getInterceptor(false).preHandle(request, response, new Object());
-        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+        assertEquals(Locale.of("pt", "BR"), resolver.resolveLocale(request));
     }
 
     @Test
@@ -112,7 +112,7 @@ class CasLocaleChangeInterceptorTests {
         val resolver = new SessionLocaleResolver();
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
         getInterceptor(false).preHandle(request, response, new Object());
-        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+        assertEquals(Locale.of("pt", "BR"), resolver.resolveLocale(request));
     }
 
     @Test

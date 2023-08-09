@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class CasSSLContextTests {
     private static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
-        val url = new URL(addr);
+        val url = new URI(addr).toURL();
         val connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setHostnameVerifier(NoopHostnameVerifier.INSTANCE);

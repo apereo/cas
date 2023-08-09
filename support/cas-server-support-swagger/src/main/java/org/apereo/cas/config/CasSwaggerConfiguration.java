@@ -40,8 +40,8 @@ public class CasSwaggerConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                val apiDocs = StringUtils.defaultString(springDocConfigProperties.getApiDocs().getPath(), "/v3/api-docs");
-                val swaggerUI = StringUtils.defaultString(swaggerUiConfigProperties.getPath(), "/swagger-ui");
+                val apiDocs = StringUtils.defaultIfBlank(springDocConfigProperties.getApiDocs().getPath(), "/v3/api-docs");
+                val swaggerUI = StringUtils.defaultIfBlank(swaggerUiConfigProperties.getPath(), "/swagger-ui");
                 return List.of(apiDocs, swaggerUI);
             }
         };

@@ -36,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -164,7 +164,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 val registeredService = serviceValidateConfigurationContext.getServicesManager()
                     .findServiceBy(service, CasModelRegisteredService.class);
                 verifyRegisteredServiceProperties(registeredService, service);
-                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
+                return new HttpBasedServiceCredential(new URI(pgtUrl).toURL(), registeredService);
             } catch (final Exception e) {
                 LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
                 LoggingUtils.error(LOGGER, e);

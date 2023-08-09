@@ -24,7 +24,7 @@ env:
   ADFS_PASSWORD: ${{ secrets.ADFS_PASSWORD }}
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
-  JDK_CURRENT: 21
+  JDK_CURRENT: 21-ea
   NODE_CURRENT: '19'
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
   JDK_JAVA_OPTIONS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"

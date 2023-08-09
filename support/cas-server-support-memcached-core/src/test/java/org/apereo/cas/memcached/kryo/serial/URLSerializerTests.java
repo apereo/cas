@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class URLSerializerTests {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);
-            kryo.writeObject(output, new URL("https://github.com"));
+            kryo.writeObject(output, new URI("https://github.com").toURL());
             val inputStream = new ByteArrayInputStream(output.toBytes());
             assertNotNull(kryo.readObject(new Input(inputStream), URL.class));
         }

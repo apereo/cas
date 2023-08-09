@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * This is {@link AmazonCognitoAuthenticationConfiguration}.
@@ -112,7 +112,7 @@ public class AmazonCognitoAuthenticationConfiguration {
             (int) Beans.newDuration(cognito.getSocketTimeout()).toMillis());
         val region = StringUtils.defaultIfBlank(cognito.getRegion(), Region.AWS_GLOBAL.id());
         val url = String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", region, cognito.getUserPoolId());
-        val jwkSetURL = new URL(url);
+        val jwkSetURL = new URI(url).toURL();
         val keySource = new RemoteJWKSet(jwkSetURL, resourceRetriever);
         val jwtProcessor = new DefaultJWTProcessor();
         val keySelector = new JWSVerificationKeySelector(JWSAlgorithm.RS256, keySource);

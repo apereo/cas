@@ -73,7 +73,7 @@ class LdaptiveResourceCRLFetcherTests {
         val operation = mock(SearchOperation.class);
         val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
         assertNull(fetcher.fetch(new URI("https://github.com")));
-        assertNull(fetcher.fetch(new URL("https://github.com")));
+        assertNull(fetcher.fetch(new URI("https://github.com").toURL()));
         assertNull(fetcher.fetch("https://github.com"));
     }
 

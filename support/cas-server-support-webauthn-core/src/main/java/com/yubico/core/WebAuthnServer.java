@@ -25,7 +25,6 @@
 package com.yubico.core;
 
 import org.apereo.cas.util.RandomUtils;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -65,7 +64,6 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -73,7 +71,6 @@ import java.security.cert.X509Certificate;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -103,8 +100,7 @@ public class WebAuthnServer {
     }
 
     public Either<String, RegistrationRequest> startRegistration(
-        @NonNull
-        final String username,
+        @NonNull final String username,
         final Optional<String> displayName,
         final Optional<String> credentialNickname,
         final ResidentKeyRequirement residentKeyRequirement,
@@ -151,7 +147,7 @@ public class WebAuthnServer {
 
     public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(final String responseJson) {
         LOGGER.trace("finishRegistration responseJson: {}", responseJson);
-        RegistrationResponse response = null;
+        RegistrationResponse response;
         try {
             response = jsonMapper.readValue(responseJson, RegistrationResponse.class);
         } catch (final IOException e) {
@@ -164,7 +160,7 @@ public class WebAuthnServer {
 
         if (request == null) {
             LOGGER.debug("fail finishRegistration responseJson: {}", responseJson);
-            return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
+            return Either.left(List.of("Registration failed!", "No such registration in progress."));
         } else {
             try {
                 val registration = rp.finishRegistration(
@@ -214,31 +210,23 @@ public class WebAuthnServer {
                 );
             } catch (final RegistrationFailedException e) {
                 LOGGER.debug("fail finishRegistration responseJson: {}", responseJson, e);
-                return Either.left(Arrays.asList("Registration failed", e.getMessage()));
+                return Either.left(List.of("Registration failed", e.getMessage()));
             } catch (final Exception e) {
                 LOGGER.error("fail finishRegistration responseJson: {}", responseJson, e);
-                return Either.left(Arrays.asList("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
+                return Either.left(List.of("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
         }
     }
 
     public Either<List<String>, AssertionRequestWrapper> startAuthentication(final Optional<String> username) {
-        LOGGER.trace("startAuthentication username: {}", username);
-
         if (username.isPresent() && !userStorage.userExists(username.get())) {
-            return Either.left(Collections.singletonList("The username \"" + username.get() + "\" is not registered."));
+            return Either.left(List.of("The username " + username.get() + " is not registered."));
         } else {
             var request = new AssertionRequestWrapper(
                 generateRandom(),
-                rp.startAssertion(
-                    StartAssertionOptions.builder()
-                        .username(username)
-                        .build()
-                )
+                rp.startAssertion(StartAssertionOptions.builder().username(username).build())
             );
-
             assertRequestStorage.put(request.getRequestId(), request);
-
             return Either.right(request);
         }
     }
@@ -249,53 +237,54 @@ public class WebAuthnServer {
             response = jsonMapper.readValue(responseJson, AssertionResponse.class);
         } catch (final IOException e) {
             LOGGER.debug("Failed to decode response object", e);
-            return Either.left(Arrays.asList("Assertion failed!", "Failed to decode response object.", e.getMessage()));
+            return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
         val request = assertRequestStorage.getIfPresent(response.requestId());
         assertRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
-            return Either.left(Arrays.asList("Assertion failed!", "No such assertion in progress."));
+            return Either.left(List.of("Assertion failed!", "No such assertion in progress."));
         } else {
             try {
-                val result = rp.finishAssertion(
+                val assertionResult = rp.finishAssertion(
                     FinishAssertionOptions.builder()
                         .request(request.getRequest())
                         .response(response.credential())
                         .build()
                 );
 
-                if (result.isSuccess()) {
+                if (assertionResult.isSuccess()) {
                     try {
-                        userStorage.updateSignatureCount(result);
+                        userStorage.updateSignatureCount(assertionResult);
                     } catch (final Exception e) {
                         LOGGER.error(
                             "Failed to update signature count for user \"{}\", credential \"{}\"",
-                            result.getUsername(),
+                            assertionResult.getUsername(),
                             response.credential().getId(),
                             e
                         );
                     }
 
+                    val session = sessions.createSession(assertionResult.getCredential().getUserHandle());
                     return Either.right(
                         new SuccessfulAuthenticationResult(
                             request,
                             response,
-                            userStorage.getRegistrationsByUsername(result.getUsername()),
-                            result.getUsername(),
-                            sessions.createSession(result.getUserHandle())
+                            userStorage.getRegistrationsByUsername(assertionResult.getUsername()),
+                            assertionResult.getUsername(),
+                            session
                         )
                     );
                 } else {
-                    return Either.left(Collections.singletonList("Assertion failed: Invalid assertion."));
+                    return Either.left(List.of("Assertion failed: Invalid assertion."));
                 }
             } catch (final AssertionFailedException e) {
                 LOGGER.debug("Assertion failed", e);
-                return Either.left(Arrays.asList("Assertion failed!", e.getMessage()));
+                return Either.left(List.of("Assertion failed!", e.getMessage()));
             } catch (final Exception e) {
                 LOGGER.error("Assertion failed", e);
-                return Either.left(Arrays.asList("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
+                return Either.left(List.of("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
         }
     }
@@ -410,7 +399,7 @@ public class WebAuthnServer {
         boolean accountDeleted;
     }
 
-    private static final class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
+    private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
         @Override
         public void serialize(final AuthenticatorData value, final JsonGenerator gen,
                               final SerializerProvider serializers) throws IOException {
@@ -453,7 +442,8 @@ public class WebAuthnServer {
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
                 .flatMap(cert -> {
-                    if (rp.getAttestationTrustSource().get() instanceof final AttestationMetadataSource source) {
+                    if (rp.getAttestationTrustSource().isPresent() &&
+                        rp.getAttestationTrustSource().get() instanceof final AttestationMetadataSource source) {
                         return source.findMetadata(cert);
                     }
                     return Optional.empty();

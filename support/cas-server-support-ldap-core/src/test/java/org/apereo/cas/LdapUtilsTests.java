@@ -26,7 +26,7 @@ import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.io.Serial;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.Arrays;
@@ -79,7 +79,7 @@ class LdapUtilsTests {
 
     @Test
     void verifyEntry() throws Exception {
-        assertFalse(LdapUtils.isLdapConnectionUrl(new URL("https://github.com")));
+        assertFalse(LdapUtils.isLdapConnectionUrl(new URI("https://github.com").toURL()));
         assertFalse(LdapUtils.containsResultEntry(null));
     }
 

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setPattern("***");
         assertFalse(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
-            new URL("https://github.com/apereo/cas")));
+            new URI("https://github.com/apereo/cas").toURL()));
     }
 
     @Test
@@ -49,7 +49,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
         policy.setPattern("https://github.com/apereo/cas");
         policy.setExactMatch(true);
         assertTrue(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
-            new URL("https://github.com/apereo/cas")));
+            new URI("https://github.com/apereo/cas").toURL()));
     }
 
     @Test
@@ -57,6 +57,6 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setUseServiceId(true);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("^https:.+/apereo/cas");
-        assertTrue(policy.isAllowedProxyCallbackUrl(registeredService, new URL("https://github.com/apereo/cas")));
+        assertTrue(policy.isAllowedProxyCallbackUrl(registeredService, new URI("https://github.com/apereo/cas").toURL()));
     }
 }

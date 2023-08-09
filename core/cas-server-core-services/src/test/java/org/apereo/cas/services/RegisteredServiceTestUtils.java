@@ -25,9 +25,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,8 +58,8 @@ public class RegisteredServiceTestUtils {
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
             val service = (CasModelRegisteredService) RegisteredServiceTestUtils.getRegisteredService(url);
-            return new HttpBasedServiceCredential(new URL(url), service);
-        } catch (final MalformedURLException e) {
+            return new HttpBasedServiceCredential(new URI(url).toURL(), service);
+        } catch (final Exception e) {
             throw new IllegalArgumentException();
         }
     }
