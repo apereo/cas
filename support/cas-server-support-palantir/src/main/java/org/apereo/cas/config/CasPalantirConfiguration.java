@@ -5,13 +5,19 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.palantir.controller.DashboardController;
 import org.apereo.cas.palantir.controller.SchemaController;
+import org.apereo.cas.palantir.controller.ServicesController;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -44,6 +50,14 @@ public class CasPalantirConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "palantirServicesController")
+    public ServicesController palantirServicesController(@Qualifier(ServicesManager.BEAN_NAME)
+                                                         final ObjectProvider<ServicesManager> servicesManager,
+                                                         final ConfigurableApplicationContext applicationContext) {
+        return new ServicesController(servicesManager, new RegisteredServiceJsonSerializer(applicationContext));
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "palantirWebMvcConfigurer")
     public WebMvcConfigurer palantirWebMvcConfigurer(final CasConfigurationProperties casProperties) {
         return new WebMvcConfigurer() {
@@ -54,7 +68,7 @@ public class CasPalantirConfiguration {
             }
         };
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "palantirEndpointWebSecurityConfigurer")
     public CasWebSecurityConfigurer<HttpSecurity> palantirEndpointWebSecurityConfigurer() {
