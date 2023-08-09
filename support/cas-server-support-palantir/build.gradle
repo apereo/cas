@@ -88,6 +88,7 @@ tasks.register("build-ui", NpxTask) {
         'client/package.json',
         'client/vite.config.js'
     )
+    outputs.dir(new File(project.projectDir, "src/main/resources/static/assets"))
     environment = ["BUILD_PATH": "${buildDir}"]
 }
-processResources.finalizedBy(tasks.named("build-ui"))
+processResources.dependsOn(tasks.named("build-ui"))
