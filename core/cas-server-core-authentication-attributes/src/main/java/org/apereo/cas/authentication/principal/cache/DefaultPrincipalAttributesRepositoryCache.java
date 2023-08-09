@@ -47,7 +47,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
     private static Cache<String, Map<String, List<Object>>> initializeCache(
         final RegisteredServicePrincipalAttributesRepository repository) {
         val cachedRepository = CachingPrincipalAttributesRepository.class.cast(repository);
-        val unit = TimeUnit.valueOf(StringUtils.defaultString(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
+        val unit = TimeUnit.valueOf(StringUtils.defaultIfBlank(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
             .initialCapacity(DEFAULT_MAXIMUM_CACHE_SIZE)
             .maximumSize(DEFAULT_MAXIMUM_CACHE_SIZE)

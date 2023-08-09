@@ -15,7 +15,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,7 +45,7 @@ class CasThymeleafTemplatesDirectorTests {
 
         val director = new CasThymeleafTemplatesDirector(plan);
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
-        assertNotNull(director.getUrlExternalForm(new URL(RegisteredServiceTestUtils.CONST_TEST_URL)));
+        assertNotNull(director.getUrlExternalForm(new URI(RegisteredServiceTestUtils.CONST_TEST_URL).toURL()));
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));

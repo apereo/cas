@@ -19,8 +19,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.context.ApplicationEventPublisher;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -70,8 +69,8 @@ public class CoreAuthenticationTestUtils {
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url), getRegisteredService(url));
-        } catch (final MalformedURLException e) {
+            return new HttpBasedServiceCredential(new URI(url).toURL(), getRegisteredService(url));
+        } catch (final Exception e) {
             throw new IllegalArgumentException();
         }
     }

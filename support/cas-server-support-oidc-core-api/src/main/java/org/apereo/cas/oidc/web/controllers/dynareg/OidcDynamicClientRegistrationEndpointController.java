@@ -94,7 +94,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             LoggingUtils.error(LOGGER, e);
             val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
-            map.put("error_description", StringUtils.defaultString(e.getMessage(), "None"));
+            map.put("error_description", StringUtils.defaultIfBlank(e.getMessage(), "None"));
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
         }
     }

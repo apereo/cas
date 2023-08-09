@@ -8,7 +8,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 
 import java.net.InetAddress;
-import java.net.URL;
+import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -29,7 +29,7 @@ public class InetAddressUtils {
      */
     public static InetAddress getByName(final String urlAddr) {
         return FunctionUtils.doAndHandle(() -> {
-            val url = new URL(urlAddr);
+            val url = new URI(urlAddr).toURL();
             return InetAddress.getAllByName(url.getHost())[0];
         }, e -> {
             LOGGER.trace("Host name could not be determined automatically.", e);

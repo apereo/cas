@@ -62,9 +62,9 @@ public class SystemUtils {
 
         val info = new LinkedHashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
 
-        info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
-        info.put("CAS Branch", StringUtils.defaultString(GIT_PROPERTIES.getBranch(), "master"));
-        info.put("CAS Commit Id", StringUtils.defaultString(GIT_PROPERTIES.getCommitId(), "Not Available"));
+        info.put("CAS Version", StringUtils.defaultIfBlank(CasVersion.getVersion(), "Not Available"));
+        info.put("CAS Branch", StringUtils.defaultIfBlank(GIT_PROPERTIES.getBranch(), "master"));
+        info.put("CAS Commit Id", StringUtils.defaultIfBlank(GIT_PROPERTIES.getCommitId(), "Not Available"));
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());

@@ -78,7 +78,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -390,7 +390,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             return plan -> casProperties.getAuthn().getMfa().getDuo().stream()
                 .filter(duo -> StringUtils.isNotBlank(duo.getRegistration().getRegistrationUrl()))
                 .forEach(duo -> {
-                    val serviceId = FunctionUtils.doUnchecked(() -> new URL(duo.getRegistration().getRegistrationUrl()).getHost());
+                    val serviceId = FunctionUtils.doUnchecked(() -> new URI(duo.getRegistration().getRegistrationUrl()).toURL().getHost());
                     val service = new CasRegisteredService();
                     service.setId(RandomUtils.nextLong());
                     service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);

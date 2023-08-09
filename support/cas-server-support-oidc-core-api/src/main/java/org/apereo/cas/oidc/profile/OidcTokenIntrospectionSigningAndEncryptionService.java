@@ -40,7 +40,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        return StringUtils.defaultString(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.RSA_USING_SHA512);
+        return StringUtils.defaultIfBlank(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.RSA_USING_SHA512);
     }
 
     @Override

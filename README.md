@@ -92,13 +92,13 @@ of [volunteers and contributors][githubcontributors]. Support options may be [fo
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
-[maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
+[maintenance]: https://apereo.github.io/cas/development/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
 [githubreleases]: https://github.com/apereo/cas/releases
 [gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
-[contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
+[contribute]: https://apereo.github.io/cas/development/developer/Contributor-Guidelines.html
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases
@@ -106,6 +106,6 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
-[casbuildprocess]: https://apereo.github.io/cas/developer/Build-Process.html
+[casbuildprocess]: https://apereo.github.io/cas/development/developer/Build-Process.html
 [githubcontributors]: https://github.com/apereo/cas/graphs/contributors
 [casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas/cas-server-core

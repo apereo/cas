@@ -78,7 +78,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the string value
      */
     private static String getLocalizedValues(final String locale, final List<?> items) {
-        val foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
+        val foundLocale = findLocale(StringUtils.defaultIfBlank(locale, "en"), items);
         if (foundLocale.isPresent()) {
             return foundLocale.get();
         }

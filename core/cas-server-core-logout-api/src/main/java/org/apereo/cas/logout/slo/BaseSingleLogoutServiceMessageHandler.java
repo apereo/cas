@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -157,7 +157,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .ticketId(ticketId)
             .service(selectedService)
-            .logoutUrl(FunctionUtils.doUnchecked(() -> new URL(logoutUrl.getUrl())))
+            .logoutUrl(FunctionUtils.doUnchecked(() -> new URI(logoutUrl.getUrl()).toURL()))
             .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
             .executionRequest(context)

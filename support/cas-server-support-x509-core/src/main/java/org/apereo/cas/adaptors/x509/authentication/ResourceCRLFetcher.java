@@ -46,7 +46,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
 
     @Override
     public X509CRL fetch(final String crl) throws Exception {
-        return fetch(new URL(crl));
+        return fetch(new URI(crl).toURL());
     }
 
     @Override

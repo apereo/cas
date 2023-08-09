@@ -58,7 +58,7 @@ Note that Spring Framework `6.1` provides a first-class experience on JDK `21` a
 runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of
 Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
 
-As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
+As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline 
 in the next few release candidates.
 
 ### Graal VM Native Images
@@ -73,6 +73,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ## Other Stuff
                           
 - U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2002.
+- Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
 
 ## Library Upgrades
    

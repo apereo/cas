@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,15 +37,15 @@ class HttpBasedServiceCredentialTests {
     @Test
     void verifyEqualsWithNull() throws Exception {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
-        val c = new HttpBasedServiceCredential(new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL), registeredService);
+        val c = new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(), registeredService);
         assertNotEquals(null, c);
     }
 
     @Test
     void verifyEqualsWithFalse() throws Exception {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
-        val c = new HttpBasedServiceCredential(new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL), registeredService);
-        val c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"), registeredService);
+        val c = new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(), registeredService);
+        val c2 = new HttpBasedServiceCredential(new URI("http://www.msn.com").toURL(), registeredService);
         assertNotEquals(c2, c);
         assertNotEquals(new Object(), c);
     }
@@ -62,11 +62,10 @@ class HttpBasedServiceCredentialTests {
     }
 
     @Test
-    void verifySerializeAnHttpBasedServiceCredentialToJson() throws IOException {
+    void verifySerializeAnHttpBasedServiceCredentialToJson() throws Exception {
         val credentialMetaDataWritten =
-            new HttpBasedServiceCredential(new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL),
+            new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(),
                 RegisteredServiceTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL));
-
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, HttpBasedServiceCredential.class);
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);

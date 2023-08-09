@@ -37,7 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * This is {@link AuthyAuthenticationEventExecutionPlanConfiguration}.
@@ -63,7 +63,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             .supply(Unchecked.supplier(() -> {
                 val properties = casProperties.getAuthn().getMfa().getAuthy();
                 val authyUrl = StringUtils.defaultIfBlank(properties.getApiUrl(), AuthyApiClient.DEFAULT_API_URI);
-                val url = new URL(authyUrl);
+                val url = new URI(authyUrl).toURL();
                 val testFlag = "http".equalsIgnoreCase(url.getProtocol());
                 val authyClient = new AuthyApiClient(properties.getApiKey(), authyUrl, testFlag);
                 return new DefaultAuthyClientInstance(authyClient, properties);

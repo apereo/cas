@@ -21,7 +21,7 @@ public abstract class BaseCasNativeImageFeature implements Feature {
      */
     protected static boolean getBooleanOption(final String name, final boolean defaultValue) {
         val prop = System.getProperty(name);
-        return BooleanUtils.toBoolean(StringUtils.defaultString(prop, Boolean.toString(defaultValue)));
+        return BooleanUtils.toBoolean(StringUtils.defaultIfBlank(prop, Boolean.toString(defaultValue)));
     }
 
     /**

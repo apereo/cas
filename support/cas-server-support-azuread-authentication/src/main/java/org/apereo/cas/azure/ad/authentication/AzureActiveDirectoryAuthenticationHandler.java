@@ -29,7 +29,7 @@ import org.springframework.http.MediaType;
 
 import javax.security.auth.login.FailedLoginException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
     }
 
     private String getUserInfoFromGraph(final IAuthenticationResult authenticationResult, final String username) throws Exception {
-        val url = new URL(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username);
+        val url = new URI(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username).toURL();
         val conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");

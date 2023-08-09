@@ -81,8 +81,8 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
             val fgaApiUrl = String.format("%s/stores/%s/check", url, store);
 
             val checkEntity = AuthorizationRequestEntity.builder()
-                .object(StringUtils.defaultString(this.object, request.getService().getId()))
-                .relation(StringUtils.defaultString(this.relation, "owner"))
+                .object(StringUtils.defaultIfBlank(this.object, request.getService().getId()))
+                .relation(StringUtils.defaultIfBlank(this.relation, "owner"))
                 .user(request.getPrincipalId())
                 .build()
                 .toJson();

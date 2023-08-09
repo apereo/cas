@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -66,7 +66,7 @@ class FrontChannelLogoutActionTests {
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
                 .ticketId(id)
                 .status(LogoutRequestStatus.NOT_ATTEMPTED)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .build();
 
             WebUtils.putLogoutRequests(context, List.of(sloReq));
@@ -102,7 +102,7 @@ class FrontChannelLogoutActionTests {
                     .build())
                 .logoutType(RegisteredServiceLogoutType.NONE)
                 .ticketId(id)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .status(LogoutRequestStatus.SUCCESS)
                 .build();
 
@@ -129,7 +129,7 @@ class FrontChannelLogoutActionTests {
                     .build())
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
                 .ticketId(id)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .status(LogoutRequestStatus.NOT_ATTEMPTED)
                 .build();
 

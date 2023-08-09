@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,14 +59,10 @@ class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDoesntSupportBadUserCredentials() {
-        try {
-            assertFalse(getAuthenticationHandler()
-                .supports(new HttpBasedServiceCredential(new URL("http://www.rutgers.edu"),
-                    CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
-        } catch (final MalformedURLException e) {
-            throw new AssertionError("Could not resolve URL.", e);
-        }
+    void verifyDoesntSupportBadUserCredentials() throws Exception {
+        assertFalse(getAuthenticationHandler()
+            .supports(new HttpBasedServiceCredential(new URI("http://www.rutgers.edu").toURL(),
+                CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
     }
 
     @Test

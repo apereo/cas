@@ -23,7 +23,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -59,10 +59,10 @@ public class ValidateEndpointCommand {
     }
 
     private static URLConnection createConnection(final String url, final String proxy) throws Exception {
-        val constructedUrl = new URL(url);
+        val constructedUrl = new URI(url).toURL();
         return FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
                 Unchecked.supplier(() -> {
-                    val proxyUrl = new URL(proxy);
+                    val proxyUrl = new URI(proxy).toURL();
                     LOGGER.info("Using proxy address [{}]", proxy);
                     val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
                     return constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 
@@ -87,7 +87,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         val url = builder.determineLogoutUrl(svc, getService("https://www.somewhere.com/logout?p=v"));
-        assertEquals(new URL("https://www.somewhere.com/logout?p=v").toExternalForm(), url.iterator().next().getUrl());
+        assertEquals(new URI("https://www.somewhere.com/logout?p=v").toURL().toExternalForm(), url.iterator().next().getUrl());
     }
 
     @Test
@@ -114,7 +114,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(new URL("https://localhost/logout?p=v").toExternalForm(), url.iterator().next().getUrl());
+        assertEquals(new URI("https://localhost/logout?p=v").toURL().toExternalForm(), url.iterator().next().getUrl());
     }
 
     @Test
@@ -123,7 +123,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(new URL("https://localhost/logout?p=v").toExternalForm(), url.iterator().next().getUrl());
+        assertEquals(new URI("https://localhost/logout?p=v").toURL().toExternalForm(), url.iterator().next().getUrl());
     }
 
     @Test
@@ -132,7 +132,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true, "\\d*", true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(new URL("https://localhost/logout?p=v").toExternalForm(), url.iterator().next().getUrl());
+        assertEquals(new URI("https://localhost/logout?p=v").toURL().toExternalForm(), url.iterator().next().getUrl());
     }
 
     @Test

@@ -9,7 +9,7 @@ env:
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   TERM: xterm-256color
-  JDK_CURRENT: 21
+  JDK_CURRENT: 21-ea
 
 ##########################################################################
 

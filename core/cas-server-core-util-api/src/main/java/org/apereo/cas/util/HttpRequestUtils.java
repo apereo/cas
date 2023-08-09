@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +177,7 @@ public class HttpRequestUtils {
      */
     public static HttpStatus pingUrl(final String location) {
         try {
-            val url = new URL(location);
+            val url = new URI(location).toURL();
             val connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(PING_URL_TIMEOUT);
             connection.setReadTimeout(PING_URL_TIMEOUT);

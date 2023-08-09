@@ -13,7 +13,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   CAS_PROJECT_DB_URL_ENDPOINT: ${{ secrets.CAS_PROJECT_DB_URL_ENDPOINT }}
   CAS_PROJECT_DB_API_KEY: ${{ secrets.CAS_PROJECT_DB_API_KEY }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 21-ea
 
 ##########################################################################
 

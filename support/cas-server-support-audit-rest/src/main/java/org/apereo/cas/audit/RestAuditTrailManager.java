@@ -55,7 +55,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         try {
             val auditJson = serializer.toString(audit);
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
-                "userAgent", StringUtils.defaultString(audit.getClientInfo().getUserAgent(), "N/A"));
+                "userAgent", StringUtils.defaultIfBlank(audit.getClientInfo().getUserAgent(), "N/A"));
             headers.putAll(properties.getHeaders());
 
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());

@@ -133,6 +133,7 @@ OAuth Token Introspection responses can now be [produced as JWTs](../authenticat
 - [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support RSA public/private keypairs.
 - CAS is now able to conditionally geolocate client sessions when building and pinning [SSO Cookies](../authentication/Configuring-SSO-Cookie.html).
 - [Memcached functionality and overall support](../ticketing/Memcached-Ticket-Registry.html) is now deprecated, and is scheduled to be removed in future releases.
+- CAS server is now able to act as a [Spring Boot Admin Server](../monitoring/Configuring-SpringBootAdmin.html) itself. 
 
 ## Library Upgrades
 

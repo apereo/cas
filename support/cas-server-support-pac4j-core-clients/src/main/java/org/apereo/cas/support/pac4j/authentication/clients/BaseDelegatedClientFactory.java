@@ -146,7 +146,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
             __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
 
-        val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+        val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
         LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
 

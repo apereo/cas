@@ -35,6 +35,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
@@ -44,6 +45,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
+import org.apereo.cas.config.SamlIdPThrottleConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -349,11 +351,14 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreHttpConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreMonitorConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
+        CasThrottlingConfiguration.class,
         SamlIdPConfiguration.class,
+        SamlIdPThrottleConfiguration.class,
         SamlIdPMonitoringConfiguration.class,
         SamlIdPComponentSerializationConfiguration.class,
         SamlIdPTicketCatalogConfiguration.class,
@@ -363,7 +368,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
-        CasCoreAuditConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,

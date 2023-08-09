@@ -23,6 +23,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
@@ -74,7 +75,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-saml")
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-consent-core")
-
+    testImplementation project(":support:cas-server-support-throttle")
+    
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

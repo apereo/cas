@@ -18,7 +18,7 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,12 +62,12 @@ class EncryptedTranscoderTests {
                 + "new nation conceived in liberty and dedicated to the proposition that all men "
                 + "are created equal."),
             Arguments.arguments(transcoder2,
-                new URL("https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
+                new URI("https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
                         + "q=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&aq=&"
                         + "sll=38.897678,-77.036517&sspn=0.00835,0.007939&vpsrc=6&t=w&"
                         + "g=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&ie=UTF8&hq=&"
                         + "hnear=1600+Pennsylvania+Ave+NW,+Washington,+District+of+Columbia,+20500&"
-                        + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A"))
+                        + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A").toURL())
         );
     }
 

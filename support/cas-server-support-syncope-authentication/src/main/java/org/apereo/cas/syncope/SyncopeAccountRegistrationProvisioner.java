@@ -94,6 +94,6 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
     }
 
     protected String getSyncopeRealm(final AccountRegistrationRequest request) {
-        return StringUtils.defaultString(request.getProperty("realm", String.class), properties.getRealm());
+        return StringUtils.defaultIfBlank(request.getProperty("realm", String.class), properties.getRealm());
     }
 }

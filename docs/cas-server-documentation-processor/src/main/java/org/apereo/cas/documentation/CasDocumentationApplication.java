@@ -735,8 +735,8 @@ public class CasDocumentationApplication {
                     var requestParamAnn = parameter.getAnnotation(RequestParam.class);
                     if (requestParamAnn != null) {
                         var paramData = new LinkedHashMap<String, Object>();
-                        var name = StringUtils.defaultString(requestParamAnn.name(), requestParamAnn.value());
-                        name = StringUtils.defaultString(name, parameter.getName());
+                        var name = StringUtils.defaultIfBlank(requestParamAnn.name(), requestParamAnn.value());
+                        name = StringUtils.defaultIfBlank(name, parameter.getName());
                         paramData.put("name", name);
                         paramData.put("description", "Request query parameter");
                         paramData.put("required", requestParamAnn.required());

@@ -35,6 +35,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
+import org.apereo.cas.config.SamlIdPThrottleConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
@@ -79,6 +80,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         SamlIdPConfiguration.class,
+        SamlIdPThrottleConfiguration.class,
         SamlIdPMonitoringConfiguration.class,
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,

@@ -19,8 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -54,14 +53,10 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDoesNotSupportBadUserCredentials() {
-        try {
-            val credential = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
-            assertFalse(authenticationHandler.supports(credential));
-        } catch (final MalformedURLException e) {
-            throw new AssertionError("MalformedURLException caught.");
-        }
+    void verifyDoesNotSupportBadUserCredentials() throws Exception {
+        val credential = new HttpBasedServiceCredential(
+            new URI("http://www.rutgers.edu").toURL(), CoreAuthenticationTestUtils.getRegisteredService());
+        assertFalse(authenticationHandler.supports(credential));
     }
 
     @Test

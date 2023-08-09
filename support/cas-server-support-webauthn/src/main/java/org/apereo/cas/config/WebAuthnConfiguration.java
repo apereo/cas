@@ -76,7 +76,7 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedHashSet;
@@ -134,7 +134,7 @@ public class WebAuthnConfiguration {
                     if (StringUtils.isNotBlank(fidoProperties.getLegalHeader())
                         && StringUtils.isNotBlank(fidoProperties.getMetadataBlobUrl())
                         && StringUtils.isNotBlank(fidoProperties.getTrustRootUrl())) {
-                        val trustRootUrl = new URL(fidoProperties.getTrustRootUrl());
+                        val trustRootUrl = new URI(fidoProperties.getTrustRootUrl()).toURL();
                         val trustRootUrlHashes = org.springframework.util.StringUtils.commaDelimitedListToSet(fidoProperties.getTrustRootHash())
                             .stream()
                             .map(Unchecked.function(ByteArray::fromHex))
@@ -144,7 +144,7 @@ public class WebAuthnConfiguration {
                             .expectLegalHeader(fidoProperties.getLegalHeader())
                             .downloadTrustRoot(trustRootUrl, trustRootUrlHashes)
                             .useTrustRootCacheFile(fidoProperties.getTrustRootCacheFile())
-                            .downloadBlob(new URL(fidoProperties.getMetadataBlobUrl()))
+                            .downloadBlob(new URI(fidoProperties.getMetadataBlobUrl()).toURL())
                             .useBlobCacheFile(fidoProperties.getBlobCacheFile())
                             .verifyDownloadsOnly(true)
                             .clock(Clock.systemUTC())
@@ -238,10 +238,10 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager) throws Exception {
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val serverName = casProperties.getServer().getName();
-            val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), serverName));
+            val appId = new AppId(StringUtils.defaultIfBlank(webAuthn.getApplicationId(), serverName));
             val defaultRelyingPartyId = RelyingPartyIdentity.builder()
-                .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(serverName).getHost()))
-                .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), "CAS")).build();
+                .id(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyId(), new URI(serverName).toURL().getHost()))
+                .name(StringUtils.defaultIfBlank(webAuthn.getRelyingPartyName(), "CAS")).build();
             val origins = new LinkedHashSet<String>();
             if (StringUtils.isNotBlank(webAuthn.getAllowedOrigins())) {
                 origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(webAuthn.getAllowedOrigins()));
