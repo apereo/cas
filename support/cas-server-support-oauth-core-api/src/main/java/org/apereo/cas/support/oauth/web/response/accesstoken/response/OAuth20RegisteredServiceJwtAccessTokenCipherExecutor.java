@@ -2,8 +2,11 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
-
+import org.apereo.cas.util.function.FunctionUtils;
+import lombok.val;
 import java.util.Optional;
 
 /**
@@ -58,5 +61,20 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
             return super.getEncryptionKey(registeredService);
         }
         return Optional.empty();
+    }
+
+    @Override
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
+                                                                   final RegisteredService registeredService) {
+        val cipher = super.createCipherExecutorInstance(encryptionKey, signingKey, registeredService);
+        return prepareCipherExecutor(cipher, registeredService);
+    }
+
+    protected JwtTicketCipherExecutor prepareCipherExecutor(final JwtTicketCipherExecutor cipher,
+                                                            final RegisteredService registeredService) {
+        if (registeredService instanceof final OAuthRegisteredService oauthRegisteredService) {
+            FunctionUtils.doIfNotBlank(oauthRegisteredService.getJwtAccessTokenSigningAlg(), cipher::setSigningAlgorithm);
+        }
+        return cipher;
     }
 }

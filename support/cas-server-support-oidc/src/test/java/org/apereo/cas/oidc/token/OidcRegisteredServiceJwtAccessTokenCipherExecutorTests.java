@@ -5,16 +5,14 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -47,6 +45,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     @Test
     void verifyOperationByService() throws Exception {
         val service = getOidcRegisteredService("whatever");
+        service.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA384);
         assertTrue(oidcRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
         val at = getAccessToken(service.getClientId());
         val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
@@ -99,6 +98,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     @Test
     void verifyOAuthService() throws Exception {
         val service = getOAuthRegisteredService(UUID.randomUUID().toString(), RegisteredServiceTestUtils.CONST_TEST_URL);
+        service.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.RSA_USING_SHA384);
         service.getProperties().put(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
         val at = getAccessToken(service.getClientId());
