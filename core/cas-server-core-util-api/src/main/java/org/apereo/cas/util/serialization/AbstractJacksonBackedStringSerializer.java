@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -146,6 +147,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return FunctionUtils.doUnchecked(() -> {
             try (val writer = new StringWriter()) {
                 to(writer, object);
+                return writer.toString();
+            }
+        });
+    }
+
+    @Override
+    public String fromList(final Collection<T> json) {
+        return FunctionUtils.doUnchecked(() -> {
+            try (val writer = new StringWriter()) {
+                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, json);
                 return writer.toString();
             }
         });
