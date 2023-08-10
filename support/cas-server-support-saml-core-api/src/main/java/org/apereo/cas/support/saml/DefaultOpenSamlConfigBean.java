@@ -15,6 +15,7 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.opensaml.xmlsec.config.DecryptionParserPool;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Load the OpenSAML config context.
@@ -41,8 +42,12 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
 
     private final XMLObjectProviderRegistry xmlObjectProviderRegistry;
 
-    public DefaultOpenSamlConfigBean(final @NonNull ParserPool parserPool) {
+    private final ConfigurableApplicationContext applicationContext;
+
+    public DefaultOpenSamlConfigBean(final @NonNull ParserPool parserPool,
+                                     final ConfigurableApplicationContext applicationContext) {
         this.parserPool = parserPool;
+        this.applicationContext = applicationContext;
 
         FunctionUtils.doUnchecked(u -> {
             LOGGER.trace("Initializing OpenSaml configuration...");
