@@ -84,28 +84,26 @@ public class ServiceTicketResource {
         @PathVariable("tgtId")
         final String tgtId) {
         try {
-            val authn = this.ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
+            val authn = ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
-            val service = Objects.requireNonNull(this.argumentExtractor.extractService(httpServletRequest),
+            val service = Objects.requireNonNull(argumentExtractor.extractService(httpServletRequest),
                 "Target service/application is unspecified or unrecognized in the request");
             if (BooleanUtils.toBoolean(httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_RENEW))) {
-                val credential = this.credentialFactory.fromRequest(httpServletRequest, requestBody);
+                val credential = credentialFactory.fromRequest(httpServletRequest, requestBody);
                 if (credential == null || credential.isEmpty()) {
                     throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
                 }
-                val authenticationResult =
-                    authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
-
-                return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+                val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
+                return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
             val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
             val authenticationResult = builder
                 .collect(authn)
-                .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
-            return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+                .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
 
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);

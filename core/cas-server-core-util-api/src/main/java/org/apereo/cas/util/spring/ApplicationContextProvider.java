@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCach
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
@@ -205,9 +206,11 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the message sanitizer
      */
     public static Optional<MessageSanitizer> getMessageSanitizer() {
-        if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
-        }
-        return Optional.empty();
+        return FunctionUtils.doAndHandle(() -> {
+            if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
+                return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
+            }
+            return Optional.<MessageSanitizer>empty();
+        }, e -> Optional.<MessageSanitizer>empty()).get();
     }
 }
