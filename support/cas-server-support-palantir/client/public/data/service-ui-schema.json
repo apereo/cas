@@ -10,7 +10,7 @@
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/evaluationOrder"
+                            "scope": "#/properties/name"
                         }
                     ]
                 }
@@ -25,7 +25,7 @@
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/informationUrl"
+                            "scope": "#/properties/evaluationOrder"
                         }
                     ]
                 }

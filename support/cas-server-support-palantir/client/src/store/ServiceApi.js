@@ -7,6 +7,9 @@ export const serviceApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: `${API_PATH}` }),
     endpoints: (builder) => ({
         getServices: builder.query({
+            query: () => `data/services.json`,
+        }),
+        getService: builder.query({
             query: () => `data/service.json`,
         }),
     }),
@@ -14,4 +17,4 @@ export const serviceApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetServicesQuery } = serviceApi
+export const { useGetServicesQuery, useGetServiceQuery } = serviceApi

@@ -7,24 +7,25 @@ import {
 
 import { store } from './store/store';
 import CasThemeProvider from './theme/CasThemeProvider';
-import Layout from './Layout';
 
-import { dashboardRoutes } from './dashboard/routes';
+import { routes } from './views/Routes';
 
-import { API_PATH } from './App.constant';
+import { APP_PATH } from './App.constant';
 
-const router = createBrowserRouter([
-    ...dashboardRoutes
-]);
+const router = createBrowserRouter(
+    [
+        ...routes
+    ],
+    {
+        basename: `/${APP_PATH}`
+    }
+);
 
 function App() {
     return (
         <Provider store={store}>
             <CasThemeProvider>
-                <Layout>
-                    { API_PATH }
-                    <RouterProvider router={router} />
-                </Layout>
+                <RouterProvider router={router} />
             </CasThemeProvider>
         </Provider>
     )
