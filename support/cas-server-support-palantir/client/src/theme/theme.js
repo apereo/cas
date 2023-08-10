@@ -1,5 +1,5 @@
 import { cyan, teal, grey } from "@mui/material/colors";
-import { alpha } from '@mui/material';
+import { alpha, lighten } from '@mui/material';
 
 export const getDesignTokens = (mode) => ({
     typography: {
@@ -22,12 +22,17 @@ export const getDesignTokens = (mode) => ({
         ...(mode === "light"
             ? {
                   // palette values for light mode
-                  primary: teal,
-                  divider: grey[800],
-                  text: {
-                      primary: grey[900],
-                      secondary: grey[800],
-                  },
+                primary: {
+                    main: '#153e50',
+                    light: '#436473',
+                    dark: '#0e2b38',
+                    contrastText: '#FFFFFF'
+                },
+                divider: grey[800],
+                text: {
+                    primary: grey[900],
+                    secondary: grey[800],
+                },
               }
             : {
                   // palette values for dark mode
