@@ -219,7 +219,7 @@ public class CoreAuthenticationUtils {
      * @return the map
      */
     public static Multimap<String, Object> transformPrincipalAttributesListIntoMultiMap(final List<String> list) {
-        val multimap = ArrayListMultimap.<String, Object>create();
+        val attributes = ArrayListMultimap.<String, Object>create();
         if (list.isEmpty()) {
             LOGGER.debug("No principal attributes are defined");
         } else {
@@ -230,14 +230,14 @@ public class CoreAuthenticationUtils {
                     val name = attrCombo.get(0).trim();
                     val value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
-                    multimap.put(name, value);
+                    attributes.put(name, value);
                 } else {
                     LOGGER.debug("Mapped principal attribute name [{}]", attributeName);
-                    multimap.put(attributeName, attributeName);
+                    attributes.put(attributeName, attributeName);
                 }
             });
         }
-        return multimap;
+        return attributes;
     }
 
 

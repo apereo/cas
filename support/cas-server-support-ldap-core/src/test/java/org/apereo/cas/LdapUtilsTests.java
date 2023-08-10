@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -18,6 +20,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
@@ -160,6 +163,31 @@ class LdapUtilsTests {
         ldap.setDnFormat("cn=%s,dc=example,dc=org");
         assertNotNull(LdapUtils.newLdaptiveAuthenticator(ldap));
     }
+
+    @Test
+    void verifyActiveDirectoryPasswordPolicy() {
+        val ldap = new Ldap();
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setSearchFilter("cn=user");
+        ldap.setType(AbstractLdapAuthenticationProperties.AuthenticationTypes.AD);
+        ldap.setDnFormat("cn=%s,dc=example,dc=org");
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+        assertNotNull(authenticator);
+        val passwordPolicy = new LdapPasswordPolicyProperties()
+            .setType(AbstractLdapProperties.LdapType.AD);
+        val configuration = LdapUtils.createLdapPasswordPolicyConfiguration(
+            passwordPolicy, authenticator, ArrayListMultimap.create());
+        assertNotNull(configuration);
+        val responseHandler = Arrays.stream(authenticator.getResponseHandlers()).findFirst()
+            .map(ActiveDirectoryAuthenticationResponseHandler.class::cast)
+            .orElseThrow();
+        assertNotNull(responseHandler.getExpirationPeriod());
+        assertNotNull(responseHandler.getWarningPeriod());
+    }
+
 
     @Test
     void verifyLdapAuthnActiveDirectory() {
