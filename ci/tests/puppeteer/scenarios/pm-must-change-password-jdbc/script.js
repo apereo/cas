@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepswd. You must change your password.");
     await cas.type(page,'#password', "Jv!e0mKD&dCNl^Q");
     await cas.type(page,'#confirmedPassword', "Jv!e0mKD&dCNl^Q");
-    await page.keyboard.press('Enter');
+    await await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     await cas.goto(page, "https://localhost:8443/cas/logout");

@@ -11,7 +11,7 @@ async function startAuthFlow(page, username) {
     let pswd = await page.$('#password');
     assert(pswd == null);
     await cas.type(page, '#username', username);
-    await page.keyboard.press('Enter');
+    await await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     const url = await page.url();

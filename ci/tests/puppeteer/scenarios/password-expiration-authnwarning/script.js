@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, '#password-confirm-mismatch-msg');
     await cas.assertInvisibility(page, '#password-policy-violation-msg');
 
-    await page.keyboard.press('Enter');
+    await await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertTextContent(page, "#content h2", "Password Change Successful");
     await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.");

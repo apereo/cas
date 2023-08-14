@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -29,11 +30,13 @@ public class Pac4jKeyCloakOidcClientProperties extends BasePac4jOidcClientProper
      * Keycloak realm used to construct metadata discovery URI.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String realm;
 
     /**
      * Keycloak base URL used to construct metadata discovery URI.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String baseUri;
 }

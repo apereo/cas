@@ -28,7 +28,7 @@ async function fetchCode(page, acr, params) {
     }
     await cas.screenshot(page);
     await cas.type(page, '#token', scratch);
-    await page.keyboard.press('Enter');
+    await await cas.pressEnter(page);
     await page.waitForNavigation();
 
     if (await cas.isVisible(page, "#allow")) {

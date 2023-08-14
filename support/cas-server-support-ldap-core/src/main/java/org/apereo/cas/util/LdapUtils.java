@@ -716,6 +716,7 @@ public class LdapUtils {
      * @param properties to inspect
      * @return the list of entry handlers
      */
+    @SuppressWarnings("MissingCasesInEnumSwitch")
     public static List<LdapEntryHandler> newLdaptiveEntryHandlers(final List<LdapSearchEntryHandlersProperties> properties) {
         val entryHandlers = new ArrayList<LdapEntryHandler>();
         properties.forEach(prop -> {

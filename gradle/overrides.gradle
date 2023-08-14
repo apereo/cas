@@ -31,6 +31,9 @@ configurations.configureEach {
                 if (requested.name == "hibernate-validator") {
                     details.useVersion("${hibernateValidatorVersion}")
                 }
+                if (requested.name == "commons-lang3") {
+                    details.useVersion("${commonsLangVersion}")
+                }
                 if (requested.group == "org.hibernate.orm")  {
                     details.useVersion("${hibernateVersion}")
                 }

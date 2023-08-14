@@ -146,7 +146,7 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    await page.keyboard.press('Enter');
+    await this.pressEnter(page);
     return await page.waitForNavigation();
 };
 
@@ -214,6 +214,11 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
         page.$eval(selector, form => form.submit()),
         page.waitForTimeout(3000)
     ]);
+};
+
+exports.pressEnter = async(page) => {
+    page.keyboard.press('Enter');
+    page.waitForTimeout(1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -747,7 +752,7 @@ exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") =>
             console.log(`Submitting Duo Security bypass code ${bypassCode}`);
             await this.type(page, "input[name='passcode']", bypassCode);
             await this.screenshot(page);
-            await page.keyboard.press('Enter');
+            await this.pressEnter(page);
             console.log(`Waiting for Duo Security to accept bypass code...`);
             await page.waitForTimeout(10000);
             let error = await this.isVisible(page, "div.message.error");
