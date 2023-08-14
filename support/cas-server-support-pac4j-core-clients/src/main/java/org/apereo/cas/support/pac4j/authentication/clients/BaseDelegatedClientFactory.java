@@ -161,7 +161,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
     }
 
-
     protected Collection<IndirectClient> buildFoursquareIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val foursquare = pac4jProperties.getFoursquare();
@@ -357,10 +356,12 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     private OidcClient getOidcClientFrom(final Pac4jOidcClientProperties clientProperties,
                                          final CasConfigurationProperties casProperties) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+
         if (clientProperties.getAzure().isEnabled() && StringUtils.isNotBlank(clientProperties.getAzure().getId())) {
             LOGGER.debug("Building OpenID Connect client for Azure AD...");
             val azure = getOidcConfigurationForClient(clientProperties.getAzure(), AzureAd2OidcConfiguration.class);
-            azure.setTenant(clientProperties.getAzure().getTenant());
+            azure.setTenant(resolver.resolve(clientProperties.getAzure().getTenant()));
             val cfg = new AzureAd2OidcConfiguration(azure);
             val azureClient = new AzureAd2Client(cfg);
             configureClient(azureClient, clientProperties.getAzure(), casProperties);
@@ -376,8 +377,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (clientProperties.getKeycloak().isEnabled() && StringUtils.isNotBlank(clientProperties.getKeycloak().getId())) {
             LOGGER.debug("Building OpenID Connect client for KeyCloak...");
             val cfg = getOidcConfigurationForClient(clientProperties.getKeycloak(), KeycloakOidcConfiguration.class);
-            cfg.setRealm(clientProperties.getKeycloak().getRealm());
-            cfg.setBaseUri(clientProperties.getKeycloak().getBaseUri());
+            val opMetadataResolver = new OidcOpMetadataResolver(cfg);
+            opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+            cfg.setOpMetadataResolver(opMetadataResolver);
+            cfg.setRealm(resolver.resolve(clientProperties.getKeycloak().getRealm()));
+            cfg.setBaseUri(resolver.resolve(clientProperties.getKeycloak().getBaseUri()));
             val kc = new KeycloakOidcClient(cfg);
             configureClient(kc, clientProperties.getKeycloak(), casProperties);
             return kc;
@@ -429,13 +433,17 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                           final Class<T> clazz) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
         
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
+
+        cfg.setSecret(resolver.resolve(oidc.getSecret()));
+        cfg.setClientId(resolver.resolve(oidc.getId()));
+
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
         cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
@@ -471,10 +479,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
         cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
-        val opMetadataResolver = new OidcOpMetadataResolver(cfg);
-        opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-        cfg.setOpMetadataResolver(opMetadataResolver);
-
         return cfg;
     }
 

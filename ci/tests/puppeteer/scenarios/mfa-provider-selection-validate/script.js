@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
 
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
-    await page.keyboard.press('Enter');
+    await await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
 

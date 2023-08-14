@@ -128,7 +128,7 @@ public class DefaultAcmeCertificateManager implements AcmeCertificateManager {
      * @return {@link Challenge} to verify
      */
     private Challenge httpChallenge(final Authorization auth) {
-        val challenge = locator.find(auth);
+        val challenge = locator.find(auth).orElseThrow();
         acmeChallengeRepository.add(challenge.getToken(), challenge.getAuthorization());
         return challenge;
     }

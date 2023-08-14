@@ -5,12 +5,6 @@ ext.libraries = [
                     exclude(group: "org.bitbucket.b_c", module: "jose4j")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                },
-                dependencies.create("org.shredzone.acme4j:acme4j-utils:$acmeClientVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.bitbucket.b_c", module: "jose4j")
-                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
         googlecloudpubsub          : [
