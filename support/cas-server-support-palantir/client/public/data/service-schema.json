@@ -1842,9 +1842,6 @@
     "type": "object",
     "anyOf": [
         {
-            "$ref": "#/$defs/BaseWebBasedRegisteredService"
-        },
-        {
             "$ref": "#/$defs/CasRegisteredService"
         }
     ]
