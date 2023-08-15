@@ -7,11 +7,14 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -592,11 +595,19 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
-                    FunctionUtils.doAndHandle(__ -> {
-                        val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
-                        val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
-                        cfg.setSamlAttributeConverter(converter);
-                    });
+                    if (ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
+                        FunctionUtils.doAndHandle(__ -> {
+                            val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
+                            val script = new WatchableGroovyScriptResource(resource);
+                            cfg.setSamlAttributeConverter(new GroovyAttributeConverter(script));
+                        });
+                    } else {
+                        FunctionUtils.doAndHandle(__ -> {
+                            val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
+                            val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
+                            cfg.setSamlAttributeConverter(converter);
+                        });
+                    }
                 }
 
                 val mappedAttributes = saml.getMappedAttributes();

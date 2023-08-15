@@ -23,11 +23,11 @@ import java.util.Optional;
 @Getter
 @ToString(of = "resource")
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
-    private final transient Resource resource;
+    private final Resource resource;
 
-    private transient FileWatcherService watcherService;
+    private FileWatcherService watcherService;
 
-    private transient GroovyObject groovyScript;
+    private GroovyObject groovyScript;
 
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;

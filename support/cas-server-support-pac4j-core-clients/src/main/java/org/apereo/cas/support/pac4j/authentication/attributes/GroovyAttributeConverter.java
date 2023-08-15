@@ -4,11 +4,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.profile.converter.AbstractAttributeConverter;
-
 import java.io.Serializable;
 
 /**
@@ -23,6 +21,11 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
 
     public GroovyAttributeConverter() {
         super(Serializable.class);
+    }
+
+    public GroovyAttributeConverter(final ExecutableCompiledGroovyScript script) {
+        this();
+        this.script = script;
     }
 
     @Override
