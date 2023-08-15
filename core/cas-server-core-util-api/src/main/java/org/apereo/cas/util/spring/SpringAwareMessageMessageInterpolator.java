@@ -13,7 +13,7 @@ import jakarta.validation.Validation;
 import java.util.Locale;
 
 /**
- * Configures the {@link javax.validation.Validator} to check the Spring Messages.
+ * Configures the {@link jakarta.validation.Validator} to check the Spring Messages.
  *
  * @author Scott Battaglia
  * @since 3.4

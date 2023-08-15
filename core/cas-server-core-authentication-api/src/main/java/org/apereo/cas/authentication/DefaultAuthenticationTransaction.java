@@ -22,7 +22,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Getter(onMethod = @__({@Override}))
+@Getter
 @RequiredArgsConstructor
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
