@@ -33,7 +33,7 @@ public class DashboardController {
      *
      * @return the model and view
      */
-    @GetMapping(path = {"/dashboard", "/"}, produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(path = {"/dashboard", "/", "/dashboard/**/*"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView dashboardHome() {
         return VIEW_DASHBOARD;
     }
