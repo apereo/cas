@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -291,7 +292,30 @@ class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-            "cas.authn.pac4j.saml[0].saml2AttributeConverter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
+        "cas.authn.pac4j.saml[0].saml2-attribute-converter=classpath:/SAMLAttributeConverter.groovy",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
+        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
+        "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class Saml2ClientsWithGroovyAttributeConverter extends BaseDelegatedClientFactoryTests {
+        @Test
+        void verifyClient() {
+            val saml2clients = delegatedClientFactory.build();
+            assertEquals(1, saml2clients.size());
+            val client = (SAML2Client) saml2clients.stream().findFirst().get();
+            assertTrue(client.getConfiguration().getSamlAttributeConverter() instanceof GroovyAttributeConverter);
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+            "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
             "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
             "cas.authn.pac4j.saml[0].keystore-password=1234567890",
             "cas.authn.pac4j.saml[0].private-key-password=1234567890",
