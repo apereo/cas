@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await browser.close();

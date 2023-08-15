@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#email');
 
     await cas.type(page,'#email', "casuser@example.org");
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertTextContent(page, 'div .banner-danger p', "reCAPTCHA validation failed.");
 

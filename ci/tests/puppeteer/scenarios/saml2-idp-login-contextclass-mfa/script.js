@@ -29,7 +29,7 @@ async function cleanUp() {
         console.log(`Using scratch code ${scratch} to login...`);
         await cas.screenshot(page);
         await cas.type(page,'#token', scratch);
-        await await cas.pressEnter(page);
+        await cas.pressEnter(page);
         await page.waitForNavigation();
         console.log(`Page URL: ${page.url()}`);
         await page.waitForTimeout(3000);

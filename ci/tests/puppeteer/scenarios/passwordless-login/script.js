@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
 
     await cas.type(page,'#username', "casuser");
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
