@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
+        th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
+    </title>
+    <base href="/cas/palantir/dashboard">
+    <link href="/cas/assets/style.css" rel="stylesheet" />
+</head>
+<body>
+    <main role="main" layout:fragment="content" id="content">
+    </main>
+    <script th:src="@{/assets/palantir.umd.js}" module></script>
+</body>
+</html>

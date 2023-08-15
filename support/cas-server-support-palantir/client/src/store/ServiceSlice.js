@@ -3,14 +3,24 @@ import React from 'react';
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 
+const initialState = {
+    service: {
+        '@class': 'org.apereo.cas.services.RegexRegisteredService'
+    }
+};
+
 export const ServiceSlice = createSlice({
     name: 'service',
-    initialState: {
-        service: {}
-    },
+    initialState,
     reducers: {
         updateService(state, action) {
             state.service = action.payload;
+        },
+        newService(state, action) {
+            state.service = {
+                ...initialState.service,
+                ...action.payload
+            };
         },
     },
 });
@@ -22,4 +32,4 @@ export function useServiceData () {
     return useSelector(ServiceSelector);
 }
 
-export const { updateService } = ServiceSlice.actions;
+export const { updateService, newService } = ServiceSlice.actions;
