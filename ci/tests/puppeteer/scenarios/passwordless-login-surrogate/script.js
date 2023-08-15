@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
     assert(pswd == null);
 
     await cas.type(page,'#username', "user3+casuser");
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(3000);
     await cas.assertInnerText(page, "#login h3", "Provide Token");

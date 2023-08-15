@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await cas.type(page, '#username', "duobypass");
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await cas.screenshot(page);
     console.log("Waiting for Duo MFA to complete...");
     await page.waitForTimeout(12000);

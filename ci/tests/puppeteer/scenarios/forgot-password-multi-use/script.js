@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
 
     await cas.type(page,'#username', "casuser");
-    await await cas.pressEnter(page);
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await page.waitForTimeout(1000);
