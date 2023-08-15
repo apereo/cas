@@ -714,6 +714,12 @@ exports.refreshContext = async(url = "https://localhost:8443/cas") => {
     console.log(response);
 };
 
+exports.refreshBusContext = async(url = "https://localhost:8443/cas") => {
+    console.log(`Refreshing CAS application context in ${url}`);
+    const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
+    console.log(response);
+};
+
 exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {
