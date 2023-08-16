@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    void verifyNoExpirationPolicy() {
+    void verifyNoExpirationPolicy() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service, TicketGrantingTicket.class);
@@ -37,7 +37,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyBadTicketType() {
+    void verifyBadTicketType() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         assertThrows(ClassCastException.class,
@@ -45,7 +45,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyExpirationPolicyPerAuthenticationAsSeconds() {
+    void verifyExpirationPolicyPerAuthenticationAsSeconds() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("someTgtExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(registeredService);
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
@@ -56,7 +56,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyExpirationPolicyPerAuthenticationAsDuration() {
+    void verifyExpirationPolicyPerAuthenticationAsDuration() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("durationTgtExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(registeredService);
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
@@ -67,7 +67,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("customTgtExpirationPolicy", CasRegisteredService.class);
         defaultSvc.setTicketGrantingTicketExpirationPolicy(
             new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(120));

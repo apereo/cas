@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GroovyShellScriptTests {
 
     @Test
-    void verifyExec() {
+    void verifyExec() throws Throwable {
         val shell = new GroovyShellScript("println 'test'");
         assertNotNull(shell.getGroovyScript());
         assertNotNull(shell.getScript());
@@ -27,7 +27,7 @@ class GroovyShellScriptTests {
     }
 
     @Test
-    void verifyUnknownBadScript() {
+    void verifyUnknownBadScript() throws Throwable {
         val shell = new GroovyShellScript("###$$@@@!!!***&&&");
         assertDoesNotThrow(() -> {
             shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);

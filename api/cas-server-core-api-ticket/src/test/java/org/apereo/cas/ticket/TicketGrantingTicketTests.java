@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @Tag("Tickets")
 class TicketGrantingTicketTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val ticket = mock(TicketGrantingTicket.class);
         when(ticket.getDescendantTickets()).thenCallRealMethod();
         assertTrue(ticket.getDescendantTickets().isEmpty());

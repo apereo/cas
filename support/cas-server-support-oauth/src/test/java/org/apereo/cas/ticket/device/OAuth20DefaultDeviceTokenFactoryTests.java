@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20DefaultDeviceTokenFactoryTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyOperationWithExpPolicy() {
+    void verifyOperationWithExpPolicy() throws Throwable {
         val registeredService = getRegisteredService("https://device.oauth.org", "clientid-device", "secret-at");
         registeredService.setDeviceTokenExpirationPolicy(new DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy("PT100S"));
         servicesManager.save(registeredService);

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    void verifyOperationByNoPolicy() {
+    void verifyOperationByNoPolicy() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
@@ -32,7 +32,7 @@ class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifa
     }
 
     @Test
-    void verifyBadInput() {
+    void verifyBadInput() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
@@ -44,7 +44,7 @@ class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifa
     }
 
     @Test
-    void verifyOperationByPolicyForPrincipal() {
+    void verifyOperationByPolicyForPrincipal() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-dummy"));
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
@@ -58,7 +58,7 @@ class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifa
     }
 
     @Test
-    void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
@@ -71,7 +71,7 @@ class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifa
     }
 
     @Test
-    void verifyOperationByNoKnownProvider() {
+    void verifyOperationByNoKnownProvider() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("unknown"));
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);

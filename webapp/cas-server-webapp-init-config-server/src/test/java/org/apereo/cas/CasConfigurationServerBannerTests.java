@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 class CasConfigurationServerBannerTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val banner = new CasConfigurationServerBanner();
         assertNotNull(banner.getTitle());
 

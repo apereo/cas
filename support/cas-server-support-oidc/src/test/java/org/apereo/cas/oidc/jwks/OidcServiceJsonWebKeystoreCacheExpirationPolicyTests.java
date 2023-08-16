@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends AbstractOidcTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = getOidcRegisteredService();
         service.setJwksCacheDuration("PT0.005S");
         val policy = new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties);

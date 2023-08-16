@@ -28,7 +28,7 @@ public class CoreAttributesTestUtils {
 
     private static final String CONST_TEST_URL = "https://google.com";
 
-    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) throws Throwable {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 

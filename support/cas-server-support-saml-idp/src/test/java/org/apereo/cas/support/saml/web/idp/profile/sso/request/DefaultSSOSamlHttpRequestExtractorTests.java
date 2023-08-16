@@ -34,7 +34,7 @@ class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTe
         + "ufV%2BerXUwSdEQ%2BeBUtOU%2BXAN5sfj57x%2Bjf09vfZPUH";
 
     @Test
-    void verifyActionWithExplicitUrlDecoding() {
+    void verifyActionWithExplicitUrlDecoding() throws Throwable {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
         val decoded = EncodingUtils.urlDecode(SAML_REQUEST);
         val request = getMockHttpServletRequest(decoded);
@@ -46,7 +46,7 @@ class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTe
 
 
     @Test
-    void verifyActionWithoutExplicitUrlDecoding() {
+    void verifyActionWithoutExplicitUrlDecoding() throws Throwable {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
         val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
@@ -56,7 +56,7 @@ class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyActionWrongClassDecoding() {
+    void verifyActionWrongClassDecoding() throws Throwable {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
         val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
@@ -65,7 +65,7 @@ class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyActionNoContext() {
+    void verifyActionNoContext() throws Throwable {
         val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
         val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = mock(BaseHttpServletRequestXMLMessageDecoder.class);

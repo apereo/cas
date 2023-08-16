@@ -39,7 +39,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     private ServicesManager servicesManager;
 
     @Test
-    void verifyNoneDefined() throws Exception {
+    void verifyNoneDefined() throws Throwable {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -50,7 +50,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyDefined() throws Exception {
+    void verifyDefined() throws Throwable {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -61,7 +61,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyUnknown() throws Exception {
+    void verifyUnknown() throws Throwable {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -72,13 +72,13 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyNoAccount() throws Exception {
+    void verifyNoAccount() throws Throwable {
         val context = new MockRequestContext();
         assertFalse(isAuthorized(context));
     }
 
 
-    private boolean isAuthorized(final MockRequestContext context) {
+    private boolean isAuthorized(final MockRequestContext context) throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);

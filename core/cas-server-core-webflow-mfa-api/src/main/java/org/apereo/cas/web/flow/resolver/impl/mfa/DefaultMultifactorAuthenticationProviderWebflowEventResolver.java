@@ -43,7 +43,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val registeredService = resolveRegisteredServiceInRequestContext(context);
         val service = resolveServiceFromAuthenticationRequest(context);
         val authentication = WebUtils.getAuthentication(context);
@@ -67,7 +67,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 
@@ -86,7 +86,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         final Authentication authentication,
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final Service service) {
+        final Service service) throws Throwable {
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             return Optional.empty();
         }

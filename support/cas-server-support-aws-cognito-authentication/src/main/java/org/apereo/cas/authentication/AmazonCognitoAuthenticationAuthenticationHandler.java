@@ -113,7 +113,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             throw new AccountNotFoundException(e.getMessage());
         } catch (final CredentialExpiredException | InvalidPasswordException e) {
             throw new AccountPasswordMustChangeException(e.getMessage());
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw new FailedLoginException(e.getMessage());
         }
     }

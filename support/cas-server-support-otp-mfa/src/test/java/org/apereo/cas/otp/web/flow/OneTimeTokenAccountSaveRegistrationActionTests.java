@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class OneTimeTokenAccountSaveRegistrationActionTests {
     @Test
-    void verifyCreateAccount() {
+    void verifyCreateAccount() throws Throwable {
         val props = new CasConfigurationProperties();
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
@@ -58,7 +58,7 @@ class OneTimeTokenAccountSaveRegistrationActionTests {
     }
 
     @Test
-    void verifyMissingAccount() {
+    void verifyMissingAccount() throws Throwable {
         val props = new CasConfigurationProperties();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         val action = new OneTimeTokenAccountSaveRegistrationAction(repository, props);

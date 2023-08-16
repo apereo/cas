@@ -11,8 +11,9 @@ public interface PasswordValidationService {
     /**
      * Validate password.
      *
-     * @param bean       the bean
-     * @return true/false
+     * @param bean the bean
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean isValid(PasswordChangeRequest bean);
+    boolean isValid(PasswordChangeRequest bean) throws Throwable;
 }

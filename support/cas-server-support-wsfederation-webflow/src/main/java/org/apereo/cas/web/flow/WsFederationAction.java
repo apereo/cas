@@ -55,7 +55,7 @@ public class WsFederationAction extends AbstractAuthenticationAction {
                 return super.doExecute(context);
             }
             return wsFederationRequestBuilder.buildAuthenticationRequestEvent(context);
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LoggingUtils.error(LOGGER, ex);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, ex.getMessage());
         }

@@ -76,7 +76,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySavingSamlService() throws Exception {
+    void verifySavingSamlService() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -94,7 +94,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySavingInCommonSamlService() throws Exception {
+    void verifySavingInCommonSamlService() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -155,7 +155,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignAssertionTrueWithDeserialization() {
+    void verifySignAssertionTrueWithDeserialization() throws Throwable {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
@@ -175,7 +175,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignAssertionFalseWithDeserialization() {
+    void verifySignAssertionFalseWithDeserialization() throws Throwable {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",

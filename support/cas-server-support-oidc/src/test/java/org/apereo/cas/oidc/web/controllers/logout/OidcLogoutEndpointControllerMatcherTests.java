@@ -33,7 +33,7 @@ class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests {
     protected OidcLogoutEndpointController oidcLogoutEndpointController;
 
     @Test
-    void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Throwable {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -43,7 +43,7 @@ class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithIdTokenAndValidRegExMatchingPostLogoutRedirectUrlParams() throws Exception {
+    void verifyOidcLogoutWithIdTokenAndValidRegExMatchingPostLogoutRedirectUrlParams() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 

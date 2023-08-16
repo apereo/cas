@@ -53,7 +53,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
     private ServicesManager servicesManager;
 
     @Test
-    void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -71,19 +71,19 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
             WSFederationRequest.of(request), request, assertion));
     }
 
-    private static TicketValidator.ValidationResult getValidationResult(final Map<String, List<Object>> attributes) {
+    private static TicketValidator.ValidationResult getValidationResult(final Map<String, List<Object>> attributes) throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser", attributes);
         val assertion = mock(TicketValidator.ValidationResult.class);
         when(assertion.getPrincipal()).thenReturn(principal);
         return assertion;
     }
 
-    private static TicketValidator.ValidationResult getValidationResult() {
+    private static TicketValidator.ValidationResult getValidationResult() throws Throwable {
         return getValidationResult(CoreAuthenticationTestUtils.getAttributes());
     }
 
     @Test
-    void verifyRequestFailsOperation() {
+    void verifyRequestFailsOperation() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -103,7 +103,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
 
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
 
     @Test
-    void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() throws Throwable {
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
     }

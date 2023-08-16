@@ -48,7 +48,7 @@ class RegisteredServiceThemeResolverTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ExternalThemeTests extends BaseThemeTests {
         @Test
-        void verifyCustomSource() {
+        void verifyCustomSource() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -73,7 +73,7 @@ class RegisteredServiceThemeResolverTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ExampleThemeTests extends BaseThemeTests {
         @Test
-        void verifyNoAccess() {
+        void verifyNoAccess() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addHeader("User-Agent", "Mozilla");
@@ -92,7 +92,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        void verifyNoTheme() {
+        void verifyNoTheme() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -109,7 +109,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        void verifyGroovyTheme() throws Exception {
+        void verifyGroovyTheme() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -129,7 +129,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        void verifyUrlTheme() {
+        void verifyUrlTheme() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -151,7 +151,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        void verifyCustomTheme() {
+        void verifyCustomTheme() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

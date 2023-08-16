@@ -32,7 +32,7 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
 
     private final ConcurrentMap<String, String> devices = new ConcurrentHashMap<>();
 
-    private final transient Resource jsonResource;
+    private final Resource jsonResource;
 
     public JsonResourceQRAuthenticationDeviceRepository(final Resource jsonResource) {
         this.jsonResource = jsonResource;

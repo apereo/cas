@@ -58,7 +58,7 @@ class WebAuthnStartRegistrationActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             this.webAuthnMultifactorAuthenticationProvider, "webAuthnMultifactorAuthenticationProvider");

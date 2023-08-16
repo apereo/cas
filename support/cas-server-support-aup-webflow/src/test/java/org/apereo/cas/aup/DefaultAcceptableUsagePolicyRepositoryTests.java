@@ -49,14 +49,14 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
         @Test
-        void verifyActionDefaultGlobal() {
+        void verifyActionDefaultGlobal() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
             verifyAction(properties);
         }
 
         @Test
-        void verifyActionAcceptedGlobal() {
+        void verifyActionAcceptedGlobal() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
             val context = getRequestContext();
@@ -71,14 +71,14 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         }
         
         @Test
-        void verifyActionDefaultAuthentication() {
+        void verifyActionDefaultAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
             verifyAction(properties);
         }
 
         @Test
-        void verifyActionNoAuthentication() {
+        void verifyActionNoAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
             val context = getRequestContext();
@@ -87,7 +87,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         }
 
         @Test
-        void verifyProps() {
+        void verifyProps() throws Throwable {
             val status = AcceptableUsagePolicyStatus.accepted(CoreAuthenticationTestUtils.getPrincipal());
             status.clearProperties();
             status.addProperty("example", "cas");
@@ -108,7 +108,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             return true;
         }
 
-        private void verifyAction(final AcceptableUsagePolicyProperties properties) {
+        private static void verifyAction(final AcceptableUsagePolicyProperties properties) throws Throwable {
             val context = getRequestContext();
 
             val repo = getRepositoryInstance(properties);
@@ -121,7 +121,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             assertTrue(repo.verify(context).isAccepted());
         }
 
-        private MockRequestContext getRequestContext() {
+        private static MockRequestContext getRequestContext() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request,
@@ -129,7 +129,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             return context;
         }
 
-        private AcceptableUsagePolicyRepository getRepositoryInstance(final AcceptableUsagePolicyProperties properties) {
+        private static AcceptableUsagePolicyRepository getRepositoryInstance(final AcceptableUsagePolicyProperties properties) {
             val support = mock(TicketRegistrySupport.class);
             when(support.getAuthenticatedPrincipalFrom(anyString()))
                 .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
@@ -148,7 +148,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
         @Test
-        void verifyMissingUserAccepted() throws Exception {
+        void verifyMissingUserAccepted() throws Throwable {
             val actualPrincipalId = UUID.randomUUID().toString();
             val c = getCredential(actualPrincipalId);
             val context = getRequestContext(actualPrincipalId, Map.of(), c);

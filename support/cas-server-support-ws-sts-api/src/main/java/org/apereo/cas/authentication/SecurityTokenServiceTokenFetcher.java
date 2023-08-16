@@ -20,6 +20,7 @@ public interface SecurityTokenServiceTokenFetcher {
      * @param service     the service
      * @param principalId the principal id
      * @return the optional
+     * @throws Throwable the throwable
      */
-    Optional<SecurityToken> fetch(Service service, String principalId);
+    Optional<SecurityToken> fetch(Service service, String principalId) throws Throwable;
 }

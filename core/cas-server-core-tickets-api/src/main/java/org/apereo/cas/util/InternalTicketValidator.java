@@ -29,7 +29,7 @@ public class InternalTicketValidator implements TicketValidator {
     private final ServicesManager servicesManager;
 
     @Override
-    public ValidationResult validate(final String ticketId, final String serviceId) {
+    public ValidationResult validate(final String ticketId, final String serviceId) throws Throwable {
         val service = webApplicationServiceFactory.createService(serviceId);
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
         val authentication = assertion.getPrimaryAuthentication();

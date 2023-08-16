@@ -47,7 +47,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             LOGGER.trace("Established connection to schema [{}]", connection.getSchema());
             val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw new FailedLoginException(e.getMessage());
         }
     }

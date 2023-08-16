@@ -46,7 +46,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyNoServiceFound() {
+    void verifyNoServiceFound() throws Throwable {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -55,7 +55,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyDisabledServiceFound() throws Exception {
+    void verifyDisabledServiceFound() throws Throwable {
         val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);
@@ -72,7 +72,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyExclusiveAuthnDelegationMode() {
+    void verifyExclusiveAuthnDelegationMode() throws Throwable {
         val svc23 = RegisteredServiceTestUtils.getRegisteredService("cas-access-delegation");
         val strategy23 = new DefaultRegisteredServiceAccessStrategy();
         strategy23.setEnabled(true);

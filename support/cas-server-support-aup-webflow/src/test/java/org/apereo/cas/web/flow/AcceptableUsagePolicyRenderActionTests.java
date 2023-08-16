@@ -39,7 +39,7 @@ class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyAc
     private Action acceptableUsagePolicyRenderAction;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),

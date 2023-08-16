@@ -18,6 +18,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     protected Pair<String, Object> mapClaimToAttribute(final String claim,
                                                        final RegisteredServiceAttributeReleasePolicyContext context,
-                                                       final Map<String, List<Object>> resolvedAttributes) {
+                                                       final Map<String, List<Object>> resolvedAttributes) throws Throwable {
         val mappedClaimResult = getMappedClaim(claim, context);
         if (mappedClaimResult.isPresent()) {
             val mappedAttr = mappedClaimResult.get();
@@ -142,7 +143,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
         allowedClaims
             .stream()
-            .map(claim -> mapClaimToAttribute(claim, context, resolvedAttributes))
+            .map(Unchecked.function(claim -> mapClaimToAttribute(claim, context, resolvedAttributes)))
             .filter(p -> Objects.nonNull(p.getValue()))
             .forEach(p -> attributesToRelease.put(p.getKey(), CollectionUtils.toCollection(p.getValue(), ArrayList.class)));
         return attributesToRelease;

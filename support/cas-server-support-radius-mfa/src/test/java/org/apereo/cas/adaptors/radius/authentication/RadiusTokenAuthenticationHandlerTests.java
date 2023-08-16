@@ -52,7 +52,7 @@ class RadiusTokenAuthenticationHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val c = new RadiusTokenCredential("Mellon");
 
         assertTrue(authenticationHandler.supports(c));

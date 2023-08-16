@@ -30,7 +30,7 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
     private Authenticator authenticator;
 
     @RetryingTest(3)
-    public void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Throwable {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
 

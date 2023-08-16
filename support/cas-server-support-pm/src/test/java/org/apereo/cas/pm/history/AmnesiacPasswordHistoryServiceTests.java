@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AmnesiacPasswordHistoryServiceTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = new AmnesiacPasswordHistoryService();
         assertTrue(service.fetchAll().isEmpty());
         assertTrue(service.fetch("casuser").isEmpty());

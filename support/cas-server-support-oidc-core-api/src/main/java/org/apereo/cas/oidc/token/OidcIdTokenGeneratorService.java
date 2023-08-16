@@ -67,7 +67,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
@@ -80,7 +80,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final OidcRegisteredService registeredService,
                                        final OAuth20ResponseTypes responseType,
-                                       final OAuth20GrantTypes grantType) {
+                                       final OAuth20GrantTypes grantType) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
@@ -203,7 +203,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) {
+                                                       final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()

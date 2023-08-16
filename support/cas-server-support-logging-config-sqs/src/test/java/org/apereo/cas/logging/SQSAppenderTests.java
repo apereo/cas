@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 class SQSAppenderTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(SQSAppender.class.getName());
         val appender = (SQSAppender) logger.getAppenders().get("SQSAppender");

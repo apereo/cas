@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.io.Serial;
@@ -55,11 +56,11 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, List<Object>> principalAttributes) {
+                              final Map<String, List<Object>> principalAttributes) throws Throwable {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
-            .map(strategy -> strategy.nominate(authentications, principalAttributes))
+            .map(Unchecked.function(strategy -> strategy.nominate(authentications, principalAttributes)))
             .filter(Objects::nonNull)
             .findFirst()
             .orElseThrow();
@@ -68,11 +69,11 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
+    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
-            .map(strategy -> strategy.nominate(principals, attributes))
+            .map(Unchecked.function(strategy -> strategy.nominate(principals, attributes)))
             .findFirst()
             .orElseThrow();
         LOGGER.trace("Nominated principal [{}] from principal chain [{}]", principal, principals);

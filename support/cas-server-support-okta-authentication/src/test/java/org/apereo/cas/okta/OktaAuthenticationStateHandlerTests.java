@@ -61,14 +61,14 @@ class OktaAuthenticationStateHandlerTests {
     private PrincipalFactory oktaPrincipalFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         val response = mock(AuthenticationResponse.class);

@@ -72,7 +72,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Test
     @Order(Integer.MAX_VALUE)
-    public void verifyFailOps() {
+    void verifyFailOps() throws Throwable {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
     }

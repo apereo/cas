@@ -111,7 +111,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
         if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -138,7 +138,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return the principal
      * @throws GeneralSecurityException the general security exception
      */
-    protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws GeneralSecurityException {
+    protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws Throwable {
         val lc = getLoginContext(credential);
         try {
             lc.login();

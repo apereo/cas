@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 class OneTimeTokenAccountConfirmSelectionRegistrationActionTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())

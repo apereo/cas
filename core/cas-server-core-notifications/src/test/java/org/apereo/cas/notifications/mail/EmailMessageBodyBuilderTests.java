@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 class EmailMessageBodyBuilderTests {
     @Test
-    void verifyNoBody() {
+    void verifyNoBody() throws Throwable {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -37,7 +37,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileFound() {
+    void verifyLocalizedFileFound() throws Throwable {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -50,7 +50,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileNotFound() {
+    void verifyLocalizedFileNotFound() throws Throwable {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -63,7 +63,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -76,7 +76,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyTemplateOperation() {
+    void verifyTemplateOperation() throws Throwable {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -92,7 +92,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyInlineGroovyOperation() {
+    void verifyInlineGroovyOperation() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val cacheMgr = new GroovyScriptResourceCacheManager();
@@ -110,7 +110,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyGroovyOperation() {
+    void verifyGroovyOperation() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

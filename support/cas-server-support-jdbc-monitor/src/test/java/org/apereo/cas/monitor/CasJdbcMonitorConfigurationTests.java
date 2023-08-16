@@ -33,7 +33,7 @@ class CasJdbcMonitorConfigurationTests {
     private HealthIndicator dataSourceHealthIndicator;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(dataSourceHealthIndicator);
     }
 }

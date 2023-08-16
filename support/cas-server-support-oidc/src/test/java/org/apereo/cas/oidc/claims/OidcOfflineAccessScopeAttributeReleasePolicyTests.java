@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 public class OidcOfflineAccessScopeAttributeReleasePolicyTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new OidcOfflineAccessScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope(), policy.getScopeType());
         assertTrue(policy.getAllowedAttributes().isEmpty());

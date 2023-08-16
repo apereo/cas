@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -62,7 +62,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySoapOperation() throws Exception {
+    void verifySoapOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -87,7 +87,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySignByBasicCredOperation() throws Exception {
+    void verifySignByBasicCredOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -114,7 +114,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
     
     @Test
-    void verifySignByFingerprintOperation() throws Exception {
+    void verifySignByFingerprintOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),

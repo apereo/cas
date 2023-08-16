@@ -71,7 +71,7 @@ class SoapAuthenticationHandlerTests {
     private AuthenticationHandler soapAuthenticationAuthenticationHandler;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = soapAuthenticationAuthenticationHandler.authenticate(creds, mock(Service.class));
         assertNotNull(result);
@@ -81,7 +81,7 @@ class SoapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailures() {
+    void verifyFailures() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         runTest(creds, HttpStatus.FORBIDDEN, AccountDisabledException.class);
         runTest(creds, HttpStatus.UNAUTHORIZED, FailedLoginException.class);

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -45,14 +45,14 @@ class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Throwable {
         val response = umaDeletePolicyForResourceSetEndpointController.deletePoliciesForResourceSet(1, 1,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void verifyMissingOperation() throws Exception {
+    void verifyMissingOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         val response = umaDeletePolicyForResourceSetEndpointController.deletePoliciesForResourceSet(1, 2,
             results.getLeft(), results.getMiddle());

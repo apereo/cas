@@ -30,7 +30,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFindsNoUser() {
+        void verifySyncFindsNoUser() throws Throwable {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
@@ -41,7 +41,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         }
 
         @Test
-        void verifyBadCredential() {
+        void verifyBadCredential() throws Throwable {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0));
                 val credentials = mock(Credential.class);
@@ -61,7 +61,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     })
     class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFailsWithUnicodePswd() {
+        void verifySyncFailsWithUnicodePswd() throws Throwable {
             assertDoesNotThrow(() -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");
@@ -76,7 +76,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @TestPropertySource(properties = "cas.authn.password-sync.ldap[0].password-attribute=st")
     class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val sync = ldapPasswordSynchronizers.first();
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password");
             assertTrue(sync.supports(credentials));

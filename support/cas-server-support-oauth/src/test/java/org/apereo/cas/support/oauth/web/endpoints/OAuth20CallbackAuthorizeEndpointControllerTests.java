@@ -38,7 +38,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -49,7 +49,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationWithoutRedirectUri() {
+    void verifyOperationWithoutRedirectUri() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         val response = new MockHttpServletResponse();
@@ -59,7 +59,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationWithoutClientId() {
+    void verifyOperationWithoutClientId() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val response = new MockHttpServletResponse();
@@ -69,7 +69,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationBadClientId() {
+    void verifyOperationBadClientId() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "badClientId");
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -80,7 +80,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationBadRedirectUri() {
+    void verifyOperationBadRedirectUri() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "http://badredirecturi");

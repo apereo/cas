@@ -70,7 +70,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    void verifyFails() {
+    void verifyFails() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.GERMAN));
@@ -97,7 +97,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    void verifyFetch() throws Exception {
+    void verifyFetch() throws Throwable {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9198");

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public record DefaultDeviceFingerprintStrategy(List<DeviceFingerprintComponentMa
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .map(component -> component.extractComponent(principal, request, response))
+            .map(Unchecked.function(component -> component.extractComponent(principal, request, response)))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.joining(componentSeparator));

@@ -40,8 +40,7 @@ public interface AuthenticationManager {
      *
      * @param authenticationTransaction Process a single authentication transaction
      * @return Authentication object on success that contains metadata about credentials that were authenticated.
-     * @throws AuthenticationException On authentication failure. The exception contains details
-     *                                 on each of the credentials that failed to authenticate.
+     * @throws Throwable the throwable
      */
-    Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws AuthenticationException;
+    Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws Throwable;
 }

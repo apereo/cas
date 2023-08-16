@@ -16,39 +16,39 @@ import java.util.Collection;
  */
 @Slf4j
 public class GroovyPasswordHistoryService extends BasePasswordHistoryService {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyPasswordHistoryService(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
-    public boolean exists(final PasswordChangeRequest changeRequest) {
-        return this.watchableScript.execute("exists", Boolean.class, new Object[]{changeRequest, LOGGER});
+    public boolean exists(final PasswordChangeRequest changeRequest) throws Throwable {
+        return this.watchableScript.execute("exists", Boolean.class, changeRequest, LOGGER);
     }
 
     @Override
-    public boolean store(final PasswordChangeRequest changeRequest) {
-        return this.watchableScript.execute("store", Boolean.class, new Object[]{changeRequest, LOGGER});
+    public boolean store(final PasswordChangeRequest changeRequest) throws Throwable {
+        return this.watchableScript.execute("store", Boolean.class, changeRequest, LOGGER);
     }
 
     @Override
-    public Collection<? extends PasswordHistoryEntity> fetchAll() {
-        return this.watchableScript.execute("fetchAll", Collection.class, new Object[]{LOGGER});
+    public Collection<? extends PasswordHistoryEntity> fetchAll() throws Throwable {
+        return this.watchableScript.execute("fetchAll", Collection.class, LOGGER);
     }
 
     @Override
-    public Collection<? extends PasswordHistoryEntity> fetch(final String username) {
-        return this.watchableScript.execute("fetch", Collection.class, new Object[]{username, LOGGER});
+    public Collection<? extends PasswordHistoryEntity> fetch(final String username) throws Throwable {
+        return this.watchableScript.execute("fetch", Collection.class, username, LOGGER);
     }
 
     @Override
-    public void remove(final String username) {
-        this.watchableScript.execute("remove", Void.class, new Object[]{username, LOGGER});
+    public void remove(final String username) throws Throwable {
+        this.watchableScript.execute("remove", Void.class, username, LOGGER);
     }
 
     @Override
-    public void removeAll() {
-        this.watchableScript.execute("removeAll", Void.class, new Object[]{LOGGER});
+    public void removeAll() throws Throwable {
+        this.watchableScript.execute("removeAll", Void.class, LOGGER);
     }
 }

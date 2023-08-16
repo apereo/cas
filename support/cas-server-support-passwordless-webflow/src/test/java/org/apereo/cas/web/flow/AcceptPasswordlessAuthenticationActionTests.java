@@ -45,7 +45,7 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -68,7 +68,7 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     }
 
     @Test
-    void verifyUnknownToken() throws Exception {
+    void verifyUnknownToken() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -83,7 +83,7 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     }
 
     @Test
-    void verifyMissingTokenAction() throws Exception {
+    void verifyMissingTokenAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
         val request = new MockHttpServletRequest();

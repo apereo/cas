@@ -32,6 +32,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
      * @param responseType         the response type
      * @param grantType            the grant type
      * @return the OAuth code
+     * @throws Throwable the throwable
      */
     OAuth20Code create(Service service,
                        Authentication authentication,
@@ -42,5 +43,5 @@ public interface OAuth20CodeFactory extends TicketFactory {
                        String clientId,
                        Map<String, Map<String, Object>> requestClaims,
                        OAuth20ResponseTypes responseType,
-                       OAuth20GrantTypes grantType);
+                       OAuth20GrantTypes grantType) throws Throwable;
 }

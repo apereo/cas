@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -34,12 +35,14 @@ public class AccountProfilePreparePasswordManagementAction extends BaseCasWebflo
                                   && casProperties.getAuthn().getPm().getCore().isEnabled();
         WebUtils.putSecurityQuestionsEnabled(requestContext, secQuestionsEnabled);
         val tgt = WebUtils.getTicketGrantingTicket(requestContext);
-        if (secQuestionsEnabled && tgt != null) {
-            val principal = tgt.getAuthentication().getPrincipal();
-            val query = PasswordManagementQuery.builder().username(principal.getId()).build();
-            val questions = passwordManagementService.getSecurityQuestions(query);
-            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(requestContext, questions);
-        }
-        return null;
+        return FunctionUtils.doUnchecked(() -> {
+            if (secQuestionsEnabled && tgt != null) {
+                val principal = tgt.getAuthentication().getPrincipal();
+                val query = PasswordManagementQuery.builder().username(principal.getId()).build();
+                val questions = passwordManagementService.getSecurityQuestions(query);
+                PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(requestContext, questions);
+            }
+            return null;
+        });
     }
 }

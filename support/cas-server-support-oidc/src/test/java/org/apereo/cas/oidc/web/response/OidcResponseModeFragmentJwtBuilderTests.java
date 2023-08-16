@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
     @Test
-    void verifyResponseModeForService() throws Exception {
+    void verifyResponseModeForService() throws Throwable {
         val registeredService = getOidcRegisteredService("client");
         servicesManager.save(registeredService);
         val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.FRAGMENT_JWT);
@@ -37,7 +37,7 @@ class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyResponseModeForDefault() throws Exception {
+    void verifyResponseModeForDefault() throws Throwable {
         val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
         servicesManager.save(registeredService);
         val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.FRAGMENT_JWT);

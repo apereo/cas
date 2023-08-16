@@ -28,7 +28,7 @@ class RestfulLoginWebflowDecoratorTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val props = new RestfulWebflowLoginDecoratorProperties();
         props.setUrl("http://localhost:9465");
 

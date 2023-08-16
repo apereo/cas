@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @RetryingTest(3)
-    public void verifyResolver() throws Exception {
+    void verifyResolver() throws Throwable {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");

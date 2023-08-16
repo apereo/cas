@@ -66,7 +66,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     private OAuth20AuthorizeEndpointController oAuth20AuthorizeEndpointController;
 
     @Test
-    void verifyNoClientId() {
+    void verifyNoClientId() throws Throwable {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
@@ -74,7 +74,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoRedirectUri() {
+    void verifyNoRedirectUri() throws Throwable {
         val registeredService = addRegisteredService();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
@@ -83,7 +83,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoResponseType() {
+    void verifyNoResponseType() throws Throwable {
         val registeredService = addRegisteredService();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
@@ -93,7 +93,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadResponseType() throws Exception {
+    void verifyBadResponseType() throws Throwable {
         val registeredService = addRegisteredService();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -114,7 +114,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoCasService() {
+    void verifyNoCasService() throws Throwable {
         clearAllServices();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, UUID.randomUUID().toString());
@@ -124,7 +124,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCasClientCanValidate() throws Exception {
+    void verifyCasClientCanValidate() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -169,7 +169,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRedirectUriDoesNotStartWithServiceId() {
+    void verifyRedirectUriDoesNotStartWithServiceId() throws Throwable {
         clearAllServices();
         val registeredService = getRegisteredService(OTHER_REDIRECT_URI, UUID.randomUUID().toString());
         servicesManager.save(registeredService);
@@ -183,7 +183,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCodeNoProfile() {
+    void verifyCodeNoProfile() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -206,7 +206,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyMissingTicketGrantingTicket() throws Exception {
+    void verifyMissingTicketGrantingTicket() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -238,7 +238,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyServiceAccessDenied() throws Exception {
+    void verifyServiceAccessDenied() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -273,7 +273,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCodeRedirectToClient() throws Exception {
+    void verifyCodeRedirectToClient() throws Throwable {
         clearAllServices();
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
@@ -325,7 +325,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTokenRedirectToClient() throws Exception {
+    void verifyTokenRedirectToClient() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -376,7 +376,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyPerServiceExpiration() throws Exception {
+    void verifyPerServiceExpiration() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -430,7 +430,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCodeRedirectToClientWithState() throws Exception {
+    void verifyCodeRedirectToClientWithState() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -476,7 +476,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTokenRedirectToClientWithState() throws Exception {
+    void verifyTokenRedirectToClientWithState() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -524,7 +524,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCodeRedirectToClientApproved() throws Exception {
+    void verifyCodeRedirectToClientApproved() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -568,7 +568,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTokenRedirectToClientApproved() throws Exception {
+    void verifyTokenRedirectToClientApproved() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -614,7 +614,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRedirectToApproval() throws Exception {
+    void verifyRedirectToApproval() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -649,7 +649,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTokenRedirectToClientApprovedWithJwtToken() throws Exception {
+    void verifyTokenRedirectToClientApprovedWithJwtToken() throws Throwable {
         clearAllServices();
 
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
@@ -704,7 +704,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
-    protected CasProfile buildCasProfile() throws Exception {
+    protected CasProfile buildCasProfile() throws Throwable {
         val profile = new CasProfile();
         profile.setId(ID);
         val attributes = new HashMap<String, Object>();

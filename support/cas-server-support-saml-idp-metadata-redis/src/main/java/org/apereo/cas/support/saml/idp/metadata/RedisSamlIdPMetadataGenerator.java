@@ -24,7 +24,7 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
      */
     public static final String CAS_PREFIX = SamlIdPMetadataDocument.class.getSimpleName() + ':';
 
-    private final transient CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
+    private final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
     public RedisSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
                                          final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {

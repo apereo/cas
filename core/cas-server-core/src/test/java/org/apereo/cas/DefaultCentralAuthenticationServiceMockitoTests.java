@@ -138,7 +138,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @BeforeEach
-    public void prepareNewCAS() {
+    public void prepareNewCAS() throws Throwable {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         val metadata = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal");
@@ -202,12 +202,12 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
         assertThrows(InvalidTicketException.class, () -> cas.createProxyGrantingTicket("bad-st", getAuthenticationContext()));
     }
 
     @Test
-    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
         assertThrows(UnauthorizedServiceException.class, () -> this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext()));
     }
 
@@ -218,7 +218,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifyChainedAuthenticationsOnValidation() {
+    void verifyChainedAuthenticationsOnValidation() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         val st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);

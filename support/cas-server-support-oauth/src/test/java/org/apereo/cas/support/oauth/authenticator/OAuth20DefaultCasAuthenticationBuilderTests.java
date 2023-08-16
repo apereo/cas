@@ -32,7 +32,7 @@ class OAuth20DefaultCasAuthenticationBuilderTests extends BaseOAuth20Authenticat
     private OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     @Test
-    void verifyOperationByService() {
+    void verifyOperationByService() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE), service.getServiceId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -41,7 +41,7 @@ class OAuth20DefaultCasAuthenticationBuilderTests extends BaseOAuth20Authenticat
     }
 
     @Test
-    void verifyOperationToBuild() {
+    void verifyOperationToBuild() throws Throwable {
         val profile = new CasProfile();
         profile.setId("casuser");
         profile.addAuthenticationAttribute("clazz", "high");

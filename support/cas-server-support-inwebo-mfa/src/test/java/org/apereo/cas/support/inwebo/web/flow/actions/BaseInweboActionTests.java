@@ -115,13 +115,13 @@ public abstract class BaseInweboActionTests {
         WebUtils.putAuthenticationResultBuilder(resultBuilder, requestContext);
     }
 
-    protected void assertMfa() {
+    protected void assertMfa() throws Throwable {
         val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
         val attributes = builder.build(new DefaultPrincipalElectionStrategy()).getAuthentication().getAttributes();
         assertNotNull(attributes.get("inweboAuthenticationDevice"));
     }
 
-    protected void assertNoMfa() {
+    protected void assertNoMfa() throws Throwable {
         val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
         val attributes = builder.build(new DefaultPrincipalElectionStrategy()).getAuthentication().getAttributes();
         assertNull(attributes.get("inweboAuthenticationDevice"));

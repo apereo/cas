@@ -85,7 +85,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         private CasWebflowEventResolver compositeResolver;
 
         @Test
-        void verifyCompositeBypass() {
+        void verifyCompositeBypass() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -115,7 +115,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         private CasWebflowEventResolver compositeResolver;
 
         @Test
-        void verifyComposite() {
+        void verifyComposite() throws Throwable {
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
 
@@ -135,7 +135,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         @Test
-        void verifyCompositeWithAuthnContextValidated() {
+        void verifyCompositeWithAuthnContextValidated() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
@@ -156,14 +156,15 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         @Test
-        void verifyNoComposite() {
+        void verifyNoComposite() throws Throwable {
             val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, provider.getId()));
             val result = assertCompositeProvider(resolvedEvents, RegisteredServiceTestUtils.getAuthentication());
             assertEquals(provider.getId(), result.iterator().next().getId());
         }
 
-        private Set<Event> assertCompositeProvider(final Set<Event> resolvedEvents, final Authentication authentication) {
+        private Set<Event> assertCompositeProvider(final Set<Event> resolvedEvents,
+                                                   final Authentication authentication) throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

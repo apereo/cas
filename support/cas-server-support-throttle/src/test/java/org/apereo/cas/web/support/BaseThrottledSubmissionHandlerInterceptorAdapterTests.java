@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -26,6 +25,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
@@ -93,7 +93,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @Test
-    void verifyThrottle() throws Exception {
+    void verifyThrottle() throws Throwable {
         /* Ensure that repeated logins BELOW threshold rate are allowed */
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
@@ -143,7 +143,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
                     credentials(username, password));
             response.setStatus(HttpServletResponse.SC_OK);
             authenticationManager.authenticate(transaction);
-        } catch (final AuthenticationException e) {
+        } catch (final Throwable e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             getThrottle().postHandle(request, response, getThrottle(), null);
         } finally {
@@ -170,6 +170,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,

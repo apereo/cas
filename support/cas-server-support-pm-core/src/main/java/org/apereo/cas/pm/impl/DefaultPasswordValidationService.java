@@ -23,7 +23,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
     private final PasswordHistoryService passwordHistoryService;
 
     @Override
-    public boolean isValid(final PasswordChangeRequest bean) {
+    public boolean isValid(final PasswordChangeRequest bean) throws Throwable {
         if (!StringUtils.hasText(bean.toPassword())) {
             LOGGER.error("Provided password is blank");
             return false;

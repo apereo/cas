@@ -16,11 +16,10 @@ public interface AuthenticationTransactionManager {
      * @param authenticationTransaction   the authn attempt
      * @param authenticationResultBuilder the authentication context
      * @return the transaction manager
-     * @throws AuthenticationException the authentication exception
+     * @throws Throwable the throwable
      */
     AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
-                                            AuthenticationResultBuilder authenticationResultBuilder)
-        throws AuthenticationException;
+                                            AuthenticationResultBuilder authenticationResultBuilder) throws Throwable;
 
     /**
      * Gets authentication manager.

@@ -13,22 +13,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class SimpleServiceTests {
 
     @Test
-    void verifyProperId() {
+    void verifyProperId() throws Throwable {
         assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId(), "Ids are not equal.");
     }
 
     @Test
-    void verifyEqualsWithNull() {
+    void verifyEqualsWithNull() throws Throwable {
         assertNotEquals(null, RegisteredServiceTestUtils.getService(), "Service matches null.");
     }
 
     @Test
-    void verifyEqualsWithBadClass() {
+    void verifyEqualsWithBadClass() throws Throwable {
         assertNotEquals(new Object(), RegisteredServiceTestUtils.getService(), "Services matches String class.");
     }
 
     @Test
-    void verifyEquals() {
+    void verifyEquals() throws Throwable {
         assertEquals(RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getService(), "Services are not equal.");
     }
 }

@@ -99,7 +99,7 @@ public class TicketGrantingTicketResource {
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -146,7 +146,7 @@ public class TicketGrantingTicketResource {
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request,
-                                                                        final HttpServletResponse response) throws Exception {
+                                                                        final HttpServletResponse response) throws Throwable {
         val authenticationResult = authenticationService.authenticate(requestBody, request, response);
         val result = authenticationResult.orElseThrow(FailedLoginException::new);
         return centralAuthenticationService.createTicketGrantingTicket(result);

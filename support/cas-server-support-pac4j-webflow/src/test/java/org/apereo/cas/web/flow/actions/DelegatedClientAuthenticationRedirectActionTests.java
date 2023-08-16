@@ -50,7 +50,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyRedirect() throws Exception {
+    void verifyRedirect() throws Throwable {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("CasClient");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);
@@ -62,7 +62,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
     }
 
     @Test
-    void verifyPost() throws Exception {
+    void verifyPost() throws Throwable {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("SAML2ClientPostBinding");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);

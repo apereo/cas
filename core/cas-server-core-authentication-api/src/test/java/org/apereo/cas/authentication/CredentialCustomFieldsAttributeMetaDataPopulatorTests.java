@@ -23,7 +23,7 @@ class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
         new CredentialCustomFieldsAttributeMetaDataPopulator();
 
     @Test
-    void verifyPopulator() {
+    void verifyPopulator() throws Throwable {
         val credentials = new UsernamePasswordCredential();
         credentials.getCustomFields().put("field1", "value1");
         credentials.getCustomFields().put("field2", List.of("value2"));

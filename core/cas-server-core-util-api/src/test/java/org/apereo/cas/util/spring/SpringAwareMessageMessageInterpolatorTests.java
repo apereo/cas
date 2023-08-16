@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class SpringAwareMessageMessageInterpolatorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         LocaleContextHolder.setLocale(Locale.getDefault());
         val polator = new SpringAwareMessageMessageInterpolator();
         val source = mock(MessageSource.class);

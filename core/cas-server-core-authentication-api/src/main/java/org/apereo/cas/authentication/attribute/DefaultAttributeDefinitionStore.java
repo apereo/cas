@@ -5,7 +5,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -22,7 +21,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -75,8 +73,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition defn) {
         if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
-                        + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
-                        + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
+                + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
+                + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
             return defn.getKey();
         }
         return key;
@@ -155,12 +153,10 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         final String key,
         final AttributeDefinitionResolutionContext context) {
         val result = locateAttributeDefinition(key);
-        return result
-            .map(definition -> {
-                val currentValues = definition.resolveAttributeValues(context.withScope(this.scope));
-                return Optional.of(Pair.of(definition, currentValues));
-            })
-            .orElseGet(Optional::empty);
+        return result.flatMap(definition -> FunctionUtils.doUnchecked(() -> {
+            val currentValues = definition.resolveAttributeValues(context.withScope(this.scope));
+            return Optional.of(Pair.of(definition, currentValues));
+        }));
     }
 
     @Override

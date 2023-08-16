@@ -22,49 +22,49 @@ public interface CasAuthenticationEventListener extends CasEventListener {
      * Handle TGT creation event.
      *
      * @param event the event
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasTicketGrantingTicketCreatedEvent(CasTicketGrantingTicketCreatedEvent event) throws Exception;
+    void handleCasTicketGrantingTicketCreatedEvent(CasTicketGrantingTicketCreatedEvent event) throws Throwable;
 
     /**
      * Handle TGT deleted event.
      *
      * @param event the event
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasTicketGrantingTicketDeletedEvent(CasTicketGrantingTicketDestroyedEvent event) throws Exception;
+    void handleCasTicketGrantingTicketDeletedEvent(CasTicketGrantingTicketDestroyedEvent event) throws Throwable;
 
     /**
      * Handle cas authentication policy failure event.
      *
      * @param event the event
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasAuthenticationTransactionFailureEvent(CasAuthenticationTransactionFailureEvent event) throws Exception;
+    void handleCasAuthenticationTransactionFailureEvent(CasAuthenticationTransactionFailureEvent event) throws Throwable;
 
     /**
      * Handle cas authentication policy failure event.
      *
      * @param event the event
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasAuthenticationPolicyFailureEvent(CasAuthenticationPolicyFailureEvent event) throws Exception;
+    void handleCasAuthenticationPolicyFailureEvent(CasAuthenticationPolicyFailureEvent event) throws Throwable;
 
     /**
      * Handle cas risky authentication detected event.
      *
      * @param event the event
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event) throws Exception;
+    void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event) throws Throwable;
 }

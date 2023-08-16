@@ -44,8 +44,9 @@ public class WsFederationResponseValidator {
      * Validate ws federation authentication request event.
      *
      * @param context the context
+     * @throws Throwable the throwable
      */
-    public void validateWsFederationAuthenticationRequest(final RequestContext context) {
+    public void validateWsFederationAuthenticationRequest(final RequestContext context) throws Throwable {
         val service = wsFederationCookieManager.retrieve(context);
         LOGGER.debug("Retrieved service [{}] from the session cookie", service);
 
@@ -74,7 +75,7 @@ public class WsFederationResponseValidator {
 
     private void buildCredentialsFromAssertion(final RequestContext context,
                                                final Pair<Assertion, WsFederationConfiguration> assertion,
-                                               final Service service) {
+                                               final Service service) throws Throwable {
         try {
             LOGGER.debug("Creating credential based on the provided assertion");
             val credential = wsFederationHelper.createCredentialFromToken(assertion.getKey());

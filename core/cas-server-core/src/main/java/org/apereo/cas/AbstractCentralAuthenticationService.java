@@ -71,13 +71,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
-    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context) throws AbstractTicketException {
+    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication,
+                                                                final ServiceContext context) throws AbstractTicketException {
         val policy = configurationContext.getAuthenticationPolicyFactory().createPolicy(context);
         try {
             if (policy.isSatisfiedBy(authentication)) {
                 return authentication;
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
@@ -110,13 +111,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    /**
-     * Resolve service from authentication request.
-     *
-     * @param service the service
-     * @return the service
-     */
-    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) {
+    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
         return configurationContext.getAuthenticationServiceSelectionPlan().resolveService(service, WebApplicationService.class);
     }
 

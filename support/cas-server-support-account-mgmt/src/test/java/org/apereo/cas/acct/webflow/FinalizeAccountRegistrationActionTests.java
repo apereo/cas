@@ -59,13 +59,13 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     }
 
     @Test
-    void verifyOperationFailsWithMissingRequest() throws Exception {
+    void verifyOperationFailsWithMissingRequest() throws Throwable {
         val results = finalizeAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }
 
     @Test
-    void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Throwable {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         AccountRegistrationUtils.putAccountRegistrationRequest(context, registrationRequest);
         val results = finalizeAccountRegistrationAction.execute(context);
@@ -75,7 +75,7 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     @TestConfiguration(value = "FinalizeAccountRegistrationActionTestConfiguration", proxyBeanMethods = false)
     static class FinalizeAccountRegistrationActionTestConfiguration {
         @Bean
-        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Exception {
+        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Throwable {
             val response = new AccountRegistrationResponse();
             response.putProperty("success", true);
             val provisioner = mock(AccountRegistrationProvisioner.class);

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 class FinalizeInterruptFlowActionTests {
 
     @Test
-    void verifyFinalizedInterruptBlocked() {
+    void verifyFinalizedInterruptBlocked() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -52,7 +52,7 @@ class FinalizeInterruptFlowActionTests {
     }
 
     @Test
-    void verifyFinalizedInterruptBlockedUnauthzUrl() throws Exception {
+    void verifyFinalizedInterruptBlockedUnauthzUrl() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new MockExternalContext());
 
@@ -74,7 +74,7 @@ class FinalizeInterruptFlowActionTests {
     }
 
     @Test
-    void verifyFinalizedInterruptNonBlocked() throws Exception {
+    void verifyFinalizedInterruptNonBlocked() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

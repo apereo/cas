@@ -38,7 +38,7 @@ class DefaultConsentActivationStrategyDisabledTests {
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
-    void verifyNoConsent() {
+    void verifyNoConsent() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -53,7 +53,5 @@ class DefaultConsentActivationStrategyDisabledTests {
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockHttpServletRequest()));
-
     }
-
 }

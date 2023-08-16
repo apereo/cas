@@ -84,7 +84,7 @@ class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflo
     }
 
     @Test
-    void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         WebUtils.putCredential(context, new RadiusTokenCredential("token"));
         var event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

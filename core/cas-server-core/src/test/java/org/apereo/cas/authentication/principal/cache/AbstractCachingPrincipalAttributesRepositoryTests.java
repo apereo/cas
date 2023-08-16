@@ -45,7 +45,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private Principal principal;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         attributes = new HashMap<>();
         attributes.put("a1", Arrays.asList("v1", "v2", "v3"));
 
@@ -101,7 +101,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    void verifyMergingStrategyWithNoncollidingAttributeAdder() {
+    void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Throwable {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
@@ -113,7 +113,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    void verifyMergingStrategyWithReplacingAttributeAdder() {
+    void verifyMergingStrategyWithReplacingAttributeAdder() throws Throwable {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
@@ -125,7 +125,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    void verifyMergingStrategyWithMultivaluedAttributeMerger() {
+    void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Throwable {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);

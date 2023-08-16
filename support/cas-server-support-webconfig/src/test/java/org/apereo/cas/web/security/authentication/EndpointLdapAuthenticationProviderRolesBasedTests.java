@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
-    void verifyAuthorizedByRole() {
+    void verifyAuthorizedByRole() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
@@ -50,7 +50,7 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
     }
 
     @Test
-    void verifyUnauthorizedByRole() {
+    void verifyUnauthorizedByRole() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
@@ -62,7 +62,7 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
     }
 
     @Test
-    void verifyUserNotFound() {
+    void verifyUserNotFound() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
@@ -75,7 +75,7 @@ class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdap
     }
 
     @Test
-    void verifyUserBadPassword() {
+    void verifyUserBadPassword() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("SOME_BAD_ROLE"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();

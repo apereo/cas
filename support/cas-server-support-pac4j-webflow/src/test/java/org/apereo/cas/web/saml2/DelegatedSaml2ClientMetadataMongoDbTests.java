@@ -48,7 +48,7 @@ class DelegatedSaml2ClientMetadataMongoDbTests {
 
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());
         assertTrue(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
     }

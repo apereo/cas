@@ -32,7 +32,7 @@ class OidcLocaleChangeInterceptorTests extends AbstractOidcTests {
     private HandlerInterceptor oidcLocaleChangeInterceptor;
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, new SessionLocaleResolver());

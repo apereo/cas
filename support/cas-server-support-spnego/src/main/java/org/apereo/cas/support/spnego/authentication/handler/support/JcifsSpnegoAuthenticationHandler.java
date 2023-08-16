@@ -20,7 +20,6 @@ import lombok.val;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -60,7 +59,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     @Override
     @Synchronized
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val spnegoCredential = (SpnegoCredential) credential;
         if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
@@ -84,7 +83,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     protected AuthenticationHandlerExecutionResult doInternalAuthentication(final List<Authentication> authentications,
-                             final SpnegoCredential spnegoCredential, final Service service) throws GeneralSecurityException {
+                             final SpnegoCredential spnegoCredential, final Service service) throws Throwable {
         var principal = (java.security.Principal) null;
         var nextToken = (byte[]) null;
         val it = authentications.iterator();
@@ -144,7 +143,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
      * @param isNtlm the is ntlm
      * @return the simple principal
      */
-    protected Principal getPrincipal(final String name, final boolean isNtlm) {
+    protected Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
         if (this.principalWithDomainName) {
             return this.principalFactory.createPrincipal(name);
         }

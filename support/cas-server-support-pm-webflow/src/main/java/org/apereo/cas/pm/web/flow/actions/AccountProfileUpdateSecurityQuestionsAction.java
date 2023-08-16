@@ -75,7 +75,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
             passwordManagementService.updateSecurityQuestions(query);
             messages.addMessage(new MessageBuilder().info().code(CODE_SUCCESS).build());
             return success();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             messages.addMessage(new MessageBuilder().error().code(CODE_FAILURE).build());
             return error();

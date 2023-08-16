@@ -59,7 +59,7 @@ class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowCo
     }
 
     @Test
-    void verifyCsrfOperation() {
+    void verifyCsrfOperation() throws Throwable {
         val webAuthnFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN);
         val context = new MockRequestControlContext(webAuthnFlow);
         val request = new MockHttpServletRequest();

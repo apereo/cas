@@ -47,7 +47,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyFailOps() throws Exception {
+    void verifyFailOps() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -66,7 +66,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyLoad() throws Exception {
+    void verifyLoad() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -81,7 +81,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyDelete() {
+    void verifyDelete() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8550");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -98,7 +98,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() throws Exception {
+    void verifyGet() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -113,7 +113,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetById() throws Exception {
+    void verifyGetById() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -128,7 +128,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetByIdAndUser() throws Exception {
+    void verifyGetByIdAndUser() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -143,7 +143,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCount() {
+    void verifyCount() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -156,7 +156,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCountByUser() {
+    void verifyCountByUser() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8596");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -169,7 +169,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySave() throws Exception {
+    void verifySave() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8553");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
@@ -193,7 +193,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveFail() {
+    void verifySaveFail() throws Throwable {
         val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8554");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,

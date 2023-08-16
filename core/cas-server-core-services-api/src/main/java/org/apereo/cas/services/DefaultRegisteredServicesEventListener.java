@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 import java.util.List;
@@ -82,11 +83,11 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
             contacts
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getPhone()))
-                .forEach(contact -> {
+                .forEach(Unchecked.consumer(contact -> {
                     val smsRequest = SmsRequest.builder().from(sms.getFrom())
                         .to(contact.getPhone()).text(message).build();
                     communicationsManager.sms(smsRequest);
-                });
+                }));
         }
     }
 }

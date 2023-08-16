@@ -124,7 +124,7 @@ class RadiusConfigurationTests {
     }
 
     @Test
-    void verifyAccessChallengedWebflowEventResolver() {
+    void verifyAccessChallengedWebflowEventResolver() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -39,7 +39,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
 
     @Test
-    void verifyAttributeAsNameIDPersistent() throws Exception {
+    void verifyAttributeAsNameIDPersistent() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.getAttributeValueTypes().put("customNameId", NameIDType.PERSISTENT);
 
@@ -66,7 +66,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyAttributeAsNameIDSameAsSubject() throws Exception {
+    void verifyAttributeAsNameIDSameAsSubject() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.getAttributeValueTypes().put("customNameId", NameIDType.class.getSimpleName());
         
@@ -92,7 +92,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyTestAttributeDefns() throws Exception {
+    void verifyTestAttributeDefns() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor
@@ -118,7 +118,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyFriendlyNamesForKnownAttributes() throws Exception {
+    void verifyFriendlyNamesForKnownAttributes() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();

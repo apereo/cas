@@ -46,7 +46,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
     private final CasConfigurationProperties properties;
 
     @Override
-    public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request) {
+    public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request) throws Throwable {
         try {
             val resource = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson().getLocation();
             val mappings = MAPPER.readValue(resource.getInputStream(),

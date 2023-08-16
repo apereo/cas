@@ -42,7 +42,7 @@ class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMult
     private CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);

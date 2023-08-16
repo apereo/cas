@@ -86,7 +86,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         "/**/" + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -109,7 +109,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(credentials -> {
-                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credentials.getUserProfile().getId());
+                val principal = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credentials.getUserProfile().getId()));
                 val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
                     .createService(casProperties.getServer().getPrefix());
 

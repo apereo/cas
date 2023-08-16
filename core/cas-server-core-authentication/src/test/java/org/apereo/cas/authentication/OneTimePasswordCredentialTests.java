@@ -26,7 +26,7 @@ class OneTimePasswordCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeAnOneTimePasswordCredentialToJson() throws Exception {
+    void verifySerializeAnOneTimePasswordCredentialToJson() throws Throwable {
         val credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);

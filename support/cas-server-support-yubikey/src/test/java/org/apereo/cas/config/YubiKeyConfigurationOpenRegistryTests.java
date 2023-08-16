@@ -33,7 +33,7 @@ class YubiKeyConfigurationOpenRegistryTests {
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id));
     }

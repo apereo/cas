@@ -34,11 +34,11 @@ public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
      * Rotate keys and response entity.
      *
      * @return the response entity
-     * @throws Exception the exception
+     * @throws Throwable the exception
      */
     @GetMapping(path = "/rotate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rotate keys in the keystore forcefully")
-    public ResponseEntity<String> handleRotation() throws Exception {
+    public ResponseEntity<String> handleRotation() throws Throwable {
         val rotation = rotationService.getObject().rotate();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);
@@ -48,11 +48,11 @@ public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
      * Revoke keys and response entity.
      *
      * @return the response entity
-     * @throws Exception the exception
+     * @throws Throwable the exception
      */
     @GetMapping(path = "/revoke", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Revoke keys in the keystore forcefully")
-    public ResponseEntity<String> handleRevocation() throws Exception {
+    public ResponseEntity<String> handleRevocation() throws Throwable {
         val rotation = rotationService.getObject().revoke();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);

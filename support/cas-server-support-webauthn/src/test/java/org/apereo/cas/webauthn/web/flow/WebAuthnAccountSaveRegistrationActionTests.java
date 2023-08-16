@@ -61,7 +61,7 @@ class WebAuthnAccountSaveRegistrationActionTests {
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setParameter("sessionToken", EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8)));

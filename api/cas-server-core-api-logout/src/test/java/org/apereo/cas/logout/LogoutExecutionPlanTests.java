@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("Logout")
 class LogoutExecutionPlanTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val plan = new LogoutExecutionPlan() {
         };
         assertTrue(plan.getLogoutPostProcessors().isEmpty());

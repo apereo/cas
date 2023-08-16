@@ -21,8 +21,9 @@ public interface PasswordlessUserAccountStore {
      *
      * @param username the username
      * @return the passwordless user account
+     * @throws Throwable the throwable
      */
-    Optional<PasswordlessUserAccount> findUser(String username);
+    Optional<PasswordlessUserAccount> findUser(String username) throws Throwable;
 
     /**
      * Load.

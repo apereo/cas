@@ -50,7 +50,7 @@ class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMulti
     private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Test
-    void verifyOperationFails() {
+    void verifyOperationFails() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);

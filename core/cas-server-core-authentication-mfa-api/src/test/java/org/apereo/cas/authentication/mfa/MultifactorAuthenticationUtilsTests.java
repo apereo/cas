@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 class MultifactorAuthenticationUtilsTests {
 
     @Test
-    void verifyMissingTransition() {
+    void verifyMissingTransition() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -56,7 +56,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyMissingProviderEvent() {
+    void verifyMissingProviderEvent() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -73,14 +73,14 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAvailProviders() {
+    void verifyAvailProviders() throws Throwable {
         val appCtx = mock(ApplicationContext.class);
         when(appCtx.getBeansOfType(any(), anyBoolean(), anyBoolean())).thenThrow(new RuntimeException());
         assertNotNull(MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(appCtx));
     }
 
     @Test
-    void verifyProviders() {
+    void verifyProviders() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -95,7 +95,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyResolveBySingleAttribute() {
+    void verifyResolveBySingleAttribute() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -121,7 +121,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyResolveByAttribute() {
+    void verifyResolveByAttribute() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -148,7 +148,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyMultivaluedAttrs() {
+    void verifyMultivaluedAttrs() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -179,7 +179,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyProviderByService() {
+    void verifyProviderByService() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

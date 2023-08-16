@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val input = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         val token = getAccessToken();
         val credentials = new TokenCredentials(token.getId());

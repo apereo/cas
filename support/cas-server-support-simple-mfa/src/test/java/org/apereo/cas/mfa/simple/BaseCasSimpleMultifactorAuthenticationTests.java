@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration;
@@ -99,6 +100,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })

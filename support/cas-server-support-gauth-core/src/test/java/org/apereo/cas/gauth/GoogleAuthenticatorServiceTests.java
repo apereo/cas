@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GoogleAuthenticatorServiceTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         val authenticator = new GoogleAuthenticator(bldr.build());
         authenticator.setCredentialRepository(new DummyCredentialRepository());

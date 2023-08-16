@@ -54,7 +54,7 @@ class CasCoreServicesMonitoringConfigurationTests {
     protected ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.load();
         servicesManager.save(registeredService);

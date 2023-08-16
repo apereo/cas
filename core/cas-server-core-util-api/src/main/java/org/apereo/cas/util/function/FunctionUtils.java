@@ -2,7 +2,6 @@ package org.apereo.cas.util.function;
 
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,7 +14,6 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -187,7 +185,7 @@ public class FunctionUtils {
      * @return the supplier
      */
     public static <R> Supplier<R> doIfNotNull(final Object input,
-                                              final Supplier<R> trueFunction,
+                                              final CheckedSupplier<R> trueFunction,
                                               final Supplier<R> falseFunction) {
         return () -> {
             try {
@@ -445,7 +443,7 @@ public class FunctionUtils {
      * @param params   the params
      */
     public static void doUnchecked(final CheckedConsumer<Object> consumer, final Object... params) {
-        Unchecked.consumer(s -> consumer.accept(params)).accept(null);
+        Unchecked.consumer(cons -> consumer.accept(params)).accept(null);
     }
 
     /**

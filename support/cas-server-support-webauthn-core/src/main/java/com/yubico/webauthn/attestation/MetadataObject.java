@@ -51,7 +51,7 @@ public class MetadataObject {
         new TypeReference<List<JsonNode>>() {
         };
 
-    private final transient JsonNode data;
+    private final JsonNode data;
 
     private final String identifier;
 

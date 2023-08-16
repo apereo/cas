@@ -66,7 +66,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySavingServiceChangesDn(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
+    void verifySavingServiceChangesDn(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
@@ -82,7 +82,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     }
 
     @Test
-    void verifyServiceInserted() {
+    void verifyServiceInserted() throws Throwable {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
         registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);

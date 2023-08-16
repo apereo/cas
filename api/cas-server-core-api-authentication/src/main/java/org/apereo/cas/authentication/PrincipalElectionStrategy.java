@@ -31,7 +31,7 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      * @param principalAttributes the principal attributes
      * @return the principal
      */
-    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes);
+    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes) throws Throwable;
 
     /**
      * Nominate principal.
@@ -40,7 +40,7 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      * @param attributes the attributes
      * @return the principal
      */
-    Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes);
+    Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes) throws Throwable;
 
     @Override
     default int getOrder() {

@@ -50,7 +50,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
     @Test
     @Order(1)
-    public void verifyDeviceNotTrusted() throws Exception {
+    void verifyDeviceNotTrusted() throws Throwable {
         val r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
         getMfaTrustEngine().save(r);
@@ -66,7 +66,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
     @Test
     @Order(2)
-    public void verifyDeviceTrusted() throws Exception {
+    void verifyDeviceTrusted() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
@@ -100,7 +100,7 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
     @Test
     @Order(3)
-    public void verifySkipVerify() throws Exception {
+    void verifySkipVerify() throws Throwable {
         val r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
 

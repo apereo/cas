@@ -39,7 +39,7 @@ class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttribu
 
     @Override
     @Test
-    void verifySingleRowAttributeRepository() {
+    void verifySingleRowAttributeRepository() throws Throwable {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -51,7 +51,7 @@ class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttribu
 
     @Override
     @Test
-    void verifyPeopleSingleRowAttributeRepository() {
+    void verifyPeopleSingleRowAttributeRepository() throws Throwable {
         assertNotNull(attributeRepository);
         val people = attributeRepository.getPeople(Map.of("username", List.of("casuser")));
         val person = people.iterator().next();

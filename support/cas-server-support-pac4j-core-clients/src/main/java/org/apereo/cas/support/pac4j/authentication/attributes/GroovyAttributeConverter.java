@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -31,9 +32,11 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
     @Override
     public synchronized Object convert(final Object attribute) {
         if (script != null) {
-            val args = CollectionUtils.wrap("attribute", attribute, "logger", LOGGER);
-            script.setBinding(args);
-            return script.execute(args.values().toArray(), Object.class, false);
+            return FunctionUtils.doUnchecked(() -> {
+                val args = CollectionUtils.wrap("attribute", attribute, "logger", LOGGER);
+                script.setBinding(args);
+                return script.execute(args.values().toArray(), Object.class, false);
+            });
         }
         return attribute;
     }

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class QRAuthenticationTokenValidationResultTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val result = QRAuthenticationTokenValidationResult.builder()
             .authentication(RegisteredServiceTestUtils.getAuthentication())
             .build();

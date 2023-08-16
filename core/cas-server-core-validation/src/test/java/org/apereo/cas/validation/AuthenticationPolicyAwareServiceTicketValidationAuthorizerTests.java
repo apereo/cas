@@ -125,7 +125,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
+    void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() throws Throwable {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AllAuthenticationHandlersSucceededAuthenticationPolicy(), handlers);
@@ -137,7 +137,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyAllCredentialsValidatedAuthenticationPolicy() {
+    void verifyAllCredentialsValidatedAuthenticationPolicy() throws Throwable {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AllCredentialsValidatedAuthenticationPolicy(), handlers);
@@ -149,7 +149,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyRequiredHandlerAuthenticationPolicy() {
+    void verifyRequiredHandlerAuthenticationPolicy() throws Throwable {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
@@ -162,7 +162,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyRequiredHandlerAuthenticationPolicyTryAll() {
+    void verifyRequiredHandlerAuthenticationPolicyTryAll() throws Throwable {
         val handler = getAcceptUsersAuthenticationHandler();
         val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
@@ -175,7 +175,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyOperationWithHandlersAndAtLeastOneCredential() {
+    void verifyOperationWithHandlersAndAtLeastOneCredential() throws Throwable {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(), handlers);
@@ -187,7 +187,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() {
+    void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() throws Throwable {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
         val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
         val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(true), handlers);
@@ -199,7 +199,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     @Test
-    void verifyOperationWithExcludedHandlers() {
+    void verifyOperationWithExcludedHandlers() throws Throwable {
         val h1 = getTestOtpAuthenticationHandler();
         val h2 = getSimpleTestAuthenticationHandler();
         val handlers = List.of(h1, getAcceptUsersAuthenticationHandler(), h2);

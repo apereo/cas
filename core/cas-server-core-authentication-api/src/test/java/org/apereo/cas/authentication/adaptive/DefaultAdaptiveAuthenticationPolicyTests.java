@@ -30,7 +30,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36 Edge/12.0";
 
     @Test
-    void verifyActionClientIpRejected() {
+    void verifyActionClientIpRejected() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -52,7 +52,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyActionUserAgentRejected() {
+    void verifyActionUserAgentRejected() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -67,7 +67,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyActionGeoLocationRejected() {
+    void verifyActionGeoLocationRejected() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -88,7 +88,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyActionGeoLocationPass() {
+    void verifyActionGeoLocationPass() throws Throwable {
         val request = new MockHttpServletRequest();
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
@@ -105,7 +105,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyActionWithNoClientInfo() {
+    void verifyActionWithNoClientInfo() throws Throwable {
         val props = new AdaptiveAuthenticationProperties();
         val service = mock(GeoLocationService.class);
         val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);

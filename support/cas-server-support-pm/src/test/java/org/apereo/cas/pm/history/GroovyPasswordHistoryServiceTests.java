@@ -54,7 +54,7 @@ class GroovyPasswordHistoryServiceTests {
     private PasswordHistoryService passwordHistoryService;
 
     @Test
-    void verifyValidity() {
+    void verifyValidity() throws Throwable {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));

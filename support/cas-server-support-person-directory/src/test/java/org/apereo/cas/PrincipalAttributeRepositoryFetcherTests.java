@@ -44,7 +44,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("casuser-whatever")
@@ -62,7 +62,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class NoActiveRepositoryTests extends BaseTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")
@@ -78,7 +78,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class SelectiveRepositoryTests extends BaseTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")

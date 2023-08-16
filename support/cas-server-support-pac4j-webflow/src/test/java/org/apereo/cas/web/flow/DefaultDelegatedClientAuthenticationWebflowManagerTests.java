@@ -115,7 +115,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyOidcStoreOperation() throws Exception {
+    void verifyOidcStoreOperation() throws Throwable {
         val config = new OidcConfiguration();
         config.setClientId(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -129,7 +129,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyOAuth2StoreOperation() throws Exception {
+    void verifyOAuth2StoreOperation() throws Throwable {
         val config = new OAuth20Configuration();
         config.setKey(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -143,7 +143,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyOAuth1StoreOperation() throws Exception {
+    void verifyOAuth1StoreOperation() throws Throwable {
         val config = new OAuth10Configuration();
         config.setKey(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -157,7 +157,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyCasStoreOperation() throws Exception {
+    void verifyCasStoreOperation() throws Throwable {
         val localeResolver = new SessionLocaleResolver();
         httpServletRequest.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
         val config = new CasConfiguration();
@@ -174,7 +174,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifySamlStoreOperation() throws Exception {
+    void verifySamlStoreOperation() throws Throwable {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
@@ -188,7 +188,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyForceAuthnOperation() throws Exception {
+    void verifyForceAuthnOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         registeredService.setProperties(Map.of(
             RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_FORCE_AUTHN.getPropertyName(),
@@ -212,7 +212,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyPassiveAuthnOperation() throws Exception {
+    void verifyPassiveAuthnOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         registeredService.setProperties(Map.of(
             RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_PASSIVE_AUTHN.getPropertyName(),
@@ -236,7 +236,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyNoTransientSessionTicketStored() throws Exception {
+    void verifyNoTransientSessionTicketStored() throws Throwable {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
         delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
@@ -247,7 +247,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    void verifyExpiredTicketOperation() throws Exception {
+    void verifyExpiredTicketOperation() throws Throwable {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
@@ -260,7 +260,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
-    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
+    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Throwable {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);

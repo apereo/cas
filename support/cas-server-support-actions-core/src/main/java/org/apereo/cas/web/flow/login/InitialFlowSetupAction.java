@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -89,10 +90,11 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         configureWebflowForCustomFields(context);
         configureWebflowForServices(context);
 
-        val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
-        configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
-
-        return success();
+        return FunctionUtils.doUnchecked(() -> {
+            val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
+            configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
+            return success();
+        });
     }
 
     /**
@@ -142,10 +144,10 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
 
-        val service = WebUtils.getService(this.argumentExtractors, context);
+        val service = WebUtils.getService(argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
-            val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            val selectedService = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(service));
             val registeredService = servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
@@ -167,7 +169,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
     }
 
-    protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
+    protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 

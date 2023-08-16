@@ -55,35 +55,35 @@ class FileTrustStoreSslSocketFactoryTests {
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+        void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Throwable {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
         }
 
         @Test
-        void verifyTrustStoreNotFound() {
+        void verifyTrustStoreNotFound() throws Throwable {
             assertThrows(IOException.class, () -> sslFactory(new FileSystemResource("test.jks"), "changeit", "JKS"));
         }
 
         @Test
-        void verifyTrustStoreBadPassword() {
+        void verifyTrustStoreBadPassword() throws Throwable {
             assertThrows(IOException.class, () -> sslFactory(RESOURCE, "invalid", "JKS"));
         }
 
         @Test
-        void verifyTrustStoreType() throws Exception {
+        void verifyTrustStoreType() throws Throwable {
             val client = getSimpleHttpClient(sslFactory(RESOURCE_P12, "changeit", "PKCS12"));
             assertTrue(client.isValidEndPoint("https://www.google.com"));
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
+        void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Throwable {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("https://www.google.com"));
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
+        void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Throwable {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("http://wikipedia.org"));
         }
@@ -99,7 +99,7 @@ class FileTrustStoreSslSocketFactoryTests {
         private CasSSLContext casSslContext;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             assertNotNull(casSslContext.getTrustManagerFactory());
             assertNotNull(DefaultCasSSLContextTests.SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
         }

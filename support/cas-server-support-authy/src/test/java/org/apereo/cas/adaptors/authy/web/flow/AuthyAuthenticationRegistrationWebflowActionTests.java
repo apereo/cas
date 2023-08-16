@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val authyInstance = mock(AuthyClientInstance.class);
         val apiClient = mock(AuthyApiClient.class);
         when(authyInstance.authyClient()).thenReturn(apiClient);

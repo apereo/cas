@@ -34,6 +34,8 @@ public interface AuthenticationRiskNotifier extends Runnable {
 
     /**
      * Notify in the event that an authentication attempt is considered risky.
+     *
+     * @throws Throwable the throwable
      */
-    void publish();
+    void publish() throws Throwable;
 }

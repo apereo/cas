@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     @Test
-    void verifyNonCompatibleService() {
+    void verifyNonCompatibleService() throws Throwable {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
 
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
@@ -31,7 +31,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifyUndefinedOrPublicSubjectType() {
+    void verifyUndefinedOrPublicSubjectType() throws Throwable {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
 
         val registeredService = new OidcRegisteredService();
@@ -60,7 +60,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifySubjectType() {
+    void verifySubjectType() throws Throwable {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
         provider.setPersistentIdGenerator(new ShibbolethCompatiblePersistentIdGenerator("cpaOl1pwGZ439!!"));
 

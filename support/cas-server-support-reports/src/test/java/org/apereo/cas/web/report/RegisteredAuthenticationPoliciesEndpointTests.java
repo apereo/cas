@@ -25,7 +25,7 @@ class RegisteredAuthenticationPoliciesEndpointTests extends AbstractCasEndpointT
     private RegisteredAuthenticationPoliciesEndpoint endpoint;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(endpoint.handle().isEmpty());
         assertNotNull(endpoint.fetchPolicy(AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName()));
     }

@@ -38,7 +38,7 @@ class TokenAuthenticationEndpointTests extends AbstractCasEndpointTests {
     private AuthenticationHandler tokenAuthenticationHandler;
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
         servicesManager.save(registeredService);

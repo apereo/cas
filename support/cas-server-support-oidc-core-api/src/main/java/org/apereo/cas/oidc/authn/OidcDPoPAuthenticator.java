@@ -53,7 +53,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
     }
 
     protected Optional<Credentials> validateAccessToken(final Credentials credentials, final WebContext webContext,
-                                                        final String dPopProof) throws Exception {
+                                                        final String dPopProof) throws Throwable {
         val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow();
         val registeredService = (OidcRegisteredService)
             OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
@@ -68,7 +68,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
 
     protected JWKThumbprintConfirmation verifyProofOfPossession(final WebContext webContext,
                                                                 final String dPopProof,
-                                                                final String clientId) throws Exception {
+                                                                final String clientId) throws Throwable {
         val algorithms = oidcServerDiscoverySettings.getDPopSigningAlgValuesSupported()
             .stream()
             .map(JWSAlgorithm::parse)
@@ -82,7 +82,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
     }
 
     protected Optional<Credentials> buildUserProfile(final Credentials credentials, final String dPopProof,
-                                                     final String clientId, final JWKThumbprintConfirmation confirmation) throws Exception {
+                                                     final String clientId, final JWKThumbprintConfirmation confirmation) throws Throwable {
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val userProfile = new CommonProfile(true);
         userProfile.setId(clientId);
@@ -93,7 +93,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
         return Optional.of(credentials);
     }
 
-    protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws Exception {
+    protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws Throwable {
         return SignedJWT.parse(dPopProof);
     }
 }

@@ -23,31 +23,31 @@ class RandomUtilsTests {
     }
 
     @Test
-    void verifyUnknownAlg() {
+    void verifyUnknownAlg() throws Throwable {
         System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, "bad-algorithm");
         assertNotNull(RandomUtils.getNativeInstance());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val value = RandomUtils.generateSecureRandomId();
         assertNotNull(value);
     }
 
     @Test
-    void verifyAlphaNumeric() {
+    void verifyAlphaNumeric() throws Throwable {
         val value = RandomUtils.randomAlphanumeric(4, 8);
         assertNotNull(value);
     }
 
     @Test
-    void verifyRandomAlphabetic() {
+    void verifyRandomAlphabetic() throws Throwable {
         val value = RandomUtils.randomAlphabetic(4, 8);
         assertNotNull(value);
     }
 
     @Test
-    void verifyInt() {
+    void verifyInt() throws Throwable {
         var value = RandomUtils.nextInt();
         assertNotNull(value);
 
@@ -56,13 +56,13 @@ class RandomUtilsTests {
     }
 
     @Test
-    void verifyLong() {
+    void verifyLong() throws Throwable {
         var value = RandomUtils.nextLong(3, 3);
         assertEquals(3, value);
     }
 
     @Test
-    void verifyDouble() {
+    void verifyDouble() throws Throwable {
         var value = RandomUtils.nextDouble();
         assertNotNull(value);
 
@@ -71,7 +71,7 @@ class RandomUtilsTests {
     }
 
     @Test
-    void verifyValidation() {
+    void verifyValidation() throws Throwable {
         assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextDouble(10, 1));
         assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextDouble(-1, -1));
 

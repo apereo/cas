@@ -33,10 +33,11 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      * @param registeredService the registered service
      * @param accessToken       the access token
      * @return the map
+     * @throws Throwable the throwable
      */
     default Principal filter(final Service service, final Principal profile,
                              final RegisteredService registeredService,
-                             final OAuth20AccessToken accessToken) {
+                             final OAuth20AccessToken accessToken) throws Throwable {
         return profile;
     }
 
@@ -47,9 +48,10 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      * @param profile           the profile
      * @param registeredService the registered service
      * @return the principal
+     * @throws Throwable the throwable
      */
     default Principal filter(final Service service, final Principal profile,
-                             final RegisteredService registeredService) {
+                             final RegisteredService registeredService) throws Throwable {
         return filter(service, profile, registeredService, null);
     }
 }

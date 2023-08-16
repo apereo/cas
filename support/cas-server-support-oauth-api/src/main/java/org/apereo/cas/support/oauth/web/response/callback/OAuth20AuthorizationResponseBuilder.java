@@ -34,21 +34,21 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      * @param redirectUrl       the redirect url
      * @param parameters        the parameters
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     ModelAndView build(OAuthRegisteredService registeredService,
                        OAuth20ResponseModeTypes responseMode,
                        String redirectUrl,
-                       Map<String, String> parameters) throws Exception;
+                       Map<String, String> parameters) throws Throwable;
 
     /**
      * Build.
      *
      * @param holder the holder
      * @return the view response
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    ModelAndView build(AccessTokenRequestContext holder) throws Exception;
+    ModelAndView build(AccessTokenRequestContext holder) throws Throwable;
 
     /**
      * Supports request?

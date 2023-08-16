@@ -43,7 +43,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     }
 
     @Test
-    void checkInitialAttributes() {
+    void checkInitialAttributes() throws Throwable {
         val p = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
@@ -53,7 +53,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     }
 
     @Test
-    void checkAttributesWithRepository() {
+    void checkAttributesWithRepository() throws Throwable {
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();

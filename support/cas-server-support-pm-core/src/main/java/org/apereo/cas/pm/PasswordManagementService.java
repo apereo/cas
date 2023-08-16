@@ -41,11 +41,11 @@ public interface PasswordManagementService {
     /**
      * Execute op to change password.
      *
-     * @param bean       the bean
+     * @param bean the bean
      * @return true /false
-     * @throws InvalidPasswordException if new password fails downstream validation
+     * @throws Throwable the throwable
      */
-    default boolean change(final PasswordChangeRequest bean) throws InvalidPasswordException {
+    default boolean change(final PasswordChangeRequest bean) throws Throwable {
         return false;
     }
 
@@ -53,9 +53,10 @@ public interface PasswordManagementService {
      * Unlock account for credential.
      *
      * @param credential the credential
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    default boolean unlockAccount(final Credential credential) {
+    default boolean unlockAccount(final Credential credential) throws Throwable {
         return false;
     }
 
@@ -64,8 +65,9 @@ public interface PasswordManagementService {
      *
      * @param query the username
      * @return the string
+     * @throws Throwable the throwable
      */
-    default String findEmail(final PasswordManagementQuery query) {
+    default String findEmail(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 
@@ -74,8 +76,9 @@ public interface PasswordManagementService {
      *
      * @param query the query
      * @return the string
+     * @throws Throwable the throwable
      */
-    default String findPhone(final PasswordManagementQuery query) {
+    default String findPhone(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 
@@ -84,8 +87,9 @@ public interface PasswordManagementService {
      *
      * @param query the query
      * @return the string
+     * @throws Throwable the throwable
      */
-    default String findUsername(final PasswordManagementQuery query) {
+    default String findUsername(final PasswordManagementQuery query) throws Throwable {
         return null;
     }
 
@@ -117,8 +121,9 @@ public interface PasswordManagementService {
      *
      * @param query the query
      * @return the security questions
+     * @throws Throwable the throwable
      */
-    default Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
+    default Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
         return new LinkedHashMap<>(0);
     }
 
@@ -126,8 +131,9 @@ public interface PasswordManagementService {
      * Update security questions.
      *
      * @param query the query
+     * @throws Throwable the throwable
      */
-    default void updateSecurityQuestions(final PasswordManagementQuery query) {
+    default void updateSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
     }
 
     /**

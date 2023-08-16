@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -50,7 +50,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    void verifyMissingPolicyOperation() throws Exception {
+    void verifyMissingPolicyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -74,7 +74,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    void verifyMissingOperation() throws Exception {
+    void verifyMissingOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var response = umaFindPolicyForResourceSetEndpointController.getPoliciesForResourceSet(10, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -83,7 +83,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    void verifyNoAuthOperation() throws Exception {
+    void verifyNoAuthOperation() throws Throwable {
         var response = umaFindPolicyForResourceSetEndpointController.getPoliciesForResourceSet(10,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

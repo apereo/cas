@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.FileAuthenticationEventExecutionPlanConfiguration;
@@ -71,6 +72,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCookieConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     FileAuthenticationEventExecutionPlanConfiguration.class,
@@ -102,7 +104,7 @@ class ConfigurationTests {
     private AuthenticationHandler rejectUsersAuthenticationHandler;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(fileAuthenticationHandler);
         assertNotNull(groovyResourceAuthenticationHandler);
         assertNotNull(jsonResourceAuthenticationHandler);

@@ -45,8 +45,9 @@ public interface PrincipalResolver extends Ordered {
      *
      * @param credential Source credential.
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential) {
+    default Principal resolve(final Credential credential) throws Throwable {
         return resolve(credential, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
@@ -57,8 +58,9 @@ public interface PrincipalResolver extends Ordered {
      * @param credential Source credential.
      * @param handler    the authentication handler linked to the resolver. May be null.
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) {
+    default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) throws Throwable {
         return resolve(credential, Optional.empty(), handler, Optional.empty());
     }
 
@@ -70,10 +72,11 @@ public interface PrincipalResolver extends Ordered {
      * @param handler    the authentication handler linked to the resolver. May be null.
      * @param service    the service
      * @return Resolved principal, or null if the principal could not be resolved.
+     * @throws Throwable the throwable
      */
     Principal resolve(Credential credential, Optional<Principal> principal,
                       Optional<AuthenticationHandler> handler,
-                      Optional<Service> service);
+                      Optional<Service> service) throws Throwable;
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD

@@ -7,6 +7,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.MultiValueMap;
 
@@ -48,11 +49,11 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request,
-                                        final MultiValueMap<String, String> requestBody) {
+                                        final MultiValueMap<String, String> requestBody) throws Throwable {
         return this.chain
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
-            .map(f -> f.fromRequest(request, requestBody))
+            .map(Unchecked.function(f -> f.fromRequest(request, requestBody)))
             .flatMap(List::stream)
             .collect(Collectors.toList());
     }

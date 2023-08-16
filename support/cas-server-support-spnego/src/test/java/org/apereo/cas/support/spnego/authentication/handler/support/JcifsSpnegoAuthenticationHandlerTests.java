@@ -1,7 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -37,7 +36,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     private static final int POOL_SIZE = 10;
 
     @Test
-    void verifySuccessfulAuthenticationWithDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithDomainName() throws Throwable {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -49,7 +48,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithoutDomainName() throws Throwable {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -60,7 +59,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
+    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Throwable {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)));
@@ -69,18 +68,18 @@ class JcifsSpnegoAuthenticationHandlerTests {
         authenticate(credentials, authenticationHandler);
     }
 
-    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
+    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws Throwable {
         try {
             authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }
     }
 
     @Test
-    void verifyUnsuccessfulAuthentication() throws Exception {
+    void verifyUnsuccessfulAuthentication() throws Throwable {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)));
@@ -90,7 +89,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
@@ -101,7 +100,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyGetSimpleCredentials() {
+    void verifyGetSimpleCredentials() throws Throwable {
         val myNtlmUser = "DOMAIN\\Username";
         val myNtlmUserWithNoDomain = USERNAME;
         val myKerberosUser = "Username@DOMAIN.COM";
@@ -123,7 +122,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myKerberosUser, false));
     }
 
-    private SpnegoProperties getProperties(final boolean principalWithDomainName, final boolean ntlmAllowed) {
+    private static SpnegoProperties getProperties(final boolean principalWithDomainName, final boolean ntlmAllowed) {
         val prop = new SpnegoProperties();
         prop.setName(StringUtils.EMPTY);
         prop.setOrder(0);

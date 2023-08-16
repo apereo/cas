@@ -29,7 +29,6 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -134,7 +133,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-        final String originalPassword) throws GeneralSecurityException, PreventedException {
+        final String originalPassword) throws Throwable {
         val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {
@@ -165,7 +164,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
      * @throws LoginException On security policy errors related to principal creation.
      */
-    protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
+    protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {
         LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(),
             ldapEntry.getAttributeNames());
         val id = getLdapPrincipalIdentifier(username, ldapEntry);
@@ -175,19 +174,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
-    /**
-     * Collect attributes for ldap entry.
-     *
-     * @param ldapEntry the ldap entry
-     * @param username  the username
-     * @return the map
-     */
     protected Map<String, List<Object>> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
         val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
         principalAttributeMap.forEach((key, names) -> {
             val attributeNames = CollectionUtils.toCollection(names, ArrayList.class);
-            if (attributeNames.size() == 1 && attributeNames.stream().allMatch(s -> s.toString().endsWith(";"))) {
+            if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> name.toString().endsWith(";"))) {
                 val attrs = ldapEntry.getAttributes()
                     .stream()
                     .filter(attr -> attr.getName().startsWith(key.concat(";"))).toList();

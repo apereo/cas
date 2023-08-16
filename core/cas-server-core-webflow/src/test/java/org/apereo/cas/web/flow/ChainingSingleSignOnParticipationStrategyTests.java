@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class ChainingSingleSignOnParticipationStrategyTests {
     @Test
-    void verifyVotesNoInChain() {
+    void verifyVotesNoInChain() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -41,7 +41,7 @@ class ChainingSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyEmptyChain() {
+    void verifyEmptyChain() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -58,7 +58,7 @@ class ChainingSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyVotesYesInChain() {
+    void verifyVotesYesInChain() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -76,7 +76,7 @@ class ChainingSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyVotesNoInChainWithoutSupport() {
+    void verifyVotesNoInChainWithoutSupport() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -65,11 +65,11 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                 LOGGER.debug("Credential is not supported [{}]", credential);
             }
             return success(resultMap);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             WebUtils.addErrorMessageToContext(requestContext, "screen.surrogates.account.selection.error",
                 "Unable to accept or authorize selection");
             LoggingUtils.error(LOGGER, e);
-            return error(e);
+            return error(new RuntimeException(e));
         }
     }
 }

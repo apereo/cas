@@ -33,7 +33,7 @@ class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     private UrlResolver casCallbackUrlResolver;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = addRegisteredService();
 
         val request = new MockHttpServletRequest();

@@ -30,7 +30,7 @@ class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests 
     private OAuth20AuthorizationRequestValidator validator;
 
     @Test
-    void verifySupports() throws Exception {
+    void verifySupports() throws Throwable {
         val service = getRegisteredService(UUID.randomUUID().toString(), "secret");
         servicesManager.save(service);
 

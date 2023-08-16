@@ -47,7 +47,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesCorrectly() {
+    void verifyEncodeNamesCorrectly() throws Throwable {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -57,7 +57,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesUnnecessary() {
+    void verifyEncodeNamesUnnecessary() throws Throwable {
         when(webApplicationService.getFormat()).thenReturn(ValidationResponseType.JSON);
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
@@ -68,7 +68,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesWithNoService() {
+    void verifyEncodeNamesWithNoService() throws Throwable {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -77,7 +77,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeBinaryValuesCorrectly() {
+    void verifyEncodeBinaryValuesCorrectly() throws Throwable {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user", "casuser".getBytes(StandardCharsets.UTF_8));
         val results = encoder.encodeAttributes(attributes, registeredService, webApplicationService);
@@ -87,7 +87,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodedWithPrefix() {
+    void verifyEncodedWithPrefix() throws Throwable {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("_MAIL_", "casuser@example.org");
         val results = encoder.encodeAttributes(attributes, registeredService, webApplicationService);

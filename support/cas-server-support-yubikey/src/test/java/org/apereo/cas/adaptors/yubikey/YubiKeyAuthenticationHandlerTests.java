@@ -85,7 +85,7 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    void checkSuccessAuthn() throws Exception {
+    void checkSuccessAuthn() throws Throwable {
         val client = mock(YubicoClient.class);
         val response = mock(VerificationResponse.class);
         when(response.getStatus()).thenReturn(ResponseStatus.OK);
@@ -96,14 +96,13 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    void checkFailsVerificationAuthn() throws Exception {
+    void checkFailsVerificationAuthn() throws Throwable {
         val client = mock(YubicoClient.class);
         when(client.verify(anyString())).thenThrow(new YubicoVerificationException("fails"));
         val handler = getHandler(client);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }
-
-
+    
     @Test
     void checkReplayedAuthn() {
         val handler = getHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));

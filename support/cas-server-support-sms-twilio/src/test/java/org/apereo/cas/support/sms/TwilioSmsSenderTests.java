@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 class TwilioSmsSenderTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val s = new TwilioSmsSender("accountid", "token");
         assertFalse(s.send("123456789", "123456789", "Msg"));
     }

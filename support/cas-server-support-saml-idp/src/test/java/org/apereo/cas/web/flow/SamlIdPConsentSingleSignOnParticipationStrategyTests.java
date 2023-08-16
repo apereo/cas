@@ -47,7 +47,7 @@ class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWe
     private SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Test
-    void verifyIdPNeedsConsentOperation() {
+    void verifyIdPNeedsConsentOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

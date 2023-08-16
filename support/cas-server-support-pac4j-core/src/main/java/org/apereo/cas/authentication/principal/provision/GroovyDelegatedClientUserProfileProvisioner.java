@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class GroovyDelegatedClientUserProfileProvisioner extends BaseDelegatedClientUserProfileProvisioner {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyDelegatedClientUserProfileProvisioner(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
@@ -26,7 +26,7 @@ public class GroovyDelegatedClientUserProfileProvisioner extends BaseDelegatedCl
 
     @Override
     public void execute(final Principal principal, final UserProfile profile,
-                        final BaseClient client, final Credential credential) {
+                        final BaseClient client, final Credential credential) throws Throwable {
         val args = new Object[]{principal, profile, client, LOGGER};
         watchableScript.execute(args, Void.class);
     }

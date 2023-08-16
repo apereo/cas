@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -29,17 +30,17 @@ public class SurrogateAuthorizationAction extends BaseCasWebflowAction {
             if (svc != null) {
                 val authentication = WebUtils.getAuthentication(requestContext);
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-
                 val service = WebUtils.getService(requestContext);
                 val audit = AuditableContext.builder().service(service)
                     .service(service)
                     .authentication(authentication)
                     .registeredService(svc)
                     .build();
-                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-                accessResult.throwExceptionIfNeeded();
-
-                return success();
+                return FunctionUtils.doUnchecked(() -> {
+                    val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                    accessResult.throwExceptionIfNeeded();
+                    return success();
+                });
             }
             return null;
         } finally {

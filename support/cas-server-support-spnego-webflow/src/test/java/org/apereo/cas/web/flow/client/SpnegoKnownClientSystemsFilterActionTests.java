@@ -117,7 +117,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Exception {
+    void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Throwable {
         val action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");

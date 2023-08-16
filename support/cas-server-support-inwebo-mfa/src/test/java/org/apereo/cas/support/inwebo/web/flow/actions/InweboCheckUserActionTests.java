@@ -53,7 +53,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyNoUser() {
+    void verifyNoUser() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, 0));
 
         val event = action.doExecute(requestContext);
@@ -64,7 +64,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyInweboException() {
+    void verifyInweboException() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenThrow(new RuntimeException());
 
         val event = action.doExecute(requestContext);
@@ -75,7 +75,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserBlocked() {
+    void verifyUserBlocked() throws Throwable {
         val loginSearch = loginSearchOk(3, USER_ID);
         loginSearch.setUserStatus(1);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearch);
@@ -88,7 +88,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserNotRegisteredVA() {
+    void verifyUserNotRegisteredVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -99,7 +99,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserNotRegisteredMA() {
+    void verifyUserNotRegisteredMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
@@ -111,7 +111,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPush() {
+    void verifyPush() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -122,7 +122,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAuto() {
+    void verifyPushAuto() throws Throwable {
         inwebo.setPushAuto(false);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
 
@@ -134,7 +134,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUnexpectedStatus2() {
+    void verifyUnexpectedStatus2() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -145,7 +145,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUnexpectedStatus3() {
+    void verifyUnexpectedStatus3() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -156,7 +156,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyBrowserVA() {
+    void verifyBrowserVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -167,7 +167,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyBrowserMA() {
+    void verifyBrowserMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
@@ -179,7 +179,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserVA() {
+    void verifyPushAndBrowserVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
         val event = action.doExecute(requestContext);
@@ -190,7 +190,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserMA() {
+    void verifyPushAndBrowserMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -202,7 +202,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserNone() {
+    void verifyPushAndBrowserNone() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -214,7 +214,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserVA() {
+    void verifyPushDisabledAndBrowserVA() throws Throwable {
         inwebo.setPushEnabled(false);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
@@ -226,7 +226,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserMA() {
+    void verifyPushDisabledAndBrowserMA() throws Throwable {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
@@ -239,7 +239,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserNone() {
+    void verifyPushDisabledAndBrowserNone() throws Throwable {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));

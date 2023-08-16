@@ -30,7 +30,7 @@ class QRAuthenticationDeviceRepositoryEndpointTests {
     private QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(qrAuthenticationDeviceRepositoryEndpoint.devices("casuser").isEmpty());
         assertDoesNotThrow(() -> {
             qrAuthenticationDeviceRepositoryEndpoint.registerDevice("casuser", UUID.randomUUID().toString());

@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -94,7 +93,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                 throw new AccountNotFoundException(username + " not found with SQL query");
             }
             throw new FailedLoginException("Multiple records found for " + username);
-        } catch (final DataAccessException e) {
+        } catch (final Throwable e) {
             throw new PreventedException(e);
         }
     }
@@ -103,13 +102,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         return getJdbcTemplate().queryForMap(properties.getSql(), username);
     }
 
-    /**
-     * Digest encoded password.
-     *
-     * @param encodedPassword the encoded password
-     * @param values          the values retrieved from database
-     * @return the digested password
-     */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
         val hashService = new DefaultHashService();
         if (StringUtils.isNotBlank(properties.getStaticSalt())) {

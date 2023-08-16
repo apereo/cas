@@ -53,7 +53,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -89,7 +89,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         private CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -122,7 +122,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     @Deprecated(since = "6.5.0", forRemoval = true)
     class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState("mfa-duo");
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

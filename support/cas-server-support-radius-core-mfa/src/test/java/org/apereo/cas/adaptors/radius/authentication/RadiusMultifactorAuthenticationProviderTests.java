@@ -28,7 +28,7 @@ class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifact
     }
 
     @Test
-    void verifyPingFails() throws Exception {
+    void verifyPingFails() throws Throwable {
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(new TimeoutException("timeout"));
@@ -37,7 +37,7 @@ class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifact
     }
 
     @Test
-    void verifyPingPasses() throws Exception {
+    void verifyPingPasses() throws Throwable {
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(new RuntimeException("pass"));

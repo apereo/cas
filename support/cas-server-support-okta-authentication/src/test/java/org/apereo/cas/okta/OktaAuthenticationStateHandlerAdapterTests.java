@@ -72,7 +72,7 @@ class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    void handleUnknownPasswordPolicy() throws Exception {
+    void handleUnknownPasswordPolicy() throws Throwable {
         val strategy = mock(AuthenticationPasswordPolicyHandlingStrategy.class);
         when(strategy.supports(any())).thenReturn(Boolean.TRUE);
         when(strategy.handle(any(), any())).thenThrow(new RuntimeException());
@@ -86,7 +86,7 @@ class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    void verifyLockout() {
+    void verifyLockout() throws Throwable {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -96,7 +96,7 @@ class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);

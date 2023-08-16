@@ -34,6 +34,7 @@ import org.apereo.cas.config.CasFiltersConfiguration;
 import org.apereo.cas.config.CasLoggingConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSupportActionsConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
@@ -43,6 +44,7 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -126,6 +128,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     WebMvcAutoConfiguration.class
 })
@@ -149,12 +152,12 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     }
 
     @Test
-    void verifyExecutorsAreBeans() {
+    void verifyExecutorsAreBeans() throws Throwable {
         assertNotNull(getFlowExecutor());
     }
 
     @Test
-    void verifyFlowExecutorByClient() {
+    void verifyFlowExecutorByClient() throws Throwable {
         val ctx = getMockRequestContext();
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
@@ -200,18 +203,20 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     service.setOriginalUrl(CoreAuthenticationTestUtils.CONST_TEST_URL);
                     service.setArtifactId(null);
 
-                    val authentication = CoreAuthenticationTestUtils.getAuthentication();
-                    val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
-                    val principal = CoreAuthenticationTestUtils.getPrincipal();
-                    authenticationResultBuilder.collect(authentication);
-                    authenticationResultBuilder.collect((Credential) CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
+                    return FunctionUtils.doUnchecked(() -> {
+                        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                        val principal = CoreAuthenticationTestUtils.getPrincipal();
+                        authenticationResultBuilder.collect(authentication);
+                        authenticationResultBuilder.collect((Credential) CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
-                    WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-                    WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-                    WebUtils.putPrincipal(requestContext, principal);
+                        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                        WebUtils.putPrincipal(requestContext, principal);
 
-                    return success();
+                        return success();
+                    });
                 }
             };
             //CHECKSTYLE:ON

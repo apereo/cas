@@ -25,6 +25,7 @@ public interface UniqueTicketIdGenerator {
      *
      * @param prefix The prefix we want attached to the ticket.
      * @return the unique ticket id
+     * @throws Throwable the throwable
      */
-    String getNewTicketId(String prefix);
+    String getNewTicketId(String prefix) throws Throwable;
 }

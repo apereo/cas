@@ -33,7 +33,6 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -82,7 +81,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
+        final String originalPassword) throws Throwable {
 
         var response = (HttpResponse) null;
         try {
@@ -111,24 +110,16 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
     }
 
-    /**
-     * Build principal from response.
-     *
-     * @param credential the credential
-     * @param response   the response
-     * @return the authentication handler execution result
-     * @throws GeneralSecurityException the general security exception
-     */
     protected AuthenticationHandlerExecutionResult buildPrincipalFromResponse(
         final UsernamePasswordCredential credential,
-        final HttpResponse response) throws GeneralSecurityException {
+        final HttpResponse response) throws Throwable {
         try {
             val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("REST authentication response received: [{}]", result);
             val principalFromRest = MAPPER.readValue(result, Principal.class);
             val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
             return createHandlerResult(credential, principal, getWarnings(response));
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Unable to detect the authentication principal for " + credential.getUsername());
         }

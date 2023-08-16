@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -31,7 +30,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -106,30 +104,24 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
 
-        try {
-            val username = credential.getUsername();
-            LOGGER.trace("Fetching token for [{}]", username);
-            val result = getAccessTokenFromUserCredentials(username, credential.toPassword());
-            LOGGER.debug("Retrieved token [{}] for [{}]", result.accessToken(), username);
-            val userInfo = getUserInfoFromGraph(result, username);
-            LOGGER.trace("Retrieved user info [{}]", userInfo);
-            val userInfoMap = (Map<String, ?>) MAPPER.readValue(JsonValue.readHjson(userInfo).toString(), Map.class);
-            val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(userInfoMap.size());
-            userInfoMap.forEach((key, value) -> {
-                val values = CollectionUtils.toCollection(value, ArrayList.class);
-                if (!values.isEmpty()) {
-                    attributeMap.put(key, values);
-                }
-            });
-            val principal = principalFactory.createPrincipal(username, attributeMap);
-            LOGGER.debug("Created principal for id [{}] and [{}] attributes", username, attributeMap);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new FailedLoginException("Invalid credentials: " + e.getMessage());
-        }
+        val username = credential.getUsername();
+        LOGGER.trace("Fetching token for [{}]", username);
+        val result = getAccessTokenFromUserCredentials(username, credential.toPassword());
+        LOGGER.debug("Retrieved token [{}] for [{}]", result.accessToken(), username);
+        val userInfo = getUserInfoFromGraph(result, username);
+        LOGGER.trace("Retrieved user info [{}]", userInfo);
+        val userInfoMap = (Map<String, ?>) MAPPER.readValue(JsonValue.readHjson(userInfo).toString(), Map.class);
+        val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(userInfoMap.size());
+        userInfoMap.forEach((key, value) -> {
+            val values = CollectionUtils.toCollection(value, ArrayList.class);
+            if (!values.isEmpty()) {
+                attributeMap.put(key, values);
+            }
+        });
+        val principal = principalFactory.createPrincipal(username, attributeMap);
+        LOGGER.debug("Created principal for id [{}] and [{}] attributes", username, attributeMap);
+        return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 }

@@ -52,7 +52,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      */
     protected final OAuth20RequestParameterResolver requestParameterResolver;
 
-    protected boolean preValidate(final WebContext context) {
+    protected boolean preValidate(final WebContext context) throws Throwable {
         val clientId = getClientIdFromRequest(context);
         val registeredService = verifyRegisteredServiceByClientId(context, clientId);
         if (registeredService == null) {
@@ -80,7 +80,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
     }
 
-    protected OAuthRegisteredService verifyRegisteredServiceByClientId(final WebContext context, final String clientId) {
+    protected OAuthRegisteredService verifyRegisteredServiceByClientId(final WebContext context, final String clientId) throws Throwable {
         if (StringUtils.isBlank(clientId)) {
             LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
             setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID), false);

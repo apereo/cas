@@ -75,7 +75,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             getUmaConfigurationContext().getTicketRegistry().addTicket(permission);
             val model = CollectionUtils.wrap("ticket", permission.getId(), "code", HttpStatus.CREATED);
             return new ResponseEntity(model, HttpStatus.OK);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to complete the permission registration request.", HttpStatus.BAD_REQUEST);

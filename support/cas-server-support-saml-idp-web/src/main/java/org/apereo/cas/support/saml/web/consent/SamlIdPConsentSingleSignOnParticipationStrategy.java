@@ -36,7 +36,7 @@ public class SamlIdPConsentSingleSignOnParticipationStrategy extends SamlIdPSing
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
         val service = ssoRequest.getAttributeValue(Service.class.getName(), Service.class);
         val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
         val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);

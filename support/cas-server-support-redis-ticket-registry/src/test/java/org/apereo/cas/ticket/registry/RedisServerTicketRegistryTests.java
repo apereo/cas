@@ -59,7 +59,7 @@ class RedisServerTicketRegistryTests {
     })
     class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
         @RepeatedTest(2)
-        public void verifyTrackingUsersAndPrefixes() {
+        void verifyTrackingUsersAndPrefixes() throws Throwable {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val runnable = new Runnable() {
                 @Override
@@ -149,7 +149,7 @@ class RedisServerTicketRegistryTests {
         private static final int COUNT = 100;
 
         @RepeatedTest(2)
-        public void verifyLargeDataset() {
+        void verifyLargeDataset() throws Throwable {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
@@ -200,7 +200,7 @@ class RedisServerTicketRegistryTests {
         }
 
         @RepeatedTest(2)
-        public void verifyHealthOperation() {
+        void verifyHealthOperation() throws Throwable {
             val health = redisHealthIndicator.health();
             val section = (Map) health.getDetails().get("redisTicketConnectionFactory");
             assertTrue(section.containsKey("server"));
@@ -212,7 +212,7 @@ class RedisServerTicketRegistryTests {
 
         @RepeatedTest(1)
         @Tag("TicketRegistryTestWithEncryption")
-        public void verifyBadTicketDecoding() throws Exception {
+        void verifyBadTicketDecoding() throws Throwable {
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
@@ -229,7 +229,7 @@ class RedisServerTicketRegistryTests {
         }
 
         @RepeatedTest(1)
-        public void verifyFailure() throws Exception {
+        void verifyFailure() throws Throwable {
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));

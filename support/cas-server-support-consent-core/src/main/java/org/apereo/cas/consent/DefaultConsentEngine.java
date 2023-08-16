@@ -54,7 +54,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final Authentication authentication,
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
-                                                final ConsentReminderOptions options) throws Exception {
+                                                final ConsentReminderOptions options) throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         attributes.replaceAll((key, value) -> {
             var attr = CasConsentableAttribute.builder()
@@ -93,7 +93,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     @Override
     public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
                                                                       final Service service,
-                                                                      final RegisteredService registeredService) {
+                                                                      final RegisteredService registeredService) throws Throwable {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
@@ -125,7 +125,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     @Override
     public ConsentQueryResult isConsentRequiredFor(final Service service,
                                                    final RegisteredService registeredService,
-                                                   final Authentication authentication) {
+                                                   final Authentication authentication) throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());

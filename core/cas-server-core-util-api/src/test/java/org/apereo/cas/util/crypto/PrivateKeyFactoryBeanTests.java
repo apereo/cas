@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrivateKeyFactoryBeanTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val factory = new PrivateKeyFactoryBean();
         factory.setLocation(new ClassPathResource("privatekey2.pem"));
         factory.setAlgorithm(RsaKeyUtil.RSA);
@@ -28,7 +28,7 @@ class PrivateKeyFactoryBeanTests {
     }
 
     @Test
-    void verifyFails() throws Exception {
+    void verifyFails() throws Throwable {
         val factory = new PrivateKeyFactoryBean();
         factory.setLocation(new ClassPathResource("badkey.pem"));
         factory.setAlgorithm(RsaKeyUtil.RSA);

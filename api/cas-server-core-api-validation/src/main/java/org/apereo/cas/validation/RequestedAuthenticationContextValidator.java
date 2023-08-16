@@ -22,9 +22,10 @@ public interface RequestedAuthenticationContextValidator {
      * @param request   - the request
      * @param response  the response
      * @return - status
+     * @throws Throwable the throwable
      */
     AuthenticationContextValidationResult validateAuthenticationContext(Assertion assertion, HttpServletRequest request,
-                                                                        HttpServletResponse response);
+                                                                        HttpServletResponse response) throws Throwable;
 
     /**
      * Validate authentication context.
@@ -35,10 +36,11 @@ public interface RequestedAuthenticationContextValidator {
      * @param authentication    the authentication
      * @param service           the service
      * @return the authentication context validation result
+     * @throws Throwable the throwable
      */
     AuthenticationContextValidationResult validateAuthenticationContext(HttpServletRequest request,
                                                                         HttpServletResponse response,
                                                                         RegisteredService registeredService,
                                                                         Authentication authentication,
-                                                                        Service service);
+                                                                        Service service) throws Throwable;
 }

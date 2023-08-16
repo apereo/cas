@@ -65,7 +65,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyMappedToMultipleAttributes() {
+    void verifyMappedToMultipleAttributes() throws Throwable {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", List.of("cn", "givenName", "unknown", "firstName"));
         val p1 = new ReturnLinkedAttributeReleasePolicy().setAllowedAttributes(allowed1);
         val service1 = CoreAttributesTestUtils.getRegisteredService();

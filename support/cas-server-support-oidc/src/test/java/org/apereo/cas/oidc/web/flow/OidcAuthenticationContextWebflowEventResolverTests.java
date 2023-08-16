@@ -51,7 +51,7 @@ class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTes
 
     @BeforeEach
     @Override
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         super.initialize();
         this.context = new MockRequestContext();
 
@@ -76,7 +76,7 @@ class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTes
     }
 
     @Test
-    void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() throws Throwable {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
