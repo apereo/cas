@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 class DefaultCasWebflowExecutionPlanTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val plan = new DefaultCasWebflowExecutionPlan();
 
         val p1 = mock(CasWebflowLoginContextProvider.class);

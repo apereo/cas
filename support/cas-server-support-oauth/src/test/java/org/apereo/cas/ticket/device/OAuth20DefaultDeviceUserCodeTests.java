@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20DefaultDeviceUserCodeTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
         assertEquals(OAuth20DeviceToken.PREFIX, devCode.getPrefix());
 

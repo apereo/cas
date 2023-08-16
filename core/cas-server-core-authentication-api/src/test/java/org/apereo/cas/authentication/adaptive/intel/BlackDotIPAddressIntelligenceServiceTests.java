@@ -31,7 +31,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyBannedOperation() {
+    void verifyBannedOperation() throws Throwable {
         try (val webServer = new MockWebServer(9355,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.TOO_MANY_REQUESTS)) {
             webServer.start();
@@ -46,7 +46,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    void verifyErrorStatusOperation() throws Exception {
+    void verifyErrorStatusOperation() throws Throwable {
         val data = MAPPER.writeValueAsString(Collections.singletonMap("status", "error"));
         try (val webServer = new MockWebServer(9356,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -61,7 +61,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    void verifySuccessStatusAndBannedWithRank() throws Exception {
+    void verifySuccessStatusAndBannedWithRank() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 1));
         try (val webServer = new MockWebServer(9357,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -76,7 +76,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    void verifySuccessStatus() throws Exception {
+    void verifySuccessStatus() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 0));
         try (val webServer = new MockWebServer(9358,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -91,7 +91,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    void verifySuccessStatusRanked() throws Exception {
+    void verifySuccessStatusRanked() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 0.4351));
         try (val webServer = new MockWebServer(9359,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -107,7 +107,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    void verifyBadResponse() {
+    void verifyBadResponse() throws Throwable {
         try (val webServer = new MockWebServer(9319,
             new ByteArrayResource("${bad-json$".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -120,15 +120,4 @@ class BlackDotIPAddressIntelligenceServiceTests {
             assertTrue(response.isBanned());
         }
     }
-
-    /*
-    @Test
-    void verifyAllowedOperation() {
-        val props = new AdaptiveAuthenticationProperties();
-        props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
-        val service = new BlackDotIPAddressIntelligenceService(props);
-        val response = service.examine(new MockRequestContext(), "8.8.8.8");
-        assertTrue(response.isAllowed());
-    }
-     */
 }

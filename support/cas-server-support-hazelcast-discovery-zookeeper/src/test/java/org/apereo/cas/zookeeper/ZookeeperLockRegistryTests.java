@@ -47,7 +47,7 @@ class ZookeeperLockRegistryTests {
     private LockRepository casTicketRegistryLockRepository;
 
     @Test
-    void verifyRepository() throws Exception {
+    void verifyRepository() throws Throwable {
         val lockKey = UUID.randomUUID().toString();
 
         val container = new Container();

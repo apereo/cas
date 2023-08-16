@@ -46,7 +46,7 @@ class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountS
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @RetryingTest(3)
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         @Cleanup
         val localhost = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
         val resource = new ClassPathResource("ldif/ldap-passwordless.ldif");

@@ -29,7 +29,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
-    public void verifyNoProviders() {
+    void verifyNoProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
@@ -39,7 +39,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
     @Test
     @Order(1)
-    public void verifyOperationByRequestIP() {
+    void verifyOperationByRequestIP() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "185.86.151.11");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
@@ -49,7 +49,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
     @Test
     @Order(2)
-    public void verifyOperationByRequestUserAgent() {
+    void verifyOperationByRequestUserAgent() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "^Mozilla.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
@@ -59,7 +59,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
     @Test
     @Order(3)
-    public void verifyOperationByRequestGeoLocation() {
+    void verifyOperationByRequestGeoLocation() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
         val geoResponse = new GeoLocationResponse();
@@ -73,7 +73,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
     @Test
     @Order(5)
-    public void verifyMissingProviders() {
+    void verifyMissingProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-xyz", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
@@ -84,7 +84,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
     @Test
     @Order(7)
-    public void verifyNoLocation() {
+    void verifyNoLocation() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);

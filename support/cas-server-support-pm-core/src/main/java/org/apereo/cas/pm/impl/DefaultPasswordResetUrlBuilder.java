@@ -58,7 +58,7 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public URL build(final String username, final WebApplicationService service) throws Exception {
+    public URL build(final String username, final WebApplicationService service) throws Throwable {
         val query = PasswordManagementQuery.builder().username(username).build();
         LOGGER.debug("Creating password reset URL designed for [{}]", username);
 

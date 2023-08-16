@@ -42,7 +42,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     private DelegatedClientAuthenticationWebflowStateContributor contributor;
 
     @Test
-    void verifyStore() throws Exception {
+    void verifyStore() throws Throwable {
         val client = new CasClient();
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
@@ -58,7 +58,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     }
 
     @Test
-    void verifyRestore() throws Exception {
+    void verifyRestore() throws Throwable {
         val client = new CasClient();
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
@@ -78,7 +78,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     }
 
     @Test
-    void verifyRestoreWithoutSessionTicket() throws Exception {
+    void verifyRestoreWithoutSessionTicket() throws Throwable {
         val client = new CasClient();
         val context = new MockRequestContext();
         val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());

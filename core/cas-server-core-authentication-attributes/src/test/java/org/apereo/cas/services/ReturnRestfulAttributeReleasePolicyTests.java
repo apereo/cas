@@ -46,7 +46,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyPolicy() throws IOException {
+    void verifyPolicy() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -63,7 +63,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyPolicyWithMappedAttributes() throws IOException {
+    void verifyPolicyWithMappedAttributes() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -84,7 +84,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyBadPolicy() {
+    void verifyBadPolicy() throws Throwable {
         try (val webServer = new MockWebServer(9298,
             new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {

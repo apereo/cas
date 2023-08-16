@@ -42,7 +42,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyNativeImageServicesDirectory() throws Exception {
+    void verifyNativeImageServicesDirectory() throws Throwable {
         System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
         val resource = mock(Resource.class);
         when(resource.getURI()).thenReturn(new URI("resource:/services"));
@@ -52,7 +52,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyRequiredHandlersServiceDefinition() throws Exception {
+    void verifyRequiredHandlersServiceDefinition() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
@@ -62,7 +62,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyExistingDefinitionForCompatibility2() throws Exception {
+    void verifyExistingDefinitionForCompatibility2() throws Throwable {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -76,7 +76,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyExistingDefinitionForCompatibility1() throws Exception {
+    void verifyExistingDefinitionForCompatibility1() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
@@ -90,7 +90,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyUsernameProviderWithAttributeReleasePolicy() throws Exception {
+    void verifyUsernameProviderWithAttributeReleasePolicy() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");

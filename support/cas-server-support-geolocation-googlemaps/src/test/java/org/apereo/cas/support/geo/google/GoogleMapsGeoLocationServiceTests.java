@@ -38,7 +38,7 @@ class GoogleMapsGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNull(geoLocationService.locate("8.8.8.8"));
         assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
@@ -51,7 +51,7 @@ class GoogleMapsGeoLocationServiceTests {
     }
 
     @Test
-    void verifyGeocode() {
+    void verifyGeocode() throws Throwable {
         val service = new GoogleMapsGeoLocationService(mock(GeoApiContext.class)) {
             @Override
             protected GeocodingResult[] reverseGeocode(final LatLng latlng) {

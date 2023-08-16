@@ -22,18 +22,19 @@ public interface AuthenticationPreProcessor extends Ordered {
      * Process the authentication event.
      *
      * @param transaction The authentication transaction.
-     * @return true/false
-     * @throws AuthenticationException the authn security exception
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean process(AuthenticationTransaction transaction) throws AuthenticationException;
+    boolean process(AuthenticationTransaction transaction) throws Throwable;
 
     /**
      * Determines whether the processor has the capability to perform tasks on the given credential.
      *
      * @param credential The credential to check.
      * @return True if processor supports the Credential, false otherwise.
+     * @throws Throwable the throwable
      */
-    default boolean supports(final Credential credential) {
+    default boolean supports(final Credential credential) throws Throwable {
         return true;
     }
 }

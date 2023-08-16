@@ -29,7 +29,7 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 

@@ -41,14 +41,14 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     private DataSource dataSource;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, this.dataSource);
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyInvalidAction() {
+    void verifyInvalidAction() throws Throwable {
         val h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, this.dataSource);
         assertThrows(FailedLoginException.class,

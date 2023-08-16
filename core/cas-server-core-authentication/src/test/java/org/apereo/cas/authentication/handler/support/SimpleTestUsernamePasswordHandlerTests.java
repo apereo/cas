@@ -31,28 +31,28 @@ class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    void verifySupportsProperUserCredentials() {
+    void verifySupportsProperUserCredentials() throws Throwable {
         assertTrue(authenticationHandler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifySupportsRememberMeUserCredentials() {
+    void verifySupportsRememberMeUserCredentials() throws Throwable {
         assertTrue(authenticationHandler.supports(new RememberMeUsernamePasswordCredential()));
     }
 
     @Test
-    void verifyDoesntSupportBadUserCredentials() {
+    void verifyDoesntSupportBadUserCredentials() throws Throwable {
         assertFalse(authenticationHandler.supports(CoreAuthenticationTestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
-    void verifyValidUsernamePassword() throws Exception {
+    void verifyValidUsernamePassword() throws Throwable {
         val result = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
     @Test
-    void verifyInvalidUsernamePassword() {
+    void verifyInvalidUsernamePassword() throws Throwable {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), mock(Service.class)));

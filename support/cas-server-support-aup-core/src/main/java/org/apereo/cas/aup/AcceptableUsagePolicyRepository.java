@@ -2,10 +2,8 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
@@ -59,17 +57,19 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
      * Verify whether the policy is accepted.
      *
      * @param requestContext the request context
-     * @return result/status if policy is accepted along with principal.
+     * @return result /status if policy is accepted along with principal.
+     * @throws Throwable the throwable
      */
-    AcceptableUsagePolicyStatus verify(RequestContext requestContext);
+    AcceptableUsagePolicyStatus verify(RequestContext requestContext) throws Throwable;
 
     /**
      * Record the fact that the policy is accepted..
      *
      * @param requestContext the request context
      * @return true if choice was saved.
+     * @throws Throwable the throwable
      */
-    boolean submit(RequestContext requestContext);
+    boolean submit(RequestContext requestContext) throws Throwable;
 
     /**
      * Fetch policy as optional.

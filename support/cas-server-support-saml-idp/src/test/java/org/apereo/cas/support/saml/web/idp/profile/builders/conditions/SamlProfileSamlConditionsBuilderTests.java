@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    void verifyWithSkew() throws Exception {
+    void verifyWithSkew() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSkewAllowance(5000);
         service.setAssertionAudiences("https://www.example.com");

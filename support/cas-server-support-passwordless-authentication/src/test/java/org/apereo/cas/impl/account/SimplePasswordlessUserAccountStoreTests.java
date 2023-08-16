@@ -28,7 +28,7 @@ class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUserAccoun
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         assertTrue(passwordlessUserAccountStore.findUser("casuser").isPresent());
         assertTrue(passwordlessUserAccountStore.findUser("other").isEmpty());
     }

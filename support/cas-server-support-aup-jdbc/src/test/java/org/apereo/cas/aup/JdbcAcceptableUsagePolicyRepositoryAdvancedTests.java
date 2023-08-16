@@ -65,13 +65,13 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    void verifyRepositoryActionWithAdvancedConfig() throws Exception {
+    void verifyRepositoryActionWithAdvancedConfig() throws Throwable {
         verifyRepositoryAction("casuser",
             CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("casuser@example.org")));
     }
 
     @Test
-    void verifySubmitWithoutAuthn() throws Exception {
+    void verifySubmitWithoutAuthn() throws Throwable {
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", Map.of(), c);
         WebUtils.putAuthentication(null, context);
@@ -79,7 +79,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    void verifyRepositoryPolicyText() {
+    void verifyRepositoryPolicyText() throws Throwable {
         val service = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policy.setMessageCode("aup.code");
@@ -89,13 +89,13 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    void verifyRepositoryPolicyNoService() {
+    void verifyRepositoryPolicyNoService() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         verifyFetchingPolicy(service, RegisteredServiceTestUtils.getAuthentication(), false);
     }
 
     @Test
-    void verifyRepositoryPolicyNoServiceViaAttr() {
+    void verifyRepositoryPolicyNoServiceViaAttr() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         verifyFetchingPolicy(service, RegisteredServiceTestUtils.getAuthentication(principal), false);

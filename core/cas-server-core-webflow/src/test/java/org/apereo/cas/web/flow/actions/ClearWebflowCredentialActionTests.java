@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 class ClearWebflowCredentialActionTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         verifyAction(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         verifyAction(CasWebflowConstants.TRANSITION_ID_ERROR);
     }

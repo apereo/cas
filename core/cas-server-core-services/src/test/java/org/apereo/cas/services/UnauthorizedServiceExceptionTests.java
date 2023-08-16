@@ -16,14 +16,14 @@ class UnauthorizedServiceExceptionTests {
     private static final String MESSAGE = "GG";
 
     @Test
-    void verifyCodeConstructor() {
+    void verifyCodeConstructor() throws Throwable {
         val e = new UnauthorizedServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    void verifyThrowableConstructorWithCode() {
+    void verifyThrowableConstructorWithCode() throws Throwable {
         val r = new RuntimeException();
         val e = new UnauthorizedServiceException(MESSAGE, r);
 

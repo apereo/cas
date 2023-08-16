@@ -40,7 +40,7 @@ class OneTimeTokenAuthenticationWebflowEventResolverTests {
     private CasWebflowEventResolver resolver;
 
     @Test
-    void verifyResolver() {
+    void verifyResolver() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

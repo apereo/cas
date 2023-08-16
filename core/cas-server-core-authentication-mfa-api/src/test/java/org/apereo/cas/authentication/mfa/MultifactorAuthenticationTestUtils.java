@@ -102,7 +102,7 @@ public class MultifactorAuthenticationTestUtils {
         final ServicesManager servicesManager,
         final Optional<MultifactorAuthenticationProvider> provider,
         final ConfigurableApplicationContext applicationContext,
-        final String failureMode) {
+        final String failureMode) throws Throwable {
         val multifactorTrigger = mock(MultifactorAuthenticationTriggerSelectionStrategy.class);
 
         val service = MultifactorAuthenticationTestUtils.getRegisteredService("https://www.github.com/apereo/cas", failureMode);

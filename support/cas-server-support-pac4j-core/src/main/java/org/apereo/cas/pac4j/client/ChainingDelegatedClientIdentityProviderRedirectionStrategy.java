@@ -3,6 +3,7 @@ package org.apereo.cas.pac4j.client;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,10 +35,10 @@ public class ChainingDelegatedClientIdentityProviderRedirectionStrategy implemen
     public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) throws Throwable {
         return strategies
             .stream()
-            .map(strategy -> strategy.select(context, service, providers))
+            .map(Unchecked.function(strategy -> strategy.select(context, service, providers)))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst();

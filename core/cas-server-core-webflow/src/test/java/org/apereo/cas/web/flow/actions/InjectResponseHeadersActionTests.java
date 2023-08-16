@@ -61,7 +61,7 @@ class InjectResponseHeadersActionTests {
     private UrlValidator urlValidator;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -81,7 +81,7 @@ class InjectResponseHeadersActionTests {
     }
 
     @Test
-    void verifyRedirectAction() throws Exception {
+    void verifyRedirectAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

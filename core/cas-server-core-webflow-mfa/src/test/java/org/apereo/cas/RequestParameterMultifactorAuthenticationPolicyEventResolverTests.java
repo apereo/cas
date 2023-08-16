@@ -41,7 +41,7 @@ class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends 
     private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

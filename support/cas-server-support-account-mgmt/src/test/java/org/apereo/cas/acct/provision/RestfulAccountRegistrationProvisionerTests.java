@@ -59,7 +59,7 @@ class RestfulAccountRegistrationProvisionerTests {
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(5002, HttpStatus.OK)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
@@ -69,7 +69,7 @@ class RestfulAccountRegistrationProvisionerTests {
     }
 
     @Test
-    void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Throwable {
         try (val webServer = new MockWebServer(5002, HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));

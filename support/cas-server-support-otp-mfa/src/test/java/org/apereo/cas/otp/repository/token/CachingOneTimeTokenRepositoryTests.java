@@ -31,7 +31,7 @@ class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests
     private OneTimeTokenRepository repository;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val token = new OneTimeToken(RandomUtils.nextInt(), id);
         repository.store(token);

@@ -63,20 +63,20 @@ class DefaultAuthenticationManagerTests {
         return svc;
     }
 
-    private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
+    private static AuthenticationHandler newMockHandler(final boolean success) throws Throwable {
         return newMockHandler(success, false);
     }
 
-    private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) throws Exception {
+    private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) throws Throwable {
         val name = "MockAuthenticationHandler" + UUID.randomUUID();
         return newMockHandler(name, success, error);
     }
 
-    private static AuthenticationHandler newMockHandler(final String name, final boolean success) throws Exception {
+    private static AuthenticationHandler newMockHandler(final String name, final boolean success) throws Throwable {
         return newMockHandler(name, success, false);
     }
 
-    private static AuthenticationHandler newMockHandler(final String name, final boolean success, final boolean error) throws Exception {
+    private static AuthenticationHandler newMockHandler(final String name, final boolean success, final boolean error) throws Throwable {
         val mock = mock(AuthenticationHandler.class);
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
@@ -113,7 +113,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateFailsPreProcessor() throws Exception {
+    void verifyAuthenticateFailsPreProcessor() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
@@ -127,7 +127,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyNoHandlers() {
+    void verifyNoHandlers() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
@@ -136,7 +136,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyTransactionWithAuthnHistoryAndAuthnPolicy() throws Exception {
+    void verifyTransactionWithAuthnHistoryAndAuthnPolicy() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
 
@@ -154,7 +154,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyBlockingAuthnPolicy() throws Exception {
+    void verifyBlockingAuthnPolicy() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false, true), null);
         map.put(newMockHandler(true), null);
@@ -176,7 +176,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyResolverFails() throws Exception {
+    void verifyResolverFails() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val resolver = mock(PrincipalResolver.class);
         when(resolver.supports(any())).thenReturn(Boolean.FALSE);
@@ -193,7 +193,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyResolverFailsAsFatal() throws Exception {
+    void verifyResolverFailsAsFatal() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val resolver = mock(PrincipalResolver.class);
         when(resolver.supports(any())).thenReturn(Boolean.FALSE);
@@ -206,7 +206,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthWithNoCreds() throws Exception {
+    void verifyAuthWithNoCreds() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
@@ -216,7 +216,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAnySuccess() throws Exception {
+    void verifyAuthenticateAnySuccess() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
@@ -232,7 +232,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAnyButTryAllSuccess() throws Exception {
+    void verifyAuthenticateAnyButTryAllSuccess() throws Throwable {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
@@ -244,7 +244,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAnyFailure() throws Exception {
+    void verifyAuthenticateAnyFailure() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
@@ -258,7 +258,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAnyFailureWithError() throws Exception {
+    void verifyAuthenticateAnyFailureWithError() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false, true), null);
         map.put(newMockHandler(false, true), null);
@@ -272,7 +272,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAllSuccess() throws Exception {
+    void verifyAuthenticateAllSuccess() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(true), null);
@@ -289,7 +289,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticatePolicyFailsGeneric() throws Exception {
+    void verifyAuthenticatePolicyFailsGeneric() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
 
@@ -305,7 +305,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticatePolicyFails() throws Exception {
+    void verifyAuthenticatePolicyFails() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
 
@@ -321,7 +321,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateAllFailure() throws Exception {
+    void verifyAuthenticateAllFailure() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
@@ -335,7 +335,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
+    void verifyAuthenticateRequiredHandlerSuccess() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
@@ -352,7 +352,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateRequiredHandlerFailure() throws Exception {
+    void verifyAuthenticateRequiredHandlerFailure() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
@@ -366,7 +366,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
+    void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Throwable {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);

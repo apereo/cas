@@ -39,7 +39,7 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         return watchableScript.execute("verify", AcceptableUsagePolicyStatus.class,
             requestContext, applicationContext, principal, LOGGER);
@@ -52,14 +52,14 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
             val result = watchableScript.execute("fetch", AcceptableUsagePolicyTerms.class,
                 requestContext, applicationContext, principal, LOGGER);
             return Optional.ofNullable(result);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext) {
+    public boolean submit(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         return watchableScript.execute("submit", Boolean.class, requestContext,
             applicationContext, principal, LOGGER);

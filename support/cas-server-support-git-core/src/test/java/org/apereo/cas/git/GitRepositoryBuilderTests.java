@@ -36,7 +36,7 @@ class GitRepositoryBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyTestPrivateKey() throws Exception {
+    void verifyTestPrivateKey() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
@@ -51,7 +51,7 @@ class GitRepositoryBuilderTests {
     }
 
     @Test
-    void verifyBuild() throws Exception {
+    void verifyBuild() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -76,7 +76,7 @@ class GitRepositoryBuilderTests {
      * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
     @Test
-    void verifyBuildWithFilePrefix() throws Exception {
+    void verifyBuildWithFilePrefix() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");

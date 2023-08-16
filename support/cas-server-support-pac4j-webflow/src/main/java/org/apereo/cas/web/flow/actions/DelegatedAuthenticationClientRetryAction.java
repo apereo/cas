@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -27,14 +28,16 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
-        val client = clients.findClient(clientName).map(IndirectClient.class::cast).get();
-        val config = providerConfigurationProducer.produce(requestContext, client).get();
+        return FunctionUtils.doUnchecked(() -> {
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
+            val client = clients.findClient(clientName).map(IndirectClient.class::cast).get();
+            val config = providerConfigurationProducer.produce(requestContext, client).get();
 
-        val urlBuilder = new URIBuilder(config.getRedirectUrl());
-        urlBuilder.addParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, Boolean.TRUE.toString());
-        response.sendRedirect(urlBuilder.toString());
-        return null;
+            val urlBuilder = new URIBuilder(config.getRedirectUrl());
+            urlBuilder.addParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, Boolean.TRUE.toString());
+            response.sendRedirect(urlBuilder.toString());
+            return null;
+        });
     }
 }

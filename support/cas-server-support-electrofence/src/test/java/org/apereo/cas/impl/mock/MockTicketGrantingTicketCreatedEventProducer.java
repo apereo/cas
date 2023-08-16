@@ -74,12 +74,12 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         return ALL_IP_ADDRS.get(index);
     }
 
-    public static CasEvent createEvent(final String user, final CasEventRepository casEventRepository) throws Exception {
+    public static CasEvent createEvent(final String user, final CasEventRepository casEventRepository) throws Throwable {
         return createEvent(user, RandomUtils.nextInt(), casEventRepository);
     }
 
     public static CasEvent createEvent(final String user, final int i,
-                                       final CasEventRepository casEventRepository) throws Exception {
+                                       final CasEventRepository casEventRepository) throws Throwable {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
@@ -94,11 +94,11 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         return dto;
     }
     
-    public static void createEvent(final int i, final CasEventRepository casEventRepository) throws Exception {
+    public static void createEvent(final int i, final CasEventRepository casEventRepository) throws Throwable {
         createEvent("casuser", i, casEventRepository);
     }
 
-    public static void createEvents(final CasEventRepository casEventRepository) throws Exception {
+    public static void createEvents(final CasEventRepository casEventRepository) throws Throwable {
         IntStream.range(1, 1000).forEach(Unchecked.intConsumer(i -> createEvent(i, casEventRepository)));
     }
 }

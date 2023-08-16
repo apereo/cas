@@ -33,7 +33,7 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
                                              final RegisteredService registeredService,
                                              final Service service,
                                              final Credential credential,
-                                             final RequestContext requestContext) {
+                                             final RequestContext requestContext) throws Throwable {
         if (ResourceUtils.doesResourceExist(watchableScript.getResource())) {
             val principal = authentication.getPrincipal();
             val attributes = new HashMap<String, Object>(principal.getAttributes());

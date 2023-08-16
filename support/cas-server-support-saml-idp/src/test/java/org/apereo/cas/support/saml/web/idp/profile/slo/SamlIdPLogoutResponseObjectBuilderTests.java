@@ -26,7 +26,7 @@ class SamlIdPLogoutResponseObjectBuilderTests extends BaseSamlIdPConfigurationTe
     private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val response = samlIdPLogoutResponseObjectBuilder.newLogoutResponse(
             UUID.randomUUID().toString(), "https://github.com/apereo/cas",
             samlIdPLogoutResponseObjectBuilder.newIssuer("myissuer"),

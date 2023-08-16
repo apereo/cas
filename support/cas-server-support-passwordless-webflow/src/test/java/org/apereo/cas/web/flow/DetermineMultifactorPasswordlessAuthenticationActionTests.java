@@ -74,7 +74,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         private Action determineMultifactorPasswordlessAuthenticationAction;
 
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -106,7 +106,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(1)
-        public void verifyUserMfaActionDisabled() throws Exception {
+        void verifyUserMfaActionDisabled() throws Throwable {
             val ctx = new StaticApplicationContext();
             ctx.refresh();
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(ctx);
@@ -128,7 +128,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(2)
-        public void verifyUserMfaActionNoProvider() throws Exception {
+        void verifyUserMfaActionNoProvider() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -146,7 +146,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(3)
-        public void verifyUserMissing() throws Exception {
+        void verifyUserMissing() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();
@@ -156,7 +156,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(4)
-        public void verifyUserHasNoContactInfo() throws Exception {
+        void verifyUserHasNoContactInfo() throws Throwable {
             val context = mock(RequestContext.class);
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
@@ -170,7 +170,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
         @Test
         @Order(100)
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));

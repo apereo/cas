@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationHandlerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new AuthenticationHandler() {
             @Override
             public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) {
@@ -35,7 +35,7 @@ class AuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDisabledOperation() {
+    void verifyDisabledOperation() throws Throwable {
         val input = AuthenticationHandler.disabled();
 
         assertEquals(AuthenticationHandlerStates.ACTIVE, input.getState());

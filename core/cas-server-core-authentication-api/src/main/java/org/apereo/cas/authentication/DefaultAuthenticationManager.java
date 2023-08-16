@@ -24,6 +24,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -61,7 +62,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         action = AuditableActions.AUTHENTICATION,
         actionResolverName = AuditActionResolvers.AUTHENTICATION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_RESOURCE_RESOLVER)
-    public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+    public Authentication authenticate(final AuthenticationTransaction transaction) throws Throwable {
         val result = invokeAuthenticationPreProcessors(transaction);
         if (!result) {
             LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
@@ -100,8 +101,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
-                .anyMatch(processor::supports))
-            .forEach(processor -> processor.process(builder, transaction));
+                .anyMatch(Unchecked.predicate(processor::supports)))
+            .forEach(Unchecked.consumer(processor -> processor.process(builder, transaction)));
     }
 
     /**
@@ -141,7 +142,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     Optional.ofNullable(handler), Optional.ofNullable(service));
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, resolved, credential);
                 return resolved;
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential);
                 LoggingUtils.error(LOGGER, e);
             }
@@ -151,21 +152,16 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
         return null;
     }
-
-    /**
-     * Invoke authentication pre processors.
-     *
-     * @param transaction the transaction
-     * @return true/false
-     */
-    protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+    
+    protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) throws Throwable {
         LOGGER.trace("Invoking authentication pre processors for authentication transaction");
         val pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
         val supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
-                .anyMatch(processor::supports)).toList();
+                .anyMatch(Unchecked.predicate(processor::supports)))
+            .toList();
 
         var processed = true;
         val it = supported.iterator();
@@ -180,7 +176,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final Credential credential,
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler,
-                                                   final Service service) throws Exception {
+                                                   final Service service) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential, clientInfo));
 
@@ -237,25 +233,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 
-    /**
-     * Publish event.
-     *
-     * @param event the event
-     */
     protected void publishEvent(final ApplicationEvent event) {
         if (applicationContext != null) {
             applicationContext.publishEvent(event);
         }
     }
 
-    /**
-     * Authenticate internal authentication builder.
-     *
-     * @param transaction the transaction
-     * @return the authentication builder
-     * @throws AuthenticationException the authentication exception
-     */
-    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
+    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws Throwable {
         val credentials = transaction.getCredentials();
         LOGGER.debug("Authentication credentials provided for this transaction are [{}]", credentials);
 
@@ -324,11 +308,11 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * @param builder                the builder
      * @param transaction            the transaction
      * @param authenticationHandlers the authentication handlers
-     * @throws AuthenticationException the authentication exception
+     * @throws Throwable the throwable
      */
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction,
-                                               final Set<AuthenticationHandler> authenticationHandlers) throws AuthenticationException {
+                                               final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
@@ -344,17 +328,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
     }
 
-    /**
-     * Evaluate authentication policies.
-     *
-     * @param authentication         the authentication
-     * @param transaction            the transaction
-     * @param authenticationHandlers the authentication handlers
-     * @return true /false
-     */
     protected ChainingAuthenticationPolicyExecutionResult evaluateAuthenticationPolicies(final Authentication authentication,
                                                                                          final AuthenticationTransaction transaction,
-                                                                                         final Set<AuthenticationHandler> authenticationHandlers) {
+                                                                                         final Set<AuthenticationHandler> authenticationHandlers) throws Throwable {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
         val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 
@@ -384,7 +360,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             } catch (final GeneralSecurityException e) {
                 LOGGER.debug(e.getMessage(), e);
                 FunctionUtils.doIfNotNull(e.getCause(), o -> executionResult.getFailures().add(e.getCause()));
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 LOGGER.debug(e.getMessage(), e);
                 executionResult.getFailures().add(e);
             }

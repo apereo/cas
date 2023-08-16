@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -67,7 +68,7 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
 
         val credential = WebUtils.getCredential(requestContext);
         val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
+        val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
         grantServiceTicket(authenticationResult, service, requestContext);
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
@@ -87,10 +88,10 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .filter(auth -> auth.supports(authenticationResult, service))
             .findFirst()
-            .ifPresent(auth -> {
+            .ifPresent(Unchecked.consumer(auth -> {
                 val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
                 val serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
                 WebUtils.putServiceTicketInRequestScope(requestContext, serviceTicketId);
-            });
+            }));
     }
 }

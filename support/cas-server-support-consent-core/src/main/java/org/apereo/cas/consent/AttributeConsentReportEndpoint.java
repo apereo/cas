@@ -118,7 +118,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Import a consent decision as a JSON document")
-    public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importAccount(final HttpServletRequest request) throws Throwable {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
         val decision = MAPPER.readValue(requestBody, new TypeReference<ConsentDecision>() {
@@ -142,7 +142,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         @PathVariable
         final String principal,
         @PathVariable
-        final long decisionId) {
+        final long decisionId) throws Throwable {
         LOGGER.debug("Deleting consent decision for principal [{}].", principal);
         return consentRepository.getObject().deleteConsentDecision(decisionId, principal);
     }
@@ -157,7 +157,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Delete consent decisions for principal", parameters = @Parameter(name = "principal"))
     public boolean revokeAllConsents(
         @PathVariable
-        final String principal) {
+        final String principal) throws Throwable {
         LOGGER.debug("Deleting all consent decisions for principal [{}].", principal);
         return this.consentRepository.getObject().deleteConsentDecisions(principal);
     }

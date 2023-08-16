@@ -44,8 +44,9 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      *
      * @param ssoRequest the request
      * @return true if authn is renewed
+     * @throws Throwable the throwable
      */
-    boolean isParticipating(SingleSignOnParticipationRequest ssoRequest);
+    boolean isParticipating(SingleSignOnParticipationRequest ssoRequest) throws Throwable;
 
     /**
      * Does strategy support this request or not?

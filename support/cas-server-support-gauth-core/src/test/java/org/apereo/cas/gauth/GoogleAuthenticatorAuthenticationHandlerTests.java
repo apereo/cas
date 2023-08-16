@@ -86,20 +86,20 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val credential = new GoogleAuthenticatorTokenCredential();
         assertTrue(handler.supports(credential));
         assertTrue(handler.supports(GoogleAuthenticatorTokenCredential.class));
     }
 
     @Test
-    void verifyAuthnAccountNotFound() {
+    void verifyAuthnAccountNotFound() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyAuthnFailsTokenUsed() {
+    void verifyAuthnFailsTokenUsed() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getValidator().store(
             new GoogleAuthenticatorToken(Integer.valueOf(credential.getToken()), "casuser"));
@@ -117,7 +117,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthnTokenFound() throws Exception {
+    void verifyAuthnTokenFound() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         val toSave = GoogleAuthenticatorAccount.builder()
             .username("casuser")
@@ -134,7 +134,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthnTokenScratchCode() throws Exception {
+    void verifyAuthnTokenScratchCode() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         val toSave = GoogleAuthenticatorAccount.builder()
             .username("casuser")
@@ -154,7 +154,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyMultipleDevices() throws Exception {
+    void verifyMultipleDevices() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         for (var i = 0; i < 2; i++) {
             val toSave = GoogleAuthenticatorAccount.builder()
@@ -176,7 +176,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySingleDevicesNoAcctId() throws Exception {
+    void verifySingleDevicesNoAcctId() throws Throwable {
         val credential = getGoogleAuthenticatorTokenCredential();
         val toSave = GoogleAuthenticatorAccount.builder()
             .username("casuser")

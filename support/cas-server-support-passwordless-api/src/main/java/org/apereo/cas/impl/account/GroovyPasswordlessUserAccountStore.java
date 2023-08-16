@@ -28,7 +28,7 @@ public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccou
     }
 
     @Override
-    public Optional<PasswordlessUserAccount> findUser(final String username) {
+    public Optional<PasswordlessUserAccount> findUser(final String username) throws Throwable {
         val args = new Object[]{username, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, PasswordlessUserAccount.class));
     }

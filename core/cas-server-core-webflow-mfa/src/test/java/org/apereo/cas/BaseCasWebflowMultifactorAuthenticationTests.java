@@ -139,7 +139,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     static class GeoLocationServiceTestConfiguration {
         @Bean
-        public GeoLocationService geoLocationService() {
+        public GeoLocationService geoLocationService() throws Throwable {
             val service = mock(GeoLocationService.class);
             val response = new GeoLocationResponse();
             response.addAddress("MSIE");

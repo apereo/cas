@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -20,6 +21,6 @@ public class DuoSecurityAuthenticationWebflowAction extends BaseCasWebflowAction
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return this.duoAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+        return FunctionUtils.doUnchecked(() -> this.duoAuthenticationWebflowEventResolver.resolveSingle(requestContext));
     }
 }

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultBucketConsumerTests {
 
     @Test
-    void verifyFailureAsync() {
+    void verifyFailureAsync() throws Throwable {
         val props = new Bucket4jThrottleProperties();
         props.setBlocking(false);
         props.getBandwidth().add(new Bucket4jBandwidthLimitProperties().setCapacity(1).setRefillDuration("PT1S"));

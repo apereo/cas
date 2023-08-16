@@ -23,8 +23,9 @@ public interface RegisteredServiceAttributeFilter extends Serializable, Ordered 
      *
      * @param givenAttributes the map for the original given attributes
      * @return a map that contains the filtered attributes.
+     * @throws Throwable the throwable
      */
-    Map<String, List<Object>> filter(Map<String, List<Object>> givenAttributes);
+    Map<String, List<Object>> filter(Map<String, List<Object>> givenAttributes) throws Throwable;
 
     @Override
     default int getOrder() {

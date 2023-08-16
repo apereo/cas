@@ -50,7 +50,7 @@ class ElasticApmAgentInitializerTests {
     private Greeter greeter;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val agent = ServiceLoader.load(ApplicationEntrypointInitializer.class).stream()
             .map(ServiceLoader.Provider::get)
             .toList()

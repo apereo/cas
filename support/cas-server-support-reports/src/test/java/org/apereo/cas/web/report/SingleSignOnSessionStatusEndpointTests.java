@@ -43,7 +43,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyOperationByValue() throws Exception {
+    void verifyOperationByValue() throws Throwable {
         val request = new MockHttpServletRequest();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -52,7 +52,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -71,7 +71,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyNoTicket() {
+    void verifyNoTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
 

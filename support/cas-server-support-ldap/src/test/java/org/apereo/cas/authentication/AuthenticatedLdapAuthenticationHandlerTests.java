@@ -42,7 +42,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
-        void verifyAuthenticateNotFound() {
+        void verifyAuthenticateNotFound() throws Throwable {
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
@@ -50,7 +50,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
         }
 
         @Test
-        void verifyAuthenticateFailureNotFound() {
+        void verifyAuthenticateFailureNotFound() throws Throwable {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(
@@ -72,7 +72,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
         @Override
-        public void verifyAuthenticateSuccess() {
+        void verifyAuthenticateSuccess() throws Throwable {
             assertThrows(LoginException.class, super::verifyAuthenticateSuccess);
         }
     }

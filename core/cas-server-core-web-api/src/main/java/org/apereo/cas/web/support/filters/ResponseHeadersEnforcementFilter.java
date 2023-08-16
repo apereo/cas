@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -189,23 +190,18 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         try {
             if (servletResponse instanceof final HttpServletResponse httpServletResponse) {
                 val httpServletRequest = (HttpServletRequest) servletRequest;
-
-                val result = prepareFilterBeforeExecution(httpServletResponse, httpServletRequest);
-
+                val result = FunctionUtils.doUnchecked(() -> prepareFilterBeforeExecution(httpServletResponse, httpServletRequest));
                 decideInsertCacheControlHeader(httpServletResponse, httpServletRequest, result);
                 decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, result);
                 decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest, result);
                 decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest, result);
                 decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest, result);
                 decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest, result);
-
             }
-
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             logException(new ServletException(getClass().getSimpleName()
                                               + " is blocking this request. Examine the cause in this stack trace to understand why.", e));
         }
-
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
@@ -215,9 +211,10 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      * @param httpServletResponse the http servlet response
      * @param httpServletRequest  the http servlet request
      * @return the optional
+     * @throws Throwable the throwable
      */
     protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                            final HttpServletRequest httpServletRequest) {
+                                                            final HttpServletRequest httpServletRequest) throws Throwable {
         return Optional.empty();
     }
 

@@ -56,7 +56,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getWebApplicationService(), result);
@@ -64,7 +64,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyDelete() {
+    void verifyDelete() throws Throwable {
         var results = singleSignOnSessionsEndpoint.destroySsoSessions(
             new SingleSignOnSessionsEndpoint.SsoSessionsRequest().withType(null),
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -91,7 +91,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
             .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());
@@ -120,7 +120,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyProxies() throws Exception {
+    void verifyProxies() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         ticketRegistry.addTicket(tgt);
@@ -132,7 +132,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyDirect() throws Exception {
+    void verifyDirect() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         ticketRegistry.addTicket(tgt);
@@ -145,7 +145,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyDeleteFails() throws Exception {
+    void verifyDeleteFails() throws Throwable {
         val registry = mock(TicketRegistry.class);
         when(registry.getTickets(any(Predicate.class))).thenReturn(Stream.of(new MockTicketGrantingTicket("casuser")));
         when(registry.deleteTicket(anyString())).thenThrow(new RuntimeException());

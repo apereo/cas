@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -52,7 +52,7 @@ class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRisk
     }
 
     @Test
-    void verifyNoMailAttr() {
+    void verifyNoMailAttr() throws Throwable {
         authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("nothing", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

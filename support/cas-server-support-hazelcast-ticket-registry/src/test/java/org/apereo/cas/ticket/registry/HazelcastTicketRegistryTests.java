@@ -84,7 +84,7 @@ class HazelcastTicketRegistryTests {
         private CasConfigurationProperties casProperties;
 
         @RepeatedTest(1)
-        public void verifyBadExpPolicyValue() {
+        void verifyBadExpPolicyValue() throws Throwable {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);
@@ -99,7 +99,7 @@ class HazelcastTicketRegistryTests {
         }
 
         @RepeatedTest(1)
-        public void verifyBadTicketInCatalog() {
+        void verifyBadTicketInCatalog() throws Throwable {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);

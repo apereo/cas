@@ -49,7 +49,7 @@ class OidcAuthorizeEndpointControllerTests {
         protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
 
         @Test
-        void verifyBadEndpointRequest() throws Exception {
+        void verifyBadEndpointRequest() throws Throwable {
             val id = UUID.randomUUID().toString();
             val request = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
             request.setMethod(HttpMethod.GET.name());
@@ -69,7 +69,7 @@ class OidcAuthorizeEndpointControllerTests {
         protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
 
         @Test
-        void verifyBadEndpointRequest() throws Exception {
+        void verifyBadEndpointRequest() throws Throwable {
             val request = getHttpRequestForEndpoint("unknown/issuer");
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
@@ -78,7 +78,7 @@ class OidcAuthorizeEndpointControllerTests {
         }
 
         @Test
-        void verifyUnknownPrompt() throws Exception {
+        void verifyUnknownPrompt() throws Throwable {
             val id = UUID.randomUUID().toString();
             val service = getOidcRegisteredService(id);
             service.setBypassApprovalPrompt(true);
@@ -96,7 +96,7 @@ class OidcAuthorizeEndpointControllerTests {
         }
 
         @Test
-        void verify() throws Exception {
+        void verify() throws Throwable {
             val id = UUID.randomUUID().toString();
             val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
             mockRequest.setMethod(HttpMethod.GET.name());

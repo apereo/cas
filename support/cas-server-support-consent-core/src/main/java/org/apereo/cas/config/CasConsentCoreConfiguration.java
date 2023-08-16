@@ -130,7 +130,7 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Exception {
+        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Throwable {
             val location = casProperties.getConsent().getJson().getLocation();
             if (location != null) {
                 LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "

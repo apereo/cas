@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperationWithExpPolicy() {
+    void verifyOperationWithExpPolicy() throws Throwable {
         val registeredService = getRegisteredService("https://rt.oauth.org", "clientid-rt", "secret-at");
         registeredService.setRefreshTokenExpirationPolicy(
             new DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy("PT100S"));

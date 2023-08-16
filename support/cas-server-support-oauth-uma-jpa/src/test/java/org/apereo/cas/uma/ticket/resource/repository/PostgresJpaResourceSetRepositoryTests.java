@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         var r = buildTestResource();
         assertTrue(umaResourceSetRepository.getAll().isEmpty());
         assertFalse(umaResourceSetRepository.getById(r.getId()).isPresent());

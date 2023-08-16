@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.jwks.rotation;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     private final OidcJsonWebKeystoreGeneratorService generatorService;
 
     @Override
-    public JsonWebKeySet rotate() throws Exception {
+    public JsonWebKeySet rotate() throws Throwable {
         return whenKeystoreResourceExists()
             .map(Unchecked.function(resource -> {
                 LOGGER.trace("Rotating keys found in [{}]", resource);
@@ -86,7 +87,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     }
 
     @Override
-    public JsonWebKeySet revoke() throws Exception {
+    public JsonWebKeySet revoke() {
         return whenKeystoreResourceExists()
             .map(Unchecked.function(resource -> {
                 LOGGER.trace("Revoking previous keys found in [{}]", resource);
@@ -102,7 +103,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
             .orElse(null);
     }
 
-    private Optional<Resource> whenKeystoreResourceExists() throws Exception {
-        return generatorService.find();
+    private Optional<Resource> whenKeystoreResourceExists() {
+        return FunctionUtils.doUnchecked(generatorService::find);
     }
 }

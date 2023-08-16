@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.HazelcastMonitorConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
@@ -61,6 +62,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -85,7 +87,7 @@ class HazelcastHealthIndicatorTests {
     private HealthIndicator hazelcastHealthIndicator;
 
     @Test
-    void verifyMonitor() {
+    void verifyMonitor() throws Throwable {
         val health = hazelcastHealthIndicator.health();
         val status = health.getStatus();
         assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
@@ -107,7 +109,7 @@ class HazelcastHealthIndicatorTests {
     }
 
     @Test
-    void verifyFreeHeapPercentageCalculation() {
+    void verifyFreeHeapPercentageCalculation() throws Throwable {
         val memoryStats = mock(MemoryStats.class);
         when(memoryStats.getFreeHeap()).thenReturn(125_555_248L);
         when(memoryStats.getCommittedHeap()).thenReturn(251_658_240L);

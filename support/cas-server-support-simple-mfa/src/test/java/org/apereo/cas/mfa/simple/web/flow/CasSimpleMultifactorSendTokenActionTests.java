@@ -46,7 +46,7 @@ class CasSimpleMultifactorSendTokenActionTests {
     @Import(BaseCasSimpleMultifactorAuthenticationTests.CasSimpleMultifactorTestConfiguration.class)
     class MultipleEmailsTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("mail", List.of("cas@example.org", "user@example.com")));
             val requestContext = buildRequestContextFor(principal);
@@ -77,7 +77,7 @@ class CasSimpleMultifactorSendTokenActionTests {
     @Import(BaseCasSimpleMultifactorAuthenticationTests.CasSimpleMultifactorTestConfiguration.class)
     class DefaultTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val theToken = createToken("casuser").getKey();
             assertNotNull(this.ticketRegistry.getTicket(theToken));
             val token = new CasSimpleMultifactorTokenCredential(theToken);
@@ -87,7 +87,7 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
-        void verifyReusingExistingTokens() throws Exception {
+        void verifyReusingExistingTokens() throws Throwable {
             val pair = createToken("casuser");
 
             val theToken = pair.getKey();
@@ -103,7 +103,7 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
-        void verifyFailsForUser() throws Exception {
+        void verifyFailsForUser() throws Throwable {
             val theToken1 = createToken("casuser1");
             assertNotNull(theToken1);
 
@@ -118,7 +118,7 @@ class CasSimpleMultifactorSendTokenActionTests {
     @Nested
     class NoCommunicationStrategyTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = buildRequestContextFor("casuser");
             val event = mfaSimpleMultifactorSendTokenAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

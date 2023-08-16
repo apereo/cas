@@ -31,7 +31,7 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
         actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER)
     @Override
-    public AuditableExecutionResult execute(final AuditableContext auditableContext) {
+    public AuditableExecutionResult execute(final AuditableContext auditableContext) throws Throwable {
         val request = (HttpServletRequest) auditableContext.getRequest().orElseThrow();
         val response = (HttpServletResponse) auditableContext.getResponse().orElseThrow();
 

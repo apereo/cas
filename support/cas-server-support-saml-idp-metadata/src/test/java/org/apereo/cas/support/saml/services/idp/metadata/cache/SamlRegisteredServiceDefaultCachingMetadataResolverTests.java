@@ -43,7 +43,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyAggregateCacheOverUrlResource() {
+    void verifyAggregateCacheOverUrlResource() throws Throwable {
         val aggregateRegisteredService = new SamlRegisteredService();
         aggregateRegisteredService.setName("AggregateMetadata");
         aggregateRegisteredService.setId(1000);
@@ -65,7 +65,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyCacheValidityForAggregates() {
+    void verifyCacheValidityForAggregates() throws Throwable {
         val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
 
         val aggregateRegisteredService = new SamlRegisteredService();
@@ -91,7 +91,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyCacheValidityWithUnknownEntityId() {
+    void verifyCacheValidityWithUnknownEntityId() throws Throwable {
         val criteriaSet = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
 
         val service = new SamlRegisteredService();
@@ -112,7 +112,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyRetryableOpWithFailure() {
+    void verifyRetryableOpWithFailure() throws Throwable {
         val criteriaSet = getCriteriaFor("urn:app.e2ma.net");
 
         val service = new SamlRegisteredService();
@@ -127,7 +127,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyRetryableOp() {
+    void verifyRetryableOp() throws Throwable {
 
         val service = new SamlRegisteredService();
         service.setName("Example");
@@ -171,7 +171,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyMissingMetadataInMDQ() {
+    void verifyMissingMetadataInMDQ() throws Throwable {
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
@@ -179,7 +179,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyDynamicMetadata() {
+    void verifyDynamicMetadata() throws Throwable {
         val criteriaSet1 = getCriteriaFor("urn:mace:incommon:internet2.edu");
 
         val service = new SamlRegisteredService();

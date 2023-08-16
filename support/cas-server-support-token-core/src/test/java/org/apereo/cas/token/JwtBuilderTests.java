@@ -29,7 +29,7 @@ class JwtBuilderTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseJwtTokenTicketBuilderTests {
         @Test
-        void verifyZonedDateTimeWorks() {
+        void verifyZonedDateTimeWorks() throws Throwable {
             val tgt = new MockTicketGrantingTicket("casuser");
             val jwt = tokenTicketBuilder.build(tgt, Map.of("date-time", List.of(ZonedDateTime.now(Clock.systemUTC()))));
             assertNotNull(jwt);
@@ -41,7 +41,7 @@ class JwtBuilderTests {
     @TestPropertySource(properties = "cas.authn.token.crypto.enabled=false")
     class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
         @Test
-        void verifyUnknownJwt() {
+        void verifyUnknownJwt() throws Throwable {
             val jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIm9yZy5hcGVyZW8uY2FzLnNlcnZpY2VzLlJlZ2"
                       + "lzdGVyZWRTZXJ2aWNlIjoiMjEzMzI0ODYyMSIsImtpZCI6IjEyMzQ1Njc4OTAifQ"
                       + ".eyJzdWIiOiJjYXN1c2VyIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvY2FzLmV4Y"

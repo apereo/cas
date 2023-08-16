@@ -28,12 +28,13 @@ public interface MultifactorAuthenticationTrigger extends Ordered {
      * @param httpServletResponse the http servlet response
      * @param service             the service
      * @return the optional
+     * @throws Throwable the throwable
      */
     Optional<MultifactorAuthenticationProvider> isActivated(Authentication authentication,
                                                             RegisteredService registeredService,
                                                             HttpServletRequest httpServletRequest,
                                                             HttpServletResponse httpServletResponse,
-                                                            Service service);
+                                                            Service service) throws Throwable;
 
     /**
      * Supports.

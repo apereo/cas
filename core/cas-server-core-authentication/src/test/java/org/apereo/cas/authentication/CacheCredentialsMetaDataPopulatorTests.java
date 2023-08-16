@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
-    void verifyPasswordAsAuthenticationAttribute() {
+    void verifyPasswordAsAuthenticationAttribute() throws Throwable {
         val populator = new CacheCredentialsMetaDataPopulator();
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());

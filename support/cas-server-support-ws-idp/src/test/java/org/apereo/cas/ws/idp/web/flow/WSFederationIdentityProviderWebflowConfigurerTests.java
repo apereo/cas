@@ -63,7 +63,7 @@ class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConf
     private CasWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
     
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

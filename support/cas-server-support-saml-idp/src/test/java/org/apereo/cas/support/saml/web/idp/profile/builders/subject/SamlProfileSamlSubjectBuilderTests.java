@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifySubjectWithNoNameId() throws Exception {
+    void verifySubjectWithNoNameId() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -59,7 +59,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySubjectWithSkewedConfData() throws Exception {
+    void verifySubjectWithSkewedConfData() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -92,7 +92,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyEncryptedSubject() throws Exception {
+    void verifyEncryptedSubject() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

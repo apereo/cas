@@ -57,7 +57,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     private DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
@@ -70,7 +70,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     }
 
     @Test
-    void verifyPostBackchannelSaml2LogoutOperation() throws Exception {
+    void verifyPostBackchannelSaml2LogoutOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());

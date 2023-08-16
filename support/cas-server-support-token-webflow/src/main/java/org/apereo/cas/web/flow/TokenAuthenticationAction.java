@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.authentication.TokenCredential;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -79,8 +80,10 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
     }
 
     protected Service resolveServiceFromRequest(final RequestContext requestContext) {
-        val givenService = Optional.ofNullable(WebUtils.getService(requestContext))
-            .orElseGet(() -> webApplicationServiceFactory.createService(casProperties.getServer().getPrefix()));
-        return serviceSelectionStrategy.resolveService(givenService);
+        return FunctionUtils.doUnchecked(() -> {
+            val givenService = Optional.ofNullable(WebUtils.getService(requestContext))
+                .orElseGet(() -> webApplicationServiceFactory.createService(casProperties.getServer().getPrefix()));
+            return serviceSelectionStrategy.resolveService(givenService);
+        });
     }
 }

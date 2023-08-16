@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class ChainingPrincipalNameTransformerTests {
     @Test
-    void verifyChain() {
+    void verifyChain() throws Throwable {
         val t = new ChainingPrincipalNameTransformer();
         t.addTransformer(new RegexPrincipalNameTransformer("(.+)@example.org"));
         t.addTransformer(new PrefixSuffixPrincipalNameTransformer("prefix-", "-suffix"));

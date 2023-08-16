@@ -43,7 +43,7 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyNoPublicKey() {
+    void verifyNoPublicKey() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
@@ -62,7 +62,7 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyBadCipher() {
+    void verifyBadCipher() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = mock(RegisteredServicePublicKey.class);
@@ -79,7 +79,7 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyEncrypt() {
+    void verifyEncrypt() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn", "uid", "mail"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");

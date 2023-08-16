@@ -25,7 +25,7 @@ public class ImmutableNativeJavaListSerializer extends Serializer<List<Object>> 
     @Override
     public void write(final Kryo kryo, final Output output, final List<Object> object) {
         output.writeInt(object.size(), true);
-        for (final val elm : object) {
+        for (val elm : object) {
             kryo.writeClassAndObject(output, elm);
         }
     }

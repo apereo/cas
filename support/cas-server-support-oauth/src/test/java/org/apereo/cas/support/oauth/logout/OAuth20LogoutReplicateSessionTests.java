@@ -50,7 +50,7 @@ class OAuth20LogoutReplicateSessionTests {
     private LogoutExecutionPlan logoutExecutionPlan;
 
     @Test
-    void verifyThatTheOAuthSpecificLogoutPostProcessorApplies() throws Exception {
+    void verifyThatTheOAuthSpecificLogoutPostProcessorApplies() throws Throwable {
 
         val processors = logoutExecutionPlan.getLogoutPostProcessors();
         assertEquals(1, processors.size());

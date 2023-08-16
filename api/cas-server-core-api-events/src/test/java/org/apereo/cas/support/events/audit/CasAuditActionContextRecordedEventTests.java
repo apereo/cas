@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasAuditActionContextRecordedEventTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(new Executable() {
             @Override
             @SuppressWarnings("JavaUtilDate")

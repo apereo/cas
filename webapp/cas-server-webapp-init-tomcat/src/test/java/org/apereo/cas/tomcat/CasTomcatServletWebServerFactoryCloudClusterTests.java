@@ -59,7 +59,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         assertNotNull(server);
@@ -67,7 +67,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
 
 
     @Test
-    void verifyDynamicCloud() {
+    void verifyDynamicCloud() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true).setClusteringType("CLOUD");
@@ -92,7 +92,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
     }
 
     @Test
-    void verifyStaticCloud() {
+    void verifyStaticCloud() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true)

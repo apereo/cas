@@ -60,9 +60,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -381,6 +381,13 @@ public class CoreAuthenticationUtils {
             .collect(Collectors.toList());
         val transformer = new ChainingPrincipalNameTransformer(transformers);
 
+        val activeAttributeRepositoryIdentifiers = Arrays.stream(personDirectory)
+            .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
+            .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+            .filter(p -> !p.isEmpty())
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+
         return PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -399,12 +406,7 @@ public class CoreAuthenticationUtils {
                 .map(p -> p.getUseExistingPrincipalId().toBoolean()).findFirst().orElse(Boolean.FALSE))
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
-            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
-                .filter(p -> !p.isEmpty())
-                .findFirst()
-                .orElse(Collections.<String>emptySet()))
+            .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
             .build();
     }
 

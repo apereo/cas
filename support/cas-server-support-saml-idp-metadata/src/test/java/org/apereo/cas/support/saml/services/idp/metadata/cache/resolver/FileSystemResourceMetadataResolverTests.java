@@ -56,7 +56,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
     
     @Test
-    void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Throwable {
         val service = new SamlRegisteredService();
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
         assertTrue(resolver.supports(service));
@@ -65,7 +65,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    void verifyResolverWithBadSigningCert() throws Exception {
+    void verifyResolverWithBadSigningCert() throws Throwable {
         val service = new SamlRegisteredService();
         service.setMetadataMaxValidity(30000);
         service.setMetadataCriteriaRoles(String.join(",", Set.of(
@@ -77,7 +77,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    void verifyResolverWithDirectory() throws Exception {
+    void verifyResolverWithDirectory() throws Throwable {
         val service = new SamlRegisteredService();
         val file = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
         service.setMetadataLocation(file);
@@ -93,7 +93,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    void verifyDefaultImpl() {
+    void verifyDefaultImpl() throws Throwable {
         val mock = mock(SamlRegisteredServiceMetadataResolver.class);
         doCallRealMethod().when(mock).saveOrUpdate(any());
         assertThrows(NotImplementedException.class, () -> mock.saveOrUpdate(null));

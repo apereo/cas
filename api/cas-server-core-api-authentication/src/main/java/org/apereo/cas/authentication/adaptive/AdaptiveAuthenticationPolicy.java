@@ -20,6 +20,7 @@ public interface AdaptiveAuthenticationPolicy {
      * @param userAgent      the user agent
      * @param location       the location
      * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean apply(RequestContext requestContext, String userAgent, GeoLocationRequest location);
+    boolean apply(RequestContext requestContext, String userAgent, GeoLocationRequest location) throws Throwable;
 }

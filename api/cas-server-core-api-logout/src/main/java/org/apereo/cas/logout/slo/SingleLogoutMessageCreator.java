@@ -14,6 +14,7 @@ public interface SingleLogoutMessageCreator {
      *
      * @param request the request
      * @return the string
+     * @throws Throwable the throwable
      */
-    SingleLogoutMessage create(SingleLogoutRequestContext request);
+    SingleLogoutMessage create(SingleLogoutRequestContext request) throws Throwable;
 }

@@ -54,12 +54,12 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
     private transient ExecutableCompiledGroovyScript executableScript;
 
     @Override
-    public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         initializeWatchableScriptIfNeeded();
         return getGroovyAttributeValue(request);
     }
 
-    protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) {
+    protected Boolean getGroovyAttributeValue(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         val args = CollectionUtils.wrap("accessRequest", request, "logger", LOGGER);
         executableScript.setBinding(args);
         return executableScript.execute(args.values().toArray(), Boolean.class);

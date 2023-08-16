@@ -41,7 +41,7 @@ class PrincipalAttributeRepositoryFetcherCascadeTests {
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")

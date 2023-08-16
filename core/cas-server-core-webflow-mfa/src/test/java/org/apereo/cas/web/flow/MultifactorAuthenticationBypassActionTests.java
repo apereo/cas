@@ -63,7 +63,7 @@ class MultifactorAuthenticationBypassActionTests {
         private ConfigurableApplicationContext configurableApplicationContext;
 
         @Test
-        void verifyOperations() throws Exception {
+        void verifyOperations() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -112,7 +112,7 @@ class MultifactorAuthenticationBypassActionTests {
         private ConfigurableApplicationContext configurableApplicationContext;
 
         @Test
-        void verifyOperations() throws Exception {
+        void verifyOperations() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

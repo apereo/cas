@@ -57,7 +57,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParseFails() {
+    void verifyParseFails() throws Throwable {
         RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(Set.of(), Set.of(), Map.of());
         assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList(" ", false));
         assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList("one *", false));
@@ -70,7 +70,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyUnrecognizedInitParamFailsFilterInit() {
+    void verifyUnrecognizedInitParamFailsFilterInit() throws Throwable {
         val filterConfig = new MockFilterConfig();
         filterConfig.addInitParameter("unrecognizedInitParameterName", "whatever");
 
@@ -80,7 +80,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoOpConfigurationFailsFilterInit() {
+    void verifyNoOpConfigurationFailsFilterInit() throws Throwable {
         val filter = new RequestParameterPolicyEnforcementFilter();
 
         val initParameterNames = new HashSet<String>();
@@ -101,7 +101,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifySettingFailSafeTrueFromInitParam() {
+    void verifySettingFailSafeTrueFromInitParam() throws Throwable {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -119,7 +119,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifySettingFailSafeFalseFromInitParam() {
+    void verifySettingFailSafeFalseFromInitParam() throws Throwable {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -138,7 +138,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRejectsMultiValuedRequestParameter() {
+    void verifyRejectsMultiValuedRequestParameter() throws Throwable {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -207,7 +207,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRejectsRequestWithIllicitCharacterInCheckedParameter() {
+    void verifyRejectsRequestWithIllicitCharacterInCheckedParameter() throws Throwable {
 
         val filter = new RequestParameterPolicyEnforcementFilter();
 
@@ -277,7 +277,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAcceptsExpectedParameterNames() {
+    void verifyAcceptsExpectedParameterNames() throws Throwable {
 
         val parameterNames = new HashSet<String>();
         parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
@@ -289,7 +289,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRejectsUnExpectedParameterName() {
+    void verifyRejectsUnExpectedParameterName() throws Throwable {
 
         val parameterNames = new HashSet<String>();
         parameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
@@ -302,13 +302,13 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParsesNullToEmptySet() {
+    void verifyParsesNullToEmptySet() throws Throwable {
         val returnedSet = RequestParameterPolicyEnforcementFilter.parseParametersList(null, true);
         assertTrue(returnedSet.isEmpty());
     }
 
     @Test
-    void verifyParsesWhiteSpaceDelimitedStringToSet() {
+    void verifyParsesWhiteSpaceDelimitedStringToSet() throws Throwable {
         val parameterValue = "service renew gateway";
         val expectedSet = new HashSet<String>();
         expectedSet.add("service");
@@ -321,29 +321,29 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParsingBlankParametersToCheckThrowsException() {
+    void verifyParsingBlankParametersToCheckThrowsException() throws Throwable {
         assertThrows(Exception.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList("   ", true));
     }
 
     @Test
-    void verifyAsteriskParsesIfAllowedToEmptySetOfParametersToCheck() {
+    void verifyAsteriskParsesIfAllowedToEmptySetOfParametersToCheck() throws Throwable {
         val expectedSet = new HashSet<String>();
         val returnedSet = RequestParameterPolicyEnforcementFilter.parseParametersList("*", true);
         assertEquals(expectedSet, returnedSet);
     }
 
     @Test
-    void verifyAsteriskParseIfNotAllowedThrowsException() {
+    void verifyAsteriskParseIfNotAllowedThrowsException() throws Throwable {
         assertThrows(Exception.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList("*", false));
     }
 
     @Test
-    void verifyParsingAsteriskWithOtherTokensThrowsException() {
+    void verifyParsingAsteriskWithOtherTokensThrowsException() throws Throwable {
         assertThrows(Exception.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList("renew * gateway", true));
     }
 
     @Test
-    void verifyParsingNullYieldsPercentHashAmpersandAndQuestionMark() {
+    void verifyParsingNullYieldsPercentHashAmpersandAndQuestionMark() throws Throwable {
         val expected = new HashSet<Character>();
         expected.add('%');
         expected.add('#');
@@ -354,19 +354,19 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParsingBlankThrowsException() {
+    void verifyParsingBlankThrowsException() throws Throwable {
         assertThrows(Exception.class, () -> RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("   "));
     }
 
     @Test
-    void verifyParsesLiteralNoneToEmptySet() {
+    void verifyParsesLiteralNoneToEmptySet() throws Throwable {
         val expected = new HashSet<Character>();
         val actual = RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("none");
         assertEquals(expected, actual);
     }
 
     @Test
-    void verifyParsingSomeCharactersWorks() {
+    void verifyParsingSomeCharactersWorks() throws Throwable {
         val expected = new HashSet<Character>();
         expected.add('&');
         expected.add('%');
@@ -379,12 +379,12 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyParsingMulticharacterTokensThrows() {
+    void verifyParsingMulticharacterTokensThrows() throws Throwable {
         assertThrows(Exception.class, () -> RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("& %*# @"));
     }
 
     @Test
-    void verifyRequireNotMultiValueBlocksMultiValue() {
+    void verifyRequireNotMultiValueBlocksMultiValue() throws Throwable {
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("dogName");
 
@@ -395,7 +395,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRequireNotMultiValuedAllowsSingleValued() {
+    void verifyRequireNotMultiValuedAllowsSingleValued() throws Throwable {
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("dogName");
 
@@ -405,7 +405,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRequireNotMultiValuedIgnoresMissingParameter() {
+    void verifyRequireNotMultiValuedIgnoresMissingParameter() throws Throwable {
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("dogName");
 
@@ -414,7 +414,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyRequireNotMultiValueAllowsUncheckedMultiValue() {
+    void verifyRequireNotMultiValueAllowsUncheckedMultiValue() throws Throwable {
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("dogName");
 
@@ -425,7 +425,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAllowsParametersNotContainingForbiddenCharacters() {
+    void verifyAllowsParametersNotContainingForbiddenCharacters() throws Throwable {
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");
         parametersToCheck.add("dogName");
@@ -444,7 +444,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyThrowsOnParameterContainingForbiddenCharacter() {
+    void verifyThrowsOnParameterContainingForbiddenCharacter() throws Throwable {
 
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");
@@ -466,7 +466,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyThrowsOnMultipleParameterContainingForbiddenCharacter() {
+    void verifyThrowsOnMultipleParameterContainingForbiddenCharacter() throws Throwable {
 
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");
@@ -489,7 +489,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAllowsUncheckedParameterContainingForbiddenCharacter() {
+    void verifyAllowsUncheckedParameterContainingForbiddenCharacter() throws Throwable {
 
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");
@@ -512,7 +512,7 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAllowsCheckedParameterNotPresent() {
+    void verifyAllowsCheckedParameterNotPresent() throws Throwable {
 
         val parametersToCheck = new HashSet<String>();
         parametersToCheck.add("catName");
@@ -531,17 +531,17 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyOnlyPostParameterInPostRequest() {
+    void verifyOnlyPostParameterInPostRequest() throws Throwable {
         internalTestOnlyPostParameter("POST");
     }
 
     @Test
-    void verifyOnlyPostParameterInGetRequest() {
+    void verifyOnlyPostParameterInGetRequest() throws Throwable {
         assertThrows(Exception.class, () -> internalTestOnlyPostParameter("GET"));
     }
 
     @Test
-    void verifyBlocksRequestByPattern() throws Exception {
+    void verifyBlocksRequestByPattern() throws Throwable {
         val filter = new RequestParameterPolicyEnforcementFilter();
         val filterConfig = new MockFilterConfig();
         filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK, ".+example\\.(com|org).*#fragment$");

@@ -89,7 +89,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private ServicesManager servicesManager;
 
     @RepeatedTest(2)
-    public void verifyOAuthCodeCanBeAdded() throws Exception {
+    void verifyOAuthCodeCanBeAdded() throws Throwable {
         val code = createOAuthCode();
         newTicketRegistry.addTicket(code);
         assertSame(1, newTicketRegistry.deleteTicket(code.getId()), "Wrong ticket count");
@@ -97,7 +97,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyAccessTokenCanBeAdded() throws Exception {
+    void verifyAccessTokenCanBeAdded() throws Throwable {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp(), casProperties);
@@ -112,7 +112,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyRefreshTokenCanBeAdded() throws Exception {
+    void verifyRefreshTokenCanBeAdded() throws Throwable {
         val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
@@ -125,7 +125,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyLargeDataset() throws Exception {
+    void verifyLargeDataset() throws Throwable {
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                     .getNewTicketId(TicketGrantingTicket.PREFIX);
@@ -142,7 +142,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         assertTrue(time <= 20);
     }
 
-    private OAuth20Code createOAuthCode() {
+    private OAuth20Code createOAuthCode() throws Throwable {
         return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString())
             .create(RegisteredServiceTestUtils.getService(),

@@ -35,7 +35,7 @@ class NimbusOAuthJacksonModuleTests {
     };
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val mapper = SERIALIZER.getObjectMapper();
         assertTrue(mapper.getRegisteredModuleIds().contains(NimbusOAuthJacksonModule.class.getName()));
         runTest(CodeVerifier.class, new CodeVerifier(RandomUtils.randomAlphabetic(CodeVerifier.MIN_LENGTH)));

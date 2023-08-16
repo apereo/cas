@@ -9,6 +9,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -45,41 +46,43 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val authn = WebUtils.getAuthentication(requestContext);
-        if (authn == null) {
-            LOGGER.error("Could not determine authentication from the request context");
-            return error();
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            val authn = WebUtils.getAuthentication(requestContext);
+            if (authn == null) {
+                LOGGER.error("Could not determine authentication from the request context");
+                return error();
+            }
 
-        val registeredService = WebUtils.getRegisteredService(requestContext);
-        val service = WebUtils.getService(requestContext);
+            val registeredService = WebUtils.getRegisteredService(requestContext);
+            val service = WebUtils.getService(requestContext);
 
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
-            LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
+            if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+                LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
+                return success();
+            }
+
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
+            val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
+            if (deviceBean.isEmpty()) {
+                LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");
+                return success();
+            }
+            val deviceRecord = deviceBean.get();
+            if (StringUtils.isBlank(deviceRecord.getDeviceName())) {
+                LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked");
+                return success();
+            }
+
+            if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
+                storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+            }
+            LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
+            MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
+                authn,
+                trustedProperties.getCore().getAuthenticationContextAttribute());
+            WebUtils.putAuthentication(authn, requestContext);
             return success();
-        }
-
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
-        val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
-        if (deviceBean.isEmpty()) {
-            LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");
-            return success();
-        }
-        val deviceRecord = deviceBean.get();
-        if (StringUtils.isBlank(deviceRecord.getDeviceName())) {
-            LOGGER.debug("No device name is provided. Trusted authentication record is not stored and tracked");
-            return success();
-        }
-
-        if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
-        }
-        LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
-        MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            authn,
-            trustedProperties.getCore().getAuthenticationContextAttribute());
-        WebUtils.putAuthentication(authn, requestContext);
-        return success();
+        });
     }
 
     /**

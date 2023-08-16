@@ -48,7 +48,7 @@ class InquireInterruptActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyInterruptedByServicePrincipalAttribute() {
+    void verifyInterruptedByServicePrincipalAttribute() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -72,7 +72,7 @@ class InquireInterruptActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
     }
 
-    private static InterruptInquirer getInterruptInquirer(final InterruptResponse interruptResponse) {
+    private static InterruptInquirer getInterruptInquirer(final InterruptResponse interruptResponse) throws Throwable {
         val interrupt = mock(InterruptInquirer.class);
         when(interrupt.inquire(any(Authentication.class),
             any(RegisteredService.class), any(Service.class),
@@ -82,7 +82,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    void verifyInterrupted() {
+    void verifyInterrupted() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -113,7 +113,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    void verifyInterruptedAlready() {
+    void verifyInterruptedAlready() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -135,7 +135,7 @@ class InquireInterruptActionTests {
 
 
     @Test
-    void verifyInterruptFinalized() {
+    void verifyInterruptFinalized() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -156,7 +156,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    void verifyNotInterrupted() {
+    void verifyNotInterrupted() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -176,7 +176,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    void verifyNotInterruptedAsFinalized() {
+    void verifyNotInterruptedAsFinalized() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

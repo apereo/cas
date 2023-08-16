@@ -42,7 +42,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class EagerInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyEagerInit() {
+        void verifyEagerInit() throws Throwable {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -102,7 +102,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class IdentifiableClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactoryForIdentifiableClients() {
+        void verifyFactoryForIdentifiableClients() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(13, clients.size());
         }
@@ -118,7 +118,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class GitHubClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyGithubClient() {
+        void verifyGithubClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (GitHubClient) clients.iterator().next();
@@ -135,7 +135,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class OAuth20Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactory() {
+        void verifyFactory() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -153,7 +153,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class CasClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactoryForCasClientsHavingLoginInDomain() {
+        void verifyFactoryForCasClientsHavingLoginInDomain() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (CasClient) clients.iterator().next();
@@ -178,7 +178,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class AppleClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -219,7 +219,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class OidcClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(4, clients.size());
         }
@@ -236,7 +236,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class LazyInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyLaziness() {
+        void verifyLaziness() throws Throwable {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -260,7 +260,7 @@ class DefaultDelegatedClientFactoryTests {
     @Import(SamlMessageStoreTestConfiguration.class)
     class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());
@@ -283,7 +283,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -304,7 +304,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2ClientsWithGroovyAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val saml2clients = delegatedClientFactory.build();
             assertEquals(1, saml2clients.size());
             val client = (SAML2Client) saml2clients.stream().findFirst().get();
@@ -327,7 +327,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
 
             val saml2clients = delegatedClientFactory.build();
             assertEquals(1, saml2clients.size());
@@ -378,7 +378,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());

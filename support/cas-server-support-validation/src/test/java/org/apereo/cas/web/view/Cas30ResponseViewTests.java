@@ -80,7 +80,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
-    private static String decryptCredential(final String cred) throws Exception {
+    private static String decryptCredential(final String cred) throws Throwable {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
@@ -137,7 +137,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyViewAuthnAttributes() throws Exception {
+    void verifyViewAuthnAttributes() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
@@ -145,7 +145,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
@@ -156,7 +156,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Throwable {
         val attributes = renderView();
         LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
@@ -167,14 +167,14 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyViewBinaryAttributes() throws Exception {
+    void verifyViewBinaryAttributes() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey("binaryAttribute"));
         val binaryAttr = attributes.get("binaryAttribute");
         assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
     }
 
-    protected Map<?, ?> renderView() throws Exception {
+    protected Map<?, ?> renderView() throws Throwable {
         val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
         LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 

@@ -45,7 +45,7 @@ public class CasEurekaDiscoveryClientTests {
         private EurekaClientConfigBean eurekaClientConfigBean;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(eurekaClientConfigBean);
         }
     }
@@ -66,7 +66,7 @@ public class CasEurekaDiscoveryClientTests {
         private EurekaClientConfigBean eurekaClientConfigBean;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(eurekaClientConfigBean);
         }
     }

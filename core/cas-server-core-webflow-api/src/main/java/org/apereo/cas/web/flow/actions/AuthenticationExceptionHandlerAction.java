@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,11 +44,12 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
     public String handle(final Exception e, final RequestContext requestContext) {
         val handlers = webflowExceptionHandlers
             .stream()
-            .filter(handler -> handler.supports(e, requestContext)).toList();
+            .filter(Unchecked.predicate(handler -> handler.supports(e, requestContext)))
+            .toList();
 
         return handlers
             .stream()
-            .map(handler -> handler.handle(e, requestContext))
+            .map(Unchecked.function(handler -> handler.handle(e, requestContext)))
             .filter(Objects::nonNull)
             .findFirst()
             .orElseGet(this::error)

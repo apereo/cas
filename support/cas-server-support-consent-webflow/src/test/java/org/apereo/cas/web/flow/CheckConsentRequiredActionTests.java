@@ -42,7 +42,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    void verifyNoConsentWithoutServiceOrAuthn() throws Exception {
+    void verifyNoConsentWithoutServiceOrAuthn() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -58,7 +58,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    void verifyOperationGlobalConsentActive() throws Exception {
+    void verifyOperationGlobalConsentActive() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -84,7 +84,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    void verifyOperationServiceEnabled() throws Exception {
+    void verifyOperationServiceEnabled() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -95,7 +95,7 @@ class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    void verifyOperationServiceDisabled() throws Exception {
+    void verifyOperationServiceDisabled() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

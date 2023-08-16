@@ -353,29 +353,31 @@ public class LdapUtils {
         if (ResourceUtils.doesResourceExist(filterQuery)) {
             ApplicationContextProvider.getScriptResourceCacheManager()
                 .ifPresentOrElse(cacheMgr -> {
-                    val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
-                    var script = (ExecutableCompiledGroovyScript) null;
-                    if (cacheMgr.containsKey(cacheKey)) {
-                        script = cacheMgr.get(cacheKey);
-                        LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-                    } else {
-                        val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
-                        LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                        script = new WatchableGroovyScriptResource(resource);
-                        cacheMgr.put(cacheKey, script);
-                        LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-                    }
-                    if (script != null) {
-                        val parameters = IntStream.range(0, values.size())
-                            .boxed()
-                            .collect(Collectors.toMap(paramName::get, values::get, (__, b) -> b, LinkedHashMap::new));
-                        val args = CollectionUtils.<String, Object>wrap("filter", filter,
-                            "parameters", parameters,
-                            "applicationContext", ApplicationContextProvider.getApplicationContext(),
-                            "logger", LOGGER);
-                        script.setBinding(args);
-                        script.execute(args.values().toArray(), FilterTemplate.class);
-                    }
+                    FunctionUtils.doUnchecked(__ -> {
+                        val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
+                        var script = (ExecutableCompiledGroovyScript) null;
+                        if (cacheMgr.containsKey(cacheKey)) {
+                            script = cacheMgr.get(cacheKey);
+                            LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+                        } else {
+                            val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
+                            LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                            script = new WatchableGroovyScriptResource(resource);
+                            cacheMgr.put(cacheKey, script);
+                            LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
+                        }
+                        if (script != null) {
+                            val parameters = IntStream.range(0, values.size())
+                                .boxed()
+                                .collect(Collectors.toMap(paramName::get, values::get, (a, b) -> b, LinkedHashMap::new));
+                            val args = CollectionUtils.<String, Object>wrap("filter", filter,
+                                "parameters", parameters,
+                                "applicationContext", ApplicationContextProvider.getApplicationContext(),
+                                "logger", LOGGER);
+                            script.setBinding(args);
+                            script.execute(args.values().toArray(), FilterTemplate.class);
+                        }
+                    });
                 },
                     () -> {
                         throw new RuntimeException("Script cache manager unavailable to handle LDAP filter");

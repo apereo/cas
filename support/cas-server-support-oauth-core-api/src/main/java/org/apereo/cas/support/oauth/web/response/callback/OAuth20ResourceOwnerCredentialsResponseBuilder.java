@@ -34,7 +34,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
     @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())

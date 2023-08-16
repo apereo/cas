@@ -18,7 +18,7 @@ public interface OAuth20RequestValidator extends Ordered {
      * @return true /false
      * @throws Exception the exception
      */
-    boolean validate(WebContext context) throws Exception;
+    boolean validate(WebContext context) throws Throwable;
 
     /**
      * Supports request?
@@ -27,5 +27,5 @@ public interface OAuth20RequestValidator extends Ordered {
      * @return true /false
      * @throws Exception the exception
      */
-    boolean supports(WebContext context) throws Exception;
+    boolean supports(WebContext context) throws Throwable;
 }

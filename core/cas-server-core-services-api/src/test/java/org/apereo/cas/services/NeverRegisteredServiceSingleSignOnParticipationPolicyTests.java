@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class NeverRegisteredServiceSingleSignOnParticipationPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new NeverRegisteredServiceSingleSignOnParticipationPolicy();
         assertFalse(input.shouldParticipateInSso(mock(RegisteredService.class), mock(AuthenticationAwareTicket.class)));
     }

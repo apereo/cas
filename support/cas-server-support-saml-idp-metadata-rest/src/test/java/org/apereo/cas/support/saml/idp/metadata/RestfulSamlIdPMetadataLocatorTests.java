@@ -72,7 +72,7 @@ class RestfulSamlIdPMetadataLocatorTests extends BaseRestfulSamlMetadataTests {
     }
     
     @Test
-    void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() throws Throwable {
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
 
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());

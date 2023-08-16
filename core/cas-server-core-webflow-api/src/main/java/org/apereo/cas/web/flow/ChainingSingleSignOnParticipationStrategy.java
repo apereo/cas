@@ -4,6 +4,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,12 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
         val supporters = getSupportingSingleSignOnParticipationStrategies(ssoRequest);
         if (supporters.isEmpty()) {
             return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(ssoRequest);
         }
-        return supporters.stream().allMatch(p -> p.isParticipating(ssoRequest));
+        return supporters.stream().allMatch(Unchecked.predicate(p -> p.isParticipating(ssoRequest)));
     }
 
     @Override

@@ -23,7 +23,7 @@ class CasResolveAttributesReportEndpointTests extends AbstractCasEndpointTests {
     private CasResolveAttributesReportEndpoint endpoint;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val response = endpoint.resolvePrincipalAttributes("casuser");
         assertNotNull(response);
         assertFalse(response.isEmpty());

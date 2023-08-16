@@ -69,7 +69,7 @@ public class ServicesControllerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         var mvcResult = mvc.perform(get("/palantir/services")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())

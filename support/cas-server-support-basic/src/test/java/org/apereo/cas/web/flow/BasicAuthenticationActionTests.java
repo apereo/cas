@@ -93,7 +93,7 @@ class BasicAuthenticationActionTests {
     private Action basicAuthenticationAction;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         HttpUtils.createBasicAuthHeaders("casuser", StringUtils.reverse("casuser")).forEach(request::addHeader);
         val context = new MockRequestContext();

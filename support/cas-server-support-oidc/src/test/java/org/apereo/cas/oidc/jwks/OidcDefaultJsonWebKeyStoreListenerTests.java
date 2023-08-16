@@ -25,7 +25,7 @@ class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
     private ConfigurableApplicationContext realApplicationContext;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val cacheKey = new OidcJsonWebKeyCacheKey(
             casProperties.getAuthn().getOidc().getCore().getIssuer(), OidcJsonWebKeyUsage.SIGNING);
         val keys = oidcDefaultJsonWebKeystoreCache.get(cacheKey);

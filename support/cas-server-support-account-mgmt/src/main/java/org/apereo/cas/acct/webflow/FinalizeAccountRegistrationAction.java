@@ -34,7 +34,7 @@ public class FinalizeAccountRegistrationAction extends BaseCasWebflowAction {
             if (response.isSuccess()) {
                 return success(response);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         WebUtils.addErrorMessageToContext(requestContext, "cas.screen.acct.error.provision");

@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 class LdapUtilsTests {
 
     @Test
-    void verifyGetBoolean() {
+    void verifyGetBoolean() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         entry.addAttributes(new LdapAttribute("attr2", StringUtils.EMPTY));
@@ -62,7 +62,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetLong() {
+    void verifyGetLong() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "100"));
         val input = LdapUtils.getLong(entry, "attr1", 0L);
@@ -70,7 +70,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetBinary() {
+    void verifyGetBinary() throws Throwable {
         val entry = new LdapEntry();
         val attr = new LdapAttribute("attr1", "100".getBytes(StandardCharsets.UTF_8));
         attr.setBinary(true);
@@ -81,13 +81,13 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyEntry() throws Exception {
+    void verifyEntry() throws Throwable {
         assertFalse(LdapUtils.isLdapConnectionUrl(new URI("https://github.com").toURL()));
         assertFalse(LdapUtils.containsResultEntry(null));
     }
 
     @Test
-    void verifyFailsOp() throws Exception {
+    void verifyFailsOp() throws Throwable {
         val factory = mock(ConnectionFactory.class);
         val wrapper = new LdapConnectionFactory(factory);
         when(factory.getConnectionConfig()).thenThrow(new IllegalArgumentException("fails"));
@@ -100,7 +100,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyScriptedFilter() {
+    void verifyScriptedFilter() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         ApplicationContextProvider.holdApplicationContext(appCtx);
@@ -124,14 +124,14 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyFilterByIndex() {
+    void verifyFilterByIndex() throws Throwable {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));
         assertTrue(filter.getParameters().containsKey("0"));
         assertTrue(filter.getParameters().containsValue("casuser"));
     }
 
     @Test
-    void verifyLdapAuthnAnon() {
+    void verifyLdapAuthnAnon() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -149,7 +149,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyLdapAuthnDirect() {
+    void verifyLdapAuthnDirect() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -165,7 +165,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyActiveDirectoryPasswordPolicy() {
+    void verifyActiveDirectoryPasswordPolicy() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -190,7 +190,7 @@ class LdapUtilsTests {
 
 
     @Test
-    void verifyLdapAuthnActiveDirectory() {
+    void verifyLdapAuthnActiveDirectory() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -207,7 +207,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyPagedSearch() throws Exception {
+    void verifyPagedSearch() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -232,7 +232,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyComparePooling() throws Exception {
+    void verifyComparePooling() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -264,7 +264,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyConnectionConfig() throws Exception {
+    void verifyConnectionConfig() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");

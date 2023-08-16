@@ -28,7 +28,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void checkDefaultAuthzStrategyConfig() {
+    void checkDefaultAuthzStrategyConfig() throws Throwable {
         val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         assertTrue(authz.isServiceAccessAllowed());

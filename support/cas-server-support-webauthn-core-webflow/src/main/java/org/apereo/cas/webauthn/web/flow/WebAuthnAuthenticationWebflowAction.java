@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -23,10 +24,12 @@ public class WebAuthnAuthenticationWebflowAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val result = this.authenticationWebflowEventResolver.resolveSingle(requestContext);
-        if (!result.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {
-            WebUtils.addErrorMessageToContext(requestContext, "cas.mfa.webauthn.auth.fail");
-        }
-        return result;
+        return FunctionUtils.doUnchecked(() -> {
+            val result = authenticationWebflowEventResolver.resolveSingle(requestContext);
+            if (!result.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {
+                WebUtils.addErrorMessageToContext(requestContext, "cas.mfa.webauthn.auth.fail");
+            }
+            return result;
+        });
     }
 }

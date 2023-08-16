@@ -37,7 +37,7 @@ class BrowserWebStorageSessionStoreTests {
     private CipherExecutor webflowCipherExecutor;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val store = new BrowserWebStorageSessionStore(webflowCipherExecutor);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());

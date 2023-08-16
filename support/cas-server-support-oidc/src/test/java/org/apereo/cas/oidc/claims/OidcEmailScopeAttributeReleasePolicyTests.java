@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -48,7 +48,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyClaimMapOperation() {
+    void verifyClaimMapOperation() throws Throwable {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -78,7 +78,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val policy = new OidcEmailScopeAttributeReleasePolicy();

@@ -6,6 +6,7 @@ import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -89,7 +90,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
 
         for (val inquirer : this.interruptInquirers) {
             LOGGER.debug("Invoking interrupt inquirer using [{}]", inquirer.getName());
-            val response = inquirer.inquire(authentication, registeredService, service, credential, requestContext);
+            val response = FunctionUtils.doUnchecked(() -> inquirer.inquire(authentication, registeredService, service, credential, requestContext));
             if (response != null && response.isInterrupt()) {
                 LOGGER.debug("Interrupt inquiry is required since inquirer produced a response [{}]", response);
                 InterruptUtils.putInterruptIn(requestContext, response);

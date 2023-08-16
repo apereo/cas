@@ -81,7 +81,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                                 return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                                     registeredService, authn.getPrincipal().getId(),
                                     (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
-                            } catch (final Exception e) {
+                            } catch (final Throwable e) {
                                 LOGGER.info(e.getMessage(), e);
                                 return false;
                             }

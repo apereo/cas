@@ -91,7 +91,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()
-            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext)));
     }
 
 }

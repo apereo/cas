@@ -14,7 +14,7 @@ public record DefaultSecurityTokenTicketFactory(UniqueTicketIdGenerator ticketUn
 
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket,
-                                      final byte[] securityTokenSerialized) {
+                                      final byte[] securityTokenSerialized) throws Throwable {
         val token = EncodingUtils.encodeBase64(securityTokenSerialized);
         val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy.buildTicketExpirationPolicy(), token);

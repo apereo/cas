@@ -26,7 +26,7 @@ public class WebAuthnAuthenticationWebflowEventResolver extends BaseMultifactorA
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
@@ -34,7 +34,7 @@ public class WebAuthnAuthenticationWebflowEventResolver extends BaseMultifactorA
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 }

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 11211)
 class URLSerializerTests {
     @Test
-    void verifyTranscoderWorks() throws Exception {
+    void verifyTranscoderWorks() throws Throwable {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);

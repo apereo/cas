@@ -42,7 +42,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,
         actionResolverName = AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER)
-    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) {
+    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getObject().getServicesManager(), accessToken.getClientId());
 
@@ -62,7 +62,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
                                                               final WebContext context,
-                                                              final RegisteredService registeredService) {
+                                                              final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getObject().getAuthenticationAttributeReleasePolicy()

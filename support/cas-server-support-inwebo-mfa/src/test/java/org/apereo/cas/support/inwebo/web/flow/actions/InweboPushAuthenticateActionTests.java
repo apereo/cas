@@ -41,7 +41,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAuthenticateOk() {
+    void verifyPushAuthenticateOk() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
         val event = action.doExecute(requestContext);
@@ -50,7 +50,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAuthenticateFailed() {
+    void verifyPushAuthenticateFailed() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
         val event = action.doExecute(requestContext);

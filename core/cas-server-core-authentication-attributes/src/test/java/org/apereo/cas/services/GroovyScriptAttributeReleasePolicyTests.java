@@ -36,7 +36,7 @@ class GroovyScriptAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
 
@@ -53,7 +53,7 @@ class GroovyScriptAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyFails() {
+    void verifyFails() throws Throwable {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:bad-path.groovy");
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -67,7 +67,7 @@ class GroovyScriptAttributeReleasePolicyTests {
 
 
     @Test
-    void verifySystemPropertyInRef() throws Exception {
+    void verifySystemPropertyInRef() throws Throwable {
         val file = File.createTempFile("GroovyAttributeRelease", ".groovy");
         try (val is = new ClassPathResource("GroovyAttributeRelease.groovy").getInputStream()) {
             is.transferTo(new FileOutputStream(file));

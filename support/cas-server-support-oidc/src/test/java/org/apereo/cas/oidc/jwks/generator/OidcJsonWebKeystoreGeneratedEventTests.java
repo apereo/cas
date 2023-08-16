@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcJsonWebKeystoreGeneratedEventTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val event = new OidcJsonWebKeystoreGeneratedEvent(this,
             new FileSystemResource(File.createTempFile("first", "second")), null);
         assertNotNull(event.getSource());

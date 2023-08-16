@@ -31,6 +31,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
@@ -91,7 +92,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
     @BeforeEach
-    public void prepTest() throws Exception {
+    public void prepTest() throws Throwable {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
@@ -128,6 +129,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreServicesConfiguration.class,
         GoogleMapsGeoCodingConfiguration.class,
         CasCoreWebConfiguration.class,

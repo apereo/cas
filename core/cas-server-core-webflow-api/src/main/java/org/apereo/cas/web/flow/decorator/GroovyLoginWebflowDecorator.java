@@ -25,7 +25,7 @@ public class GroovyLoginWebflowDecorator implements WebflowDecorator {
     }
 
     @Override
-    public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
+    public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) throws Throwable {
         val args = new Object[]{requestContext, applicationContext, LOGGER};
         watchableScript.execute(args, Void.class);
     }

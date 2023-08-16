@@ -97,7 +97,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
                + "</samlp:LogoutResponse>";
     }
 
-    protected void assertStartAuthentication(final Service service) throws Exception {
+    protected void assertStartAuthentication(final Service service) throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         val response = new MockHttpServletResponse();

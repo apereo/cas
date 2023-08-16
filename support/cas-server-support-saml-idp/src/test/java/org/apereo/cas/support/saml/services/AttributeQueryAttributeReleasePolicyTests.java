@@ -49,7 +49,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyReleasesAttributes() {
+    void verifyReleasesAttributes() throws Throwable {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "cn"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();

@@ -51,7 +51,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix())
                           + "?client_name=" + oauthCasClient.getName();
 

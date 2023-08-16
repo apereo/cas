@@ -55,7 +55,7 @@ class RenewAuthenticationRequestCheckActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyProceed() throws Exception {
+    void verifyProceed() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ class RenewAuthenticationRequestCheckActionTests {
     }
 
     @Test
-    void verifyRenew() throws Exception {
+    void verifyRenew() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");

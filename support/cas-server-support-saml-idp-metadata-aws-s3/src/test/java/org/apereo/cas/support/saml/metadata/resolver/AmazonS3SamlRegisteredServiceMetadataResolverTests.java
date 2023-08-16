@@ -52,7 +52,7 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     private SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("SAML");
         service.setId(100);

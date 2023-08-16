@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("AmazonWebServices")
 class AmazonSimpleNotificationServiceSmsSenderTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val snsClient = mock(SnsClient.class);
         val result = PublishResponse.builder().messageId("PASSED").build();
         when(snsClient.publish(any(PublishRequest.class))).thenReturn(result);
@@ -33,7 +33,7 @@ class AmazonSimpleNotificationServiceSmsSenderTests {
     }
     
     @Test
-    void verifyFailsAction() {
+    void verifyFailsAction() throws Throwable {
         val snsClient = mock(SnsClient.class);
         when(snsClient.publish(any(PublishRequest.class))).thenThrow(new IllegalArgumentException());
         val properties = new AmazonSnsProperties();

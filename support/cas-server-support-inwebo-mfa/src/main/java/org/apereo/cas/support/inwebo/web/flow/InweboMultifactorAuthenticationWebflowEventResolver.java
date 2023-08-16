@@ -24,7 +24,7 @@ public class InweboMultifactorAuthenticationWebflowEventResolver extends BaseMul
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
@@ -32,7 +32,7 @@ public class InweboMultifactorAuthenticationWebflowEventResolver extends BaseMul
             actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
             resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 }

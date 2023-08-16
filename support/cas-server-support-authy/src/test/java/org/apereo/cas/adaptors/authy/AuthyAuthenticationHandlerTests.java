@@ -54,7 +54,7 @@ class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val authyInstance = configureAuthyClientInstance(200, 200, Token.VALID_TOKEN_MESSAGE);
         val handler = getAuthyAuthenticationHandler(authyInstance);
 
@@ -73,7 +73,7 @@ class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Throwable {
         val authyInstance = configureAuthyClientInstance(400, 200, Token.VALID_TOKEN_MESSAGE);
         val handler = getAuthyAuthenticationHandler(authyInstance);
 
@@ -89,7 +89,7 @@ class AuthyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsVerify() throws Exception {
+    void verifyFailsVerify() throws Throwable {
         val authyInstance = configureAuthyClientInstance(200, 400, "Bad");
         val handler = getAuthyAuthenticationHandler(authyInstance);
 

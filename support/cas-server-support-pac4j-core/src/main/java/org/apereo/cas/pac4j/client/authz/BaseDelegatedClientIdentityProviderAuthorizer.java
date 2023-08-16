@@ -32,17 +32,17 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
 
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
-                                                  final RequestContext context) {
+                                                  final RequestContext context) throws Throwable {
         return handleAuthorizationForService(clientName, service);
     }
 
     @Override
     public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
-                                                  final HttpServletRequest request) {
+                                                  final HttpServletRequest request) throws Throwable {
         return handleAuthorizationForService(clientName, service);
     }
 
-    protected boolean handleAuthorizationForService(final String clientName, final Service service) {
+    protected boolean handleAuthorizationForService(final String clientName, final Service service) throws Throwable {
         if (service == null || StringUtils.isBlank(service.getId())) {
             LOGGER.debug("Can not evaluate delegated authentication policy without a service");
             return true;

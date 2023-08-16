@@ -27,7 +27,7 @@ class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitator
     private HealthIndicator dynamoDbHealthIndicator;
 
     @Test
-    void verifyHealthOperation() throws Exception {
+    void verifyHealthOperation() throws Throwable {
         val health = dynamoDbHealthIndicator.health();
         val section = health.getDetails();
         assertTrue(section.containsKey("proxyTicketsTable"));

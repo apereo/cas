@@ -104,7 +104,7 @@ class X509SubjectPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyResolvePrincipalInternal(final String certPath,
+    void verifyResolvePrincipalInternal(final String certPath,
                                                final String descriptor,
                                                final String expectedResult) throws Exception {
 

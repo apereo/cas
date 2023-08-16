@@ -35,12 +35,12 @@ class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oidcIssuerService.determineIssuer(Optional.empty()));
     }
 
     @Test
-    void verifyEchoingOperation() throws Exception {
+    void verifyEchoingOperation() throws Throwable {
         val svc = getOidcRegisteredService();
         val oidcService = OidcIssuerService.echoing("https://custom.issuer/");
         assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.empty()));
@@ -53,7 +53,7 @@ class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyServiceIssuer() {
+    void verifyServiceIssuer() throws Throwable {
         val svc = getOidcRegisteredService();
         var issuer = oidcIssuerService.determineIssuer(Optional.of(svc));
         assertEquals(issuer, casProperties.getAuthn().getOidc().getCore().getIssuer());
@@ -63,7 +63,7 @@ class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyIssuerPatterns() {
+    void verifyIssuerPatterns() throws Throwable {
         assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), "profile"));
     }
 }

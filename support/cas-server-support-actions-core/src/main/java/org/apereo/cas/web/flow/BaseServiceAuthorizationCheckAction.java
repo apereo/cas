@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -29,7 +30,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
     @Override
     public Event doExecute(final RequestContext context) {
         val serviceInContext = WebUtils.getService(context);
-        val service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
+        val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext));
         if (service == null) {
             return success();
         }

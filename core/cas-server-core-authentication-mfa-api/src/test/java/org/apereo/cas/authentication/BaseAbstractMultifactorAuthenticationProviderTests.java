@@ -17,7 +17,7 @@ public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
     public abstract AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() throws Exception;
 
     @Test
-    void verifyInitialProvider() throws Exception {
+    void verifyInitialProvider() throws Throwable {
         val p = getMultifactorAuthenticationProvider();
         assertNotNull(p.getId());
         assertNotNull(p.getFriendlyName());
@@ -25,7 +25,7 @@ public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
     }
 
     @Test
-    void verifyPing() throws Exception {
+    void verifyPing() throws Throwable {
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         val p = getMultifactorAuthenticationProvider();
         assertDoesNotThrow(() -> p.isAvailable(service));

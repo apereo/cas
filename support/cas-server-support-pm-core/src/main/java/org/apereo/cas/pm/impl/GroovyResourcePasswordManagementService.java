@@ -38,37 +38,37 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public boolean changeInternal(final @NonNull PasswordChangeRequest bean) {
-        return watchableScript.execute("change", Boolean.class, new Object[]{bean, LOGGER});
+    public boolean changeInternal(final @NonNull PasswordChangeRequest bean) throws Throwable {
+        return watchableScript.execute("change", Boolean.class, bean, LOGGER);
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
-        return watchableScript.execute("findEmail", String.class, new Object[]{query, LOGGER});
+    public String findEmail(final PasswordManagementQuery query) throws Throwable {
+        return watchableScript.execute("findEmail", String.class, query, LOGGER);
     }
 
     @Override
-    public String findPhone(final PasswordManagementQuery query) {
-        return watchableScript.execute("findPhone", String.class, new Object[]{query, LOGGER});
+    public String findPhone(final PasswordManagementQuery query) throws Throwable {
+        return watchableScript.execute("findPhone", String.class, query, LOGGER);
     }
 
     @Override
-    public String findUsername(final PasswordManagementQuery query) {
-        return watchableScript.execute("findUsername", String.class, new Object[]{query, LOGGER});
+    public String findUsername(final PasswordManagementQuery query) throws Throwable {
+        return watchableScript.execute("findUsername", String.class, query, LOGGER);
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{query, LOGGER});
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
+        return watchableScript.execute("getSecurityQuestions", Map.class, query, LOGGER);
     }
 
     @Override
-    public boolean unlockAccount(final Credential credential) {
-        return watchableScript.execute("unlockAccount", Boolean.class, new Object[]{credential, LOGGER});
+    public boolean unlockAccount(final Credential credential) throws Throwable {
+        return watchableScript.execute("unlockAccount", Boolean.class, credential, LOGGER);
     }
 
     @Override
-    public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        watchableScript.execute("updateSecurityQuestions", Void.class, new Object[]{query, LOGGER});
+    public void updateSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
+        watchableScript.execute("updateSecurityQuestions", Void.class, query, LOGGER);
     }
 }

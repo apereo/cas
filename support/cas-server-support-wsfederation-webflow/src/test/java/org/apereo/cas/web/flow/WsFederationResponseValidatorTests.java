@@ -78,7 +78,7 @@ class WsFederationResponseValidatorTests {
 
     @Test
     @Order(2)
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val zdt = ZonedDateTime.of(2014, 2, 26, 22, 51, 10, 0, ZoneOffset.UTC);
         val clock = Clock.fixed(zdt.toInstant(), ZoneOffset.UTC);
         wsFederationHelper.setClock(clock);
@@ -89,7 +89,7 @@ class WsFederationResponseValidatorTests {
 
     @Test
     @Order(1)
-    public void verifyFailedOperation() throws Exception {
+    void verifyFailedOperation() throws Throwable {
         val context = prepareContext();
         assertThrows(IllegalArgumentException.class, () -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
     }

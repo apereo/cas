@@ -47,7 +47,7 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     }
     
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
         val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());
@@ -60,7 +60,7 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     }
 
     @Test
-    void verifyWithCallback() throws Exception {
+    void verifyWithCallback() throws Throwable {
         val callbackUrl = "http://localhost:8443/cas"
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 

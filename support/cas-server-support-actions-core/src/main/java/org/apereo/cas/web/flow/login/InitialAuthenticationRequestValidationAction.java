@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -20,6 +21,6 @@ public class InitialAuthenticationRequestValidationAction extends BaseCasWebflow
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        return this.initialAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
+        return FunctionUtils.doUnchecked(() -> initialAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext));
     }
 }

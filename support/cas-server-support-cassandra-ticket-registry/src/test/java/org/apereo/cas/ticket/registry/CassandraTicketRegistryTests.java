@@ -45,7 +45,7 @@ class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(1)
-    public void verifyFails() {
+    void verifyFails() throws Throwable {
         assertDoesNotThrow(() -> newTicketRegistry.addTicket((Ticket) null));
     }
 

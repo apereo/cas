@@ -10,11 +10,9 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -43,9 +41,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential,
-        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        final UsernamePasswordCredential credential, final String originalPassword) throws PreventedException {
         val sql = "SELECT COUNT('x') FROM ".concat(properties.getTableUsers())
             .concat(" WHERE ")
             .concat(properties.getFieldUser())
@@ -59,7 +55,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
-        } catch (final DataAccessException e) {
+        } catch (final Throwable e) {
             throw new PreventedException(e);
         }
     }

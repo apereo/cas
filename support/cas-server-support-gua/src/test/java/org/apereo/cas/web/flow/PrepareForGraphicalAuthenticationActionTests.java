@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -32,7 +32,7 @@ class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphicalAuth
     }
 
     @Test
-    void verifyMissingAction() throws Exception {
+    void verifyMissingAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         WebUtils.putGraphicalUserAuthenticationUsername(context, "casuser");

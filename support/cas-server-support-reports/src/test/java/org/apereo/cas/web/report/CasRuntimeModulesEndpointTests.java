@@ -23,7 +23,7 @@ class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
     private CasRuntimeModulesEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         var modules = endpoint.reportModules();
         assertFalse(modules.isEmpty());
 

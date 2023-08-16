@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 class X509AuthenticationUtilsTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         Arrays.stream(SubjectDnPrincipalResolverProperties.SubjectDnFormat.values()).forEach(opt -> {
             val results = X509AuthenticationUtils.getSubjectDnFormat(opt);
             if (opt != SubjectDnPrincipalResolverProperties.SubjectDnFormat.DEFAULT) {

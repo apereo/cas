@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -45,7 +46,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 val serviceTicket = context.getServiceTicket().orElseThrow();
                 val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
                 ensurePrincipalAccessIsAllowedForService(providedRegisteredService.get(), serviceTicket.getService(), authResult);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -69,7 +70,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
                 ensurePrincipalAccessIsAllowedForService(registeredService, service, authResult);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -79,7 +80,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
     protected static void ensurePrincipalAccessIsAllowedForService(final RegisteredService registeredService,
                                                                    final Service service,
-                                                                   final Authentication authentication) {
+                                                                   final Authentication authentication) throws Throwable {
         val attributes = CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes());
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
             registeredService, authentication.getPrincipal().getId(), (Map) attributes);
@@ -148,7 +149,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, principal.getId(), principal.getAttributes());
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -172,7 +173,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .build();
             try {
                 ensurePrincipalAccessIsAllowedForService(registeredService, service, authentication);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -210,7 +211,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .map(enforcer -> enforcer.execute(context))
+            .map(Unchecked.function(enforcer -> enforcer.execute(context)))
             .filter(Objects::nonNull)
             .filter(AuditableExecutionResult::isExecutionFailure)
             .findFirst();

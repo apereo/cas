@@ -23,7 +23,7 @@ class DataSourceProxyTests {
 
     @Test
     @SuppressWarnings("JdkObsolete")
-    public void verifyProxySource() throws Exception {
+    void verifyProxySource() throws Throwable {
         val ds = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:cas");
         val environment = new Hashtable<>();
         environment.put("java:comp/env/jdbc/MyDS", ds);

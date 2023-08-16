@@ -48,14 +48,14 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
+    void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(org.apereo.cas.util.RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
         assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(r));
     }
 
     @Test
-    void verifyInvalidFileLoad() {
+    void verifyInvalidFileLoad() throws Throwable {
         val file = mock(File.class);
         when(file.canRead()).thenReturn(Boolean.FALSE);
         assertTrue(newServiceRegistry.load(file).isEmpty());

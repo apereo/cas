@@ -43,7 +43,7 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyDecryptionEncryption() {
+    void verifyDecryptionEncryption() throws Throwable {
         val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
         val plain = jasypt.decryptValue(result);
@@ -51,14 +51,14 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyEncodeOps() {
+    void verifyEncodeOps() throws Throwable {
         assertNotNull(jasypt.getName());
         val result = jasypt.encode(getClass().getSimpleName());
         assertNotNull(result);
     }
 
     @Test
-    void verifyDecryptionEncryptionPairNotNeeded() {
+    void verifyDecryptionEncryptionPairNotNeeded() throws Throwable {
         val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
@@ -66,14 +66,14 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyDecryptionEncryptionPairFails() {
+    void verifyDecryptionEncryptionPairFails() throws Throwable {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
         val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
-    void verifyDecryptionEncryptionPairSuccess() {
+    void verifyDecryptionEncryptionPairSuccess() throws Throwable {
         val value = jasypt.encryptValue("Testing");
         val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
@@ -85,7 +85,7 @@ class CasConfigurationJasyptCipherExecutorTests {
      * Password encrypted with 6.4.0 and password of "P@$$w0rd".
      */
     @Test
-    void verifyEncryptedPassword() {
+    void verifyEncryptedPassword() throws Throwable {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
@@ -94,7 +94,7 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyAlgorithms() {
+    void verifyAlgorithms() throws Throwable {
         val algorithms = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
             assertTrue(isAlgorithmFunctional(algorithm.toString()));

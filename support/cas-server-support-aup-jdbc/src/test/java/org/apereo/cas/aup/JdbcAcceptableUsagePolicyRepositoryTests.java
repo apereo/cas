@@ -46,7 +46,7 @@ class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePo
     }
     
     @Test
-    void verifyRepositoryAction() throws Exception {
+    void verifyRepositoryAction() throws Throwable {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("accepted", "false"));
     }
     

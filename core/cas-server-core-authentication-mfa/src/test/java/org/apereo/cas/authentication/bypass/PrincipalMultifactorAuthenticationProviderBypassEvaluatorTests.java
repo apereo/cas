@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    void verifyNoMatchOperation() {
+    void verifyNoMatchOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -53,7 +53,7 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -76,7 +76,7 @@ class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyOperationByProperty() {
+    void verifyOperationByProperty() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
