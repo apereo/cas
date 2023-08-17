@@ -71,16 +71,6 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         return super.resolveSingle(context);
     }
 
-    /**
-     * Determine multifactor authentication provider optional.
-     *
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @param request           the request
-     * @param response          the response
-     * @param service           the service
-     * @return the optional
-     */
     protected Optional<MultifactorAuthenticationProvider> determineMultifactorAuthenticationProvider(
         final RegisteredService registeredService,
         final Authentication authentication,

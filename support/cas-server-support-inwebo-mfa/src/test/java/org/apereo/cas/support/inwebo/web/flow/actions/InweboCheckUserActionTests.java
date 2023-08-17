@@ -43,7 +43,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
         action = new InweboCheckUserAction(service, casProperties);
     }
 
-    private InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
+    private static InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
         val response = new InweboLoginSearchResponse();
         response.setResult(InweboResult.OK);
         response.setCount(1);

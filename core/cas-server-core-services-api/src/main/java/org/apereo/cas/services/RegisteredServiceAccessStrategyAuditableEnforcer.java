@@ -13,7 +13,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;

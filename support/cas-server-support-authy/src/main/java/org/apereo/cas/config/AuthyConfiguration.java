@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
-import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,10 +14,10 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -117,7 +116,7 @@ public class AuthyConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) throws Exception {
             return BeanSupplier.of(CasWebflowEventResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new AuthyAuthenticationWebflowEventResolver(casWebflowConfigurationContext))
+                .supply(() -> new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext))
                 .otherwiseProxy()
                 .get();
         }

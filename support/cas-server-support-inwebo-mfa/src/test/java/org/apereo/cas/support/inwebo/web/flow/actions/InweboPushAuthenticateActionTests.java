@@ -31,7 +31,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
         action = new InweboPushAuthenticateAction(service);
     }
 
-    private InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
+    private static InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
         val response = new InweboPushAuthenticateResponse();
         response.setResult(result);
         if (result == InweboResult.OK) {

@@ -16,9 +16,9 @@ import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
-import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
+import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -102,7 +102,7 @@ public abstract class BaseInweboActionTests {
         val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, applicationContext);
         val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
         val context = CasWebflowEventResolutionConfigurationContext.builder().authenticationSystemSupport(authenticationSystemSupport).build();
-        resolver = new InweboMultifactorAuthenticationWebflowEventResolver(context);
+        resolver = new FinalMultifactorAuthenticationTransactionWebflowEventResolver(context);
         setAuthenticationInContext(LOGIN);
     }
 

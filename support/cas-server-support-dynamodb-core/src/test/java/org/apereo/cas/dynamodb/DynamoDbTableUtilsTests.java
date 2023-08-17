@@ -146,7 +146,7 @@ class DynamoDbTableUtilsTests {
         }
     }
 
-    private void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
+    private static void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
         when(client.createTable(argThat(matcher)))
             .thenReturn(CreateTableResponse.builder().build());
         val description = TableDescription.builder().tableStatus(TableStatus.ACTIVE).build();

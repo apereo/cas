@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
