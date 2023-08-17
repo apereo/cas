@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -70,7 +69,7 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
     protected boolean evaluateAdaptiveAuthenticationPolicy(final RequestContext requestContext) throws Throwable {
         val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
         val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
-        return geoLocation != null && StringUtils.isNotBlank(agent) && adaptiveAuthenticationPolicy.apply(requestContext, agent, geoLocation);
+        return adaptiveAuthenticationPolicy.isAuthenticationRequestAllowed(requestContext, agent, geoLocation);
     }
 
     protected Event fireEventHooks(final Event event, final RequestContext ctx) {

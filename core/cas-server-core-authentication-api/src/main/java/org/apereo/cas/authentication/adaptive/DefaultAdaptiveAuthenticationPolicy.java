@@ -31,7 +31,8 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     @Override
-    public boolean apply(final RequestContext requestContext, final String userAgent, final GeoLocationRequest location) throws Throwable {
+    public boolean isAuthenticationRequestAllowed(final RequestContext requestContext, final String userAgent,
+                                                  final GeoLocationRequest location) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null || StringUtils.isBlank(userAgent)) {
             LOGGER.warn("No client IP or user-agent was provided. Skipping adaptive authentication policy...");

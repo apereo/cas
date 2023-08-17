@@ -38,7 +38,7 @@ class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests exten
 
         request.addHeader("cas-header-name", "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        val c = WebUtils.getCredential(context);
-        assertEquals("casuser", c.getId());
+        val credential = WebUtils.getCredential(context);
+        assertEquals("casuser", credential.getId());
     }
 }
