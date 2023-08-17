@@ -9,14 +9,11 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,10 +28,6 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
 
     protected ResourceBasedServiceRegistry newServiceRegistry;
 
-    public static Stream<Class<? extends RegisteredService>> getParameters() {
-        return AbstractServiceRegistryTests.getParameters();
-    }
-
     @Override
     public void tearDownServiceRegistry() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
@@ -46,16 +39,17 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
         return newServiceRegistry;
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val r = buildRegisteredServiceInstance(org.apereo.cas.util.RandomUtils.nextInt(), registeredServiceClass);
-        r.setName("hell/o@world:*");
-        assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(r));
+    @Test
+    void verifyServiceWithInvalidFileName() {
+        getRegisteredServiceTypes().forEach(type -> {
+            val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
+            registeredService.setName("hell/o@world:*");
+            assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(registeredService));
+        });
     }
 
     @Test
-    void verifyInvalidFileLoad() throws Throwable {
+    void verifyInvalidFileLoad() {
         val file = mock(File.class);
         when(file.canRead()).thenReturn(Boolean.FALSE);
         assertTrue(newServiceRegistry.load(file).isEmpty());
@@ -77,10 +71,8 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     void verify() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-
         val serializer = mock(StringSerializer.class);
         doThrow(new RuntimeException()).when(serializer).to(any(OutputStream.class), any());
-
         val registry = new AbstractResourceBasedServiceRegistry(FileUtils.getTempDirectory().toPath(),
             serializer, applicationContext, mock(RegisteredServiceReplicationStrategy.class),
             new DefaultRegisteredServiceResourceNamingStrategy(), List.of(), mock(WatcherService.class)) {

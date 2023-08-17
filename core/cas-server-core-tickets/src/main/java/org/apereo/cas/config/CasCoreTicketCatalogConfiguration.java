@@ -24,7 +24,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketCatalogConfiguration {

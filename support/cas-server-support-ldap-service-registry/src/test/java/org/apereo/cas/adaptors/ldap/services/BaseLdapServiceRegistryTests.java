@@ -60,29 +60,27 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceRegistryMapper;
 
-    public static Stream<Class<? extends RegisteredService>> getParameters() {
-        return AbstractServiceRegistryTests.getParameters();
-    }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    void verifySavingServiceChangesDn(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
-        val services = getServiceRegistry().load();
-        assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
-        val originalId = rs.getId();
-        assertNotNull(rs);
-        rs.setId(666);
-        assertNotNull(getServiceRegistry().save(rs));
-        assertNotEquals(rs.getId(), originalId);
+    @Test
+    void verifySavingServiceChangesDn() {
+        getRegisteredServiceTypes().forEach(registeredServiceClass -> {
+            getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
+            val services = getServiceRegistry().load();
+            assertFalse(services.isEmpty());
+            val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
+            val originalId = rs.getId();
+            assertNotNull(rs);
+            rs.setId(666);
+            assertNotNull(getServiceRegistry().save(rs));
+            assertNotEquals(rs.getId(), originalId);
 
-        assertNotNull(ldapServiceRegistryMapper.getIdAttribute());
-        assertNotNull(ldapServiceRegistryMapper.getObjectClass());
+            assertNotNull(ldapServiceRegistryMapper.getIdAttribute());
+            assertNotNull(ldapServiceRegistryMapper.getObjectClass());
+        });
     }
 
     @Test
-    void verifyServiceInserted() throws Throwable {
+    void verifyServiceInserted() {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
         registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);

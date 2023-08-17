@@ -29,7 +29,6 @@ import org.springframework.core.Ordered;
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @ConditionalOnFeatureEnabled(feature = {
     CasFeatureModule.FeatureCatalog.Monitoring,
     CasFeatureModule.FeatureCatalog.TicketRegistry

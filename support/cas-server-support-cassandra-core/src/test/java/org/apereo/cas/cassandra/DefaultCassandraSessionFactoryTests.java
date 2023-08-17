@@ -17,7 +17,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link org.apereo.cas.cassandra.DefaultCassandraSessionFactoryTests}.
+ * This is {@link DefaultCassandraSessionFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0

@@ -57,9 +57,9 @@ import java.util.Arrays;
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @see javax.security.auth.callback.CallbackHandler
- * @see javax.security.auth.callback.PasswordCallback
- * @see javax.security.auth.callback.NameCallback
+ * @see CallbackHandler
+ * @see PasswordCallback
+ * @see NameCallback
  * @since 3.0.0
  */
 @Slf4j

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @UtilityClass
 public class ApplicationUtils {
     private static final int APPLICATION_EVENTS_CAPACITY = 5_000;

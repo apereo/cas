@@ -20,7 +20,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Setter
 @Accessors(chain = true)

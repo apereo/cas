@@ -36,7 +36,6 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@Slf4j
 public abstract class BaseRegisteredService implements RegisteredService {
 
     @Serial

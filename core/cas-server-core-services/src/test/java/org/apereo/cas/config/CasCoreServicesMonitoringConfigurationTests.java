@@ -26,7 +26,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests}.
+ * This is {@link CasCoreServicesMonitoringConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0

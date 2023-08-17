@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowEventResolver}.
+ * This is {@link OneTimeTokenAuthenticationWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0

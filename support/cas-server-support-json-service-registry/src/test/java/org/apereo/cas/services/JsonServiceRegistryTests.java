@@ -6,8 +6,11 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -115,6 +119,16 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             .build();
         val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
         assertEquals("casuser", username);
+    }
+
+    @Override
+    protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
+        return Stream.of(
+            CasRegisteredService.class,
+            OAuthRegisteredService.class,
+            SamlRegisteredService.class,
+            OidcRegisteredService.class,
+            WSFederationRegisteredService.class);
     }
 
     private static AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {

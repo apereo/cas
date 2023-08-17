@@ -20,7 +20,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)

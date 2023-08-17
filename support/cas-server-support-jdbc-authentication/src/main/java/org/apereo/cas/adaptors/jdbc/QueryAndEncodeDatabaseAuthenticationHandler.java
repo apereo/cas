@@ -33,7 +33,7 @@ import java.util.Map;
  * number of iterations as well as private salt.
  * <p>
  * This handler uses the hashing method defined by Apache Shiro's
- * {@link org.apache.shiro.crypto.hash.DefaultHashService}. Refer to the Javadocs
+ * {@link DefaultHashService}. Refer to the Javadocs
  * to learn more about the behavior. If the hashing behavior and/or configuration
  * of private and public salts does nto meet your needs, a extension can be developed
  * to specify alternative methods of encoding and digestion of the encoded password.

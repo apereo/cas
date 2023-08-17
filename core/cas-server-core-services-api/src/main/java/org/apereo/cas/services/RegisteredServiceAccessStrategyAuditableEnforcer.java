@@ -31,7 +31,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
     
