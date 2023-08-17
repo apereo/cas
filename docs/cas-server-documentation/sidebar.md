@@ -527,7 +527,7 @@ layout: null
                 *   [Overview](/cas/{{ version }}/services/SAML2-Service-Management.html)  
                 *   [Metadata Management](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata.html)  
             *   [Attribute Release](#saml2attrrelease)
-                *   [Overview](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
+                *   [Attribute Policies](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
                 *   [Attribute Definitions](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Definitions.html)
                 *   [Attribute Value Types](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-ValueTypes.html)
                 *   [Attribute Friendly Name](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-FriendlyName.html)
