@@ -2,6 +2,7 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -129,7 +130,8 @@ class SimpleHttpClientTests {
 
         @Test
         void verifyValidRejected() throws Throwable {
-            try (val webServer = new MockWebServer(8099,
+            val port = RandomUtils.nextInt(7000, 9999);
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
                 webServer.start();
                 val result = getHttpClient().isValidEndPoint(new URI("http://localhost:8099").toURL());
