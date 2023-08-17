@@ -34,9 +34,9 @@ const cas = require('../../cas.js');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.submitForm(page, "#registerform");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
     await browser.close();

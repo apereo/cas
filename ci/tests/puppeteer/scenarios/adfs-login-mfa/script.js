@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(2000);
+    await page.waitForTimeout(2000);
     console.log(`Page URL: ${page.url()}`);
     
     let ticket = await cas.assertTicketParameter(page);

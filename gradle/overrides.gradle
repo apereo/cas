@@ -1,5 +1,11 @@
 configurations.configureEach {
     resolutionStrategy {
+        capabilitiesResolution {
+            withCapability("com.google.collections:google-collections") {
+                selectHighestVersion()
+            }
+        }
+        
         if (!providers.systemProperty("skipVersionConflict").present) {
             failOnVersionConflict()
         }
@@ -20,6 +26,9 @@ configurations.configureEach {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
                 if (requested.group == "com.google.guava" && requested.name == "guava")  {
+                    details.useVersion("$guavaVersion")
+                }
+                if (requested.group == "com.google.collections" && requested.name == "google-collections")  {
                     details.useVersion("$guavaVersion")
                 }
                 if (requested.group == "org.opensaml")  {
