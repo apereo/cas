@@ -48,11 +48,11 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNotNull(p);
-        assertTrue(p.getAttributes().containsKey("PersonName"));
+        assertNotNull(principal);
+        assertTrue(principal.getAttributes().containsKey("PersonName"));
     }
 
     @Test
@@ -68,10 +68,10 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getHttpBasedServiceCredentials();
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNull(p);
+        assertNull(principal);
     }
 
     @Override

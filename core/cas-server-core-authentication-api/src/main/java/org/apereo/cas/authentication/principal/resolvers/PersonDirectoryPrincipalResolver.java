@@ -174,6 +174,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
 
         val repositoryIds = new HashSet<>(context.getActiveAttributeRepositoryIdentifiers());
+        if (repositoryIds.isEmpty()) {
+            repositoryIds.add(IPersonAttributeDao.WILDCARD);
+        }
         givenService.ifPresent(service -> {
             val registeredService = context.getServicesManager().findServiceBy(service);
             if (registeredService != null && registeredService.getAttributeReleasePolicy() != null
