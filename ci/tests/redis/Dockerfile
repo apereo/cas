@@ -1,6 +1,6 @@
 ARG redisVersion
 
-FROM redis/redis-stack:latest as redisearch
+FROM redis/redis-stack:7.2.0-v0 as redisearch
 FROM bitnami/redis:$redisVersion
 
 COPY --from=redisearch /opt/redis-stack/lib/redisearch.so /usr/lib/redis/modules/redisearch.so
