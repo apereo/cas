@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -93,6 +94,9 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         val authnRequest = (AuthnRequest) builder.buildObject();
         authnRequest.setAssertionConsumerServiceURL(shire);
 
+        val id = '_' + String.valueOf(RandomUtils.nextLong());
+        authnRequest.setID(id);
+        
         val isBuilder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) isBuilder.buildObject();

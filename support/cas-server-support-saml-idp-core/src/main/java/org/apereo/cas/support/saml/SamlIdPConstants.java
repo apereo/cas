@@ -108,5 +108,10 @@ public interface SamlIdPConstants {
      * The PAOS content type.
      */
     String ECP_SOAP_PAOS_CONTENT_TYPE = "application/vnd.paos+xml";
+
+    /**
+     * The SAML2 authentication request identifier.
+     */
+    String AUTHN_REQUEST_ID = "srid";
 }
 

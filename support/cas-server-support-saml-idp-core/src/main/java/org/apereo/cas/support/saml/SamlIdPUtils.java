@@ -1,14 +1,21 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -44,7 +51,10 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,16 +85,31 @@ public class SamlIdPUtils {
         final SessionStore sessionStore,
         final OpenSamlConfigBean openSamlConfigBean,
         final Class<? extends RequestAbstractType> clazz) {
-        LOGGER.trace("Retrieving authentication request from scope");
-        val authnContext = sessionStore
-            .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
-            .map(String.class::cast)
-            .map(value -> retrieveSamlRequest(openSamlConfigBean, clazz, value))
-            .flatMap(authnRequest -> sessionStore
-                .get(context, MessageContext.class.getName())
-                .map(String.class::cast)
-                .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest)));
-        return authnContext.map(ctx -> Pair.of((AuthnRequest) ctx.getMessage(), ctx));
+        LOGGER.trace("Attempting to fetch SAML2 authentication session from [{}]", context.getFullRequestURL());
+        val currentContext = sessionStore.get(context, SamlIdPSessionEntry.class.getName());
+        return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
+            .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID)
+                .map(ctx::get)
+                .or(() -> {
+                    val applicationContext = openSamlConfigBean.getApplicationContext();
+                    val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
+                    val service = argumentExtractor.extractService(JEEContext.class.cast(context).getNativeRequest());
+                    return Optional.ofNullable(service).map(__ -> {
+                        val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
+                        val resolvedService = serviceSelectionPlan.resolveService(service);
+                        val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
+                        return CollectionUtils.firstElement(authnRequestId)
+                            .map(Object::toString)
+                            .map(ctx::get)
+                            .orElse(null);
+                    });
+                }))
+            .filter(entry -> StringUtils.isNotBlank(entry.getSamlRequest()))
+            .map(entry -> {
+                val authnRequest = retrieveSamlRequest(openSamlConfigBean, clazz, entry.getSamlRequest());
+                val messageContext = SamlIdPAuthenticationContext.decode(entry.getContext()).toMessageContext(authnRequest);
+                return Pair.of((AuthnRequest) messageContext.getMessage(), messageContext);
+            });
     }
 
     /**
@@ -372,11 +397,16 @@ public class SamlIdPUtils {
         val messageContext = context.getValue();
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-
             val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
-            sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
+            val entry = new SamlIdPSessionEntry()
+                .setId(authnRequest.getID())
+                .setSamlRequest(samlRequest)
+                .setRelayState(SAMLBindingSupport.getRelayState(messageContext))
+                .setContext(authnContext);
+            val currentContext = sessionStore.get(webContext, SamlIdPSessionEntry.class.getName());
+            val entries = currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx).orElseGet(HashMap::new);
+            entries.put(entry.getId(), entry);
+            sessionStore.set(webContext, SamlIdPSessionEntry.class.getName(), entries);
         }
     }
 
@@ -405,6 +435,22 @@ public class SamlIdPUtils {
             .get();
         LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
         return nameQualifier;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    private static final class SamlIdPSessionEntry implements Serializable {
+        private static final long serialVersionUID = 8119055575574523810L;
+
+        private String id;
+
+        private String samlRequest;
+
+        private String relayState;
+
+        private String context;
     }
 }
 

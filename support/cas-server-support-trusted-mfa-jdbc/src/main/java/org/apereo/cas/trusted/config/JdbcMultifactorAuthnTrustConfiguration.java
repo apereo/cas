@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -28,6 +29,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -44,21 +47,54 @@ import javax.sql.DataSource;
 @AutoConfiguration
 public class JdbcMultifactorAuthnTrustConfiguration {
 
+    @Configuration(value = "JdbcMultifactorAuthnTrustTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JdbcMultifactorAuthnTrustTransactionConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PlatformTransactionManager jpaMfaTrustTransactionManager(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
+            val transactionManager = new JpaTransactionManager();
+            transactionManager.setEntityManagerFactory(emf);
+            return transactionManager;
+        }
+
+        @ConditionalOnMissingBean(name = "jpaMfaTrustTransactionTemplate")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TransactionOperations jpaMfaTrustTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jpaMfaTrustTransactionManager")
+            final PlatformTransactionManager transactionManagerServiceReg,
+            final ConfigurableApplicationContext applicationContext) {
+            val transactionTemplate = new TransactionTemplate(transactionManagerServiceReg);
+            val jpa = casProperties.getAuthn().getMfa().getTrusted().getJpa();
+            transactionTemplate.setIsolationLevelName(jpa.getIsolationLevelName());
+            transactionTemplate.setPropagationBehaviorName(jpa.getPropagationBehaviorName());
+            return transactionTemplate;
+        }
+    }
+
     @Configuration(value = "JdbcMultifactorAuthnTrustEngineConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcMultifactorAuthnTrustEngineConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jpaMfaTrustEngine")
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+            @Qualifier("jpaMfaTrustTransactionTemplate")
+            final TransactionOperations jpaMfaTrustTransactionTemplate,
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustCipherExecutor")
             final CipherExecutor mfaTrustCipherExecutor,
             @Qualifier("mfaTrustRecordKeyGenerator")
             final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
-            return new JpaMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-                mfaTrustCipherExecutor, keyGenerationStrategy);
+            return new JpaMultifactorAuthenticationTrustStorage(
+                casProperties.getAuthn().getMfa().getTrusted(),
+                mfaTrustCipherExecutor, keyGenerationStrategy,
+                jpaMfaTrustTransactionTemplate);
         }
-
     }
 
     @Configuration(value = "JdbcMultifactorAuthnTrustEntityConfiguration", proxyBeanMethods = false)
@@ -69,8 +105,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
         public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
 
@@ -87,14 +122,10 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<EntityManagerFactory> mfaTrustedAuthnEntityManagerFactory(
             final CasConfigurationProperties casProperties,
-            @Qualifier("dataSourceMfaTrustedAuthn")
-            final DataSource dataSourceMfaTrustedAuthn,
-            @Qualifier("jpaMfaTrustedAuthnPackagesToScan")
-            final BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan,
-            @Qualifier("jpaMfaTrustedAuthnVendorAdapter")
-            final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            @Qualifier("dataSourceMfaTrustedAuthn") final DataSource dataSourceMfaTrustedAuthn,
+            @Qualifier("jpaMfaTrustedAuthnPackagesToScan") final BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan,
+            @Qualifier("jpaMfaTrustedAuthnVendorAdapter") final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn)
                 .packagesToScan(jpaMfaTrustedAuthnPackagesToScan.toSet())
                 .persistenceUnitName("jpaMfaTrustedAuthnContext")
@@ -103,21 +134,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
                 casProperties.getAuthn().getMfa().getTrusted().getJpa());
         }
 
-    }
-
-    @Configuration(value = "JdbcMultifactorAuthnTrustTransactionConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JdbcMultifactorAuthnTrustTransactionConfiguration {
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PlatformTransactionManager transactionManagerMfaAuthnTrust(
-            @Qualifier("mfaTrustedAuthnEntityManagerFactory")
-            final EntityManagerFactory emf) {
-            val mgmr = new JpaTransactionManager();
-            mgmr.setEntityManagerFactory(emf);
-            return mgmr;
-        }
     }
 
     @Configuration(value = "JdbcMultifactorAuthnTrustDataConfiguration", proxyBeanMethods = false)

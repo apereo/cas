@@ -1028,10 +1028,14 @@ public class LdapUtils {
         LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
         switch (passwordPolicy.getType()) {
             case AD:
-                responseHandlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                    attributes.put(a, a);
+                val warningPeriod = Period.ofDays(cfg.getPasswordWarningNumberOfDays());
+                val expirationPeriod = Period.ofDays(passwordPolicy.getPasswordExpirationNumberOfDays());
+                val handler = new ActiveDirectoryAuthenticationResponseHandler(expirationPeriod, warningPeriod);
+                LOGGER.debug("Creating active directory authentication response handler with expiration period [{}] and warning period [{}]", expirationPeriod, warningPeriod);
+                responseHandlers.add(handler);
+                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(attr -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", attr);
+                    attributes.put(attr, attr);
                 });
                 break;
             case FreeIPA:
