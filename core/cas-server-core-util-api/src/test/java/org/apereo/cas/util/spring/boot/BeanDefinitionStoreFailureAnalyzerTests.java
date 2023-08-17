@@ -24,7 +24,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
 class BeanDefinitionStoreFailureAnalyzerTests {
 
     @Test
-    void analyzeBeanDefinitionStoreException() {
+    static void analyzeBeanDefinitionStoreException() {
         val analysis = performAnalysis();
         val description = analysis.getDescription();
         assertThat(description).contains("not.defined");
@@ -46,13 +46,13 @@ class BeanDefinitionStoreFailureAnalyzerTests {
         assertThat(description2).contains("thecause");
     }
 
-    private FailureAnalysis performAnalysis() {
+    private static FailureAnalysis performAnalysis() {
         val failure = createFailure();
         assertNotNull(failure);
         return new BeanDefinitionStoreFailureAnalyzer().analyze(failure);
     }
 
-    private BeanDefinitionStoreException createFailure() {
+    private static BeanDefinitionStoreException createFailure() {
         val bf = new DefaultListableBeanFactory();
         bf.registerBeanDefinition("testBean",
             genericBeanDefinition(CasServerProperties.class)

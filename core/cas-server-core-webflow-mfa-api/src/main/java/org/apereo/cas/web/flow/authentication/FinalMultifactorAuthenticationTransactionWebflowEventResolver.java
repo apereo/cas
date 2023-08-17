@@ -1,26 +1,24 @@
-package org.apereo.cas.adaptors.authy.web.flow;
+package org.apereo.cas.web.flow.authentication;
 
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Set;
 
 /**
- * This is {@link AuthyAuthenticationWebflowEventResolver}.
+ * This is {@link FinalMultifactorAuthenticationTransactionWebflowEventResolver}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 7.0.0
  */
-public class AuthyAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class FinalMultifactorAuthenticationTransactionWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    public AuthyAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
+    public FinalMultifactorAuthenticationTransactionWebflowEventResolver(
+        final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
         super(webflowEventResolutionConfigurationContext);
     }
 

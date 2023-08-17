@@ -1,7 +1,6 @@
 package org.apereo.cas.util.app;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
