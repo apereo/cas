@@ -23,7 +23,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Setter
 @Accessors(chain = true)

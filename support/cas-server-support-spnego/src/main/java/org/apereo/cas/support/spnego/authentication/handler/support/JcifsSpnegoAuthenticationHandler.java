@@ -14,6 +14,7 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
+import jcifs.spnego.AuthenticationException;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -97,7 +98,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Authenticated SPNEGO principal [{}]. Retrieving the next token for authentication...",
                     Optional.ofNullable(principal).map(java.security.Principal::getName).orElse(null));
                 nextToken = authentication.getNextToken();
-            } catch (final jcifs.spnego.AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
                 throw new FailedLoginException(e.getMessage());
             }

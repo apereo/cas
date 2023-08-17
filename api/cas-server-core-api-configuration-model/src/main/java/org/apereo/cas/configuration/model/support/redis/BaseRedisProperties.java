@@ -152,28 +152,28 @@ public class BaseRedisProperties implements Serializable {
         /**
          * Read from the current upstream node.
          *
-         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAM} instead.
+         * @deprecated Use {@link BaseRedisProperties.RedisReadFromTypes#UPSTREAM} instead.
          */
         @Deprecated
         MASTER,
         /**
          * Read from the upstream node, but if it is unavailable, read from replica nodes.
          *
-         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAMPREFERRED} instead.
+         * @deprecated Use {@link BaseRedisProperties.RedisReadFromTypes#UPSTREAMPREFERRED} instead.
          */
         @Deprecated
         MASTERPREFERRED,
         /**
          * Read from replica nodes.
          *
-         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICA} instead.
+         * @deprecated Use {@link BaseRedisProperties.RedisReadFromTypes#REPLICA} instead.
          */
         @Deprecated
         SLAVE,
         /**
          * Read from the replica nodes, but if none is unavailable, read from the upstream node.
          *
-         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICAPREFERRED} instead.
+         * @deprecated Use {@link BaseRedisProperties.RedisReadFromTypes#REPLICAPREFERRED} instead.
          */
         @Deprecated
         SLAVEPREFERRED,

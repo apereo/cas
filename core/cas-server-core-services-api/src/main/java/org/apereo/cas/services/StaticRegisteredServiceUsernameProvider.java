@@ -21,7 +21,6 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

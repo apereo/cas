@@ -9,7 +9,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowAction}.
+ * This is {@link OneTimeTokenAuthenticationWebflowAction}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0

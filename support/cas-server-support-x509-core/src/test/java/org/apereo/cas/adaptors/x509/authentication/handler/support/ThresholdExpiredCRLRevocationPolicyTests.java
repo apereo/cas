@@ -74,7 +74,7 @@ class ThresholdExpiredCRLRevocationPolicyTests {
     }
 
     /**
-     * Test method for {@link ThresholdExpiredCRLRevocationPolicy#apply(java.security.cert.X509CRL)}.
+     * Test method for {@link ThresholdExpiredCRLRevocationPolicy#apply(X509CRL)}.
      */
     @ParameterizedTest
     @MethodSource("getTestParameters")

@@ -19,6 +19,9 @@ configurations.configureEach {
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
+                if (requested.group == "com.google.guava" && requested.name == "guava")  {
+                    details.useVersion("$guavaVersion")
+                }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }

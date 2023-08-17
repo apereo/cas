@@ -251,7 +251,7 @@ class X509CredentialsAuthenticationHandlerTests {
     }
 
     /**
-     * Tests the {@link AuthenticationHandler#authenticate(Credential, org.apereo.cas.authentication.principal.Service)} method.
+     * Tests the {@link AuthenticationHandler#authenticate(Credential, Service)} method.
      */
     @ParameterizedTest
     @MethodSource("getTestParameters")
