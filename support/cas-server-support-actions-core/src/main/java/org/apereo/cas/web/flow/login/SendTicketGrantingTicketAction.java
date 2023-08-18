@@ -42,7 +42,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final ApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         val ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
 

@@ -36,7 +36,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     private final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         val url = redirectUrl.toString();
         if (ScriptingUtils.isGroovyScript(url)) {

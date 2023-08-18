@@ -41,7 +41,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val resultMap = new HashMap<String, Object>();
         try {
             val credential = WebUtils.getCredential(requestContext);

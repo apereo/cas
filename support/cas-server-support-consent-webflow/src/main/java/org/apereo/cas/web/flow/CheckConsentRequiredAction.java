@@ -45,7 +45,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val consentEvent = determineConsentEvent(requestContext);
             if (StringUtils.isBlank(consentEvent)) {

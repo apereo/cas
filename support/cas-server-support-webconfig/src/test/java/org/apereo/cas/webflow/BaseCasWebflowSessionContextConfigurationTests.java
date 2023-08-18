@@ -1,7 +1,6 @@
 package org.apereo.cas.webflow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -45,6 +44,7 @@ import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -65,7 +65,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
@@ -180,9 +179,9 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
-            return new AbstractAction() {
+            return new BaseCasWebflowAction() {
                 @Override
-                protected Event doExecute(final RequestContext requestContext) {
+                protected Event doExecuteInternal(final RequestContext requestContext) {
                     val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
@@ -208,7 +207,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                         val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
                         val principal = CoreAuthenticationTestUtils.getPrincipal();
                         authenticationResultBuilder.collect(authentication);
-                        authenticationResultBuilder.collect((Credential) CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                        authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
                         val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
                         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);

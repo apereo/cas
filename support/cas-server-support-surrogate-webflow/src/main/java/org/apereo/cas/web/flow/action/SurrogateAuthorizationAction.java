@@ -23,7 +23,7 @@ public class SurrogateAuthorizationAction extends BaseCasWebflowAction {
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
             val svc = WebUtils.getRegisteredService(requestContext);

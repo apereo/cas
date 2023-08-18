@@ -45,7 +45,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewAction extends BaseC
     private final MultifactorAuthenticationTrustedDeviceNamingStrategy namingStrategy;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authn = WebUtils.getAuthentication(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);

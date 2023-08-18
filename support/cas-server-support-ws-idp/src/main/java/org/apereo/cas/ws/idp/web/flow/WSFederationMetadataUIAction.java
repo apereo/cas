@@ -26,7 +26,7 @@ public class WSFederationMetadataUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val serviceCtx = WebUtils.getService(requestContext);
             if (serviceCtx != null) {

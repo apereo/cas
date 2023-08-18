@@ -44,7 +44,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
     private final SessionStore sessionStore;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);

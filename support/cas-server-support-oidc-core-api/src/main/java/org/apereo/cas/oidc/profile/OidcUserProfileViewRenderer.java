@@ -95,7 +95,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
 
     protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
                                                                      final HttpServletResponse response,
-                                                                     final OidcRegisteredService registeredService) {
+                                                                     final OidcRegisteredService registeredService) throws Throwable {
         val claims = convertUserProfileIntoClaims(userProfile);
         claims.setAudience(registeredService.getClientId());
         claims.setIssuedAt(NumericDate.now());

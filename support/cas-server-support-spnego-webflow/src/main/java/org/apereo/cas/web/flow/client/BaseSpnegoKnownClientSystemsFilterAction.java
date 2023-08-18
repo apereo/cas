@@ -59,7 +59,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {

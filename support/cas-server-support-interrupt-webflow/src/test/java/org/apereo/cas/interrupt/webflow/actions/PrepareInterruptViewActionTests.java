@@ -27,7 +27,7 @@ class PrepareInterruptViewActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val action = new PrepareInterruptViewAction();
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertNull(event);
     }
 }

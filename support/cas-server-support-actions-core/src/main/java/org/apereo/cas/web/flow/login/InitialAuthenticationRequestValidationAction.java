@@ -20,7 +20,7 @@ public class InitialAuthenticationRequestValidationAction extends BaseCasWebflow
     private final CasWebflowEventResolver initialAuthenticationProviderWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> initialAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext));
     }
 }

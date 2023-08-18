@@ -37,7 +37,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     protected final SamlIdPMetadataGeneratorConfigurationContext configurationContext;
 
     @Override
-    public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         LOGGER.debug("Preparing to generate metadata for entity id [{}]", idp.getCore().getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
@@ -80,18 +80,18 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      *
      * @param registeredService registered service
      * @return the pair
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    public abstract Pair<String, String> buildSelfSignedEncryptionCert(Optional<SamlRegisteredService> registeredService) throws Exception;
+    public abstract Pair<String, String> buildSelfSignedEncryptionCert(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Build self signed signing cert.
      *
      * @param registeredService registered service
      * @return the pair
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService) throws Exception;
+    public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * New saml id p metadata document.
@@ -111,7 +111,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @throws Exception the exception
      */
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) throws Exception {
+                                                               final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return doc;
     }
 
@@ -121,9 +121,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @param metadata          the metadata
      * @param registeredService registered service
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
+    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return metadata;
     }
 
@@ -189,7 +189,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
-                                                    final Optional<SamlRegisteredService> registeredService) throws Exception {
+                                                    final Optional<SamlRegisteredService> registeredService) throws Throwable {
 
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());

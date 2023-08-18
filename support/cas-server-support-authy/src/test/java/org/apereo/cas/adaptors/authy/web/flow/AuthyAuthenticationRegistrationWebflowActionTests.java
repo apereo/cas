@@ -65,18 +65,18 @@ class AuthyAuthenticationRegistrationWebflowActionTests {
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new AuthyAuthenticationRegistrationWebflowAction(authyInstance);
-        var event = action.doExecute(context);
+        var event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
 
         user.setStatus(400);
-        event = action.doExecute(context);
+        event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         
         user.setStatus(200);
         hash.setSuccess(false);
         hash.setError(new Error());
         hash.setMessage("Message");
-        event = action.doExecute(context);
+        event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 }

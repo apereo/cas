@@ -27,7 +27,7 @@ public class GroovyScriptWebflowAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{requestContext, applicationContext, casProperties, LOGGER};
             return script.execute(args, Event.class);

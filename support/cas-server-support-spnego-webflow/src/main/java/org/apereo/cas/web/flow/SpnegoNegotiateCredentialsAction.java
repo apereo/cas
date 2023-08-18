@@ -58,7 +58,7 @@ public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
     private final boolean mixedModeAuthentication;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 

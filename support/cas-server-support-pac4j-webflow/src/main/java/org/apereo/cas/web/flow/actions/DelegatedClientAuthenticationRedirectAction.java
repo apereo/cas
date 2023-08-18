@@ -59,7 +59,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
         val client = locateClientIdentityProvider(ticket);
         initializeClientIdentityProvider(client);
@@ -139,9 +139,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         }
     }
 
-
-
-    protected void initializeClientIdentityProvider(final IndirectClient client) {
+    protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
         client.init();
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }

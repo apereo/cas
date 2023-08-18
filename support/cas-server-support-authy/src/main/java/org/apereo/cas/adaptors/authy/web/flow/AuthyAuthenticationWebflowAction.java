@@ -20,7 +20,7 @@ public class AuthyAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> casWebflowEventResolver.resolveSingle(requestContext));
     }
 }

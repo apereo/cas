@@ -118,7 +118,7 @@ class InitialFlowSetupActionTests {
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-            action.doExecute(context);
+            action.execute(context);
 
             assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
             assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
@@ -131,13 +131,13 @@ class InitialFlowSetupActionTests {
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-            this.action.doExecute(context);
+            this.action.execute(context);
 
             assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
             assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
 
             request.setContextPath(CONST_CONTEXT_PATH_2);
-            this.action.doExecute(context);
+            this.action.execute(context);
 
             assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.warnCookieGenerator.getCookiePath());
             assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.tgtCookieGenerator.getCookiePath());

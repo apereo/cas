@@ -74,7 +74,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response);
@@ -148,7 +148,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return getFinalEvent();
     }
 
-    private void removeTicketGrantingTicketIfAny(final RequestContext context, final String clientName, final Service resolvedService) throws Exception {
+    private void removeTicketGrantingTicketIfAny(final RequestContext context, final String clientName,
+                                                 final Service resolvedService) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
         if (tgt != null) {
             configContext.getTicketRegistry().deleteTicket(tgt);
@@ -177,7 +178,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected Event finalizeDelegatedClientAuthentication(final RequestContext context,
-                                                          final ClientCredential credentials) {
+                                                          final ClientCredential credentials) throws Throwable {
         val strategies = new ArrayList<>(configContext.getApplicationContext()
             .getBeansOfType(DelegatedClientAuthenticationCredentialResolver.class).values());
         AnnotationAwareOrderComparator.sortIfNecessary(strategies);
@@ -189,7 +190,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .flatMap(List::stream)
             .collect(Collectors.toList());
         if (candidateMatches.isEmpty()) {
-            return super.doExecute(context);
+            return super.execute(context);
         }
         DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, candidateMatches);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_SELECT);

@@ -32,7 +32,7 @@ public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER)
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.trace("Submitting acceptable usage policy");
             if (repository.submit(requestContext)) {

@@ -55,17 +55,15 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-
         val service = WebUtils.getService(requestContext);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
         FunctionUtils.throwIf(StringUtils.isBlank(ticketGrantingTicket),
             () -> new InvalidTicketException(new AuthenticationException("No ticket-granting ticket could be found in the context"), ticketGrantingTicket));
         val authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
-        FunctionUtils.throwIf(authentication == null,
+        FunctionUtils.throwIfNull(authentication,
             () -> new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket));
-
         val credential = WebUtils.getCredential(requestContext);
         val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
         val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));

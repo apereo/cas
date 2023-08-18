@@ -55,7 +55,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
             val registrationRequest = new AccountRegistrationRequest();

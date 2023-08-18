@@ -30,7 +30,7 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val transientTicket = requestContext.getRequestParameters()
                 .get(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);

@@ -44,7 +44,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
     void verifyPushAuthenticateOk() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertEquals(SESSION_ID, requestContext.getFlowScope().get(WebflowConstants.INWEBO_SESSION_ID));
     }
@@ -53,7 +53,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
     void verifyPushAuthenticateFailed() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_SESSION_ID));
     }

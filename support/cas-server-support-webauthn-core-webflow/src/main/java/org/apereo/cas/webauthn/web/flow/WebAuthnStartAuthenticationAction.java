@@ -25,7 +25,7 @@ public class WebAuthnStartAuthenticationAction extends AbstractMultifactorAuthen
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal());
         LOGGER.trace("Checking registration record for [{}]", principal.getId());

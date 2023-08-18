@@ -48,7 +48,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     }
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
-                                     final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
+                                     final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Throwable {
         val configContext = getConfigurationContext();
         val logout = configContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val logoutRequest = (LogoutRequest) pair.getKey();
@@ -89,17 +89,9 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT).forward(request, response);
     }
 
-    /**
-     * Handle profile request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @param decoder  the decoder
-     * @throws Exception the exception
-     */
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
-                                           final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+                                           final BaseHttpServletRequestXMLMessageDecoder decoder) throws Throwable {
         val logout = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML2 IdP SLO requests is disabled");

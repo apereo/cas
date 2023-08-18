@@ -45,7 +45,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
     private final CasCookieBuilder casCookieBuilder;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         if (WebUtils.isInterruptAuthenticationFlowFinalized(requestContext)) {
             WebUtils.removeInterruptAuthenticationFlowFinalized(requestContext);
             return getInterruptSkippedEvent();

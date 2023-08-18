@@ -19,7 +19,7 @@ import java.util.Optional;
 public class MultifactorAuthenticationAvailableAction extends AbstractMultifactorAuthenticationAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val failureEval = provider.getFailureModeEvaluator();
         val checkAvailability = Optional.ofNullable(failureEval)

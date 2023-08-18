@@ -61,7 +61,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
         if (StringUtils.isNotBlank(redirectUrl)) {
             val service = this.serviceFactory.createService(redirectUrl);
