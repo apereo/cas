@@ -48,7 +48,7 @@ class FinalizeInterruptFlowActionTests {
         WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
 
         val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
-        assertThrows(UnauthorizedServiceException.class, () -> action.doExecute(context));
+        assertThrows(UnauthorizedServiceException.class, () -> action.execute(context));
     }
 
     @Test
@@ -67,7 +67,7 @@ class FinalizeInterruptFlowActionTests {
         WebUtils.putRegisteredService(context, registeredService);
 
         val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, event.getId());
         assertTrue(context.getMockExternalContext().isResponseComplete());
         assertNotNull(context.getMockExternalContext().getExternalRedirectUrl());
@@ -87,7 +87,7 @@ class FinalizeInterruptFlowActionTests {
         WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
 
         val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(InquireInterruptAction.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT));

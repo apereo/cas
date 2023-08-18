@@ -53,7 +53,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     @TestConfiguration(value = "SamlIdPLocatorFailsTestConfiguration", proxyBeanMethods = false)
     static class SamlIdPLocatorFailsTestConfiguration {
         @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
+        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Throwable {
             val locator = mock(SamlIdPMetadataLocator.class);
             when(locator.exists(argThat(Optional::isEmpty))).thenAnswer((Answer<Boolean>) invocationOnMock -> {
                 var property = System.getProperty("test.runtime");

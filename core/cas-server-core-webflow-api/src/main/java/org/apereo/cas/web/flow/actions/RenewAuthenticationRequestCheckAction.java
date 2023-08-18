@@ -22,7 +22,7 @@ public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val ssoRequest = SingleSignOnParticipationRequest.builder()
                 .requestContext(requestContext)

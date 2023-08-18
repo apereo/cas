@@ -82,7 +82,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         configureCookieGenerators(context);
         configureWebflowContext(context);
 

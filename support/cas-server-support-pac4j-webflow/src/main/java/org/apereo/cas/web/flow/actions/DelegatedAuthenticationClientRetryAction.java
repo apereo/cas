@@ -27,7 +27,7 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         return FunctionUtils.doUnchecked(() -> {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);

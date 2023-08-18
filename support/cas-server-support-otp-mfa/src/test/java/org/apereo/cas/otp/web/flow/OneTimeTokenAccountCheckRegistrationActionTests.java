@@ -56,7 +56,7 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.doExecute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
@@ -86,6 +86,6 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.doExecute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
     }
 }

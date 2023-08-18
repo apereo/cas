@@ -53,7 +53,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);

@@ -68,7 +68,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);

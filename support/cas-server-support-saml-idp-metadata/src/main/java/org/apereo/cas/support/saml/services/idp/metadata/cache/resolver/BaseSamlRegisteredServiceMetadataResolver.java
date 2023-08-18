@@ -109,13 +109,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         }
     }
 
-    /**
-     * Build signature validation filter if needed.
-     *
-     * @param service            the service
-     * @param metadataFilterList the metadata filter list
-     * @throws Exception the exception
-     */
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList)
         throws Exception {
@@ -128,14 +121,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         }
     }
 
-    /**
-     * Build signature validation filter if needed.
-     *
-     * @param service                   the service
-     * @param metadataFilterList        the metadata filter list
-     * @param metadataSignatureResource the metadata signature resource
-     * @throws Exception the exception
-     */
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList,
                                                                  final String metadataSignatureResource) throws Exception {

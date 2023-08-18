@@ -19,7 +19,7 @@ public class RadiusAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext));
     }
 }

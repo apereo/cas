@@ -35,7 +35,7 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
     private final PrincipalFactory principalFactory;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val token = request.getParameter("token");
         if (StringUtils.isBlank(token)) {

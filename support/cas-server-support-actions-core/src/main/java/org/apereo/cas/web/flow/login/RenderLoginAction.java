@@ -39,7 +39,7 @@ public class RenderLoginAction extends BaseCasWebflowAction {
     protected final ApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         applicationContext.getBeansOfType(WebflowDecorator.class)
             .values()
             .stream()

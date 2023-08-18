@@ -32,7 +32,7 @@ public class OAuth20RegisteredServiceUIAction extends BaseCasWebflowAction imple
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val serviceCtx = WebUtils.getService(requestContext);
             if (serviceCtx != null) {

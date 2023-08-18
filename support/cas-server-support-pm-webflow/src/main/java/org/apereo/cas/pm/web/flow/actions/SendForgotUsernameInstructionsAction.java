@@ -77,7 +77,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);

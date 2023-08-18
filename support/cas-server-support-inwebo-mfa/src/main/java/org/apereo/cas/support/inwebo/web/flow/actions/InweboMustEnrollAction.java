@@ -18,7 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class InweboMustEnrollAction extends BaseCasWebflowAction {
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
         flowScope.put(WebflowConstants.MUST_ENROLL, true);
         WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.usernotregistered");

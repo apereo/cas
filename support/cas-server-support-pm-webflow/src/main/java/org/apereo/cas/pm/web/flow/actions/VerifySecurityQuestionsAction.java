@@ -26,7 +26,7 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
     private final PasswordManagementService passwordManagementService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);

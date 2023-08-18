@@ -19,7 +19,7 @@ public class YubiKeyAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext));
     }
 }

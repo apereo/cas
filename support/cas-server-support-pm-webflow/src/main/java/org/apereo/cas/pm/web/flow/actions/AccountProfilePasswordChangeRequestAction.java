@@ -28,7 +28,7 @@ public class AccountProfilePasswordChangeRequestAction extends BaseCasWebflowAct
     private final PasswordResetUrlBuilder passwordResetUrlBuilder;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicket(requestContext);
         try {
             return FunctionUtils.doUnchecked(() -> {

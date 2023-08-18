@@ -57,7 +57,7 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 

@@ -41,7 +41,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -58,7 +58,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertNotEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -76,7 +76,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -93,7 +93,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -111,7 +111,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
 
     }
@@ -130,7 +130,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().no(this).getId(), ev.getId());
 
     }

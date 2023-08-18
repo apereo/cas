@@ -117,7 +117,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     private void executeTest(final MockHttpServletRequest request, final HttpServletResponse response,
-                             final SamlRegisteredService service) throws Exception {
+                             final SamlRegisteredService service) throws Throwable {
         servicesManager.save(service);
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(LogoutRequest.DEFAULT_ELEMENT_NAME);

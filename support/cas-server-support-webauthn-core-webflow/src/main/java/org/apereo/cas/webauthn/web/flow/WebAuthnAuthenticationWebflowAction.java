@@ -23,7 +23,7 @@ public class WebAuthnAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver authenticationWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val result = authenticationWebflowEventResolver.resolveSingle(requestContext);
             if (!result.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {

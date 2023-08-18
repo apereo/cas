@@ -61,7 +61,7 @@ class OneTimeTokenAccountCreateRegistrationActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.doExecute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT));
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_QR_IMAGE_BASE64));
     }

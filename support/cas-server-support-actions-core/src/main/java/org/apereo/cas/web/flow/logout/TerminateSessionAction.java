@@ -119,7 +119,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
                 () -> isLogoutRequestConfirmed(requestContext),
                 () -> Boolean.TRUE)

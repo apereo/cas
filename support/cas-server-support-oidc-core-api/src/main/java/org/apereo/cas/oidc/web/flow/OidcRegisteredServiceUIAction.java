@@ -30,7 +30,7 @@ public class OidcRegisteredServiceUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         return FunctionUtils.doUnchecked(() -> {
             val serviceCtx = WebUtils.getService(requestContext);
             if (serviceCtx != null) {

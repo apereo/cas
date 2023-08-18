@@ -37,7 +37,7 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             if (!evaluateAdaptiveAuthenticationPolicy(requestContext)) {
                 val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);

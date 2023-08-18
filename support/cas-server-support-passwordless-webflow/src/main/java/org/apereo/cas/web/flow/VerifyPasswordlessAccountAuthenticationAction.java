@@ -30,7 +30,7 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val username = requestContext.getRequestParameters().getRequired(PasswordlessRequestParser.PARAMETER_USERNAME);
             val passwordlessRequest = passwordlessRequestParser.parse(username);

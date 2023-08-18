@@ -63,7 +63,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
      * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         LOGGER.trace("Service asking for service ticket is [{}]", service);
 

@@ -39,7 +39,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
     private final YubiKeyAccountRegistry registry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
             val uid = principal.getId();

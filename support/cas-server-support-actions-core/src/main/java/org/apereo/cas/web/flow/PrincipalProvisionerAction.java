@@ -24,7 +24,7 @@ public class PrincipalProvisionerAction extends BaseCasWebflowAction {
     private final PrincipalProvisioner principalProvisioner;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);
         if (credential == null || authentication == null) {

@@ -20,7 +20,7 @@ public class DuoSecurityAuthenticationWebflowAction extends BaseCasWebflowAction
     private final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         return FunctionUtils.doUnchecked(() -> this.duoAuthenticationWebflowEventResolver.resolveSingle(requestContext));
     }
 }

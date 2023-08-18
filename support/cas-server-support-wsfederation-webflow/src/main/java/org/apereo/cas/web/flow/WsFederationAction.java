@@ -46,7 +46,7 @@ public class WsFederationAction extends AbstractAuthenticationAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val wa = request.getParameter(WA);

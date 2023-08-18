@@ -442,17 +442,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return ssoAvailable ? Optional.of(ticketGrantingTicket) : Optional.empty();
     }
 
-    /**
-     * Verify saml authentication request.
-     *
-     * @param authenticationContext the pair
-     * @param request               the request
-     * @return the pair
-     * @throws Exception the exception
-     */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> verifySamlAuthenticationRequest(
         final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-        final HttpServletRequest request) throws Exception {
+        final HttpServletRequest request) throws Throwable {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         LOGGER.debug("Located issuer [{}] from authentication request", issuer);
@@ -491,7 +483,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                        final SamlRegisteredService registeredService) throws Exception {
+                                                        final SamlRegisteredService registeredService) throws Throwable {
         val ctx = authenticationContext.getValue();
         verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
     }
@@ -510,7 +502,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                        final SamlRegisteredService registeredService) throws Exception {
+                                                        final SamlRegisteredService registeredService) throws Throwable {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("The authentication context is not signed");
             if (adaptor.isAuthnRequestsSigned() && !registeredService.isSkipValidatingAuthnRequest()) {

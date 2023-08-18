@@ -69,7 +69,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = resolvePrincipal(authentication.getPrincipal());
         val token = getOrCreateToken(requestContext, principal);

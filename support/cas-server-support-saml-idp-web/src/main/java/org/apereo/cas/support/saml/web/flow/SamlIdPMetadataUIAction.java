@@ -33,7 +33,7 @@ public class SamlIdPMetadataUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val service = serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
             if (service != null) {

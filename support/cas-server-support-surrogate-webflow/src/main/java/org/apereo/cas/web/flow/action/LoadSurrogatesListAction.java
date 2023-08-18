@@ -61,7 +61,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
                 WebUtils.removeSurrogateAuthenticationRequest(requestContext);

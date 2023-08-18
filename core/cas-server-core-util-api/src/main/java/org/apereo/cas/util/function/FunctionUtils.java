@@ -485,7 +485,7 @@ public class FunctionUtils {
      *
      * @param value the value
      * @return the value
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     public static String throwIfBlank(final String value) throws Throwable {
         throwIf(StringUtils.isBlank(value), () -> new IllegalArgumentException("Value cannot be empty or blank"));
@@ -499,7 +499,7 @@ public class FunctionUtils {
      * @param value   the value
      * @param handler the handler
      * @return the t
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     public static <T> T throwIfNull(final T value, final CheckedSupplier<Throwable> handler) throws Throwable {
         throwIf(value == null, handler);
@@ -511,7 +511,7 @@ public class FunctionUtils {
      *
      * @param condition the condition
      * @param throwable the throwable
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     public static void throwIf(final boolean condition,
                                final CheckedSupplier<? extends Throwable> throwable) throws Throwable {

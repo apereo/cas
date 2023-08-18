@@ -28,7 +28,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val serviceInContext = WebUtils.getService(context);
         val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext));
         if (service == null) {

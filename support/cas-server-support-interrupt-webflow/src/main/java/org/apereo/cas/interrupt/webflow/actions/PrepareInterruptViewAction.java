@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class PrepareInterruptViewAction extends BaseCasWebflowAction {
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return null;
     }
 }

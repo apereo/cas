@@ -40,7 +40,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val authn = WebUtils.getAuthentication(requestContext);
             if (authn == null) {
