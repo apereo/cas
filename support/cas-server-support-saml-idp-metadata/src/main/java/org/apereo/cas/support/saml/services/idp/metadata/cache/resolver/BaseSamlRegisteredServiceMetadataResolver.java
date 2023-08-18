@@ -3,8 +3,10 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -22,14 +24,15 @@ import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.Resource;
-
 import javax.xml.namespace.QName;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This is {@link BaseSamlRegisteredServiceMetadataResolver}.
@@ -92,6 +95,23 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
                 service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
         }
+
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
+            && service.getMetadataCriteriaEntityAttributes() != null
+            && !service.getMetadataCriteriaEntityAttributes().isEmpty()) {
+            val dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection().toUpperCase(Locale.ENGLISH));
+            val conditions = service.getMetadataCriteriaEntityAttributes().entrySet().stream()
+                .map(entry -> MetadataEntityAttributeQuery.of(entry.getKey(), Attribute.URI_REFERENCE, entry.getValue()))
+                .toList();
+            LOGGER.trace("Building entity attribute predicate filter for direction [{}] and conditions [{}]",
+                service.getMetadataCriteriaDirection(), conditions);
+            val predicate = SamlIdPUtils.buildEntityAttributePredicate(conditions);
+            val filter = new PredicateFilter(dir, predicate);
+            filter.initialize();
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added metadata predicate filter with direction [{}] and entity attribute conditions [{}]",
+                service.getMetadataCriteriaDirection(), conditions);
+        }
     }
 
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
@@ -108,6 +128,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             LOGGER.warn("Skipped metadata SignatureValidationFilter since signature cannot be located for [{}]", service.getServiceId());
         }
     }
+
 
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList)
