@@ -526,6 +526,7 @@ layout: null
             *   [Service Providers](#saml2spoverview)
                 *   [Overview](/cas/{{ version }}/services/SAML2-Service-Management.html)  
                 *   [Metadata Management](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata.html)  
+                *   [Metadata Filtering](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata-Filtering.html)  
             *   [Attribute Release](#saml2attrrelease)
                 *   [Attribute Policies](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
                 *   [Attribute Definitions](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Definitions.html)

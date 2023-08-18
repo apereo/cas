@@ -10,13 +10,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegiste
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -35,13 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
-    private static CriteriaSet getCriteriaFor(final String entityId) {
-        val criteriaSet1 = new CriteriaSet();
-        criteriaSet1.add(new EntityIdCriterion(entityId));
-        criteriaSet1.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        return criteriaSet1;
-    }
-
     @Test
     void verifyAggregateCacheOverUrlResource() throws Throwable {
         val aggregateRegisteredService = new SamlRegisteredService();
