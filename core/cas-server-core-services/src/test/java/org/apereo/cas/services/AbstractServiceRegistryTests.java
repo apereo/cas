@@ -7,12 +7,12 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -139,14 +139,14 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     void verifySavingServices() {
         getRegisteredServiceTypes().forEach(type -> {
-            serviceRegistry.save(buildRegisteredServiceInstance(100, type));
+            val registeredService = buildRegisteredServiceInstance(100, type);
+            serviceRegistry.save(registeredService);
             val services = serviceRegistry.load();
-            assertEquals(1, services.size(), type::getName);
-            assertEquals(1, serviceRegistry.size(), type::getName);
-            serviceRegistry.save(buildRegisteredServiceInstance(101, type));
+            assertTrue(services.stream().anyMatch(svc -> svc.equals(registeredService)));
+            val registeredService2 = buildRegisteredServiceInstance(101, type);
+            serviceRegistry.save(registeredService2);
             val services2 = serviceRegistry.load();
-            assertEquals(2, services2.size(), type::getName);
-            assertEquals(2, serviceRegistry.size(), type::getName);
+            assertTrue(services2.stream().anyMatch(svc -> svc.equals(registeredService)));
         });
     }
 

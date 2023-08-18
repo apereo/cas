@@ -50,6 +50,7 @@ class PrincipalAttributeRepositoryFetcherTests {
                 .principalId("casuser-whatever")
                 .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("current-cas"))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.isEmpty());
@@ -67,6 +68,7 @@ class PrincipalAttributeRepositoryFetcherTests {
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.isEmpty());
@@ -84,6 +86,7 @@ class PrincipalAttributeRepositoryFetcherTests {
                 .principalId("friabili")
                 .activeAttributeRepositoryIdentifiers(Set.of("GROOVY"))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.containsKey("groovyNewName"));

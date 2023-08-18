@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -76,9 +76,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val radiusCredential = (RadiusTokenCredential) credential;
         val password = radiusCredential.getToken();
-
-        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
-            "CAS has no reference to an authentication event to locate a principal");
+        val authentication = FunctionUtils.throwIfNull(WebUtils.getInProgressAuthentication(),
+            () -> new FailedLoginException("CAS has no reference to an authentication event to locate a principal"));
         val principal = authentication.getPrincipal();
         val username = principal.getId();
 
@@ -92,9 +91,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                 state = Optional.of(stateAttr.getValueObject());
             }
         }
-
         val result = RadiusUtils.authenticate(username, password, this.servers,
-            this.failoverOnAuthenticationFailure, this.failoverOnException, state);
+            failoverOnAuthenticationFailure, this.failoverOnException, state);
         if (result.getKey()) {
             val radiusAttributes = CollectionUtils.toMultiValuedMap(result.getValue().get());
             val finalPrincipal = principalFactory.createPrincipal(username, radiusAttributes);

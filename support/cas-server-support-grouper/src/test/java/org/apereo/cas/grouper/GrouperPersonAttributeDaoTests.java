@@ -52,6 +52,7 @@ class GrouperPersonAttributeDaoTests {
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")
             .build()
+            .fromAllAttributeRepositories()
             .retrieve();
         assertTrue(attributes.containsKey("grouperGroups"));
         assertTrue(attributes.containsKey("givenName"));

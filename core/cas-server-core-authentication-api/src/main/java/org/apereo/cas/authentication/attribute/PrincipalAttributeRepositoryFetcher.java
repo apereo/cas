@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -72,5 +73,17 @@ public class PrincipalAttributeRepositoryFetcher {
         val person = people.iterator().next();
         LOGGER.debug("Retrieved person [{}] from attribute repositories for query [{}]", person, query);
         return person.getAttributes();
+    }
+
+    /**
+     * Allow the fetcher to support/activate all attribute repositories
+     * and disable filtering.
+     *
+     * @return the principal attribute repository fetcher
+     */
+    @CanIgnoreReturnValue
+    public PrincipalAttributeRepositoryFetcher fromAllAttributeRepositories() {
+        activeAttributeRepositoryIdentifiers.add(IPersonAttributeDao.WILDCARD);
+        return this;
     }
 }
