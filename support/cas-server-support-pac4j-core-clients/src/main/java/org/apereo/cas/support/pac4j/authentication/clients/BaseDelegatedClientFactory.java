@@ -380,9 +380,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (clientProperties.getKeycloak().isEnabled() && StringUtils.isNotBlank(clientProperties.getKeycloak().getId())) {
             LOGGER.debug("Building OpenID Connect client for KeyCloak...");
             val cfg = getOidcConfigurationForClient(clientProperties.getKeycloak(), KeycloakOidcConfiguration.class);
-            val opMetadataResolver = new OidcOpMetadataResolver(cfg);
-            opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-            cfg.setOpMetadataResolver(opMetadataResolver);
             cfg.setRealm(resolver.resolve(clientProperties.getKeycloak().getRealm()));
             cfg.setBaseUri(resolver.resolve(clientProperties.getKeycloak().getBaseUri()));
             val kc = new KeycloakOidcClient(cfg);
@@ -482,6 +479,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
         cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+        cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
         return cfg;
     }
 

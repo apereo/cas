@@ -239,10 +239,10 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
 
         if (casProperties.getTgc().isAutoConfigureCookiePath()) {
-            val path = this.ticketGrantingTicketCookieGenerator.getCookiePath();
+            val path = ticketGrantingTicketCookieGenerator.getCookiePath();
             if (StringUtils.isBlank(path)) {
                 LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
-                this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
+                ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
             } else {
                 LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
             }

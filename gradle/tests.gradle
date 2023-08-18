@@ -207,10 +207,24 @@ tasks.withType(Test).configureEach {
     def list = []
     list.add("--add-modules")
     list.add("java.se")
+
     list.add("--add-exports")
     list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
     list.add("--add-exports")
+    list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
+    list.add("--add-exports")
     list.add("java.xml.crypto/org.jcp.xml.dsig.internal.dom=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED")
+
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
     list.add("--add-opens")
@@ -228,7 +242,11 @@ tasks.withType(Test).configureEach {
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
     list.add("--add-opens")
+    list.add("java.base/jdk.unsupported=ALL-UNNAMED")
+    
+    list.add("--add-opens")
     list.add("java.base/sun.security.action=jdk.crypto.ec")
+
     list.add("-Xms512m")
     list.add("-Xmx4g")
     jvmArgs = list
