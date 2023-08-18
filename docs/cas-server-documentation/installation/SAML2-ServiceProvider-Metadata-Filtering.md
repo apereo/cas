@@ -69,7 +69,7 @@ when the metadata contains specific entity IDs.
   "metadataLocation": "/path/to/metadata.xml",
   "metadataCriteriaDirection": "include",
   "metadataCriteriaPattern": "^https://.+.example.org",
-  "metadataCriteriaRoles: "SPSSODescriptor"
+  "metadataCriteriaRoles": "SPSSODescriptor"
 }
 ```
 

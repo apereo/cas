@@ -171,6 +171,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                         StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
                         StringUtils.appendIfMissing(getCookiePath(), "/"))
                     .distinct()
+                    .filter(StringUtils::isNotBlank)
                     .forEach(path -> {
                         val crm = new Cookie(cookie.getName(), cookie.getValue());
                         crm.setMaxAge(0);
