@@ -2,6 +2,7 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -37,6 +38,8 @@ import static org.mockito.Mockito.*;
 class OneTimeTokenAccountCheckRegistrationActionTests {
     @Test
     void verifyExistingAccount() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())
@@ -54,7 +57,8 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
@@ -84,7 +88,8 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
     }

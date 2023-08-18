@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -227,19 +228,18 @@ public abstract class AbstractServiceRegistryTests {
     void verifyServiceLookupByServiceId() {
         getRegisteredServiceTypes().forEach(type -> {
             val r1 = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
-            r1.setServiceId(".*serviceid.*");
+            val id = UUID.randomUUID().toString();
+            r1.setServiceId(".*%s.*".formatted(id));
             r1.setEvaluationOrder(100);
             serviceRegistry.save(r1);
 
             val r2 = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
-            r2.setServiceId(".*serviceid.*");
+            r2.setServiceId(r1.getServiceId());
             r2.setEvaluationOrder(1);
             serviceRegistry.save(r2);
-
-            val svc = serviceRegistry.findServiceBy("serviceid");
+            val svc = serviceRegistry.findServiceBy(id);
             assertNotNull(svc);
             assertEquals(r2, svc);
-
             assertNull(serviceRegistry.findServiceBy("this-service-id-does-not-exist"));
         });
     }

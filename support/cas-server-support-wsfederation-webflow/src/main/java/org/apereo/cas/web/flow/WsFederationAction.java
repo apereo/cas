@@ -52,7 +52,7 @@ public class WsFederationAction extends AbstractAuthenticationAction {
             val wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
-                return super.doExecute(context);
+                return super.doExecuteInternal(context);
             }
             return wsFederationRequestBuilder.buildAuthenticationRequestEvent(context);
         } catch (final Throwable ex) {

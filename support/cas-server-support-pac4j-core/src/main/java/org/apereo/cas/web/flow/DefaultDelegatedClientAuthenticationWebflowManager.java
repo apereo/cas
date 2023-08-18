@@ -242,13 +242,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         }).get();
     }
 
-    /**
-     * Gets delegated client id.
-     *
-     * @param webContext the web context
-     * @param client     the client
-     * @return the delegated client id
-     */
     protected String getDelegatedClientId(final WebContext webContext, final Client client) {
         var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);

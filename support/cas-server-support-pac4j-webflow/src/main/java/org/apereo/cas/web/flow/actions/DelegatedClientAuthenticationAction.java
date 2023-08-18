@@ -97,7 +97,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     return FunctionUtils.doUnchecked(() -> {
                         val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
                         LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
-                        return super.doExecute(context);
+                        return super.doExecuteInternal(context);
                     });
                 }
                 FunctionUtils.doUnchecked(__ -> {
@@ -119,7 +119,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 val up = profile.toUserProfile(clientName);
                 val clientCredentialSelected = new ClientCredential(clientName, up);
                 WebUtils.putCredential(context, clientCredentialSelected);
-                return super.doExecute(context);
+                return super.doExecuteInternal(context);
             }
 
             if (clientCredential.isPresent()) {
@@ -190,7 +190,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .flatMap(List::stream)
             .collect(Collectors.toList());
         if (candidateMatches.isEmpty()) {
-            return super.execute(context);
+            return super.doExecuteInternal(context);
         }
         DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, candidateMatches);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_SELECT);

@@ -132,9 +132,9 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql("makesNoSenseInSql")).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
-        assertThrows(PreventedException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
+        assertThrows(PreventedException.class, () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
@@ -142,11 +142,11 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         assertThrows(FailedLoginException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"), mock(Service.class)));
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"), mock(Service.class)));
     }
 
     @Test
@@ -156,14 +156,12 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
             .setSaltFieldName("salt").setDisabledFieldName("ops")
             .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME).
                 setStaticSalt(STATIC_SALT);
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
-
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        val r = q.authenticate(credentials, mock(Service.class));
-
-        assertNotNull(r);
-        assertEquals("user1", r.getPrincipal().getId());
+        val result = handler.authenticate(credentials, mock(Service.class));
+        assertNotNull(result);
+        assertEquals("user1", result.getPrincipal().getId());
     }
 
     @Test
@@ -174,10 +172,10 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
             .setExpiredFieldName(EXPIRED_FIELD_NAME)
             .setStaticSalt(STATIC_SALT)
             .setSaltFieldName("salt");
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         assertThrows(AccountPasswordMustChangeException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"), mock(Service.class)));
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"), mock(Service.class)));
     }
 
     @Test
@@ -187,11 +185,11 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
             .setDisabledFieldName(DISABLED_FIELD_NAME)
             .setStaticSalt(STATIC_SALT)
             .setSaltFieldName("salt");
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         assertThrows(AccountDisabledException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"), mock(Service.class)));
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"), mock(Service.class)));
     }
 
     @Test
@@ -201,9 +199,9 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
             .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME)
             .setStaticSalt(STATIC_SALT)
             .setSaltFieldName("salt");
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+        val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
             PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
-        q.setPasswordEncoder(new PasswordEncoder() {
+        handler.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final CharSequence password) {
                 return password.toString().concat("1");
@@ -214,9 +212,8 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
                 return true;
             }
         });
-
-        q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        val r = q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"), mock(Service.class));
+        handler.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
+        val r = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"), mock(Service.class));
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());

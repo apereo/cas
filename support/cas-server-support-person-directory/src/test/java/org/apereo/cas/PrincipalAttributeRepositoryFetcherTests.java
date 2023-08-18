@@ -63,12 +63,11 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class NoActiveRepositoryTests extends BaseTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")
                 .build()
-                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.isEmpty());
@@ -86,7 +85,6 @@ class PrincipalAttributeRepositoryFetcherTests {
                 .principalId("friabili")
                 .activeAttributeRepositoryIdentifiers(Set.of("GROOVY"))
                 .build()
-                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.containsKey("groovyNewName"));

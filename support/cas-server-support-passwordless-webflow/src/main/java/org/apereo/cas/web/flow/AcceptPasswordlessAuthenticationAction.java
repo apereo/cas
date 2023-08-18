@@ -69,7 +69,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + principal.getUsername()));
             if (passwordlessToken.getToken().equalsIgnoreCase(token)) {
                 handlePasswordlessAuthenticationAttempt(requestContext, principal, passwordlessToken);
-                val finalEvent = super.doExecute(requestContext);
+                val finalEvent = super.doExecuteInternal(requestContext);
                 passwordlessTokenRepository.deleteToken(passwordlessToken);
                 return finalEvent;
             }

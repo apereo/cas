@@ -30,7 +30,7 @@ public class GoogleAuthenticatorValidateTokenAction extends AbstractMultifactorA
     protected final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val token = requestContext.getRequestParameters().getRequired(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.class);
         val accountId = requestContext.getRequestParameters().getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
 

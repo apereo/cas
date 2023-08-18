@@ -111,7 +111,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             populateContextWithCredential(requestContext, browserSessionStore, authentication);
             populateContextWithAuthentication(requestContext, browserSessionStore);
             populateContextWithService(requestContext, browserSessionStore);
-            return super.doExecute(requestContext);
+            return super.doExecuteInternal(requestContext);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
         } finally {
