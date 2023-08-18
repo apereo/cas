@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -60,7 +61,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential transformedCredential,
         final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        throws Throwable {
 
         if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
@@ -86,14 +87,14 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
-
+            val principal = principalFactory.createPrincipal(username);
+            return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
             }
             throw new FailedLoginException("Multiple records found for " + username);
-        } catch (final Throwable e) {
+        } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }
     }
