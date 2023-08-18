@@ -36,6 +36,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
                 .principalId(UID)
                 .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("cas"))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());
@@ -55,6 +56,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
                 .principalId("unknown")
                 .currentPrincipal(principal)
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());
@@ -75,6 +77,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
                 .currentPrincipal(principal)
                 .queryAttributes(Map.of("customParameter", List.of(UID)))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());

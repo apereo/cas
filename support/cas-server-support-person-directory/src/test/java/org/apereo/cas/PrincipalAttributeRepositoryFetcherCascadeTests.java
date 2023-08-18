@@ -47,6 +47,7 @@ class PrincipalAttributeRepositoryFetcherCascadeTests {
             .principalId("casuser")
             .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("current-cas"))
             .build()
+            .fromAllAttributeRepositories()
             .retrieve();
         assertNotNull(attributes);
     }

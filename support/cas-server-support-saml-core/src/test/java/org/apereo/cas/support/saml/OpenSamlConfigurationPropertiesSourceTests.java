@@ -4,7 +4,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.config.ConfigurationService;
-import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OpenSamlConfigurationPropertiesSourceTests {
     @Test
     void verifyOperation() {
-        val source = ConfigurationService.get(OpenSamlConfigurationPropertiesSource.class);
-        assertFalse(Objects.requireNonNull(source.getProperties()).isEmpty());
+        val source = ConfigurationService.getConfigurationProperties();
+        assertFalse(source.getProperty(OpenSamlConfigurationPropertiesSource.CONFIG_APACHE_XML_IGNORE_LINEBREAKS).isEmpty());
+        assertFalse(source.getProperty(OpenSamlConfigurationPropertiesSource.CONFIG_STRICT_MODE).isEmpty());
     }
 }

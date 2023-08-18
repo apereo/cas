@@ -45,7 +45,7 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperationFails() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@onmicrosoft.com", "bf65hfg78");
+                "castest@misaghmoayyedhotmail.onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
@@ -73,7 +73,7 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperationFails() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@onmicrosoft.com", "bf65hfg78");
+                "castest@misaghmoayyedhotmail.onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }

@@ -40,32 +40,32 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-signing.crt");
     }
 
     @Override
-    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-signing.key");
     }
 
     @Override
-    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-metadata.xml");
     }
 
     @Override
-    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-encryption.crt");
     }
 
     @Override
-    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-encryption.key");
     }
 
     @Override
-    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return resolveMetadata(registeredService).exists();
     }
 
@@ -89,7 +89,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         });
     }
 
-    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) throws Throwable {
         if (result.isPresent()) {
             val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
             LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
