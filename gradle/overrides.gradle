@@ -28,9 +28,6 @@ configurations.configureEach {
                 if (requested.group == "com.google.guava" && requested.name == "guava")  {
                     details.useVersion("$guavaVersion")
                 }
-                if (requested.group == "com.google.collections" && requested.name == "google-collections")  {
-                    details.useVersion("$guavaVersion")
-                }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
