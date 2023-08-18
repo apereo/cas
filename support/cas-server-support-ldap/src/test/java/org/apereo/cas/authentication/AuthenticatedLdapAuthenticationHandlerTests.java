@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
         void verifyAuthenticateNotFound() throws Throwable {
-            assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
                         new UsernamePasswordCredential("notfound", "badpassword"), mock(Service.class)))));
@@ -52,7 +51,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
         @Test
         void verifyAuthenticateFailureNotFound() throws Throwable {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
-            assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(
                     Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"), mock(Service.class)))));
         }
