@@ -60,7 +60,6 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
-import org.pac4j.oidc.metadata.OidcOpMetadataResolver;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;

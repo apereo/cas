@@ -4,19 +4,17 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.azure.ad.BaseAzureActiveDirectoryTests;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +25,17 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Azure")
+@EnabledIfEnvironmentVariable(named = "AZURE_AD_USER_PASSWORD", matches = ".+")
+@EnabledIfEnvironmentVariable(named = "AZURE_AD_DOMAIN", matches = ".+")
 class AzureActiveDirectoryAuthenticationTests {
+
+    private static String AZURE_AD_USER_PASSWORD;
+    private static String AZURE_AD_DOMAIN;
+
+    static {
+        AZURE_AD_USER_PASSWORD = System.getenv("AZURE_AD_USER_PASSWORD");
+        AZURE_AD_DOMAIN = System.getenv("AZURE_AD_DOMAIN");
+    }
 
     @TestPropertySource(properties = {
         "cas.authn.azure-active-directory.client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
@@ -45,7 +53,7 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperationFails() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@misaghmoayyedhotmail.onmicrosoft.com", "bf65hfg78");
+                "castest@" + AZURE_AD_DOMAIN, "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
@@ -62,10 +70,11 @@ class AzureActiveDirectoryAuthenticationTests {
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
+
         @Test
         void verifyOperation() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@misaghmoayyedhotmail.onmicrosoft.com", "Tuwa2565");
+                "castest@" + AZURE_AD_DOMAIN, AZURE_AD_USER_PASSWORD);
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
             assertNotNull(result);
         }
@@ -73,7 +82,7 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperationFails() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@misaghmoayyedhotmail.onmicrosoft.com", "bf65hfg78");
+                "castest@" + AZURE_AD_DOMAIN, "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
@@ -94,12 +103,12 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperation() throws Throwable {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "castest@misaghmoayyedhotmail.onmicrosoft.com", "zVh86iUtwQLP");
+                "castest@" + AZURE_AD_DOMAIN, AZURE_AD_USER_PASSWORD);
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
             assertNotNull(result);
         }
     }
-    
+
     @TestPropertySource(properties = {
         "cas.authn.attribute-repository.azure-active-directory[0].client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
         "cas.authn.attribute-repository.azure-active-directory[0].client-secret=Ro58Q~NbOEInGNGAEdxHGWJ3QkS0jVTLP1fuLcg-",
@@ -115,7 +124,7 @@ class AzureActiveDirectoryAuthenticationTests {
         @Test
         void verifyOperation() throws Throwable {
             val repository = microsoftAzureActiveDirectoryAttributeRepositories.get(0);
-            val person = repository.getPerson("castest@misaghmoayyedhotmail.onmicrosoft.com");
+            val person = repository.getPerson("castest@" + AZURE_AD_DOMAIN);
             assertNotNull(person);
         }
     }
