@@ -22,23 +22,23 @@ class Cas10ProtocolValidationSpecificationTests extends BaseCasCoreTests {
     private CasProtocolValidationSpecification validationSpecification;
 
     @Test
-    void verifySatisfiesSpecOfTrue() {
+    void verifySatisfiesSpecOfTrue() throws Throwable {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyNotSatisfiesSpecOfTrue() {
+    void verifyNotSatisfiesSpecOfTrue() throws Throwable {
         validationSpecification.setRenew(true);
         assertFalse(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifySatisfiesSpecOfFalse() {
+    void verifySatisfiesSpecOfFalse() throws Throwable {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifySatisfiesSpecOfFalse2() {
+    void verifySatisfiesSpecOfFalse2() throws Throwable {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 

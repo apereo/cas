@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApiAuthentication")
 class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
-    void verifyOperationShouldProceed() {
+    void verifyOperationShouldProceed() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -53,7 +53,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyOperationFailsWithNoProvider() {
+    void verifyOperationFailsWithNoProvider() throws Throwable {
         try (val webServer = new MockWebServer(9316,
             new ByteArrayResource("Y".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.ACCEPTED)) {
             webServer.start();
@@ -70,7 +70,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyRestSendsQueryParameters() throws Exception {
+    void verifyRestSendsQueryParameters() throws Throwable {
         try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
             val port = webServer.getPort();
             val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());

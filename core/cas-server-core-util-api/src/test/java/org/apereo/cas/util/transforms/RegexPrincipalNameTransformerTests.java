@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class RegexPrincipalNameTransformerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val chain = new ChainingPrincipalNameTransformer();
         chain.addTransformer(new RegexPrincipalNameTransformer("(\\w+)@\\w+.org"));
         chain.addTransformer(new ConvertCasePrincipalNameTransformer(true));
@@ -24,7 +24,7 @@ class RegexPrincipalNameTransformerTests {
     }
 
     @Test
-    void verifyNoOperation() {
+    void verifyNoOperation() throws Throwable {
         val chain = new ChainingPrincipalNameTransformer();
         chain.addTransformer(new RegexPrincipalNameTransformer("(\\w+)@\\w+.org"));
         val result = chain.transform(" cas  ");

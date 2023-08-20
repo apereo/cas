@@ -1,10 +1,8 @@
 package org.apereo.cas.configuration.metadata;
 
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
@@ -21,20 +19,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ConfigurationMetadataUnitParser {
     private final String sourcePath;
-
-    /**
-     * Gets compilation unit.
-     *
-     * @param typePath the type path
-     * @return the compilation unit
-     */
-    @SneakyThrows
-    public static CompilationUnit getCompilationUnit(final String typePath) {
-        try (val is = Files.newInputStream(Paths.get(typePath))) {
-            return StaticJavaParser.parse(is);
-        }
-    }
-
+    
     /**
      * Parse compilation unit.
      *
@@ -45,7 +30,6 @@ public class ConfigurationMetadataUnitParser {
      * @param typeName              the type name
      * @param indexNameWithBrackets the index name with brackets
      */
-    @SneakyThrows
     public void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
                                      final Set<ConfigurationMetadataProperty> collectedGroups,
                                      final ConfigurationMetadataProperty property,
@@ -73,6 +57,8 @@ public class ConfigurationMetadataUnitParser {
                     }
                 }
             }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

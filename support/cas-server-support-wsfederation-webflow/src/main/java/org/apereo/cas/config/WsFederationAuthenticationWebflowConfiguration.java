@@ -10,7 +10,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -131,8 +131,8 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationEndpointConfigurer")
-    public ProtocolEndpointWebSecurityConfigurer<Void> wsFederationEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+    public CasWebSecurityConfigurer<Void> wsFederationEndpointConfigurer() {
+        return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
                 return List.of(WsFederationNavigationController.ENDPOINT_REDIRECT);

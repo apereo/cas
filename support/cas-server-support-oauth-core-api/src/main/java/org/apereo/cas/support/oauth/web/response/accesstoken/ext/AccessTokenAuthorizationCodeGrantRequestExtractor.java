@@ -36,7 +36,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     @Override
-    public AccessTokenRequestContext extractRequest(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
         val grantType = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
 

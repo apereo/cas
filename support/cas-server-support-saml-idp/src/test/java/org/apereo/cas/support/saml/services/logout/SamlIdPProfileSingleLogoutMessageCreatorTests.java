@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.test.context.TestPropertySource;
 
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -45,7 +45,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
         samlRegisteredService.setSigningSignatureCanonicalizationAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutUrl(new URL("https://sp.example.org/slo"))
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
             .registeredService(samlRegisteredService)
             .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")
@@ -62,7 +62,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySoapOperation() throws Exception {
+    void verifySoapOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -70,7 +70,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
 
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutUrl(new URL("https://sp.example.org/slo"))
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
             .registeredService(samlRegisteredService)
             .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")
@@ -87,7 +87,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySignByBasicCredOperation() throws Exception {
+    void verifySignByBasicCredOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -97,7 +97,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         samlRegisteredService.setSigningCredentialType("basic");
         samlRegisteredService.setSkewAllowance(1000);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutUrl(new URL("https://sp.example.org/slo"))
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
             .registeredService(samlRegisteredService)
             .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")
@@ -114,7 +114,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
     
     @Test
-    void verifySignByFingerprintOperation() throws Exception {
+    void verifySignByFingerprintOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp(),
@@ -123,7 +123,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setSigningCredentialFingerprint("badfingerprint");
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutUrl(new URL("https://sp.example.org/slo"))
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
             .registeredService(samlRegisteredService)
             .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")

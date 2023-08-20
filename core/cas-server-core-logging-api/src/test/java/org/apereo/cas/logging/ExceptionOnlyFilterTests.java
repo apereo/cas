@@ -1,6 +1,5 @@
 package org.apereo.cas.logging;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -31,8 +30,7 @@ class ExceptionOnlyFilterTests {
         return logFile.length();
     }
 
-    @SneakyThrows
-    private static void sleep(final int millis) {
+    private static void sleep(final int millis) throws Exception {
         Thread.sleep(millis);
     }
 
@@ -44,7 +42,7 @@ class ExceptionOnlyFilterTests {
      * Stopping th log system so file is flushed for size check, sleep also works.
      */
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val fileSize = getFileSize();
         LOGGER.error("Testing no exception");
         sleep(1000);
@@ -55,7 +53,7 @@ class ExceptionOnlyFilterTests {
     }
 
     @Test
-    void verifyFilters() {
+    void verifyFilters() throws Throwable {
         val filter = new ExceptionOnlyFilter();
         assertEquals(Filter.Result.ACCEPT,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), mock(Message.class), new Throwable()));

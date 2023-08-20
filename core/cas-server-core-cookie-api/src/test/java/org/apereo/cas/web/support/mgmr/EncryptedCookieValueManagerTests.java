@@ -21,13 +21,13 @@ import static org.mockito.Mockito.*;
 class EncryptedCookieValueManagerTests {
 
     @Test
-    void verifyNoValue() {
+    void verifyNoValue() throws Throwable {
         val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class), DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyEmptyValue() {
+    void verifyEmptyValue() throws Throwable {
         val cipher = mock(CipherExecutor.class);
         when(cipher.decode(anyString(), any())).thenReturn(StringUtils.EMPTY);
         val mgr = new EncryptedCookieValueManager(cipher, DefaultCookieSameSitePolicy.INSTANCE);

@@ -39,7 +39,7 @@ class WsFederationActionTests {
     protected Action wsFederationAction;
 
     @Test
-    void verifyRequestOperation() throws Exception {
+    void verifyRequestOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

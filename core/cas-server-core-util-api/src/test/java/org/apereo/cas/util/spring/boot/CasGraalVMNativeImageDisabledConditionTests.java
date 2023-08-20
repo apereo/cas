@@ -18,13 +18,13 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 class CasGraalVMNativeImageDisabledConditionTests {
     @Test
-    void verifyNotInNativeImage() {
+    void verifyNotInNativeImage() throws Throwable {
         val condition = new CasGraalVMNativeImageDisabledCondition();
         assertTrue(condition.getMatchOutcome(mock(ConditionContext.class), mock(AnnotatedTypeMetadata.class)).isMatch());
     }
 
     @Test
-    void verifyInNativeImage() {
+    void verifyInNativeImage() throws Throwable {
         System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
         val condition = new CasGraalVMNativeImageDisabledCondition();
         assertFalse(condition.getMatchOutcome(mock(ConditionContext.class), mock(AnnotatedTypeMetadata.class)).isMatch());

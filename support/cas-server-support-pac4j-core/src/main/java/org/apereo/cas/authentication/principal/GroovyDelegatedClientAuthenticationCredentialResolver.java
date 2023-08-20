@@ -31,7 +31,7 @@ public class GroovyDelegatedClientAuthenticationCredentialResolver
 
     @Override
     public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
-                                                                 final ClientCredential credentials) {
+                                                                 final ClientCredential credentials) throws Throwable {
         val profile = resolveUserProfile(context, credentials);
         val args = new Object[]{context, credentials, profile, LOGGER};
         return watchableScript.execute(args, List.class);

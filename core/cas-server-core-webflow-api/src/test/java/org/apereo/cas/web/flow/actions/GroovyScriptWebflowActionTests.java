@@ -40,7 +40,7 @@ class GroovyScriptWebflowActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyShellScript() throws Exception {
+    void verifyShellScript() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -56,7 +56,7 @@ class GroovyScriptWebflowActionTests {
     }
 
     @Test
-    void verifyScript() throws Exception {
+    void verifyScript() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

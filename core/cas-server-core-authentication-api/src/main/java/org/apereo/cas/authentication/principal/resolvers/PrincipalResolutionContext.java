@@ -68,5 +68,6 @@ public class PrincipalResolutionContext {
     private final IAttributeMerger attributeMerger;
 
     private final ServicesManager servicesManager;
+
     private final AttributeDefinitionStore attributeDefinitionStore;
 }

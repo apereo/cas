@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.ForwardedHeaderUtils;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -400,7 +400,8 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
 
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
         if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
-            val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
+            val servetRequest = new ServletServerHttpRequest(httpServletRequest);
+            val uri = ForwardedHeaderUtils.adaptFromForwardedHeaders(servetRequest.getURI(), servetRequest.getHeaders())
                 .build()
                 .toUriString();
             if (!this.patternToBlock.equals(RegexUtils.MATCH_NOTHING_PATTERN)

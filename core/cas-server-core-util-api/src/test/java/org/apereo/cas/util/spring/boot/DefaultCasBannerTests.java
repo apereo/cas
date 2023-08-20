@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultCasBannerTests {
     @Test
     @Order(1)
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val banner = new DefaultCasBanner();
         assertNotNull(banner.getTitle());
         assertNotNull(AbstractCasBanner.LINE_SEPARATOR);
@@ -38,7 +38,7 @@ class DefaultCasBannerTests {
 
     @Test
     @Order(100)
-    public void verifyNoBanner() throws Exception {
+    void verifyNoBanner() throws Throwable {
         System.setProperty("CAS_BANNER_SKIP", "true");
         val banner = new DefaultCasBanner();
         val environment = new MockEnvironment();

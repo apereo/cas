@@ -67,7 +67,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val currentAcct = getCandidateAccountFrom(requestContext);
             if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()) {

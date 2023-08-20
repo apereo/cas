@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
-import java.util.Optional;
-
 /**
  * This is {@link WatchableGroovyScriptResource}.
  *
@@ -23,11 +21,11 @@ import java.util.Optional;
 @Getter
 @ToString(of = "resource")
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
-    private final transient Resource resource;
+    private final Resource resource;
 
-    private transient FileWatcherService watcherService;
+    private FileWatcherService watcherService;
 
-    private transient GroovyObject groovyScript;
+    private GroovyObject groovyScript;
 
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
@@ -50,7 +48,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz) {
+    public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
         return execute(args, clazz, true);
     }
 
@@ -60,17 +58,19 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @param args the args
      */
     @Override
-    public void execute(final Object[] args) {
+    public void execute(final Object[] args) throws Throwable {
         execute(args, Void.class, true);
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        return Optional.ofNullable(this.groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, args, clazz, failOnError)).orElse(null);
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
+        return groovyScript != null
+            ? ScriptingUtils.executeGroovyScript(groovyScript, args, clazz, failOnError)
+            : null;
     }
 
     @Override
-    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
+    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
         return execute(methodName, clazz, true, args);
     }
 
@@ -84,8 +84,11 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @param args        the args
      * @return the t
      */
-    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
-        return Optional.ofNullable(groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, methodName, args, clazz, failOnError)).orElse(null);
+    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
+                         final Object... args) throws Throwable{
+        return groovyScript != null
+            ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+            : null;
     }
 
 

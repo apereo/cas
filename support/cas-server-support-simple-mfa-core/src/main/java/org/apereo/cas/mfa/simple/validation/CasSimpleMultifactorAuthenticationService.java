@@ -26,7 +26,7 @@ public interface CasSimpleMultifactorAuthenticationService {
      * @return the cas simple multifactor authentication token
      * @throws Exception the exception
      */
-    CasSimpleMultifactorAuthenticationTicket generate(Principal principal, Service service) throws Exception;
+    CasSimpleMultifactorAuthenticationTicket generate(Principal principal, Service service) throws Throwable;
 
     /**
      * Store the token in the underlying storage, as necessary.
@@ -34,7 +34,7 @@ public interface CasSimpleMultifactorAuthenticationService {
      * @param token the token
      * @throws Exception the exception
      */
-    void store(CasSimpleMultifactorAuthenticationTicket token) throws Exception;
+    void store(CasSimpleMultifactorAuthenticationTicket token) throws Throwable;
 
     /**
      * Validate MFA the credential.
@@ -44,5 +44,5 @@ public interface CasSimpleMultifactorAuthenticationService {
      * @return principal object representing the mfa session.
      * @throws Exception the exception
      */
-    Principal validate(Principal resolvedPrincipal, CasSimpleMultifactorTokenCredential credential) throws Exception;
+    Principal validate(Principal resolvedPrincipal, CasSimpleMultifactorTokenCredential credential) throws Throwable;
 }

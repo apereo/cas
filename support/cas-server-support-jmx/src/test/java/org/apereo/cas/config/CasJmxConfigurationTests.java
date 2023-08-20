@@ -31,7 +31,7 @@ class CasJmxConfigurationTests {
     private TicketRegistryManagedResource ticketRegistryManagedResource;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(this.servicesManagerManagedResource);
         assertNotNull(this.ticketRegistryManagedResource);
     }

@@ -25,6 +25,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -93,7 +94,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCreate() {
+    void verifyCreate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
@@ -118,7 +119,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
@@ -148,7 +149,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() {
+    void verifyGet() throws Throwable {
         val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
@@ -173,7 +174,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCaseSensitivity() {
+    void verifyCaseSensitivity() throws Throwable {
         val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
@@ -199,7 +200,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetWithDecodedSecret() {
+    void verifyGetWithDecodedSecret() throws Throwable {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
@@ -225,7 +226,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         return UUID.randomUUID().toString();
     }
 
@@ -259,6 +260,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreConfiguration.class,

@@ -34,7 +34,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAuthorizationAuth() throws Exception {
+    void verifyAuthorizationAuth() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -58,7 +58,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRevocationNeedsAuthn() throws Exception {
+    void verifyRevocationNeedsAuthn() throws Throwable {
         var request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
         request.setRequestURI('/' + OAuth20Constants.REVOCATION_URL);
@@ -72,7 +72,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRevocationAuth() throws Exception {
+    void verifyRevocationAuth() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -86,7 +86,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessToken() throws Exception {
+    void verifyAccessToken() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -99,7 +99,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyProfile() throws Exception {
+    void verifyProfile() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

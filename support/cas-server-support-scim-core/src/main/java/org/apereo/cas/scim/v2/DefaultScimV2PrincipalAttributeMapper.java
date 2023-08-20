@@ -72,7 +72,7 @@ public class DefaultScimV2PrincipalAttributeMapper implements ScimV2PrincipalAtt
     protected String getPrincipalAttributeValue(final Principal principal,
                                                 final String attributeName,
                                                 final String defaultValue) {
-        return StringUtils.defaultString(getPrincipalAttributeValue(principal, attributeName), defaultValue);
+        return StringUtils.defaultIfBlank(getPrincipalAttributeValue(principal, attributeName), defaultValue);
     }
 
     /**

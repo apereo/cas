@@ -42,7 +42,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
     private final RestEndpointProperties properties;
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         HttpResponse response = null;
         try {
             val current = super.createPrincipal(id, attributes);

@@ -53,7 +53,7 @@ class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMu
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

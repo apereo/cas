@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
 
     await cas.type(page,'#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(4000);
     await cas.screenshot(page);
 
     await page.waitForTimeout(1000);

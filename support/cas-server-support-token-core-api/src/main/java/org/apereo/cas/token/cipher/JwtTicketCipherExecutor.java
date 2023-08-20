@@ -92,15 +92,8 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
         return Optional.empty();
     }
 
-    /**
-     * Gets cipher operations registered service property.
-     *
-     * @param registeredService the registered service
-     * @return the cipher operations order registered service property
-     */
     protected RegisteredServiceProperty.RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(final RegisteredService registeredService) {
         return RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE;
     }
-
-
+    
 }

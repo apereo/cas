@@ -45,7 +45,7 @@ class RegisteredServiceKafkaDistributedCacheManagerTests {
         registeredServiceDistributedCacheManager;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         assertFalse(registeredServiceDistributedCacheManager.contains(service));
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());

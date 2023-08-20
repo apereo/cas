@@ -30,12 +30,13 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @SuppressWarnings("ClassCanBeStatic")
     class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId(UID)
                 .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("cas"))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());
@@ -48,13 +49,14 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @EnabledIfListeningOnPort(port = 10389)
     class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of("title", List.of(UID)));
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("unknown")
                 .currentPrincipal(principal)
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());
@@ -67,7 +69,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @EnabledIfListeningOnPort(port = 10389)
     class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of());
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
@@ -75,6 +77,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
                 .currentPrincipal(principal)
                 .queryAttributes(Map.of("customParameter", List.of(UID)))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertFalse(attributes.isEmpty());

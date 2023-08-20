@@ -31,7 +31,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
 
 
     @Test
-    void verifySerializeToJson() throws Exception {
+    void verifySerializeToJson() throws Throwable {
         val criteria = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
             .setOperator(LogicalOperatorTypes.OR)
             .setAllowIfInactive(true)
@@ -42,7 +42,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyRequiredPlain() {
+    void verifyRequiredPlain() throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("name1")))
@@ -56,7 +56,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyRequiredRegex() {
+    void verifyRequiredRegex() throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("***")))

@@ -76,7 +76,7 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @Test
-    void verifyAccessToEndpoints() throws Exception {
+    void verifyAccessToEndpoints() throws Throwable {
         mvc.perform(get("/cas/actuator/beans")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/info")
                 .with(httpBasic("casuser", "Mellon")))

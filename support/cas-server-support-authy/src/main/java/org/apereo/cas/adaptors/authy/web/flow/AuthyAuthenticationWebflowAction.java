@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.authy.web.flow;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -19,7 +20,7 @@ public class AuthyAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        return this.casWebflowEventResolver.resolveSingle(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> casWebflowEventResolver.resolveSingle(requestContext));
     }
 }

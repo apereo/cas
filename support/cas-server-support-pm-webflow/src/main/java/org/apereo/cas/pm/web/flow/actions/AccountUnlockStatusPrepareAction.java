@@ -18,7 +18,7 @@ public class AccountUnlockStatusPrepareAction extends BaseCasWebflowAction {
     private static final int CAPTCHA_LENGTH = 6;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         FunctionUtils.doIf(!requestContext.getCurrentEvent().getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR),
             u -> requestContext.getMessageContext().clearMessages()).accept(requestContext);
         requestContext.getConversationScope().put("captchaValue", RandomUtils.randomAlphanumeric(CAPTCHA_LENGTH));

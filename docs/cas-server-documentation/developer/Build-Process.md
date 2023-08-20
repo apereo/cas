@@ -74,11 +74,13 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipSonarqube`               | Ignore reporting results to Sonarqube.                                                               |
 | `skipErrorProneCompiler`      | Skip running the `error-prone` static-analysis compiler.                                             |
 | `skipBootifulArtifact`        | Do not apply the Spring Boot plugin to bootify application artifacts.                                |
+| `skipAot`                     | Skip running AOT processes when building Graal VM native images.                                     |
 | `ignoreJavadocFailures`       | Ignore javadoc failures and let the build resume.                                                    |
 | `ignoreFindbugsFailures`      | Ignore Findbugs failures and let the build resume.                                                   |
 | `ignoreTestFailures`          | Ignore test failures and let the build resume.                                                       |
-| `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support                     |core]` prefix.
+| `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support                     |
 | `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
+| `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -97,7 +99,7 @@ CAS development may be carried out using any modern IDE that supports Gradle.
 
 The following IDEA settings for Gradle may also be useful:
 
-![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
+![image](https://github.com/apereo/cas/assets/1205228/ab73a45a-44d8-4880-bfc6-105dfd52c3a9)
 
 <div class="alert alert-info">:information_source: <strong>Note</strong><p>
 You should always use the latest version of the Intellij IDEA.
@@ -311,14 +313,14 @@ function bc() {
     --configure-on-demand --build-cache \
     --parallel -x test -x javadoc -x check -DenableRemoteDebugging=true \
     --stacktrace -DskipNestedConfigMetadataGen=true \
-    -DremoteDebuggingSuspend=false \
+    -DremoteDebuggingSuspend=false --no-configuration-cache \
     -DcasModules=${casmodules}
 }
 
 # Install JARs/WARs for use with a CAS overlay project
 alias bci='clear; cas; \
     ./gradlew clean build publishToMavenLocal \ 
-    --configure-on-demand \
+    --configure-on-demand --no-configuration-cache \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \

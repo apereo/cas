@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.RequiredArgsConstructor;
@@ -31,14 +32,18 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements Di
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
-        return watchableScript.execute("matches", Boolean.class, args);
+        return FunctionUtils.doUnchecked(() -> {
+            val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
+            return watchableScript.execute("matches", Boolean.class, args);
+        });
     }
 
     @Override
     protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
-        val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
-        return watchableScript.execute(args, byte[].class);
+        return FunctionUtils.doUnchecked(() -> {
+            val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
+            return watchableScript.execute(args, byte[].class);
+        });
     }
 
     @Override

@@ -43,6 +43,7 @@ import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
@@ -93,10 +94,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -131,9 +130,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -148,7 +145,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -161,7 +157,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
         "spring.main.allow-bean-definition-overriding=true",
-        
+
         "cas.audit.engine.audit-format=JSON",
         "cas.audit.slf4j.use-single-line=true",
 
@@ -487,16 +483,14 @@ public abstract class AbstractOAuth20Tests {
         servicesManager.load();
     }
 
-    @SneakyThrows
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
-                                                  final boolean refreshToken) {
+                                                  final boolean refreshToken) throws Throwable {
         return assertClientOK(service, refreshToken, null);
     }
 
-    @SneakyThrows
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
                                                   final boolean refreshToken,
-                                                  final String scopes) {
+                                                  final String scopes) throws Throwable {
         val principal = createPrincipal();
         val code = addCode(principal, service);
         LOGGER.debug("Added code [{}] for principal [{}]", code, principal);
@@ -547,12 +541,12 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessTokenId, refreshTokenId);
     }
 
-    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) throws Exception {
+    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) throws Throwable {
         return addCodeWithChallenge(principal, registeredService, null, null);
     }
 
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
-                                               final String codeChallenge, final String codeChallengeMethod) throws Exception {
+                                               final String codeChallenge, final String codeChallengeMethod) throws Throwable {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
@@ -564,7 +558,7 @@ public abstract class AbstractOAuth20Tests {
             tgt, new ArrayList<>(),
             codeChallenge, codeChallengeMethod, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(code);
+        ticketRegistry.addTicket(code);
         return code;
     }
 
@@ -582,7 +576,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
-                                                  final OAuthRegisteredService registeredService) throws Exception {
+                                                  final OAuthRegisteredService registeredService) throws Throwable {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -596,7 +590,7 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
                                                   final OAuthRegisteredService registeredService,
-                                                  final OAuth20AccessToken accessToken) throws Exception {
+                                                  final OAuth20AccessToken accessToken) throws Throwable {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -609,14 +603,14 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
-                                                final OAuthRegisteredService registeredService) throws Exception {
+                                                final OAuthRegisteredService registeredService) throws Throwable {
         val code = addCode(principal, registeredService);
         return addAccessToken(principal, registeredService, code.getId());
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
                                                 final OAuthRegisteredService registeredService,
-                                                final String codeId) throws Exception {
+                                                final String codeId) throws Throwable {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -628,8 +622,7 @@ public abstract class AbstractOAuth20Tests {
         return accessToken;
     }
 
-    @SneakyThrows
-    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service) throws Throwable {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
         return assertRefreshTokenOk(service, refreshToken, principal);
@@ -637,7 +630,7 @@ public abstract class AbstractOAuth20Tests {
 
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
                                                                                  final OAuth20RefreshToken refreshToken,
-                                                                                 final Principal principal) throws Exception {
+                                                                                 final Principal principal) throws Throwable {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
@@ -677,8 +670,9 @@ public abstract class AbstractOAuth20Tests {
      *
      * @param registeredService the registered service
      * @return the model and view
+     * @throws Throwable the exception
      */
-    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) {
+    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(final OAuthRegisteredService registeredService) throws Throwable {
         return generateAccessTokenResponseAndGetModelAndView(registeredService,
             RegisteredServiceTestUtils.getAuthentication("casuser"), OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
@@ -686,18 +680,17 @@ public abstract class AbstractOAuth20Tests {
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
-        final OAuth20GrantTypes grantType) {
+        final OAuth20GrantTypes grantType) throws Throwable {
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         return generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, grantType, mockRequest);
     }
 
-    @SneakyThrows
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
         final OAuthRegisteredService registeredService,
         final Authentication authentication,
         final OAuth20GrantTypes grantType,
-        final HttpServletRequest mockRequest) {
+        final HttpServletRequest mockRequest) throws Throwable {
 
         val mockResponse = new MockHttpServletResponse();
 
@@ -794,6 +787,7 @@ public abstract class AbstractOAuth20Tests {
         CasCoreTicketComponentSerializationConfiguration.class,
         CasCoreUtilSerializationConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         AbstractOAuth20Tests.OAuth20TestConfiguration.class,
         CasThymeleafConfiguration.class,
         CasThemesConfiguration.class,

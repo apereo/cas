@@ -43,7 +43,6 @@ import org.springframework.http.MediaType;
 import javax.net.ssl.SSLHandshakeException;
 
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
@@ -99,7 +98,7 @@ public class HttpUtils {
     private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
         val builder = getHttpClientBuilder(execution);
         if (StringUtils.isNotBlank(execution.getProxyUrl())) {
-            val proxyEndpoint = new URL(execution.getProxyUrl());
+            val proxyEndpoint = new URI(execution.getProxyUrl()).toURL();
             val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort());
             builder.setProxy(proxy);
         }

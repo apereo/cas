@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationMetadata")
 class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
-    void verifyAction() {
-        val p = new SurrogateAuthenticationMetaDataPopulator();
-        assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+    void verifyAction() throws Throwable {
+        val populator = new SurrogateAuthenticationMetaDataPopulator();
+        assertFalse(populator.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
         val credential = new UsernamePasswordCredential();
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
@@ -31,8 +31,8 @@ class SurrogateAuthenticationMetaDataPopulatorTests {
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         assertThrows(SurrogateAuthenticationException.class,
-            () -> p.populateAttributes(builder, mock(AuthenticationTransaction.class)));
-        p.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
+            () -> populator.populateAttributes(builder, mock(AuthenticationTransaction.class)));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         val auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 class DefaultAuthenticationAttributeReleasePolicyTests {
     @Test
-    void verifyNoRelease() {
+    void verifyNoRelease() throws Throwable {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
@@ -37,7 +37,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyNoReleaseCredential() {
+    void verifyNoReleaseCredential() throws Throwable {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -51,7 +51,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyReleaseCredentialAllowed() {
+    void verifyReleaseCredentialAllowed() throws Throwable {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -65,7 +65,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyOnlyRelease() {
+    void verifyOnlyRelease() throws Throwable {
         val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of("cn", "authnContext"),
             Set.of(), "authnContext");
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -81,7 +81,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyReleaseAll() {
+    void verifyReleaseAll() throws Throwable {
         val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of(),
             Set.of(), "authnContext");
 

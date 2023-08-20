@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class QRAuthenticationValidateTokenAction extends BaseCasWebflowAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val token = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         val deviceId = request.getParameter("deviceId");

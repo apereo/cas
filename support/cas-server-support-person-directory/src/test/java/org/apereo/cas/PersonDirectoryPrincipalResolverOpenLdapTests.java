@@ -68,7 +68,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyResolverWithTags() throws Exception {
+    void verifyResolverWithTags() throws Throwable {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
         @Cleanup
         val connection = new LDAPConnection("localhost", 11389,

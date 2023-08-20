@@ -33,7 +33,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     private CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener;
 
     @Test
-    void verifyDeleted() {
+    void verifyDeleted() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceDeletedEvent(
@@ -41,7 +41,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     }
 
     @Test
-    void verifyLoaded() {
+    void verifyLoaded() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceLoadedEvent(
@@ -49,7 +49,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     }
 
     @Test
-    void verifySaved() {
+    void verifySaved() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceSavedEvent(

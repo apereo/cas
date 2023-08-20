@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    void verifyRegistrationOperation() throws Exception {
+    void verifyRegistrationOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -44,7 +44,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyFailsId() throws Exception {
+    void verifyFailsId() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
 
@@ -59,7 +59,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyFailsMissing() throws Exception {
+    void verifyFailsMissing() throws Throwable {
         val id = RandomUtils.nextLong();
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest(id).toJson();
@@ -68,7 +68,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyNoAuth() throws Exception {
+    void verifyNoAuth() throws Throwable {
         var body = createUmaResourceRegistrationRequest(1000).toJson();
         val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(1000, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

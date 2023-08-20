@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class ServiceRegistryTests {
     @Test
-    void verifyFindById() {
+    void verifyFindById() throws Throwable {
         val component = mock(ServiceRegistry.class);
         val service = mock(RegisteredService.class);
         when(component.findServiceById(anyLong())).thenReturn(service);
@@ -28,7 +28,7 @@ class ServiceRegistryTests {
     }
 
     @Test
-    void verifyFindByName() {
+    void verifyFindByName() throws Throwable {
         val component = mock(ServiceRegistry.class);
 
         when(component.findServiceByExactServiceName(anyString())).thenReturn(null);

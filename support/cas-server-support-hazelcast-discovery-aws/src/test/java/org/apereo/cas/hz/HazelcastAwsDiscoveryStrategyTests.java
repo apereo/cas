@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("Hazelcast")
 class HazelcastAwsDiscoveryStrategyTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val strategy = new HazelcastAwsDiscoveryStrategy();
         val properties = new HazelcastClusterProperties();
         val aws = properties.getDiscovery().getAws();

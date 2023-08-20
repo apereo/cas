@@ -34,7 +34,7 @@ class DefaultTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyEncryptionKeySizes() {
+    void verifyEncryptionKeySizes() throws Throwable {
         IntStream.of(16, 32, 128, 192, 256).forEach(keySize -> {
             val cipher = new DefaultTicketCipherExecutor(null, null,
                 "AES", 512, keySize, "webflow");
@@ -48,7 +48,7 @@ class DefaultTicketCipherExecutorTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyExistingEncryptionKeySizes(final int keySize, final String encryptionKey) {
+    void verifyExistingEncryptionKeySizes(final int keySize, final String encryptionKey) {
         val signingKeySecret = "VfYEhlNRkOuG8AaWXQmG0QB7XYsvPwpTF6w8pkucuQ3E8ZMBRyesEPMvuBFyF-8czyvapyrsaTwM49x-JzZAKQ";
         val cipher = new DefaultTicketCipherExecutor(encryptionKey, signingKeySecret,
             "AES", 512, keySize, "webflow");
@@ -57,7 +57,7 @@ class DefaultTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyParameterSpecIVConsistency() {
+    void verifyParameterSpecIVConsistency() throws Throwable {
         val signingKey = "GMj2k7oO-tv65hOfz5XPrzjKGtpqzvs9lDyLfhftfoNPjBQUPMwlmP3U6sPsz1NZB-Inc3YvL8rO1k9jYzqUwQ";
         val encryptionKey = "oNNhN4m4hHBrayLpqt9gzA";
         val cipher1 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
@@ -73,7 +73,7 @@ class DefaultTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyCompatibilityWithCAS63() {
+    void verifyCompatibilityWithCAS63() throws Throwable {
         val encodedByCas63 = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LkViVE0wX0ZzMnhfam9tTzNuMGtpcXU4ODhoZ1JZZlR5bUE5bkRHOGh3aWZCazVuND"
                              + "VtTXVmZy40ZUNYYTluRFl3NnJmeEtHU1Y0c2laajh0aG1Sc1BUd0ZDa3NjMXJRYW8tSGlGVGJ6V1lMcXF4Y080TjVxNENqR3IwM0VYZGNOc3V1cV9ISTRidGVsdw==";
         val encoded = EncodingUtils.decodeBase64(encodedByCas63);

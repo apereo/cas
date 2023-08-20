@@ -63,7 +63,7 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);

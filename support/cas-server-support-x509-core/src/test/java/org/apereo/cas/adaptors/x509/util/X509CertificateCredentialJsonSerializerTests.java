@@ -30,7 +30,7 @@ class X509CertificateCredentialJsonSerializerTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val json = MAPPER.writeValueAsString(c);
         assertNotNull(json);
@@ -43,7 +43,7 @@ class X509CertificateCredentialJsonSerializerTests {
     }
 
     @Test
-    void verifyAuditableOperation() {
+    void verifyAuditableOperation() throws Throwable {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val set = new LinkedHashSet<>();
         set.add(c);

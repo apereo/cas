@@ -3,9 +3,7 @@ package org.apereo.cas.web.flow.decorator;
 import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,9 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,13 +23,12 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApi")
 class RestfulLoginWebflowDecoratorTests {
-    @SneakyThrows
-    private static String getJsonData() {
+    private static String getJsonData() throws Exception {
         return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new RestfulWebflowLoginDecoratorProperties();
         props.setUrl("http://localhost:9465");
 

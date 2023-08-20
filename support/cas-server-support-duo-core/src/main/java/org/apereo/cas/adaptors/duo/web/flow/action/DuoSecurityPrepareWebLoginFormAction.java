@@ -22,7 +22,7 @@ import java.util.Objects;
 public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class);
         Objects.requireNonNull(credential).setUsername(principal.getId());

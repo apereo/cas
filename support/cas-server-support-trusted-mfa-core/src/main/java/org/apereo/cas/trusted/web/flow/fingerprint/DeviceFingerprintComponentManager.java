@@ -35,6 +35,7 @@ public interface DeviceFingerprintComponentManager extends Ordered {
      * @param request   the request
      * @param response  the response
      * @return The fingerprint component
+     * @throws Throwable the throwable
      */
-    Optional<String> extractComponent(String principal, HttpServletRequest request, HttpServletResponse response);
+    Optional<String> extractComponent(String principal, HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

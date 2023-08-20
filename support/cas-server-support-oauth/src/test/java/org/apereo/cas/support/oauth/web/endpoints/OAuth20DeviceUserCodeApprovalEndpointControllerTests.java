@@ -35,7 +35,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     }
 
     @Test
-    void verifyGet() {
+    void verifyGet() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val mv = callbackAuthorizeController.handleGetRequest(request, response);
@@ -45,7 +45,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     }
 
     @Test
-    void verifyPostNoCode() {
+    void verifyPostNoCode() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         var mv = callbackAuthorizeController.handlePostRequest(request, response);
@@ -57,7 +57,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     }
 
     @Test
-    void verifyApproval() throws Exception {
+    void verifyApproval() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());

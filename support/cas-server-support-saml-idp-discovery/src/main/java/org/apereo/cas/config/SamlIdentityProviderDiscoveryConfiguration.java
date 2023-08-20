@@ -9,7 +9,7 @@ import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -54,8 +54,8 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryEndpointConfigurer")
-    public ProtocolEndpointWebSecurityConfigurer<Void> identityProviderDiscoveryEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+    public CasWebSecurityConfigurer<Void> identityProviderDiscoveryEndpointConfigurer() {
+        return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));

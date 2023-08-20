@@ -53,7 +53,7 @@ class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyAllowedOperation() throws Exception {
+    void verifyAllowedOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -69,7 +69,7 @@ class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyStatusCodeUnAuthz() {
+    void verifyStatusCodeUnAuthz() throws Throwable {
         assertPolicyFails(9201, HttpStatus.UNAUTHORIZED, FailedLoginException.class);
         assertPolicyFails(9202, HttpStatus.LOCKED, AccountLockedException.class);
         assertPolicyFails(9203, HttpStatus.METHOD_NOT_ALLOWED, AccountDisabledException.class);

@@ -62,7 +62,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         val ctx = SingleLogoutExecutionRequest.builder().ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build();
@@ -71,7 +71,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySendByPost() {
+    void verifySendByPost() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(samlRegisteredService.getServiceId());
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
 
@@ -81,7 +81,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyNoSaml() {
+    void verifyNoSaml() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib();
         servicesManager.save(registeredService);
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
@@ -92,7 +92,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySendByRedirect() {
+    void verifySendByRedirect() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
@@ -101,7 +101,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySkipLogoutForOriginator() throws Exception {
+    void verifySkipLogoutForOriginator() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(samlRegisteredService.getServiceId()));
         
@@ -128,7 +128,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifySoap() {
+    void verifySoap() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
 
         val registeredService = new SamlRegisteredService();

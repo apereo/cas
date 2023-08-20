@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 10389)
 class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
         assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
     }
 
     @Test
-    void verifyNoFilterOperation() {
+    void verifyNoFilterOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--userPassword_password_--userAttributes_cn";
         assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
@@ -58,7 +58,7 @@ class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
@@ -67,7 +67,7 @@ class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    void verifyBadUrlOperation() {
+    void verifyBadUrlOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10399_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
@@ -77,7 +77,7 @@ class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
 
 
     @Test
-    void verifyNoResult() {
+    void verifyNoResult() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
                   + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
 

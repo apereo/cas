@@ -33,7 +33,7 @@ class NexmoSmsSenderTests {
     private SmsSender smsSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(smsSender.canSend());
         assertFalse(smsSender.send("3477464532", "3477462341", "This is a text"));
     }

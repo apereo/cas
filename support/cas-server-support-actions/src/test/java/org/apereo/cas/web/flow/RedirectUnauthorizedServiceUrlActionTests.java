@@ -33,7 +33,7 @@ class RedirectUnauthorizedServiceUrlActionTests extends AbstractWebflowActionsTe
     private Action action;
 
     @Test
-    void verifyUrl() throws Exception {
+    void verifyUrl() throws Throwable {
         val context = getMockRequestContext();
         val url = new URI("https://github.com/apereo/cas");
         WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, url);
@@ -42,7 +42,7 @@ class RedirectUnauthorizedServiceUrlActionTests extends AbstractWebflowActionsTe
     }
 
     @Test
-    void verifyScript() throws Exception {
+    void verifyScript() throws Throwable {
         val context = getMockRequestContext();
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);

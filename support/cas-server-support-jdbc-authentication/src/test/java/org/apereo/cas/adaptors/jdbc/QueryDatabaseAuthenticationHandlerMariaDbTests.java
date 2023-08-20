@@ -62,9 +62,9 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
-            c.setAutoCommit(true);
-            try (val pstmt = c.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {
+        try (val connection = this.dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            try (val pstmt = connection.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {
                 pstmt.setString(1, "casuser");
                 pstmt.setString(2, "Mellon");
                 pstmt.setString(3, "earth");
@@ -84,7 +84,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     }
 
     @Test
-    void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("location"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),

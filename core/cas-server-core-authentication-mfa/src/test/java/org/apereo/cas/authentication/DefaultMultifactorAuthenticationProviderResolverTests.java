@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultMultifactorAuthenticationProviderResolverTests {
     private static void assertProviderResolutionFromManyProviders(final MultifactorAuthenticationTrigger trigger,
                                                                   final ConfigurableApplicationContext applicationContext,
-                                                                  final boolean assertPresence) {
+                                                                  final boolean assertPresence) throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -80,7 +80,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyMultipleProvidersWithPrincipalAttributes() {
+    void verifyMultipleProvidersWithPrincipalAttributes() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -98,7 +98,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyInvalidPrincipalAttributes() {
+    void verifyInvalidPrincipalAttributes() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val casProperties = new CasConfigurationProperties();
@@ -109,7 +109,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyMultipleProvidersWithAuthenticationAttributes() {
+    void verifyMultipleProvidersWithAuthenticationAttributes() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -123,7 +123,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyResolutionByAuthenticationAttribute() {
+    void verifyResolutionByAuthenticationAttribute() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -146,7 +146,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyResolutionByPrincipalAttribute() {
+    void verifyResolutionByPrincipalAttribute() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -180,7 +180,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -196,7 +196,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    void verifyNoMatch() {
+    void verifyNoMatch() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

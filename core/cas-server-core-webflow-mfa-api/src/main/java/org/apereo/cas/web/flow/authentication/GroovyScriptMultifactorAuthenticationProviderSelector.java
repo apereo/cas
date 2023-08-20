@@ -21,7 +21,7 @@ import java.util.Collection;
  */
 @Slf4j
 public class GroovyScriptMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyScriptMultifactorAuthenticationProviderSelector(final Resource resource) {
         this.watchableScript = new WatchableGroovyScriptResource(resource);
@@ -29,7 +29,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                                     final RegisteredService service, final Principal principal) {
+                                                     final RegisteredService service, final Principal principal) throws Throwable {
         val args = new Object[]{service, principal, providers, LOGGER};
         LOGGER.debug("Invoking Groovy script with service=[{}], principal=[{}], providers=[{}]", service, principal, providers);
         val provider = watchableScript.execute(args, String.class);

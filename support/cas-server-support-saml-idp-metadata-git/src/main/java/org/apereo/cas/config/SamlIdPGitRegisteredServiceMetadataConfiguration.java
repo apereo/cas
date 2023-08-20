@@ -116,7 +116,7 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
         @Override
         public void run() {
             FunctionUtils.doUnchecked(__ -> {
-                val origin = StringUtils.defaultString(gitRepository.getRepositoryRemote("origin"), "default");
+                val origin = StringUtils.defaultIfBlank(gitRepository.getRepositoryRemote("origin"), "default");
                 LOGGER.debug("Starting to pull SAML registered services from [{}]", origin);
                 gitRepository.pull();
             });

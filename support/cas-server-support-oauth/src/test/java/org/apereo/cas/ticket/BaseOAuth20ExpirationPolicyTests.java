@@ -108,7 +108,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
-    protected static TicketGrantingTicket newTicketGrantingTicket() {
+    protected static TicketGrantingTicket newTicketGrantingTicket() throws Throwable {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -116,7 +116,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
             EXP_POLICY_TGT);
     }
 
-    protected OAuth20Code createOAuthCode() {
+    protected OAuth20Code createOAuthCode() throws Throwable {
         val builder = mock(ExpirationPolicyBuilder.class);
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -129,7 +129,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
-    protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) {
+    protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) throws Throwable {
         val code = createOAuthCode();
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(),
@@ -137,7 +137,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
-    protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {
+    protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) throws Throwable {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345", at.getId(),

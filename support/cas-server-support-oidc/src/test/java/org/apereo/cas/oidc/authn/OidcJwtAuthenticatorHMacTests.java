@@ -54,7 +54,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
-    void verifyBadAlgAction() throws Exception {
+    void verifyBadAlgAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -68,9 +68,9 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
         val keyGen = KeyPairGenerator.getInstance("RSA");
         val pair = keyGen.generateKeyPair();
-        val priv = pair.getPrivate();
+        val privateKey = pair.getPrivate();
 
-        val jwt = EncodingUtils.signJwsRSASha512(priv, claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
+        val jwt = EncodingUtils.signJwsRSASha512(privateKey, claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
         auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
@@ -78,12 +78,12 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     }
 
     private Authenticator getAuthenticator() {
-        val c = (BaseClient) oidcJwtClientProvider.createClient();
-        return c.getAuthenticator();
+        val client = (BaseClient) oidcJwtClientProvider.createClient();
+        return client.getAuthenticator();
     }
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -109,7 +109,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyDisabledServiceAction() throws Exception {
+    void verifyDisabledServiceAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -136,7 +136,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyNoUserAction() throws Exception {
+    void verifyNoUserAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -150,7 +150,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadJwt() throws Exception {
+    void verifyBadJwt() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -166,7 +166,7 @@ class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
 
     private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
                                                        final String uid, final String password,
-                                                       final String clientId) throws Exception {
+                                                       final String clientId) throws Throwable {
         val credentials = new UsernamePasswordCredentials(uid, password);
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),

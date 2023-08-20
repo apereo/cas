@@ -1,5 +1,11 @@
 configurations.configureEach {
     resolutionStrategy {
+        capabilitiesResolution {
+            withCapability("com.google.collections:google-collections") {
+                selectHighestVersion()
+            }
+        }
+        
         if (!providers.systemProperty("skipVersionConflict").present) {
             failOnVersionConflict()
         }
@@ -19,6 +25,9 @@ configurations.configureEach {
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
+                if (requested.group == "com.google.guava" && requested.name == "guava")  {
+                    details.useVersion("$guavaVersion")
+                }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
@@ -30,6 +39,9 @@ configurations.configureEach {
                 }
                 if (requested.name == "hibernate-validator") {
                     details.useVersion("${hibernateValidatorVersion}")
+                }
+                if (requested.name == "commons-lang3") {
+                    details.useVersion("${commonsLangVersion}")
                 }
                 if (requested.group == "org.hibernate.orm")  {
                     details.useVersion("${hibernateVersion}")

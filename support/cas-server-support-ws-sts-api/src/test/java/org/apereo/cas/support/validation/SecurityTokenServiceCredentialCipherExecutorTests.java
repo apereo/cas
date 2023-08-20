@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SecurityTokenServiceCredentialCipherExecutorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cipher = new SecurityTokenServiceCredentialCipherExecutor(null,
             null, null, 0, 0);
         val encoded = cipher.encode("value");

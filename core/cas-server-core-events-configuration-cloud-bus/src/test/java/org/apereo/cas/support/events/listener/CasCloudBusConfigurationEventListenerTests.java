@@ -38,7 +38,7 @@ class CasCloudBusConfigurationEventListenerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(casCloudBusConfigurationEventListener);
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshRemoteApplicationEvent(this, "service", "destination")));

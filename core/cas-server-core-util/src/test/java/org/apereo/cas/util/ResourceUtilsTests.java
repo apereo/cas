@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class ResourceUtilsTests {
     @Test
-    void verifyResourceExists() {
+    void verifyResourceExists() throws Throwable {
         assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         val resourceLoader = mock(ResourceLoader.class);
@@ -44,7 +44,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyResourceOnClasspath() {
+    void verifyResourceOnClasspath() throws Throwable {
         val res = new ClassPathResource("valid.json");
         assertNotNull(ResourceUtils.prepareClasspathResourceIfNeeded(res, false, "valid"));
         assertNull(ResourceUtils.prepareClasspathResourceIfNeeded(null, false, "valid"));
@@ -52,7 +52,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyPrepare() {
+    void verifyPrepare() throws Throwable {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), false, ".*");
@@ -60,7 +60,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyPrepareDir() {
+    void verifyPrepareDir() throws Throwable {
         val url = getClass().getClassLoader().getResource("META-INF");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), true, "MANIFEST");
@@ -68,7 +68,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyExport() throws Exception {
+    void verifyExport() throws Throwable {
         val resourceName = "META-INF/additional-spring-configuration-metadata.json";
         val url = getClass().getClassLoader().getResource(resourceName);
         assertNotNull(url);
@@ -90,7 +90,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyClasspathResourceDirectory() {
+    void verifyClasspathResourceDirectory() throws Throwable {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val file = new File(url.toExternalForm()).getParentFile();

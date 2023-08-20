@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
-    void verifyAuthorizedByGroup() {
+    void verifyAuthorizedByGroup() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();

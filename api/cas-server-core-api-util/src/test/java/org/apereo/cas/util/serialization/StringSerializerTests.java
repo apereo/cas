@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class StringSerializerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(StringSerializer.class);
         when(input.supports(any(File.class))).thenCallRealMethod();
         when(input.supports(anyString())).thenCallRealMethod();

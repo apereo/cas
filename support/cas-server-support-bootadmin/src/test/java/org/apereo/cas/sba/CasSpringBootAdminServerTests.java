@@ -3,7 +3,7 @@ package org.apereo.cas.sba;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasSpringBootAdminConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration;
@@ -66,7 +66,7 @@ import static org.mockito.Mockito.*;
 public class CasSpringBootAdminServerTests {
     @Autowired
     @Qualifier("springBootAdminEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer;
+    private CasWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer;
 
     @Autowired
     @Qualifier("springBootAdminWebClientCustomizer")
@@ -81,7 +81,7 @@ public class CasSpringBootAdminServerTests {
     private InstanceIdGenerator instanceIdGenerator;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(springBootAdminEndpointConfigurer);
         assertNotNull(springBootAdminWebClientCustomizer);
         assertNotNull(registrationClient);
@@ -95,7 +95,7 @@ public class CasSpringBootAdminServerTests {
     }
 
     @Test
-    void verifyInstanceIdGeneration() {
+    void verifyInstanceIdGeneration() throws Throwable {
         val registration1 = Registration.create("Cas1", "https://localhost:8443/cas/actuator/health")
             .metadata("name", "CASInstance").build();
         val registration2 = Registration.create("Cas2", "https://localhost:8443/cas/actuator/health").build();

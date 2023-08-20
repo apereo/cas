@@ -61,7 +61,7 @@ public class UserAuthenticationResource {
         })
     public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       final HttpServletRequest request,
-                                                      final HttpServletResponse response) {
+                                                      final HttpServletResponse response) throws Throwable {
         try {
             val authenticationResult = authenticationService.authenticate(requestBody, request, response);
             val result = authenticationResult.orElseThrow(FailedLoginException::new);

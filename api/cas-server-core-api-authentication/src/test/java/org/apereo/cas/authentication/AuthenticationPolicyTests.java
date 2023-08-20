@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(AuthenticationPolicy.class);
         when(policy.getOrder()).thenCallRealMethod();
         when(policy.shouldResumeOnFailure(any())).thenCallRealMethod();

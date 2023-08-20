@@ -52,7 +52,7 @@ class InMemoryPasswordHistoryServiceTests {
     private PasswordHistoryService passwordHistoryService;
 
     @Test
-    void verifyValidity() {
+    void verifyValidity() throws Throwable {
         passwordHistoryService.removeAll();
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
 

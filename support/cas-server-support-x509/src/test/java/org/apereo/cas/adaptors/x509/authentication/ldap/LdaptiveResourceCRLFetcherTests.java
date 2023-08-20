@@ -68,12 +68,12 @@ class LdaptiveResourceCRLFetcherTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val config = mock(ConnectionConfig.class);
         val operation = mock(SearchOperation.class);
         val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
         assertNull(fetcher.fetch(new URI("https://github.com")));
-        assertNull(fetcher.fetch(new URL("https://github.com")));
+        assertNull(fetcher.fetch(new URI("https://github.com").toURL()));
         assertNull(fetcher.fetch("https://github.com"));
     }
 
@@ -87,7 +87,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -104,7 +104,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -120,7 +120,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertNotNull(fetcher.fetch(resource));

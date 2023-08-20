@@ -1,9 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -49,11 +47,9 @@ public interface CentralAuthenticationService {
      *
      * @param authenticationResult the current authentication result in order to create the ticket.
      * @return Non -null ticket-granting ticket identifier.
-     * @throws AuthenticationException on errors authenticating the credentials
-     * @throws AbstractTicketException if ticket cannot be created
+     * @throws Throwable the throwable
      */
-    TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult)
-        throws AuthenticationException, AbstractTicketException;
+    TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Grant a {@link ServiceTicket} that may be used to access the given service
@@ -70,11 +66,9 @@ public interface CentralAuthenticationService {
      * @param service                The target service of the ServiceTicket.
      * @param authenticationResult   The authentication context established if credentials provided
      * @return Non -null service ticket identifier.
-     * @throws AuthenticationException on errors authenticating the credentials
-     * @throws AbstractTicketException if the ticket could not be created.
+     * @throws Throwable the throwable
      */
-    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult)
-        throws AuthenticationException, AbstractTicketException;
+    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Grant a {@link ProxyTicket} that may be used to access the given service
@@ -90,9 +84,9 @@ public interface CentralAuthenticationService {
      * @param proxyGrantingTicket Proof of prior authentication.
      * @param service             The target service of the ServiceTicket.
      * @return Non -null service ticket identifier.
-     * @throws AbstractTicketException if the ticket could not be created.
+     * @throws Throwable the throwable
      */
-    ProxyTicket grantProxyTicket(String proxyGrantingTicket, Service service) throws AbstractTicketException;
+    ProxyTicket grantProxyTicket(String proxyGrantingTicket, Service service) throws Throwable;
 
     /**
      * Validate a {@link ServiceTicket} for a particular Service.
@@ -100,9 +94,9 @@ public interface CentralAuthenticationService {
      * @param serviceTicketId Proof of prior authentication.
      * @param service         Service wishing to validate a prior authentication.
      * @return Non -null ticket validation assertion.
-     * @throws AbstractTicketException if there was an error validating the ticket.
+     * @throws Throwable the throwable
      */
-    Assertion validateServiceTicket(String serviceTicketId, Service service) throws AbstractTicketException;
+    Assertion validateServiceTicket(String serviceTicketId, Service service) throws Throwable;
 
     /**
      * Delegate a {@link TicketGrantingTicket}  to a Service for proxying authentication
@@ -111,11 +105,9 @@ public interface CentralAuthenticationService {
      * @param serviceTicketId      The service ticket identifier that will delegate to a {@link TicketGrantingTicket}.
      * @param authenticationResult The current authentication context before this ticket can be granted.
      * @return Non -null ticket-granting ticket identifier that can grant {@link ServiceTicket} that proxy authentication.
-     * @throws AuthenticationException on errors authenticating the credentials
-     * @throws AbstractTicketException if there was an error creating the ticket
+     * @throws Throwable the throwable
      */
-    ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult)
-        throws AuthenticationException, AbstractTicketException;
+    ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Gets ticket factory.

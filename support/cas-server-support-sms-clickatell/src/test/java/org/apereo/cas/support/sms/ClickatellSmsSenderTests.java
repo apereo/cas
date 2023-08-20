@@ -37,7 +37,7 @@ class ClickatellSmsSenderTests {
     private SmsSender smsSender;
 
     @Test
-    void verifySmsSender() {
+    void verifySmsSender() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + '{'
@@ -64,7 +64,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyError() {
+    void verifyError() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "],"
@@ -80,7 +80,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyUnacceptable() {
+    void verifyUnacceptable() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\": \"false\", \"error\": \"fails\"}"
@@ -95,7 +95,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyBadPayload() {
+    void verifyBadPayload() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\":..."
@@ -110,7 +110,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyBadSmsSender() {
+    void verifyBadSmsSender() throws Throwable {
         try (val webServer = new MockWebServer(8099,
             new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();

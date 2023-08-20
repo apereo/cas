@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class PathRegexPatternTreeFilterTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val filter = new PathRegexPatternTreeFilter(RegexUtils.createPattern(".+"));
         val walker = mock(TreeWalk.class);
         when(walker.isSubtree()).thenReturn(Boolean.TRUE);

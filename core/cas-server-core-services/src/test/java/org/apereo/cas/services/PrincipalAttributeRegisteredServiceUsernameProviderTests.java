@@ -39,7 +39,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyUsernameByPrincipalAttributeWithMapping() {
+    void verifyUsernameByPrincipalAttributeWithMapping() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("email");
 
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
@@ -64,7 +64,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyUsernameByPrincipalAttributeAsCollection() {
+    void verifyUsernameByPrincipalAttributeAsCollection() throws Throwable {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
@@ -84,7 +84,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyUsernameByPrincipalAttribute() {
+    void verifyUsernameByPrincipalAttribute() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
         val attrs = new HashMap<String, List<Object>>();
@@ -102,7 +102,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyNoAttrRelPolicy() {
+    void verifyNoAttrRelPolicy() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
         val attrs = new HashMap<String, List<Object>>();
@@ -124,7 +124,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyDisabledService() {
+    void verifyDisabledService() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
         val attrs = new HashMap<String, List<Object>>();
@@ -146,7 +146,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyUsernameByPrincipalAttributeNotFound() {
+    void verifyUsernameByPrincipalAttributeNotFound() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
         val attrs = new HashMap<String, List<Object>>();
@@ -164,7 +164,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyUsernameUndefined() {
+    void verifyUsernameUndefined() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
         val p = RegisteredServiceTestUtils.getPrincipal("person");
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
@@ -177,14 +177,14 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyEquality() {
+    void verifyEquality() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         val provider2 = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         assertEquals(provider, provider2);
     }
 
     @Test
-    void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws Exception {
+    void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws Throwable {
         val providerWritten = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         MAPPER.writeValue(JSON_FILE, providerWritten);
         val providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);

@@ -43,7 +43,7 @@ class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(1)
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();

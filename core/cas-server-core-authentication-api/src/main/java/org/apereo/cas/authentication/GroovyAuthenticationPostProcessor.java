@@ -27,13 +27,13 @@ public class GroovyAuthenticationPostProcessor implements AuthenticationPostProc
     }
 
     @Override
-    public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
+    public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{builder, transaction, LOGGER};
         watchableScript.execute(args, Void.class);
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public boolean supports(final Credential credential) throws Throwable {
         val args = new Object[]{credential, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
     }

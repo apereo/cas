@@ -65,7 +65,7 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
+        void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Throwable {
             request.addParameter("service", TEST_SERVICE_ID);
             val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
@@ -77,7 +77,7 @@ class LogoutActionTests {
         }
 
         @Test
-        void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
+        void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Throwable {
             val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
             service.setName(TEST_SERVICE_ID);
@@ -99,7 +99,7 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        void verifyLogoutNoCookie() throws Exception {
+        void verifyLogoutNoCookie() throws Throwable {
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
@@ -127,7 +127,7 @@ class LogoutActionTests {
         }
 
         @Test
-        void verifyLogoutCookie() throws Exception {
+        void verifyLogoutCookie() throws Throwable {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val event = logoutAction.execute(requestContext);
@@ -135,7 +135,7 @@ class LogoutActionTests {
         }
 
         @Test
-        void verifyLogoutRequestBack() throws Exception {
+        void verifyLogoutRequestBack() throws Throwable {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -151,7 +151,7 @@ class LogoutActionTests {
         }
 
         @Test
-        void verifyLogoutRequestFront() throws Exception {
+        void verifyLogoutRequestFront() throws Throwable {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()

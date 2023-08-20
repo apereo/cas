@@ -31,14 +31,14 @@ class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests exten
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Throwable {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         request.addHeader("cas-header-name", "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        val c = WebUtils.getCredential(context);
-        assertEquals("casuser", c.getId());
+        val credential = WebUtils.getCredential(context);
+        assertEquals("casuser", credential.getId());
     }
 }

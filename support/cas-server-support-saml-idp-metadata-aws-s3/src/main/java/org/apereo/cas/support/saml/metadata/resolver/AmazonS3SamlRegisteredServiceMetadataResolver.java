@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private final transient S3Client s3Client;
+    private final S3Client s3Client;
 
     private final String bucketName;
 

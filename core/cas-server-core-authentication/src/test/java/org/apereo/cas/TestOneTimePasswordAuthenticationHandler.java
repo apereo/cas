@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
 import java.util.Map;
 
 /**
@@ -37,7 +36,7 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws Throwable {
         val otp = (OneTimePasswordCredential) credential;
         val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {

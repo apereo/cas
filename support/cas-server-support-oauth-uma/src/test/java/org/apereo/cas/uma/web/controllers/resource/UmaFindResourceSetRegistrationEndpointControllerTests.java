@@ -30,7 +30,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -42,7 +42,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyUnAuthOperation() throws Exception {
+    void verifyUnAuthOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -57,7 +57,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyFailsToFind() {
+    void verifyFailsToFind() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

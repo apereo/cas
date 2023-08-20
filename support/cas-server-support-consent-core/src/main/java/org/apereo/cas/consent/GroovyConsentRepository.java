@@ -23,32 +23,32 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
 
     private final WatchableGroovyScriptResource watchableScript;
 
-    public GroovyConsentRepository(final Resource groovyResource) {
+    public GroovyConsentRepository(final Resource groovyResource) throws Throwable {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
         setConsentDecisions(readDecisionsFromGroovyResource());
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
         val result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecision(final long decisionId, final String principal) throws Throwable {
         super.deleteConsentDecision(decisionId, principal);
         return watchableScript.execute("delete", Boolean.class, decisionId, principal, LOGGER);
     }
 
     @Override
-    public boolean deleteConsentDecisions(final String principal) {
+    public boolean deleteConsentDecisions(final String principal) throws Throwable {
         super.deleteConsentDecisions(principal);
         return watchableScript.execute("deletePrincipal", Boolean.class, principal, LOGGER);
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteAll() throws Throwable {
         super.deleteAll();
         watchableScript.execute("deleteAll", Void.class, LOGGER);
     }
@@ -58,11 +58,11 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
         this.watchableScript.close();
     }
 
-    private void writeAccountToGroovyResource(final ConsentDecision decision) {
+    private void writeAccountToGroovyResource(final ConsentDecision decision) throws Throwable {
         watchableScript.execute("write", Boolean.class, decision, LOGGER);
     }
 
-    private Set<ConsentDecision> readDecisionsFromGroovyResource() {
+    private Set<ConsentDecision> readDecisionsFromGroovyResource() throws Throwable {
         return watchableScript.execute("read", Set.class, getConsentDecisions(), LOGGER);
     }
 }

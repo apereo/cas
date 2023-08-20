@@ -27,7 +27,7 @@ public class AuthyAuthenticationRegistrationWebflowAction extends BaseCasWebflow
     private final AuthyClientInstance instance;
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val principal = WebUtils.getAuthentication(context).getPrincipal();
         val user = instance.getOrCreateUser(principal);
         if (!user.isOk()) {

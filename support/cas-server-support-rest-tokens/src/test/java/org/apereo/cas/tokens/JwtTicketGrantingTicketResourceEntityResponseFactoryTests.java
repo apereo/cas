@@ -29,7 +29,7 @@ class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTick
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyTicketGrantingTicketAsDefault() throws Exception {
+    void verifyTicketGrantingTicketAsDefault() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
@@ -42,7 +42,7 @@ class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTick
     }
 
     @Test
-    void verifyTicketGrantingTicketAsJwt() throws Exception {
+    void verifyTicketGrantingTicketAsJwt() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
@@ -69,7 +69,7 @@ class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTick
     }
 
     @Test
-    void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
+    void verifyTicketGrantingTicketAsJwtWithHeader() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 

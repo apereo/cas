@@ -94,7 +94,7 @@ class DefaultRestAuthenticationServiceTests {
     private RestAuthenticationService restAuthenticationService;
 
     @Test
-    void verifyAuthentication() {
+    void verifyAuthentication() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 

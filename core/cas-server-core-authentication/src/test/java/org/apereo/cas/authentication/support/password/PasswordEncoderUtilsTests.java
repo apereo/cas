@@ -41,7 +41,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyNoType() {
+    void verifyNoType() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setType(null);
         var encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -52,7 +52,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyArgon2() {
+    void verifyArgon2() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.ARGON2.name());
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -60,7 +60,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyBcryptType() {
+    void verifyBcryptType() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setSecret(null);
         properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.BCRYPT.name());
@@ -69,7 +69,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyPbkdf2() {
+    void verifyPbkdf2() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setSecret(UUID.randomUUID().toString());
         properties.setStrength(16);
@@ -79,7 +79,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyGroovyType() {
+    void verifyGroovyType() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setType("classpath:/GroovyPasswordEncoder.groovy");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -87,7 +87,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyClassType() {
+    void verifyClassType() throws Throwable {
         val properties = new PasswordEncoderProperties();
         properties.setType("org.example.cas.SamplePasswordEncoder");
         val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, applicationContext);
@@ -95,7 +95,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @Test
-    void verifyAvailableTypes() {
+    void verifyAvailableTypes() throws Throwable {
         val secret = UUID.randomUUID().toString();
         Arrays.stream(PasswordEncoderProperties.PasswordEncoderTypes.values()).forEach(type -> {
             val properties = new PasswordEncoderProperties();

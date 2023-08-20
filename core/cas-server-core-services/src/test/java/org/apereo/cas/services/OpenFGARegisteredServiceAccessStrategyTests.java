@@ -45,7 +45,7 @@ class OpenFGARegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val strategy = new OpenFGARegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");

@@ -20,7 +20,7 @@ class JwtTicketCipherExecutorTests {
     public static final String ST = "ST-1234567890";
 
     @Test
-    void verifyCipheredToken() {
+    void verifyCipheredToken() throws Throwable {
         val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true, 0, 0);
         val token = c.encode(ST);
@@ -28,7 +28,7 @@ class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyCipheredTokenWithoutEncryption() {
+    void verifyCipheredTokenWithoutEncryption() throws Throwable {
         val c = new JwtTicketCipherExecutor(null,
             "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false, 0, 0);
         val token = c.encode(ST);
@@ -36,7 +36,7 @@ class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyCipheredTokenWithoutEncryptionAndSigning() {
+    void verifyCipheredTokenWithoutEncryptionAndSigning() throws Throwable {
         val c = new JwtTicketCipherExecutor();
         c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
         val token = c.encode(ST);
@@ -44,7 +44,7 @@ class JwtTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyCipheredTokenWithSignAndEncrypt() {
+    void verifyCipheredTokenWithSignAndEncrypt() throws Throwable {
         val c = new JwtTicketCipherExecutor(null, null, true, 0, 0);
         c.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.SIGN_AND_ENCRYPT);
         val token = c.encode(ST);

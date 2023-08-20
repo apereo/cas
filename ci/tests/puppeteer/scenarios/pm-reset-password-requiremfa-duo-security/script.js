@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "#forgotPasswordLink");
     await page.waitForTimeout(2000);
     await cas.type(page,'#username', "duobypass");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(8000);
     await cas.screenshot(page);

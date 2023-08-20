@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class AcceptUserGraphicsForAuthenticationAction extends BaseCasWebflowAction {
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val username = requestContext.getRequestParameters().get("username");
         WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
         WebUtils.putGraphicalUserAuthenticationUsername(requestContext, username);

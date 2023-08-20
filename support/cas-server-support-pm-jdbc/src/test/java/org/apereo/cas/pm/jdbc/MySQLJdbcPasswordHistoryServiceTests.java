@@ -25,7 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         passwordHistoryService.removeAll();
     }
 }

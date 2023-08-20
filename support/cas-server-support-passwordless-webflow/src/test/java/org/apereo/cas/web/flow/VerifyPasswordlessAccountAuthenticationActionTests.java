@@ -42,7 +42,7 @@ class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordles
     private Action verifyPasswordlessAccountAuthenticationAction;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = getRequestContext("casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
@@ -51,7 +51,7 @@ class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    void verifyNoUserInfoAction() throws Exception {
+    void verifyNoUserInfoAction() throws Throwable {
         val context = getRequestContext("nouserinfo");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class);
@@ -59,20 +59,20 @@ class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    void verifyInvalidUser() throws Exception {
+    void verifyInvalidUser() throws Throwable {
         val context = getRequestContext("unknown");
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
     @Test
-    void verifyRequestPassword() throws Exception {
+    void verifyRequestPassword() throws Throwable {
         val context = getRequestContext("needs-password");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT,
             verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
     @Test
-    void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Exception {
+    void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Throwable {
         val context = getRequestContext("needs-password-user-without-email-or-phone");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }

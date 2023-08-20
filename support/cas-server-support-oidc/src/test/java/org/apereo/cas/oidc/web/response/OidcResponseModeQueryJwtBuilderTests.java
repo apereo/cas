@@ -33,7 +33,7 @@ class OidcResponseModeQueryJwtBuilderTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DisabledTests extends AbstractOidcTests {
         @Test
-        void verifyResponseModeWithoutCrypto() throws Exception {
+        void verifyResponseModeWithoutCrypto() throws Throwable {
             val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);
@@ -51,7 +51,7 @@ class OidcResponseModeQueryJwtBuilderTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyResponseModeForService() throws Exception {
+        void verifyResponseModeForService() throws Throwable {
             val registeredService = getOidcRegisteredService("client");
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);
@@ -66,7 +66,7 @@ class OidcResponseModeQueryJwtBuilderTests {
         }
 
         @Test
-        void verifyResponseModeForDefault() throws Exception {
+        void verifyResponseModeForDefault() throws Throwable {
             val registeredService = getOidcRegisteredService("client").setJwks(StringUtils.EMPTY);
             servicesManager.save(registeredService);
             val builder = oauthResponseModeFactory.getBuilder(registeredService, OAuth20ResponseModeTypes.QUERY_JWT);

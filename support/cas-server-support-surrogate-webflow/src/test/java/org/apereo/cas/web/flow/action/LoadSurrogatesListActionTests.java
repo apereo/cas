@@ -44,7 +44,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     private Action loadSurrogatesListAction;
 
     @Test
-    void verifyGetListView() throws Exception {
+    void verifyGetListView() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -57,7 +57,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     }
 
     @Test
-    void verifyAuthenticate() throws Exception {
+    void verifyAuthenticate() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
@@ -86,7 +86,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     }
 
     @Test
-    void verifyAuthenticateNotAuthorized() throws Exception {
+    void verifyAuthenticateNotAuthorized() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
@@ -115,7 +115,7 @@ class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     }
 
     @Test
-    void verifySkipAuthenticate() throws Exception {
+    void verifySkipAuthenticate() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);

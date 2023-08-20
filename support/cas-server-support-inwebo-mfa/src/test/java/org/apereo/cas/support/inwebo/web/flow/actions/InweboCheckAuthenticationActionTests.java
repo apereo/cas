@@ -33,7 +33,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyGoodOtp() throws Exception {
+    void verifyGoodOtp() throws Throwable {
         request.addParameter("otp", OTP);
         when(service.authenticateExtended(LOGIN, OTP)).thenReturn(deviceResponse(InweboResult.OK));
 
@@ -43,7 +43,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyBadOtp() throws Exception {
+    void verifyBadOtp() throws Throwable {
         request.addParameter("otp", OTP);
         when(service.authenticateExtended(LOGIN, OTP)).thenReturn(deviceResponse(InweboResult.NOK));
 
@@ -53,7 +53,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushValidated() throws Exception {
+    void verifyPushValidated() throws Throwable {
         requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.OK));
 
@@ -63,7 +63,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushNotValidatedYet() throws Exception {
+    void verifyPushNotValidatedYet() throws Throwable {
         requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.WAITING));
 
@@ -73,7 +73,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushRefusedOrTimeout() throws Exception {
+    void verifyPushRefusedOrTimeout() throws Throwable {
         requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.REFUSED));
 
@@ -83,7 +83,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushError() throws Exception {
+    void verifyPushError() throws Throwable {
         requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.NOK));
 

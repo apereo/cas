@@ -35,7 +35,7 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     private SingleLogoutServiceLogoutUrlBuilder samlLogoutUrlBuilder;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp");
         val results = samlLogoutUrlBuilder.determineLogoutUrl(samlRegisteredService, service);
@@ -45,7 +45,7 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyRedirectOperation() {
+    void verifyRedirectOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService("https://mocky.io");
         val results = samlLogoutUrlBuilder.determineLogoutUrl(samlRegisteredService, service);
@@ -54,7 +54,7 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyChainOperation() {
+    void verifyChainOperation() throws Throwable {
         val defaultBuilder = new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance());
         val chain = new ChainingSingleLogoutServiceLogoutUrlBuilder(List.of(samlLogoutUrlBuilder, defaultBuilder));
 
@@ -69,7 +69,7 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifySoapOperation() {
+    void verifySoapOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
         val results = samlLogoutUrlBuilder.determineLogoutUrl(samlRegisteredService, service);
@@ -78,7 +78,7 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyNoOperation() {
+    void verifyNoOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService("no:slo:service");
         val results = samlLogoutUrlBuilder.determineLogoutUrl(samlRegisteredService, service);
@@ -86,14 +86,14 @@ class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyFailsLogoutUrl() {
+    void verifyFailsLogoutUrl() throws Throwable {
         val results = samlLogoutUrlBuilder.determineLogoutUrl(SamlIdPTestUtils.getSamlRegisteredService(),
             RegisteredServiceTestUtils.getService("https://bad-sp"));
         assertTrue(results.isEmpty());
     }
 
     @Test
-    void verifyBadInput() {
+    void verifyBadInput() throws Throwable {
         val results = samlLogoutUrlBuilder.determineLogoutUrl(SamlIdPTestUtils.getSamlRegisteredService(), null);
         assertTrue(results.isEmpty());
     }

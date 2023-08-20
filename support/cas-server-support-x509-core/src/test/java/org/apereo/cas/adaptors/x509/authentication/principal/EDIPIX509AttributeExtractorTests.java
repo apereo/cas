@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,14 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 class EDIPIX509AttributeExtractorTests {
 
-    @SneakyThrows
-    private X509Certificate getCertificate(final String certLocation) {
+    private static X509Certificate getCertificate(final String certLocation) throws Exception {
         return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                 ResourceUtils.getRawResourceFrom(certLocation).getInputStream());
     }
 
     @Test
-    void verifyExtractedAttributes() {
+    void verifyExtractedAttributes() throws Throwable {
         val extractor = new EDIPIX509AttributeExtractor();
         val attributes = extractor.extractPersonAttributes(getCertificate("classpath:/x509-san-upn-resolver.crt"));
         assertNull(attributes.get("x509EDIPI"));

@@ -40,7 +40,7 @@ class CasServicesStreamingHazelcastConfigurationTests {
     private CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }

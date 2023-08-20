@@ -29,6 +29,7 @@ public interface AuditableExecution {
      *
      * @param context the context
      * @return the result
+     * @throws Throwable the throwable
      */
-    AuditableExecutionResult execute(AuditableContext context);
+    AuditableExecutionResult execute(AuditableContext context) throws Throwable;
 }

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultRegisteredServiceDomainExtractorTests {
 
     @Test
-    void verifyDomains() {
+    void verifyDomains() throws Throwable {
         val ext = new DefaultRegisteredServiceDomainExtractor();
         assertEquals("www.example.org", ext.extract("https://www.example.org"));
         assertEquals("example.org", ext.extract("https://example.org"));

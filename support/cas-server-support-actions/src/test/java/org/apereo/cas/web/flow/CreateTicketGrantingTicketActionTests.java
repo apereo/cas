@@ -46,7 +46,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     private Action action;
 
     @Test
-    void verifySkipTgt() throws Exception {
+    void verifySkipTgt() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     }
 
     @Test
-    void verifyCreateTgt() throws Exception {
+    void verifyCreateTgt() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -91,7 +91,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     }
 
     private static void prepareRequestContextForAuthentication(final MockRequestContext context,
-                                                               final Authentication authentication) {
+                                                               final Authentication authentication) throws Throwable {
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);

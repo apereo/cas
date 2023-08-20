@@ -40,7 +40,7 @@ class OidcUserProfileDataCreatorTests {
     })
     class WithClaimMappingsTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("email", List.of("casuser@example.org"),
@@ -62,7 +62,7 @@ class OidcUserProfileDataCreatorTests {
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val accessToken = getAccessToken();
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
@@ -80,7 +80,7 @@ class OidcUserProfileDataCreatorTests {
         }
 
         @Test
-        void verifyTokenWithClaims() throws Exception {
+        void verifyTokenWithClaims() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = new JEEContext(request, response);

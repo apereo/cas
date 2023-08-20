@@ -51,7 +51,7 @@ class SendPasswordResetInstructionsActionTests {
     static class PasswordManagementTestConfiguration {
         @Bean
         @Autowired
-        public PasswordManagementService passwordChangeService() {
+        public PasswordManagementService passwordChangeService() throws Throwable {
             val service = mock(PasswordManagementService.class);
             when(service.createToken(any())).thenReturn(null);
             when(service.findUsername(any())).thenReturn("casuser");
@@ -88,7 +88,7 @@ class SendPasswordResetInstructionsActionTests {
         private MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider;
 
         @Test
-        void verifyActionRequiresMfa() throws Exception {
+        void verifyActionRequiresMfa() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -102,7 +102,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyActionAfterMfa() throws Exception {
+        void verifyActionAfterMfa() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -129,7 +129,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -142,7 +142,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyNoPhoneOrEmail() throws Exception {
+        void verifyNoPhoneOrEmail() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "none");
@@ -152,7 +152,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyNoUsername() throws Exception {
+        void verifyNoUsername() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -180,7 +180,7 @@ class SendPasswordResetInstructionsActionTests {
     class MultiUseTests extends BasePasswordManagementActionTests {
 
         @Test
-        void verifyActionMultiUse() throws Exception {
+        void verifyActionMultiUse() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -199,7 +199,7 @@ class SendPasswordResetInstructionsActionTests {
     class WithoutTokens extends BasePasswordManagementActionTests {
 
         @Test
-        void verifyNoLinkAction() throws Exception {
+        void verifyNoLinkAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "unknown");

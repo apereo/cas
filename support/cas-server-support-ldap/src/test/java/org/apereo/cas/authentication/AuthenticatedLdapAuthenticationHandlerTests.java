@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,17 +41,17 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
-        void verifyAuthenticateNotFound() {
-            assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+        void verifyAuthenticateNotFound() throws Throwable {
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
                         new UsernamePasswordCredential("notfound", "badpassword"), mock(Service.class)))));
         }
 
         @Test
-        void verifyAuthenticateFailureNotFound() {
+        void verifyAuthenticateFailureNotFound() throws Throwable {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
-            assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(
                     Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"), mock(Service.class)))));
         }
@@ -72,7 +71,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
         @Override
-        public void verifyAuthenticateSuccess() {
+        void verifyAuthenticateSuccess() throws Throwable {
             assertThrows(LoginException.class, super::verifyAuthenticateSuccess);
         }
     }

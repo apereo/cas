@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
@@ -51,7 +51,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyNoAuth() {
+    void verifyNoAuth() throws Throwable {
         var body = createUmaResourceRegistrationRequest().toJson();
         val response = umaUpdatePolicyForResourceSetEndpointController.updatePoliciesForResourceSet(1, 2, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -59,7 +59,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyMissingChannel() {
+    void verifyMissingChannel() throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
@@ -76,7 +76,7 @@ class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyMissingResource() {
+    void verifyMissingResource() throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         results = authenticateUmaRequestWithProtectionScope();

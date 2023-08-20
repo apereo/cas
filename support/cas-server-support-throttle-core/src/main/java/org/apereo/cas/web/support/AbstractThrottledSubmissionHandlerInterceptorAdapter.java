@@ -167,7 +167,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      */
     protected String getUsernameParameterFromRequest(final HttpServletRequest request) {
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
-        return request.getParameter(StringUtils.defaultString(throttle.getUsernameParameter(), "username"));
+        return request.getParameter(StringUtils.defaultIfBlank(throttle.getUsernameParameter(), "username"));
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         val userToUse = getUsernameParameterFromRequest(request);
         val clientInfo = ClientInfoHolder.getClientInfo();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
-        val resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
+        val resource = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
         val context = new AuditActionContext(
             userToUse,
             resource,

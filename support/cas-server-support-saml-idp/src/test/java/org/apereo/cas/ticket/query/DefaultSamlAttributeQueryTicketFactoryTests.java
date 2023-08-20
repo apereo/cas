@@ -24,7 +24,7 @@ class DefaultSamlAttributeQueryTicketFactoryTests extends BaseSamlIdPConfigurati
     private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val ticketId = samlAttributeQueryTicketFactory.create("ATTR_QUERY",
             getAuthnRequestFor("helloworld"), "https://www.example.org", tgt);

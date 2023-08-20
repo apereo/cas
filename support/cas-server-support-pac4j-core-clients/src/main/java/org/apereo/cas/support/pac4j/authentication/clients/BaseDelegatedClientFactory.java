@@ -7,11 +7,14 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -57,7 +60,6 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
-import org.pac4j.oidc.metadata.OidcOpMetadataResolver;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
@@ -146,7 +148,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
             __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
 
-        val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+        val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
         LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
 
@@ -160,7 +162,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             client.init();
         }
     }
-
 
     protected Collection<IndirectClient> buildFoursquareIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
@@ -357,10 +358,12 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     private OidcClient getOidcClientFrom(final Pac4jOidcClientProperties clientProperties,
                                          final CasConfigurationProperties casProperties) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+
         if (clientProperties.getAzure().isEnabled() && StringUtils.isNotBlank(clientProperties.getAzure().getId())) {
             LOGGER.debug("Building OpenID Connect client for Azure AD...");
             val azure = getOidcConfigurationForClient(clientProperties.getAzure(), AzureAd2OidcConfiguration.class);
-            azure.setTenant(clientProperties.getAzure().getTenant());
+            azure.setTenant(resolver.resolve(clientProperties.getAzure().getTenant()));
             val cfg = new AzureAd2OidcConfiguration(azure);
             val azureClient = new AzureAd2Client(cfg);
             configureClient(azureClient, clientProperties.getAzure(), casProperties);
@@ -376,8 +379,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (clientProperties.getKeycloak().isEnabled() && StringUtils.isNotBlank(clientProperties.getKeycloak().getId())) {
             LOGGER.debug("Building OpenID Connect client for KeyCloak...");
             val cfg = getOidcConfigurationForClient(clientProperties.getKeycloak(), KeycloakOidcConfiguration.class);
-            cfg.setRealm(clientProperties.getKeycloak().getRealm());
-            cfg.setBaseUri(clientProperties.getKeycloak().getBaseUri());
+            cfg.setRealm(resolver.resolve(clientProperties.getKeycloak().getRealm()));
+            cfg.setBaseUri(resolver.resolve(clientProperties.getKeycloak().getBaseUri()));
             val kc = new KeycloakOidcClient(cfg);
             configureClient(kc, clientProperties.getKeycloak(), casProperties);
             return kc;
@@ -429,13 +432,17 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                           final Class<T> clazz) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
         
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
+
+        cfg.setSecret(resolver.resolve(oidc.getSecret()));
+        cfg.setClientId(resolver.resolve(oidc.getId()));
+
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
         cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
@@ -471,10 +478,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
         cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
-        val opMetadataResolver = new OidcOpMetadataResolver(cfg);
-        opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-        cfg.setOpMetadataResolver(opMetadataResolver);
-
+        cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
         return cfg;
     }
 
@@ -588,11 +592,19 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
-                    FunctionUtils.doAndHandle(__ -> {
-                        val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
-                        val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
-                        cfg.setSamlAttributeConverter(converter);
-                    });
+                    if (ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
+                        FunctionUtils.doAndHandle(__ -> {
+                            val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
+                            val script = new WatchableGroovyScriptResource(resource);
+                            cfg.setSamlAttributeConverter(new GroovyAttributeConverter(script));
+                        });
+                    } else {
+                        FunctionUtils.doAndHandle(__ -> {
+                            val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
+                            val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
+                            cfg.setSamlAttributeConverter(converter);
+                        });
+                    }
                 }
 
                 val mappedAttributes = saml.getMappedAttributes();

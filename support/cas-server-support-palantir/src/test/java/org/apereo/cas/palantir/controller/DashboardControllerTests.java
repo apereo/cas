@@ -50,7 +50,9 @@ public class DashboardControllerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         mvc.perform(get("/palantir/dashboard")).andExpect(status().isOk());
+        mvc.perform(get("/palantir/")).andExpect(status().isOk());
+        mvc.perform(get("/palantir")).andExpect(status().isOk());
     }
 }

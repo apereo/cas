@@ -57,7 +57,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         LOGGER.debug("Available request headers are [{}]", Collections.list(request.getHeaderNames()));
-        val authorizationHeader = StringUtils.defaultString(
+        val authorizationHeader = StringUtils.defaultIfBlank(
             request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION),
             request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION.toLowerCase(Locale.ENGLISH)));
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);

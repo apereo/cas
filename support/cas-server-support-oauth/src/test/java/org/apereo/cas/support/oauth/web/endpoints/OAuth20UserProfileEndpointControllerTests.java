@@ -17,7 +17,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Reg
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer;
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
@@ -72,7 +72,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoGivenAccessToken() throws Exception {
+    void verifyNoGivenAccessToken() throws Throwable {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(),
             CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
@@ -86,7 +86,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoExistingAccessToken() throws Exception {
+    void verifyNoExistingAccessToken() throws Throwable {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         val mockResponse = new MockHttpServletResponse();
@@ -100,7 +100,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyExpiredAccessToken() throws Exception {
+    void verifyExpiredAccessToken() throws Throwable {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
         val jwtBuilder = new JwtBuilder(new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
@@ -126,13 +126,12 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(oauth20ProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyOK() throws Exception {
-
+    void verifyOK() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
         val list = List.of(VALUE, VALUE);
@@ -170,7 +169,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
+    void verifyOKWithExpiredTicketGrantingTicket() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
         val list = List.of(VALUE, VALUE);
@@ -216,7 +215,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOKWithAuthorizationHeader() throws Exception {
+    void verifyOKWithAuthorizationHeader() throws Throwable {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
         val list = List.of(VALUE, VALUE);

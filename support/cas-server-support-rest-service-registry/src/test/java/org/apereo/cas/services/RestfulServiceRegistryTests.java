@@ -21,7 +21,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.jupiter.api.MethodOrderer;
@@ -115,16 +114,14 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity save(@RequestBody final String service) {
+                        public ResponseEntity save(@RequestBody final String service) throws Exception {
                 val registeredService = MAPPER.readValue(service, RegisteredService.class);
                 serviceRegistry.save(registeredService);
                 return ResponseEntity.ok(MAPPER.writeValueAsString(registeredService));
             }
 
             @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) {
+                        public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) throws Exception {
                 if (NumberUtils.isParsable(id)) {
                     return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.findServiceById(Long.parseLong(id))));
                 }
@@ -132,8 +129,7 @@ class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity load() {
+                        public ResponseEntity load() throws Exception {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.load()));
             }
         }

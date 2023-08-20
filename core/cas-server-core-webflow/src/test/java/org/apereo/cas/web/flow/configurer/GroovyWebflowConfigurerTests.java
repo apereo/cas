@@ -25,7 +25,7 @@ class GroovyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private CasWebflowConfigurer groovyWebflowConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> groovyWebflowConfigurer.initialize());
     }
 

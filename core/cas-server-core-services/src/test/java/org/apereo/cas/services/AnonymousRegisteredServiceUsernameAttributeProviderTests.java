@@ -35,7 +35,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     private static final String CASROX = "casrox";
 
     @Test
-    void verifyPrincipalResolution() {
+    void verifyPrincipalResolution() throws Throwable {
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
 
@@ -55,7 +55,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifyEquality() {
+    void verifyEquality() throws Throwable {
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
         val provider2 = new AnonymousRegisteredServiceUsernameAttributeProvider(
@@ -74,7 +74,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifyGeneratedIdsMatch() {
+    void verifyGeneratedIdsMatch() throws Throwable {
         val salt = "nJ+G!VgGt=E2xCJp@Kb+qjEjE4R2db7NEW!9ofjMNas2Tq3h5h!nCJxc3Sr#kv=7JwU?#MN=7e+r!wpcMw5RF42G8J"
                    + "8tNkGp4g4rFZ#RnNECL@wZX5=yia+KPEwwq#CA9EM38=ZkjK2mzv6oczCVC!m8k!=6@!MW@xTMYH8eSV@7yc24Bz6NUstzbTWH3pnGojZm7pW8N"
                    + "wjLypvZKqhn7agai295kFBhMmpS\n9Jz9+jhVkJfFjA32GiTkZ5hvYiFG104xWnMbHk7TsGrfw%tvACAs=f3C";
@@ -93,7 +93,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifyGeneratedIdsMatchMultiValuedAttribute() {
+    void verifyGeneratedIdsMatchMultiValuedAttribute() throws Throwable {
         val salt = "whydontyoustringmealong";
         val gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
         gen.setAttribute("uid");

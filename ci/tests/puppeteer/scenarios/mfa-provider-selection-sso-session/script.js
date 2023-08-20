@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await cas.assertTicketParameter(page);
@@ -55,7 +55,7 @@ const cas = require("../../cas.js");
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     console.log("Navigating to second service with SSO session");

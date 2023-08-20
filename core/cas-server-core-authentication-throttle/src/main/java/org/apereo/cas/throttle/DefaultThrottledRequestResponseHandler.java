@@ -27,7 +27,7 @@ public class DefaultThrottledRequestResponseHandler implements ThrottledRequestR
     public boolean handle(final HttpServletRequest request, final HttpServletResponse response) {
         return FunctionUtils.doUnchecked(() -> {
             val username = StringUtils.isNotBlank(this.usernameParameter)
-                ? StringUtils.defaultString(request.getParameter(this.usernameParameter), "N/A")
+                ? StringUtils.defaultIfBlank(request.getParameter(this.usernameParameter), "N/A")
                 : "N/A";
             val msg = "Access Denied for user ["
                       + StringEscapeUtils.escapeHtml4(username) + "] from IP Address ["

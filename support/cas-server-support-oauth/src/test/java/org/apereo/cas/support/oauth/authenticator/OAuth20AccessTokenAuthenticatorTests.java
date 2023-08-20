@@ -39,7 +39,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     }
 
     @Test
-    void verifyAuthenticationWithJwtAccessToken() throws Exception {
+    void verifyAuthenticationWithJwtAccessToken() throws Throwable {
         val accessToken = getAccessToken();
         this.ticketRegistry.addTicket(accessToken);
 
@@ -59,7 +59,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     }
 
     @Test
-    void verifyAuthenticationFailsWithNoToken() {
+    void verifyAuthenticationFailsWithNoToken() throws Throwable {
         val accessToken = getAccessToken();
         val encoder = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
@@ -76,7 +76,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     }
 
     @Test
-    void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Throwable {
         val accessToken = getAccessToken();
         this.ticketRegistry.addTicket(accessToken);
 

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class MultifactorAuthenticationCredentialTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new MultifactorAuthenticationCredential() {
             @Serial
             private static final long serialVersionUID = -7854668847716061700L;

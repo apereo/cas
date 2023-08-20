@@ -42,7 +42,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     protected OidcPushedAuthorizeEndpointController oidcPushedAuthorizeController;
 
     @Test
-    void verifyGetOperationFails() throws Exception {
+    void verifyGetOperationFails() throws Throwable {
         assertNotNull(oidcPushedAuthorizeController);
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.GET.name());
@@ -54,7 +54,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val mockRequest = getHttpRequestForEndpoint(OidcConstants.PUSHED_AUTHORIZE_URL);
         mockRequest.setMethod(HttpMethod.GET.name());

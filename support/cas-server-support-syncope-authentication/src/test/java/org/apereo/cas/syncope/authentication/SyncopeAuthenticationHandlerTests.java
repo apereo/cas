@@ -46,7 +46,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         @Qualifier("syncopeAuthenticationHandlers")
         private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
         @Test
-        void verifyHandlerPasses() throws Exception {
+        void verifyHandlerPasses() throws Throwable {
             assertNotNull(syncopeAuthenticationHandlers);
             val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
             val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("syncopecas", "Mellon");
@@ -67,7 +67,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
 
         @Test
-        void verifyHandlerPasses() {
+        void verifyHandlerPasses() throws Throwable {
             val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
             try (val webserver = startMockSever(user(), HttpStatus.OK, 8096)) {
                 assertDoesNotThrow(() ->
@@ -76,7 +76,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         }
 
         @Test
-        void verifyHandlerMustChangePassword() {
+        void verifyHandlerMustChangePassword() throws Throwable {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("mustChangePassword", true);
@@ -88,7 +88,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         }
 
         @Test
-        void verifyHandlerSuspended() {
+        void verifyHandlerSuspended() throws Throwable {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("suspended", true);

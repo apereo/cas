@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
 
     @Test
-    void verifySupportedClaims() throws Exception {
+    void verifySupportedClaims() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
         assertFalse(handler.getSupportedClaimTypes().isEmpty());
@@ -38,7 +38,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML2Type() {
+    void verifySAML2Type() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -61,7 +61,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML1Type() {
+    void verifySAML1Type() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 

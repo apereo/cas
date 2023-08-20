@@ -78,14 +78,6 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     }
 
 
-    /**
-     * Create cipher executor instance.
-     *
-     * @param encryptionKey     the encryption key
-     * @param signingKey        the signing key
-     * @param registeredService the registered service
-     * @return the jwt ticket cipher executor
-     */
     protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
                                                                    final RegisteredService registeredService) {
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,

@@ -25,7 +25,7 @@ public class InitPasswordChangeAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val core = casProperties.getAuthn().getPm().getCore();
         WebUtils.putPasswordPolicyPattern(requestContext, core.getPasswordPolicyPattern());
         requestContext.getFlowScope().put("passwordPolicyCharacterSet", core.getPasswordPolicyCharacterSet());

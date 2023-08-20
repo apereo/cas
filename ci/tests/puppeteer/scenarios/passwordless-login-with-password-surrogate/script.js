@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
     assert(pswd == null);
 
     await cas.type(page,'#username', "user3+casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await page.waitForTimeout(2000);
@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#password');
 
     await cas.type(page,'#password', "Mellon");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await page.waitForTimeout(2000);

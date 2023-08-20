@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val clientId = addRegisteredService().getClientId();
         val holder = AccessTokenRequestContext.builder()
             .clientId(clientId)
@@ -46,14 +46,14 @@ class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth2
     }
 
     @Test
-    void verifyModelAndViewPost() throws Exception {
+    void verifyModelAndViewPost() throws Throwable {
         val clientId = addRegisteredService().getClientId();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));
     }
 
     @Test
-    void verifyModelAndView() throws Exception {
+    void verifyModelAndView() throws Throwable {
         val clientId = addRegisteredService().getClientId();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));

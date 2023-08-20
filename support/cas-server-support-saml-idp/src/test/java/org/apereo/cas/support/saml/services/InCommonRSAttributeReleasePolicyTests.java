@@ -37,7 +37,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyMatch() {
+    void verifyMatch() throws Throwable {
         val filter = new InCommonRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -57,7 +57,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
     }
 
     @Test
-    void verifyOids() {
+    void verifyOids() throws Throwable {
         val filter = new InCommonRSAttributeReleasePolicy();
         filter.setUseUniformResourceName(true);
 
@@ -87,7 +87,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
     }
 
     @Test
-    void verifyAttributeDefinitions() {
+    void verifyAttributeDefinitions() throws Throwable {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new InCommonRSAttributeReleasePolicy();
         policy.setUseUniformResourceName(true);

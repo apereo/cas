@@ -23,8 +23,9 @@ public interface PrincipalFactory extends Serializable {
      *
      * @param id the id
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal createPrincipal(final String id) {
+    default Principal createPrincipal(final String id) throws Throwable {
         return createPrincipal(id, new HashMap<>(0));
     }
 
@@ -34,6 +35,7 @@ public interface PrincipalFactory extends Serializable {
      * @param id         the id
      * @param attributes the attributes
      * @return the principal
+     * @throws Throwable the throwable
      */
-    Principal createPrincipal(String id, Map<String, List<Object>> attributes);
+    Principal createPrincipal(String id, Map<String, List<Object>> attributes) throws Throwable;
 }

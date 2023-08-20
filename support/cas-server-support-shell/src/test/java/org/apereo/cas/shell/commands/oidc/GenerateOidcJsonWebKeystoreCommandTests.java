@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateOidcJsonWebKeystoreCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val location = FileUtils.getTempDirectoryPath();
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-oidc-jwks --jwksFile " + location + " --jwksKeyId cas"));
     }

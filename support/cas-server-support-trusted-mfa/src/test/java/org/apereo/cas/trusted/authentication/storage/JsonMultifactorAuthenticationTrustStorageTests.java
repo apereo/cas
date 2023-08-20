@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -27,14 +26,12 @@ import java.io.File;
 class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @BeforeAll
-    @SneakyThrows
-    public static void beforeClass() {
+        public static void beforeClass() {
         deleteJsonFile();
     }
 
     @AfterAll
-    @SneakyThrows
-    public static void afterClass() {
+        public static void afterClass() {
         deleteJsonFile();
     }
 

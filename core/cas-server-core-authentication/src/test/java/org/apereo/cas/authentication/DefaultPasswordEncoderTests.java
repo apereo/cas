@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class DefaultPasswordEncoderTests {
 
     @Test
-    void verifyPasswordEncoderByCustomClassName() {
+    void verifyPasswordEncoderByCustomClassName() throws Throwable {
         val p = new PasswordEncoderProperties();
         p.setType(StandardPasswordEncoder.class.getName());
         p.setSecret("SECRET");
@@ -32,27 +32,27 @@ class DefaultPasswordEncoderTests {
     }
 
     @Test
-    void verifyPasswordEncoderByMD5() {
-        val p = new PasswordEncoderProperties();
-        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
-        p.setEncodingAlgorithm("MD5");
-        p.setCharacterEncoding("UTF-8");
-        val e = PasswordEncoderUtils.newPasswordEncoder(p, mock(ApplicationContext.class));
+    void verifyPasswordEncoderByMD5() throws Throwable {
+        val properties = new PasswordEncoderProperties();
+        properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
+        properties.setEncodingAlgorithm("MD5");
+        properties.setCharacterEncoding("UTF-8");
+        val e = PasswordEncoderUtils.newPasswordEncoder(properties, mock(ApplicationContext.class));
         assertTrue(e.matches("asd123", "bfd59291e825b5f2bbf1eb76569f8fe7"));
     }
 
     @Test
-    void verifyPasswordEncoderBySHA1() {
-        val p = new PasswordEncoderProperties();
-        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
-        p.setEncodingAlgorithm("SHA-1");
-        p.setCharacterEncoding("UTF-8");
-        val e = PasswordEncoderUtils.newPasswordEncoder(p, mock(ApplicationContext.class));
+    void verifyPasswordEncoderBySHA1() throws Throwable {
+        val properties = new PasswordEncoderProperties();
+        properties.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
+        properties.setEncodingAlgorithm("SHA-1");
+        properties.setCharacterEncoding("UTF-8");
+        val e = PasswordEncoderUtils.newPasswordEncoder(properties, mock(ApplicationContext.class));
         assertTrue(e.matches("asd123", "2891baceeef1652ee698294da0e71ba78a2a4064"));
     }
 
     @Test
-    void verifyPasswordEncoderBySHA256() {
+    void verifyPasswordEncoderBySHA256() throws Throwable {
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("SHA-256");
@@ -62,14 +62,14 @@ class DefaultPasswordEncoderTests {
     }
 
     @Test
-    void verifyBadInput() {
+    void verifyBadInput() throws Throwable {
         val encoder = new DefaultPasswordEncoder(null, null);
         assertNull(encoder.encode(null));
         assertNull(encoder.encode("password"));
     }
 
     @Test
-    void verifyBadAlg() {
+    void verifyBadAlg() throws Throwable {
         val encoder = new DefaultPasswordEncoder("BadAlgorithm", null);
         assertNull(encoder.encode("password"));
     }

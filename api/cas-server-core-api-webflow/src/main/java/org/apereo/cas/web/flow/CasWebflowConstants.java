@@ -1901,31 +1901,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN = "validatePasswordResetTokenAction";
 
     /**
-     * Action id 'u2fAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_U2F_AUTHENTICATION = "u2fAuthenticationWebflowAction";
-
-    /**
-     * Action id 'u2fStartAuthenticationAction'.
-     */
-    String ACTION_ID_U2F_START_AUTHENTICATION = "u2fStartAuthenticationAction";
-
-    /**
-     * Action id 'u2fStartRegistrationAction'.
-     */
-    String ACTION_ID_U2F_START_REGISTRATION = "u2fStartRegistrationAction";
-
-    /**
-     * Action id 'u2fCheckAccountRegistrationAction'.
-     */
-    String ACTION_ID_U2F_CHECK_REGISTRATION = "u2fCheckAccountRegistrationAction";
-
-    /**
-     * Action id 'u2fSaveAccountRegistrationAction'.
-     */
-    String ACTION_ID_U2F_SAVE_REGISTRATION = "u2fSaveAccountRegistrationAction";
-
-    /**
      * Action id 'remoteAddressCheck'.
      */
     String ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK = "remoteAddressCheck";

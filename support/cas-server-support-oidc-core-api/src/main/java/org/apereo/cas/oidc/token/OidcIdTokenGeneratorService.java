@@ -67,7 +67,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
@@ -80,7 +80,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final OidcRegisteredService registeredService,
                                        final OAuth20ResponseTypes responseType,
-                                       final OAuth20GrantTypes grantType) {
+                                       final OAuth20GrantTypes grantType) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
@@ -203,7 +203,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) {
+                                                       final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
@@ -245,15 +245,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return oidc.getDiscovery().getClaims().contains(claimName) || oidc.getDiscovery().getClaims().contains(mappedClaim);
     }
 
-    /**
-     * Handle mapped claim or default.
-     *
-     * @param claimName         the claim name
-     * @param registeredService the registered service
-     * @param principal         the principal
-     * @param claims            the claims
-     * @param defaultValue      the default value
-     */
     protected void handleMappedClaimOrDefault(final String claimName,
                                               final RegisteredService registeredService,
                                               final Principal principal,
@@ -264,12 +255,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
     }
 
-    /**
-     * Gets oauth service ticket.
-     *
-     * @param tgt the tgt
-     * @return the o auth service ticket
-     */
     protected String getJwtId(final TicketGrantingTicket tgt) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
                                + OAuth20Constants.BASE_OAUTH20_URL + '/'
@@ -296,16 +281,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return oAuthServiceTicket.get().getKey();
     }
 
-    /**
-     * Generate access token hash string.
-     *
-     * @param accessToken       the access token
-     * @param registeredService the service
-     * @param claims            the claims
-     */
     protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
-                                           final JwtClaims claims) {
+                                           final JwtClaims claims) throws Throwable {
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)

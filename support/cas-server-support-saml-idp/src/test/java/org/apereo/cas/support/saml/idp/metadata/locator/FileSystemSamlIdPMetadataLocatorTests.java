@@ -29,13 +29,13 @@ import static org.mockito.Mockito.*;
 class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifyUnknownDirectory() {
+    void verifyUnknownDirectory() throws Throwable {
         val locator = new FileSystemSamlIdPMetadataLocator(new File("/#**??#"), mock(Cache.class));
         assertThrows(IllegalArgumentException.class, locator::initialize);
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         samlIdPMetadataLocator.initialize();
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
@@ -47,7 +47,7 @@ class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTest
     }
 
     @Test
-    void verifyService() throws Exception {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

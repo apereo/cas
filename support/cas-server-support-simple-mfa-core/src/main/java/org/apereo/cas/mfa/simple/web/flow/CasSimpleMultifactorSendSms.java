@@ -12,6 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ class CasSimpleMultifactorSendSms {
     protected boolean send(final Principal principal, final Ticket tokenTicket,
                            final RequestContext requestContext) {
         return FunctionUtils.doIf(communicationsManager.isSmsSenderDefined(),
-            () -> {
+            Unchecked.supplier(() -> {
                 val smsProperties = properties.getSms();
                 val token = tokenTicket.getId();
                 val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
@@ -40,7 +41,7 @@ class CasSimpleMultifactorSendSms {
                     .text(smsText)
                     .build();
                 return communicationsManager.sms(smsRequest);
-            }, () -> false).get();
+            }), () -> false).get();
     }
 
     protected String buildTextMessageBody(final SmsProperties smsProperties, final String token,

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 class DynamicMetadataResolverAdapterTests extends AbstractOpenSamlTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val resource = new UrlResource(new URI("http://localhost:6622/entities/"));
         val adapter = new DynamicMetadataResolverAdapter(Map.of(resource, new MetadataFilterChain()));
         adapter.setConfigBean(configBean);

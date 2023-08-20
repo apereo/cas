@@ -44,7 +44,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
     
     @Test
-    void verifySignedAuthnRequest() throws Exception {
+    void verifySignedAuthnRequest() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setServiceId("signed:authn:service");
         servicesManager.save(service);
@@ -58,7 +58,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyNoShire() {
+    void verifyNoShire() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val service = getSamlRegisteredServiceForTestShib();
@@ -72,7 +72,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyBadServiceWithNoMetadata() {
+    void verifyBadServiceWithNoMetadata() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val service = new SamlRegisteredService();
@@ -87,7 +87,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(MessageDecodingException.class,
@@ -96,7 +96,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
 
 
     @Test
-    void verifyBadService() {
+    void verifyBadService() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, "xxxxxx");
         val response = new MockHttpServletResponse();
@@ -105,7 +105,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
         request.addParameter("CName1", "SomeParameter");
@@ -121,7 +121,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
 
     @Test
     @SuppressWarnings("JavaUtilDate")
-    public void verifyOperationWithTime() throws Exception {
+    void verifyOperationWithTime() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
         request.addParameter(SamlIdPConstants.TARGET, "relay-state");

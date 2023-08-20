@@ -113,7 +113,7 @@ class CasRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyMatches(final CasRegisteredService service,
+    void verifyMatches(final CasRegisteredService service,
                               final String serviceToMatch,
                               final boolean expectedResult) {
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
@@ -122,7 +122,7 @@ class CasRegisteredServiceTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifySerialization(final CasRegisteredService service,
+    void verifySerialization(final CasRegisteredService service,
                                     final String serviceToMatch,
                                     final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
@@ -133,7 +133,7 @@ class CasRegisteredServiceTests {
     }
 
     @Test
-    void verifyDefaultMatchingStrategy() {
+    void verifyDefaultMatchingStrategy() throws Throwable {
         val service = new CasRegisteredService();
         service.setMatchingStrategy(null);
         service.setServiceId("\\d\\d\\d");
@@ -141,7 +141,7 @@ class CasRegisteredServiceTests {
     }
 
     @Test
-    void verifyDefaults() {
+    void verifyDefaults() throws Throwable {
         val service = mock(RegisteredService.class);
         when(service.getDescription()).thenCallRealMethod();
         when(service.getFriendlyName()).thenCallRealMethod();

@@ -39,7 +39,7 @@ public abstract class AbstractRadiusServerTests {
     }
 
     @Test
-    void verifyAuthenticationSuccess() throws Exception {
+    void verifyAuthenticationSuccess() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.code());
@@ -51,7 +51,7 @@ public abstract class AbstractRadiusServerTests {
     public abstract RadiusServer getRadiusServer();
 
     @Test
-    void verifyAuthenticationFails() throws Exception {
+    void verifyAuthenticationFails() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "badpsw");
         assertNull(response);

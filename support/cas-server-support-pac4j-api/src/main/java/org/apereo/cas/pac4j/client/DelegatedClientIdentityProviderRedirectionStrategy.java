@@ -24,11 +24,12 @@ public interface DelegatedClientIdentityProviderRedirectionStrategy extends Orde
      * @param service  the service
      * @param provider the provider
      * @return the primary delegated authentication provider
+     * @throws Throwable the throwable
      */
     Optional<DelegatedClientIdentityProviderConfiguration> select(
         RequestContext context,
         WebApplicationService service,
-        Set<DelegatedClientIdentityProviderConfiguration> provider);
+        Set<DelegatedClientIdentityProviderConfiguration> provider) throws Throwable;
 
     @Override
     default int getOrder() {

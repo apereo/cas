@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class SurrogateEligibilitySelectionAuditResourceResolverTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resolver = new SurrogateEligibilitySelectionAuditResourceResolver();
         val jp = mock(JoinPoint.class);
         val result = new HashMap<>();

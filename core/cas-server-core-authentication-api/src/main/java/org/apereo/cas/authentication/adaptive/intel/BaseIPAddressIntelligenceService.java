@@ -28,7 +28,7 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
     }
 
     @Override
-    public IPAddressIntelligenceResponse examine(final RequestContext context, final String clientIpAddress) {
+    public IPAddressIntelligenceResponse examine(final RequestContext context, final String clientIpAddress) throws Throwable {
         if (isClientIpAddressRejected(clientIpAddress)) {
             val response = IPAddressIntelligenceResponse.banned();
             trackResponseInRequestContext(context, response);
@@ -45,8 +45,9 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
      * @param context         the context
      * @param clientIpAddress the client ip address
      * @return the ip address intelligence response
+     * @throws Throwable the throwable
      */
-    public abstract IPAddressIntelligenceResponse examineInternal(RequestContext context, String clientIpAddress);
+    public abstract IPAddressIntelligenceResponse examineInternal(RequestContext context, String clientIpAddress) throws Throwable;
 
     private boolean isClientIpAddressRejected(final String clientIp) {
         val rejectIpAddresses = this.adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();

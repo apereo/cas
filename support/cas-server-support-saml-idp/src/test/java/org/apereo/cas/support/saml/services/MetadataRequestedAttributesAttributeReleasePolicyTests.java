@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +36,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyNoServiceOrEntityId() {
+    void verifyNoServiceOrEntityId() throws Throwable {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -53,7 +52,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifyMatch() {
+    void verifyMatch() throws Throwable {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -74,7 +73,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws Throwable {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         MAPPER.writeValue(JSON_FILE, filter);

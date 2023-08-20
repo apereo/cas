@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class GroovyIPAddressIntelligenceService extends BaseIPAddressIntelligenceService {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyIPAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
         super(adaptiveAuthenticationProperties);
@@ -24,7 +24,7 @@ public class GroovyIPAddressIntelligenceService extends BaseIPAddressIntelligenc
     }
 
     @Override
-    public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
+    public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) throws Throwable {
         val args = new Object[]{context, clientIpAddress, LOGGER};
         return watchableScript.execute(args, IPAddressIntelligenceResponse.class);
     }

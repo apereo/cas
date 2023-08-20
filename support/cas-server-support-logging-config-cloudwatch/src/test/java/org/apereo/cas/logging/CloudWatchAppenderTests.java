@@ -34,7 +34,7 @@ class CloudWatchAppenderTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val config = new ClassPathResource("log4j2-test.xml");
         val context = LoggerContext.getContext(CloudWatchAppenderTests.class.getClassLoader(), false, config.getURI());
         val logger = context.getLogger(CloudWatchAppender.class.getName());

@@ -43,7 +43,7 @@ class ChainingPrincipalResolverTests {
 
     private static Principal mergeAndResolve(final Principal p1, final Credential credential,
                                              final PrincipalResolver resolver1, final PrincipalResolver resolver2,
-                                             final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) {
+                                             final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) throws Throwable {
         val props = new CasConfigurationProperties();
         props
             .getAuthn()
@@ -76,7 +76,7 @@ class ChainingPrincipalResolverTests {
     }
 
     @Test
-    void examineResolve() {
+    void examineResolve() throws Throwable {
         val principalOut = principalFactory.createPrincipal("output");
         val credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
@@ -104,7 +104,7 @@ class ChainingPrincipalResolverTests {
     }
 
     @Test
-    void examineResolverMergingAttributes() {
+    void examineResolverMergingAttributes() throws Throwable {
         val p1 = principalFactory.createPrincipal("casuser", Map.of("familyName", List.of("Smith")));
         val p2 = principalFactory.createPrincipal("casuser", Map.of("familyName", List.of("smith")));
 

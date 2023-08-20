@@ -113,7 +113,7 @@ public class PasswordEncoderUtils {
                 return new LdapShaPasswordEncoder();
             }
             case PBKDF2 -> {
-                val encodingAlgorithm = StringUtils.defaultString(properties.getEncodingAlgorithm(),
+                val encodingAlgorithm = StringUtils.defaultIfBlank(properties.getEncodingAlgorithm(),
                     Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256.name());
                 return new Pbkdf2PasswordEncoder(properties.getSecret(),
                     properties.getStrength(), properties.getIterations(),

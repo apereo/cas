@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @Tag("RestfulApi")
 class RestfulDelegatedClientUserProfileProvisionerTests {
     @Test
-    void verifyAllowedOperation() {
+    void verifyAllowedOperation() throws Throwable {
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");

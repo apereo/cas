@@ -6,8 +6,8 @@ import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpo
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasWebSecurityConstants;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 import org.apereo.cas.web.security.authentication.IpAddressAuthorizationManager;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -46,11 +45,6 @@ import java.util.stream.Collectors;
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter implements DisposableBean {
-    /**
-     * Endpoint url used for admin-level form-login of endpoints.
-     */
-    public static final String ENDPOINT_URL_ADMIN_FORM_LOGIN = "/adminlogin";
-
     private final CasConfigurationProperties casProperties;
 
     private final SecurityProperties securityProperties;
@@ -59,7 +53,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
-    private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
+    private final List<CasWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
 
     private final SecurityContextRepository securityContextRepository;
 
@@ -73,12 +67,12 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,
                                                             final JaasSecurityActuatorEndpointsMonitorProperties jaas)
         throws Exception {
-        val p = new JaasAuthenticationProvider();
-        p.setLoginConfig(jaas.getLoginConfig());
-        p.setLoginContextName(jaas.getLoginContextName());
-        p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
-        p.afterPropertiesSet();
-        http.authenticationProvider(p);
+        val provider = new JaasAuthenticationProvider();
+        provider.setLoginConfig(jaas.getLoginConfig());
+        provider.setLoginContextName(jaas.getLoginContextName());
+        provider.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
+        provider.afterPropertiesSet();
+        http.authenticationProvider(provider);
     }
 
     @Override
@@ -95,7 +89,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
      */
     public void configureWebSecurity(final WebSecurity web) {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
+            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
             .flatMap(List::stream)
@@ -134,7 +128,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
 
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
+            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
             .flatMap(List::stream)
@@ -154,9 +148,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
-        http.sessionManagement(AbstractHttpConfigurer::disable);
-        http.requestCache(RequestCacheConfigurer::disable);
-
+        
         protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
@@ -217,7 +209,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     protected void configureEndpointAccessByFormLogin(final HttpSecurity http) throws Exception {
         if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
-            http.formLogin(customize -> customize.loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll());
+            http.formLogin(customize -> customize.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll());
         } else {
             http.formLogin(AbstractHttpConfigurer::disable);
         }

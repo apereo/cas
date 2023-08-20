@@ -24,7 +24,7 @@ public class GroovyUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     }
 
     @Override
-    public String getNewTicketId(final String prefix) {
+    public String getNewTicketId(final String prefix) throws Throwable {
         val args = new Object[]{prefix, LOGGER};
         return watchableScript.execute(args, String.class);
     }

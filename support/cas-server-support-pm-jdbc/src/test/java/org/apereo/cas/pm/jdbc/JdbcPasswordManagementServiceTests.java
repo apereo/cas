@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServiceTests {
 
     @Test
-    void verifyUserEmailCanBeFound() {
+    void verifyUserEmailCanBeFound() throws Throwable {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("casuser@example.org", email);
         assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
@@ -32,14 +32,14 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
     }
 
     @Test
-    void verifyUserCanBeFound() {
+    void verifyUserCanBeFound() throws Throwable {
         val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
         assertEquals("casuser", user);
         assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().email("unknown").build()));
     }
 
     @Test
-    void verifyPhoneNumberCanBeFound() {
+    void verifyPhoneNumberCanBeFound() throws Throwable {
         val phone = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("1234567890", phone);
         assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("whatever").build()));
@@ -48,7 +48,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
 
 
     @Test
-    void verifyUserQuestionsCanBeFound() {
+    void verifyUserQuestionsCanBeFound() throws Throwable {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("question1"));
@@ -56,7 +56,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
     }
 
     @Test
-    void verifyUserPasswordChange() {
+    void verifyUserPasswordChange() throws Throwable {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword1".toCharArray());
@@ -68,7 +68,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
     }
 
     @Test
-    void verifySecurityQuestions() {
+    void verifySecurityQuestions() throws Throwable {
         val query = PasswordManagementQuery.builder().username("casuser").build();
         query.securityQuestion("Q1", "A1");
         passwordChangeService.updateSecurityQuestions(query);
@@ -76,7 +76,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
     }
 
     @Test
-    void verifyUnlockAccount() {
+    void verifyUnlockAccount() throws Throwable {
         val locked = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("locked");
         assertTrue(passwordChangeService.unlockAccount(locked));
     }

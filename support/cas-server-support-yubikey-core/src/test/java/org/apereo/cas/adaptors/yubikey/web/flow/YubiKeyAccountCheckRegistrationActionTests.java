@@ -47,7 +47,7 @@ class YubiKeyAccountCheckRegistrationActionTests {
     }
     
     @Test
-    void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -58,7 +58,7 @@ class YubiKeyAccountCheckRegistrationActionTests {
     }
 
     @Test
-    void verifyActionRegister() throws Exception {
+    void verifyActionRegister() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

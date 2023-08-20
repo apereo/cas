@@ -57,7 +57,7 @@ class DuoSecurityPrepareWebLoginFormActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

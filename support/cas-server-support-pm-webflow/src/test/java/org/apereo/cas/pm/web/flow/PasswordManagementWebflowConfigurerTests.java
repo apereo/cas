@@ -68,7 +68,7 @@ class PasswordManagementWebflowConfigurerTests {
         private Action verifySecurityQuestionsAction;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -134,7 +134,7 @@ class PasswordManagementWebflowConfigurerTests {
         private CasMultifactorWebflowCustomizer passwordManagementMultifactorWebflowCustomizer;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);

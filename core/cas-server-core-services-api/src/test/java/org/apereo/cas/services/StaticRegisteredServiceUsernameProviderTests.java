@@ -28,7 +28,7 @@ class StaticRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         System.setProperty("CAS_UID", "casuser");
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

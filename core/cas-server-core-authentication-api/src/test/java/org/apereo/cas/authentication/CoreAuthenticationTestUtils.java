@@ -15,12 +15,12 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.context.ApplicationEventPublisher;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -70,8 +70,8 @@ public class CoreAuthenticationTestUtils {
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url), getRegisteredService(url));
-        } catch (final MalformedURLException e) {
+            return new HttpBasedServiceCredential(new URI(url).toURL(), getRegisteredService(url));
+        } catch (final Exception e) {
             throw new IllegalArgumentException();
         }
     }
@@ -127,7 +127,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
-        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
+        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes));
     }
 
     public static Authentication getAuthentication() {
@@ -154,7 +154,7 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(principal, attributes, null);
     }
 
-    public static Authentication getAuthentication(final Map<String, List<Object>> authnAttributes) {
+    public static Authentication getAuthentication(final Map<String, List<Object>> authnAttributes){
         return getAuthentication(getPrincipal(CONST_USERNAME), authnAttributes, null);
     }
 
@@ -192,31 +192,30 @@ public class CoreAuthenticationTestUtils {
         return service;
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service)
-        throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
+                                                               final Service service) {
         return getAuthenticationResult(support, service, getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws Throwable {
         return getAuthenticationResult(support, getWebApplicationService(), getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
-        throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
+                                                               final Credential... credentials) throws Throwable {
         return getAuthenticationResult(support, getWebApplicationService(), credentials);
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service,
-                                                               final Credential... credentials) throws AuthenticationException {
-
-        return support.finalizeAuthenticationTransaction(service, credentials);
+                                                               final Credential... credentials) {
+        return FunctionUtils.doUnchecked(() -> support.finalizeAuthenticationTransaction(service, credentials));
     }
 
-    public static AuthenticationResult getAuthenticationResult() throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult() throws Throwable {
         return getAuthenticationResult(getWebApplicationService(), getAuthentication());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final Service service) {
+    public static AuthenticationResult getAuthenticationResult(final Service service) throws Throwable {
         return getAuthenticationResult(service, getAuthentication());
     }
 
@@ -231,7 +230,7 @@ public class CoreAuthenticationTestUtils {
         return result;
     }
 
-    public static AuthenticationBuilder getAuthenticationBuilder() {
+    public static AuthenticationBuilder getAuthenticationBuilder() throws Throwable {
         return getAuthenticationBuilder(getPrincipal());
     }
 

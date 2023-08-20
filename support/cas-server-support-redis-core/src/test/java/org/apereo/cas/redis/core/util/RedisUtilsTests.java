@@ -37,7 +37,7 @@ class RedisUtilsTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyKeys() {
+    void verifyKeys() throws Throwable {
         val connection = RedisObjectFactory.newRedisConnectionFactory(casProperties.getAudit().getRedis(), true,
             CasSSLContext.disabled());
         val template = RedisObjectFactory.<String, Object>newRedisTemplate(Objects.requireNonNull(connection));

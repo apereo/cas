@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Order(Order.DEFAULT + 1)
 class ExitCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         runShellCommand(() -> () -> "quit");
         fail("Shell should have quit but did not");
     }

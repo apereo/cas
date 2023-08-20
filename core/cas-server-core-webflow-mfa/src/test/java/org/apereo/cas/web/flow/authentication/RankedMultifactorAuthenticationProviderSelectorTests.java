@@ -29,7 +29,7 @@ class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflo
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Test
-    void verifySelectionOfMfaProvider() {
+    void verifySelectionOfMfaProvider() throws Throwable {
         val dummy1 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         dummy1.setOrder(10);
         dummy1.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);

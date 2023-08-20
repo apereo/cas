@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +40,7 @@ class DefaultCasSSLContextTests {
     @Import(CasCoreHttpConfiguration.class)
     static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
-            val url = new URL(addr);
+            val url = new URI(addr).toURL();
             val connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setHostnameVerifier(NoopHostnameVerifier.INSTANCE);
@@ -60,7 +60,7 @@ class DefaultCasSSLContextTests {
         private CasSSLContext casSslContext;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             assertNotNull(casSslContext.getTrustManagerFactory());
             assertThrows(Exception.class,
                 () -> SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
@@ -77,7 +77,7 @@ class DefaultCasSSLContextTests {
         private CasSSLContext casSslContext;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             assertNotNull(SharedTestConfiguration.contactUrl("https://untrusted-root.badssl.com/", casSslContext));
         }
     }

@@ -5,12 +5,6 @@ ext.libraries = [
                     exclude(group: "org.bitbucket.b_c", module: "jose4j")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                },
-                dependencies.create("org.shredzone.acme4j:acme4j-utils:$acmeClientVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.bitbucket.b_c", module: "jose4j")
-                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
         googlecloudpubsub          : [
@@ -2900,25 +2894,6 @@ ext.libraries = [
                     exclude(group: "com.google.code.gson", module: "gson")
                 }
         ],
-        springcloudeurekaserver    : [
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:$springCloudEurekaVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "com.netflix.eureka", module: "eureka-client")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "javax.servlet", module: "servlet-api")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                },
-                dependencies.create("com.google.code.gson:gson:$gsonVersion") {
-                }
-        ],
         springcloudzookeeper       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-zookeeper-config:$springCloudZookeeperVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
@@ -3487,15 +3462,6 @@ ext.libraries = [
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-codec", module: "commons-codec")
-                },
-        u2flibserver               :
-                dependencies.create("com.yubico:u2flib-server-core:$yubicoU2fServerVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-codec", module: "commons-codec")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-                    exclude(group: "com.google.guava", module: "guava")
                 },
         duojava                    : [
                 dependencies.create("com.duosecurity:duo-client:$duoClientVersion") {

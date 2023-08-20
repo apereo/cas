@@ -35,7 +35,7 @@ class CasApplicationContextInitializerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(applicationContext);
         val validateConfig = System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS);
         assertEquals(Boolean.FALSE.toString(), validateConfig);

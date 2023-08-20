@@ -63,25 +63,25 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyTicketIsNull() {
+    void verifyTicketIsNull() throws Throwable {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    void verifyTicketIsNotExpired() {
+    void verifyTicketIsNotExpired() throws Throwable {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneOffset.UTC));
         assertFalse(this.ticket.isExpired());
         assertEquals(0, this.expirationPolicy.getTimeToIdle());
     }
 
     @Test
-    void verifyTicketIsExpiredByTime() {
+    void verifyTicketIsExpiredByTime() throws Throwable {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT_SECONDS).plusNanos(1), ZoneOffset.UTC));
         assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    void verifyTicketIsExpiredByCount() {
+    void verifyTicketIsExpiredByCount() throws Throwable {
         IntStream.range(0, NUMBER_OF_USES)
             .forEach(i -> this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(),
                 NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy()));
@@ -96,7 +96,7 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, MultiTimeUseOrTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

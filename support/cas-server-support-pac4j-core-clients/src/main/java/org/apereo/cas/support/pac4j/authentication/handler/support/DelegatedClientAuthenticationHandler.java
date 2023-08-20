@@ -101,13 +101,13 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
 
     @Override
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final UserProfile profile, final BaseClient client, final Service service) {
+                                                          final UserProfile profile, final BaseClient client, final Service service) throws Throwable {
         profileProvisioner.execute(principal, profile, client, credentials);
     }
 
     @Override
     protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
-                                                        final ClientCredential credential, final Service service) {
+                                                        final ClientCredential credential, final Service service) throws Throwable {
         val processors = applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class)
             .values()
             .stream()

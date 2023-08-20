@@ -146,7 +146,7 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    await page.keyboard.press('Enter');
+    await this.pressEnter(page);
     return await page.waitForNavigation();
 };
 
@@ -177,29 +177,27 @@ exports.assertInvisibility = async (page, selector) => {
 };
 
 
-exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
+exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
         console.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName
     });
     console.log(`Found cookies ${cookies.length}`);
-    if (present) {
-        console.log(`Checking for cookie ${cookieName}`);
+    if (cookieMustBePresent) {
+        console.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
         console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
         return cookies[0];
+    }
+    console.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
+    if (cookies.length === 0) {
+        await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        if (cookies.length > 0) {
-            let ck = cookies[0];
-            console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
-        }
-        const result = cookies.length === 0;
-        if (result) {
-            await this.logg(`Cookie ${cookieName} can be found`);
-        } else {
-            await this.logr(`Cookie ${cookieName} cannot be found`);
-        }
-        assert(result);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found`);
+        let ck = cookies[0];
+        let msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
+        await this.logb(msg);
+        throw msg;
     }
 };
 
@@ -214,6 +212,11 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
         page.$eval(selector, form => form.submit()),
         page.waitForTimeout(3000)
     ]);
+};
+
+exports.pressEnter = async(page) => {
+    page.keyboard.press('Enter');
+    page.waitForTimeout(1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -709,6 +712,12 @@ exports.refreshContext = async(url = "https://localhost:8443/cas") => {
     console.log(response);
 };
 
+exports.refreshBusContext = async(url = "https://localhost:8443/cas") => {
+    console.log(`Refreshing CAS application context in ${url}`);
+    const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
+    console.log(response);
+};
+
 exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {
@@ -747,7 +756,7 @@ exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") =>
             console.log(`Submitting Duo Security bypass code ${bypassCode}`);
             await this.type(page, "input[name='passcode']", bypassCode);
             await this.screenshot(page);
-            await page.keyboard.press('Enter');
+            await this.pressEnter(page);
             console.log(`Waiting for Duo Security to accept bypass code...`);
             await page.waitForTimeout(10000);
             let error = await this.isVisible(page, "div.message.error");

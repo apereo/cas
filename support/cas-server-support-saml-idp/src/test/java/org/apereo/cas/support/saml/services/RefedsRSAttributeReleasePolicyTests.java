@@ -37,7 +37,7 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyMatch() {
+    void verifyMatch() throws Throwable {
         val filter = new RefedsRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);

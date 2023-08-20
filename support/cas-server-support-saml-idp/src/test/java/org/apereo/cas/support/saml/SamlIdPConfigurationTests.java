@@ -21,25 +21,25 @@ class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifySigValidationFilterByRes() throws Exception {
+    void verifySigValidationFilterByRes() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("metadata/idp-signing.crt"));
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilterPublicKey() throws Exception {
+    void verifySigValidationFilterPublicKey() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("public-key.pem"));
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilter() {
+    void verifySigValidationFilter() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(applicationContext, "classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilterByPath() throws Exception {
+    void verifySigValidationFilterByPath() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter("classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }

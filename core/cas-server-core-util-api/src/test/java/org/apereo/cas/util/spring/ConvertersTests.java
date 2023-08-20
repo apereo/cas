@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class ConvertersTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(new Converters.ZonedDateTimeToStringConverter().convert(ZonedDateTime.now(Clock.systemUTC())));
     }
 }

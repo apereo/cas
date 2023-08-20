@@ -30,7 +30,8 @@ public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFac
     protected final ExpirationPolicyBuilder expirationPolicy;
 
     @Override
-    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes, final Map<String, Object> claims) {
+    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes,
+                                      final Map<String, Object> claims) throws Throwable {
         val codeId = this.idGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
         return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy.buildTicketExpirationPolicy(), scopes, claims);
     }

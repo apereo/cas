@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @Tag("Groovy")
 class GroovyLoginWebflowDecoratorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val groovy = new GroovyLoginWebflowDecorator(new ClassPathResource("GroovyLoginWebflowDecorator.groovy"));
         val requestContext = new MockRequestContext();
         groovy.decorate(requestContext, mock(ApplicationContext.class));

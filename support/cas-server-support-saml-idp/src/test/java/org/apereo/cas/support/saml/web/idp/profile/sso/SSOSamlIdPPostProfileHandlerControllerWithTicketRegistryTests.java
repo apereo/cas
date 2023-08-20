@@ -64,7 +64,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests extends Base
     }
 
     @Test
-    void verifyPostSignRequest() throws Exception {
+    void verifyPostSignRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Firefox");
