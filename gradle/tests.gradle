@@ -224,7 +224,7 @@ tasks.withType(Test).configureEach {
     list.add("jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED")
     list.add("--add-exports")
     list.add("java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED")
-
+    
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
     list.add("--add-opens")
@@ -241,9 +241,6 @@ tasks.withType(Test).configureEach {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/jdk.unsupported=ALL-UNNAMED")
-    
     list.add("--add-opens")
     list.add("java.base/sun.security.action=jdk.crypto.ec")
 

@@ -64,6 +64,10 @@ dependencyResolutionManagement {
             mavenContent { snapshotsOnly() }
         }
         maven {
+            url "https://repository.apache.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
