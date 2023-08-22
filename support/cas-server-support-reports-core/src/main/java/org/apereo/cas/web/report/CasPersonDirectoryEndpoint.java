@@ -1,7 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,51 +9,55 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
-import org.springframework.util.Assert;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Objects;
-import java.util.Set;
 
 /**
- * This is {@link CasAttributeRepositoryReportEndpoint}.
+ * This is {@link CasPersonDirectoryEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "attributeRepository", enableByDefault = false)
-public class CasAttributeRepositoryReportEndpoint extends BaseCasActuatorEndpoint {
+@RestControllerEndpoint(id = "personDirectory", enableByDefault = false)
+public class CasPersonDirectoryEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<IPersonAttributeDao> cachingAttributeRepository;
 
-    public CasAttributeRepositoryReportEndpoint(
+    public CasPersonDirectoryEndpoint(
         final CasConfigurationProperties casProperties,
         final ObjectProvider<IPersonAttributeDao> cachingAttributeRepository) {
         super(casProperties);
         this.cachingAttributeRepository = cachingAttributeRepository;
     }
-    
-    @ReadOperation
-    @Operation(summary = "Display cached attributes in the attribute repository for user",
+
+    /**
+     * Show cached attributes for person.
+     *
+     * @param username the username
+     * @return the person attributes
+     */
+    @GetMapping("/cache/{username}")
+    @Operation(summary = "Display cached attributes in the attribute repository for user. If attributes are found in the cache, they are returned. "
+        + "Otherwise, attribute repositories will be contacted to fetch and cache person attributes again",
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
-    public IPersonAttributes showCachedAttributesFor(@Selector final String username) throws Throwable {
+    public IPersonAttributes showCachedAttributesFor(@PathVariable("username") final String username) {
         val cachingRepository = getCachingPersonAttributeDao();
         return cachingRepository.getPerson(username);
     }
 
-    @DeleteOperation
+    /**
+     * Remove cached attributes.
+     *
+     * @param username the username
+     */
+    @DeleteMapping("/cache/{username}")
     @Operation(summary = "Remove cached attributes in the attribute repository for user",
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
-    public void removeCachedAttributesFor(@Selector final String username) throws Throwable {
-        final var cachingRepository = getCachingPersonAttributeDao();
+    public void removeCachedAttributesFor(@PathVariable("username") final String username) {
+        val cachingRepository = getCachingPersonAttributeDao();
         cachingRepository.removeUserAttributes(username);
     }
 

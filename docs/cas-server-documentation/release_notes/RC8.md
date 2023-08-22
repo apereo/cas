@@ -88,3 +88,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 - Spring Shell
 - Apache Tomcat
 - Gradle
+- Hazelcast
+- Oshi
+- Apache Ignite
+- Pac4j
