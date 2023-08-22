@@ -86,6 +86,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 - Spring Integration
 - Spring Framework
 - Spring Shell
+- Spring AMQP
 - Apache Tomcat
 - Gradle
 - Hazelcast

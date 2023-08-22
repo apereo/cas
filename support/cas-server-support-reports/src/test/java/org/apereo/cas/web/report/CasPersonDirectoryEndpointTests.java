@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -26,9 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@TestPropertySource(properties = {
-    "management.endpoint.personDirectory.enabled=true"
-})
+@TestPropertySource(properties = "management.endpoint.personDirectory.enabled=true")
 @Import(CasPersonDirectoryEndpointTests.CasPersonDirectoryTestConfiguration.class)
 @Tag("ActuatorEndpoint")
 public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
@@ -103,6 +102,11 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
         @Override
         public boolean equals(Object o) {
             return o instanceof final MockPersonAttributeDao dao && compareTo(dao) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(getId()).toHashCode();
         }
     }
 }
