@@ -7,17 +7,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link AnonymousAccessAttributeReleasePolicy}.
+ * This is {@link PseudonymousAccessAttributeReleasePolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class AnonymousAccessAttributeReleasePolicy extends BaseEntityCategoryAttributeReleasePolicy {
+public class PseudonymousAccessAttributeReleasePolicy extends BaseEntityCategoryAttributeReleasePolicy {
     /**
      * Map of allowed attributes by this policy in the form of attribute name linked
      * to its equivalent urn value.
      */
     public static final Map<String, String> ALLOWED_ATTRIBUTES = CollectionUtils.wrap(
+        "eduPersonAssurance", "urn:oid:1.3.6.1.4.1.5923.1.1.1.11",
         "schacHomeOrganization", "urn:oid:1.3.6.1.4.1.25178.1.2.9",
         "eduPersonScopedAffiliation", "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
     
@@ -32,7 +33,7 @@ public class AnonymousAccessAttributeReleasePolicy extends BaseEntityCategoryAtt
     @JsonIgnore
     @Override
     public Set<String> getEntityAttributeValues() {
-        return CollectionUtils.wrapSet("https://refeds.org/category/anonymous");
+        return CollectionUtils.wrapSet("https://refeds.org/category/pseudonymous");
     }
-    
+
 }
