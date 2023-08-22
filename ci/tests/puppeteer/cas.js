@@ -38,19 +38,19 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.logy = async (text) => {
-    console.log(colors.yellow(text));
+    console.log(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    console.log(colors.blue(text));
+    console.log(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    console.log(colors.green(text));
+    console.log(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    console.log(colors.red(text));
+    console.log(`⛔ ${colors.red(text)}`);
 };
 
 exports.removeDirectory = async (directory) => {

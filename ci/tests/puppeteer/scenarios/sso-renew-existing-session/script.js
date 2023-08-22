@@ -7,7 +7,8 @@ const cas = require('../../cas.js');
     
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.com");
     await cas.loginWith(page);
-
+    await cas.assertTicketParameter(page);
+    
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
@@ -17,5 +18,9 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#existingSsoMsg');
 
+    await cas.goto(page, "https://localhost:8443/cas/login");
+    await page.waitForTimeout(1000);
+    await cas.assertCookie(page);
+    
     await browser.close();
 })();

@@ -25,10 +25,10 @@ async function cleanUp() {
             await page.waitForTimeout(4000);
             await page.waitForSelector('#username', {visible: true});
             await cas.loginWith(page, "user1", "password");
-            await page.waitForTimeout(4000);
+            await page.waitForTimeout(5000);
             console.log("Checking for page URL...");
             console.log(await page.url());
-            await page.waitForTimeout(4000);
+            await page.waitForTimeout(6000);
             await cas.assertInnerText(page, "#principal", "user1@example.com");
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa")
         } finally {

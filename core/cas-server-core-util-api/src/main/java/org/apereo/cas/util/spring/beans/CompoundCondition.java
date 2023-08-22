@@ -142,6 +142,7 @@ class CompoundCondition implements BeanCondition {
             });
     }
 
+    @SuppressWarnings("UnusedVariable")
     private record BooleanCondition(Boolean value) implements Condition {}
     
     @Data
