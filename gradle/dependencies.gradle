@@ -3476,12 +3476,6 @@ ext.libraries = [
                     exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
                 }
         ],
-        authyjava                  : [
-                dependencies.create("com.authy:authy-java:$authyVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.json", module: "json")
-                }
-        ],
         bucket4j                   : [
                 dependencies.create("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

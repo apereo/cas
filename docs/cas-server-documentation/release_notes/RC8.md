@@ -72,7 +72,8 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 ## Other Stuff
                           
-- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2002.
+- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
+- Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
 - Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
 
 ## Library Upgrades

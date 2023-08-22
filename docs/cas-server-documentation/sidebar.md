@@ -287,7 +287,6 @@ layout: null
             *   [DynamoDb](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html)
             *   [Redis](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-Redis.html)
             *   [REST](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-Rest.html)
-        *   [Authy](/cas/{{ version }}/mfa/AuthyAuthenticator-Authentication.html)
         *   [Simple](#simplemfaoverview)
             *   [Overview](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication.html)
             *   [Communication Strategy](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication-Communication.html)

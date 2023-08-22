@@ -290,7 +290,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|gauth|webauthn|authy|fido)
+            mfaprovider|gauth|webauthn|fido)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)

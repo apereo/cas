@@ -1800,16 +1800,6 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
     /**
-     * Action id 'authyAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_AUTHY_AUTHENTICATION = "authyAuthenticationWebflowAction";
-
-    /**
-     * Action id 'authyAuthenticationRegistrationWebflowAction'.
-     */
-    String ACTION_ID_AUTHY_REGISTRATION = "authyAuthenticationRegistrationWebflowAction";
-
-    /**
      * Action id 'loadAccountRegistrationPropertiesAction'.
      */
     String ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES = "loadAccountRegistrationPropertiesAction";
