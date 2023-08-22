@@ -112,7 +112,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
 
         @Override

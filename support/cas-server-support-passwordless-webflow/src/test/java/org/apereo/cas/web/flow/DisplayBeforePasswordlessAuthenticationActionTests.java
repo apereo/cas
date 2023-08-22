@@ -47,7 +47,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
     

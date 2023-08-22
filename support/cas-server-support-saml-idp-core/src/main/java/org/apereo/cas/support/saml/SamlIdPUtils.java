@@ -337,7 +337,7 @@ public class SamlIdPUtils {
      *
      * @param entityDescriptor the entity descriptor
      * @param candidates       the candidates
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesEntityDescriptorMatchEntityAttribute(final EntityDescriptor entityDescriptor,
                                                                    final List<MetadataEntityAttributeQuery> candidates) {

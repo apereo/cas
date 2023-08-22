@@ -28,7 +28,7 @@ public interface BeanCondition {
      * @return the bean condition
      */
     static BeanCondition on(final String name) {
-        return new PropertyBeanCondition(name);
+        return new CompoundCondition(name);
     }
 
     /**
@@ -103,10 +103,20 @@ public interface BeanCondition {
     BeanCondition and(Supplier<Boolean> booleanSupplier);
 
     /**
+     * And bean condition.
+     *
+     * @param booleanSupplier the boolean supplier
+     * @return the bean condition
+     */
+    BeanCondition and(Condition booleanSupplier);
+
+    /**
      * To supplier supplier.
      *
      * @param applicationContext the application context
      * @return the supplier
      */
     Supplier<Boolean> given(PropertyResolver applicationContext);
+
+    interface Condition {}
 }

@@ -79,6 +79,9 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val smsSent = strategy.contains(TokenSharingStrategyOptions.SMS)
             && CasSimpleMultifactorSendSms.of(communicationsManager, properties).send(principal, token, requestContext);
 
+        val phoneCallSent = strategy.contains(TokenSharingStrategyOptions.PHONE)
+            && CasSimpleMultifactorMakePhoneCall.of(communicationsManager, properties).call(principal, token, requestContext);
+
         return FunctionUtils.doUnchecked(() -> {
             var emailSent = false;
             if (strategy.contains(TokenSharingStrategyOptions.EMAIL)) {
@@ -97,7 +100,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }
 
             val notificationSent = strategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);
-            if (smsSent || emailSent || notificationSent) {
+            if (smsSent || emailSent || notificationSent || phoneCallSent) {
                 LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
                 storeToken(requestContext, token);
                 return buildSuccessEvent(token);

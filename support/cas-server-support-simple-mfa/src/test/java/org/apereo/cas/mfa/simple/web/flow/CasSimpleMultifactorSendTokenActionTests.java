@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.simple.web.flow;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
+import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -12,6 +13,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -58,6 +61,42 @@ class CasSimpleMultifactorSendTokenActionTests {
             val request = (MockHttpServletRequest) WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             emailRecipients.keySet().forEach(key -> request.setParameter(key.toString(), "nothing"));
             event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeStatic")
+    @Nested
+    @TestPropertySource(properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+
+        "cas.authn.mfa.simple.mail.from=admin@example.org",
+        "cas.authn.mfa.simple.mail.subject=CAS Token",
+        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}",
+
+        "cas.authn.mfa.simple.sms.from=347746512"
+    })
+    @Import(PhoneCallTests.PhoneCallOperatorTestConfiguration.class)
+    class PhoneCallTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+
+        @TestConfiguration(value = "PhoneCallOperatorTestConfiguration", proxyBeanMethods = false)
+        public static class PhoneCallOperatorTestConfiguration {
+            @Bean
+            public PhoneCallOperator phoneCallOperator() {
+                return new PhoneCallOperator() {
+                    @Override
+                    public boolean call(final String from, final String to, final String message) {
+                        return true;
+                    }
+                };
+            }
+        }
+
+        @Test
+        void verifyOperation() throws Throwable {
+            val context = buildRequestContextFor("casuser");
+            val event = mfaSimpleMultifactorSendTokenAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         }
     }
