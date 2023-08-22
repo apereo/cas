@@ -108,7 +108,7 @@ class SurrogateAuthenticationEventListenerTests {
 
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 }

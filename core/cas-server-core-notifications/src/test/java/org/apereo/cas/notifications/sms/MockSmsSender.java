@@ -1,12 +1,17 @@
 package org.apereo.cas.notifications.sms;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * This is {@link MockSmsSender}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class MockSmsSender implements SmsSender {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class MockSmsSender implements SmsSender {
+    public static final SmsSender INSTANCE = new MockSmsSender();
     @Override
     public boolean send(final String from, final String to, final String message) {
         return true;

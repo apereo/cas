@@ -129,7 +129,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param registeredService the registered service
      * @param principalId       the principal id
      * @param attributes        the attributes
-     * @return the boolean
+     * @return true/false
      * @throws Throwable the throwable
      */
     public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,

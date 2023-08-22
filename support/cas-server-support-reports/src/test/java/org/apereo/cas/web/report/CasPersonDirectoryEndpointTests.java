@@ -57,7 +57,7 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
     }
 
     @RequiredArgsConstructor
-    private static class MockPersonAttributeDao implements IPersonAttributeDao {
+    private static final class MockPersonAttributeDao implements IPersonAttributeDao {
         @Override
         public IPersonAttributes getPerson(final String s, final Set<IPersonAttributes> set, final IPersonAttributeDaoFilter iPersonAttributeDaoFilter) {
             return PERSON;
@@ -100,7 +100,7 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             return o instanceof final MockPersonAttributeDao dao && compareTo(dao) == 0;
         }
 

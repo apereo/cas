@@ -17,18 +17,18 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
- * This is {@link PropertyBeanCondition}.
+ * This is {@link CompoundCondition}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-class PropertyBeanCondition implements BeanCondition {
+class CompoundCondition implements BeanCondition {
     private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
 
     private final Deque<Condition> conditionList = new ArrayDeque<>();
 
-    PropertyBeanCondition(final String name) {
+    CompoundCondition(final String name) {
         conditionList.push(new PropertyCondition(name));
     }
 
@@ -101,8 +101,16 @@ class PropertyBeanCondition implements BeanCondition {
     }
 
     @Override
+    @CanIgnoreReturnValue
     public BeanCondition and(final Supplier<Boolean> booleanSupplier) {
         conditionList.push(new BooleanCondition(booleanSupplier.get()));
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public BeanCondition and(final Condition condition) {
+        conditionList.push(condition);
         return this;
     }
 
@@ -128,19 +136,14 @@ class PropertyBeanCondition implements BeanCondition {
                     return StringUtils.isNotBlank(result);
                 }
                 if (cond instanceof final BooleanCondition condition) {
-                    return BooleanUtils.toBoolean(condition.getValue());
+                    return BooleanUtils.toBoolean(condition.value());
                 }
                 return false;
             });
     }
 
-    private interface Condition {}
-
-    @Data
-    private static final class BooleanCondition implements Condition {
-        private final Boolean value;
-    }
-
+    private record BooleanCondition(Boolean value) implements Condition {}
+    
     @Data
     private static final class PropertyCondition implements Condition {
         private final String propertyName;

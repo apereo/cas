@@ -102,7 +102,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     static class ElectronicFenceTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 
