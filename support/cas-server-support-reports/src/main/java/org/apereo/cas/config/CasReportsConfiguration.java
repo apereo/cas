@@ -26,9 +26,9 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
-import org.apereo.cas.web.report.CasAttributeRepositoryReportEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
+import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
 import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
@@ -42,7 +42,6 @@ import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
@@ -61,7 +60,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.List;
 
 /**
@@ -201,12 +199,12 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasAttributeRepositoryReportEndpoint casAttributeRepositoryEndpoint(
+        public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
             @Autowired
             @Qualifier("cachingAttributeRepository")
             final ObjectProvider<IPersonAttributeDao> cachingAttributeRepository,
             final CasConfigurationProperties casProperties) {
-            return new CasAttributeRepositoryReportEndpoint(casProperties, cachingAttributeRepository);
+            return new CasPersonDirectoryEndpoint(casProperties, cachingAttributeRepository);
         }
         
         @Bean

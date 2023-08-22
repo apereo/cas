@@ -26,7 +26,7 @@ as long as the SSO session exists.</p></div>
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="resolveAttributes" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="resolveAttributes,personDirectory" casModule="cas-server-support-reports" %}
 
 ## Person Directory
 
