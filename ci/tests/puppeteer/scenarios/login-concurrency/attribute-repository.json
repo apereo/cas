@@ -1,0 +1,10 @@
+{
+  "casuser": {
+    "entitlements": [ "user", "normal" ],
+    "label": [ "user-account" ]
+  },
+  "casadmin": {
+    "entitlements": [ "admin", "high" ],
+    "name": [ "administrator" ]
+  }
+}
