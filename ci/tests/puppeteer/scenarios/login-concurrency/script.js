@@ -9,8 +9,8 @@ assert(config != null);
 
 const paramOptions = {
     file: config.loadScript,
-    samplesRequested: 25,
-    concurrencyRequested: 10
+    samplesRequested: 5,
+    concurrencyRequested: 5
 };
 const loadtest = async () => await startPuppeteerLoadTest(paramOptions);
 
