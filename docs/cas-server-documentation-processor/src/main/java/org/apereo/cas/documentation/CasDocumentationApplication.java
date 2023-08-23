@@ -453,7 +453,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -485,7 +485,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -517,7 +517,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -549,7 +549,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -687,8 +687,8 @@ public class CasDocumentationApplication {
             var param = method.getParameters()[i];
             var selector = param.getAnnotation(Selector.class) != null;
             selector = selector || param.getAnnotation(PathVariable.class) != null;
-
             if (selector) {
+                map.put("selector", selector);
                 var path = (String) map.get("path");
 
                 if (path.indexOf('{') == -1) {

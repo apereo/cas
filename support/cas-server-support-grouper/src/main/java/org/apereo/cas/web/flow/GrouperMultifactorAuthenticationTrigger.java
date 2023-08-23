@@ -25,7 +25,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,8 +82,7 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
         val groupField = GrouperGroupField.valueOf(grouperField);
 
         val values = results.stream()
-            .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
-            .flatMap(Function.identity())
+            .flatMap(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
             .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
             .collect(Collectors.toSet());
 
