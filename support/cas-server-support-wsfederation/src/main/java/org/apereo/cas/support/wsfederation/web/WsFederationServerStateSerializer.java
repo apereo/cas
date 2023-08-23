@@ -8,16 +8,16 @@ import java.io.Serial;
 import java.util.Map;
 
 /**
- * This is {@link WsFederationCookieSerializer}.
+ * This is {@link WsFederationServerStateSerializer}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class WsFederationCookieSerializer extends AbstractJacksonBackedStringSerializer<Map> {
+public class WsFederationServerStateSerializer extends AbstractJacksonBackedStringSerializer<Map> {
     @Serial
     private static final long serialVersionUID = -1152522695984638020L;
 
-    public WsFederationCookieSerializer() {
+    public WsFederationServerStateSerializer() {
         super(new MinimalPrettyPrinter());
     }
 

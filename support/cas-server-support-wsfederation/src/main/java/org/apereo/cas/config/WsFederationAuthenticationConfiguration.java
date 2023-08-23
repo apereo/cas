@@ -82,8 +82,7 @@ public class WsFederationAuthenticationConfiguration {
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
             final CasConfigurationProperties casProperties) {
-            return new WsFederationCookieManager(wsFederationConfigurations.toList(),
-                casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
+            return new WsFederationCookieManager(wsFederationConfigurations.toList(), casProperties);
         }
 
     }
