@@ -80,6 +80,10 @@ node {
     nodeProjectDir = new File("${project.projectDir}", "client")
 }
 
+tasks.named("yarn", YarnTask) {
+    args = ['--network-timeout', '600000']
+}
+
 tasks.register("build-ui", NpxTask) {
     command = "vite"
     args = [ "build", "--outDir", "../src/main/resources/static/assets"]
