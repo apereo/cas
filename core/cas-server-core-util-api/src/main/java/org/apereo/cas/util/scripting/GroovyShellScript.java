@@ -47,8 +47,8 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         executionLock.lock();
-        LOGGER.trace("Beginning to execute script [{}]", this);
         try {
+            LOGGER.trace("Beginning to execute script [{}]", this);
             if (groovyScript != null) {
                 if (binding != null && !binding.isEmpty()) {
                     groovyScript.setBinding(new Binding(binding));
