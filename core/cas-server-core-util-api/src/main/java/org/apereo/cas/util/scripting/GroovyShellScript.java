@@ -21,7 +21,7 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private final Script groovyScript;
     private final String script;
 
-    private final ThreadLocal<Map<String, Object>> bindingThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
 
     public GroovyShellScript(final String script) {
         this.script = script;
@@ -42,7 +42,7 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     public synchronized <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);
-            val binding = bindingThreadLocal.get();
+            val binding = BINDING_THREAD_LOCAL.get();
             if (groovyScript != null) {
                 if (binding != null && !binding.isEmpty()) {
                     LOGGER.trace("Setting binding [{}]", binding);
@@ -55,7 +55,7 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
             }
             return null;
         } finally {
-            bindingThreadLocal.remove();
+            BINDING_THREAD_LOCAL.remove();
             if (groovyScript != null) {
                 groovyScript.setBinding(new Binding(Map.of()));
             }
@@ -70,10 +70,9 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
 
     @Override
     public void setBinding(final Map<String, Object> args) {
-        bindingThreadLocal.set(new HashMap<>(args));
+        BINDING_THREAD_LOCAL.set(new HashMap<>(args));
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)
