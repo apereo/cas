@@ -14,6 +14,26 @@ Members involved in [CAS application security](/cas/Mailing-Lists.html):
 - Create and maintain recommendations on good practices for CAS implementation around hardening, configuration, failing safe, security by default, etc.
 
 To review the old archives of the application security working group, [please see this guide](https://wiki.jasig.org/display/CAS/CAS+AppSec+Working+Group).
+     
+## Context & Definition
+
+What is a security vulnerability? how and when discovered defects may be tagged as a vulnerability?
+
+A security vulnerability is almost always a software defect and typically is a direct result of a CAS deployment behaving in unexpected ways
+despite correct system configuration and application state. Correctness and intention is typically judged against available CAS documentation or a project member
+acting as a subject-matter expert who may be able to clarify intended, expected behavior. Security bugs and vulnerabilities that present themselves as a result of CAS misconfiguration, misuse 
+or misunderstanding of how features and use cases work do not qualify. Likewise, scenarios that stem from *plausible deniability* (i.e. "I had no idea X works this way")
+generally do not qualify. While features and enhancements can always be reviewed and debated to remove or improve a degree of flexibility, a lack of understanding or 
+intentional misuse are almost always seen as a normal defect or opportunity for improvement. You are more than welcome to contribute.
+
+Furthermore, in an ecosystem that involves many moving and variable parts, the CAS software and project generally tends to only focus on the CAS piece
+and does not make a serious claim or attempt to secure (or even at times explain or document) the behavior of the systems present in its deployment environment. For example, if you
+are managing a clustered CAS deployment backed by Hazelcast that sits in front of a proxy, behind a load balancer, connecting to Active Directory and is deployed via Docker and Kubernetes,
+CAS security only then goes as far as CAS itself. You are, *independently and separately*, responsible for managing and securing all other components that live in this ecosystem.
+Your proxy might allow untrusted data to pass through or your LDAP directory could support insecure connections, or you may intentionally configure CAS to accept authentication 
+requests from any application on this planet and beyond. None of these constitute a CAS security vulnerability.
+
+If you find that aspects of the CAS documentation can be improved to clarify and explain a specific situation better, you are more than welcome to contribute.
 
 ## Response Model
 
