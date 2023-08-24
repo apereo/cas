@@ -23,15 +23,13 @@ export default defineConfig(({mode}) => ({
         react(),
     ],
     build: {
+        minify: mode === 'production' ? true : false,
         lib: {
             entry: resolve(__dirname, 'src/main.jsx'),
             name: 'Palantir',
             fileName: (format) => `palantir.${format}.js`,
             formats: [
-                'cjs',
-                'umd',
-                'iife',
-                'es'
+                'umd'
             ]
         }
     }
