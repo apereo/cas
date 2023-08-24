@@ -76,38 +76,40 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 .registeredService(registeredService)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-
-            if (!accessResult.isExecutionFailure() && canAuthenticate(callContext)) {
-                val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-                validateCredentials(upc, registeredService, callContext);
-
-                val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
-                val resolvedPrincipal = principalResolver.resolve(credential);
-
-                val profile = new CommonProfile();
-                if (resolvedPrincipal instanceof NullPrincipal) {
-                    LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
-                    profile.setId(id);
-                } else {
-                    val usernameContext = RegisteredServiceUsernameProviderContext.builder()
-                        .registeredService(registeredService)
-                        .service(service)
-                        .principal(resolvedPrincipal)
-                        .build();
-                    val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
-                    profile.setId(username);
-                }
-                profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
-                LOGGER.debug("Created profile id [{}]", profile.getId());
-
-                val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, callContext);
-                profile.addAttributes((Map) principal.getAttributes());
-
-                LOGGER.debug("Authenticated user profile [{}]", profile);
-                credentials.setUserProfile(profile);
-                return Optional.of(credentials);
+            val proceed = !accessResult.isExecutionFailure() && canAuthenticate(callContext);
+            if (!proceed) {
+                val name = getClass().getSimpleName();
+                LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
+                return Optional.empty();
             }
-            return Optional.empty();
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            validateCredentials(upc, registeredService, callContext);
+
+            val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
+            val resolvedPrincipal = principalResolver.resolve(credential);
+
+            val profile = new CommonProfile();
+            if (resolvedPrincipal instanceof NullPrincipal) {
+                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
+                profile.setId(id);
+            } else {
+                val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                    .registeredService(registeredService)
+                    .service(service)
+                    .principal(resolvedPrincipal)
+                    .build();
+                val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
+                profile.setId(username);
+            }
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
+            LOGGER.debug("Created profile id [{}]", profile.getId());
+
+            val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, callContext);
+            profile.addAttributes((Map) principal.getAttributes());
+
+            LOGGER.debug("Authenticated user profile [{}]", profile);
+            credentials.setUserProfile(profile);
+            return Optional.of(credentials);
         });
     }
 

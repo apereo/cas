@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -58,8 +57,10 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     }
 
     @Override
-    protected boolean canAuthenticate(final CallContext context) {
-        return context.webContext().getRequestParameter(OAuth20Constants.CODE_VERIFIER).isPresent();
+    protected boolean canAuthenticate(final CallContext callContext) {
+        val context = callContext.webContext();
+        return getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).isPresent()
+            && getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.CODE).isPresent();
     }
 
     @Override
@@ -70,11 +71,14 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         if (!getClientSecretValidator().validate(registeredService, clientSecret)) {
             throw new CredentialsException("Client Credentials provided is not valid for service: " + registeredService.getName());
         }
-        val codeVerifier = callContext.webContext().getRequestParameter(OAuth20Constants.CODE_VERIFIER)
+        val codeVerifier = getRequestParameterResolver()
+            .resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE_VERIFIER)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val code = callContext.webContext().getRequestParameter(OAuth20Constants.CODE)
+        val code = getRequestParameterResolver()
+            .resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
+        LOGGER.debug("Received PKCE code verifier [{}] along with code [{}]", codeVerifier, code);
         val token = getTicketRegistry().getTicket(code, OAuth20Code.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("Provided code [{}] is either not found in the ticket registry or has expired", code);
