@@ -18,10 +18,10 @@ import java.util.Map;
 @Getter
 @Slf4j
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
+    private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
+
     private final Script groovyScript;
     private final String script;
-
-    private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
 
     public GroovyShellScript(final String script) {
         this.script = script;
