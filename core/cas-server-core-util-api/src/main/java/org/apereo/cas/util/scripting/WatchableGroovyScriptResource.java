@@ -9,7 +9,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This is {@link WatchableGroovyScriptResource}.
@@ -21,8 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Getter
 @ToString(of = "resource")
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
-    private final ReentrantLock executionLock = new ReentrantLock();
-
     private final Resource resource;
 
     private FileWatcherService watcherService;
@@ -54,34 +51,28 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
         return execute(args, clazz, true);
     }
 
-    /**
-     * Execute.
-     *
-     * @param args the args
-     */
     @Override
     public void execute(final Object[] args) throws Throwable {
         execute(args, Void.class, true);
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
-        executionLock.lock();
+    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
+        return execute(methodName, clazz, true, args);
+    }
+
+    @Override
+    public synchronized <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);
             return FunctionUtils.doIfNotNull(groovyScript,
                 () -> ScriptingUtils.executeGroovyScript(groovyScript, args, clazz, failOnError),
                 () -> null).get();
         } finally {
-            executionLock.unlock();
             LOGGER.trace("Completed script execution [{}]", this);
         }
     }
 
-    @Override
-    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
-        return execute(methodName, clazz, true, args);
-    }
 
     /**
      * Execute.
@@ -95,14 +86,12 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                          final Object... args) throws Throwable {
-        executionLock.lock();
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);
             return FunctionUtils.doIfNotNull(groovyScript,
                 () -> ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError),
                 () -> null).get();
         } finally {
-            executionLock.unlock();
             LOGGER.trace("Completed script execution [{}]", this);
         }
     }

@@ -231,12 +231,10 @@ public class ScriptingUtils {
                                             final Object[] args,
                                             final Class<T> clazz,
                                             final boolean failOnError) {
-
-        if (groovyScript == null || StringUtils.isBlank(methodName)) {
-            return null;
-        }
-
         try {
+            if (groovyScript == null || StringUtils.isBlank(methodName)) {
+                return null;
+            }
             return getGroovyResult(groovyScript, methodName, args, clazz, failOnError);
         } catch (final Throwable e) {
             if (failOnError) {
@@ -288,14 +286,11 @@ public class ScriptingUtils {
      * @return the script
      */
     public static Script parseGroovyShellScript(final String script) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val shell = new GroovyShell();
             LOGGER.debug("Parsing groovy script [{}]", script);
             return shell.parse(script);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        });
     }
 
     /**
