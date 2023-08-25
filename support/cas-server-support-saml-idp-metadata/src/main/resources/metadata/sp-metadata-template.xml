@@ -8,7 +8,7 @@
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>
-        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        <md:AssertionConsumerService Binding="${binding}"
                                      Location="${assertionConsumerServiceUrl}"
                                      index="0"/>
     </md:SPSSODescriptor>
