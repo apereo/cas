@@ -664,6 +664,8 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcTokenIntrospectionSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenIntrospectionSigningAndEncryptionService,
             @Qualifier("oidcClientRegistrationRequestTranslator")
@@ -797,6 +799,7 @@ public class OidcConfiguration {
                 .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
                 .accessTokenJwtBuilder(accessTokenJwtBuilder)
                 .clientSecretValidator(oauth20ClientSecretValidator)
+                .attributeDefinitionStore(attributeDefinitionStore)
                 .build();
         }
     }

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -65,6 +66,10 @@ class DefaultAttributeDefinitionStoreTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -453,6 +458,11 @@ class DefaultAttributeDefinitionStoreTests {
             store.removeAttributeDefinition(defn.getKey());
             assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
         }
+    }
+
+    @Test
+    void verifyLocateAttributeDefnByName() throws Throwable {
+        assertTrue(attributeDefinitionStore.locateAttributeDefinitionByName("interesting-attribute", AttributeDefinition.class).isPresent());
     }
 
 }

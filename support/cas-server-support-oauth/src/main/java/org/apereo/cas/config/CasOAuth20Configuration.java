@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -259,6 +260,7 @@ public class CasOAuth20Configuration {
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME) final AttributeDefinitionStore attributeDefinitionStore,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
@@ -310,6 +312,7 @@ public class CasOAuth20Configuration {
                 .oauthRequestValidators(oauthAuthorizationRequestValidators)
                 .clientSecretValidator(oauth20ClientSecretValidator)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
+                .attributeDefinitionStore(attributeDefinitionStore)
                 .build();
         }
     }
