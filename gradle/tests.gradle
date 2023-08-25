@@ -16,9 +16,9 @@ enum TestCategories {
     CAS,
     CasConfiguration,
     Cassandra,
-    Cipher,
+    Cipher(true),
     Consent,
-    Cookie,
+    Cookie(true),
     Delegation,
     DuoSecurity,
     DynamoDb,
@@ -75,7 +75,7 @@ enum TestCategories {
     RegisteredService,
     RestfulApi,
     RestfulApiAuthentication,
-    SAML,
+    SAML(true),
     SAML1,
     SAML2,
     SAML2Web,
@@ -92,7 +92,7 @@ enum TestCategories {
     Syncope,
     Tickets,
     UMA,
-    Utility,
+    Utility(true),
     Web,
     WebApp,
     Webflow,
@@ -107,6 +107,16 @@ enum TestCategories {
     WSFederation,
     X509,
     ZooKeeper
+
+    boolean parallelEnabled;
+
+    TestCategories() {
+        parallelEnabled = false
+    }
+    
+    TestCategories(boolean parallelEnabled) {
+        this.parallelEnabled = parallelEnabled
+    }
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
@@ -156,20 +166,26 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     }
 }
 
-TestCategories.values().each({ category ->
+TestCategories.values().each({ testCategory ->
     def sourceTestDirs = project.sourceSets.test.java.srcDirs
     def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-    if (hasTestsOfCategory(sourceTestDirs, category.name())) {
-        def taskName = "test${category.name()}"
+    if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
+        def taskName = "test${testCategory.name()}"
         if (!tasks.getNames().contains(taskName)) {
             // println "Creating task ${taskName} for ${project.name}"
             tasks.register(taskName, Test) {
-                description = "Run unit/integration tests to verify the test category: ${category.name()}"
+                description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
-                enabled = shouldTest(sourceTestDirs, category.name())
+                enabled = shouldTest(sourceTestDirs, testCategory.name())
                 outputs.file(jacocoTestExecutionResultsFile)
                 useJUnitPlatform {
-                    includeTags category.name()
+                    includeTags testCategory.name()
+                }
+                if (testCategory.parallelEnabled) {
+                    systemProperty("junit.jupiter.execution.parallel.enabled", true)
+                    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
                 }
             }
         }
@@ -202,6 +218,8 @@ tasks.withType(Test).configureEach {
     systemProperty("spring.main.banner-mode", "off")
     systemProperty("CI", ci)
 
+
+    
     failFast = true
 
     def list = []

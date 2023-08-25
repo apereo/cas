@@ -32,6 +32,7 @@ import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -45,6 +46,10 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class MockWebServer implements Closeable {
+    private static final int STARTING_PORT_RANGE = 4000;
+    private static final int ENDING_PORT_RANGE = 9999;
+
+    private static final ConcurrentSkipListSet ALL_PORTS = new ConcurrentSkipListSet<>();
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -58,11 +63,23 @@ public class MockWebServer implements Closeable {
      */
     private Thread workerThread;
 
+    public MockWebServer() {
+        this(getRandomPort());
+    }
+
+    public MockWebServer(final Resource resource, final String contentType) {
+        this(getRandomPort(), resource, contentType, HttpStatus.OK);
+    }
+
+    public MockWebServer(final String jsonResource) {
+        this(new ByteArrayResource(jsonResource.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE);
+    }
+
     public MockWebServer(final int port) {
         try {
             this.worker = new Worker(getServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -73,7 +90,7 @@ public class MockWebServer implements Closeable {
             this.worker = new Worker(getServerSocket(port), resource,
                 HttpStatus.OK, MediaType.APPLICATION_JSON_VALUE, Map.of());
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -83,7 +100,7 @@ public class MockWebServer implements Closeable {
             val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
             this.worker = new Worker(getServerSocket(port), resource, status, MediaType.APPLICATION_JSON_VALUE, headers);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -95,7 +112,7 @@ public class MockWebServer implements Closeable {
         try {
             this.worker = new Worker(getServerSocket(port), resource, status);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -107,7 +124,7 @@ public class MockWebServer implements Closeable {
         try {
             this.worker = new Worker(getServerSocket(port), resource, contentType, status);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -116,7 +133,7 @@ public class MockWebServer implements Closeable {
             this.worker = new Worker(getServerSocket(port), MediaType.APPLICATION_JSON_VALUE);
             responseBody(data);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -124,7 +141,7 @@ public class MockWebServer implements Closeable {
         try {
             this.worker = new Worker(getServerSocket(port), funcExec);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Cannot create Web server", e);
+            throw new IllegalArgumentException("Cannot create Web server on port " + port, e);
         }
     }
 
@@ -157,6 +174,10 @@ public class MockWebServer implements Closeable {
         return ss;
     }
 
+    public int getPort() {
+        return this.worker.getPort();
+    }
+    
     public void responseBody(final String data) {
         this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
     }
@@ -267,6 +288,10 @@ public class MockWebServer implements Closeable {
             this.headers.putAll(headers);
         }
 
+        public int getPort() {
+            return serverSocket.getLocalPort();
+        }
+
         private static byte[] header(final String name, final Object value) {
             return String.format("%s: %s%s", name, value, SEPARATOR).getBytes(StandardCharsets.UTF_8);
         }
@@ -304,6 +329,7 @@ public class MockWebServer implements Closeable {
 
         public void stop() {
             try {
+                ALL_PORTS.remove(getPort());
                 serverSocket.close();
             } catch (final IOException e) {
                 LOGGER.trace("Exception when closing the server socket: [{}]", e.getMessage());
@@ -343,5 +369,14 @@ public class MockWebServer implements Closeable {
                 LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
             }
         }
+    }
+
+    private static int getRandomPort() {
+        var port = 0;
+        while (port == 0 || ALL_PORTS.contains(port)) {
+           port = RandomUtils.nextInt(STARTING_PORT_RANGE, ENDING_PORT_RANGE);
+        }
+        ALL_PORTS.add(port);
+        return port;
     }
 }
