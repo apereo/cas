@@ -17,15 +17,17 @@ prevent it from being released by other protocols.
   "mail": {
     "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
     "key": "mail",
-    "singleValue": true
+    "singleValue": false,
+    "structured": false
   }
 }
 ```
 
 The following additional settings can be specified for a OpenID Connect attribute definitions:
 
-| Name          | Description                                                                                                               |
-|---------------|---------------------------------------------------------------------------------------------------------------------------|
-| `singleValue` | Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value. |
+| Name          | Description                                                                                                                                                                                                                                        |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `singleValue` | Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                                                                                          |
+| `structured`  | Default is `false`. Determines if the resulting attribute should be encoded as a hierarchical/structured attribute, activated only if the `name` assigned to the attribute definition indicates a hierarchical layout such as `parent.child.child` |
 
 To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
