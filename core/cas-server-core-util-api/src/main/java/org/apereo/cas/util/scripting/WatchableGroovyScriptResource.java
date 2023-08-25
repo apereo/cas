@@ -65,9 +65,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     public synchronized <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);
-            return FunctionUtils.doIfNotNull(groovyScript,
-                () -> ScriptingUtils.executeGroovyScript(groovyScript, args, clazz, failOnError),
-                () -> null).get();
+            return groovyScript != null
+                ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
+                : null;
         } finally {
             LOGGER.trace("Completed script execution [{}]", this);
         }
@@ -88,9 +88,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
                          final Object... args) throws Throwable {
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);
-            return FunctionUtils.doIfNotNull(groovyScript,
-                () -> ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError),
-                () -> null).get();
+            return groovyScript != null
+                ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+                : null;
         } finally {
             LOGGER.trace("Completed script execution [{}]", this);
         }
