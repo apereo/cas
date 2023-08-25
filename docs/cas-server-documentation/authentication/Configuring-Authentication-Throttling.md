@@ -29,10 +29,10 @@ A couple strategies are provided for tracking failed attempts:
 2. Source IP and username - Limit successive failed logins against a particular user from the same IP address.
 
 All login throttling components that ship with CAS limit successive failed login attempts that exceed a threshold
-rate in failures per second. The following properties are provided to define the failure rate.
+rate, which is a time in seconds between two failures. The following properties are provided to define the failure rate.
 
-* `failureRangeInSeconds` - Period of time in seconds during which the threshold applies.
-* `failureThreshold` - Number of failed login attempts permitted in the above period.
+* `threshold` - Number of failed login attempts.
+* `rangeSeconds` - Period of time in seconds.
 
 A failure rate of more than 1 per 3 seconds is indicative of an automated authentication attempt, which is a
 reasonable basis for throttling policy. Regardless of policy care should be 
@@ -40,7 +40,7 @@ taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
 <div class="alert alert-info mt-3">:information_source: <strong>Threshold Rate</strong><p>
-The failure threshold rate is calculated as: <code>failureThreshold / failureRangeInSeconds</code>. For instance,
+The failure threshold rate is calculated as: <code>threshold / rangeSeconds</code>. For instance,
 the failure rate for the above scenario would be <code>0.333333</code>. An authentication attempt may be considered throttled
 if the request submission rate (calculated as the difference between the current date and the last submission date) exceeds
 the failure threshold rate.
