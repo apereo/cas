@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml;
 
 import lombok.val;
+import org.opensaml.core.config.ConfigurationProperties;
 import org.opensaml.core.config.ConfigurationPropertiesSource;
+import org.opensaml.core.config.provider.PropertiesAdapter;
 import java.util.Properties;
 
 /**
@@ -27,11 +29,11 @@ public class OpenSamlConfigurationPropertiesSource implements ConfigurationPrope
     public static final String CONFIG_APACHE_XML_IGNORE_LINEBREAKS = "org.apache.xml.security.ignoreLineBreaks";
 
     @Override
-    public Properties getProperties() {
+    public ConfigurationProperties getProperties() {
         val properties = new Properties();
         properties.setProperty(CONFIG_APACHE_XML_IGNORE_LINEBREAKS, "true");
         properties.setProperty(CONFIG_SUN_XML_IGNORE_LINEBREAKS, "true");
         properties.setProperty(CONFIG_STRICT_MODE, "false");
-        return properties;
+        return new PropertiesAdapter(properties);
     }
 }
