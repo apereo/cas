@@ -246,6 +246,8 @@ tasks.withType(Test).configureEach {
 
     list.add("-Xms512m")
     list.add("-Xmx4g")
+    
+    list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")

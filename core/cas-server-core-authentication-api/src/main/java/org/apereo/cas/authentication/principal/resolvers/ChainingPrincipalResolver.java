@@ -68,6 +68,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 if (resolvedPrincipal != null) {
                     LOGGER.debug("Resolved principal [{}]", resolvedPrincipal);
                     principals.add(resolvedPrincipal);
+                } else {
+                    LOGGER.warn("Unable to resolve principal via [{}]", resolver.getName());
                 }
             });
         if (principals.isEmpty()) {
