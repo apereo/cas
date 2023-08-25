@@ -37,7 +37,6 @@ class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             new File(FileUtils.getTempDirectory(), "saml-sp-metadata.json"));
         val service = new SamlRegisteredService();
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);
-
         service.setName("Example");
         service.setId(1000);
         service.setServiceId("https://example.org/saml");
