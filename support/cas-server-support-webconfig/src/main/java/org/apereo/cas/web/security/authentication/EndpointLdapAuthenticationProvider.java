@@ -84,12 +84,17 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
             val request = new AuthenticationRequest(username, new Credential(password), ReturnAttributes.ALL.value());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 
-            val response = this.authenticator.authenticate(request);
+            val response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.isSuccess()) {
-
-                val roles = securityProperties.getUser().getRoles();
+                val roles = securityProperties.getUser()
+                    .getRoles()
+                    .stream()
+                    .map(role -> StringUtils.prependIfMissing(role, ldapProperties.getLdapAuthz().getRolePrefix()))
+                    .map(String::toUpperCase)
+                    .collect(Collectors.toList());
+                LOGGER.debug("Required roles are [{}]", roles);
                 if (roles.isEmpty()) {
                     LOGGER.info("No user security roles are defined to enable authorization. User [{}] is considered authorized", username);
                     return generateAuthenticationToken(authentication, new ArrayList<>(0));
@@ -98,7 +103,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 val entry = response.getLdapEntry();
                 val profile = new CommonProfile();
                 profile.setId(username);
-                entry.getAttributes().forEach(a -> profile.addAttribute(a.getName(), a.getStringValues()));
+                entry.getAttributes().forEach(attribute -> profile.addAttribute(attribute.getName(), attribute.getStringValues()));
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
@@ -116,7 +121,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                     .collect(Collectors.toCollection(ArrayList::new));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
                 val authorizer = new RequireAnyRoleAuthorizer(roles);
-                LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
+                LOGGER.debug("Executing authorization for expected roles [{}]", authorizer.getElements());
 
                 if (authorizer.isAllAuthorized(context, JEESessionStore.INSTANCE, CollectionUtils.wrap(profile))) {
                     return generateAuthenticationToken(authentication, authorities);
