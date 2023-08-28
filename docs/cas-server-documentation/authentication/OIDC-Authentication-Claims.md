@@ -22,12 +22,12 @@ Please see [this guide](OIDC-Authentication-Claims-Mapping.html).
 
 ## Releasing Claims
 
-Please see [this guide](OIDC-Authentication-Claims-Mapping-Release.html).
+Please see [this guide](OIDC-Authentication-Claims-Release.html).
 
 ## Pairwise Identifiers
 
-Please see [this guide](OIDC-Authentication-Claims-Mapping-Pairwise.html).
+Please see [this guide](OIDC-Authentication-Claims-Pairwise.html).
 
 ## Subject Identifier Claim
 
-Please see [this guide](OIDC-Authentication-Claims-Mapping-Sub.html).
+Please see [this guide](OIDC-Authentication-Claims-Sub.html).

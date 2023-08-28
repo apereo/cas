@@ -79,7 +79,7 @@ else
 fi
 
 echo "kubectl version"
-kubectl version --short
+kubectl version
 
 echo "Checking for host entry"
 set +e

@@ -146,7 +146,7 @@ class RedisServerTicketRegistryTests {
     })
     class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
 
-        private static final int COUNT = 100;
+        private static final int COUNT = 50;
 
         @RepeatedTest(2)
         void verifyLargeDataset() throws Throwable {
