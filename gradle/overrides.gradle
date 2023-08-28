@@ -31,6 +31,9 @@ configurations.configureEach {
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
+                if (requested.group == "org.springframework.amqp")  {
+                    details.useVersion("${springRabbitVersion}")
+                }
                 if (requested.group == "jakarta.activation")  {
                     details.useVersion("${jakartaActivationVersion}")
                 }
