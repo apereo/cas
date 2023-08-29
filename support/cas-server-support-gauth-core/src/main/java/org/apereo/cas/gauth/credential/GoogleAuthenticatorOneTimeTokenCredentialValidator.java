@@ -56,7 +56,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         LOGGER.trace("Received OTP [{}] assigned to account [{}]", otp, tokenCredential.getAccountId());
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
-        val accounts = this.credentialRepository.get(uid);
+        val accounts = credentialRepository.get(uid);
         if (accounts == null || accounts.isEmpty()) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }

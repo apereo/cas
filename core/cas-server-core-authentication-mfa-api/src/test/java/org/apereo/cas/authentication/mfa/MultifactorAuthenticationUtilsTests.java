@@ -80,22 +80,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyProviders() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
-        ApplicationContextProvider.holdApplicationContext(null);
-        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        assertFalse(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
-    }
-
-    @Test
-    void verifyResolveBySingleAttribute() throws Throwable {
+    void verifyResolveBySingleAttribute() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -106,7 +91,7 @@ class MultifactorAuthenticationUtilsTests {
 
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
+        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId(), applicationContext).isPresent());
 
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
         val transition = new Transition(new DefaultTransitionCriteria(
@@ -132,7 +117,7 @@ class MultifactorAuthenticationUtilsTests {
 
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
+        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId(), applicationContext).isPresent());
 
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
         val transition = new Transition(new DefaultTransitionCriteria(
@@ -185,7 +170,7 @@ class MultifactorAuthenticationUtilsTests {
 
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId()).isPresent());
+        assertTrue(MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider.getId(), applicationContext).isPresent());
 
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getMultifactorAuthenticationPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-other"));

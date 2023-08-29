@@ -43,7 +43,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public OneTimeTokenAccount get(final long id) {
+    public synchronized OneTimeTokenAccount get(final long id) {
         val accounts = readAccountsFromJsonRepository();
         return accounts.values()
             .stream()
@@ -54,12 +54,12 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username, final long id) {
+    public synchronized OneTimeTokenAccount get(final String username, final long id) {
         return get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null);
     }
 
     @Override
-    public Collection<? extends OneTimeTokenAccount> get(final String username) {
+    public synchronized Collection<? extends OneTimeTokenAccount> get(final String username) {
         try {
             if (!location.getFile().exists()) {
                 LOGGER.warn("JSON account repository file [{}] is not found.", location.getFile());
@@ -87,7 +87,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public Collection<? extends OneTimeTokenAccount> load() {
+    public synchronized Collection<? extends OneTimeTokenAccount> load() {
         try {
             return readAccountsFromJsonRepository().values()
                 .stream().flatMap(List::stream).collect(Collectors.toList());
@@ -98,7 +98,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+    public synchronized OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         try {
             LOGGER.debug("Storing google authenticator account for [{}]", account.getUsername());
             val accounts = readAccountsFromJsonRepository();
@@ -117,7 +117,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
+    public synchronized OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
             val accounts = readAccountsFromJsonRepository();
             if (accounts.containsKey(account.getUsername().trim().toLowerCase(Locale.ENGLISH))) {
@@ -142,32 +142,32 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public void deleteAll() {
+    public synchronized void deleteAll() {
         writeAccountsToJsonRepository(new HashMap<>(0));
     }
 
     @Override
-    public void delete(final String username) {
+    public synchronized void delete(final String username) {
         val accounts = readAccountsFromJsonRepository();
         accounts.remove(username.trim().toLowerCase(Locale.ENGLISH));
         writeAccountsToJsonRepository(accounts);
     }
 
     @Override
-    public void delete(final long id) {
+    public synchronized void delete(final long id) {
         val accounts = readAccountsFromJsonRepository();
         accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
         writeAccountsToJsonRepository(accounts);
     }
 
     @Override
-    public long count() {
+    public synchronized long count() {
         val accounts = readAccountsFromJsonRepository();
         return accounts.size();
     }
 
     @Override
-    public long count(final String username) {
+    public synchronized long count(final String username) {
         val accounts = readAccountsFromJsonRepository();
         return accounts.containsKey(username.trim().toLowerCase(Locale.ENGLISH)) ? accounts.get(username.trim().toLowerCase(Locale.ENGLISH)).size() : 0;
     }
@@ -182,7 +182,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         }
     }
 
-    private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
+    private synchronized void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
         FunctionUtils.doUnchecked(__ -> {
             if (location.getFile() != null) {
                 LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
@@ -191,7 +191,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         });
     }
 
-    private Map<String, List<OneTimeTokenAccount>> readAccountsFromJsonRepository() {
+    private synchronized Map<String, List<OneTimeTokenAccount>> readAccountsFromJsonRepository() {
         return FunctionUtils.doUnchecked(() -> {
             val file = location.getFile();
             LOGGER.debug("Ensuring JSON repository file exists at [{}]", file);

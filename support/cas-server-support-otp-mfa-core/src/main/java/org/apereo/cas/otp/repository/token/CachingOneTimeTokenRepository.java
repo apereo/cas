@@ -23,14 +23,14 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     private final Cache<String, Collection<OneTimeToken>> storage;
 
     @Override
-    public void cleanInternal() {
+    public synchronized void cleanInternal() {
         LOGGER.trace("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
         LOGGER.debug("Estimated total of [{}] token(s) cached and may be removed in future iterations", this.storage.estimatedSize());
     }
 
     @Override
-    public void store(final OneTimeToken token) {
+    public synchronized void store(final OneTimeToken token) {
         if (exists(token.getUserId(), token.getToken())) {
             val tokens = this.storage.getIfPresent(token.getUserId());
             Objects.requireNonNull(tokens).add(token);
@@ -45,7 +45,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     }
 
     @Override
-    public OneTimeToken get(final String uid, final Integer otp) {
+    public synchronized OneTimeToken get(final String uid, final Integer otp) {
         val tokens = storage.getIfPresent(uid);
         LOGGER.debug("Found used tokens [{}]", tokens);
         if (tokens != null) {
@@ -59,7 +59,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     }
 
     @Override
-    public void remove(final String uid, final Integer otp) {
+    public synchronized void remove(final String uid, final Integer otp) {
         val dataset = this.storage.asMap();
         LOGGER.debug("Locating user [{}] to remove token [{}]", uid, otp);
         if (dataset.containsKey(uid)) {
@@ -71,23 +71,23 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     }
 
     @Override
-    public void remove(final String uid) {
+    public synchronized void remove(final String uid) {
         this.storage.invalidate(uid);
     }
 
     @Override
-    public void remove(final Integer otp) {
+    public synchronized void remove(final Integer otp) {
         val dataset = this.storage.asMap();
         dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.equals(t.getToken())));
     }
 
     @Override
-    public void removeAll() {
+    public synchronized void removeAll() {
         this.storage.invalidateAll();
     }
 
     @Override
-    public long count(final String uid) {
+    public synchronized long count(final String uid) {
         val tokens = this.storage.getIfPresent(uid);
         LOGGER.debug("Found used tokens [{}]", tokens);
         if (tokens != null) {
@@ -97,7 +97,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     }
 
     @Override
-    public long count() {
+    public synchronized long count() {
         return this.storage.estimatedSize();
     }
 }

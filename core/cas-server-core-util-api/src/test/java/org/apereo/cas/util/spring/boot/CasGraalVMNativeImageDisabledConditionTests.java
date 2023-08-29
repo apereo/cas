@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("Simple")
+@Tag("Native")
 class CasGraalVMNativeImageDisabledConditionTests {
     @Test
     void verifyNotInNativeImage() throws Throwable {
