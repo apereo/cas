@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -62,7 +63,6 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ResourceLock(value = "attributeDefinitionStore", mode = ResourceAccessMode.READ_WRITE)
 class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
@@ -80,6 +80,9 @@ class DefaultAttributeDefinitionStoreTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyFlattenedDefn() throws Throwable {
@@ -114,6 +117,7 @@ class DefaultAttributeDefinitionStoreTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
             .build();
         return policy.getAttributes(releasePolicyContext);

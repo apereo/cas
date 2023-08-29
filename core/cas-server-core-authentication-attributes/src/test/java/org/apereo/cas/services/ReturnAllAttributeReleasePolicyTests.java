@@ -6,15 +6,17 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.util.List;
@@ -28,6 +30,8 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class ReturnAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllAttributeReleasePolicy.json");
@@ -35,14 +39,8 @@ class ReturnAllAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    @BeforeEach
-    public void setup() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws Throwable {
@@ -66,6 +64,7 @@ class ReturnAllAttributeReleasePolicyTests {
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val results = policy.getAttributes(releasePolicyContext);
         assertEquals(1, results.size());
@@ -89,6 +88,7 @@ class ReturnAllAttributeReleasePolicyTests {
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val consented = policy.getConsentableAttributes(releasePolicyContext);
         assertTrue(consented.isEmpty());
@@ -111,6 +111,7 @@ class ReturnAllAttributeReleasePolicyTests {
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val consented = policy.getConsentableAttributes(releasePolicyContext);
         assertEquals(1, consented.size());
@@ -137,6 +138,7 @@ class ReturnAllAttributeReleasePolicyTests {
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val results = policy.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("cn"));
@@ -160,6 +162,7 @@ class ReturnAllAttributeReleasePolicyTests {
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val results = policy.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("cn"));
@@ -182,11 +185,12 @@ class ReturnAllAttributeReleasePolicyTests {
 
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
-
+        
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
 
         val consented = policy.getConsentableAttributes(releasePolicyContext);

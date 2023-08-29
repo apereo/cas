@@ -84,7 +84,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @param args        the args
      * @return the t
      */
-    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
+    public synchronized <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                          final Object... args) throws Throwable {
         try {
             LOGGER.trace("Beginning to execute script [{}]", this);

@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -40,10 +41,14 @@ class GroovyScriptAttributeReleasePolicyTests {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.containsKey("username"));
@@ -54,12 +59,15 @@ class GroovyScriptAttributeReleasePolicyTests {
 
     @Test
     void verifyFails() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:bad-path.groovy");
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
@@ -73,12 +81,16 @@ class GroovyScriptAttributeReleasePolicyTests {
             is.transferTo(new FileOutputStream(file));
         }
         assertTrue(file.exists());
+
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("file:${#systemProperties['java.io.tmpdir']}/" + file.getName());
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.containsKey("username"));

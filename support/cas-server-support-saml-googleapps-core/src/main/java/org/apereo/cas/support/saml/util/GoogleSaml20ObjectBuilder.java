@@ -36,8 +36,8 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     @Override
     public QName getSamlObjectQName(final Class objectType) {
         try {
-            val f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
-            val name = f.get(null).toString();
+            val field = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
+            val name = field.get(null).toString();
 
             if (objectType.equals(Response.class) || objectType.equals(Status.class) || objectType.equals(StatusCode.class)) {
                 return new QName(SAMLConstants.SAML20P_NS, name, "samlp");

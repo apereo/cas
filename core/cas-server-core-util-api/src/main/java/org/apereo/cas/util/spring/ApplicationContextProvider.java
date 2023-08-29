@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
@@ -158,18 +157,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
         if (CONTEXT != null && CONTEXT.containsBean(ScriptResourceCacheManager.BEAN_NAME)) {
             return Optional.of(CONTEXT.getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Gets attribute definition store.
-     *
-     * @return the attribute definition store
-     */
-    public static Optional<AttributeDefinitionStore> getAttributeDefinitionStore() {
-        if (CONTEXT != null && CONTEXT.containsBean(AttributeDefinitionStore.BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(AttributeDefinitionStore.BEAN_NAME, AttributeDefinitionStore.class));
         }
         return Optional.empty();
     }

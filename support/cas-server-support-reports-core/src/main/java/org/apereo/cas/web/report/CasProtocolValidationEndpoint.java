@@ -115,12 +115,14 @@ public class CasProtocolValidationEndpoint {
         val authentication = buildAuthentication(request, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(configurationContext.getApplicationContext())
             .service(selectedService)
             .principal(authentication.getPrincipal())
             .build();
 
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
+            configurationContext.getApplicationContext(),
             authentication.getPrincipal(),
             configurationContext.getPrincipalFactory(),
             attributesToRelease,

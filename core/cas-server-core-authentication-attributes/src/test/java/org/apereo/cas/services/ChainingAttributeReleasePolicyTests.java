@@ -56,6 +56,7 @@ class ChainingAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
@@ -71,6 +72,7 @@ class ChainingAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
@@ -93,6 +95,7 @@ class ChainingAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
@@ -108,6 +111,7 @@ class ChainingAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
@@ -123,6 +127,7 @@ class ChainingAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val results = chain.getConsentableAttributes(context);

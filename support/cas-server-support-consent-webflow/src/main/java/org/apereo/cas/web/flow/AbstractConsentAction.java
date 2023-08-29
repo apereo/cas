@@ -79,7 +79,7 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
         return FunctionUtils.doUnchecked(() -> {
-            val serviceToUse = this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+            val serviceToUse = authenticationRequestServiceSelectionStrategies.resolveService(service);
             val registeredService = this.servicesManager.findServiceBy(serviceToUse);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return registeredService;
@@ -90,7 +90,7 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
         val consentProperties = casProperties.getConsent().getCore();
 
         val originalService = WebUtils.getService(requestContext);
-        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(originalService);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         val registeredService = getRegisteredServiceForConsent(requestContext, service);
         val authentication = WebUtils.getAuthentication(requestContext);
         val attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);

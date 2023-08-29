@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -52,10 +53,14 @@ class ReturnRestfulAttributeReleasePolicyTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val policyWritten = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9299");
+
+            val applicationContext = new StaticApplicationContext();
+            applicationContext.refresh();
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policyWritten.getAttributes(releasePolicyContext);
             assertFalse(attributes.isEmpty());
@@ -71,10 +76,14 @@ class ReturnRestfulAttributeReleasePolicyTests {
             val policyWritten = new ReturnRestfulAttributeReleasePolicy()
                 .setEndpoint("http://localhost:9299")
                 .setAllowedAttributes(Map.of("givenName", List.of("givenName1", "givenName2")));
+
+            val applicationContext = new StaticApplicationContext();
+            applicationContext.refresh();
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policyWritten.getAttributes(releasePolicyContext);
             assertEquals(2, attributes.size());
@@ -90,11 +99,14 @@ class ReturnRestfulAttributeReleasePolicyTests {
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
+            val applicationContext = new StaticApplicationContext();
+            applicationContext.refresh();
             val policy = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9298");
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policy.getAttributes(releasePolicyContext);
             assertTrue(attributes.isEmpty());

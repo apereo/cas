@@ -99,6 +99,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                 .registeredService(context.getRegisteredService())
                 .service(context.getService())
                 .principal(context.getPrincipal())
+                .applicationContext(context.getApplicationContext())
                 .build();
             return context.getRegisteredService().getAttributeReleasePolicy().getAttributes(releasePolicyContext);
         }

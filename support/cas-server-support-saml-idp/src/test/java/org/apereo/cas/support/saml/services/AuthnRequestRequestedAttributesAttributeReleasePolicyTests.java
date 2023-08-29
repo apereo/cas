@@ -141,6 +141,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")))
@@ -164,6 +165,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")))
             .build();
@@ -199,6 +201,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")))
             .build();

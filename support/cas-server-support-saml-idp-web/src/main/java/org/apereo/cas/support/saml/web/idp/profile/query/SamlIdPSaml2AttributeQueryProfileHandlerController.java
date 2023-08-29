@@ -90,6 +90,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val principal = resolvePrincipalForAttributeQuery(authentication, registeredService);
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .service(ticket.getService())
                 .principal(principal)
                 .build();
@@ -105,6 +106,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .registeredService(registeredService)
                 .service(ticket.getService())
                 .principal(authentication.getPrincipal())
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .build();
             
             val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);

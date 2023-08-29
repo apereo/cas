@@ -196,6 +196,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .registeredService(registeredService)
             .service(service)
             .principal(authn.getPrincipal())
+            .applicationContext(getConfigurationContext().getApplicationContext())
             .build();
         val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
         releasingAttributes.putAll(authn.getAttributes());

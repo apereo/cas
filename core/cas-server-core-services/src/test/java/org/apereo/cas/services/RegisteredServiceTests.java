@@ -3,17 +3,18 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.google.common.collect.ArrayListMultimap;
-import lombok.Setter;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.util.Arrays;
@@ -29,8 +30,9 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.12
  */
-@Setter
 @Tag("RegisteredService")
+@SpringBootTest(classes = CasCoreHttpConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServiceTests {
     private static final long ID = 1000;
 
@@ -54,6 +56,9 @@ class RegisteredServiceTests {
 
     private static final String ATTR_3 = "attr3";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private final BaseRegisteredService baseService = new BaseRegisteredService() {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -73,15 +78,6 @@ class RegisteredServiceTests {
             return true;
         }
     };
-
-    @BeforeEach
-    public void beforeEach() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
 
     @Test
     void verifyAllowToProxyIsFalseByDefault() throws Throwable {
@@ -118,6 +114,7 @@ class RegisteredServiceTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
@@ -141,6 +138,7 @@ class RegisteredServiceTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
@@ -169,6 +167,7 @@ class RegisteredServiceTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
         assertEquals(1, attr.size());

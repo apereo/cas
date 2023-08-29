@@ -9,13 +9,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -44,6 +43,8 @@ public class DefaultConsentEngine implements ConsentEngine {
     private final CasConfigurationProperties casProperties;
 
     private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
@@ -91,9 +92,10 @@ public class DefaultConsentEngine implements ConsentEngine {
     }
 
     @Override
-    public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
-                                                                      final Service service,
-                                                                      final RegisteredService registeredService) throws Throwable {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(
+        final Authentication authentication,
+        final Service service,
+        final RegisteredService registeredService) throws Throwable {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
@@ -101,6 +103,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                 .registeredService(registeredService)
                 .service(service)
                 .principal(authentication.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val consentableAttributes = policy.getConsentableAttributes(context);
             consentableAttributes.entrySet().removeIf(entry -> {

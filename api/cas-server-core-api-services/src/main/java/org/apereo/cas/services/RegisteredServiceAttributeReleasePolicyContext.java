@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.ApplicationContext;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,9 @@ public class RegisteredServiceAttributeReleasePolicyContext {
     private final Service service;
 
     private final RegisteredService registeredService;
+
+    @NotNull
+    private final ApplicationContext applicationContext;
 
     @Builder.Default
     private final Map<String, List<Object>> releasingAttributes = new LinkedHashMap<>();

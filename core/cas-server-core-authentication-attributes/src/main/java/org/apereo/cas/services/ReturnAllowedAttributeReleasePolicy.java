@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -55,7 +56,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes();
+        return getAllowedAttributes().stream().filter(key -> !ScriptingUtils.isInlineGroovyScript(key)).collect(Collectors.toList());
     }
 
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(

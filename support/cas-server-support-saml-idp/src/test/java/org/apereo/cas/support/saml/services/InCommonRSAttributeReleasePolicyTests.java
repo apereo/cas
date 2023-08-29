@@ -43,6 +43,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
@@ -65,6 +66,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
@@ -94,6 +96,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();

@@ -53,6 +53,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .build();
@@ -70,6 +71,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .build();
@@ -92,6 +94,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .build();
@@ -114,6 +117,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
         service.getAttributes().put(SamlIdPConstants.PROVIDER_ID, List.of(registeredService.getServiceId()));
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(service)
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .build();
@@ -139,6 +143,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
             service.getAttributes().put(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest));
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
+                .applicationContext(applicationContext)
                 .service(service)
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
                 .build();

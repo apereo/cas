@@ -77,6 +77,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service1)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();

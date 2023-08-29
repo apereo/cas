@@ -106,11 +106,13 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return ServiceValidateConfigurationContext.builder()
+                .applicationContext(applicationContext)
                 .ticketRegistry(ticketRegistry)
                 .principalFactory(principalFactory)
                 .principalResolver(defaultPrincipalResolver)

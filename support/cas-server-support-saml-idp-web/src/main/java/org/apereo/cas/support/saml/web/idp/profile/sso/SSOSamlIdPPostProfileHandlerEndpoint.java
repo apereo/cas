@@ -292,11 +292,14 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
         val authentication = authenticateRequest(samlRequest, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(saml20ObjectBuilder.getOpenSamlConfigBean().getApplicationContext())
             .service(selectedService)
             .principal(authentication.getPrincipal())
             .build();
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
-        val builder = DefaultAuthenticationBuilder.of(authentication.getPrincipal(), principalFactory, attributesToRelease,
+        val builder = DefaultAuthenticationBuilder.of(
+            context.getApplicationContext(), authentication.getPrincipal(),
+            principalFactory, attributesToRelease,
             selectedService, registeredService, authentication);
 
         val finalAuthentication = builder.build();

@@ -11,9 +11,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.util.HashMap;
@@ -38,6 +40,9 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyUsernameByPrincipalAttributeWithMapping() throws Throwable {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("email");
@@ -58,6 +63,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(registeredService)
             .service(RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"))
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("user@example.org", id);
@@ -78,6 +84,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
@@ -96,6 +103,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
@@ -118,6 +126,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
@@ -141,6 +150,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(registeredService)
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         assertThrows(UnauthorizedServiceException.class, () -> provider.resolveUsername(usernameContext));
     }
@@ -158,6 +168,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals(id, p.getId());
@@ -171,6 +182,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals(id, p.getId());

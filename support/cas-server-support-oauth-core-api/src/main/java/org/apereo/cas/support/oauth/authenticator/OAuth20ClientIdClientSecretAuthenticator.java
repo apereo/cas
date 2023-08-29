@@ -34,6 +34,7 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,6 +65,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     private final TicketFactory ticketFactory;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
@@ -97,6 +100,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                     .registeredService(registeredService)
                     .service(service)
                     .principal(resolvedPrincipal)
+                    .applicationContext(applicationContext)
                     .build();
                 val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
                 profile.setId(username);

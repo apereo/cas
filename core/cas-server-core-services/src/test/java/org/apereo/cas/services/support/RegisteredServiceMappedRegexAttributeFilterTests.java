@@ -101,8 +101,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     @Test
     void verifySerialization() throws Throwable {
         val data = SerializationUtils.serialize(this.filter);
-        val secondFilter =
-            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+        val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 
