@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.InetAddressUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -141,8 +142,10 @@ public class NonInflatingSaml20ObjectBuilderTests {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, "https://www.apereo.org/app/sp", ZonedDateTime.now(ZoneOffset.UTC),
-            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+        val confirmation = builder.newSubjectConfirmation("https://www.apereo.org/app/sp",
+            ZonedDateTime.now(ZoneOffset.UTC), "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2",
+            ZonedDateTime.now(ZoneOffset.UTC), InetAddressUtils.getByName("https://www.apereo.org/app/sp"));
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 
@@ -151,8 +154,9 @@ public class NonInflatingSaml20ObjectBuilderTests {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, null, ZonedDateTime.now(ZoneOffset.UTC),
-                "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+        val confirmation = builder.newSubjectConfirmation(null, ZonedDateTime.now(ZoneOffset.UTC),
+            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC), null);
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 
@@ -167,19 +171,19 @@ public class NonInflatingSaml20ObjectBuilderTests {
     public void failSign() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertThrows(IllegalArgumentException.class,
-            () -> builder.signSamlResponse("bad-response",
+            () -> AbstractSamlObjectBuilder.signSamlResponse("bad-response",
                 mock(PrivateKey.class), mock(PublicKey.class)));
         val response = builder.newResponse(UUID.randomUUID().toString(), ZonedDateTime.now(ZoneOffset.UTC), "cas",
             CoreAuthenticationTestUtils.getWebApplicationService());
         val result = SamlUtils.transformSamlObject(openSamlConfigBean, response, true).toString();
         assertThrows(IllegalArgumentException.class,
-            () -> builder.signSamlResponse(result,
+            () -> AbstractSamlObjectBuilder.signSamlResponse(result,
                 mock(PrivateKey.class), mock(PublicKey.class)));
         assertThrows(IllegalArgumentException.class,
             () -> {
                 val pubKey = mock(PublicKey.class);
                 when(pubKey.getAlgorithm()).thenReturn("RSA");
-                builder.signSamlResponse(result,
+                AbstractSamlObjectBuilder.signSamlResponse(result,
                     mock(PrivateKey.class), pubKey);
             });
     }
