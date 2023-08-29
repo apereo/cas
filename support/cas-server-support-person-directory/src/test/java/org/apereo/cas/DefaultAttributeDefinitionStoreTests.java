@@ -22,6 +22,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,6 +62,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ResourceLock(value = "attributeDefinitionStore", mode = ResourceAccessMode.READ_WRITE)
 class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");

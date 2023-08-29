@@ -95,14 +95,26 @@ exports.innerText = async (page, selector) => {
     return text;
 };
 
-exports.innerTexts = async (page, selector) => {
-    return await page.evaluate((button) => {
+exports.elementValue = async (page, selector, valueToSet = undefined) => {
+    let text = await page.$eval(selector, el => el.value.trim());
+    if (valueToSet !== undefined && valueToSet !== null) {
+        console.log(`Setting value for selector [${selector}] to: [${valueToSet}]`);
+        await page.$eval(selector, (el, toSet) => {
+            el.value = toSet;
+        }, valueToSet);
+    } else {
+        console.log(`Value for selector [${selector}] is: [${text}]`);
+    }
+    return text;
+};
+
+exports.innerTexts = async (page, selector) =>
+    await page.evaluate((button) => {
         let results = [];
         let elements = document.querySelectorAll(button);
         elements.forEach(entry => results.push(entry.innerText.trim()));
         return results;
     }, selector);
-};
 
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
@@ -132,7 +144,7 @@ exports.uploadImage = async (imagePath) => {
     }
 };
 
-exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
+exports.waitForElement = async (page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
 exports.loginWith = async (page,
                            user = "casuser",
@@ -214,7 +226,7 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
     ]);
 };
 
-exports.pressEnter = async(page) => {
+exports.pressEnter = async (page) => {
     page.keyboard.press('Enter');
     page.waitForTimeout(1000);
 };
@@ -292,7 +304,7 @@ exports.doRequest = async (url, method = "GET",
             rejectUnauthorized: false,
             headers: headers
         };
-        options.agent = new https.Agent( options );
+        options.agent = new https.Agent(options);
 
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
@@ -506,7 +518,7 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
-exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.verifyJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     await this.logg("Using key to verify JWT:");
     console.log(keyContent);
     const secretKey = await jose.importJWK(keyContent, alg);
@@ -516,7 +528,7 @@ exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     return decoded;
 };
 
-exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
+exports.decryptJwt = async (ticket, keyPath, alg = "RS256") => {
     console.log(`Using private key path ${keyPath}`);
     if (fs.existsSync(keyPath)) {
         const keyContent = fs.readFileSync(keyPath, 'utf8');
@@ -531,7 +543,7 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
     throw `Unable to locate private key ${keyPath} to verify JWT`
 };
 
-exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.decryptJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
     console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
@@ -540,7 +552,7 @@ exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     return decoded;
 };
 
-exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
+exports.decryptJwtWithSecret = async (jwt, secret, options = {}) => {
     console.log(`Decrypting JWT with key ${secret}`);
     const buff = jose.base64url.decode(secret);
     const decoded = await jose.jwtDecrypt(jwt, buff, options);
@@ -551,7 +563,7 @@ exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
 
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
-    
+
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
@@ -599,9 +611,9 @@ exports.screenshot = async (page) => {
     }
 };
 
-exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+exports.isCiEnvironment = async () => process.env.CI !== undefined && process.env.CI === "true";
 
-exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
+exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
@@ -677,11 +689,11 @@ exports.killProcess = async (command, arguments) => {
     });
 };
 
-exports.sha256 = async(value) => CryptoJS.SHA256(value);
+exports.sha256 = async (value) => CryptoJS.SHA256(value);
 
-exports.base64Url = async(value) => CryptoJS.enc.Base64url.stringify(value);
+exports.base64Url = async (value) => CryptoJS.enc.Base64url.stringify(value);
 
-exports.pageVariable = async(page, name) => await page.evaluate(name);
+exports.pageVariable = async (page, name) => await page.evaluate(name);
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
@@ -706,13 +718,13 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.refreshContext = async(url = "https://localhost:8443/cas") => {
+exports.refreshContext = async (url = "https://localhost:8443/cas") => {
     console.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
     console.log(response);
 };
 
-exports.refreshBusContext = async(url = "https://localhost:8443/cas") => {
+exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
     console.log(`Refreshing CAS application context in ${url}`);
     const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
     console.log(response);
