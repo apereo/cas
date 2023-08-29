@@ -1493,11 +1493,6 @@ ext.libraries = [
         ldaptive                   : [
                 dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
-                },
-                dependencies.create("org.ldaptive:ldaptive-beans:$ldaptiveVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-cli", module: "commons-cli")
                 },
                 dependencies.create("io.netty:netty-handler:$nettyVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1520,7 +1515,13 @@ ext.libraries = [
                 dependencies.create("io.netty:netty-transport-native-epoll:$nettyVersion:linux-x86_64") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
+                dependencies.create("io.netty:netty-transport-native-epoll:$nettyVersion:linux-aarch_64") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
                 dependencies.create("io.netty:netty-transport-native-kqueue:$nettyVersion:osx-x86_64") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("io.netty:netty-transport-native-kqueue:$nettyVersion:osx-aarch_64") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
