@@ -14,7 +14,6 @@ import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -23,8 +22,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,7 +32,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -49,6 +47,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
+@Execution(ExecutionMode.SAME_THREAD)
 class ReturnAllowedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
 
@@ -66,13 +65,8 @@ class ReturnAllowedAttributeReleasePolicyTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     class AttributeDefinitionsTests {
-        @Autowired
-        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
-        private AttributeDefinitionStore attributeDefinitionStore;
-
         @Test
         void verifyUnresolvedAttributes() throws Throwable {
-            assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
 
@@ -81,14 +75,13 @@ class ReturnAllowedAttributeReleasePolicyTests {
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("casuser"))))
                 .build();
-            val results = policy.getAttributes(context);
-            assertEquals(1, results.size());
-            assertTrue(results.containsKey("displayName"));
+            val attributes = policy.getAttributes(context);
+            assertEquals(1, attributes.size());
+            assertTrue(attributes.containsKey("displayName"));
         }
 
         @Test
         void verifyVirtualAttributesInChain() throws Throwable {
-            assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
             policy.setOrder(0);
@@ -106,10 +99,10 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy, policy2);
 
-            val results = chain.getAttributes(context);
-            assertEquals(2, results.size());
-            assertTrue(results.containsKey("displayName"));
-            assertTrue(results.containsKey("calculated-displayName"));
+            val attributes = chain.getAttributes(context);
+            assertEquals(2, attributes.size());
+            assertTrue(attributes.containsKey("displayName"));
+            assertTrue(attributes.containsKey("calculated-displayName"));
         }
     }
 

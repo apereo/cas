@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.thread.Cleanable;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doAndHandle(__ -> {
             LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
             storage.remove();
         });
