@@ -59,13 +59,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     void verifyTokenAuthz() throws Throwable {
-        val acct = OneTimeTokenAccount.builder()
-            .username("casuser")
-            .name(UUID.randomUUID().toString())
-            .secretKey("secret")
-            .validationCode(123456)
-            .scratchCodes(List.of())
-            .build();
+        val acct = getOneTimeTokenAccount();
         assertTrue(validator.isTokenAuthorizedFor(123456, acct));
         assertFalse(validator.isTokenAuthorizedFor(987654, acct));
     }
@@ -78,13 +72,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     void verifyAcctValidation() throws Throwable {
-        val acct = GoogleAuthenticatorAccount.builder()
-            .username("casuser")
-            .name(UUID.randomUUID().toString())
-            .secretKey("secret")
-            .validationCode(123456)
-            .scratchCodes(List.of())
-            .build();
+        val acct = getOneTimeTokenAccount();
         googleAuthenticatorAccountRegistry.save(acct);
 
         val cred = new GoogleAuthenticatorTokenCredential("123456", acct.getId());
@@ -93,13 +81,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     void verifyAcctValidationScratchCode() throws Throwable {
-        val acct = GoogleAuthenticatorAccount.builder()
-            .username("casuser")
-            .name(UUID.randomUUID().toString())
-            .secretKey("secret")
-            .validationCode(123456)
-            .scratchCodes(CollectionUtils.wrapList(834251))
-            .build();
+        val acct = getOneTimeTokenAccount(CollectionUtils.wrapList(834251));
         googleAuthenticatorAccountRegistry.save(acct);
 
         val cred = new GoogleAuthenticatorTokenCredential("834251", acct.getId());
@@ -109,13 +91,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     void verifyTokenReuse() throws Throwable {
-        val acct = GoogleAuthenticatorAccount.builder()
-            .username("casuser")
-            .name(UUID.randomUUID().toString())
-            .secretKey("secret")
-            .validationCode(123456)
-            .scratchCodes(List.of())
-            .build();
+        val acct = getOneTimeTokenAccount();
         googleAuthenticatorAccountRegistry.save(acct);
 
         val otp1 = new OneTimeToken(556644, "casuser");
@@ -152,6 +128,21 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
             () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"), cred));
     }
 
+    private static OneTimeTokenAccount getOneTimeTokenAccount() {
+        return getOneTimeTokenAccount(List.of());
+    }
+
+    private static OneTimeTokenAccount getOneTimeTokenAccount(final List<Number> scratchCodes) {
+        return GoogleAuthenticatorAccount
+            .builder()
+            .username("casuser")
+            .name(UUID.randomUUID().toString())
+            .secretKey("secret")
+            .validationCode(123456)
+            .scratchCodes(scratchCodes)
+            .build();
+    }
+    
     @TestConfiguration(value = "GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration", proxyBeanMethods = false)
     static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
         @Bean

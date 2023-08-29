@@ -100,7 +100,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
 
-        var toSave = OneTimeTokenAccount.builder()
+        val toSave = OneTimeTokenAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())

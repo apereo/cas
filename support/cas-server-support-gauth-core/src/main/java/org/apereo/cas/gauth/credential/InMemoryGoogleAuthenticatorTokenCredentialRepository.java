@@ -34,13 +34,15 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username, final long id) {
+    public synchronized OneTimeTokenAccount get(final String username, final long id) {
         return get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null);
     }
 
     @Override
-    public OneTimeTokenAccount get(final long id) {
-        return this.accounts.values().stream()
+    public synchronized OneTimeTokenAccount get(final long id) {
+        return accounts
+            .values()
+            .stream()
             .flatMap(List::stream)
             .filter(ac -> ac.getId() == id)
             .findFirst()
@@ -48,16 +50,16 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public Collection<? extends OneTimeTokenAccount> get(final String userName) {
+    public synchronized Collection<? extends OneTimeTokenAccount> get(final String userName) {
         if (contains(userName)) {
-            val account = this.accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
+            val account = accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
             return decode(account);
         }
         return new ArrayList<>(0);
     }
 
     @Override
-    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+    public synchronized OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         val encoded = encode(account);
         val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
         records.add(encoded);
@@ -66,7 +68,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
+    public synchronized OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encoded = encode(account);
         if (accounts.containsKey(account.getUsername().toLowerCase(Locale.ENGLISH).trim())) {
             val records = accounts.get(account.getUsername().toLowerCase(Locale.ENGLISH).trim());
@@ -83,27 +85,27 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
-    public void deleteAll() {
-        this.accounts.clear();
+    public synchronized void deleteAll() {
+        accounts.clear();
     }
 
     @Override
-    public void delete(final String username) {
-        this.accounts.remove(username.toLowerCase(Locale.ENGLISH).trim());
+    public synchronized void delete(final String username) {
+        accounts.remove(username.toLowerCase(Locale.ENGLISH).trim());
     }
 
     @Override
-    public void delete(final long id) {
+    public synchronized void delete(final long id) {
         accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
     }
 
     @Override
-    public long count() {
-        return this.accounts.size();
+    public synchronized long count() {
+        return accounts.size();
     }
 
     @Override
-    public long count(final String username) {
+    public synchronized long count(final String username) {
         return get(username.toLowerCase(Locale.ENGLISH).trim()).size();
     }
 
@@ -112,7 +114,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
         return accounts.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
-    private boolean contains(final String username) {
-        return this.accounts.containsKey(username.toLowerCase(Locale.ENGLISH).trim());
+    private synchronized boolean contains(final String username) {
+        return accounts.containsKey(username.toLowerCase(Locale.ENGLISH).trim());
     }
 }

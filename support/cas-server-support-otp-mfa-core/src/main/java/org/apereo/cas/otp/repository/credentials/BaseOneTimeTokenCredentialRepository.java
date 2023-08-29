@@ -47,12 +47,6 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
     }
 
 
-    /**
-     * Decode collection.
-     *
-     * @param account the account
-     * @return the collection
-     */
     protected Collection<? extends OneTimeTokenAccount> decode(final Collection<? extends OneTimeTokenAccount> account) {
         return account.stream().map(this::decode).collect(Collectors.toList());
     }

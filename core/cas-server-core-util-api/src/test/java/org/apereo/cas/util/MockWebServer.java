@@ -64,9 +64,13 @@ public class MockWebServer implements Closeable {
     private Thread workerThread;
 
     public MockWebServer() {
-        this(getRandomPort());
+        this(HttpStatus.OK);
     }
 
+    public MockWebServer(final HttpStatus status) {
+        this(getRandomPort(), status);
+    }
+    
     public MockWebServer(final Resource resource, final String contentType) {
         this(getRandomPort(), resource, contentType, HttpStatus.OK);
     }
