@@ -47,6 +47,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(service)
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
 
@@ -61,9 +62,13 @@ class DefaultRegisteredServiceUsernameProviderTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -77,9 +82,13 @@ class DefaultRegisteredServiceUsernameProviderTests {
         provider.setRemovePattern("@.+");
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -93,9 +102,13 @@ class DefaultRegisteredServiceUsernameProviderTests {
         provider.setScope("example.org");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -107,9 +120,13 @@ class DefaultRegisteredServiceUsernameProviderTests {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);

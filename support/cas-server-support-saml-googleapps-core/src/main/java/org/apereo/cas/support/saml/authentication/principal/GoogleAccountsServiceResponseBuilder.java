@@ -135,6 +135,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             .registeredService(registeredService)
             .service(service)
             .principal(principal)
+            .applicationContext(getSamlObjectBuilder().getOpenSamlConfigBean().getApplicationContext())
             .build();
         val userId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 

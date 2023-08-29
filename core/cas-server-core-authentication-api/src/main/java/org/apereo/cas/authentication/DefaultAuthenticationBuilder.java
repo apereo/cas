@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.time.ZoneOffset;
@@ -117,6 +118,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Factory method.
      *
+     * @param applicationContext  the application context
      * @param principal           principal.
      * @param principalFactory    principalFactory.
      * @param principalAttributes principalAttributes.
@@ -124,8 +126,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @param registeredService   registeredService.
      * @param authentication      authentication.
      * @return AuthenticationBuilder new AuthenticationBuilder instance.
+     * @throws Throwable the throwable
      */
-    public static AuthenticationBuilder of(final Principal principal,
+    public static AuthenticationBuilder of(final ApplicationContext applicationContext,
+                                           final Principal principal,
                                            final PrincipalFactory principalFactory,
                                            final Map<String, List<Object>> principalAttributes,
                                            final Service service,
@@ -135,6 +139,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
             .service(service)
             .principal(principal)
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);

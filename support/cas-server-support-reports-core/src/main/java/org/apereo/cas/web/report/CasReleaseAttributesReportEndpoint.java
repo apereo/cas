@@ -28,6 +28,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
 
 import java.util.LinkedHashMap;
@@ -52,13 +53,17 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
 
     private final ObjectProvider<PrincipalResolver> principalResolver;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     public CasReleaseAttributesReportEndpoint(final CasConfigurationProperties casProperties,
+                                              final ConfigurableApplicationContext applicationContext,
                                               final ObjectProvider<ServicesManager> servicesManager,
                                               final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
                                               final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
                                               final ObjectProvider<PrincipalFactory> principalFactory,
                                               final ObjectProvider<PrincipalResolver> principalResolver) {
         super(casProperties);
+        this.applicationContext = applicationContext;
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;
@@ -97,12 +102,14 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         val authentication = buildAuthentication(username, password, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(selectedService)
             .principal(authentication.getPrincipal())
             .build();
 
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
+            applicationContext,
             authentication.getPrincipal(),
             principalFactory.getObject(),
             attributesToRelease,

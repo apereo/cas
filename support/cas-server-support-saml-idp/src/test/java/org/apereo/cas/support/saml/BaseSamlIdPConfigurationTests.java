@@ -98,6 +98,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import java.time.Clock;
@@ -122,6 +123,9 @@ import java.util.Map;
                 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;

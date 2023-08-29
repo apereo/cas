@@ -9,8 +9,10 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +37,9 @@ class GroovyRegisteredServiceUsernameProviderTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyUsernameProvider() throws Throwable {
         val provider = new GroovyRegisteredServiceUsernameProvider();
@@ -44,6 +49,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .principal(RegisteredServiceTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("fromscript", id);
@@ -57,6 +63,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System")))
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -70,6 +77,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", List.of("CAS-System"))))
             .build();
         val id = provider.resolveUsername(usernameContext);

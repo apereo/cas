@@ -150,8 +150,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     @Test
     void verifyTokenBuilderWithoutServiceTicket() throws Throwable {
         val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
-            StringUtils.EMPTY,
-            CoreAuthenticationTestUtils.getAuthentication());
+            StringUtils.EMPTY, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);
         assertFalse(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }

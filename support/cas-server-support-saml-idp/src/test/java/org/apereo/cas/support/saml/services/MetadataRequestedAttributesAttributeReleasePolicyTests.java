@@ -45,6 +45,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
             CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user"));
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attributes = filter.getAttributes(context);
@@ -62,6 +63,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attributes = filter.getAttributes(context);

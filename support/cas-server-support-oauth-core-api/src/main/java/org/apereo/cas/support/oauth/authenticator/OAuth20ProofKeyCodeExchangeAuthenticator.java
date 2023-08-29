@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticator}.
@@ -39,10 +40,11 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         final OAuth20RequestParameterResolver requestParameterResolver,
         final OAuth20ClientSecretValidator clientSecretValidator,
         final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-        final TicketFactory ticketFactory) {
+        final TicketFactory ticketFactory,
+        final ConfigurableApplicationContext applicationContext) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator,
-            profileScopeToAttributesFilter, ticketFactory);
+            profileScopeToAttributesFilter, ticketFactory, applicationContext);
     }
 
     private static String calculateCodeVerifierHash(final String method, final String codeVerifier) {

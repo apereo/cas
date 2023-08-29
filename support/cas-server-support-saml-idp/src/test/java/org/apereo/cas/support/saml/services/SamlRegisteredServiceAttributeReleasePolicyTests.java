@@ -36,10 +36,13 @@ import static org.mockito.Mockito.*;
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     void verifyNoSamlService() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -49,10 +52,13 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     void verifyNoAppContext() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -62,6 +68,9 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     void verifyBadHttpRequest() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        
         val registeredService = new SamlRegisteredService();
         registeredService.setId(100);
         registeredService.setName("SAML");
@@ -71,6 +80,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.cas.org"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -80,6 +90,9 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     void verifyEntityIdAndService() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val request = MockHttpServletRequest.class.cast(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         Objects.requireNonNull(request).removeParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
@@ -90,6 +103,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -115,6 +129,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.cas.org"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -156,6 +171,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(ApplicationContextProvider.getApplicationContext())
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();

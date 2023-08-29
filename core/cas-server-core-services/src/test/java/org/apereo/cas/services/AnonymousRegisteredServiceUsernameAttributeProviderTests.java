@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,9 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val service = mock(Service.class);
         when(service.getId()).thenReturn("id");
         val principal = mock(Principal.class);
@@ -48,6 +52,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
             .service(service)
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
 
         val id = provider.resolveUsername(usernameContext);
@@ -82,9 +87,13 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         gen.setAttribute("employeeId");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService("https://cas.example.org/app"))
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("anyuser",
                 CollectionUtils.wrap("employeeId", List.of("T911327"))))
             .build();
@@ -99,9 +108,13 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         gen.setAttribute("uid");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("anyuser",
                 CollectionUtils.wrap("uid", CollectionUtils.wrap("obegon"))))
             .build();

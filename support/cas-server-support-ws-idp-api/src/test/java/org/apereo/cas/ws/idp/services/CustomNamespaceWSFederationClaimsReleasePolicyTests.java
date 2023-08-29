@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,9 @@ class CustomNamespaceWSFederationClaimsReleasePolicyTests {
 
     @Test
     void verifyAttributeRelease() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new CustomNamespaceWSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.getClaim(), "cn",
@@ -41,6 +45,7 @@ class CustomNamespaceWSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();

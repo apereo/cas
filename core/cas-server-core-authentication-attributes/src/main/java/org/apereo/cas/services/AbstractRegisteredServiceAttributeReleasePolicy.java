@@ -1,8 +1,10 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -113,7 +115,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 LOGGER.debug("Ignoring default attribute policy attributes");
             } else {
                 LOGGER.trace("Checking default attribute policy attributes");
-                val defaultAttributes = getReleasedByDefaultAttributes(context.getPrincipal(), availableAttributes);
+                val defaultAttributes = getReleasedByDefaultAttributes(context, availableAttributes);
                 LOGGER.debug("Default attributes found to be released are [{}]", defaultAttributes);
                 if (!defaultAttributes.isEmpty()) {
                     LOGGER.debug("Adding default attributes first to the released set of attributes");
@@ -143,7 +145,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             .filter(policy -> Objects.nonNull(policy.getStatus()))
             .map(policy -> {
                 if (policy.getStatus().isFalse()) {
-                    LOGGER.debug("Cconsent policy is turned off and disabled for service [{}].", context.getService());
+                    LOGGER.debug("Consent policy is turned off and disabled for service [{}].", context.getService());
                     return new HashMap<String, List<Object>>();
                 }
                 if (policy.getStatus().isTrue()) {
@@ -198,28 +200,26 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> principalAttributes) {
-        LOGGER.trace("Retrieving attribute definition store and attribute definitions...");
-        return ApplicationContextProvider.getAttributeDefinitionStore()
-            .map(definitionStore -> {
-                val availableAttributes = new LinkedHashMap<>(principalAttributes);
-                availableAttributes.putAll(context.getReleasingAttributes());
-                if (definitionStore.isEmpty()) {
-                    LOGGER.trace("No attribute definitions are defined in the attribute definition "
-                                 + "store, or no attribute definitions are requested.");
-                    return availableAttributes;
-                }
-                val requestedDefinitions = new LinkedHashSet<>(determineRequestedAttributeDefinitions(context));
-                requestedDefinitions.addAll(principalAttributes.keySet());
+        if (context.getApplicationContext().containsBean(AttributeDefinitionStore.BEAN_NAME)) {
+            LOGGER.trace("Retrieving attribute definition store and attribute definitions...");
+            val definitionStore = context.getApplicationContext().getBean(AttributeDefinitionStore.BEAN_NAME, AttributeDefinitionStore.class);
+            val availableAttributes = new LinkedHashMap<>(principalAttributes);
+            availableAttributes.putAll(context.getReleasingAttributes());
+            if (definitionStore.isEmpty()) {
+                LOGGER.trace("No attribute definitions are defined in the attribute definition "
+                    + "store, or no attribute definitions are requested.");
+                return availableAttributes;
+            }
+            val requestedDefinitions = new LinkedHashSet<>(determineRequestedAttributeDefinitions(context));
+            requestedDefinitions.addAll(principalAttributes.keySet());
 
-                LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
-                    requestedDefinitions, availableAttributes);
-                return definitionStore.resolveAttributeValues(requestedDefinitions, availableAttributes,
-                    context.getPrincipal(), context.getRegisteredService(), context.getService());
-            })
-            .orElseGet(() -> {
-                LOGGER.trace("No attribute definition store is available in application context");
-                return principalAttributes;
-            });
+            LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
+                requestedDefinitions, availableAttributes);
+            return definitionStore.resolveAttributeValues(requestedDefinitions, availableAttributes,
+                context.getPrincipal(), context.getRegisteredService(), context.getService());
+        }
+        LOGGER.trace("No attribute definition store is available in application context");
+        return principalAttributes;
     }
 
     protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final Principal principal,
@@ -246,6 +246,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                     .principal(context.getPrincipal())
                     .registeredService(context.getRegisteredService())
                     .releasingAttributes(attributesToRelease)
+                    .applicationContext(context.getApplicationContext())
                     .build();
                 val id = usernameProvider.resolveUsername(usernameContext);
                 LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
@@ -264,25 +265,23 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Determines a default bundle of attributes that may be released to all services
      * without the explicit mapping for each service.
      *
-     * @param principal  the principal
+     * @param context    the context
      * @param attributes the attributes
      * @return the released by default attributes
      */
-    protected Map<String, List<Object>> getReleasedByDefaultAttributes(final Principal principal, final Map<String, List<Object>> attributes) {
-        return ApplicationContextProvider.getCasConfigurationProperties()
-            .map(properties -> {
-                val defaultAttrs = properties.getAuthn().getAttributeRepository().getCore().getDefaultAttributesToRelease();
-                LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
-                val defaultAttributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-                defaultAttrs.forEach(key -> {
-                    if (attributes.containsKey(key)) {
-                        LOGGER.debug("Found and added default attribute for release: [{}]", key);
-                        defaultAttributesToRelease.put(key, attributes.get(key));
-                    }
-                });
-                return defaultAttributesToRelease;
-            })
-            .orElseGet(TreeMap::new);
+    protected Map<String, List<Object>> getReleasedByDefaultAttributes(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                                       final Map<String, List<Object>> attributes) {
+        val properties = context.getApplicationContext().getBean(CasConfigurationProperties.class);
+        val defaultAttrs = properties.getAuthn().getAttributeRepository().getCore().getDefaultAttributesToRelease();
+        LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
+        val defaultAttributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+        defaultAttrs.forEach(key -> {
+            if (attributes.containsKey(key)) {
+                LOGGER.debug("Found and added default attribute for release: [{}]", key);
+                defaultAttributesToRelease.put(key, attributes.get(key));
+            }
+        });
+        return defaultAttributesToRelease;
     }
 
     /**

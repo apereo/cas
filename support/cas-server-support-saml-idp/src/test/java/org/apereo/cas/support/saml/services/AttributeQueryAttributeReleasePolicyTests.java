@@ -60,6 +60,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(service)
             .principal(principal)
             .build();

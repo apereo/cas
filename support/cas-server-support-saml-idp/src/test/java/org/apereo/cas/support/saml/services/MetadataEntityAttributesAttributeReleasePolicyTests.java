@@ -60,6 +60,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("givenName", UUID.randomUUID().toString())))

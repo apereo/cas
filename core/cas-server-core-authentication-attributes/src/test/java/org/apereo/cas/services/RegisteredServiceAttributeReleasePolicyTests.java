@@ -85,6 +85,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -94,6 +95,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val definitions = policy.determineRequestedAttributeDefinitions(releasePolicyContext);
@@ -119,6 +121,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -148,6 +151,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -177,6 +181,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -202,6 +207,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -235,6 +241,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -276,6 +283,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -311,6 +319,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         var attr = policy.getAttributes(context);
@@ -350,6 +359,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())
             .service(CoreAttributesTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attrs = policy.getConsentableAttributes(context);

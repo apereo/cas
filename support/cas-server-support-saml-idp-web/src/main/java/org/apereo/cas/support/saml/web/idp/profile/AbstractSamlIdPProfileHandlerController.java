@@ -184,6 +184,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                               final Map<String, List<Object>> attributesToCombine) throws Throwable {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
             .service(service)
             .principal(authentication.getPrincipal())
             .build();
@@ -193,6 +194,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .registeredService(registeredService)
             .service(service)
             .principal(authentication.getPrincipal())
+            .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         attributes.putAll(attributesToCombine);

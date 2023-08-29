@@ -47,6 +47,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -81,6 +82,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
         registeredService.setAttributeReleasePolicy(chain);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -98,6 +100,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();

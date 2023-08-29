@@ -303,13 +303,14 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
             @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory,
             final CasConfigurationProperties casProperties) {
             return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory,
-                casProperties, oidcAttributeReleasePolicyFactory);
+                casProperties, oidcAttributeReleasePolicyFactory, applicationContext);
         }
 
     }

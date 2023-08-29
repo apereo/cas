@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,10 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLAttributes")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
@@ -49,6 +43,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = filter.getAttributes(context);
         assertTrue(attributes.isEmpty());
@@ -67,6 +62,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
@@ -84,6 +80,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());

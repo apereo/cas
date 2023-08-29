@@ -157,6 +157,8 @@ or override log42.component.properties to turn off async
         
         <Logger name="de.codecentric.boot" level="info" />
 
+        <Logger name="io.micrometer" level="warn" />
+        
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>

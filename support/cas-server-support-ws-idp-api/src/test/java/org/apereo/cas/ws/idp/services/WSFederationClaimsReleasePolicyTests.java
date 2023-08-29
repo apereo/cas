@@ -14,8 +14,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -42,6 +44,9 @@ class WSFederationClaimsReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyAttributeReleaseNone() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
@@ -51,6 +56,7 @@ class WSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -66,6 +72,7 @@ class WSFederationClaimsReleasePolicyTests {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -88,6 +95,7 @@ class WSFederationClaimsReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -112,6 +120,7 @@ class WSFederationClaimsReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();

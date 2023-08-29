@@ -44,6 +44,7 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user")))
             .build();

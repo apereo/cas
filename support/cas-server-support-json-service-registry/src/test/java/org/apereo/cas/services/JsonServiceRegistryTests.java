@@ -57,10 +57,10 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyRequiredHandlersServiceDefinition() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -81,10 +81,10 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyExistingDefinitionForCompatibility1() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -95,14 +95,15 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyUsernameProviderWithAttributeReleasePolicy() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser",
                 Map.of("groups", List.of("g1", "g2"), "username", List.of("casuser"))))
             .build();
@@ -116,6 +117,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             .registeredService(context.getRegisteredService())
             .service(context.getService())
             .principal(context.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
         assertEquals("casuser", username);
