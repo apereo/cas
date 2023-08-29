@@ -12,7 +12,6 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -40,6 +39,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(attrs.containsKey("phone_number"));
@@ -83,14 +83,12 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
 
         @Test
         void verifySerialization() throws Throwable {
-            val appCtx = new StaticApplicationContext();
-            appCtx.refresh();
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy);
             val service = getOidcRegisteredService();
             service.setAttributeReleasePolicy(chain);
-            val serializer = new RegisteredServiceJsonSerializer(appCtx);
+            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val json = serializer.toString(service);
             assertNotNull(json);
             assertNotNull(serializer.from(json));

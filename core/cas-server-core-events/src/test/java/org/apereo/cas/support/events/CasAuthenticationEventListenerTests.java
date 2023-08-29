@@ -21,6 +21,8 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,6 +61,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @Tag("Events")
+@ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
 class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";

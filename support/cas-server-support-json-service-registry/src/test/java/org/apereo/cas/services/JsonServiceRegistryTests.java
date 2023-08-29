@@ -14,9 +14,10 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import java.net.URI;
@@ -39,6 +40,9 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() throws Exception {
         this.newServiceRegistry = buildResourceBasedServiceRegistry(RESOURCE);
@@ -57,8 +61,6 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyRequiredHandlersServiceDefinition() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
@@ -68,9 +70,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @Test
     void verifyExistingDefinitionForCompatibility2() throws Throwable {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -81,8 +81,6 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyExistingDefinitionForCompatibility1() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
@@ -95,8 +93,6 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyUsernameProviderWithAttributeReleasePolicy() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
@@ -133,11 +129,9 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             WSFederationRegisteredService.class);
     }
 
-    private static AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
         return new JsonServiceRegistry(location, WatcherService.noOp(),
-            appCtx,
+            applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

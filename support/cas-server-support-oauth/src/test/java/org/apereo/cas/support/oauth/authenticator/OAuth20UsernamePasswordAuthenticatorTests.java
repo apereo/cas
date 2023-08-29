@@ -43,7 +43,7 @@ class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authenticator
         authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertFalse(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().isEmpty());
     }
 
     @Test
@@ -56,7 +56,7 @@ class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authenticator
         authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertFalse(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().isEmpty());
     }
 
     @Test
@@ -122,6 +122,6 @@ class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authenticator
         authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
-        assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
+        assertFalse(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().isEmpty());
     }
 }

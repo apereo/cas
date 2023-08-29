@@ -51,7 +51,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.ZoneOffset;
@@ -182,11 +181,8 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
 
-
-        val ctx = new StaticApplicationContext();
-        ctx.refresh();
         val context = CentralAuthenticationServiceContext.builder()
-            .applicationContext(ctx)
+            .applicationContext(applicationContext)
             .ticketRegistry(ticketRegMock)
             .servicesManager(smMock)
             .ticketFactory(factory)

@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -78,14 +77,12 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
     void verifySerialization() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         var json = serializer.toString(service);
         assertNotNull(json);
         assertNotNull(serializer.from(json));
