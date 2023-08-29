@@ -1,20 +1,22 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,11 +24,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("GroovyServices")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class GroovyScriptAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "groovyScriptAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
@@ -40,9 +47,6 @@ class GroovyScriptAttributeReleasePolicyTests {
     void verifyAction() throws Throwable {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
-
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -59,8 +63,6 @@ class GroovyScriptAttributeReleasePolicyTests {
 
     @Test
     void verifyFails() throws Throwable {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:bad-path.groovy");
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -81,9 +83,6 @@ class GroovyScriptAttributeReleasePolicyTests {
             is.transferTo(new FileOutputStream(file));
         }
         assertTrue(file.exists());
-
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("file:${#systemProperties['java.io.tmpdir']}/" + file.getName());
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
