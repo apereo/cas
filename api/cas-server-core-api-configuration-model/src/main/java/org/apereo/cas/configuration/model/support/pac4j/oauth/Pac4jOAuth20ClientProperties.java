@@ -88,6 +88,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
      */
     private Map<String, String> customParams = new LinkedHashMap<>(1);
 
+    /**
+     * The client authentication method: basicAuth (default) or requestBody.
+     */
+    private String clientAuthenticationMethod;
+
     public Pac4jOAuth20ClientProperties() {
         setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
     }
