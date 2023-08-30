@@ -4,19 +4,14 @@ import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthentica
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,11 +27,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
 
     @Test
     void verifyBannedOperation() throws Throwable {
-        try (val webServer = new MockWebServer(9355,
-            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.TOO_MANY_REQUESTS)) {
+        try (val webServer = new MockWebServer(StringUtils.EMPTY, HttpStatus.TOO_MANY_REQUESTS)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9355?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
@@ -48,11 +42,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
     @Test
     void verifyErrorStatusOperation() throws Throwable {
         val data = MAPPER.writeValueAsString(Collections.singletonMap("status", "error"));
-        try (val webServer = new MockWebServer(9356,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9356?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
@@ -63,11 +56,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
     @Test
     void verifySuccessStatusAndBannedWithRank() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 1));
-        try (val webServer = new MockWebServer(9357,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9357?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
@@ -78,11 +70,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
     @Test
     void verifySuccessStatus() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 0));
-        try (val webServer = new MockWebServer(9358,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9358?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
@@ -93,11 +84,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
     @Test
     void verifySuccessStatusRanked() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("status", "success", "result", 0.4351));
-        try (val webServer = new MockWebServer(9359,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer(data)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9359?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
@@ -108,11 +98,10 @@ class BlackDotIPAddressIntelligenceServiceTests {
 
     @Test
     void verifyBadResponse() throws Throwable {
-        try (val webServer = new MockWebServer(9319,
-            new ByteArrayResource("${bad-json$".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        try (val webServer = new MockWebServer("${bad-json$")) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getBlackDot().setUrl("http://localhost:9319?ip=%s");
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:" + webServer.getPort() + "?ip=%s");
             props.getIpIntel().getBlackDot().setMode("DYNA_CHECK");
             props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
             val service = new BlackDotIPAddressIntelligenceService(props);

@@ -58,9 +58,6 @@ public class MockWebServer implements Closeable {
      */
     private final Worker worker;
 
-    /**
-     * Controls the worker thread.
-     */
     private Thread workerThread;
 
     public MockWebServer() {
@@ -70,7 +67,13 @@ public class MockWebServer implements Closeable {
     public MockWebServer(final HttpStatus status) {
         this(getRandomPort(), status);
     }
-    
+
+    public MockWebServer(final String resource, final HttpStatus status) {
+        this(getRandomPort(), new ByteArrayResource(resource.getBytes(StandardCharsets.UTF_8), "Output"),
+            MediaType.APPLICATION_JSON_VALUE, status);
+    }
+
+
     public MockWebServer(final Resource resource, final String contentType) {
         this(getRandomPort(), resource, contentType, HttpStatus.OK);
     }

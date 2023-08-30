@@ -2,18 +2,12 @@ package org.apereo.cas;
 
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.env.MockEnvironment;
-
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link RestfulPropertySourceLocatorTests}.
@@ -33,14 +27,14 @@ class RestfulPropertySourceLocatorTests {
 
     @Test
     void verifyBadParsing() throws Throwable {
-        val environment = new MockEnvironment();
-        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:8021");
-        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");
-        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-password", "password");
         val loc = new RestfulPropertySourceLocator();
-        try (val webServer = new MockWebServer(8021,
-            new ByteArrayResource("@@".getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer("@@")) {
             webServer.start();
+            val environment = new MockEnvironment();
+            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:" + webServer.getPort());
+            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");
+            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-password", "password");
+
             assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
         }
     }

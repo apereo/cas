@@ -68,8 +68,6 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private MockHttpServletRequest httpRequest;
-
     private SAML2MessageContext saml2MessageContext;
 
     @BeforeEach
@@ -88,7 +86,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        httpRequest = new MockHttpServletRequest();
+        val httpRequest = new MockHttpServletRequest();
         httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 
         val response = new MockHttpServletResponse();
@@ -238,6 +236,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")))
             .build();
