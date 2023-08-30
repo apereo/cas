@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,7 +27,6 @@ import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link RegisteredServiceThemeResolverTests}.
@@ -130,21 +128,20 @@ class RegisteredServiceThemeResolverTests {
 
         @Test
         void verifyUrlTheme() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-            registeredService.setTheme("http://localhost:6315");
-            servicesManager.save(registeredService);
-            val service = RegisteredServiceTestUtils.getService();
-            WebUtils.putServiceIntoFlowScope(context, service);
-
-            try (val webServer = new MockWebServer(6315,
-                new ByteArrayResource("custom-theme".getBytes(UTF_8), "Output"), OK)) {
+            try (val webServer = new MockWebServer("custom-theme")) {
                 webServer.start();
+                val context = new MockRequestContext();
+                val request = new MockHttpServletRequest();
+                val response = new MockHttpServletResponse();
+                context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+                RequestContextHolder.setRequestContext(context);
+                ExternalContextHolder.setExternalContext(context.getExternalContext());
+                val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+                registeredService.setTheme("http://localhost:%s".formatted(webServer.getPort()));
+                servicesManager.save(registeredService);
+                val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+                WebUtils.putServiceIntoFlowScope(context, service);
+
                 assertDoesNotThrow(() -> themeResolver.setThemeName(request, response, "whatever"));
                 assertEquals("custom-theme", themeResolver.resolveThemeName(request));
             }
@@ -158,10 +155,10 @@ class RegisteredServiceThemeResolverTests {
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             registeredService.setTheme("custom-theme");
             servicesManager.save(registeredService);
-            val service = RegisteredServiceTestUtils.getService();
+            val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
             WebUtils.putServiceIntoFlowScope(context, service);
             assertEquals("custom-theme", themeResolver.resolveThemeName(request));
         }
