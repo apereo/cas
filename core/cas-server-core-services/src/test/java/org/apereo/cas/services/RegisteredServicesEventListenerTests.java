@@ -84,7 +84,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationEventNoContact() {
+    void verifyServiceExpirationEventNoContact() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertDoesNotThrow(new Executable() {
             @Override
@@ -97,7 +97,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationEventWithContact() {
+    void verifyServiceExpirationEventWithContact() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -110,7 +110,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationWithRemovalEvent() {
+    void verifyServiceExpirationWithRemovalEvent() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -130,7 +130,7 @@ class RegisteredServicesEventListenerTests {
         @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 }

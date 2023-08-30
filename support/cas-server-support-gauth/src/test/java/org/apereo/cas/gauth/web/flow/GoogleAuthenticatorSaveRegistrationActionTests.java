@@ -83,7 +83,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    void verifyAccountValidationFails() throws Exception {
+    void verifyAccountValidationFails() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -106,7 +106,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    void verifyAccountValidationOnly() throws Exception {
+    void verifyAccountValidationOnly() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())

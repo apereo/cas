@@ -59,7 +59,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyWithNoTicketOrService() {
+    void verifyWithNoTicketOrService() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -79,7 +79,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAuthnHandledWithRenew() throws Exception {
+    void verifyAuthnHandledWithRenew() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -101,7 +101,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAuthnResolvesEvent() throws Exception {
+    void verifyAuthnResolvesEvent() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -122,7 +122,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAuthnResolvesMfaEvent() throws Exception {
+    void verifyAuthnResolvesMfaEvent() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
@@ -150,7 +150,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAuthnResolvesMfaContextValidatedNoForceExecution() throws Exception {
+    void verifyAuthnResolvesMfaContextValidatedNoForceExecution() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
@@ -177,7 +177,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAuthnResolvesMfaContextValidated() throws Exception {
+    void verifyAuthnResolvesMfaContextValidated() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
@@ -208,7 +208,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    void verifyAddDelegate() {
+    void verifyAddDelegate() throws Throwable {
         assertDoesNotThrow(() -> {
             resolver.addDelegate(mock(CasWebflowEventResolver.class));
             resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);

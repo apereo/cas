@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("Hazelcast")
 class HazelcastJCloudsDiscoveryStrategyTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cluster = new HazelcastClusterProperties();
         val clouds = cluster.getDiscovery().getJclouds();
         val id = UUID.randomUUID().toString();

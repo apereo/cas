@@ -25,7 +25,7 @@ class EDIPIX509AttributeExtractorTests {
     }
 
     @Test
-    void verifyExtractedAttributes() throws Exception {
+    void verifyExtractedAttributes() throws Throwable {
         val extractor = new EDIPIX509AttributeExtractor();
         val attributes = extractor.extractPersonAttributes(getCertificate("classpath:/x509-san-upn-resolver.crt"));
         assertNull(attributes.get("x509EDIPI"));

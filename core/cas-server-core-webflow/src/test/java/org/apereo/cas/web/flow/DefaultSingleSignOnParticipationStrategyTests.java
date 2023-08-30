@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 class DefaultSingleSignOnParticipationStrategyTests {
     @Test
-    void verifyParticipationDisabledWithService() {
+    void verifyParticipationDisabledWithService() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
@@ -65,7 +65,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyParticipationDisabled() {
+    void verifyParticipationDisabled() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -85,7 +85,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyParticipatesForRenew() {
+    void verifyParticipatesForRenew() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -107,7 +107,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyParticipatesForRenewDisabled() {
+    void verifyParticipatesForRenewDisabled() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -127,7 +127,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyParticipateForServiceTgtExpirationPolicyWithoutTgt() {
+    void verifyParticipateForServiceTgtExpirationPolicyWithoutTgt() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setTicketGrantingTicketExpirationPolicy(
@@ -154,7 +154,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyDoesNotParticipateForService() {
+    void verifyDoesNotParticipateForService() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(false);
@@ -181,7 +181,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyCookieCreationByService() {
+    void verifyCookieCreationByService() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceSingleSignOnParticipationPolicy();
@@ -210,7 +210,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyRegisteredServiceFromContextEvaluatedBeforeService() {
+    void verifyRegisteredServiceFromContextEvaluatedBeforeService() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val callbackRegisteredService = CoreAuthenticationTestUtils.getRegisteredService("https://cas/idp/profile/SAML2/Callback");
@@ -243,7 +243,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyRegisteredServiceWithValidSso() {
+    void verifyRegisteredServiceWithValidSso() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
@@ -276,7 +276,7 @@ class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyRegisteredServiceWithValidSsoAndServiceExpPolicy() {
+    void verifyRegisteredServiceWithValidSsoAndServiceExpPolicy() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);

@@ -35,7 +35,7 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
     @Override
-    public Optional<SecurityToken> fetch(final Service service, final String principalId) {
+    public Optional<SecurityToken> fetch(final Service service, final String principalId) throws Throwable {
         val resolvedService = this.selectionStrategy.resolveServiceFrom(service);
         LOGGER.debug("Resolved service as [{}]", resolvedService);
         if (resolvedService != null) {

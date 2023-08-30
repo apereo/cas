@@ -65,14 +65,15 @@ in the next few release candidates.
 
 A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
-The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) have selectively switched
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
 
 ## Other Stuff
                           
-- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2002.
+- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
+- Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
 - Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
 
 ## Library Upgrades
@@ -86,5 +87,10 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 - Spring Integration
 - Spring Framework
 - Spring Shell
+- Spring AMQP
 - Apache Tomcat
 - Gradle
+- Hazelcast
+- Oshi
+- Apache Ignite
+- Pac4j

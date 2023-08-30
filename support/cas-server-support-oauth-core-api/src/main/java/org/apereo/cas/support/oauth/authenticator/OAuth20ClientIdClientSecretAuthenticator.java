@@ -66,17 +66,22 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final TicketFactory ticketFactory;
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
-        LOGGER.debug("Authenticating credential [{}]", credentials);
-        val upc = (UsernamePasswordCredentials) credentials;
-        val id = upc.getUsername();
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
-        val audit = AuditableContext.builder()
-            .registeredService(registeredService)
-            .build();
-        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-
-        if (!accessResult.isExecutionFailure() && canAuthenticate(callContext)) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.debug("Authenticating credential [{}]", credentials);
+            val upc = (UsernamePasswordCredentials) credentials;
+            val id = upc.getUsername();
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+            val audit = AuditableContext.builder()
+                .registeredService(registeredService)
+                .build();
+            val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+            val proceed = !accessResult.isExecutionFailure() && canAuthenticate(callContext);
+            if (!proceed) {
+                val name = getClass().getSimpleName();
+                LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
+                return Optional.empty();
+            }
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, callContext);
 
@@ -105,12 +110,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
             return Optional.of(credentials);
-        }
-        return Optional.empty();
+        });
     }
 
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,
-                                                    final WebApplicationService service, final CallContext callContext) {
+                                                    final WebApplicationService service, final CallContext callContext) throws Throwable {
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
         val scopes = requestParameterResolver.resolveRequestedScopes(callContext.webContext());
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());

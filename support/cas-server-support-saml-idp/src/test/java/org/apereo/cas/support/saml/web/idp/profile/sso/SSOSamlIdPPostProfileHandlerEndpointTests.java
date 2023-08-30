@@ -43,7 +43,7 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyGetOperation() {
+    void verifyGetOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val samlRequest = new SSOSamlIdPPostProfileHandlerEndpoint.SamlRequest("casuser",
@@ -53,7 +53,7 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyPostOperation() {
+    void verifyPostOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val samlRequest = new SSOSamlIdPPostProfileHandlerEndpoint.SamlRequest("casuser",
@@ -63,14 +63,14 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyPostLogoutOperation() throws Exception {
+    void verifyPostLogoutOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val entity = endpoint.produceLogoutRequestPost(samlRegisteredService.getServiceId(), response);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
     }
 
     @Test
-    void verifyPostOperationWithoutPassword() {
+    void verifyPostOperationWithoutPassword() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val samlRequest = new SSOSamlIdPPostProfileHandlerEndpoint.SamlRequest("casuser",
@@ -80,7 +80,7 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyBadCredentials() {
+    void verifyBadCredentials() throws Throwable {
         val request = new MockHttpServletRequest();
         val samlRequest = new SSOSamlIdPPostProfileHandlerEndpoint.SamlRequest("xyz",
             "123", samlRegisteredService.getServiceId(), false);
@@ -90,7 +90,7 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyMissingEntity() {
+    void verifyMissingEntity() throws Throwable {
         val request = new MockHttpServletRequest();
         val samlRequest = new SSOSamlIdPPostProfileHandlerEndpoint.SamlRequest("xyz",
             "123", null, false);

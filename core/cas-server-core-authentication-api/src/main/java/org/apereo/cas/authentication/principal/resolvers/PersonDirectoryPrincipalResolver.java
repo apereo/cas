@@ -48,7 +48,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
 
         LOGGER.trace("Attempting to resolve a principal via [{}]", getName());
         var principalId = extractPrincipalId(credential, currentPrincipal);
@@ -100,19 +100,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return context.getAttributeRepository();
     }
 
-    /**
-     * Build resolved principal.
-     *
-     * @param id               the id
-     * @param attributes       the attributes
-     * @param credential       the credential
-     * @param currentPrincipal the current principal
-     * @param handler          the handler
-     * @return the principal
-     */
     protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
                                                final Credential credential, final Optional<Principal> currentPrincipal,
-                                               final Optional<AuthenticationHandler> handler) {
+                                               final Optional<AuthenticationHandler> handler) throws Throwable {
         return context.getPrincipalFactory().createPrincipal(id, attributes);
     }
 
@@ -184,6 +174,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
 
         val repositoryIds = new HashSet<>(context.getActiveAttributeRepositoryIdentifiers());
+        if (repositoryIds.isEmpty()) {
+            repositoryIds.add(IPersonAttributeDao.WILDCARD);
+        }
         givenService.ifPresent(service -> {
             val registeredService = context.getServicesManager().findServiceBy(service);
             if (registeredService != null && registeredService.getAttributeReleasePolicy() != null

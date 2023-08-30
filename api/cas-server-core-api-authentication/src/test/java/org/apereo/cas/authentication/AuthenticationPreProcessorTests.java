@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationPreProcessorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val p = new AuthenticationPreProcessor() {
             @Override
             public boolean process(final AuthenticationTransaction transaction) throws AuthenticationException {

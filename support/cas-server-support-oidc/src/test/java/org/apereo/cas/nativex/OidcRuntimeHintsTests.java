@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class OidcRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new OidcRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(OidcRegisteredService.class).test(hints));

@@ -63,7 +63,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     private Action submitAccountRegistrationAction;
 
     @Test
-    void verifySuccessOperation() throws Exception {
+    void verifySuccessOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
@@ -83,7 +83,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyFailingOperation() throws Exception {
+    void verifyFailingOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         

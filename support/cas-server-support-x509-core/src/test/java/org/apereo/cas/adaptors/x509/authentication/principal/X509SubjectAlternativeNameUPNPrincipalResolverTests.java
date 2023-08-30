@@ -20,8 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -91,9 +89,9 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyResolvePrincipalInternal(final String certPath,
+    void verifyResolvePrincipalInternal(final String certPath,
                                                final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws FileNotFoundException, CertificateException {
+                                               final String alternatePrincipalAttribute) throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -128,7 +126,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     }
 
     @Test
-    void verifyAlternate() throws Exception {
+    void verifyAlternate() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)

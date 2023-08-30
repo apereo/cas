@@ -7,6 +7,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -32,23 +33,21 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         super(casProperties);
         this.defaultPrincipalResolver = defaultPrincipalResolver;
     }
-
-
+    
     /**
      * Resolve principal attributes map.
      *
      * @param uid the uid
      * @return the map
+     * @throws Throwable the throwable
      */
     @ReadOperation
-    @Operation(summary = "Resolve principal attributes for user", parameters = @Parameter(name = "uid", required = true))
-    public Map<String, Object> resolvePrincipalAttributes(
-        @Selector
-        final String uid) {
-        val p = defaultPrincipalResolver.getObject().resolve(new BasicIdentifiableCredential(uid));
+    @Operation(summary = "Resolve principal attributes for user", parameters = @Parameter(name = "uid", required = true, in = ParameterIn.PATH))
+    public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) throws Throwable {
+        val principal = defaultPrincipalResolver.getObject().resolve(new BasicIdentifiableCredential(uid));
         val map = new HashMap<String, Object>();
-        map.put("uid", p.getId());
-        map.put("attributes", p.getAttributes());
+        map.put("uid", principal.getId());
+        map.put("attributes", principal.getAttributes());
         return map;
     }
 }

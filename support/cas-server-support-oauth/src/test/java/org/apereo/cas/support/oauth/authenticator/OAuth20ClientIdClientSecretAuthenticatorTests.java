@@ -41,7 +41,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
     static class NullPrincipalTestConfiguration {
         @Bean
-        public PrincipalResolver defaultPrincipalResolver() {
+        public PrincipalResolver defaultPrincipalResolver() throws Throwable {
             val mockPrincipalResolver = mock(PrincipalResolver.class);
             when(mockPrincipalResolver.resolve(any())).thenReturn(NullPrincipal.getInstance());
             return mockPrincipalResolver;
@@ -52,7 +52,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
-        public void verifyAuthentication() {
+        void verifyAuthentication() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -62,7 +62,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypePassword() {
+        void verifyAuthenticationWithGrantTypePassword() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -72,7 +72,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithBadSecret() throws Exception {
+        void verifyAuthenticationWithBadSecret() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -87,7 +87,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithCodeChallengePkce() throws Exception {
+        void verifyAuthenticationWithCodeChallengePkce() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -107,7 +107,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
+        void verifyAuthenticationWithGrantTypeRefreshToken() throws Throwable {
             val refreshToken = getRefreshToken(serviceWithoutSecret);
             ticketRegistry.addTicket(refreshToken);
 
@@ -144,7 +144,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithAttributesMapping() {
+        void verifyAuthenticationWithAttributesMapping() throws Throwable {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -162,7 +162,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        void verifyAuthenticationWithoutResolvedPrincipal() {
+        void verifyAuthenticationWithoutResolvedPrincipal() throws Throwable {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();

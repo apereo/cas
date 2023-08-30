@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +59,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
 
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");

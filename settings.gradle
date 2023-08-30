@@ -64,6 +64,10 @@ dependencyResolutionManagement {
             mavenContent { snapshotsOnly() }
         }
         maven {
+            url "https://repository.apache.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
@@ -204,8 +208,6 @@ include "support:cas-server-support-aup-mongo"
 include "support:cas-server-support-aup-redis"
 include "support:cas-server-support-aup-rest"
 include "support:cas-server-support-aup-webflow"
-include "support:cas-server-support-authy"
-include "support:cas-server-support-authy-core"
 include "support:cas-server-support-aws"
 include "support:cas-server-support-aws-cognito-authentication"
 include "support:cas-server-support-aws-s3-service-registry"

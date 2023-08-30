@@ -32,7 +32,7 @@ class CustomNamespaceWSFederationClaimsReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyAttributeRelease() {
+    void verifyAttributeRelease() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new CustomNamespaceWSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.getClaim(), "cn",

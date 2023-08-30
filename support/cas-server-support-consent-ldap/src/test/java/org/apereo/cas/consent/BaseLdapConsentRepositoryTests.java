@@ -99,7 +99,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyConsentDecisionIsNotMistaken() throws Exception {
+    void verifyConsentDecisionIsNotMistaken() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -114,7 +114,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyAllConsentDecisionsAreFoundForSingleUser() throws Exception {
+    void verifyAllConsentDecisionsAreFoundForSingleUser() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -131,7 +131,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyAllConsentDecisionsAreFoundForAllUsers() throws Exception {
+    void verifyAllConsentDecisionsAreFoundForAllUsers() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -148,7 +148,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyConsentDecisionIsStored() throws Exception {
+    void verifyConsentDecisionIsStored() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         assertNotNull(this.repository.storeConsentDecision(decision));
         val r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
@@ -159,7 +159,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyConsentDecisionIsUpdated() throws Exception {
+    void verifyConsentDecisionIsUpdated() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
@@ -179,7 +179,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     }
 
     @Test
-    void verifyConsentDecisionIsDeleted() throws Exception {
+    void verifyConsentDecisionIsDeleted() throws Throwable {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));

@@ -21,7 +21,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     private static final String TEST = "test";
 
     @Test
-    void verifyFindByQuery() {
+    void verifyFindByQuery() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(1984);
         service.setName(TEST + 1984);
@@ -36,7 +36,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyInvalidServiceSave() {
+    void verifyInvalidServiceSave() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(2233);
         service.setName(TEST);
@@ -49,7 +49,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyFindByName() {
+    void verifyFindByName() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(6100);
         service.setName(TEST);
@@ -65,7 +65,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyFindByNameAndType() {
+    void verifyFindByNameAndType() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(6200);
         service.setName(TEST);
@@ -92,7 +92,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyEmptyCacheFirst() {
+    void verifyEmptyCacheFirst() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(5000);
         service.setName(TEST);

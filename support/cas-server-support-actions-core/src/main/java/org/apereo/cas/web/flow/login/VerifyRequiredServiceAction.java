@@ -45,7 +45,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
     private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
 

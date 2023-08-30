@@ -53,7 +53,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
 
     @Test
     @Order(1)
-    public void verifyOperationWithRedirect() throws Exception {
+    void verifyOperationWithRedirect() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -75,7 +75,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
 
     @Test
     @Order(1)
-    public void verifyOperationNoLogoutRedirectUrl() throws Exception {
+    void verifyOperationNoLogoutRedirectUrl() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -97,7 +97,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
 
     @Test
     @Order(1)
-    public void verifyOperationWithRelay() throws Exception {
+    void verifyOperationWithRelay() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -110,7 +110,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
 
     @Test
     @Order(1000)
-    public void verifyOperationFailsWithError() throws Exception {
+    void verifyOperationFailsWithError() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");

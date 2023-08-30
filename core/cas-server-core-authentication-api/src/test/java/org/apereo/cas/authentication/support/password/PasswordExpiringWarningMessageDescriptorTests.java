@@ -31,14 +31,14 @@ class PasswordExpiringWarningMessageDescriptorTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
         assertEquals(30, d.getDaysToExpiration());
         assertEquals("DefaultMessage", d.getDefaultMessage());
     }
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         handler.addMessageDescriptor(d);

@@ -3,14 +3,12 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -68,6 +66,26 @@ public interface AttributeDefinitionStore {
     AttributeDefinitionStore registerAttributeDefinition(String key, AttributeDefinition defn);
 
     /**
+     * Locate attribute definition by definition name.
+     *
+     * @param name the name
+     * @return the optional
+     */
+    Optional<AttributeDefinition> locateAttributeDefinitionByName(String name);
+
+    /**
+     * Locate attribute definition by name optional.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the optional
+     */
+    default <T extends AttributeDefinition> Optional<T> locateAttributeDefinitionByName(final String name, final Class<T> clazz) {
+        return locateAttributeDefinitionByName(name).map(clazz::cast);
+    }
+
+    /**
      * Removes attribute definition attribute by key.
      *
      * @param key the key
@@ -78,10 +96,10 @@ public interface AttributeDefinitionStore {
     /**
      * Locate attribute definition.
      *
-     * @param name the name
+     * @param key the name
      * @return the optional
      */
-    Optional<AttributeDefinition> locateAttributeDefinition(String name);
+    Optional<AttributeDefinition> locateAttributeDefinition(String key);
 
     /**
      * Locate attribute definition optional.
@@ -197,8 +215,8 @@ public interface AttributeDefinitionStore {
     /**
      * Import store.
      *
-     * @param samlStore the saml store
+     * @param definitionStore the saml store
      * @return the attribute definition store
      */
-    AttributeDefinitionStore importStore(AttributeDefinitionStore samlStore);
+    AttributeDefinitionStore importStore(AttributeDefinitionStore definitionStore);
 }

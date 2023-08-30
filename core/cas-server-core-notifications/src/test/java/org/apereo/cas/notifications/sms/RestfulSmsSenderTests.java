@@ -76,7 +76,7 @@ class RestfulSmsSenderTests {
         }
 
         @Test
-        void verifySms() {
+        void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
                 .to("1234567890").text("Hello CAS").build();
@@ -123,13 +123,11 @@ class RestfulSmsSenderTests {
         }
 
         @Test
-        void verifySms() {
+        void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
                 .to("1234567890").text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }
-
-
 }

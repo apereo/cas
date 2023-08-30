@@ -49,7 +49,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         var status = super.verify(requestContext);
         if (status.isDenied()) {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();

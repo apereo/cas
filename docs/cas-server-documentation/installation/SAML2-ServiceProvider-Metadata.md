@@ -149,14 +149,16 @@ use [this service](https://www.samltool.com/sp_metadata.php) to create the metad
 save it in an XML file and then reference and register it with CAS for the SP.
 
 Alternatively, you may take advantage of a standalone `saml-sp-metadata.json` file that may be found in the same directory
-as the CAS metadata artifacts. The contents of this file may be as follows:
+as the CAS metadata artifacts. The contents of this file, may be defined with a rather [relaxed JSON syntax](https://hjson.github.io), 
+and may be as follows:
 
 ```json
 {
   "https://example.org/saml": {
     "entityId": "https://example.org/saml",
     "certificate": "MIIDUj...",
-    "assertionConsumerServiceUrl": "https://example.org/sso/"
+    "assertionConsumerServiceUrl": "https://example.org/sso/",
+    "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
   }
 }
 ```

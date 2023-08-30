@@ -70,13 +70,13 @@ class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
     @Test
-    void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         WebUtils.putCredential(context, new RadiusTokenCredential("token"));
         val event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

@@ -27,7 +27,7 @@ class DefaultOAuth20UserProfileDataCreatorTests extends AbstractOAuth20Tests {
     private OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
 

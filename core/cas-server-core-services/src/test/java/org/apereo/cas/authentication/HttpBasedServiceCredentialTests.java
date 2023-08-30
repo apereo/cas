@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,20 +28,20 @@ class HttpBasedServiceCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyProperUrl() {
+    void verifyProperUrl() throws Throwable {
         assertEquals(CoreAuthenticationTestUtils.CONST_GOOD_URL,
             CoreAuthenticationTestUtils.getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }
 
     @Test
-    void verifyEqualsWithNull() throws Exception {
+    void verifyEqualsWithNull() throws Throwable {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
         val c = new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(), registeredService);
         assertNotEquals(null, c);
     }
 
     @Test
-    void verifyEqualsWithFalse() throws Exception {
+    void verifyEqualsWithFalse() throws Throwable {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
         val c = new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(), registeredService);
         val c2 = new HttpBasedServiceCredential(new URI("http://www.msn.com").toURL(), registeredService);
@@ -51,9 +50,9 @@ class HttpBasedServiceCredentialTests {
     }
 
     @Test
-    void verifyEqualsWithTrue() throws Exception {
+    void verifyEqualsWithTrue() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
-        val callbackUrl = new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL);
+        val callbackUrl = new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL();
         val c = new HttpBasedServiceCredential(callbackUrl, registeredService);
         val c2 = new HttpBasedServiceCredential(callbackUrl, registeredService);
 
@@ -62,7 +61,7 @@ class HttpBasedServiceCredentialTests {
     }
 
     @Test
-    void verifySerializeAnHttpBasedServiceCredentialToJson() throws Exception {
+    void verifySerializeAnHttpBasedServiceCredentialToJson() throws Throwable {
         val credentialMetaDataWritten =
             new HttpBasedServiceCredential(new URI(CoreAuthenticationTestUtils.CONST_GOOD_URL).toURL(),
                 RegisteredServiceTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL));

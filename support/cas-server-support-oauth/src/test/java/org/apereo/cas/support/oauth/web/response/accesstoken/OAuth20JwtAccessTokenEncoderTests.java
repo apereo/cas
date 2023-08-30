@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     @Test
-    void verifyAccessTokenHeaderService() {
+    void verifyAccessTokenHeaderService() throws Throwable {
         val accessToken = getAccessToken();
         val builder = getCipherDisabledJwtBuilder();
 
@@ -50,7 +50,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenIdEncodingWithoutJwt() {
+    void verifyAccessTokenIdEncodingWithoutJwt() throws Throwable {
         val accessToken = getAccessToken();
 
         val builder = getCipherDisabledJwtBuilder();
@@ -64,7 +64,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenIdEncodingWithJwtWithNoCipher() {
+    void verifyAccessTokenIdEncodingWithJwtWithNoCipher() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherDisabledJwtBuilder();
@@ -77,7 +77,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenIdEncodingWithJwtGlobally() {
+    void verifyAccessTokenIdEncodingWithJwtGlobally() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
@@ -91,7 +91,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyExtractionAsParameterForService() {
+    void verifyExtractionAsParameterForService() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
@@ -104,7 +104,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyExtractionAsParameter() {
+    void verifyExtractionAsParameter() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
@@ -117,7 +117,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenIdEncodingWithJwtForService() {
+    void verifyAccessTokenIdEncodingWithJwtForService() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();
@@ -132,7 +132,7 @@ class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenIdEncodingWithJwt() {
+    void verifyAccessTokenIdEncodingWithJwt() throws Throwable {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val builder = getCipherEnabledJwtBuilder();

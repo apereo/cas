@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 class ScriptingUtilsTests {
 
     @Test
-    void verifyInlineGroovyScript() {
+    void verifyInlineGroovyScript() throws Throwable {
         assertTrue(ScriptingUtils.isInlineGroovyScript("groovy {return 0}"));
         val script = ScriptingUtils.parseGroovyShellScript("return authentication.principal.id + ' @ ' + authentication.authenticationDate");
         val authn = mock(Authentication.class);
@@ -47,12 +47,12 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyExternalGroovyScript() {
+    void verifyExternalGroovyScript() throws Throwable {
         assertTrue(ScriptingUtils.isExternalGroovyScript("file:/somefolder/sample.groovy"));
     }
 
     @Test
-    void verifyGroovyScriptShellExecution() {
+    void verifyGroovyScriptShellExecution() throws Throwable {
         val script = ScriptingUtils.parseGroovyShellScript("return name");
         val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class);
         assertEquals("casuser", result);
@@ -120,7 +120,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGetObject() {
+    void verifyGetObject() throws Throwable {
         var result = ScriptingUtils.getObjectInstanceFromGroovyResource(null, null, null, null);
         assertNull(result);
         result = ScriptingUtils.getObjectInstanceFromGroovyResource(mock(Resource.class), null, null, null);

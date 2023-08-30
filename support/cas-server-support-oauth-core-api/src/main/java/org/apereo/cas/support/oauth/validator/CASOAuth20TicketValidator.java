@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.client.authentication.AttributePrincipalImpl;
 import org.apereo.cas.client.validation.Assertion;
 import org.apereo.cas.client.validation.AssertionImpl;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
 
@@ -30,7 +31,7 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
 
     @Override
     public Assertion validate(final String ticket, final String service) {
-        val validationResult = validator.validate(ticket, service);
+        val validationResult = FunctionUtils.doUnchecked(() -> validator.validate(ticket, service));
         val assertion = validationResult.getAssertion();
 
         val principalAttributes = new HashMap(validationResult.getPrincipal().getAttributes());
@@ -46,7 +47,6 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
 
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
             assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
-
         return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes, assertion.getContext());
     }
 }

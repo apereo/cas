@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class FindPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "find --name cas.server.name --summary"));
     }
 }

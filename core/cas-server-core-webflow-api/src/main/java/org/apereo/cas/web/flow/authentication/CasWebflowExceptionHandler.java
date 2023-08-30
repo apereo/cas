@@ -23,15 +23,17 @@ public interface CasWebflowExceptionHandler<T extends Exception> extends Ordered
      * @param exception      the exception
      * @param requestContext the request context
      * @return the event
+     * @throws Throwable the throwable
      */
-    Event handle(T exception, RequestContext requestContext);
+    Event handle(T exception, RequestContext requestContext) throws Throwable;
 
     /**
      * Supports exception.
      *
      * @param exception      the exception
      * @param requestContext the request context
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean supports(Exception exception, RequestContext requestContext);
+    boolean supports(Exception exception, RequestContext requestContext) throws Throwable;
 }

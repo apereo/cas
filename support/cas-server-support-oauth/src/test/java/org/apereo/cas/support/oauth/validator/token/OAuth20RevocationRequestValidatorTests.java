@@ -42,7 +42,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     private OAuthRegisteredService supportingService;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() throws Throwable {
         servicesManager.deleteAll();
         supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
@@ -56,7 +56,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperationClientSecretPost() throws Exception {
+    void verifyOperationClientSecretPost() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -79,7 +79,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperationClientSecretBasic() throws Exception {
+    void verifyOperationClientSecretBasic() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -99,7 +99,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
         assertFalse(validator.validate(new JEEContext(request, response)));
     }
 
-    private void registerTicket(final String name) throws Exception {
+    private void registerTicket(final String name) throws Throwable {
         val oauthCode = mock(OAuth20RefreshToken.class);
         when(oauthCode.getId()).thenReturn(name);
         when(oauthCode.isExpired()).thenReturn(false);

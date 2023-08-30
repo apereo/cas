@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 2181)
 class HazelcastZooKeeperDiscoveryStrategyTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cluster = new HazelcastClusterProperties();
         val zk = cluster.getDiscovery().getZookeeper();
         zk.setUrl("localhost:2181");

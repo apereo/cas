@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasWebSecurityConfigurerTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val cfg = new CasWebSecurityConfigurer<>() {
         };
         assertEquals(cfg, cfg.configure(new Object()));

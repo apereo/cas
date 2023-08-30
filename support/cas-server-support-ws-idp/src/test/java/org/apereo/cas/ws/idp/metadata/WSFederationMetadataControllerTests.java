@@ -27,7 +27,7 @@ class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProv
     private WSFederationMetadataController wsFederationMetadataController;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         wsFederationMetadataController.doGet(request, response);
@@ -35,7 +35,7 @@ class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProv
     }
 
     @Test
-    void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = mock(MockHttpServletResponse.class);
         doThrow(new RuntimeException()).when(response).setContentType(anyString());

@@ -115,7 +115,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                                                    @RequestParam(required = false) final String roleArn,
                                                    @RequestBody final MultiValueMap<String, String> requestBody,
                                                    final HttpServletRequest request,
-                                                   final HttpServletResponse response) {
+                                                   final HttpServletResponse response) throws Throwable {
 
         var authenticationResult = (AuthenticationResult) null;
         try {

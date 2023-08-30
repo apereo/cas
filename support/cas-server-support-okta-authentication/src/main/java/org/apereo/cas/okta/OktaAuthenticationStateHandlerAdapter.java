@@ -82,7 +82,7 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
             if (passwordPolicyHandlingStrategy.supports(passwordWarning)) {
                 warnings = passwordPolicyHandlingStrategy.handle(passwordWarning, passwordPolicyConfiguration);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         handleUnknown(passwordWarning);

@@ -162,7 +162,7 @@ public class CasPersonDirectoryConfiguration {
                 case CASCADE -> {
                     val dao = new CascadingPersonAttributeDao();
                     dao.setAddOriginalAttributesToQuery(true);
-                    dao.setStopIfFirstDaoReturnsNull(true);
+                    dao.setStopIfFirstDaoReturnsNull(properties.getCore().isStopCascadingWhenNoInitialResults());
                     return dao;
                 }
                 default -> {

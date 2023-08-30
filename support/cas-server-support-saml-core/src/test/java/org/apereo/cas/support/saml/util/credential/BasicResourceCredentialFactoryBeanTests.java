@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML")
 class BasicResourceCredentialFactoryBeanTests {
     @Test
-    void verifyKeys() throws Exception {
+    void verifyKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         assertSame(BasicCredential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
@@ -32,27 +32,27 @@ class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    void verifyMissingPrivKeys() {
+    void verifyMissingPrivKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/badprivate.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    void verifyMissingSecretKeys() {
+    void verifyMissingSecretKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setSecretKeyInfo(new ClassPathResource("keys/badsec.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    void verifyNoKeys() {
+    void verifyNoKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    void verifyNoKeyInfo() {
+    void verifyNoKeyInfo() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(null);
         assertThrows(FatalBeanException.class, factory::getObject);
@@ -61,7 +61,7 @@ class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    void verifyMismatchedKeys() {
+    void verifyMismatchedKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/private.pem"));
         factory.setPublicKeyInfo(new ClassPathResource("keys/badpublic.key"));
@@ -69,7 +69,7 @@ class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    void verifyPublicKeys() throws Exception {
+    void verifyPublicKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         assertSame(BasicCredential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
@@ -79,7 +79,7 @@ class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    void verifySecretKeys() throws Exception {
+    void verifySecretKeys() throws Throwable {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setUsageType("UNSPECIFIED");
         factory.setSecretKeyInfo(new ClassPathResource("keys/secret.key"));

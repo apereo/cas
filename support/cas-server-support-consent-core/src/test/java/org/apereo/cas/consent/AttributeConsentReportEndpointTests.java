@@ -48,7 +48,7 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,
@@ -67,7 +67,7 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Throwable {
         val uid = UUID.randomUUID().toString();
         val toSave = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,

@@ -63,8 +63,8 @@ public class AzureMapsGeoLocationService extends AbstractGeoLocationService {
         val options = new ReverseSearchAddressOptions(new GeoPosition(longitude, latitude));
         val searchResult = mapsSearchClient.beginReverseSearchAddressBatch(List.of(options)).getFinalResult();
         val location = new GeoLocationResponse();
-        for (final val item : searchResult.getBatchItems()) {
-            for (final val result : item.getResult().getAddresses()) {
+        for (val item : searchResult.getBatchItems()) {
+            for (val result : item.getResult().getAddresses()) {
                 location.addAddress(result.getAddress().getFreeformAddress());
                 location.setLatitude(result.getPosition().getLatitude());
                 location.setLongitude(result.getPosition().getLongitude());

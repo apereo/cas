@@ -38,19 +38,19 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.logy = async (text) => {
-    console.log(colors.yellow(text));
+    console.log(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    console.log(colors.blue(text));
+    console.log(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    console.log(colors.green(text));
+    console.log(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    console.log(colors.red(text));
+    console.log(`⛔ ${colors.red(text)}`);
 };
 
 exports.removeDirectory = async (directory) => {
@@ -177,29 +177,27 @@ exports.assertInvisibility = async (page, selector) => {
 };
 
 
-exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
+exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
         console.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName
     });
     console.log(`Found cookies ${cookies.length}`);
-    if (present) {
-        console.log(`Checking for cookie ${cookieName}`);
+    if (cookieMustBePresent) {
+        console.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
         console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
         return cookies[0];
+    }
+    console.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
+    if (cookies.length === 0) {
+        await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        if (cookies.length > 0) {
-            let ck = cookies[0];
-            console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
-        }
-        const result = cookies.length === 0;
-        if (result) {
-            await this.logg(`Cookie ${cookieName} can be found`);
-        } else {
-            await this.logr(`Cookie ${cookieName} cannot be found`);
-        }
-        assert(result);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found`);
+        let ck = cookies[0];
+        let msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
+        await this.logb(msg);
+        throw msg;
     }
 };
 

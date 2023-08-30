@@ -47,7 +47,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
-                                       final Class<T> clazz) {
+                                       final Class<T> clazz) throws Throwable {
         val ticketId = produceTicketIdentifier(service);
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
@@ -85,13 +85,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return (T) result;
     }
 
-    /**
-     * Produce ticket identifier.
-     *
-     * @param service the service
-     * @return the ticket id
-     */
-    protected String produceTicketIdentifier(final Service service) {
+    protected String produceTicketIdentifier(final Service service) throws Throwable {
         val uniqueTicketIdGenKey = service.getClass().getName();
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
         var generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);

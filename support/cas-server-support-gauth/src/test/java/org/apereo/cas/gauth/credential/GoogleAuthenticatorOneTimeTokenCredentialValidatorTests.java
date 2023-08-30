@@ -58,7 +58,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Test
-    void verifyTokenAuthz() {
+    void verifyTokenAuthz() throws Throwable {
         val acct = OneTimeTokenAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -71,13 +71,13 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyStore() {
+    void verifyStore() throws Throwable {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));
     }
 
     @Test
-    void verifyAcctValidation() throws Exception {
+    void verifyAcctValidation() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -92,7 +92,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyAcctValidationScratchCode() throws Exception {
+    void verifyAcctValidationScratchCode() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -108,7 +108,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyTokenReuse() {
+    void verifyTokenReuse() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -126,7 +126,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyBadToken() {
+    void verifyBadToken() throws Throwable {
         assertThrows(PreventedException.class,
             () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 new GoogleAuthenticatorTokenCredential("abcdefg", 123456L)));
@@ -136,7 +136,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyMultipleAccountsWithNoId() {
+    void verifyMultipleAccountsWithNoId() throws Throwable {
         for (var i = 0; i < 2; i++) {
             val acct = GoogleAuthenticatorAccount.builder()
                 .username("casuser")

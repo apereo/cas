@@ -32,7 +32,7 @@ class CasTomcatBannerTests {
     private Environment environment;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val banner = new CasTomcatBanner();
         val writer = new StringWriter();
         val out = WriterOutputStream.builder().setWriter(writer).get();

@@ -10,6 +10,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -68,12 +69,10 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Nonnull
     @Override
-    public String resolveThemeName(
-        @Nonnull
-        final HttpServletRequest request) {
+    public String resolveThemeName(@Nonnull final HttpServletRequest request) {
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
-        val service = authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext);
+        val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext));
         if (service == null) {
             LOGGER.trace("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
             return rememberThemeName(request);

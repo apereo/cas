@@ -29,7 +29,7 @@ class DefaultOAuth20AuthorizationModelAndViewBuilderTests extends AbstractOAuth2
     private OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder;
 
     @Test
-    void verifyFragment() throws Exception {
+    void verifyFragment() throws Throwable {
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
         servicesManager.save(registeredService);
         val mv = oauthAuthorizationModelAndViewBuilder.build(registeredService, OAuth20ResponseModeTypes.FRAGMENT,

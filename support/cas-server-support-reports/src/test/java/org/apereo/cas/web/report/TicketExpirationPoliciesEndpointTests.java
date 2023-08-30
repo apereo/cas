@@ -31,7 +31,7 @@ class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
     private TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         service.setTicketGrantingTicketExpirationPolicy(new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(10));
         service.setServiceTicketExpirationPolicy(new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "PT10S"));

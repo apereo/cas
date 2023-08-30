@@ -55,7 +55,7 @@ class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val builder = new ChainingSingleLogoutServiceLogoutUrlBuilder(
             List.of(new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance())));
 

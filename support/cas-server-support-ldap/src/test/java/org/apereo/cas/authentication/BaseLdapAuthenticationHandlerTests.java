@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -67,6 +68,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -88,7 +90,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateFailure() {
+    void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList()
@@ -96,7 +98,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateSuccess() {
+    void verifyAuthenticateSuccess() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());

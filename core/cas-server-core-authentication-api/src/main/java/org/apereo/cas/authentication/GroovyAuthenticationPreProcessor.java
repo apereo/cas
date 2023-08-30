@@ -19,7 +19,7 @@ import org.springframework.core.io.Resource;
 @Setter
 @Slf4j
 public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     private int order;
 
@@ -28,13 +28,13 @@ public class GroovyAuthenticationPreProcessor implements AuthenticationPreProces
     }
 
     @Override
-    public boolean process(final AuthenticationTransaction transaction) throws AuthenticationException {
+    public boolean process(final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{transaction, LOGGER};
         return watchableScript.execute(args, Boolean.class);
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public boolean supports(final Credential credential) throws Throwable {
         val args = new Object[]{credential, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
     }

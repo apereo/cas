@@ -48,7 +48,7 @@ class FrontChannelLogoutActionTests {
         private Action frontChannelLogoutAction;
 
         @Test
-        void verifyNoSlo() throws Exception {
+        void verifyNoSlo() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -85,7 +85,7 @@ class FrontChannelLogoutActionTests {
         private Action frontChannelLogoutAction;
 
         @Test
-        void verifyLogoutNone() throws Exception {
+        void verifyLogoutNone() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -112,7 +112,7 @@ class FrontChannelLogoutActionTests {
         }
 
         @Test
-        void verifyLogout() throws Exception {
+        void verifyLogout() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -139,7 +139,7 @@ class FrontChannelLogoutActionTests {
         }
         
         @Test
-        void verifyNoRequests() throws Exception {
+        void verifyNoRequests() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

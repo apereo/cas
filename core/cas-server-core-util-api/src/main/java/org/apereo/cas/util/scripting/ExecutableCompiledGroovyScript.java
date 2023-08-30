@@ -18,14 +18,14 @@ public interface ExecutableCompiledGroovyScript extends AutoCloseable {
      * @param clazz the clazz
      * @return the t
      */
-    <T> T execute(Object[] args, Class<T> clazz);
+    <T> T execute(Object[] args, Class<T> clazz) throws Throwable;
 
     /**
      * Execute.
      *
      * @param args the args
      */
-    void execute(Object[] args);
+    void execute(Object[] args) throws Throwable;
 
     /**
      * Execute t.
@@ -35,8 +35,9 @@ public interface ExecutableCompiledGroovyScript extends AutoCloseable {
      * @param clazz       the clazz
      * @param failOnError the fail on error
      * @return the t
+     * @throws Throwable the throwable
      */
-    <T> T execute(Object[] args, Class<T> clazz, boolean failOnError);
+    <T> T execute(Object[] args, Class<T> clazz, boolean failOnError) throws Throwable;
 
     /**
      * Execute t.
@@ -47,7 +48,7 @@ public interface ExecutableCompiledGroovyScript extends AutoCloseable {
      * @param args       the args
      * @return the t
      */
-    <T> T execute(String methodName, Class<T> clazz, Object... args);
+    <T> T execute(String methodName, Class<T> clazz, Object... args) throws Throwable;
 
     /**
      * Sets binding.

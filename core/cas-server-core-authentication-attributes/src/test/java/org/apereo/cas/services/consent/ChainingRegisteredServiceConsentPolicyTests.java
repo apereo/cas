@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ChainingRegisteredServiceConsentPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(new DefaultRegisteredServiceConsentPolicy(Set.of("cn"), Set.of("givenName"))));
         chain.addPolicy(new DefaultRegisteredServiceConsentPolicy(Set.of("mail"), Set.of("address")));
@@ -31,7 +31,7 @@ class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    void verifyStatusEnabled() {
+    void verifyStatusEnabled() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -40,7 +40,7 @@ class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    void verifyStatusDisabled() {
+    void verifyStatusDisabled() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -49,7 +49,7 @@ class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    void verifyStatusUndefined() {
+    void verifyStatusUndefined() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy(),
@@ -58,7 +58,7 @@ class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    void verifyExcludedServices() {
+    void verifyExcludedServices() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.TRUE).setExcludedServices(Set.of("application1")),

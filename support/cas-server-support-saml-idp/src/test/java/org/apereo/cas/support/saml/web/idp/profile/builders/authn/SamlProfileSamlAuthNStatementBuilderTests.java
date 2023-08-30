@@ -33,7 +33,7 @@ class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfiguration
     private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = getAuthnRequestFor(UUID.randomUUID().toString());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);

@@ -58,7 +58,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        void verifyOp() throws Exception {
+        void verifyOp() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = getRequestContext(request, response);
@@ -69,7 +69,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
         }
 
         @Test
-        void verifyBodyContainsUsername() throws Exception {
+        void verifyBodyContainsUsername() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = getRequestContext(request, response);
@@ -96,7 +96,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        void verifyBodyContainsUsername() throws Exception {
+        void verifyBodyContainsUsername() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = getRequestContext(request, response);

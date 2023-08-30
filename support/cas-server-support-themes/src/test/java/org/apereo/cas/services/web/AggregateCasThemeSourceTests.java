@@ -37,14 +37,14 @@ class AggregateCasThemeSourceTests {
     private ThemeSource themeSource;
 
     @Test
-    void verifyCustomSource() {
+    void verifyCustomSource() throws Throwable {
         val theme = themeSource.getTheme("my-theme");
         assertNotNull(theme);
         val message = theme.getMessageSource().getMessage("cas.theme.name",
-            ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
+            ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.ENGLISH);
         assertEquals("MyTheme2", message);
         val message2 = theme.getMessageSource().getMessage("screen.welcome.instructions",
-            ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
+            ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.ENGLISH);
         assertEquals("Test123", message2);
     }
 }

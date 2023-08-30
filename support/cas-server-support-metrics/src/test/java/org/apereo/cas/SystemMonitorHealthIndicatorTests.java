@@ -48,7 +48,7 @@ class SystemMonitorHealthIndicatorTests {
     private ObjectProvider<MetricsEndpoint> metricsEndpoint;
     
     @Test
-    void verifyObserveOk() {
+    void verifyObserveOk() throws Throwable {
         val monitor = new SystemMonitorHealthIndicator(metricsEndpoint, 10);
         val status = monitor.health().getStatus();
         assertEquals(Status.UP, status);

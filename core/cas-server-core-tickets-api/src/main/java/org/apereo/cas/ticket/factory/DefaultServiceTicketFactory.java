@@ -52,7 +52,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,
                                        final boolean credentialProvided,
-                                       final Class<T> clazz) {
+                                       final Class<T> clazz) throws Throwable {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         var result = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode service ticket [{}]", ticketId);
@@ -101,16 +101,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return (T) result;
     }
 
-    /**
-     * Produce ticket identifier.
-     *
-     * @param service              the service
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param credentialProvided   whether credentials where directly provided
-     * @return ticket id
-     */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
-                                             final boolean credentialProvided) {
+                                             final boolean credentialProvided) throws Throwable {
         val uniqueTicketIdGenKey = service.getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {

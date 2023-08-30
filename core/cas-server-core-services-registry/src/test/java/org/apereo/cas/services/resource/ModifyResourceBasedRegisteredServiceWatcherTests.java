@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class ModifyResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    void verifyOperationFoundModified() throws Exception {
+    void verifyOperationFoundModified() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {

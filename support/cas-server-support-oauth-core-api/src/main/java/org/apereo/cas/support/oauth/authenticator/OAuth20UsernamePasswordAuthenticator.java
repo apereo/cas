@@ -105,14 +105,14 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
             return Optional.of(credentials);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }
     }
 
     protected Principal buildAuthenticatedPrincipal(final AuthenticationResult authenticationResult,
                                                     final OAuthRegisteredService registeredService,
-                                                    final Service service, final CallContext callContext) {
+                                                    final Service service, final CallContext callContext) throws Throwable {
         val authentication = authenticationResult.getAuthentication();
         val principal = authentication.getPrincipal();
 

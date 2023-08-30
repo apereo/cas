@@ -32,7 +32,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ClaimMappingTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -45,7 +45,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        void verifyChainOperation() {
+        void verifyChainOperation() throws Throwable {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -66,7 +66,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyValueTypes() {
+        void verifyValueTypes() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService();
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(
                 CollectionUtils.wrap("active1", "status1", "active2", "status2",
@@ -83,7 +83,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
             val oidcRegisteredService = getOidcRegisteredService();
             assertTrue(mapper.containsMappedAttribute("name", oidcRegisteredService));
@@ -91,7 +91,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        void verifyClaimMapOperation() {
+        void verifyClaimMapOperation() throws Throwable {
             val policy = new OidcEmailScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());

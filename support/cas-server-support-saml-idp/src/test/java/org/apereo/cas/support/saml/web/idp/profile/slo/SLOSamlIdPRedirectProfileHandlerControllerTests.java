@@ -55,7 +55,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
 
     @Test
     @Order(1)
-    public void verifyOperationRedirectWithParameter() throws Exception {
+    void verifyOperationRedirectWithParameter() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -71,7 +71,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
 
     @Test
     @Order(2)
-    public void verifyOperationRedirectWithoutParameter() throws Exception {
+    void verifyOperationRedirectWithoutParameter() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -85,7 +85,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
 
     @Test
     @Order(3)
-    public void verifyLogoutResponse() throws Exception {
+    void verifyLogoutResponse() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -117,7 +117,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     private void executeTest(final MockHttpServletRequest request, final HttpServletResponse response,
-                             final SamlRegisteredService service) throws Exception {
+                             final SamlRegisteredService service) throws Throwable {
         servicesManager.save(service);
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(LogoutRequest.DEFAULT_ELEMENT_NAME);

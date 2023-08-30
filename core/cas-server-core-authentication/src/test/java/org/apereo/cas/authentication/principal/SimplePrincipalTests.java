@@ -27,14 +27,14 @@ class SimplePrincipalTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyEquality() {
+    void verifyEquality() throws Throwable {
         val p = new SimplePrincipal("id", new HashMap<>());
         assertNotEquals(null, p);
         assertNotEquals("HelloWorld", p);
     }
 
     @Test
-    void verifySerializeACompletePrincipalToJson() throws Exception {
+    void verifySerializeACompletePrincipalToJson() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("attribute", List.of("value"));
         val principalWritten = new SimplePrincipal("id", attributes);
@@ -44,7 +44,7 @@ class SimplePrincipalTests {
     }
 
     @Test
-    void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Exception {
+    void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Throwable {
         val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);

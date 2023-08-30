@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
-    void verifyJwtForServiceTicket() throws Exception {
+    void verifyJwtForServiceTicket() throws Throwable {
         var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
@@ -34,7 +34,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    void verifyJwtForServiceTicketWithOwnKeys() throws Exception {
+    void verifyJwtForServiceTicketWithOwnKeys() throws Throwable {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123455", service);
         assertNotNull(jwt);
@@ -50,7 +50,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    void verifyJwtForTicketGrantingTicket() throws Exception {
+    void verifyJwtForTicketGrantingTicket() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val jwt = tokenTicketBuilder.build(tgt, Map.of());
         assertNotNull(jwt);
@@ -60,7 +60,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    void verifyJwtForAuthN() throws Exception {
+    void verifyJwtForAuthN() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val jwt = tokenTicketBuilder.build(tgt.getAuthentication());
         assertNotNull(jwt);
@@ -70,7 +70,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    void verifyJwtForAuthAndService() throws Exception {
+    void verifyJwtForAuthAndService() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val jwt = tokenTicketBuilder.build(tgt.getAuthentication(), RegisteredServiceTestUtils.getRegisteredService());
         assertNotNull(jwt);

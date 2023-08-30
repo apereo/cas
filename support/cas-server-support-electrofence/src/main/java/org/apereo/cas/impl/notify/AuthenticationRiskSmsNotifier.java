@@ -31,7 +31,7 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
     }
 
     @Override
-    public void publish() {
+    public void publish() throws Throwable {
         val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
         val principal = authentication.getPrincipal();
 

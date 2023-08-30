@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class DeleteResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    void verifyOperationNotFound() throws Exception {
+    void verifyOperationNotFound() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -49,7 +49,7 @@ class DeleteResourceBasedRegisteredServiceWatcherTests {
     }
 
     @Test
-    void verifyOperationFoundDeleted() throws Exception {
+    void verifyOperationFoundDeleted() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -74,7 +74,7 @@ class DeleteResourceBasedRegisteredServiceWatcherTests {
     }
 
     @Test
-    void verifyTempFilesIgnored() throws Exception {
+    void verifyTempFilesIgnored() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {

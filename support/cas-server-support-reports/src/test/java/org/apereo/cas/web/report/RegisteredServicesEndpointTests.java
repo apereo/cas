@@ -39,7 +39,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     private RegisteredServicesEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service1, service2);
@@ -55,7 +55,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyImportOperationAsJson() throws Exception {
+    void verifyImportOperationAsJson() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val request = new MockHttpServletRequest();
@@ -65,7 +65,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyImportOperationFails() throws Exception {
+    void verifyImportOperationFails() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setContent(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8));
         assertEquals(HttpStatus.BAD_REQUEST, endpoint.importService(request).getStatusCode());
@@ -73,7 +73,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
 
 
     @Test
-    void verifyImportOperationAsYaml() throws Exception {
+    void verifyImportOperationAsYaml() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val request = new MockHttpServletRequest();
@@ -84,7 +84,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyExportOperation() {
+    void verifyExportOperation() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         this.servicesManager.save(service);
         val response = endpoint.export();
@@ -93,7 +93,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyBulkImportAsZip() throws Exception {
+    void verifyBulkImportAsZip() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val request = new MockHttpServletRequest();

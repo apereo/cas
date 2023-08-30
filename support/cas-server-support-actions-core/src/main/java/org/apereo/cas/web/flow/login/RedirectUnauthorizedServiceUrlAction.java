@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -35,20 +36,22 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     private final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         val url = redirectUrl.toString();
         if (ScriptingUtils.isGroovyScript(url)) {
-            val registeredService = WebUtils.getRegisteredService(requestContext);
-            val authentication = WebUtils.getAuthentication(requestContext);
-            val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
-                "authentication", authentication,
-                "requestContext", requestContext,
-                "applicationContext", applicationContext,
-                "logger", LOGGER);
-            val scriptToExec = scriptResourceCacheManager.resolveScriptableResource(url);
-            scriptToExec.setBinding(args);
-            redirectUrl = scriptToExec.execute(args.values().toArray(), URI.class);
+            redirectUrl = FunctionUtils.doUnchecked(() -> {
+                val registeredService = WebUtils.getRegisteredService(requestContext);
+                val authentication = WebUtils.getAuthentication(requestContext);
+                val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
+                    "authentication", authentication,
+                    "requestContext", requestContext,
+                    "applicationContext", applicationContext,
+                    "logger", LOGGER);
+                val scriptToExec = scriptResourceCacheManager.resolveScriptableResource(url);
+                scriptToExec.setBinding(args);
+                return scriptToExec.execute(args.values().toArray(), URI.class);
+            });
         }
 
         LOGGER.debug("Redirecting to unauthorized redirect URL [{}]", redirectUrl);

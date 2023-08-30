@@ -38,7 +38,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     private Action passwordChangeAction;
 
     @Test
-    void verifyFailNoCreds() throws Exception {
+    void verifyFailNoCreds() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -53,7 +53,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyFailsValidation() throws Exception {
+    void verifyFailsValidation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -71,7 +71,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyChange() throws Exception {
+    void verifyChange() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -92,7 +92,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyChangeFails() throws Exception {
+    void verifyChangeFails() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -112,7 +112,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyPasswordRejected() throws Exception {
+    void verifyPasswordRejected() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

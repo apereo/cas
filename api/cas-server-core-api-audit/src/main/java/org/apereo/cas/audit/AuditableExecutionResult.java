@@ -54,7 +54,7 @@ public class AuditableExecutionResult {
      * RuntimeException.
      */
     @Setter
-    private RuntimeException exception;
+    private Throwable exception;
 
     /**
      * The execution result of the auditable action.
@@ -103,7 +103,7 @@ public class AuditableExecutionResult {
     /**
      * Throw exception if needed.
      */
-    public void throwExceptionIfNeeded() {
+    public void throwExceptionIfNeeded() throws Throwable {
         if (isExecutionFailure()) {
             throw getException().get();
         }
@@ -187,7 +187,7 @@ public class AuditableExecutionResult {
      *
      * @return optional exception
      */
-    public Optional<RuntimeException> getException() {
+    public Optional<Throwable> getException() {
         return Optional.ofNullable(exception);
     }
 

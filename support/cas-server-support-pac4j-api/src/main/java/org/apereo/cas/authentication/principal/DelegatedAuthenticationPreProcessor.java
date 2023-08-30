@@ -21,8 +21,9 @@ public interface DelegatedAuthenticationPreProcessor extends Ordered {
      * @param credential the credential
      * @param service    the service
      * @return the principal
+     * @throws Throwable the throwable
      */
-    Principal process(Principal principal, BaseClient client, Credential credential, Service service);
+    Principal process(Principal principal, BaseClient client, Credential credential, Service service) throws Throwable;
 
     @Override
     default int getOrder() {

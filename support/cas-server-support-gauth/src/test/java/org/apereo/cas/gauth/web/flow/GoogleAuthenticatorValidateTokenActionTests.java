@@ -49,7 +49,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifySuccessfulValidation() throws Exception {
+    void verifySuccessfulValidation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

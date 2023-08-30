@@ -35,7 +35,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
     @Override
-    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.AUTHORIZE_URL)) {
             LOGGER.warn("CAS cannot accept the authorization request given the issuer is invalid.");
@@ -63,7 +63,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
     @Override
-    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestPost(final HttpServletRequest request,
+                                          final HttpServletResponse response) throws Throwable {
         return handleRequest(request, response);
     }
 }

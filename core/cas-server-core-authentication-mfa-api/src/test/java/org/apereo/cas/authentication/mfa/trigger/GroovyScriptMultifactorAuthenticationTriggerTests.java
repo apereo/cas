@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val trigger = buildGroovyTrigger();
         var result = trigger.isActivated(authentication, registeredService,
             this.httpRequest, this.httpResponse, mock(Service.class));
@@ -45,7 +45,7 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
     @Test
     @Order(2)
-    public void verifyCompositeProvider() {
+    void verifyCompositeProvider() throws Throwable {
         val trigger = buildGroovyTrigger();
         val service = MultifactorAuthenticationTestUtils.getService("composite");
         val result = trigger.isActivated(authentication, registeredService,
@@ -55,7 +55,7 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
     @Test
     @Order(3)
-    public void verifyBadInputParameters() {
+    void verifyBadInputParameters() throws Throwable {
         val trigger = buildGroovyTrigger();
         var result = trigger.isActivated(null, registeredService,
             this.httpRequest, this.httpResponse, mock(Service.class));
@@ -74,7 +74,7 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
-    public void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val trigger = buildGroovyTrigger();
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService,
@@ -86,7 +86,7 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         assertNotNull(trigger.getWatchableScript());
     }
 
-    private GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger() {
+    private GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger() throws Throwable {
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
         when(selector.resolve(any(), any(), any())).thenReturn(new TestMultifactorAuthenticationProvider());
         return new GroovyScriptMultifactorAuthenticationTrigger(

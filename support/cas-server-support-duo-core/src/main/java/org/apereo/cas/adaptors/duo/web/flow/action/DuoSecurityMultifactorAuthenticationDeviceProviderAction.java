@@ -34,7 +34,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
     private final ApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
 

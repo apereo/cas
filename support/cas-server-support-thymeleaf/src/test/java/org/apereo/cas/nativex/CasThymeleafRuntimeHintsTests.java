@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasThymeleafRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new CasThymeleafRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.resource().forBundle("messages").test(hints));

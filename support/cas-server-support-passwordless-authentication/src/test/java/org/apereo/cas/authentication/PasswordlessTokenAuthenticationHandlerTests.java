@@ -46,7 +46,7 @@ class PasswordlessTokenAuthenticationHandlerTests {
         private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
         @Test
-        void verifyDisable() {
+        void verifyDisable() throws Throwable {
             val authenticationHandlers = authenticationEventExecutionPlan.getAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
             assertTrue(authenticationHandlers.isEmpty());
         }
@@ -56,7 +56,7 @@ class PasswordlessTokenAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests {
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val repository = new InMemoryPasswordlessTokenRepository(60, CipherExecutor.noOpOfSerializableToString());
 
             val uid = UUID.randomUUID().toString();

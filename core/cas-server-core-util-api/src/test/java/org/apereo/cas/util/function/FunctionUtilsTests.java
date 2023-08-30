@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionUtilsTests {
 
     @Test
-    void verifyDoIf0() {
+    void verifyDoIf0() throws Throwable {
         val result = new AtomicBoolean();
         FunctionUtils.doIf(true, input -> result.set(true), (Consumer<String>) s -> result.set(false)).accept("input");
         assertTrue(result.get());
@@ -32,7 +32,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoIf1() {
+    void verifyDoIf1() throws Throwable {
         assertFalse(FunctionUtils.doIf(input -> {
                 throw new IllegalArgumentException();
             },
@@ -40,7 +40,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoIf2() {
+    void verifyDoIf2() throws Throwable {
         val trueFunction = new Supplier<Boolean>() {
             @Override
             public Boolean get() {
@@ -52,7 +52,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoIf3() {
+    void verifyDoIf3() throws Throwable {
         assertThrows(IllegalArgumentException.class, () -> FunctionUtils.doIf(input -> {
                 throw new IllegalArgumentException();
             },
@@ -63,20 +63,20 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoIfNull() {
+    void verifyDoIfNull() throws Throwable {
         var supplier = FunctionUtils.doIfNotNull(new Object(), () -> {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.FALSE));
         assertFalse(supplier.get());
 
-        supplier = FunctionUtils.doIfNotNull(null, Suppliers.ofInstance(Boolean.TRUE), Suppliers.ofInstance(Boolean.FALSE));
+        supplier = FunctionUtils.doIfNotNull(null, () -> Boolean.TRUE, Suppliers.ofInstance(Boolean.FALSE));
         assertFalse(supplier.get());
-        supplier = FunctionUtils.doIfNotNull(new Object(), Suppliers.ofInstance(Boolean.TRUE), Suppliers.ofInstance(Boolean.FALSE));
+        supplier = FunctionUtils.doIfNotNull(new Object(), () -> Boolean.TRUE, Suppliers.ofInstance(Boolean.FALSE));
         assertTrue(supplier.get());
     }
 
     @Test
-    void verifyDoIfNull1() {
+    void verifyDoIfNull1() throws Throwable {
         assertDoesNotThrow(() -> FunctionUtils.doIfNotNull(Boolean.TRUE, result -> {
             throw new IllegalArgumentException();
         }));
@@ -90,14 +90,14 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoIfNull2() {
+    void verifyDoIfNull2() throws Throwable {
         assertTrue(FunctionUtils.doIfNull(new Object(), () -> {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.TRUE)).get());
     }
 
     @Test
-    void verifyDoAndHandle() {
+    void verifyDoAndHandle() throws Throwable {
         assertThrows(IllegalArgumentException.class,
             () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
                 throw new IllegalArgumentException();
@@ -111,7 +111,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoAndHandle2() {
+    void verifyDoAndHandle2() throws Throwable {
         var supplier = FunctionUtils.doAndHandle(
             () -> {
                 throw new IllegalArgumentException();
@@ -127,7 +127,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    void verifyDoWithoutThrows() {
+    void verifyDoWithoutThrows() throws Throwable {
         val supplier = FunctionUtils.doWithoutThrows(o -> {
             throw new IllegalArgumentException();
         });

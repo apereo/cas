@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 class MaxmindDatabaseGeoLocationServiceTests {
 
     @Test
-    void verifyWebServices() throws Exception {
+    void verifyWebServices() throws Throwable {
         var service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties()
             .setAccountId(123456).setLicenseKey("abcdefghi"));
         assertNull(service.locate("5.194.132.155"));
@@ -49,7 +49,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyCity() throws Exception {
+    void verifyCity() throws Throwable {
         val cityReader = mock(DatabaseReader.class);
         when(cityReader.city(any())).thenReturn(getCityResponse());
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties()).withCityDatabaseReader(cityReader);
@@ -65,7 +65,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyCityUnknown() throws Exception {
+    void verifyCityUnknown() throws Throwable {
         val cityReader = mock(DatabaseReader.class);
         when(cityReader.city(any())).thenThrow(new AddressNotFoundException("Unknown"));
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties()).withCityDatabaseReader(cityReader);
@@ -75,7 +75,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyNoReader() {
+    void verifyNoReader() throws Throwable {
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties());
         val response = service.locate("127.0.0.1");
         assertEquals(0, response.getLatitude());
@@ -83,14 +83,14 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyLocate() {
+    void verifyLocate() throws Throwable {
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties());
         val response = service.locate("abcedf");
         assertNull(response);
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val city = mock(DatabaseReader.class);
         when(city.city(any(InetAddress.class))).thenReturn(getCityResponse());
 

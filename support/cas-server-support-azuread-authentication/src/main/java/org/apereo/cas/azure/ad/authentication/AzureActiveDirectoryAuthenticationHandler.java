@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
@@ -26,12 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import javax.security.auth.login.FailedLoginException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -106,8 +103,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
 
         try {
             val username = credential.getUsername();

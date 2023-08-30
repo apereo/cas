@@ -64,7 +64,7 @@ class OidcDefaultJsonWebKeystoreRotationServiceTests {
     class EmptyKeystoreTests extends AbstractOidcTests {
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             var jwks = oidcJsonWebKeystoreRotationService.rotate();
             assertEquals(6, jwks.getJsonWebKeys().size());
 
@@ -98,7 +98,7 @@ class OidcDefaultJsonWebKeystoreRotationServiceTests {
     class ExistingKeystoreTests extends AbstractOidcTests {
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val jwks = oidcJsonWebKeystoreRotationService.rotate();
             assertEquals(5, jwks.getJsonWebKeys().size());
         }

@@ -56,7 +56,7 @@ class PrincipalBearingCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         assertTrue(this.resolver.supports(credential));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
@@ -64,7 +64,7 @@ class PrincipalBearingCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    void verifyReturnedPrincipal() {
+    void verifyReturnedPrincipal() throws Throwable {
         val credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         val p = this.resolver.resolve(credential,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),

@@ -25,14 +25,14 @@ import static org.springframework.http.HttpStatus.*;
 class RestfulPropertySourceLocatorTests {
 
     @Test
-    void verifyNoUrl() {
+    void verifyNoUrl() throws Throwable {
         val environment = new MockEnvironment();
         val loc = new RestfulPropertySourceLocator();
         assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
     }
 
     @Test
-    void verifyBadParsing() {
+    void verifyBadParsing() throws Throwable {
         val environment = new MockEnvironment();
         environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:8021");
         environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");

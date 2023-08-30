@@ -68,7 +68,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     private ResourceLoader resourceLoader;
 
     @Test
-    void verifyLocator() {
+    void verifyLocator() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 
@@ -80,7 +80,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyPriority() {
+    void verifyPriority() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -93,7 +93,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyNoneProfile() {
+    void verifyNoneProfile() throws Throwable {
         val mockEnv =new MockEnvironment();
         mockEnv.setActiveProfiles(CasConfigurationPropertiesSourceLocator.PROFILE_NONE);
         val source = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(mockEnv);
@@ -102,7 +102,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
 
     @Test
-    void verifyGroovySlurper() {
+    void verifyGroovySlurper() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -111,14 +111,14 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyYamlLoaderThrows() {
+    void verifyYamlLoaderThrows() throws Throwable {
         val loader = configurationPropertiesLoaderFactory.getLoader(
             resourceLoader.getResource("classpath:/badyaml.yml"), "test");
         assertThrows(YAMLException.class, loader::load);
     }
 
     @Test
-    void verifySystemPropertiesOverrideCasConfiguration() {
+    void verifySystemPropertiesOverrideCasConfiguration() throws Throwable {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 

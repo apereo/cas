@@ -92,7 +92,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyAuthenticationFailsToFindUser() {
+    void verifyAuthenticationFailsToFindUser() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -101,7 +101,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyPasswordInvalid() {
+    void verifyPasswordInvalid() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -110,7 +110,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyMultipleRecords() {
+    void verifyMultipleRecords() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -119,7 +119,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyBadQuery() {
+    void verifyBadQuery() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL.replace("*", "error")).setFieldPassword(PASSWORD_FIELD);
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -128,7 +128,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
@@ -141,7 +141,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyFindUserAndExpired() {
+    void verifyFindUserAndExpired() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldExpired("expired");
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -150,7 +150,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
     }
 
     @Test
-    void verifyFindUserAndDisabled() {
+    void verifyFindUserAndDisabled() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>(0));
@@ -163,7 +163,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
      * with FailedLoginException
      */
     @Test
-    void verifyBCryptFail() {
+    void verifyBCryptFail() throws Throwable {
         val encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);
@@ -179,7 +179,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
      * using raw password test can authenticate
      */
     @Test
-    void verifyBCryptSuccess() throws Exception {
+    void verifyBCryptSuccess() throws Throwable {
         val encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);

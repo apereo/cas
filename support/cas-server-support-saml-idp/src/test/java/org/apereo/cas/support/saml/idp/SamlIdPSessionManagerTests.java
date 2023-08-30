@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPSessionManagerTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifySessionOps() throws Exception {
+    void verifySessionOps() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
@@ -45,7 +45,7 @@ class SamlIdPSessionManagerTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySessionOpsWithEmbeddedId() throws Exception {
+    void verifySessionOpsWithEmbeddedId() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);

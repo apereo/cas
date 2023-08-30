@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Spnego")
 class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "MSIE");
@@ -36,7 +36,7 @@ class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    void verifyEmptyAgent() throws Exception {
+    void verifyEmptyAgent() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -48,7 +48,7 @@ class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    void verifyBadAuthzHeader() throws Exception {
+    void verifyBadAuthzHeader() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader("User-Agent", "MSIE");

@@ -104,7 +104,7 @@ class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyResponse() {
+    void verifyResponse() throws Throwable {
         val resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(DefaultResponse.ResponseType.POST, resp.responseType());

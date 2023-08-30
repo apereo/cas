@@ -26,7 +26,7 @@ class RefuseRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyJson() throws Exception {
+    void verifyJson() throws Throwable {
         val policyWritten = new RefuseRegisteredServiceProxyPolicy();
         assertFalse(policyWritten.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
             new URI("https://github.com").toURL()));

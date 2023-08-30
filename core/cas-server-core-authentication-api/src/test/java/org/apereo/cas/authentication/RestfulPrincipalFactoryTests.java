@@ -30,7 +30,7 @@ class RestfulPrincipalFactoryTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val entity = MAPPER.writeValueAsString(CoreAuthenticationTestUtils.getPrincipal("casuser"));
         try (val webServer = new MockWebServer(9155,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -46,7 +46,7 @@ class RestfulPrincipalFactoryTests {
     }
 
     @Test
-    void verifyNullPrincipal() throws Exception {
+    void verifyNullPrincipal() throws Throwable {
         val entity = MAPPER.writeValueAsString(CoreAuthenticationTestUtils.getPrincipal("casuser"));
         try (val webServer = new MockWebServer(9156,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.EXPECTATION_FAILED)) {
@@ -61,7 +61,7 @@ class RestfulPrincipalFactoryTests {
     }
 
     @Test
-    void verifyBadResponse() {
+    void verifyBadResponse() throws Throwable {
         try (val webServer = new MockWebServer(9157,
             new ByteArrayResource("abcde123456".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();

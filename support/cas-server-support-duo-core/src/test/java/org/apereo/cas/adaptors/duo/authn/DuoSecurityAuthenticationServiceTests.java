@@ -60,7 +60,7 @@ class DuoSecurityAuthenticationServiceTests {
     private HttpClient httpClient;
 
     @Test
-    void verifyPingOK() throws Exception {
+    void verifyPingOK() throws Throwable {
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "OK"));
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
@@ -78,7 +78,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyPingFails() throws Exception {
+    void verifyPingFails() throws Throwable {
         val duoProperties = casProperties.getAuthn().getMfa().getDuo().get(0);
         duoProperties.setDuoApiHost("http://localhost:6556");
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
@@ -96,7 +96,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyPingFailsToParse() throws Exception {
+    void verifyPingFailsToParse() throws Throwable {
         val results = MAPPER.writeValueAsString(UUID.randomUUID().toString());
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApiHost(null);
@@ -112,7 +112,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = mock(DuoSecurityAuthenticationService.class);
         when(service.getDuoClient()).thenCallRealMethod();
         when(service.signRequestToken(anyString())).thenCallRealMethod();

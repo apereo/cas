@@ -48,7 +48,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyFails() throws Exception {
+    void verifyFails() throws Throwable {
         val resource = mock(Resource.class);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(resource,
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
@@ -61,14 +61,14 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     }
 
     @Test
-    void verifyNotExists() {
+    void verifyNotExists() throws Throwable {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new ClassPathResource("acct-bad.json"),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());
     }
 
     @Test
-    void verifyNoAccounts() throws Exception {
+    void verifyNoAccounts() throws Throwable {
         val file = File.createTempFile("account", ".json");
         FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new FileSystemResource(file),
@@ -88,7 +88,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     }
 
     @Test
-    void verifyBadResource() throws Exception {
+    void verifyBadResource() throws Throwable {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new UrlResource(new URI("https://httpbin.org/get")),
             googleAuthenticatorInstance, CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber());
         assertTrue(repo.get("casuser").isEmpty());

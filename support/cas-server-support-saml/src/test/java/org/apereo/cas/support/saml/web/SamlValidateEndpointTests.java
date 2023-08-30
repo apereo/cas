@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasValidationConfiguration;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreSamlConfiguration.class,
     SamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,
     SamlAuthenticationEventExecutionPlanConfiguration.class,
@@ -56,12 +58,12 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
         assertNotNull(samlValidateEndpoint);
         val request = new MockHttpServletRequest();
@@ -71,7 +73,7 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyWithoutPassword() {
+    void verifyWithoutPassword() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
         assertNotNull(samlValidateEndpoint);
         val request = new MockHttpServletRequest();

@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 @Monitorable
 public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
-    private final transient S3Client s3Client;
+    private final S3Client s3Client;
 
     private final String bucketName;
 

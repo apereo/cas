@@ -245,9 +245,9 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      *
      * @param service the service
      * @return the signature signing configuration
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Exception {
+    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Throwable {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -302,9 +302,9 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      *
      * @param registeredService the registered service
      * @return the signing private key
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
+    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Throwable {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
         val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
@@ -407,7 +407,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                     return finalizeSigningCredential(new BasicX509Credential(certificate, privateKey), credential);
                 }
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return null;

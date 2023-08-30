@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +45,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws Throwable {
         val policyWritten = new ReturnAllAttributeReleasePolicy();
         policyWritten.setExcludedAttributes(CollectionUtils.wrapSet("Hello", "World"));
         MAPPER.writeValue(JSON_FILE, policyWritten);
@@ -55,7 +54,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyExclusionRules() {
+    void verifyExclusionRules() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         policy.setExcludedAttributes(CollectionUtils.wrapSet("cn"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -75,7 +74,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyConsentForServiceInDisabled() {
+    void verifyConsentForServiceInDisabled() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
         val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
@@ -96,7 +95,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyConsentForServiceInUndefined() {
+    void verifyConsentForServiceInUndefined() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", List.of("CommonName")));
         val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
@@ -120,7 +119,7 @@ class ReturnAllAttributeReleasePolicyTests {
 
 
     @Test
-    void verifyExcludedServicesFromConsent() {
+    void verifyExcludedServicesFromConsent() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
@@ -148,7 +147,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyNoConsentPolicy() {
+    void verifyNoConsentPolicy() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
@@ -171,7 +170,7 @@ class ReturnAllAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyConsentPolicyActive() {
+    void verifyConsentPolicyActive() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));

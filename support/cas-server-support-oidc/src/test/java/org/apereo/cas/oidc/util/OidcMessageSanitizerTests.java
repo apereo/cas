@@ -24,7 +24,7 @@ class OidcMessageSanitizerTests extends AbstractOidcTests {
     private MessageSanitizer messageSanitizer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         var results = messageSanitizer.sanitize("ticket OC-1-abcdefg created");
         assertTrue(results.contains("OC-1-********"));
         results = messageSanitizer.sanitize("ticket AT-1-abcdefg created");

@@ -86,7 +86,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
     }
 
     @Test
-    void verifyResolver() throws Exception {
+    void verifyResolver() throws Throwable {
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));

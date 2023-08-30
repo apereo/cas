@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.Getter;
@@ -26,26 +27,18 @@ import org.springframework.webflow.execution.RequestContext;
 public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
     private final AcceptableUsagePolicyRepository repository;
 
-    /**
-     * Record the fact that the policy is accepted.
-     *
-     * @param context    the context
-     * @return success if policy acceptance is recorded successfully.
-     */
-    private Event submit(final RequestContext context) {
-        LOGGER.trace("Submitting acceptable usage policy");
-        if (repository.submit(context)) {
-            return new EventFactorySupport().event(this,
-                CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
-        }
-        return error();
-    }
 
     @Audit(action = AuditableActions.AUP_SUBMIT,
         actionResolverName = AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER)
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        return submit(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> {
+            LOGGER.trace("Submitting acceptable usage policy");
+            if (repository.submit(requestContext)) {
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+            }
+            return error();
+        });
     }
 }

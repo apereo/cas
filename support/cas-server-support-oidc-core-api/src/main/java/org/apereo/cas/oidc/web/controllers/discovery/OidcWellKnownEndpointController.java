@@ -74,6 +74,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
      * @param resource the resource
      * @param rel      the rel
      * @return the web finger response
+     * @throws Throwable the throwable
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL + "/webfinger",
         produces = "application/jrd+json")
@@ -81,7 +82,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
         @RequestParam("resource")
         final String resource,
         @RequestParam(value = "rel", required = false)
-        final String rel) {
+        final String rel) throws Throwable {
         return BeanSupplier.isNotProxy(webFingerDiscoveryService)
             ? webFingerDiscoveryService.handleRequest(resource, rel)
             : ResponseEntity.notFound().build();

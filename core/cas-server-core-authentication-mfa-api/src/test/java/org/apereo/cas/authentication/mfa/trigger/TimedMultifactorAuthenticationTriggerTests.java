@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(2)
-    public void verifyUndefined() {
+    void verifyUndefined() throws Throwable {
         val props = new CasConfigurationProperties();
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
@@ -42,7 +42,7 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
 
     @Test
     @Order(3)
-    public void verifyProvider() {
+    void verifyProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val timeProps = new TimeBasedAuthenticationProperties();
         timeProps.setProviderId(TestMultifactorAuthenticationProvider.ID);
@@ -65,7 +65,7 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
     @Test
     @Tag("DisableProviderRegistration")
     @Order(1)
-    public void verifyNoProviders() {
+    void verifyNoProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         val timeProps = new TimeBasedAuthenticationProperties();

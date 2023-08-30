@@ -60,7 +60,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -98,7 +98,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadUser() throws Exception {
+    void verifyBadUser() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -113,7 +113,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadCred() {
+    void verifyBadCred() throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -126,13 +126,13 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     private Authenticator getAuthenticator() {
-        val c = (BaseClient) oidcJwtClientProvider.createClient();
-        return c.getAuthenticator();
+        val client = (BaseClient) oidcJwtClientProvider.createClient();
+        return client.getAuthenticator();
     }
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,
                                                       final String uid, final String password,
-                                                      final String clientId) throws Exception {
+                                                      final String clientId) throws Throwable {
         val credentials = new UsernamePasswordCredentials(uid, password);
 
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),

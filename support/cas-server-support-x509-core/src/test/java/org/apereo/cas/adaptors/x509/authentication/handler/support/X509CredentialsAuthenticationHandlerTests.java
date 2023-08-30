@@ -49,13 +49,8 @@ class X509CredentialsAuthenticationHandlerTests {
 
     private static final String USER_VALID_CRT = "user-valid.crt";
 
-    /**
-     * Gets the unit test parameters.
-     *
-     * @return Test parameter data.
-     */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static Stream<Arguments> getTestParameters() {
+    public static Stream<Arguments> getTestParameters() throws Throwable {
         val params = new ArrayList<Arguments>();
 
         /* Test case #1: Unsupported credential type */
@@ -256,11 +251,11 @@ class X509CredentialsAuthenticationHandlerTests {
     }
 
     /**
-     * Tests the {@link AuthenticationHandler#authenticate(Credential, org.apereo.cas.authentication.principal.Service)} method.
+     * Tests the {@link AuthenticationHandler#authenticate(Credential, Service)} method.
      */
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyAuthenticate(final X509CredentialsAuthenticationHandler handler, final Credential credential,
+    void verifyAuthenticate(final X509CredentialsAuthenticationHandler handler, final Credential credential,
                                    final boolean expectedSupports, final AuthenticationHandlerExecutionResult expectedResult,
                                    final GeneralSecurityException expectedException) {
         assertThrowsOrNot(expectedException, () -> {

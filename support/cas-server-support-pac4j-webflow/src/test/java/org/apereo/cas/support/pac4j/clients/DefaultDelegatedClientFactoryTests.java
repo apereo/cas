@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -41,7 +42,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class EagerInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyEagerInit() {
+        void verifyEagerInit() throws Throwable {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -101,7 +102,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class IdentifiableClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactoryForIdentifiableClients() {
+        void verifyFactoryForIdentifiableClients() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(13, clients.size());
         }
@@ -117,7 +118,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class GitHubClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyGithubClient() {
+        void verifyGithubClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (GitHubClient) clients.iterator().next();
@@ -134,7 +135,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class OAuth20Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactory() {
+        void verifyFactory() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -152,7 +153,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class CasClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyFactoryForCasClientsHavingLoginInDomain() {
+        void verifyFactoryForCasClientsHavingLoginInDomain() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = (CasClient) clients.iterator().next();
@@ -177,7 +178,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class AppleClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -218,7 +219,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class OidcClients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(4, clients.size());
         }
@@ -235,7 +236,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class LazyInitialization extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyLaziness() {
+        void verifyLaziness() throws Throwable {
             val clients1 = List.copyOf(delegatedClientFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedClientFactory.build());
@@ -259,7 +260,7 @@ class DefaultDelegatedClientFactoryTests {
     @Import(SamlMessageStoreTestConfiguration.class)
     class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());
@@ -282,7 +283,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
         }
@@ -291,7 +292,30 @@ class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-            "cas.authn.pac4j.saml[0].saml2AttributeConverter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
+        "cas.authn.pac4j.saml[0].saml2-attribute-converter=classpath:/SAMLAttributeConverter.groovy",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
+        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
+        "cas.authn.pac4j.core.lazy-init=true"
+    })
+    class Saml2ClientsWithGroovyAttributeConverter extends BaseDelegatedClientFactoryTests {
+        @Test
+        void verifyClient() throws Throwable {
+            val saml2clients = delegatedClientFactory.build();
+            assertEquals(1, saml2clients.size());
+            val client = (SAML2Client) saml2clients.stream().findFirst().get();
+            assertTrue(client.getConfiguration().getSamlAttributeConverter() instanceof GroovyAttributeConverter);
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+            "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
             "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
             "cas.authn.pac4j.saml[0].keystore-password=1234567890",
             "cas.authn.pac4j.saml[0].private-key-password=1234567890",
@@ -303,7 +327,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
 
             val saml2clients = delegatedClientFactory.build();
             assertEquals(1, saml2clients.size());
@@ -354,7 +378,7 @@ class DefaultDelegatedClientFactoryTests {
     })
     class Saml2Clients extends BaseDelegatedClientFactoryTests {
         @Test
-        void verifyClient() {
+        void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
             val client = SAML2Client.class.cast(clients.iterator().next());

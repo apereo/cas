@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTests {
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val account = PasswordlessUserAccount.builder()
             .email("passwordlessuser@example.org")
             .phone("1234567890")

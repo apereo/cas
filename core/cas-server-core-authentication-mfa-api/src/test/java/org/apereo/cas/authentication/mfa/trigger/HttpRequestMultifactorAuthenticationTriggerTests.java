@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    void verifyOperationByHeader() {
+    void verifyOperationByHeader() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestHeader("mfaPolicy");
         this.httpRequest.addHeader("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -31,7 +31,7 @@ class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAu
     }
 
     @Test
-    void verifyOperationByParameter() {
+    void verifyOperationByParameter() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestParameter("mfaPolicy");
         this.httpRequest.addParameter("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -41,7 +41,7 @@ class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAu
     }
 
     @Test
-    void verifyOperationByAttribute() {
+    void verifyOperationByAttribute() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -51,7 +51,7 @@ class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAu
     }
 
     @Test
-    void verifyOperationBySessionAttribute() {
+    void verifyOperationBySessionAttribute() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.getSession(true).setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
@@ -61,7 +61,7 @@ class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAu
     }
 
     @Test
-    void verifyOperationInvalidProvider() {
+    void verifyOperationInvalidProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", "invalid");

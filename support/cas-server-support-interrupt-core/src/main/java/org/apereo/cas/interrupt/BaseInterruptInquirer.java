@@ -22,7 +22,7 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
                                            final RegisteredService registeredService,
                                            final Service service,
                                            final Credential credential,
-                                           final RequestContext requestContext) {
+                                           final RequestContext requestContext) throws Throwable {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
@@ -50,19 +50,9 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
         return false;
     }
 
-    /**
-     * Inquire internal interrupt response.
-     *
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param service           the service
-     * @param credential        the credential
-     * @param requestContext    the request context
-     * @return the interrupt response
-     */
     protected abstract InterruptResponse inquireInternal(Authentication authentication,
                                                          RegisteredService registeredService,
                                                          Service service,
                                                          Credential credential,
-                                                         RequestContext requestContext);
+                                                         RequestContext requestContext) throws Throwable;
 }

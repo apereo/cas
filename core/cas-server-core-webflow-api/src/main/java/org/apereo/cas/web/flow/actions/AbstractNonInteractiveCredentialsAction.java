@@ -50,8 +50,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
      * request object.
      *
      * @param context the context for this request.
-     * @return the constructed credential or null if none could be constructed
-     * from the request.
+     * @return the constructed credential or null if none could be constructed from the request.
      */
     protected abstract Credential constructCredentialsFromRequest(RequestContext context);
 }

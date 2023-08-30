@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 class WsFederationAuthenticationHandlerTests extends AbstractWsFederationTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val handler = new WsFederationAuthenticationHandler(UUID.randomUUID().toString(), servicesManager,
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         assertTrue(handler.supports(getCredential()));

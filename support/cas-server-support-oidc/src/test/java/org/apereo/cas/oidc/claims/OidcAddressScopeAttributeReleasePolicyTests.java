@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.ADDRESS.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -43,7 +43,7 @@ class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val policy = new OidcAddressScopeAttributeReleasePolicy();

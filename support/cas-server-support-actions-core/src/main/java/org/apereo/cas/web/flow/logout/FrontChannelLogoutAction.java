@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -69,7 +70,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                     .stream()
                     .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
                     .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
-                    .map(handler -> handler.createSingleLogoutMessage(r))
+                    .map(Unchecked.function(handler -> handler.createSingleLogoutMessage(r)))
                     .forEach(logoutMessage -> {
                         LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
                         val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage.getPayload(), true);

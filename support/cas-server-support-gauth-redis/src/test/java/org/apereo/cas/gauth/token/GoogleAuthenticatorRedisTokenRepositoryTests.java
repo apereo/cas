@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -72,6 +73,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,

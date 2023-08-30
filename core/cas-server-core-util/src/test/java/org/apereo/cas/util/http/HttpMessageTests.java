@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HttpMessageTests {
 
     @Test
-    void verifyAsyncArgIsTakenIntoAccount() throws Exception {
+    void verifyAsyncArgIsTakenIntoAccount() throws Throwable {
         assertTrue(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend").isAsynchronous());
         assertTrue(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend", true).isAsynchronous());
         assertFalse(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend", false).isAsynchronous());

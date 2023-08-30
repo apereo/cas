@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
-    void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -33,7 +33,7 @@ class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticatio
     }
 
     @Test
-    void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();

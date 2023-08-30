@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
-    void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Throwable {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
@@ -35,7 +35,7 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Throwable {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
@@ -49,7 +49,7 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    void verifyResolverFails() throws Exception {
+    void verifyResolverFails() throws Throwable {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);

@@ -53,7 +53,7 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             LOGGER.debug("Created principal for id [{}] and [{}] attributes", adapter.getUsername(), adapter.getUserAttributes());
             val principal = this.principalFactory.createPrincipal(adapter.getUsername(), adapter.getUserAttributes());
             return createHandlerResult(credential, principal, adapter.getWarnings());
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Invalid credentials: " + e.getMessage());
         }

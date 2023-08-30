@@ -27,7 +27,7 @@ public class InitializeCaptchaAction extends BaseCasWebflowAction {
     private final GoogleRecaptchaProperties recaptchaProperties;
     
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         activationStrategy.shouldActivate(requestContext, recaptchaProperties)
             .ifPresent(properties -> {
                 WebUtils.putRecaptchaPropertiesFlowScope(requestContext, properties);

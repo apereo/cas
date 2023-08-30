@@ -51,7 +51,7 @@ class CasThymeleafViewResolverConfigurerTests {
     private ThemeViewResolverFactory themeViewResolverFactory;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val view = thymeleafViewResolver.resolveViewName("testTemplate", Locale.ENGLISH);
         assertNotNull(view);
         assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("cas"));
@@ -68,7 +68,7 @@ class CasThymeleafViewResolverConfigurerTests {
     }
 
     @Test
-    void verifyDirectView() throws Exception {
+    void verifyDirectView() throws Throwable {
         val resolver = themeViewResolverFactory.create("cas-theme-default");
         val view = resolver.resolveViewName("oneCustomView", Locale.ENGLISH);
         assertNotNull(view);

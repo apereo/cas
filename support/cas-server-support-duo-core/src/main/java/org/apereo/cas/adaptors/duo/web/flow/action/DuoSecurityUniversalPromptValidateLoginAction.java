@@ -65,9 +65,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val requestParameters = requestContext.getRequestParameters();
-
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
             return handleDuoSecurityUniversalPromptResponse(requestContext, requestParameters);
         }
@@ -112,8 +111,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             populateContextWithCredential(requestContext, browserSessionStore, authentication);
             populateContextWithAuthentication(requestContext, browserSessionStore);
             populateContextWithService(requestContext, browserSessionStore);
-            return super.doExecute(requestContext);
-        } catch (final Exception e) {
+            return super.doExecuteInternal(requestContext);
+        } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
         } finally {
             if (browserSessionStore != null) {
@@ -154,7 +153,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         WebUtils.putCredential(requestContext, credential);
     }
 
-    protected void populateContextWithAuthentication(final RequestContext requestContext, final BrowserWebStorageSessionStore sessionStorage) {
+    protected void populateContextWithAuthentication(final RequestContext requestContext, final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes().get(AuthenticationResultBuilder.class.getSimpleName());
         FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext));
         val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());

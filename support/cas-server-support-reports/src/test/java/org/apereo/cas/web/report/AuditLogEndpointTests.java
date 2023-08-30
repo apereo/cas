@@ -38,21 +38,21 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
         val results = auditLogEndpoint.getAuditLog(StringUtils.EMPTY);
         assertFalse(results.isEmpty());
     }
 
     @Test
-    void verifyOperationByInterval() {
+    void verifyOperationByInterval() throws Throwable {
         this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
         val results = auditLogEndpoint.getAuditLog("PT10M");
         assertFalse(results.isEmpty());
     }
 
     @Test
-    void verifyOperationByIntervalAndUser() {
+    void verifyOperationByIntervalAndUser() throws Throwable {
         this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
         val results = auditLogEndpoint.getAuditLog("PT10M", null, null, "casuser", null);
         assertFalse(results.isEmpty());

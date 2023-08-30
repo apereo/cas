@@ -109,7 +109,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 val principal = principalFactory.createPrincipal(creds.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo passcode authentication has failed");
@@ -125,7 +125,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Duo Security has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo Security universal prompt authentication has failed");
@@ -169,7 +169,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             throw new FailedLoginException("Duo authentication username "
                                            + primaryCredentialsUsername + " does not match Duo response: " + userId);
 
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }

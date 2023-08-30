@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.springframework.core.Ordered;
-
 import java.util.Set;
 
 /**
@@ -18,7 +17,7 @@ public interface AuthenticationPolicyResolver extends Ordered {
      * @param transaction the transaction
      * @return the set
      */
-    Set<AuthenticationPolicy> resolve(AuthenticationTransaction transaction);
+    Set<AuthenticationPolicy> resolve(AuthenticationTransaction transaction) throws Throwable;
 
     @Override
     default int getOrder() {
@@ -31,7 +30,7 @@ public interface AuthenticationPolicyResolver extends Ordered {
      * @param transaction the transaction
      * @return true/false
      */
-    default boolean supports(final AuthenticationTransaction transaction) {
+    default boolean supports(final AuthenticationTransaction transaction) throws Throwable {
         return transaction != null;
     }
 }

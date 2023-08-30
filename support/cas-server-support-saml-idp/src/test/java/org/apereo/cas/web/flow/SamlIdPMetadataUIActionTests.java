@@ -42,7 +42,7 @@ class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -63,7 +63,7 @@ class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     }
 
     @Test
-    void verifyNoEntity() throws Exception {
+    void verifyNoEntity() throws Throwable {
         
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

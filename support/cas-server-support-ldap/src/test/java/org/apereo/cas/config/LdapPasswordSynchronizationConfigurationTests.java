@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -62,7 +63,7 @@ class LdapPasswordSynchronizationConfigurationTests {
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction).isEmpty());

@@ -31,7 +31,7 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
     private OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder;
 
     @Test
-    void verifyRequestWithoutCallback() throws Exception {
+    void verifyRequestWithoutCallback() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -49,7 +49,7 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyRequestWithCallbackAndDescription() throws Exception {
+    void verifyRequestWithCallbackAndDescription() throws Throwable {
         val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
@@ -79,7 +79,7 @@ class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyRequestWithCallbackWithoutDescription() throws Exception {
+    void verifyRequestWithCallbackWithoutDescription() throws Throwable {
         val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());

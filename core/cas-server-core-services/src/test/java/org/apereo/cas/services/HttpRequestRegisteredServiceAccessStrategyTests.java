@@ -55,14 +55,14 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyAccessByIp() {
+    void verifyAccessByIp() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    void verifyAccessByIpAndHeader() {
+    void verifyAccessByIpAndHeader() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         policy.setHeaders(Map.of("CustomHeader", "^abcd-\\d\\d-.+#"));
@@ -70,27 +70,27 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyUserAgentAccess() {
+    void verifyUserAgentAccess() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    void verifyMatchFailsByIp() {
+    void verifyMatchFailsByIp() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("123.456.789.111");
         assertFalse(policy.isServiceAccessAllowed());
     }
 
     @Test
-    void verifyUndefinedValues() {
+    void verifyUndefinedValues() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    void verifyAllFieldsPresent() {
+    void verifyAllFieldsPresent() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         policy.setIpAddress(".*861.*");

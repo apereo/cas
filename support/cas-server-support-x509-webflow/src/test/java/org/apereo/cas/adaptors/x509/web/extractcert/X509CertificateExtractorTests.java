@@ -74,21 +74,21 @@ class X509CertificateExtractorTests {
     }
 
     @Test
-    void verifyExtractX509FromHeaderSpaceSeperator() {
+    void verifyExtractX509FromHeaderSpaceSeperator() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.sslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
-    void verifyExtractX509FromHeaderNoSeparator() {
+    void verifyExtractX509FromHeaderNoSeparator() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.sslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
-    void verifyExtractX509FromHeaderNoHeader() {
+    void verifyExtractX509FromHeaderNoHeader() throws Throwable {
         val request = new MockHttpServletRequest();
         assertNull(extractX509CertificateFromHeader.extract(request));
     }

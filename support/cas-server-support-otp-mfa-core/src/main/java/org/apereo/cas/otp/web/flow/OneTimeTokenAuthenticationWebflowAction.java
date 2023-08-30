@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.web.flow;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -8,7 +9,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowAction}.
+ * This is {@link OneTimeTokenAuthenticationWebflowAction}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -19,7 +20,7 @@ public class OneTimeTokenAuthenticationWebflowAction extends BaseCasWebflowActio
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        return casWebflowEventResolver.resolveSingle(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> casWebflowEventResolver.resolveSingle(requestContext));
     }
 }

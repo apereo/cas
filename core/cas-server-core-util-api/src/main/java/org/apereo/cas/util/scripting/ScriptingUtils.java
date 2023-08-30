@@ -174,11 +174,12 @@ public class ScriptingUtils {
      * @param clazz        the clazz
      * @param failOnError  the fail on error
      * @return the result
+     * @throws Throwable the exception
      */
     public static <T> T executeGroovyScript(final GroovyObject groovyObject,
                                             final Object[] args, final Class<T> clazz,
-                                            final boolean failOnError) {
-        return FunctionUtils.doUnchecked(() -> executeGroovyScript(groovyObject, "run", args, clazz, failOnError));
+                                            final boolean failOnError) throws Throwable {
+        return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
     }
 
     /**
@@ -190,12 +191,13 @@ public class ScriptingUtils {
      * @param clazz        the clazz
      * @param args         the args
      * @return the type to return
+     * @throws Throwable the exception
      */
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz,
-                                            final Object... args) {
-        return FunctionUtils.doUnchecked(() -> executeGroovyScript(groovyScript, methodName, args, clazz, false));
+                                            final Object... args) throws Throwable {
+        return executeGroovyScript(groovyScript, methodName, args, clazz, false);
     }
 
     /**
@@ -229,12 +231,10 @@ public class ScriptingUtils {
                                             final Object[] args,
                                             final Class<T> clazz,
                                             final boolean failOnError) {
-
-        if (groovyScript == null || StringUtils.isBlank(methodName)) {
-            return null;
-        }
-
         try {
+            if (groovyScript == null || StringUtils.isBlank(methodName)) {
+                return null;
+            }
             return getGroovyResult(groovyScript, methodName, args, clazz, failOnError);
         } catch (final Throwable e) {
             if (failOnError) {
@@ -286,14 +286,11 @@ public class ScriptingUtils {
      * @return the script
      */
     public static Script parseGroovyShellScript(final String script) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val shell = new GroovyShell();
             LOGGER.debug("Parsing groovy script [{}]", script);
             return shell.parse(script);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        });
     }
 
     /**

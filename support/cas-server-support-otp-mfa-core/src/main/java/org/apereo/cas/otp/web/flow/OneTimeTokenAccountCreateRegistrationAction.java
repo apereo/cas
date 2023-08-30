@@ -39,7 +39,7 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractMultifa
     private final String issuer;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val uid = principal.getId();
         val keyAccount = this.repository.create(uid);

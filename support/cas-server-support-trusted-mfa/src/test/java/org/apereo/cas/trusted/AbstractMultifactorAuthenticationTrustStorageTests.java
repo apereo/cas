@@ -92,7 +92,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    void verifyTrustEngine() {
+    void verifyTrustEngine() throws Throwable {
         var record = getMultifactorAuthenticationTrustRecord();
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -134,7 +134,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public GeoLocationService geoLocationService() {
+        public GeoLocationService geoLocationService() throws Throwable {
             val service = mock(GeoLocationService.class);
             val response = new GeoLocationResponse();
             response.addAddress("MSIE");

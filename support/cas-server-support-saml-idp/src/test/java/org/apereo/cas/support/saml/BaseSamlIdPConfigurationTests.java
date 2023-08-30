@@ -35,6 +35,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
@@ -378,6 +379,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CoreSamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreUtilSerializationConfiguration.class,
         CasCoreUtilConfiguration.class
     })

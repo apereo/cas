@@ -26,7 +26,7 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
      */
     public static final String CAS_PREFIX = SamlIdPMetadataDocument.class.getSimpleName() + ':';
 
-    private final transient CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
+    private final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
     private final long scanCount;
 

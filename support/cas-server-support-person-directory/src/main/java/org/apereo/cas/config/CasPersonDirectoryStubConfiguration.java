@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 public class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)

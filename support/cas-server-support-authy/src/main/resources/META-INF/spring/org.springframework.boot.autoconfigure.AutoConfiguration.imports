@@ -1,4 +1,0 @@
-org.apereo.cas.config.AuthyAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.AuthyConfiguration
-org.apereo.cas.config.AuthyAuthenticationComponentSerializationConfiguration
-org.apereo.cas.config.AuthyAuthenticationMultifactorProviderBypassConfiguration

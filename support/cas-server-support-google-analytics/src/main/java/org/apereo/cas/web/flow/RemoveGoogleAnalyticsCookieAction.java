@@ -20,7 +20,7 @@ public class RemoveGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         googleAnalyticsCookieBuilder.removeCookie(response);
         return null;

@@ -66,7 +66,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    void verifyEmptyRegistry() {
+    void verifyEmptyRegistry() throws Throwable {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, RegisteredServiceTestUtils.getService());
         when(servicesManager.getAllServices()).thenReturn(List.of());

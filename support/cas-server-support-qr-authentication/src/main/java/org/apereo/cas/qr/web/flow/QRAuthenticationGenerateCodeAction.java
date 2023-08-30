@@ -22,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 public class QRAuthenticationGenerateCodeAction extends BaseCasWebflowAction {
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val id = UUID.randomUUID().toString();
         LOGGER.debug("Generating QR code with channel id [{}]", id);
         val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.SIZE, QRUtils.SIZE);

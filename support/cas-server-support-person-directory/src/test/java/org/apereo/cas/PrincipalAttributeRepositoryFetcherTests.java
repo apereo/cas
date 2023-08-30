@@ -44,12 +44,13 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("casuser-whatever")
                 .currentPrincipal(CoreAuthenticationTestUtils.getPrincipal("current-cas"))
                 .build()
+                .fromAllAttributeRepositories()
                 .retrieve();
             assertNotNull(attributes);
             assertTrue(attributes.isEmpty());
@@ -78,7 +79,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @SuppressWarnings("ClassCanBeStatic")
     class SelectiveRepositoryTests extends BaseTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")

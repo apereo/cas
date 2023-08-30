@@ -42,7 +42,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     @Override
     protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
                                                final Credential credential, final Optional<Principal> currentPrincipal,
-                                               final Optional<AuthenticationHandler> handler) {
+                                               final Optional<AuthenticationHandler> handler) throws Throwable {
         if (!supports(credential)) {
             return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
         }

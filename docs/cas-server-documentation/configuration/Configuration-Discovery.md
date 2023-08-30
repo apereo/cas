@@ -20,7 +20,7 @@ The metadata reported in the discovery profile generally includes two categories
 Examples of reported items include:
 
 - Service definitions types (CAS, SAML, OAuth, etc)
-- Multifactor Authentication Provider types (Authy, Duo Security, etc)
+- Multifactor Authentication Provider types (WebAuthn, Duo Security, etc)
 - Supported ticket types
 - Available attributes for release
 - ...

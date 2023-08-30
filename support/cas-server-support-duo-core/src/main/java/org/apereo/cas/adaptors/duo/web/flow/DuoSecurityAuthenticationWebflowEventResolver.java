@@ -26,7 +26,7 @@ public class DuoSecurityAuthenticationWebflowEventResolver extends BaseMultifact
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext requestContext) {
+    public Set<Event> resolveInternal(final RequestContext requestContext) throws Throwable {
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(requestContext);
     }
 
@@ -34,7 +34,7 @@ public class DuoSecurityAuthenticationWebflowEventResolver extends BaseMultifact
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 }

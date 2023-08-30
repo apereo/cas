@@ -46,7 +46,7 @@ class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
-    void verifyRedirectByParam() throws Exception {
+    void verifyRedirectByParam() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         request.addParameter("customParam", "customValue");

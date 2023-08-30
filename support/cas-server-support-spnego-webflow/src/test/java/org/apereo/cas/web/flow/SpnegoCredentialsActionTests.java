@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @Tag("Spnego")
 class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
@@ -50,7 +50,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    void verifyNoAuthzHeader() throws Exception {
+    void verifyNoAuthzHeader() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -59,7 +59,7 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
 
     @Test
-    void verifyErrorWithBadCredential() throws Exception {
+    void verifyErrorWithBadCredential() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + ' ' + EncodingUtils.encodeBase64("credential"));
@@ -68,13 +68,15 @@ class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
         val stResolver = mock(CasWebflowEventResolver.class);
         val err = new EventFactorySupport().error(this);
         when(stResolver.resolveSingle(any())).thenReturn(err);
+        val adaptive = mock(AdaptiveAuthenticationPolicy.class);
+        when(adaptive.isAuthenticationRequestAllowed(any(), anyString(), any())).thenReturn(false);
         val action = new SpnegoCredentialsAction(mock(CasDelegatingWebflowEventResolver.class),
-            stResolver, mock(AdaptiveAuthenticationPolicy.class), false);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
+            stResolver, adaptive, false);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
     @Test
-    void verifyBadAuthzHeader() throws Exception {
+    void verifyBadAuthorizationHeader() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -1,10 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Set;
@@ -42,6 +40,7 @@ public interface DelegatedClientIdentityProviderConfigurationPostProcessor exten
      *
      * @param context   the context
      * @param providers the providers
+     * @throws Throwable the throwable
      */
-    void process(RequestContext context, Set<DelegatedClientIdentityProviderConfiguration> providers);
+    void process(RequestContext context, Set<DelegatedClientIdentityProviderConfiguration> providers) throws Throwable;
 }

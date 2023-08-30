@@ -40,7 +40,7 @@ class JsonWebKeySetStringCipherExecutorTests {
     }
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
 
@@ -59,7 +59,7 @@ class JsonWebKeySetStringCipherExecutorTests {
 
 
     @Test
-    void verifyEmptyFileForEncoding() throws Exception {
+    void verifyEmptyFileForEncoding() throws Throwable {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile)) {
@@ -68,7 +68,7 @@ class JsonWebKeySetStringCipherExecutorTests {
     }
 
     @Test
-    void verifyEncodingWithPublicKeyOnly() throws Exception {
+    void verifyEncodingWithPublicKeyOnly() throws Throwable {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
         val json = new JsonWebKeySet(data).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
@@ -80,7 +80,7 @@ class JsonWebKeySetStringCipherExecutorTests {
     }
 
     @Test
-    void verifyEmptyFileForDecoding() throws Exception {
+    void verifyEmptyFileForDecoding() throws Throwable {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("kid"))) {
@@ -89,14 +89,14 @@ class JsonWebKeySetStringCipherExecutorTests {
     }
 
     @Test
-    void verifyEmptyJwks() throws Exception {
+    void verifyEmptyJwks() throws Throwable {
         val keystoreFile = getKeystoreFile();
         val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.empty(), null);
         assertNotNull(cipher.decode("value", EMPTY_OBJECT_ARRAY));
     }
 
     @Test
-    void verifyEmptyPayload() throws Exception {
+    void verifyEmptyPayload() throws Throwable {
         val data = "{ \"keys\": [] }";
         val keystoreFile = getKeystoreFile();
         try (val webServer = new MockWebServer(8435,

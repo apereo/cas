@@ -28,7 +28,7 @@ class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
+    void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Throwable {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);
@@ -51,7 +51,7 @@ class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRenewingRefreshToken() throws Exception {
+    void verifyRenewingRefreshToken() throws Throwable {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);

@@ -31,7 +31,7 @@ class TextMagicSmsConfigurationTests {
     private SmsSender smsSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(smsSender);
     }
 }

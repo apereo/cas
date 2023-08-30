@@ -35,7 +35,7 @@ public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
     private final ObjectProvider<SecurityContextRepository> securityContextRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = buildAuthenticationContext(requestContext, request);

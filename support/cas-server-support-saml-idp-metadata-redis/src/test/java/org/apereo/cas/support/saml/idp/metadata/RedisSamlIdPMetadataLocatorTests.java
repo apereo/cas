@@ -47,7 +47,7 @@ class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
     }
 
     @Test
-    void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() throws Throwable {
         assertNotNull(redisSamlIdPMetadataTemplate);
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);

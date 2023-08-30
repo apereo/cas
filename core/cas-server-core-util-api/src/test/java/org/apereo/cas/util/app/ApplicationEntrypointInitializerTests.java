@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class ApplicationEntrypointInitializerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         ApplicationEntrypointInitializer.noOp().initialize(ArrayUtils.EMPTY_STRING_ARRAY);
         assertTrue(ApplicationEntrypointInitializer.noOp().getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY).isEmpty());
     }

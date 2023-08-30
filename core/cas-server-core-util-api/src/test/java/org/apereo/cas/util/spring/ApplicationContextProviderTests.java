@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class ApplicationContextProviderTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

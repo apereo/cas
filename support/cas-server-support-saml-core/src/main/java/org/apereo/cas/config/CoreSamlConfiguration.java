@@ -16,7 +16,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apache.xml.security.Init;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -46,17 +45,7 @@ import java.util.Properties;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
 @AutoConfiguration
 public class CoreSamlConfiguration {
-
     private static final int POOL_SIZE = 1_000;
-
-    /*
-      Make sure that SAML2 responses is not built with linebreaks.
-     */
-    static {
-        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-        System.setProperty("com.sun.org.apache.xml.internal.security.ignoreLineBreaks", "true");
-        Init.init();
-    }
 
     @Lazy
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

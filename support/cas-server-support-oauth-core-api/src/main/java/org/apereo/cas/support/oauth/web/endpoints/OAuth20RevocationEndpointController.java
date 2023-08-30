@@ -65,12 +65,12 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
      * @param request  the request
      * @param response the response
      * @return the response entity
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws Exception {
+                                      final HttpServletResponse response) throws Throwable {
         val context = new JEEContext(request, response);
 
         if (!verifyRevocationRequest(context)) {
@@ -151,7 +151,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 
-    private boolean verifyRevocationRequest(final WebContext context) throws Exception {
+    private boolean verifyRevocationRequest(final WebContext context) throws Throwable {
         val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)

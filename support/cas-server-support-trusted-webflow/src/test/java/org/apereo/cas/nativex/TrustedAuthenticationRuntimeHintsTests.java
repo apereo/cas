@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 public class TrustedAuthenticationRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new TrustedAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(PrincipalBearingPrincipalResolver.class).test(hints));

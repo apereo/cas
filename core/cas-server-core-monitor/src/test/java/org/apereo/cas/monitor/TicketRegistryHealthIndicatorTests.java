@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class TicketRegistryHealthIndicatorTests {
 
     @Test
-    void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
         when(ticketRegistry.serviceTicketCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
@@ -32,7 +32,7 @@ class TicketRegistryHealthIndicatorTests {
     }
 
     @Test
-    void verifyServiceTicketCount() {
+    void verifyServiceTicketCount() throws Throwable {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(1L);
         when(ticketRegistry.serviceTicketCount()).thenReturn(10L);

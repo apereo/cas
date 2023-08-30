@@ -45,7 +45,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyAesKeyForJwtSigning() {
+    void verifyAesKeyForJwtSigning() throws Throwable {
         val secret = EncodingUtils.generateJsonWebKey(512);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val value = "ThisValue";
@@ -56,7 +56,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyRsaKeyForJwtSigning() throws Exception {
+    void verifyRsaKeyForJwtSigning() throws Throwable {
         val value = "ThisValue";
         val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
@@ -65,7 +65,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyAesKeyForJwtEncryption() {
+    void verifyAesKeyForJwtEncryption() throws Throwable {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = EncodingUtils.generateJsonWebKey(secret);
         val value = "ThisValue";
@@ -77,7 +77,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyRsaKeyForJwtEncryption() throws Exception {
+    void verifyRsaKeyForJwtEncryption() throws Throwable {
         val value = "ThisValue";
         val found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
         val jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
@@ -85,7 +85,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyHex() {
+    void verifyHex() throws Throwable {
         assertNull(EncodingUtils.hexDecode("one"));
         assertNull(EncodingUtils.hexDecode(StringUtils.EMPTY));
         assertNull(EncodingUtils.hexEncode((byte[]) null));
@@ -95,7 +95,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyEncoding() {
+    void verifyEncoding() throws Throwable {
         assertNull(EncodingUtils.urlDecode(null));
 
         assertTrue(EncodingUtils.encodeBase64(ArrayUtils.EMPTY_BYTE_ARRAY, true).isEmpty());

@@ -26,7 +26,7 @@ public class ValidateCaptchaAction extends BaseCasWebflowAction {
     private final CaptchaActivationStrategy captchaActivationStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         if (captchaActivationStrategy.shouldActivate(requestContext, captchaValidator.getRecaptchaProperties()).isEmpty()) {
             LOGGER.debug("Recaptcha is not set to activate for the current request");
             return null;

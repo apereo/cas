@@ -36,7 +36,7 @@ class CasProtocolThymeleafViewFactoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         val view = (CasThymeleafView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);

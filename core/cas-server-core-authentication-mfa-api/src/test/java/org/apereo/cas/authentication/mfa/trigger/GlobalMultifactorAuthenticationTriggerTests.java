@@ -27,7 +27,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
-    public void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
@@ -38,7 +38,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
 
     @Test
     @Order(1)
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
@@ -49,7 +49,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
 
     @Test
     @Order(2)
-    public void verifyOperationByManyProviders() {
+    void verifyOperationByManyProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ",mfa-invalid");
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
@@ -60,7 +60,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
 
     @Test
     @Order(3)
-    public void verifyOperationByValidProviders() {
+    void verifyOperationByValidProviders() throws Throwable {
         val props = new CasConfigurationProperties();
 
         val otherProvider = new TestMultifactorAuthenticationProvider();
@@ -77,7 +77,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
 
     @Test
     @Order(4)
-    public void verifyOperationByUnresolvedProvider() {
+    void verifyOperationByUnresolvedProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId("does-not-exist");
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
@@ -88,7 +88,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
 
     @Test
     @Order(5)
-    public void verifyOperationByUndefinedProvider() {
+    void verifyOperationByUndefinedProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());

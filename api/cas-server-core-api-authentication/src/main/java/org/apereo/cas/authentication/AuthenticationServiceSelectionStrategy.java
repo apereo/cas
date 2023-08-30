@@ -28,8 +28,9 @@ public interface AuthenticationServiceSelectionStrategy extends Serializable, Or
      *
      * @param service the provided service by the caller
      * @return the resolved service
+     * @throws Throwable the throwable
      */
-    Service resolveServiceFrom(Service service);
+    Service resolveServiceFrom(Service service) throws Throwable;
 
     /**
      * Indicates whether this strategy supports service selection.

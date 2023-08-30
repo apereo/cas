@@ -116,9 +116,10 @@ public class CookieUtils {
 
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(
         final CookieProperties cookie) {
+        
         return CookieGenerationContext.builder()
             .name(cookie.getName())
-            .path(StringUtils.defaultIfBlank(cookie.getPath(), "/"))
+            .path(cookie.getPath())
             .maxAge(cookie.getMaxAge())
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())

@@ -64,11 +64,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws Exception {
+                                      final HttpServletResponse response) throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
 
         val webContext = new JEEContext(request, response);
@@ -123,10 +123,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
-    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handleRequest(request, response);
     }
 
@@ -155,7 +155,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
-                                                         final JEEContext context) {
+                                                         final JEEContext context) throws Throwable {
         val profile = verifyAndReturnAuthenticatedProfile(manager, context);
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
@@ -182,7 +182,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                     LOGGER.trace("No explicit view was defined as part of the authorization response");
                     return null;
                 });
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
         }

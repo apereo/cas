@@ -104,7 +104,6 @@ public class ServiceTicketResource {
                 .collect(authn)
                 .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
             return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
-
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
@@ -112,7 +111,7 @@ public class ServiceTicketResource {
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {

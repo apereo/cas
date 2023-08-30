@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -74,6 +73,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -520,7 +520,7 @@ public class CasCoreTicketsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager ticketTransactionManager() {
-            return new PseudoPlatformTransactionManager();
+            return new PseudoTransactionManager();
         }
     }
 

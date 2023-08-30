@@ -31,7 +31,7 @@ public class StaticEventExecutionAction extends BaseCasWebflowAction {
     private final String eventId;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         return Optional.ofNullable(eventId)
             .map(id -> new EventFactorySupport().event(this, id))
             .orElse(null);

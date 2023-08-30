@@ -61,7 +61,7 @@ class SessionHealthIndicatorJpaTests {
     private TicketRegistry jpaRegistry;
 
     private void addTicketsToRegistry(final TicketRegistry registry,
-                                      final int tgtCount, final int stCount) throws Exception {
+                                      final int tgtCount, final int stCount) throws Throwable {
         for (var i = 0; i < tgtCount; i++) {
             val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"),
                 CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
@@ -77,7 +77,7 @@ class SessionHealthIndicatorJpaTests {
 
     @Test
     @Rollback(false)
-    public void verifyObserveOkJpaTicketRegistry() throws Exception {
+    void verifyObserveOkJpaTicketRegistry() throws Throwable {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(jpaRegistry), -1, -1);
         val status = monitor.health();

@@ -43,7 +43,7 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     private int order;
 
     @Override
-    public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) {
+    public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
         val criteria = registeredService.getAuthenticationPolicy().getCriteria();
@@ -56,7 +56,7 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     }
 
     @Override
-    public boolean supports(final AuthenticationTransaction transaction) {
+    public boolean supports(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
             val registeredService = this.servicesManager.findServiceBy(service);

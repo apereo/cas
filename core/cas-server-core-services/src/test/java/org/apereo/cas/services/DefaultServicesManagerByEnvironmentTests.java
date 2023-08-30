@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
     @Test
-    void verifyServiceByEnvironment() {
+    void verifyServiceByEnvironment() throws Throwable {
         val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(getClass().getSimpleName());

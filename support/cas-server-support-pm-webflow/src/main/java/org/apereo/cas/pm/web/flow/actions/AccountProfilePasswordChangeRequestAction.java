@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -27,14 +28,16 @@ public class AccountProfilePasswordChangeRequestAction extends BaseCasWebflowAct
     private final PasswordResetUrlBuilder passwordResetUrlBuilder;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicket(requestContext);
         try {
-            val principal = tgt.getAuthentication().getPrincipal();
-            val url = passwordResetUrlBuilder.build(principal.getId()).toExternalForm();
-            LOGGER.debug("Redirecting password reset flow to [{}]", url);
-            WebUtils.putServiceRedirectUrl(requestContext, url);
-            return success(url);
+            return FunctionUtils.doUnchecked(() -> {
+                val principal = tgt.getAuthentication().getPrincipal();
+                val url = passwordResetUrlBuilder.build(principal.getId()).toExternalForm();
+                LOGGER.debug("Redirecting password reset flow to [{}]", url);
+                WebUtils.putServiceRedirectUrl(requestContext, url);
+                return success(url);
+            });
         } finally {
             ticketRegistry.deleteTicket(tgt);
         }

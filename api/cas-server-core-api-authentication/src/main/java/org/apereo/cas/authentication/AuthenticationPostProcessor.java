@@ -25,17 +25,18 @@ public interface AuthenticationPostProcessor extends Ordered, DisposableBean {
      *
      * @param builder     Builder object that temporarily holds authentication metadata.
      * @param transaction The authentication transaction.
-     * @throws AuthenticationException the authn security exception
+     * @throws Throwable the authn security exception
      */
-    void process(AuthenticationBuilder builder, AuthenticationTransaction transaction) throws AuthenticationException;
+    void process(AuthenticationBuilder builder, AuthenticationTransaction transaction) throws Throwable;
 
     /**
      * Determines whether the processor has the capability to perform tasks on the given credential.
      *
      * @param credential The credential to check.
      * @return True if processor supports the Credential, false otherwise.
+     * @throws Throwable the throwable
      */
-    default boolean supports(final Credential credential) {
+    default boolean supports(final Credential credential) throws Throwable {
         return true;
     }
 

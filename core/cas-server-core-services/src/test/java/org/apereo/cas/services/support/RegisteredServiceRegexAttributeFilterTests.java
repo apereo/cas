@@ -78,8 +78,7 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilter() {
-
+    void verifyPatternFilter() throws Throwable {
         val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(5, attrs.size());
 
@@ -98,7 +97,7 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
+    void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() throws Throwable {
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
@@ -129,14 +128,14 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val data = mock(RegisteredServiceAttributeFilter.class);
         when(data.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());

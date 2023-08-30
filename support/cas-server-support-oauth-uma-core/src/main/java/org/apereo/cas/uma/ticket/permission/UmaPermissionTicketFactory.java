@@ -20,6 +20,7 @@ public interface UmaPermissionTicketFactory extends TicketFactory {
      * @param scopes      the scopes
      * @param claims      the claims
      * @return the uma permission ticket
+     * @throws Throwable the throwable
      */
-    UmaPermissionTicket create(ResourceSet resourceSet, Collection<String> scopes, Map<String, Object> claims);
+    UmaPermissionTicket create(ResourceSet resourceSet, Collection<String> scopes, Map<String, Object> claims) throws Throwable;
 }

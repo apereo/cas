@@ -80,7 +80,7 @@ public class ResourceUtils {
      * that is picked up by the GraalVM native image.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public boolean isEmbeddedResource(final String resource) {
         val lowerCase = resource.toLowerCase(Locale.ENGLISH);
@@ -352,8 +352,9 @@ public class ResourceUtils {
      *
      * @param artifact the artifact
      * @return the resource
+     * @throws Throwable the throwable
      */
-    public static Resource toFileSystemResource(final File artifact) {
+    public static Resource toFileSystemResource(final File artifact) throws Throwable {
         val canonicalPath = FunctionUtils.doUnchecked(artifact::getCanonicalPath);
         FunctionUtils.throwIf(artifact.exists() && !artifact.canRead(),
             () -> new IllegalArgumentException("Resource " + canonicalPath + " is not readable."));

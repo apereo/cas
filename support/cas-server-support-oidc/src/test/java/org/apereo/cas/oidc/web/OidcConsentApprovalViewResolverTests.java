@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
-    void verifyBypassedBySession() throws Exception {
+    void verifyBypassedBySession() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val response = new MockHttpServletResponse();
@@ -46,7 +46,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedByPrompt() throws Exception {
+    void verifyBypassedByPrompt() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
@@ -61,7 +61,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedForPushAuthz() throws Exception {
+    void verifyBypassedForPushAuthz() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
@@ -74,7 +74,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPushedAuthz() throws Exception {
+    void verifyPushedAuthz() throws Throwable {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");
@@ -106,7 +106,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedWithoutPrompt() throws Exception {
+    void verifyBypassedWithoutPrompt() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something");

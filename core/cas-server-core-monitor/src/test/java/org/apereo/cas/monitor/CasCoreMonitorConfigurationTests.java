@@ -90,7 +90,7 @@ class CasCoreMonitorConfigurationTests {
     private HealthIndicator systemHealthIndicator;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(memoryHealthIndicator);
         assertNotNull(sessionHealthIndicator);
         assertNotNull(systemHealthIndicator);

@@ -184,7 +184,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
-            new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
+            new ReturnAllowedAttributeReleasePolicy(Arrays.asList("eduPersonAffiliation")));
 
         servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }

@@ -38,21 +38,21 @@ class RemoteAddressAuthenticationHandlerTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyAccount() throws Exception {
-        val c = new RemoteAddressCredential("192.168.1.7");
-        val result = remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class));
+    void verifyAccount() throws Throwable {
+        val credential = new RemoteAddressCredential("192.168.1.7");
+        val result = remoteAddressAuthenticationHandler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
-        assertEquals(c.getId(), result.getPrincipal().getId());
+        assertEquals(credential.getId(), result.getPrincipal().getId());
     }
 
     @Test
-    void verifyAccountFails() throws Exception {
-        val c = new RemoteAddressCredential("---");
-        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(c, mock(Service.class)));
+    void verifyAccountFails() throws Throwable {
+        val credential = new RemoteAddressCredential("---");
+        assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyBadRange() throws Exception {
+    void verifyBadRange() throws Throwable {
         val c = new RemoteAddressCredential("---");
         val handler = new RemoteAddressAuthenticationHandler("Handler1", servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.configureIpNetworkRange("abc/def");
@@ -60,7 +60,7 @@ class RemoteAddressAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val c = new RemoteAddressCredential("172.217.12.206");
         assertTrue(remoteAddressAuthenticationHandler.supports(c));
         assertTrue(remoteAddressAuthenticationHandler.supports(c.getClass()));

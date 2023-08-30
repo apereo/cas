@@ -53,7 +53,7 @@ class CasTomcatServletWebServerFactoryClusterTests {
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         try {

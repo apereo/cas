@@ -45,7 +45,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
     private MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger;
 
     @Test
-    void verifyContextMapping() throws Exception {
+    void verifyContextMapping() throws Throwable {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
         

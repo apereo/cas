@@ -58,7 +58,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
 
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() throws Throwable {
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             SUPPORTING_CLIENT_ID,
@@ -86,7 +86,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
     }
 
     @Test
-    void verifyRefreshTokenFromAnotherClientId() throws Exception {
+    void verifyRefreshTokenFromAnotherClientId() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -106,7 +106,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
     }
 
     @Test
-    void verifyOperationClientSecretPost() throws Exception {
+    void verifyOperationClientSecretPost() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -143,7 +143,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
     }
 
     @Test
-    void verifyOperationClientSecretBasic() throws Exception {
+    void verifyOperationClientSecretBasic() throws Throwable {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -181,7 +181,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         assertTrue(validator.validate(new JEEContext(request, response)));
     }
 
-    private void registerTicket(final String name, final String clientId) throws Exception {
+    private void registerTicket(final String name, final String clientId) throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val token = mock(OAuth20RefreshToken.class);
         when(token.getId()).thenReturn(name);

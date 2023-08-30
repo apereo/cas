@@ -6,8 +6,11 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,7 +46,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyNativeImageServicesDirectory() throws Exception {
+    void verifyNativeImageServicesDirectory() throws Throwable {
         System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
         val resource = mock(Resource.class);
         when(resource.getURI()).thenReturn(new URI("resource:/services"));
@@ -52,7 +56,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyRequiredHandlersServiceDefinition() throws Exception {
+    void verifyRequiredHandlersServiceDefinition() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
@@ -62,7 +66,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyExistingDefinitionForCompatibility2() throws Exception {
+    void verifyExistingDefinitionForCompatibility2() throws Throwable {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -76,7 +80,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyExistingDefinitionForCompatibility1() throws Exception {
+    void verifyExistingDefinitionForCompatibility1() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
@@ -90,7 +94,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    void verifyUsernameProviderWithAttributeReleasePolicy() throws Exception {
+    void verifyUsernameProviderWithAttributeReleasePolicy() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");
@@ -115,6 +119,16 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             .build();
         val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
         assertEquals("casuser", username);
+    }
+
+    @Override
+    protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
+        return Stream.of(
+            CasRegisteredService.class,
+            OAuthRegisteredService.class,
+            SamlRegisteredService.class,
+            OidcRegisteredService.class,
+            WSFederationRegisteredService.class);
     }
 
     private static AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {

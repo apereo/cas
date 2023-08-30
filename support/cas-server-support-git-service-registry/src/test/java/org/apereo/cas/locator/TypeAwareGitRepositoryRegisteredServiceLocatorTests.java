@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Git")
 class TypeAwareGitRepositoryRegisteredServiceLocatorTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val strategy = new DefaultRegisteredServiceResourceNamingStrategy();
         val locator = new TypeAwareGitRepositoryRegisteredServiceLocator(strategy,
             FileUtils.getTempDirectory(), new GitServiceRegistryProperties().setRootDirectory("sample-root"));

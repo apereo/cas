@@ -35,7 +35,7 @@ class SmsModeSmsSenderTests {
     private SmsSender smsSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(smsSender);
         assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
         try (val webServer = new MockWebServer(8099,

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
     @Test
-    void verifyClasspathByExpression() throws Exception {
+    void verifyClasspathByExpression() throws Throwable {
         System.setProperty("SP_REF", "classpath:sample-sp.xml");
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
@@ -50,7 +50,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyFileByExpression() throws Exception {
+    void verifyFileByExpression() throws Throwable {
         val mdFile = File.createTempFile("spsamlmetadata", ".xml");
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(mdFile, content, StandardCharsets.UTF_8);
@@ -73,7 +73,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyEmptyResolvers() {
+    void verifyEmptyResolvers() throws Throwable {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
 

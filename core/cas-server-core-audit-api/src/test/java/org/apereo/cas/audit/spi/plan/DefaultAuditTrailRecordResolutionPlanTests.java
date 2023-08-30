@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Audits")
 class DefaultAuditTrailRecordResolutionPlanTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val plan = new DefaultAuditTrailRecordResolutionPlan();
         plan.registerAuditActionResolver("action", new DefaultAuditActionResolver());
         plan.registerAuditResourceResolver("resource", new ReturnValueAsStringResourceResolver());
