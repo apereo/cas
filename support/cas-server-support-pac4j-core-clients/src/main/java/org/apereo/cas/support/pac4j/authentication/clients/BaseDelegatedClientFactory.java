@@ -312,6 +312,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setScope(oauth.getScope());
                 client.setCustomParams(oauth.getCustomParams());
                 client.setWithState(oauth.isWithState());
+                FunctionUtils.doIfNotBlank(oauth.getClientAuthenticationMethod(), client::setClientAuthenticationMethod);
                 client.getConfiguration().setResponseType(oauth.getResponseType());
                 configureClient(client, oauth, casProperties);
                 LOGGER.debug("Created client [{}]", client);
