@@ -5,16 +5,52 @@ import { API_PATH } from '../App.constant';
 export const serviceApi = createApi({
     reducerPath: 'serviceApi',
     baseQuery: fetchBaseQuery({ baseUrl: `${API_PATH}` }),
+    tagTypes: ['Service'],
     endpoints: (builder) => ({
         getServices: builder.query({
-            query: () => `data/services.json`,
+            query: () => `/services`,
+            transformResponse: (response) => {
+                const list = response[0] === 'java.util.ArrayList' ? response[1] : response;
+                return list.map(s => ({...s, id: BigInt(s.id).toString()}));
+            },
+            providesTags: ['Service']
         }),
         getService: builder.query({
-            query: () => `data/service.json`,
+            query: (id) => `/services/${BigInt(id).toString()}`,
+            providesTags: ['Service']
         }),
+        createService: builder.mutation({
+            query: (body) => ({
+                url: `services`,
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['Service']
+        }),
+        updateService: builder.mutation({
+            query: (body) => ({
+                url: `services`,
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['Service']
+        }),
+        deleteService: builder.mutation({
+            query: (id) => ({
+                url: `services/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ['Service']
+        })
     }),
 })
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetServicesQuery, useGetServiceQuery } = serviceApi
+export const {
+    useGetServicesQuery,
+    useGetServiceQuery,
+    useCreateServiceMutation,
+    useUpdateServiceMutation,
+    useDeleteServiceMutation
+} = serviceApi;
