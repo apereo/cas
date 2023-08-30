@@ -41,6 +41,7 @@ class AnonymousAccessAttributeReleasePolicyTests extends BaseSamlIdPConfiguratio
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("schacHomeOrganization", "apereo",
                     "eduPersonScopedAffiliation", "cas@apereo.org",

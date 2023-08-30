@@ -43,10 +43,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 },
-                properties = {
-                    "management.endpoints.web.exposure.include=*",
-                    "management.endpoint.samlValidate.enabled=true"
-                })
+    properties = {
+        "management.endpoints.web.exposure.include=*",
+        "management.endpoint.samlValidate.enabled=true"
+    })
 @Tag("SAML1")
 class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Autowired
