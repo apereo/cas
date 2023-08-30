@@ -36,7 +36,7 @@ class CasCoreConfigurationUtilsTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val map = CasCoreConfigurationUtils.asMap(casProperties.withHolder());
 
         assertEquals("https://sso.example.org", map.get("cas.server.name"));
@@ -46,7 +46,7 @@ class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    void verifyMappingByPropertyRef() {
+    void verifyMappingByPropertyRef() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSyncope().setName("SyncopeAuth");
         props.getAuthn().getSyncope().setUrl("https://github.com/apereo/cas");
@@ -63,7 +63,7 @@ class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    void verifyMapping() {
+    void verifyMapping() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSyncope().setName("SyncopeAuth");
         props.getAuthn().getSyncope().setUrl("https://github.com/apereo/cas");
@@ -78,7 +78,7 @@ class CasCoreConfigurationUtilsTests {
     }
 
     @Test
-    void verifyMappingCollections() {
+    void verifyMappingCollections() throws Throwable {
         val props = new CasConfigurationProperties();
         val ldap = new LdapAuthenticationProperties();
         ldap.setLdapUrl("http://localhost:1234");

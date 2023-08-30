@@ -39,7 +39,7 @@ class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccou
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val u = PasswordlessUserAccount.builder()
             .email("casuser@example.org")
             .phone("1234567890")
@@ -57,7 +57,7 @@ class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccou
     }
 
     @Test
-    void verifyFailsAction() {
+    void verifyFailsAction() throws Throwable {
         try (val webServer = new MockWebServer(9291,
             new ByteArrayResource("###".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

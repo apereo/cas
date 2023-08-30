@@ -34,7 +34,7 @@ class HazelcastSessionConfigurationTests {
     private HazelcastInstance hazelcastInstance;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(hazelcastInstance);
         val extractor = new HazelcastSessionPrincipalNameExtractor();
         assertDoesNotThrow(() -> extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class)));

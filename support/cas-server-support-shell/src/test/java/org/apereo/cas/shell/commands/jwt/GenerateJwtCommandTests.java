@@ -18,18 +18,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateJwtCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser"));
     }
 
     @Test
-    void verifyBadSize() {
+    void verifyBadSize() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --signingSecretSize -1 "));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionSecretSize -1 "));
     }
 
     @Test
-    void verifyBadAlg() {
+    void verifyBadAlg() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionAlgorithm dir --encryptionMethod A128KW "));
         assertDoesNotThrow(
             () -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionAlgorithm A128KW --encryptionMethod A128CBC_HS256"));

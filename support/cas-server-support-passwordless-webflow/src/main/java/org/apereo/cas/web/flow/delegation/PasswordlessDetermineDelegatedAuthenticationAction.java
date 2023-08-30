@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
@@ -50,14 +51,14 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
         }
 
-        val clients = providerConfigurationProducer.produce(requestContext);
+        val clients = FunctionUtils.doUnchecked(() -> providerConfigurationProducer.produce(requestContext));
         if (clients.isEmpty()) {
             LOGGER.debug("No delegated authentication providers are available or defined");
             return success();
@@ -70,31 +71,25 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
             return success();
         }
         DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, false);
-        val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
-        if (providerResult.isPresent()) {
-            val clientConfig = providerResult.get();
-            if (clientConfig instanceof final DelegatedClientIdentityProviderConfiguration client) {
-                DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, client);
-                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+        return FunctionUtils.doUnchecked(() -> {
+            val providerResult = determineDelegatedIdentityProviderConfiguration(requestContext, user, clients);
+            if (providerResult.isPresent()) {
+                val clientConfig = providerResult.get();
+                if (clientConfig instanceof final DelegatedClientIdentityProviderConfiguration client) {
+                    DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, client);
+                    val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                    request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
+                    return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+                }
             }
-        }
-        LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
-        return success();
+            LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
+            return success();
+        });
     }
 
-    /**
-     * Determine delegated identity provider configuration.
-     *
-     * @param requestContext the request context
-     * @param user           the user
-     * @param clients        the clients
-     * @return the optional
-     */
     protected Optional<Serializable> determineDelegatedIdentityProviderConfiguration(final RequestContext requestContext,
                                                                                      final PasswordlessUserAccount user,
-                                                                                     final Set<? extends Serializable> clients) {
+                                                                                     final Set<? extends Serializable> clients) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val args = new Object[]{user, clients, request, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, Serializable.class));

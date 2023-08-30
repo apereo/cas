@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cipher")
 class RegisteredServiceJwtTicketCipherExecutorTests {
     @Test
-    void verifyCipheredTokenWithoutService() {
+    void verifyCipheredTokenWithoutService() throws Throwable {
         val cipher = new RegisteredServiceJwtTicketCipherExecutor();
         val token = cipher.encode("Value", Optional.empty());
         assertEquals("Value", cipher.decode(token, Optional.empty()));
     }
 
     @Test
-    void verifyCipherStrategyPerService() {
+    void verifyCipherStrategyPerService() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val cipher = new RegisteredServiceJwtTicketCipherExecutor();
         assertTrue(cipher.getCipherOperationsStrategyType(service).isEmpty());

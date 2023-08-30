@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         CasCoreNotificationsConfiguration.class,
         CasPalantirConfiguration.class
     },
-    properties = "server.port=8080",
+    properties = "server.port=8181",
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -69,7 +69,7 @@ public class ServicesControllerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         var mvcResult = mvc.perform(get("/palantir/services")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())

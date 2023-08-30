@@ -64,7 +64,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyUnknownTicket() {
+    void verifyUnknownTicket() throws Throwable {
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId("unknown-id")
@@ -82,7 +82,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyExpiredJwt() throws Exception {
+    void verifyExpiredJwt() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -104,7 +104,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyBadSubject() throws Exception {
+    void verifyBadSubject() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -126,7 +126,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyBadIssuer() throws Exception {
+    void verifyBadIssuer() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -149,7 +149,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyUnauhzDevice() throws Exception {
+    void verifyUnauhzDevice() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val deviceId = UUID.randomUUID().toString();
@@ -173,7 +173,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -200,7 +200,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    void verifyBadDeviceId() throws Exception {
+    void verifyBadDeviceId() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 

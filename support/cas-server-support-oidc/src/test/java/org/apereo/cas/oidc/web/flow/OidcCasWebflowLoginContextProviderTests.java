@@ -32,7 +32,7 @@ class OidcCasWebflowLoginContextProviderTests extends AbstractOidcTests {
     private CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

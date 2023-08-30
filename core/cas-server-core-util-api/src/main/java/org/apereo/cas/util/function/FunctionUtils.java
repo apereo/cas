@@ -2,7 +2,6 @@ package org.apereo.cas.util.function;
 
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,7 +14,6 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -187,7 +185,7 @@ public class FunctionUtils {
      * @return the supplier
      */
     public static <R> Supplier<R> doIfNotNull(final Object input,
-                                              final Supplier<R> trueFunction,
+                                              final CheckedSupplier<R> trueFunction,
                                               final Supplier<R> falseFunction) {
         return () -> {
             try {
@@ -445,7 +443,7 @@ public class FunctionUtils {
      * @param params   the params
      */
     public static void doUnchecked(final CheckedConsumer<Object> consumer, final Object... params) {
-        Unchecked.consumer(s -> consumer.accept(params)).accept(null);
+        Unchecked.consumer(cons -> consumer.accept(params)).accept(null);
     }
 
     /**
@@ -487,9 +485,24 @@ public class FunctionUtils {
      *
      * @param value the value
      * @return the value
+     * @throws Throwable the throwable
      */
-    public static String throwIfBlank(final String value) {
+    public static String throwIfBlank(final String value) throws Throwable {
         throwIf(StringUtils.isBlank(value), () -> new IllegalArgumentException("Value cannot be empty or blank"));
+        return value;
+    }
+
+    /**
+     * Throw if null.
+     *
+     * @param <T>     the type parameter
+     * @param value   the value
+     * @param handler the handler
+     * @return the t
+     * @throws Throwable the throwable
+     */
+    public static <T> T throwIfNull(final T value, final CheckedSupplier<Throwable> handler) throws Throwable {
+        throwIf(value == null, handler);
         return value;
     }
 
@@ -498,9 +511,10 @@ public class FunctionUtils {
      *
      * @param condition the condition
      * @param throwable the throwable
+     * @throws Throwable the throwable
      */
     public static void throwIf(final boolean condition,
-                               final Supplier<? extends RuntimeException> throwable) {
+                               final CheckedSupplier<? extends Throwable> throwable) throws Throwable {
         if (condition) {
             throw throwable.get();
         }

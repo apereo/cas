@@ -19,8 +19,9 @@ public interface OidcWebFingerDiscoveryService {
      * @param resource the resource
      * @param rel      the rel
      * @return the response entity
+     * @throws Throwable the throwable
      */
-    ResponseEntity<Map> handleRequest(String resource, String rel);
+    ResponseEntity<Map> handleRequest(String resource, String rel) throws Throwable;
 
     /**
      * Gets discovery settings.

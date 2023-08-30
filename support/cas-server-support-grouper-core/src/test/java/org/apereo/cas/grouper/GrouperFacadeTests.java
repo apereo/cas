@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Grouper")
 class GrouperFacadeTests {
     @Test
-    void verifyAttributes() {
+    void verifyAttributes() throws Throwable {
         val group = new WsGroup();
         group.setExtension("GroupExtension");
         group.setDisplayName("DisplayNameGroupExtension");
@@ -34,7 +34,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyGroups() {
+    void verifyGroups() throws Throwable {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
@@ -55,13 +55,13 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyGroupsFails() {
+    void verifyGroupsFails() throws Throwable {
         val facade = new DefaultGrouperFacade();
         assertThrows(RuntimeException.class, () -> facade.fetchGroupsFor("casuser"));
     }
 
     @Test
-    void verifyEmptyGroups() {
+    void verifyEmptyGroups() throws Throwable {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
@@ -72,7 +72,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyFailedGroups() {
+    void verifyFailedGroups() throws Throwable {
         val facade = new DefaultGrouperFacade() {
             @Override
             public WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {

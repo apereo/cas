@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Triple;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 import java.io.Serial;
@@ -54,7 +54,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
             getEntityAttribute(), getEntityAttributeValues());
         val match = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(entityDescriptor,
-            List.of(Triple.of(getEntityAttribute(), getEntityAttributeFormat(), getEntityAttributeValues())));
+            List.of(MetadataEntityAttributeQuery.of(getEntityAttribute(), getEntityAttributeFormat(), getEntityAttributeValues())));
         if (match) {
             LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]",
                 attributes, entityDescriptor.getEntityID());

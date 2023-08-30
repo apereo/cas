@@ -40,7 +40,7 @@ public abstract class AbstractDelegateController implements ApplicationContextAw
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

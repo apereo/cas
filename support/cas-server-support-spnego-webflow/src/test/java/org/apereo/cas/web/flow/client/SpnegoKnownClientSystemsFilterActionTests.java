@@ -41,7 +41,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -58,7 +58,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertNotEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -76,7 +76,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -93,7 +93,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
@@ -111,13 +111,13 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
 
     }
 
     @Test
-    void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Exception {
+    void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Throwable {
         val action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
@@ -130,7 +130,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        val ev = action.doExecute(ctx);
+        val ev = action.execute(ctx);
         assertEquals(new EventFactorySupport().no(this).getId(), ev.getId());
 
     }

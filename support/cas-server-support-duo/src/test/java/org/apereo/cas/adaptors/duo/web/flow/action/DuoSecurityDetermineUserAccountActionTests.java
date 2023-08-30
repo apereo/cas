@@ -101,7 +101,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     }
 
     @Test
-    void verifyOperationEnroll() throws Exception {
+    void verifyOperationEnroll() throws Throwable {
         val context = verifyOperation(DuoSecurityUserAccountStatus.ENROLL, CasWebflowConstants.TRANSITION_ID_ENROLL);
         val url = context.getFlowScope().get("duoRegistrationUrl", String.class);
         assertNotNull(url);
@@ -109,22 +109,22 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     }
 
     @Test
-    void verifyOperationAllow() throws Exception {
+    void verifyOperationAllow() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.ALLOW, CasWebflowConstants.TRANSITION_ID_BYPASS);
     }
 
     @Test
-    void verifyOperationDeny() throws Exception {
+    void verifyOperationDeny() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.DENY, CasWebflowConstants.TRANSITION_ID_DENY);
     }
 
     @Test
-    void verifyOperationUnavailable() throws Exception {
+    void verifyOperationUnavailable() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
     }
 
     @Test
-    void verifyOperationAuth() throws Exception {
+    void verifyOperationAuth() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.AUTH, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

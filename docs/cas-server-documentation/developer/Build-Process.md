@@ -16,11 +16,6 @@ WAR Overlay method described in the project documentation for a specific CAS ver
 CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
 </p></div>
 
-## Requirements
-
-See the [installation requirements](../planning/Installation-Requirements.html) to learn about the required
-JDK version, etc.
-
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:

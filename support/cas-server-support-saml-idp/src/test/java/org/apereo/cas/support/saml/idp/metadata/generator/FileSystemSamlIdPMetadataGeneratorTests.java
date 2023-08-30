@@ -39,7 +39,7 @@ class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
         assertNotNull(metadata);
@@ -53,7 +53,7 @@ class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyService() throws Exception {
+    void verifyService() throws Throwable {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
 
         val service = new SamlRegisteredService();

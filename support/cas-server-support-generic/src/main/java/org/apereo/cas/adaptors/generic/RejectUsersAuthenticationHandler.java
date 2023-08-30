@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -42,14 +41,12 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
-
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();
         }
-
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+        val principal = principalFactory.createPrincipal(username);
+        return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 }

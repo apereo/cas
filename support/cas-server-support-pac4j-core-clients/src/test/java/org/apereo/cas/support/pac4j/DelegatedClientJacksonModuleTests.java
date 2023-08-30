@@ -33,7 +33,7 @@ class DelegatedClientJacksonModuleTests {
 
     @Test
     @SuppressWarnings("JavaUtilDate")
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val mapper = SERIALIZER.getObjectMapper();
         assertTrue(mapper.getRegisteredModuleIds().contains(DelegatedClientJacksonModule.class.getName()));
 

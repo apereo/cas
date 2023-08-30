@@ -52,11 +52,11 @@ class RadiusTokenAuthenticationHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @Test
-    void verifyOperation() throws Exception {
-        val c = new RadiusTokenCredential("Mellon");
+    void verifyOperation() throws Throwable {
+        val credential = new RadiusTokenCredential("Mellon");
 
-        assertTrue(authenticationHandler.supports(c));
-        assertTrue(authenticationHandler.supports(c.getClass()));
+        assertTrue(authenticationHandler.supports(credential));
+        assertTrue(authenticationHandler.supports(credential.getClass()));
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -65,13 +65,13 @@ class RadiusTokenAuthenticationHandlerTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c, mock(Service.class)));
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", 
             Map.of(Attr_State.NAME, List.of(new StringValue("value"))));
         val authn = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(authn, context);
-        val result = authenticationHandler.authenticate(c, mock(Service.class));
+        val result = authenticationHandler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
     }
 }

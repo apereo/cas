@@ -42,7 +42,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val resolvedEvents = WebUtils.getResolvedEventsAsAttribute(context);
         val authentication = WebUtils.getAuthentication(context);
         val service = WebUtils.getService(context);

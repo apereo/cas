@@ -34,7 +34,7 @@ class OidcHandlerInterceptorAdapterTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
     class PushedAuthorizationTests extends AbstractOidcTests {
         @Test
-        void verifyAuthzUrl() throws Exception {
+        void verifyAuthzUrl() throws Throwable {
             val svc = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://oauth.example.org");
             servicesManager.save(svc);
 
@@ -56,7 +56,7 @@ class OidcHandlerInterceptorAdapterTests {
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyNothing() throws Exception {
+        void verifyNothing() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyNoOIDC() throws Exception {
+        void verifyNoOIDC() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OAuth20Constants.DEVICE_AUTHZ_URL);
@@ -73,7 +73,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyConfigUrl() throws Exception {
+        void verifyConfigUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.CLIENT_CONFIGURATION_URL);
@@ -82,7 +82,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyRegUrl() throws Exception {
+        void verifyRegUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
@@ -91,7 +91,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyPushAuthzUrl() throws Exception {
+        void verifyPushAuthzUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);

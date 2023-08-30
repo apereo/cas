@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TokenAuthenticationSecurityTests {
 
     @Test
-    void verifyRsaOperation() {
+    void verifyRsaOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         registeredService.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());

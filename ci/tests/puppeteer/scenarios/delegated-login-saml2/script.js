@@ -17,19 +17,31 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(7000);
+    let url = await page.url();
+    console.log(`Page url: ${url}`);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertCookie(page, true, "Pac4jCookie");
+    await cas.screenshot(page);
+
+    const service = "https://localhost:9859/anything/sample1";
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    let ticket = await cas.assertTicketParameter(page);
+    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    console.log(body);
+    let json = JSON.parse(body);
+    let authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.attributes.email[0] === "Hello-user1@example.com");
 
     console.log("Testing auto-redirection via configured cookie...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(3000);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
-    let url = await page.url();
+    url = await page.url();
     console.log(`Page url: ${url}`);
     await page.waitForTimeout(3000);
     assert(url.startsWith("http://localhost:9443/simplesaml/"));

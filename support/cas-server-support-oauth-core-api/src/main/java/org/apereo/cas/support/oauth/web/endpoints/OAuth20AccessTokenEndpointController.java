@@ -76,7 +76,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         this.accessTokenGrantAuditableRequestExtractor = accessTokenGrantAuditableRequestExtractor;
     }
 
-    private static ModelAndView handleAccessTokenException(final Exception exception, final HttpServletResponse response) {
+    private static ModelAndView handleAccessTokenException(final Throwable exception, final HttpServletResponse response) {
         val data = ACCESS_TOKEN_RESPONSE_EXCEPTIONS.getOrDefault(exception.getClass().getName(),
             new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT, "Invalid or unauthorized grant"));
         LoggingUtils.error(LOGGER, data.message().concat(':' + exception.getMessage()), exception);
@@ -102,7 +102,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                 LoggingUtils.error(LOGGER, "Access token validation failed");
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
@@ -123,7 +123,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(requestHolder, tokenResult);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             return handleAccessTokenException(e, response);
         }
     }
@@ -183,7 +183,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     }
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
-                                                                               final HttpServletResponse response) {
+                                                                               final HttpServletResponse response) throws Throwable {
         val audit = AuditableContext.builder()
             .httpRequest(request)
             .httpResponse(response)
@@ -194,7 +194,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 
-    private boolean verifyAccessTokenRequest(final WebContext context) throws Exception {
+    private boolean verifyAccessTokenRequest(final WebContext context) throws Throwable {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
         return validators
             .stream()

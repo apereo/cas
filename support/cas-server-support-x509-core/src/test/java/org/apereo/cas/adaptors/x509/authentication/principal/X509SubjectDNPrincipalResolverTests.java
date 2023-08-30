@@ -71,20 +71,20 @@ class X509SubjectDNPrincipalResolverTests {
     }
 
     @Test
-    void verifyResolvePrincipalInternal() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        c.setCertificate(VALID_CERTIFICATE);
-        assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
+    void verifyResolvePrincipalInternal() throws Throwable {
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        credential.setCertificate(VALID_CERTIFICATE);
+        assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(credential,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService())).getId());
     }
 
     @Test
-    void verifyResolvePrincipalInternalRFC2253() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        c.setCertificate(VALID_CERTIFICATE);
-        assertEquals(VALID_CERTIFICATE.getSubjectX500Principal().getName(X500Principal.RFC2253), this.resolverRFC2253.resolve(c,
+    void verifyResolvePrincipalInternalRFC2253() throws Throwable {
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        credential.setCertificate(VALID_CERTIFICATE);
+        assertEquals(VALID_CERTIFICATE.getSubjectX500Principal().getName(X500Principal.RFC2253), this.resolverRFC2253.resolve(credential,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService())).getId());
@@ -92,13 +92,13 @@ class X509SubjectDNPrincipalResolverTests {
 
 
     @Test
-    void verifySupport() {
+    void verifySupport() throws Throwable {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    void verifySupportFalse() {
+    void verifySupportFalse() throws Throwable {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 }

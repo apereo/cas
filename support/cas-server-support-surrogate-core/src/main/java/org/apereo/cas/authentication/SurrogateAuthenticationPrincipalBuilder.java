@@ -25,8 +25,9 @@ public interface SurrogateAuthenticationPrincipalBuilder {
      * @param primaryPrincipal  the primary principal
      * @param registeredService the registered service
      * @return the principal
+     * @throws Throwable the throwable
      */
-    Principal buildSurrogatePrincipal(String surrogate, Principal primaryPrincipal, RegisteredService registeredService);
+    Principal buildSurrogatePrincipal(String surrogate, Principal primaryPrincipal, RegisteredService registeredService) throws Throwable;
 
     /**
      * Build surrogate principal principal without a service.
@@ -34,8 +35,9 @@ public interface SurrogateAuthenticationPrincipalBuilder {
      * @param surrogate        the surrogate
      * @param primaryPrincipal the primary principal
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) {
+    default Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) throws Throwable {
         return buildSurrogatePrincipal(surrogate, primaryPrincipal, null);
     }
 
@@ -46,8 +48,9 @@ public interface SurrogateAuthenticationPrincipalBuilder {
      * @param mutableCredential           the mutable credential
      * @param registeredService           the registered service
      * @return the optional
+     * @throws Throwable the throwable
      */
     Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(AuthenticationResultBuilder authenticationResultBuilder,
                                                                              Credential mutableCredential,
-                                                                             RegisteredService registeredService);
+                                                                             RegisteredService registeredService) throws Throwable;
 }

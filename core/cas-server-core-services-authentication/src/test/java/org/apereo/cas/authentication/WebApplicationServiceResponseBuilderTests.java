@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class WebApplicationServiceResponseBuilderTests {
 
     @Test
-    void verifyServiceUrlRedirectOverride() {
+    void verifyServiceUrlRedirectOverride() throws Throwable {
         val registeredService = mock(CasModelRegisteredService.class);
         when(registeredService.getId()).thenReturn(1L);
         when(registeredService.getServiceId()).thenReturn("https://www.google.com/.+");

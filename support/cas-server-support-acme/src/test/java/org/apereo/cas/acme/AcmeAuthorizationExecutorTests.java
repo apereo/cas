@@ -26,7 +26,7 @@ class AcmeAuthorizationExecutorTests extends BaseAcmeTests {
     private AcmeAuthorizationExecutor acmeAuthorizationExecutor;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val auth = mock(Authorization.class);
         assertTrue(acmeAuthorizationExecutor.find(auth).isEmpty());
         assertDoesNotThrow(() -> {

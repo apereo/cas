@@ -56,7 +56,7 @@ class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
         assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
         assertTrue(runGroovyBypassFor(mock(Authentication.class)));

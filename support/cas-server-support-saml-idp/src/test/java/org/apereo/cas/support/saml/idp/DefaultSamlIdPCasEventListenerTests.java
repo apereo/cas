@@ -35,7 +35,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyPassOperation() {
+    void verifyPassOperation() throws Throwable {
         System.setProperty("test.runtime", "pass");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));
@@ -43,7 +43,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     }
 
     @Test
-    void verifyFailOperation() {
+    void verifyFailOperation() throws Throwable {
         System.setProperty("test.runtime", "fail");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));
@@ -53,7 +53,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     @TestConfiguration(value = "SamlIdPLocatorFailsTestConfiguration", proxyBeanMethods = false)
     static class SamlIdPLocatorFailsTestConfiguration {
         @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
+        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Throwable {
             val locator = mock(SamlIdPMetadataLocator.class);
             when(locator.exists(argThat(Optional::isEmpty))).thenAnswer((Answer<Boolean>) invocationOnMock -> {
                 var property = System.getProperty("test.runtime");

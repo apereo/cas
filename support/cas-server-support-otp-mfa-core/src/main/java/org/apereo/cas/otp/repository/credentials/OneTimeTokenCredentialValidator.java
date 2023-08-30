@@ -3,11 +3,8 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
-
-import java.security.GeneralSecurityException;
 
 /**
  * This is {@link OneTimeTokenCredentialValidator}.
@@ -22,11 +19,9 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
      * @param authentication  the authentication
      * @param tokenCredential the token credential
      * @return the token
-     * @throws GeneralSecurityException the general security exception
-     * @throws PreventedException       the prevented exception
+     * @throws Throwable the throwable
      */
-    T validate(Authentication authentication, C tokenCredential)
-        throws GeneralSecurityException, PreventedException;
+    T validate(Authentication authentication, C tokenCredential) throws Throwable;
 
     /**
      * Store.

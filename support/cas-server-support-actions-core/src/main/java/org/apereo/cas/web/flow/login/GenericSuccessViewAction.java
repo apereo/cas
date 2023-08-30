@@ -61,7 +61,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
         if (StringUtils.isNotBlank(redirectUrl)) {
             val service = this.serviceFactory.createService(redirectUrl);
@@ -81,7 +81,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                                 return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                                     registeredService, authn.getPrincipal().getId(),
                                     (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
-                            } catch (final Exception e) {
+                            } catch (final Throwable e) {
                                 LOGGER.info(e.getMessage(), e);
                                 return false;
                             }

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20AccessTokenSovereignExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    void verifyAccessTokenExpiryWhenTgtIsExpired() {
+    void verifyAccessTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
 

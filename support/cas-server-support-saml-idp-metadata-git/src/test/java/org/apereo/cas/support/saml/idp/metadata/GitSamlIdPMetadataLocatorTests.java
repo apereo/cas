@@ -74,7 +74,7 @@ class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
     }
 
     @Test
-    void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() throws Throwable {
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
     }

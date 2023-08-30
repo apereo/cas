@@ -20,8 +20,9 @@ public interface OAuth20UserProfileDataCreator {
      * Create internal user profile data.
      *
      * @param accessToken oauth access token
-     * @param context  request context
+     * @param context     request context
      * @return Map representing profile data
+     * @throws Throwable the throwable
      */
-    Map<String, Object> createFrom(OAuth20AccessToken accessToken, WebContext context);
+    Map<String, Object> createFrom(OAuth20AccessToken accessToken, WebContext context) throws Throwable;
 }

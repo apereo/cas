@@ -71,7 +71,7 @@ class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends Base
     }
 
     @Test
-    void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() throws Throwable {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

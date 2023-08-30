@@ -40,7 +40,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
 
     @Test
     @Order(1)
-    public void verifyPatternDoesNotMatch() {
+    void verifyPatternDoesNotMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -56,7 +56,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
 
     @Test
     @Order(2)
-    public void verifyPatternDoesNotMatchAndReversed() {
+    void verifyPatternDoesNotMatchAndReversed() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("cn"));
         filter.setEntityIds("helloworld");
@@ -74,7 +74,7 @@ class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConf
 
     @Test
     @Order(3)
-    public void verifyPatternDoesMatch() {
+    void verifyPatternDoesMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));

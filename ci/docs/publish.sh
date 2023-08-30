@@ -232,6 +232,7 @@ if [[ $cloneRepository == "true" ]]; then
     echo "Moving developer documentation into project documentation"
     mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"
   fi
+  rm -Rf "$PWD/gh-pages/$branchVersion/developer"
   mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"
   mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"  
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"

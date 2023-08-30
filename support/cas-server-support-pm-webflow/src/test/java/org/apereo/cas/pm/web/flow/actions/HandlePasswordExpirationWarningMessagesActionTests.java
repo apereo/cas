@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 class HandlePasswordExpirationWarningMessagesActionTests {
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

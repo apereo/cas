@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlers(final AuthenticationTransaction transaction) {
+    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
         val handlers = getAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction [{}] are [{}]", transaction, handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
@@ -157,8 +158,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
         val resolvedHandlers = handlerResolvers.stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(r -> r.supports(handlers, transaction))
-            .map(r -> r.resolve(handlers, transaction))
+            .filter(Unchecked.predicate(r -> r.supports(handlers, transaction)))
+            .map(Unchecked.function(r -> r.resolve(handlers, transaction)))
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -221,8 +222,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
         val list = getAuthenticationPolicies();
         val resolvedPolicies = handlerResolvers.stream()
-            .filter(r -> r.supports(transaction))
-            .map(r -> r.resolve(transaction))
+            .filter(Unchecked.predicate(r -> r.supports(transaction)))
+            .map(Unchecked.function(r -> r.resolve(transaction)))
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 

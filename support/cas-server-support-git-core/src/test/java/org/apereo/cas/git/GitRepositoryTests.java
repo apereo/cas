@@ -41,7 +41,7 @@ class GitRepositoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyPushPull() throws Exception {
+    void verifyPushPull() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setBranchesToClone("master");

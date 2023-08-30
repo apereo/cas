@@ -172,7 +172,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
             return null;
         }
         val crls = new LazyList<X509CRL>();
-        for (final val crl : crlResources) {
+        for (val crl : crlResources) {
             try (val is = crl.getInputStream()) {
                 crls.addAll(X509Support.decodeCRLs(is));
             } catch (final Exception e) {

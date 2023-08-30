@@ -30,7 +30,7 @@ class CaptchaValidatorTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyLowScore() throws Exception {
+    void verifyLowScore() throws Throwable {
         val secret = UUID.randomUUID().toString();
         val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
         val validator = new GoogleCaptchaV2Validator(props);
@@ -45,7 +45,7 @@ class CaptchaValidatorTests {
     }
 
     @Test
-    void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val props = new GoogleRecaptchaProperties()
             .setScore(.1)
             .setSecret(UUID.randomUUID().toString())
@@ -62,7 +62,7 @@ class CaptchaValidatorTests {
     }
 
     @Test
-    void verifyBadResponse() {
+    void verifyBadResponse() throws Throwable {
         val secret = UUID.randomUUID().toString();
         val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
         val validator = new GoogleCaptchaV2Validator(props);
@@ -75,7 +75,7 @@ class CaptchaValidatorTests {
     }
 
     @Test
-    void verifyInstance() {
+    void verifyInstance() throws Throwable {
         assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
             .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
             .setVerifyUrl("http://localhost:8812")));

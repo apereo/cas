@@ -70,7 +70,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
+    void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() throws Throwable {
         val policy = new ReturnMappedAttributeReleasePolicy();
         val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
@@ -101,7 +101,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyAttributeFilterMappedAttributesIsCaseInsensitive() {
+    void verifyAttributeFilterMappedAttributesIsCaseInsensitive() throws Throwable {
         val policy = new ReturnAllowedAttributeReleasePolicy();
         val attrs = new ArrayList<String>();
         attrs.add(ATTR_1);
@@ -129,7 +129,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyAttributeFilterMappedAttributes() {
+    void verifyAttributeFilterMappedAttributes() throws Throwable {
         val policy = new ReturnMappedAttributeReleasePolicy();
         val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
@@ -161,7 +161,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterAllowedAttributes() {
+    void verifyServiceAttributeFilterAllowedAttributes() throws Throwable {
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         val p = mock(Principal.class);
@@ -185,14 +185,13 @@ class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey(ATTR_3));
 
         val data = SerializationUtils.serialize(policy);
-        val p2 =
-            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+        val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
 
     @Test
-    void verifyServiceAttributeDenyAllAttributes() {
+    void verifyServiceAttributeDenyAllAttributes() throws Throwable {
         val policy = new DenyAllAttributeReleasePolicy();
         val p = mock(Principal.class);
         val map = new HashMap<String, List<Object>>();
@@ -210,7 +209,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterAllAttributes() {
+    void verifyServiceAttributeFilterAllAttributes() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
         policy.setPrincipalIdAttribute("principalId");
         val p = mock(Principal.class);
@@ -248,7 +247,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
 
     @Test
-    void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
+    void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
 
         val attributes = new HashMap<String, List<Object>>();
@@ -284,7 +283,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void checkServiceAttributeFilterByAttributeRepositoryId() {
+    void checkServiceAttributeFilterByAttributeRepositoryId() throws Throwable {
         val policy = new ReturnAllAttributeReleasePolicy();
 
         val attributes = new HashMap<String, List<Object>>();
@@ -324,7 +323,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyDefaults() {
+    void verifyDefaults() throws Throwable {
         val policy = new RegisteredServiceAttributeReleasePolicy() {
             @Serial
             private static final long serialVersionUID = 6118477243447737445L;

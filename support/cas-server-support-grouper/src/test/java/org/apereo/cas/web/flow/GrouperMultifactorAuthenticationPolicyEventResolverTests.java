@@ -41,7 +41,7 @@ class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

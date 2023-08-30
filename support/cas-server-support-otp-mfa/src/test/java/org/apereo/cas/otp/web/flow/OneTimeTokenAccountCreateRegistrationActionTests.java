@@ -2,6 +2,7 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -35,13 +36,12 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class OneTimeTokenAccountCreateRegistrationActionTests {
     @Test
-    void verifyCreateAccount() throws Exception {
+    void verifyCreateAccount() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())
@@ -60,8 +60,10 @@ class OneTimeTokenAccountCreateRegistrationActionTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.doExecute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT));
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_QR_IMAGE_BASE64));
     }

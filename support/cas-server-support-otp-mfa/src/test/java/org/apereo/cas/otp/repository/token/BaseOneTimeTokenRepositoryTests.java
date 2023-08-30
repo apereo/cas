@@ -25,6 +25,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
@@ -51,7 +52,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     public static final String CASUSER = "casuser";
 
     @Test
-    void verifyTokenSave() {
+    void verifyTokenSave() throws Throwable {
         val token = new OneTimeToken(1234, CASUSER);
         val repository = getRepository();
         repository.store(token);
@@ -91,6 +92,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,

@@ -88,6 +88,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
      * @param password the password
      * @param service  the service
      * @return the map
+     * @throws Throwable the throwable
      */
     @PostMapping (produces = {
         MediaType.TEXT_XML_VALUE,
@@ -108,7 +109,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
         final HttpServletRequest request,
         final String username,
         @RequestParam(required = false) final String password,
-        final String service) {
+        final String service) throws Throwable {
         val selectedService = serviceFactory.createService(service);
         val authentication = buildAuthentication(username, password, selectedService);
 
@@ -167,7 +168,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Authentication buildAuthentication(final String username, final String password,
-                                               final WebApplicationService selectedService) {
+                                               final WebApplicationService selectedService) throws Throwable {
         if (StringUtils.isNotBlank(password)) {
             val credential = new UsernamePasswordCredential(username, password);
             val result = authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);

@@ -40,6 +40,10 @@ public interface CasSimpleMultifactorTokenCommunicationStrategy {
          */
         SMS,
         /**
+         * Phone Call strategy option.
+         */
+        PHONE,
+        /**
          * Email strategy option.
          */
         EMAIL,

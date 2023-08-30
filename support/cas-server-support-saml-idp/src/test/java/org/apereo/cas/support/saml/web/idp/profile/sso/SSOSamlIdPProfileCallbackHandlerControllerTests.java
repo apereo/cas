@@ -61,14 +61,14 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyNoRequest() {
+    void verifyNoRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test
-    void verifyNoTicketPassiveAuthn() throws Exception {
+    void verifyNoTicketPassiveAuthn() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest(true));
@@ -87,14 +87,14 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                   final AuthnRequest authnRequest, final MessageContext context) throws Exception {
+                                   final AuthnRequest authnRequest, final MessageContext context) throws Throwable {
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
         SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
             .store(new JEEContext(request, response), Pair.of(authnRequest, context));
     }
 
     @Test
-    void verifyNoTicket() throws Exception {
+    void verifyNoTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
@@ -109,7 +109,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyValidationByPost() throws Exception {
+    void verifyValidationByPost() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -128,7 +128,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    void verifyValidationByRedirect() throws Exception {
+    void verifyValidationByRedirect() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -149,7 +149,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
 
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
-                                          final AuthnRequest authnRequest) throws Exception {
+                                          final AuthnRequest authnRequest) throws Throwable {
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
@@ -157,7 +157,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
-    private ServiceTicket getServiceTicket() throws Exception {
+    private ServiceTicket getServiceTicket() throws Throwable {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
         val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);

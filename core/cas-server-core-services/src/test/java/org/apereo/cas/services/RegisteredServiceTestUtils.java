@@ -19,6 +19,7 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import lombok.experimental.UtilityClass;
@@ -194,7 +195,7 @@ public class RegisteredServiceTestUtils {
         return Unchecked.supplier(() -> getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes)).get();
     }
 
-    public static Principal getPrincipal() {
+    public static Principal getPrincipal() throws Throwable {
         return getPrincipal(CONST_USERNAME);
     }
 
@@ -203,7 +204,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
-        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
+        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes));
     }
 
     public static Authentication getAuthentication() {

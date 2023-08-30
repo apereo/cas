@@ -197,10 +197,6 @@ public interface CasFeatureModule {
          */
         Logging,
         /**
-         * Authy MFA.
-         */
-        Authy,
-        /**
          * Authentication events.
          */
         Events,

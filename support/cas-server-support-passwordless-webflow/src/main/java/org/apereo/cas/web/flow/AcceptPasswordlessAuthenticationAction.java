@@ -61,34 +61,33 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val principal = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         try {
             val token = requestContext.getRequestParameters().getRequired("token");
             val passwordlessToken = passwordlessTokenRepository.findToken(principal.getUsername())
                 .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + principal.getUsername()));
-            return FunctionUtils.doIf(passwordlessToken.getToken().equalsIgnoreCase(token),
-                    () -> {
-                        handlePasswordlessAuthenticationAttempt(requestContext, principal, passwordlessToken);
-                        val finalEvent = super.doExecute(requestContext);
-                        passwordlessTokenRepository.deleteToken(passwordlessToken);
-                        return finalEvent;
-                    }, () -> {
-                        throw new AuthenticationException("Provided token " + token + " is not issued by and does not belong to " + principal.getUsername());
-                    })
-                .get();
-        } catch (final Exception e) {
+            if (passwordlessToken.getToken().equalsIgnoreCase(token)) {
+                handlePasswordlessAuthenticationAttempt(requestContext, principal, passwordlessToken);
+                val finalEvent = super.doExecuteInternal(requestContext);
+                passwordlessTokenRepository.deleteToken(passwordlessToken);
+                return finalEvent;
+            }
+            throw new AuthenticationException("Provided token " + token + " is not issued by and does not belong to " + principal.getUsername());
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            val attributes = new LocalAttributeMap<>();
-            attributes.put("error", e);
-            var account = principal != null ? passwordlessUserAccountStore.findUser(principal.getUsername()) : Optional.empty();
-            account.ifPresent(o -> attributes.put("passwordlessAccount", o));
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
+            return FunctionUtils.doUnchecked(() -> {
+                val attributes = new LocalAttributeMap<>();
+                attributes.put("error", e);
+                var account = principal != null ? passwordlessUserAccountStore.findUser(principal.getUsername()) : Optional.empty();
+                account.ifPresent(o -> attributes.put("passwordlessAccount", o));
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
+            });
         }
     }
 
     protected void handlePasswordlessAuthenticationAttempt(final RequestContext requestContext, final PasswordlessUserAccount principal,
-                                                           final PasswordlessAuthenticationToken token) {
+                                                           final PasswordlessAuthenticationToken token) throws Throwable {
         val credential = new OneTimePasswordCredential(principal.getUsername(), token.getToken());
         val service = WebUtils.getService(requestContext);
         var authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);

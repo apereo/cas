@@ -17,17 +17,19 @@ public interface SurrogateAuthenticationEventListener extends CasEventListener {
      * Handle failure event.
      *
      * @param event the event
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleSurrogateAuthenticationFailureEvent(CasSurrogateAuthenticationFailureEvent event);
+    void handleSurrogateAuthenticationFailureEvent(CasSurrogateAuthenticationFailureEvent event) throws Throwable;
 
     /**
      * Handle success event.
      *
      * @param event the event
+     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleSurrogateAuthenticationSuccessEvent(CasSurrogateAuthenticationSuccessfulEvent event);
+    void handleSurrogateAuthenticationSuccessEvent(CasSurrogateAuthenticationSuccessfulEvent event) throws Throwable;
 }

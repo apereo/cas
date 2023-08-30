@@ -93,7 +93,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyDiscoveryStrategy() {
+    void verifyDiscoveryStrategy() throws Throwable {
 
         val strategy = getStrategy();
         val context = getMockRequestContext();
@@ -110,7 +110,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyExclusiveRedirect() {
+    void verifyExclusiveRedirect() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
@@ -128,7 +128,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyExistingPrimaryProvider() {
+    void verifyExistingPrimaryProvider() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
@@ -144,7 +144,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyPrimaryViaCookie() {
+    void verifyPrimaryViaCookie() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");

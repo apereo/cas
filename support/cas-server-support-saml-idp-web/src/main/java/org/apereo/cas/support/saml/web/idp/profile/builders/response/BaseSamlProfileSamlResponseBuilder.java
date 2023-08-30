@@ -6,13 +6,13 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Triple;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.ScratchContext;
@@ -115,7 +115,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     protected boolean encryptAssertionFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().isEncryptAssertions()
             || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
-            List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS.getName(),
+            List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 }

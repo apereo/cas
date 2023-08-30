@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,17 +30,19 @@ public class OidcRegisteredServiceUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val serviceCtx = WebUtils.getService(requestContext);
-        if (serviceCtx != null) {
-            val service = serviceSelectionStrategy.resolveServiceFrom(serviceCtx);
-            val registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-            LOGGER.debug("Found registered service [{}] from the context", registeredService.getServiceId());
-            if (registeredService instanceof final OidcRegisteredService oauthService) {
-                WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+        return FunctionUtils.doUnchecked(() -> {
+            val serviceCtx = WebUtils.getService(requestContext);
+            if (serviceCtx != null) {
+                val service = serviceSelectionStrategy.resolveServiceFrom(serviceCtx);
+                val registeredService = this.servicesManager.findServiceBy(service);
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+                LOGGER.debug("Found registered service [{}] from the context", registeredService.getServiceId());
+                if (registeredService instanceof final OidcRegisteredService oauthService) {
+                    WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
+                }
             }
-        }
-        return success();
+            return success();
+        });
     }
 }

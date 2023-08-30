@@ -64,7 +64,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     @Test
-    void verifyReadFromStorage() throws Exception {
+    void verifyReadFromStorage() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -79,7 +79,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     @Test
-    void verifyResumeFromStorage() throws Exception {
+    void verifyResumeFromStorage() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -100,7 +100,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
-                                   final AuthnRequest authnRequest) throws Exception {
+                                   final AuthnRequest authnRequest) throws Throwable {
         val context = new MessageContext();
         context.setMessage(authnRequest);
         request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
@@ -121,7 +121,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         return authnRequest;
     }
 
-    private ServiceTicket getServiceTicket() throws Exception {
+    private ServiceTicket getServiceTicket() throws Throwable {
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
         val trackingPolicy = mock(ServiceTicketSessionTrackingPolicy.class);

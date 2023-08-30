@@ -21,7 +21,7 @@ public class GroovyRegisteredServiceAccessStrategyEnforcer implements Registered
     private final WatchableGroovyScriptResource script;
 
     @Override
-    public AuditableExecutionResult execute(final AuditableContext context) {
+    public AuditableExecutionResult execute(final AuditableContext context) throws Throwable {
         val args = new Object[]{context, LOGGER};
         return script.execute(args, AuditableExecutionResult.class, true);
     }

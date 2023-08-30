@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -82,6 +83,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,
@@ -112,7 +114,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyExpiredTokens() throws Exception {
+    void verifyExpiredTokens() throws Throwable {
         val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -124,7 +126,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyLargeDataSet() {
+    void verifyLargeDataSet() throws Throwable {
         val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), userId)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();

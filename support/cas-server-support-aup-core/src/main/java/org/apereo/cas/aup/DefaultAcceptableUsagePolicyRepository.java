@@ -34,7 +34,7 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val status = super.verify(requestContext);
         if (status.isDenied()) {
             val storageInfo = getKeyAndMap(requestContext);

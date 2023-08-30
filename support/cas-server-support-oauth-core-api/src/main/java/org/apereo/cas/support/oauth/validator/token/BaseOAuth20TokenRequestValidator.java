@@ -54,7 +54,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     @Override
-    public boolean validate(final WebContext context) {
+    public boolean validate(final WebContext context) throws Throwable {
         val grantType = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
@@ -97,12 +97,13 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param grantType   the grant type
      * @param manager     the manager
      * @param userProfile the profile
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
     protected boolean validateInternal(final WebContext context,
                                        final String grantType,
                                        final ProfileManager manager,
-                                       final UserProfile userProfile) {
+                                       final UserProfile userProfile) throws Throwable {
         return false;
     }
 

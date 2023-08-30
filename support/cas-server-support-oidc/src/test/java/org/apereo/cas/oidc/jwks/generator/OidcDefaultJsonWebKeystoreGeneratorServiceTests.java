@@ -39,7 +39,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     class EmbeddedKeystoreTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val resource = oidcJsonWebKeystoreGeneratorService.find();
             assertTrue(resource.isPresent());
             val jwks = new JsonWebKeySet(IOUtils.toString(resource.get().getInputStream(), StandardCharsets.UTF_8));
@@ -52,7 +52,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     class EncryptedKeystoreTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val resource = oidcJsonWebKeystoreGeneratorService.find();
             assertTrue(resource.isPresent());
             val jwks = new JsonWebKeySet(IOUtils.toString(resource.get().getInputStream(), StandardCharsets.UTF_8));
@@ -75,7 +75,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             assertTrue(resource.exists());
             assertTrue(keystore.setLastModified(new Date().getTime()));
@@ -87,7 +87,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        void verifyRegeneration() throws Exception {
+        void verifyRegeneration() throws Throwable {
             val resource1 = oidcJsonWebKeystoreGeneratorService.generate();
             assertTrue(resource1.exists());
             val resource2 = oidcJsonWebKeystoreGeneratorService.generate();
@@ -95,7 +95,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        void verifyCurve256() throws Exception {
+        void verifyCurve256() throws Throwable {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(256);
@@ -103,7 +103,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        void verifyCurve384() throws Exception {
+        void verifyCurve384() throws Throwable {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(384);
@@ -111,14 +111,14 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        void verifyCurve521() throws Exception {
+        void verifyCurve521() throws Throwable {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(521);
             verifyGeneration(properties);
         }
 
-        private void verifyGeneration(final OidcProperties properties) throws Exception {
+        private void verifyGeneration(final OidcProperties properties) throws Throwable {
             val file = Files.createTempFile(RandomUtils.randomAlphabetic(6), ".jwks").toFile();
             properties.getJwks().getFileSystem().setJwksFile(file.getAbsolutePath());
             val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);

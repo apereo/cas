@@ -73,32 +73,32 @@ class EncryptedTranscoderTests {
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyEncodeDecode(final EncryptedTranscoder transcoder,
+    void verifyEncodeDecode(final EncryptedTranscoder transcoder,
                                    final Object encodable) throws Exception {
         val encoded = transcoder.encode(encodable);
         assertEquals(encodable, transcoder.decode(encoded));
     }
 
     @Test
-    void verifyBadEncoding() throws Exception {
+    void verifyBadEncoding() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNotNull(encoder.encode(null));
     }
 
     @Test
-    void verifyNotSerializable() throws Exception {
+    void verifyNotSerializable() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNull(encoder.encode(new Object()));
     }
 
     @Test
-    void verifyBadDecoding() {
+    void verifyBadDecoding() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertThrows(IOException.class, () -> encoder.decode(null));
     }
 
     @Test
-    void verifyBadCipher() {
+    void verifyBadCipher() throws Throwable {
         val bean = mock(CipherBean.class);
         when(bean.decrypt(any())).thenThrow(IllegalArgumentException.class);
         when(bean.encrypt(any())).thenThrow(IllegalArgumentException.class);
@@ -108,7 +108,7 @@ class EncryptedTranscoderTests {
     }
 
     @Test
-    void verifyProxy() {
+    void verifyProxy() throws Throwable {
         val bean = mock(CipherBean.class);
         val factory = new ProxyFactoryBean();
         factory.setTargetClass(CipherBean.class);

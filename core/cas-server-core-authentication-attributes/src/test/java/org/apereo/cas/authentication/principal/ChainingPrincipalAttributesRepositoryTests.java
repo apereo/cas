@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 })
 class ChainingPrincipalAttributesRepositoryTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val repo1 = new DefaultPrincipalAttributesRepository();
         repo1.setAttributeRepositoryIds(Set.of(UUID.randomUUID().toString()));
         val repo2 = new DefaultPrincipalAttributesRepository();

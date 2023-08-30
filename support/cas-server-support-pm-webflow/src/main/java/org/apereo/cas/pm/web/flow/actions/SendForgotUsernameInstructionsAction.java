@@ -77,7 +77,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
@@ -92,23 +92,19 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         if (!EmailValidator.getInstance().isValid(email)) {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
-        var query = PasswordManagementQuery.builder().email(email).build();
-        val username = passwordManagementService.findUsername(query);
-        if (StringUtils.isBlank(username)) {
-            return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
-        }
-        query = PasswordManagementQuery.builder().username(username).email(email).build();
-        return locateUserAndProcess(requestContext, query);
+        return FunctionUtils.doUnchecked(() -> {
+            var query = PasswordManagementQuery.builder().email(email).build();
+            val username = passwordManagementService.findUsername(query);
+            if (StringUtils.isBlank(username)) {
+                return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
+            }
+            query = PasswordManagementQuery.builder().username(username).email(email).build();
+            return locateUserAndProcess(requestContext, query);
+        });
     }
 
-    /**
-     * Process forgot username email and do a lookup.
-     *
-     * @param requestContext the request context
-     * @param query          the query
-     * @return the event
-     */
-    protected Event locateUserAndProcess(final RequestContext requestContext, final PasswordManagementQuery query) {
+    protected Event locateUserAndProcess(final RequestContext requestContext,
+                                         final PasswordManagementQuery query) throws Throwable {
         val result = sendForgotUsernameEmailToAccount(query, requestContext);
         return FunctionUtils.doIf(result.isSuccess(),
                 () -> success(result),
@@ -117,7 +113,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected EmailCommunicationResult sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
-                                                                        final RequestContext requestContext) {
+                                                                        final RequestContext requestContext) throws Throwable {
         val parameters = CollectionUtils.wrap("username", query.getUsername(), "email", query.getEmail());
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());

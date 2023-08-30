@@ -79,14 +79,14 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     }
 
     @Test
-    void verifySetDeviceWithNoName() throws Exception {
+    void verifySetDeviceWithNoName() throws Throwable {
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName(StringUtils.EMPTY);
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
     }
 
     @Test
-    void verifySetDevice() throws Exception {
+    void verifySetDevice() throws Throwable {
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
@@ -96,7 +96,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     }
 
     @Test
-    void verifySetDeviceWithExp() throws Exception {
+    void verifySetDeviceWithExp() throws Throwable {
         val bean = new MultifactorAuthenticationTrustBean()
             .setTimeUnit(ChronoUnit.MONTHS)
             .setExpiration(2)
@@ -110,13 +110,13 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
 
 
     @Test
-    void verifyNoAuthN() throws Exception {
+    void verifyNoAuthN() throws Throwable {
         WebUtils.putAuthentication(null, context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, mfaSetTrustAction.execute(context).getId());
     }
 
     @Test
-    void verifyBypass() throws Exception {
+    void verifyBypass() throws Throwable {
         val service = (BaseRegisteredService) WebUtils.getRegisteredService(context);
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setBypassTrustedDeviceEnabled(true);
@@ -127,14 +127,14 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     }
 
     @Test
-    void verifyNoDeviceName() throws Exception {
+    void verifyNoDeviceName() throws Throwable {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val record = mfaTrustEngine.get("casuser-setdevice");
         assertTrue(record.isEmpty());
     }
 
     @Test
-    void verifyDeviceTracked() throws Exception {
+    void verifyDeviceTracked() throws Throwable {
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(this.context);
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
         WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);

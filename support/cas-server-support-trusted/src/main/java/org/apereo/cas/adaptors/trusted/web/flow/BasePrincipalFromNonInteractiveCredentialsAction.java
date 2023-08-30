@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPri
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -48,15 +49,17 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val remoteUser = getRemotePrincipalId(request);
-        if (StringUtils.isNotBlank(remoteUser)) {
-            LOGGER.debug("User [{}] found in request", remoteUser);
-            val attributes = principalAttributesExtractor.getAttributes(request);
-            LOGGER.debug("Attributes [{}] found in request", attributes);
-            return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
-        }
-        LOGGER.debug("No user found in request");
-        return null;
+        return FunctionUtils.doUnchecked(() -> {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val remoteUser = getRemotePrincipalId(request);
+            if (StringUtils.isNotBlank(remoteUser)) {
+                LOGGER.debug("User [{}] found in request", remoteUser);
+                val attributes = principalAttributesExtractor.getAttributes(request);
+                LOGGER.debug("Attributes [{}] found in request", attributes);
+                return new PrincipalBearingCredential(principalFactory.createPrincipal(remoteUser, attributes));
+            }
+            LOGGER.debug("No user found in request");
+            return null;
+        });
     }
 }

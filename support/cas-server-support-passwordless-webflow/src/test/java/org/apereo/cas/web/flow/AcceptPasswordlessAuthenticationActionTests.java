@@ -45,7 +45,7 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -59,16 +59,8 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
         assertTrue(passwordlessTokenRepository.findToken("casuser").isEmpty());
     }
 
-    private PasswordlessAuthenticationToken createToken() {
-        val passwordlessUserAccount = PasswordlessUserAccount.builder().username("casuser").build();
-        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
-        val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
-        passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
-        return token;
-    }
-
     @Test
-    void verifyUnknownToken() throws Exception {
+    void verifyUnknownToken() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 
@@ -83,7 +75,7 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     }
 
     @Test
-    void verifyMissingTokenAction() throws Exception {
+    void verifyMissingTokenAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
         val request = new MockHttpServletRequest();
@@ -102,5 +94,13 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
             .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         return account;
+    }
+
+    private PasswordlessAuthenticationToken createToken() {
+        val passwordlessUserAccount = PasswordlessUserAccount.builder().username("casuser").build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+        val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
+        passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
+        return token;
     }
 }

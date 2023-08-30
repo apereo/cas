@@ -1605,7 +1605,7 @@ public class WebUtils {
      */
     public static RegisteredService resolveRegisteredService(final RequestContext requestContext,
                                                              final ServicesManager servicesManager,
-                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) throws Throwable {
         val registeredService = getRegisteredService(requestContext);
         if (registeredService != null) {
             return registeredService;

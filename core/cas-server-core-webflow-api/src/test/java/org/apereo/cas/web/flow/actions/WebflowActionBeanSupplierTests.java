@@ -34,7 +34,7 @@ class WebflowActionBeanSupplierTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyUnknownScript() throws Exception {
+    void verifyUnknownScript() throws Throwable {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "unknown");
 
@@ -56,7 +56,7 @@ class WebflowActionBeanSupplierTests {
     }
 
     @Test
-    void verifyScript() throws Exception {
+    void verifyScript() throws Throwable {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "classpath:/GroovyWebflowAction.groovy");
 

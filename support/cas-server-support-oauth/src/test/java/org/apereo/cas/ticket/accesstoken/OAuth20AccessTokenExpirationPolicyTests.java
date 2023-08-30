@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuthToken")
 class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    void verifyAccessTokenExpiryWhenTgtIsExpired() {
+    void verifyAccessTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         assertFalse(at.isExpired(), "Access token should not be expired");
@@ -31,7 +31,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
     }
 
     @Test
-    void verifyAccessTokenExpiredAfterSystemTime() {
+    void verifyAccessTokenExpiredAfterSystemTime() throws Throwable {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
         val exp = new OAuth20AccessTokenExpirationPolicy(100, 100);
@@ -39,7 +39,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
     }
 
     @Test
-    void verifyAccessTokenExpiredAfterTimeToKill() {
+    void verifyAccessTokenExpiredAfterTimeToKill() throws Throwable {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         when(ticket.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
@@ -48,7 +48,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
     }
 
     @Test
-    void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Exception {
+    void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Throwable {
         val policyWritten = new OAuth20AccessTokenExpirationPolicy(1234L, 5678L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, OAuth20AccessTokenExpirationPolicy.class);

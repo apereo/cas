@@ -2,6 +2,7 @@ package org.apereo.cas.okta;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
@@ -60,6 +61,7 @@ class OktaPersonAttributeDaoTests {
     @SpringBootTest(classes = {
         OktaPersonDirectoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
         "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
@@ -77,7 +79,7 @@ class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertEquals(1, oktaPersonAttributeDaos.size());
             assertNull(attributeRepository.getPerson("casuser"));
 
@@ -92,6 +94,7 @@ class OktaPersonAttributeDaoTests {
         OktaPersonAttributeDaoTests.OktaClientMockTestConfiguration.class,
         OktaPersonDirectoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
         "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
@@ -109,7 +112,7 @@ class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertFalse(oktaPersonAttributeDaos.toList().isEmpty());
             assertNotNull(attributeRepository.getPerson("casuser"));
             assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"),

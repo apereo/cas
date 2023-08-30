@@ -36,9 +36,9 @@ public interface SamlIdPMetadataGenerator {
      *
      * @param registeredService the registered service
      * @return the saml idp metadata document
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    SamlIdPMetadataDocument generate(Optional<SamlRegisteredService> registeredService) throws Exception;
+    SamlIdPMetadataDocument generate(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Clean certificate string.

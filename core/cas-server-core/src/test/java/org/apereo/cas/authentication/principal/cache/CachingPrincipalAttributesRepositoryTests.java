@@ -53,7 +53,7 @@ class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipal
     }
 
     @Test
-    void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Exception {
+    void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Throwable {
         val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
         MAPPER.writeValue(JSON_FILE, repositoryWritten);

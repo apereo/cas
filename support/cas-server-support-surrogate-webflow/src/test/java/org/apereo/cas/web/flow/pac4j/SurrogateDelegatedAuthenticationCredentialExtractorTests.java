@@ -50,7 +50,7 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;
 
     @Test
-    void verifyClientCredentialExtracted() {
+    void verifyClientCredentialExtracted() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

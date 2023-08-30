@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -46,11 +47,11 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
                                               final String groovyScript) {
 
         return ApplicationContextProvider.getScriptResourceCacheManager()
-            .map(cacheMgr -> {
+            .map(cacheMgr -> FunctionUtils.doUnchecked(() -> {
                 val script = cacheMgr.resolveScriptableResource(groovyScript,
                     context.getRegisteredService().getServiceId(), context.getRegisteredService().getName());
                 return fetchAttributeValueFromScript(script, context.getPrincipal(), context.getService());
-            })
+            }))
             .map(Object::toString)
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute username provider"));
     }
@@ -70,7 +71,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript script,
-                                                        final Principal principal, final Service service) {
+                                                        final Principal principal, final Service service) throws Throwable {
         val args = CollectionUtils.<String, Object>wrap("attributes", principal.getAttributes(),
             "id", principal.getId(),
             "service", service,

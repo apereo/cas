@@ -25,7 +25,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws Exception {
+    void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws Throwable {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setPattern("pattern");
         policy.setExactMatch(true);
@@ -36,7 +36,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    void verifyBadPattern() throws Exception {
+    void verifyBadPattern() throws Throwable {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setPattern("***");
         assertFalse(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
@@ -44,7 +44,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    void verifyExactMatch() throws Exception {
+    void verifyExactMatch() throws Throwable {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setPattern("https://github.com/apereo/cas");
         policy.setExactMatch(true);
@@ -53,7 +53,7 @@ class RegexMatchingRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    void verifyServiceIdPattern() throws Exception {
+    void verifyServiceIdPattern() throws Throwable {
         val policy = new RegexMatchingRegisteredServiceProxyPolicy();
         policy.setUseServiceId(true);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("^https:.+/apereo/cas");

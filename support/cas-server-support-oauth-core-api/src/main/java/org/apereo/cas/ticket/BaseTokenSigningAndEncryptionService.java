@@ -63,7 +63,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
      */
     public abstract Set<String> getAllowedSigningAlgorithms(OAuthRegisteredService registeredService);
 
-    protected void validateIssuerClaim(final JWTClaimsSet claims, final Optional<OAuthRegisteredService> service) {
+    protected void validateIssuerClaim(final JWTClaimsSet claims, final Optional<OAuthRegisteredService> service) throws Throwable {
         LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
         val iss = resolveIssuer(service);
         Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
@@ -94,16 +94,16 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return "JWT";
     }
 
-    protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService svc) {
-        if (shouldSignToken(svc)) {
-            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
-            val jsonWebKey = getJsonWebKeySigningKey(Optional.of(svc));
+    protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService registeredService) throws Throwable {
+        if (shouldSignToken(registeredService)) {
+            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", registeredService.getClientId());
+            val jsonWebKey = getJsonWebKeySigningKey(Optional.of(registeredService));
             LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
             Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
-            return signToken(svc, claims, jsonWebKey);
+            return signToken(registeredService, claims, jsonWebKey);
         }
         val claimSet = JwtBuilder.parse(claims.toJson());
-        return JwtBuilder.buildPlain(claimSet, Optional.of(svc));
+        return JwtBuilder.buildPlain(claimSet, Optional.of(registeredService));
     }
 
     protected byte[] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {

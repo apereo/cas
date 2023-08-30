@@ -44,7 +44,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifyUnknownScript() {
+    void verifyUnknownScript() throws Throwable {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:unknown-123456.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -62,7 +62,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
 
 
     @Test
-    void verifyScriptReleasesSamlAttributes() {
+    void verifyScriptReleasesSamlAttributes() throws Throwable {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -78,7 +78,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifyScriptReleasesSamlAttributesWithEntityId() {
+    void verifyScriptReleasesSamlAttributesWithEntityId() throws Throwable {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -100,7 +100,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifyScriptReleasesSamlAttributesWithProviderId() {
+    void verifyScriptReleasesSamlAttributesWithProviderId() throws Throwable {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
@@ -122,7 +122,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    void verifyScriptReleasesSamlAttributesWithSamlRequest() throws Exception {
+    void verifyScriptReleasesSamlAttributesWithSamlRequest() throws Throwable {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));

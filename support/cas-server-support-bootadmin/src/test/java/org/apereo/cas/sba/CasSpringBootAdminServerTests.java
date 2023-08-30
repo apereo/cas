@@ -81,7 +81,7 @@ public class CasSpringBootAdminServerTests {
     private InstanceIdGenerator instanceIdGenerator;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(springBootAdminEndpointConfigurer);
         assertNotNull(springBootAdminWebClientCustomizer);
         assertNotNull(registrationClient);
@@ -95,7 +95,7 @@ public class CasSpringBootAdminServerTests {
     }
 
     @Test
-    void verifyInstanceIdGeneration() {
+    void verifyInstanceIdGeneration() throws Throwable {
         val registration1 = Registration.create("Cas1", "https://localhost:8443/cas/actuator/health")
             .metadata("name", "CASInstance").build();
         val registration2 = Registration.create("Cas2", "https://localhost:8443/cas/actuator/health").build();

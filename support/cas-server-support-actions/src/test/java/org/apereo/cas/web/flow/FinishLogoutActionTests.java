@@ -34,7 +34,7 @@ class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    void verifyLogout() throws Exception {
+    void verifyLogout() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -43,7 +43,7 @@ class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyLogoutRedirect() throws Exception {
+    void verifyLogoutRedirect() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -53,7 +53,7 @@ class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyLogoutPost() throws Exception {
+    void verifyLogoutPost() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));

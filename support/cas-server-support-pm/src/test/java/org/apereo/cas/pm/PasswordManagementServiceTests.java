@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("PasswordOps")
 class PasswordManagementServiceTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = new PasswordManagementService() {
         };
         assertFalse(service.change(new PasswordChangeRequest()));

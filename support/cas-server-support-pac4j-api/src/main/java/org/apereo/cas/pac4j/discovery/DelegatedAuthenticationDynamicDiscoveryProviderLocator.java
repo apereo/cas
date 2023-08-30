@@ -26,8 +26,9 @@ public interface DelegatedAuthenticationDynamicDiscoveryProviderLocator {
      *
      * @param request the request
      * @return the client
+     * @throws Throwable the throwable
      */
-    Optional<IndirectClient> locate(DynamicDiscoveryProviderRequest request);
+    Optional<IndirectClient> locate(DynamicDiscoveryProviderRequest request) throws Throwable;
 
     @SuperBuilder
     @Getter

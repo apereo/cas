@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.io.Serial;
 import java.net.URI;
@@ -90,9 +91,9 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
+            return strategies.stream().anyMatch(Unchecked.predicate(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request)));
         }
-        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
+        return strategies.stream().allMatch(Unchecked.predicate(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request)));
     }
 
     @Override

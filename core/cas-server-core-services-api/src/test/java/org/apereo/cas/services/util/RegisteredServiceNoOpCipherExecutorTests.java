@@ -31,7 +31,7 @@ class RegisteredServiceNoOpCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherUnableToEncodeForStringIsTooLong() {
+    void verifyCipherUnableToEncodeForStringIsTooLong() throws Throwable {
         val svc = getService("classpath:keys/RSA1024Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val cipher = RegisteredServiceCipherExecutor.noOp();

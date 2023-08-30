@@ -36,12 +36,12 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     private CasWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(oidcProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Throwable {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -51,7 +51,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcNoLogoutUrls() throws Exception {
+    void verifyOidcNoLogoutUrls() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -70,7 +70,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithoutParams() throws Exception {
+    void verifyOidcLogoutWithoutParams() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
         val result = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
@@ -81,7 +81,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithStateParam() throws Exception {
+    void verifyOidcLogoutWithStateParam() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -93,7 +93,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithIdTokenParam() throws Exception {
+    void verifyOidcLogoutWithIdTokenParam() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -109,7 +109,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithIdTokenAndStateParams() throws Exception {
+    void verifyOidcLogoutWithIdTokenAndStateParams() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -125,7 +125,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithIdTokenAndValidPostLogoutRedirectUrlParams() throws Exception {
+    void verifyOidcLogoutWithIdTokenAndValidPostLogoutRedirectUrlParams() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -140,7 +140,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcLogoutWithIdTokenAndInvalidPostLogoutRedirectUrlParams() throws Exception {
+    void verifyOidcLogoutWithIdTokenAndInvalidPostLogoutRedirectUrlParams() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 

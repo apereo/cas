@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ class PatternMatchingAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws Throwable {
         val policy = new PatternMatchingAttributeReleasePolicy();
         assertNotNull(policy.getName());
         policy.getAllowedAttributes().put("memberOf",
@@ -44,7 +43,7 @@ class PatternMatchingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verfyPatternTransform() throws IOException {
+    void verfyPatternTransform() throws Throwable {
         val policy = new PatternMatchingAttributeReleasePolicy();
         policy.getAllowedAttributes().put("memberOf",
             new PatternMatchingAttributeReleasePolicy.Rule()
@@ -68,7 +67,7 @@ class PatternMatchingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verfyTransformEntireMatch() throws IOException {
+    void verfyTransformEntireMatch() throws Throwable {
         val policy = new PatternMatchingAttributeReleasePolicy();
         policy.getAllowedAttributes().put("memberOf",
             new PatternMatchingAttributeReleasePolicy.Rule()

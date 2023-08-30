@@ -59,7 +59,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
 
     @Test
     @Order(1)
-    public void verifyPostSignRequest() throws Exception {
+    void verifyPostSignRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -73,7 +73,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
 
     @Test
     @Order(2)
-    public void verifyRedirectRequest() throws Exception {
+    void verifyRedirectRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -92,7 +92,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
 
     @Test
     @Order(2)
-    public void verifyBadRequest() throws Exception {
+    void verifyBadRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "Text");

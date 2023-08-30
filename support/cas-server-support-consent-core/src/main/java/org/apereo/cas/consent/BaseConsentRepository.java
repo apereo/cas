@@ -59,7 +59,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
         val consent = getConsentDecisions()
             .stream()
             .anyMatch(d -> d.getId() == decision.getId());
@@ -73,17 +73,17 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecision(final long decisionId, final String principal) throws Throwable {
         return this.consentDecisions.removeIf(d -> d.getId() == decisionId && d.getPrincipal().equalsIgnoreCase(principal));
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteAll() throws Throwable {
         consentDecisions.clear();
     }
 
     @Override
-    public boolean deleteConsentDecisions(final String principal) {
+    public boolean deleteConsentDecisions(final String principal) throws Throwable {
         return consentDecisions.removeIf(consentDecision -> consentDecision.getPrincipal().equalsIgnoreCase(principal));
     }
 }

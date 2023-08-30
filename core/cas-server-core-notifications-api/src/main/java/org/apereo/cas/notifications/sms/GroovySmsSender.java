@@ -14,14 +14,14 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class GroovySmsSender implements SmsSender, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovySmsSender(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
-    public boolean send(final String from, final String to, final String message) {
+    public boolean send(final String from, final String to, final String message) throws Throwable {
         return watchableScript.execute(new Object[]{from, to, message, LOGGER}, Boolean.class);
     }
 

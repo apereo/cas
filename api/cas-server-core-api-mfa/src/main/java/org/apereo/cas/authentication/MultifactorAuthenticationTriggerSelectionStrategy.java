@@ -31,12 +31,13 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
      * @param authentication    The authentication to check for MFA requirements
      * @param service           the service
      * @return the provider id of the MFA provider required for authentication
+     * @throws Throwable the throwable
      */
     Optional<MultifactorAuthenticationProvider> resolve(HttpServletRequest request,
                                                         HttpServletResponse response,
                                                         RegisteredService registeredService,
                                                         Authentication authentication,
-                                                        Service service);
+                                                        Service service) throws Throwable;
 
     /**
      * Gets multifactor authentication triggers.

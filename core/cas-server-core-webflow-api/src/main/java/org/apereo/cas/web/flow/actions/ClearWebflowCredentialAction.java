@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class ClearWebflowCredentialAction extends BaseCasWebflowAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val currentEvent = requestContext.getCurrentEvent();
         if (currentEvent == null) {
             return null;

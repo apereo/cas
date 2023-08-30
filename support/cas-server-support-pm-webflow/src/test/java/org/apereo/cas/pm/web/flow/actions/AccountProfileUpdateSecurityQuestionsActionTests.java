@@ -82,7 +82,7 @@ class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManag
     }
 
     @Test
-    void verifyMismatchedQuestionsAndAnswers() throws Exception {
+    void verifyMismatchedQuestionsAndAnswers() throws Throwable {
         parameterMap.put("questions", new String[]{"question1", "question2", "question3"});
         parameterMap.put("answers", new String[]{"answer1", "answer2"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);
@@ -90,7 +90,7 @@ class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManag
     }
 
     @Test
-    void verifyShortQuestions() throws Exception {
+    void verifyShortQuestions() throws Throwable {
         parameterMap.put("questions", new String[]{"qaz", "zsxa", "123"});
         parameterMap.put("answers", new String[]{"a", "b", "c"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);
@@ -98,7 +98,7 @@ class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManag
     }
 
     @Test
-    void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Throwable {
         parameterMap.put("questions", new String[]{"question1", "question2"});
         parameterMap.put("answers", new String[]{"answer1", "answer2"});
         val result = accountProfileUpdateSecurityQuestionsAction.execute(context);

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class NotPreventedAuthenticationPolicyTests {
 
     @Test
-    void verifyOperationPrevented() throws Exception {
+    void verifyOperationPrevented() throws Throwable {
         val input = new NotPreventedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
@@ -33,7 +33,7 @@ class NotPreventedAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyOperationNotPrevented() throws Exception {
+    void verifyOperationNotPrevented() throws Throwable {
         val input = new NotPreventedAuthenticationPolicy();
         val authn = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal()).build();
         assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());

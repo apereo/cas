@@ -51,7 +51,7 @@ public class SamlIdPAttributeDefinition extends DefaultAttributeDefinition {
     private String salt;
 
     @Override
-    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
+    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) throws Throwable {
         if (isPersistent() && StringUtils.isNotBlank(this.salt)) {
             val givenSalt = SpringExpressionLanguageValueResolver.getInstance().resolve(this.salt);
             val generator = new ShibbolethCompatiblePersistentIdGenerator(givenSalt);

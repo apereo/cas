@@ -96,8 +96,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.CREATE_TICKET_GRANTING_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
-    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult)
-        throws AuthenticationException, AbstractTicketException {
+    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult) throws Throwable {
 
         val authentication = authenticationResult.getAuthentication();
         var service = authenticationResult.getService();
@@ -189,7 +188,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         try {
             enforceRegisteredServiceAccess(service, proxyGrantingTicketObject, registeredService);
             RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
             throw new UnauthorizedSsoServiceException();
         }
@@ -229,7 +228,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.VALIDATE_SERVICE_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws Throwable {
 
         if (!isTicketAuthenticityVerified(serviceTicketId)) {
             LOGGER.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
@@ -347,8 +346,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId,
-                                                         final AuthenticationResult authenticationResult)
-        throws AuthenticationException, AbstractTicketException {
+                                                         final AuthenticationResult authenticationResult) throws Throwable {
 
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authenticationResult.getAuthentication());
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
@@ -390,7 +388,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service,
-                                                final RegisteredService registeredService) {
+                                                final RegisteredService registeredService) throws Throwable {
 
         val attributeReleaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
@@ -414,7 +412,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Service service, final RegisteredService registeredService,
-                                                final Principal principal) {
+                                                final Principal principal) throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .principal(principal)
@@ -425,7 +423,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
-                                                final RegisteredService registeredService) {
+                                                final RegisteredService registeredService) throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .ticketGrantingTicket(ticket)

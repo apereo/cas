@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class AccountRegistrationRequestAuditPrincipalIdResolverTests {
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -46,7 +46,7 @@ class AccountRegistrationRequestAuditPrincipalIdResolverTests {
     }
 
     @Test
-    void verifyPrincipalId() {
+    void verifyPrincipalId() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -45,7 +45,7 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         private Action delegatedAuthenticationCreateClientsAction;
 
         @Test
-        void verifyAuthnFailureProduces() {
+        void verifyAuthnFailureProduces() throws Throwable {
             val context2 = getMockRequestContext();
             WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
             assertDoesNotThrow(() -> delegatedAuthenticationCreateClientsAction.execute(context2));
@@ -53,7 +53,7 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         }
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context1 = getMockRequestContext();
             val result = delegatedAuthenticationCreateClientsAction.execute(context1);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
@@ -85,7 +85,7 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         private Action delegatedAuthenticationCreateClientsAction;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = getMockRequestContext();
 
             val result = delegatedAuthenticationCreateClientsAction.execute(context);

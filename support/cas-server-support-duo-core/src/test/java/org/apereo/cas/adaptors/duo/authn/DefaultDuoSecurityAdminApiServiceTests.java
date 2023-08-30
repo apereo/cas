@@ -63,7 +63,7 @@ class DefaultDuoSecurityAdminApiServiceTests {
     }
 
     @Test
-    void verifyCodes() throws Exception {
+    void verifyCodes() throws Throwable {
         val service = new DefaultDuoSecurityAdminApiService(this.httpClient, properties);
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-bypassCodes.json"));

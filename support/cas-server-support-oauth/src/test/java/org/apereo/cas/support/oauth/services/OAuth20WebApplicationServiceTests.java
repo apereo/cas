@@ -26,7 +26,7 @@ class OAuth20WebApplicationServiceTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeACompletePrincipalToJson() throws Exception {
+    void verifySerializeACompletePrincipalToJson() throws Throwable {
         val service = new OAuthRegisteredService();
         service.setName("checkCloning");
         service.setServiceId("testId");

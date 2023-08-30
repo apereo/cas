@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 class PostgresJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         passwordHistoryService.removeAll();
     }
 }

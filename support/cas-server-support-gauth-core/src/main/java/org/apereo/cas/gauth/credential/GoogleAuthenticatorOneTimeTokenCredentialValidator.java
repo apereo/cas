@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -46,8 +45,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     @Override
     public GoogleAuthenticatorToken validate(final Authentication authentication,
-                                             final GoogleAuthenticatorTokenCredential tokenCredential)
-        throws GeneralSecurityException, PreventedException {
+                                             final GoogleAuthenticatorTokenCredential tokenCredential) throws Throwable {
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.");

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class YubiKeyAuthenticationWebflowActionTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),

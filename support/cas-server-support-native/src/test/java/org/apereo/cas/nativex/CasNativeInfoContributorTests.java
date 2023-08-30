@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasNativeInfoContributorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val contributor = new CasNativeInfoContributor();
         val builder = new Info.Builder();
         contributor.contribute(builder);

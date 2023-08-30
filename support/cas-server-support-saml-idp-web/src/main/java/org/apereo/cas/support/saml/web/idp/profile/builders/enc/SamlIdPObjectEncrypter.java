@@ -175,7 +175,7 @@ public class SamlIdPObjectEncrypter {
             val parameters = resolveDecryptionParameters(service, config);
             val decrypter = getDecrypter(encryptedId, service, adaptor, parameters);
             return (NameID) decrypter.decrypt(encryptedId);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw new DecryptionException(e);
         }
     }
@@ -443,12 +443,12 @@ public class SamlIdPObjectEncrypter {
      * @param service                 the service
      * @param decryptionConfiguration the decryption configuration
      * @return the credential
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     protected Credential configureKeyDecryptionCredential(final String peerEntityId,
                                                           final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                           final SamlRegisteredService service,
-                                                          final BasicDecryptionConfiguration decryptionConfiguration) throws Exception {
+                                                          final BasicDecryptionConfiguration decryptionConfiguration) throws Throwable {
 
         val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val providers = new ArrayList<KeyInfoProvider>(5);
@@ -477,10 +477,10 @@ public class SamlIdPObjectEncrypter {
         LOGGER.debug("Attempting to resolve the decryption key for entity id [{}]", peerEntityId);
         val credential = Objects.requireNonNull(mdCredentialResolver.resolveSingle(criteriaSet));
 
-        val encryptinKey = samlIdPMetadataLocator.resolveEncryptionKey(Optional.ofNullable(service));
+        val encryptionKey = samlIdPMetadataLocator.resolveEncryptionKey(Optional.ofNullable(service));
         val bean = new PrivateKeyFactoryBean();
         bean.setSingleton(false);
-        bean.setLocation(encryptinKey);
+        bean.setLocation(encryptionKey);
         val privateKey = Objects.requireNonNull(bean.getObject());
 
         val basicCredential = new BasicCredential(Objects.requireNonNull(credential.getPublicKey()), privateKey);

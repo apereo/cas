@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.logout.remove-descendant-tickets=false")
 class OAuth20RefreshTokenSovereignExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    void verifyRefreshTokenExpiryWhenTgtIsExpired() {
+    void verifyRefreshTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);

@@ -20,6 +20,7 @@ public interface TicketGrantingTicketFactory extends TicketFactory {
      * @param service        the service
      * @param clazz          the clazz
      * @return the t
+     * @throws Throwable the throwable
      */
-    <T extends TicketGrantingTicket> T create(Authentication authentication, Service service, Class<T> clazz);
+    <T extends TicketGrantingTicket> T create(Authentication authentication, Service service, Class<T> clazz) throws Throwable;
 }

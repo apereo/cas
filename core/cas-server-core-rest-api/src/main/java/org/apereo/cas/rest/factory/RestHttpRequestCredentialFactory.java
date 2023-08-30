@@ -36,8 +36,9 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
      * @param request     object to extract credentials from
      * @param requestBody multipart/form-data request body to extract credentials from
      * @return Credential instance(s)
+     * @throws Throwable the throwable
      */
-    List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<String, String> requestBody);
+    List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<String, String> requestBody) throws Throwable;
 
     @Override
     default int getOrder() {

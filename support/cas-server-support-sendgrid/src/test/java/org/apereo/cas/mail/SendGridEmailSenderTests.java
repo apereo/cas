@@ -53,7 +53,7 @@ class SendGridEmailSenderTests {
 
     @ParameterizedTest
     @MethodSource("emailContentTypes")
-    public void verifyOperation(final boolean html) throws Exception {
+    void verifyOperation(final boolean html) throws Exception {
         assertNotNull(emailSender);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
             Map.of("email", List.of("casuser@apereo.org")));

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

@@ -48,7 +48,7 @@ class InquireInterruptActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyInterruptedByServicePrincipalAttribute() {
+    void verifyInterruptedByServicePrincipalAttribute() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -66,13 +66,13 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.interrupt());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        var event = action.doExecute(context);
+        var event = action.execute(context);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
     }
 
-    private static InterruptInquirer getInterruptInquirer(final InterruptResponse interruptResponse) {
+    private static InterruptInquirer getInterruptInquirer(final InterruptResponse interruptResponse) throws Throwable {
         val interrupt = mock(InterruptInquirer.class);
         when(interrupt.inquire(any(Authentication.class),
             any(RegisteredService.class), any(Service.class),
@@ -82,7 +82,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    void verifyInterrupted() {
+    void verifyInterrupted() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -100,20 +100,20 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.interrupt());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        var event = action.doExecute(context);
+        var event = action.execute(context);
         assertNotNull(event);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
 
-        event = action.doExecute(context);
+        event = action.execute(context);
         assertNotNull(InterruptUtils.getInterruptFrom(context));
         assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, event.getId());
     }
 
     @Test
-    void verifyInterruptedAlready() {
+    void verifyInterruptedAlready() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -128,14 +128,14 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertNotNull(event);
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
 
     @Test
-    void verifyInterruptFinalized() {
+    void verifyInterruptFinalized() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -150,13 +150,13 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertNotNull(event);
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
     @Test
-    void verifyNotInterrupted() {
+    void verifyNotInterrupted() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -170,13 +170,13 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertNotNull(event);
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }
 
     @Test
-    void verifyNotInterruptedAsFinalized() {
+    void verifyNotInterruptedAsFinalized() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -191,7 +191,7 @@ class InquireInterruptActionTests {
         val interrupt = getInterruptInquirer(InterruptResponse.none());
 
         val action = new InquireInterruptAction(List.of(interrupt), casProperties, mock(CasCookieBuilder.class));
-        val event = action.doExecute(context);
+        val event = action.execute(context);
         assertNotNull(event);
         assertEquals(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, event.getId());
     }

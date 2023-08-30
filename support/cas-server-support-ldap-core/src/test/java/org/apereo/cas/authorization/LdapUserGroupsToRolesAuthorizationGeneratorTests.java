@@ -40,7 +40,7 @@ class LdapUserGroupsToRolesAuthorizationGeneratorTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");

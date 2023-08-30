@@ -28,7 +28,7 @@ class CasYamlHttpMessageConverterTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val input = new CasYamlHttpMessageConverter();
         val outputMessage = new MockHttpOutputMessage();
         input.write(getService(), MediaType.APPLICATION_JSON, outputMessage);

@@ -60,7 +60,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     }
 
     @Test
-    void verifyUnauthz() {
+    void verifyUnauthz() throws Throwable {
         val ex = new InvalidProxyGrantingTicketForServiceTicketException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);
@@ -69,7 +69,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     }
 
     @Test
-    void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val ex = new UnrecognizableServiceForServiceTicketValidationException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);

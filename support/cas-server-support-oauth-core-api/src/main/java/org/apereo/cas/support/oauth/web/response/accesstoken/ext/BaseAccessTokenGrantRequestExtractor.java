@@ -22,7 +22,7 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
     private final OAuth20ConfigurationContext configurationContext;
 
     @Override
-    public AccessTokenRequestContext extract(final WebContext webContext) {
+    public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
         val request = extractRequest(webContext);
         new ProfileManager(webContext, configurationContext.getSessionStore())
             .getProfile().ifPresent(profile -> {
@@ -36,5 +36,5 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
         return request;
     }
 
-    protected abstract AccessTokenRequestContext extractRequest(WebContext webContext);
+    protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;
 }

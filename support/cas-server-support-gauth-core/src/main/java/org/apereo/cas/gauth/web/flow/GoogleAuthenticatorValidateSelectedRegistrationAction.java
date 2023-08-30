@@ -25,7 +25,7 @@ public class GoogleAuthenticatorValidateSelectedRegistrationAction extends BaseC
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val account = WebUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
         if (account == null) {
             LOGGER.warn("Unable to determine google authenticator account");

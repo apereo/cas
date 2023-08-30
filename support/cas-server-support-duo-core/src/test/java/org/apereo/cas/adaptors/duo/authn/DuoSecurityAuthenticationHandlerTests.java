@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class DuoSecurityAuthenticationHandlerTests {
 
     @Test
-    void verifyDuoSecurityPasscode() throws Exception {
+    void verifyDuoSecurityPasscode() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
 
@@ -63,7 +63,7 @@ class DuoSecurityAuthenticationHandlerTests {
 
 
     @Test
-    void verifyDuoSecurityUniversalPromptCredential() throws Exception {
+    void verifyDuoSecurityUniversalPromptCredential() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(UniversalPromptDuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class)))
@@ -84,7 +84,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDuoSecurityUniversalPromptCredentialFails() throws Exception {
+    void verifyDuoSecurityUniversalPromptCredentialFails() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(UniversalPromptDuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class)))
@@ -100,7 +100,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDuoSecurityDirectCredential() throws Exception {
+    void verifyDuoSecurityDirectCredential() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class)))
@@ -118,7 +118,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDuoSecurityCredential() throws Exception {
+    void verifyDuoSecurityCredential() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class)))
@@ -136,7 +136,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDuoSecurityCredentialAuthnFails() throws Exception {
+    void verifyDuoSecurityCredentialAuthnFails() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class))).thenThrow(FailedLoginException.class);
@@ -152,7 +152,7 @@ class DuoSecurityAuthenticationHandlerTests {
 
 
     @Test
-    void verifyBadDuoSecurityCredential() throws Exception {
+    void verifyBadDuoSecurityCredential() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class)))
@@ -168,7 +168,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDirectDuoSecurityCredential() throws Exception {
+    void verifyDirectDuoSecurityCredential() throws Throwable {
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.authenticate(any(Credential.class))).thenThrow(FailedLoginException.class);
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
@@ -181,7 +181,7 @@ class DuoSecurityAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() throws Exception {
+    void verifySupports() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
 

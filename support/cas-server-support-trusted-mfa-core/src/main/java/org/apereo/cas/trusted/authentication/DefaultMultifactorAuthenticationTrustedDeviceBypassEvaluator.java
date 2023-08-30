@@ -24,7 +24,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
     @Override
     public boolean shouldBypassTrustedDevice(final RegisteredService registeredService,
                                              final Service service,
-                                             final Authentication authentication) {
+                                             final Authentication authentication) throws Throwable {
         if (registeredService == null && service == null) {
             return false;
         }

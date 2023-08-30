@@ -27,7 +27,7 @@ class OAuth20WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private CasWebflowConfigurer oauth20LogoutWebflowConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oauth20LogoutWebflowConfigurer);
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
 
     @Test
-    void verifyConsentPolicyWithScopesSavedAfterLoad() {
+    void verifyConsentPolicyWithScopesSavedAfterLoad() throws Throwable {
         var svc = new OidcRegisteredService();
         svc.setName("Scopes");
         svc.setServiceId("testId");

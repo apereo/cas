@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAMLMetadata")
 class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServicesTests {
     @Test
-    void verifyPolicyByEntityCache() throws Exception {
+    void verifyPolicyByEntityCache() throws Throwable {
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
 
         val props = new SamlIdPProperties();
@@ -63,7 +63,7 @@ class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServ
     }
 
     @Test
-    void verifyPolicyBySpEntityCache() throws Exception {
+    void verifyPolicyBySpEntityCache() throws Throwable {
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
@@ -87,7 +87,7 @@ class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServ
 
     @Test
     @SuppressWarnings("JavaTimeDefaultTimeZone")
-    public void verifyPolicyByServiceExpirationPolicy() throws Exception {
+    void verifyPolicyByServiceExpirationPolicy() throws Throwable {
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());

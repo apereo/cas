@@ -17,19 +17,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class DefaultResponseTests {
     @Test
-    void verifyHeader() {
+    void verifyHeader() throws Throwable {
         val input = DefaultResponse.getHeaderResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.HEADER, input.responseType());
     }
 
     @Test
-    void verifyRedirect() {
+    void verifyRedirect() throws Throwable {
         val input = DefaultResponse.getRedirectResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.REDIRECT, input.responseType());
     }
 
     @Test
-    void verifyPost() {
+    void verifyPost() throws Throwable {
         val input = DefaultResponse.getPostResponse("github.com", Map.of("key", "value"));
         assertEquals(Response.ResponseType.POST, input.responseType());
     }

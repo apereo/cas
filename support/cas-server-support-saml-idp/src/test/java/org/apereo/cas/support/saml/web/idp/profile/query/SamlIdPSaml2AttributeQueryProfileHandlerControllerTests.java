@@ -61,7 +61,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -94,7 +94,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyUnknownService() throws Exception {
+        void verifyUnknownService() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -135,7 +135,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyTicketExpired() throws Exception {
+        void verifyTicketExpired() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -175,7 +175,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyEncryptedNameIDFails() throws Exception {
+        void verifyEncryptedNameIDFails() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -215,7 +215,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyOK() throws Exception {
+        void verifyOK() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -252,7 +252,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyFault() throws Exception {
+        void verifyFault() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");

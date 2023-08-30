@@ -40,6 +40,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class,

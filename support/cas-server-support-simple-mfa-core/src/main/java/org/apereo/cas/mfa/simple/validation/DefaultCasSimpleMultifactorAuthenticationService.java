@@ -33,7 +33,7 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     protected final TicketFactory ticketFactory;
 
     @Override
-    public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Exception {
+    public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);

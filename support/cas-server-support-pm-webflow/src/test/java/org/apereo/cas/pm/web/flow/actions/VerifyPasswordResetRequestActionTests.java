@@ -46,7 +46,7 @@ class VerifyPasswordResetRequestActionTests {
     @TestPropertySource(properties = "cas.ticket.tst.number-of-uses=2")
     class PasswordResetTokenMultiUse extends BasePasswordManagementActionTests {
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -75,7 +75,7 @@ class VerifyPasswordResetRequestActionTests {
     @TestPropertySource(properties = "cas.authn.pm.reset.security-questions-enabled=false")
     class SecurityQuestionsDisabled extends BasePasswordManagementActionTests {
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -101,7 +101,7 @@ class VerifyPasswordResetRequestActionTests {
     @Nested
     class SecurityQuestionsEnabled extends BasePasswordManagementActionTests {
         @Test
-        void verifyInvalidToken() throws Exception {
+        void verifyInvalidToken() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -111,7 +111,7 @@ class VerifyPasswordResetRequestActionTests {
         }
 
         @Test
-        void verifyActionWithoutToken() throws Exception {
+        void verifyActionWithoutToken() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -130,7 +130,7 @@ class VerifyPasswordResetRequestActionTests {
         }
 
         @Test
-        void verifyActionWithResetToken() throws Exception {
+        void verifyActionWithResetToken() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -158,7 +158,7 @@ class VerifyPasswordResetRequestActionTests {
         }
 
         @Test
-        void verifyNoQuestionsAvailAction() throws Exception {
+        void verifyNoQuestionsAvailAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("1.2.3.4");
@@ -179,7 +179,7 @@ class VerifyPasswordResetRequestActionTests {
         }
 
         @Test
-        void verifyBadTicketAction() throws Exception {
+        void verifyBadTicketAction() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, "badticket");

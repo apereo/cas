@@ -40,7 +40,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Test
-    void verifyOperationNoCredential() {
+    void verifyOperationNoCredential() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -53,7 +53,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    void verifyAuthFails() {
+    void verifyAuthFails() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -74,7 +74,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    void verifyServiceDisallowed() {
+    void verifyServiceDisallowed() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -93,7 +93,7 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    void verifyNoAuthn() {
+    void verifyNoAuthn() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

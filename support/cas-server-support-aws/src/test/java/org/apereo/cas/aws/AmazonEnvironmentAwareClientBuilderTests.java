@@ -31,7 +31,7 @@ class AmazonEnvironmentAwareClientBuilderTests {
     private Environment environment;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
         val mock = mock(AwsClientBuilder.class);
         when(mock.build()).thenReturn(new Object());

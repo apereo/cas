@@ -33,9 +33,9 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
     private final SurrogateAuthenticationService surrogateAuthenticationService;
 
-
     @Override
-    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final RegisteredService registeredService) {
+    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal,
+                                             final RegisteredService registeredService) throws Throwable {
         val repositories = new HashSet<String>(0);
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy().getPrincipalAttributesRepository().getAttributeRepositoryIds());
@@ -58,7 +58,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
     @Override
     public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                                     final Credential mutableCredential,
-                                                                                    final RegisteredService registeredService) {
+                                                                                    final RegisteredService registeredService) throws Throwable {
         val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
         if (currentAuthn.isPresent()) {
             val authentication = currentAuthn.get();

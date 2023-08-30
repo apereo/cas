@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("1.2.3.4");
@@ -48,7 +48,7 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyActionUserlessToken() throws Exception {
+    void verifyActionUserlessToken() throws Throwable {
         val request = new MockHttpServletRequest();
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().build());
         val context = new MockRequestContext();

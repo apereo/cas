@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -54,7 +55,7 @@ class CloudDirectoryAuthenticationConfigurationTests {
     private CloudDirectoryClient amazonCloudDirectory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(amazonCloudDirectory);
     }
 }

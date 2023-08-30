@@ -27,13 +27,13 @@ class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
     private static final String SAMPLE_SIGNING_KEY = "cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ";
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val result = assertDoesNotThrow(() -> runShellCommand(() -> () -> "cipher-text --value example --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "decipher-text --value " + result + " --encryption-key " + SAMPLE_ENCRYPTION_KEY + " --signing-key " + SAMPLE_SIGNING_KEY));
     }
 
     @Test
-    void verifyFile() throws Exception {
+    void verifyFile() throws Throwable {
         val file = File.createTempFile("file", "txt");
         FileUtils.write(file, "example", StandardCharsets.UTF_8);
 

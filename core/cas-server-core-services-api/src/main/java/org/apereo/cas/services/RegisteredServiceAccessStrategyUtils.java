@@ -130,11 +130,12 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param principalId       the principal id
      * @param attributes        the attributes
      * @return true/false
+     * @throws Throwable the throwable
      */
     public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                    final RegisteredService registeredService,
                                                                    final String principalId,
-                                                                   final Map<String, List<Object>> attributes) {
+                                                                   final Map<String, List<Object>> attributes) throws Throwable {
         ensureServiceAccessIsAllowed(service, registeredService);
         LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].",
             service != null ? service.getId() : "unknown", principalId, attributes);

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class OneTimeTokenAuthenticationWebflowActionTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val resolver = mock(CasWebflowEventResolver.class);
         when(resolver.resolveSingle(any())).thenReturn(new EventFactorySupport()
             .event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS));
@@ -39,6 +39,6 @@ class OneTimeTokenAuthenticationWebflowActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.doExecute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 }

@@ -43,7 +43,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     private Action delegatedAuthenticationDiscoveryAction;
 
     @Test
-    void verifyOperationWithClient() throws Exception {
+    void verifyOperationWithClient() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -58,7 +58,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     }
 
     @Test
-    void verifyOperationWithoutClient() throws Exception {
+    void verifyOperationWithoutClient() throws Throwable {
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class PersonDirectoryAttributeRepositoryPlanTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(PersonDirectoryAttributeRepositoryPlan.class);
         doCallRealMethod().when(input).registerAttributeRepositories();
         doReturn(new ArrayList<>()).when(input).getAttributeRepositories();

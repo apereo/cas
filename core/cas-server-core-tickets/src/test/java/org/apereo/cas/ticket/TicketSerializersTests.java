@@ -65,7 +65,7 @@ class TicketSerializersTests {
     private TicketSerializationManager ticketSerializationManager;
 
     @Test
-    void verifyTicketGrantingTicketSerialization() {
+    void verifyTicketGrantingTicketSerialization() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,14 +73,14 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyTransientSessionTicketSerialization() {
+    void verifyTransientSessionTicketSerialization() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.defaultTicketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value"));
         verifySerialization(ticket);
     }
 
     @Test
-    void verifyServiceTicketSerialization() {
+    void verifyServiceTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -91,7 +91,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyProxyGrantingTicketSerialization() {
+    void verifyProxyGrantingTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -106,7 +106,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyProxyTicketSerialization() {
+    void verifyProxyTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);

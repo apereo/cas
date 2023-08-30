@@ -45,7 +45,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getInProgressAuthentication();
         val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
 

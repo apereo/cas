@@ -114,7 +114,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySamlAuthnRequestNotSigned() throws Exception {
+    void verifySamlAuthnRequestNotSigned() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
         val request = new MockHttpServletRequest();
@@ -124,7 +124,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySamlAuthnRequestSigned() throws Exception {
+    void verifySamlAuthnRequestSigned() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
@@ -147,7 +147,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySamlAuthnRequestSignedMultipleCertificates() throws Exception {
+    void verifySamlAuthnRequestSignedMultipleCertificates() throws Throwable {
         setupTestContextFor("classpath:metadata/sp-metadata-multicerts.xml", "https://bard.zoom.us");
 
         val request = new MockHttpServletRequest();
@@ -159,7 +159,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySamlAuthnRequestWithoutSig() throws Exception {
+    void verifySamlAuthnRequestWithoutSig() throws Throwable {
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 

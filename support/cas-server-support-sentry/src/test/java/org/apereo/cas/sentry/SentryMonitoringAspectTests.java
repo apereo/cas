@@ -42,7 +42,7 @@ class SentryMonitoringAspectTests {
     private Greeter greeter;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(greeter.greet(false));
         assertThrows(IllegalArgumentException.class, () -> greeter.greet(true));
     }

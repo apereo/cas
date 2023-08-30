@@ -87,7 +87,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     }
 
     protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(
-        final RegisteredServiceUsernameProviderContext context) {
+        final RegisteredServiceUsernameProviderContext context) throws Throwable {
         if (context.getRegisteredService() != null && context.getRegisteredService().getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]",
                 context.getRegisteredService(), context.getPrincipal().getId());

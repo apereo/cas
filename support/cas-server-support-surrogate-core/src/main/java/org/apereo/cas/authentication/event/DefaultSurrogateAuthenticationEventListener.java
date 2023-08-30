@@ -34,16 +34,16 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public void handleSurrogateAuthenticationFailureEvent(final CasSurrogateAuthenticationFailureEvent event) {
+    public void handleSurrogateAuthenticationFailureEvent(final CasSurrogateAuthenticationFailureEvent event) throws Throwable {
         notify(event.getPrincipal(), event);
     }
 
     @Override
-    public void handleSurrogateAuthenticationSuccessEvent(final CasSurrogateAuthenticationSuccessfulEvent event) {
+    public void handleSurrogateAuthenticationSuccessEvent(final CasSurrogateAuthenticationSuccessfulEvent event) throws Throwable {
         notify(event.getPrincipal(), event);
     }
 
-    protected void notify(final Principal principal, final AbstractCasEvent event) {
+    protected void notify(final Principal principal, final AbstractCasEvent event) throws Throwable {
         val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = casProperties.getAuthn().getSurrogate().getSms();

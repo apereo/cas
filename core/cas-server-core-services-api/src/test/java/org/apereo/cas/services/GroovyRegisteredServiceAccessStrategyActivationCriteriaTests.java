@@ -30,7 +30,7 @@ class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyExternalGroovyFile() {
+    void verifyExternalGroovyFile() throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
@@ -40,7 +40,7 @@ class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyInlineGroovyFile() {
+    void verifyInlineGroovyFile() throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
@@ -50,7 +50,7 @@ class GroovyRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifySerializeToJson() throws Exception {
+    void verifySerializeToJson() throws Throwable {
         val strategy = new GroovyRegisteredServiceAccessStrategyActivationCriteria();
         strategy.setGroovyScript("groovy { assert accessRequest != null; return false }");
         MAPPER.writeValue(JSON_FILE, strategy);

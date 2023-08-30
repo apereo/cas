@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WebUtilTests {
 
     @Test
-    void verifyFindService() {
+    void verifyFindService() throws Throwable {
         val casArgumentExtractor =
             new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         val request = new MockHttpServletRequest();
@@ -36,7 +36,7 @@ class WebUtilTests {
     }
 
     @Test
-    void verifyFoundNoService() {
+    void verifyFoundNoService() throws Throwable {
         val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");

@@ -4,13 +4,13 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -25,7 +25,7 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
      * Single sign on session authorized for service boolean.
      *
      * @param requestContext the context
-     * @return true/false
+     * @return true /false
      */
     public boolean singleSignOnSessionAuthorizedForService(final RequestContext requestContext) {
         val resolvedService = resolveServiceFromRequestContext(requestContext);
@@ -33,13 +33,13 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
         val authorized = authentication
             .map(authn -> configurationContext.getDelegatedClientIdentityProviderAuthorizers()
                 .stream()
-                .allMatch(authz -> authz.isDelegatedClientAuthorizedForAuthentication(authn, resolvedService, requestContext)))
+                .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForAuthentication(authn, resolvedService, requestContext))))
             .orElse(Boolean.FALSE);
         val strategy = configurationContext.getSingleSignOnParticipationStrategy();
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .requestContext(requestContext)
             .build();
-        return authorized && strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest);
+        return FunctionUtils.doUnchecked(() -> authorized && strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest));
     }
 
     /**
@@ -49,8 +49,10 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
      * @return the service
      */
     public Service resolveServiceFromRequestContext(final RequestContext context) {
-        val service = WebUtils.getService(context);
-        return configurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
+        return FunctionUtils.doUnchecked(() -> {
+            val service = WebUtils.getService(context);
+            return configurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
+        });
     }
 
     private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
@@ -86,7 +88,7 @@ public record DelegatedAuthenticationSingleSignOnEvaluator(DelegatedClientAuthen
                 val ssoRequest = SingleSignOnParticipationRequest.builder()
                     .requestContext(requestContext)
                     .build();
-                return strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest);
+                return FunctionUtils.doUnchecked(() -> strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest));
             }
         } catch (final AbstractTicketException e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());

@@ -70,7 +70,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         }
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
                 context.getNativeResponse(), "SAML2Client");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
@@ -79,7 +79,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         }
 
         @Test
-        void verifyProduceFailingClient() {
+        void verifyProduceFailingClient() throws Throwable {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
                 context.getNativeResponse(), "FailingClient");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
@@ -97,7 +97,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
     @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     class DynamicSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Test
-        void verifySelectionOperation() {
+        void verifySelectionOperation() throws Throwable {
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
             assertTrue(DelegationWebflowUtils.isDelegatedAuthenticationDynamicProviderSelection(requestContext));

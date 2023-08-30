@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class DelegatingExpirationPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new BaseDelegatingExpirationPolicy() {
             @Serial
             private static final long serialVersionUID = -5896270899735612574L;

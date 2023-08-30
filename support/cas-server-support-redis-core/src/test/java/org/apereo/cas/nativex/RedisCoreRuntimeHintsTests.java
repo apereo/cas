@@ -14,7 +14,7 @@ import org.springframework.aot.hint.RuntimeHints;
 @Tag("Native")
 class RedisCoreRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new RedisCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JavaUtilDate")
 class RevokedCertificateExceptionTests {
     @Test
-    void verifyReason() {
+    void verifyReason() throws Throwable {
         val entry = mock(X509CRLEntry.class);
         when(entry.hasExtensions()).thenReturn(Boolean.TRUE);
         when(entry.getSerialNumber()).thenReturn(BigInteger.ONE);

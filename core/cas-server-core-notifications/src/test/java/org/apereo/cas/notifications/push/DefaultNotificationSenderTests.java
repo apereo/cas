@@ -38,7 +38,7 @@ class DefaultNotificationSenderTests {
     private NotificationSender notificationSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(notificationSender.canSend());
         assertFalse(new DefaultNotificationSender(List.of()).notify(CoreAuthenticationTestUtils.getPrincipal(), Map.of()));
 

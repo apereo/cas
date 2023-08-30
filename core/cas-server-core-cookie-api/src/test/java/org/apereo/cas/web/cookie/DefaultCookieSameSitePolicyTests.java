@@ -24,31 +24,31 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cookie")
 class DefaultCookieSameSitePolicyTests {
     @Test
-    void verifyOff() {
+    void verifyOff() throws Throwable {
         val opt = CookieGenerationContext.builder().sameSitePolicy("Off").build();
         assertTrue(getPolicyResult(opt).isEmpty());
     }
 
     @Test
-    void verifyNone() {
+    void verifyNone() throws Throwable {
         val opt = CookieGenerationContext.builder().sameSitePolicy("NONE").build();
         assertEquals("SameSite=None;", getPolicyResult(opt).get());
     }
 
     @Test
-    void verifyLax() {
+    void verifyLax() throws Throwable {
         val opt = CookieGenerationContext.builder().sameSitePolicy("LAX").build();
         assertEquals("SameSite=Lax;", getPolicyResult(opt).get());
     }
 
     @Test
-    void verifyStrict() {
+    void verifyStrict() throws Throwable {
         val opt = CookieGenerationContext.builder().sameSitePolicy("STRICT").build();
         assertEquals("SameSite=Strict;", getPolicyResult(opt).get());
     }
 
     @Test
-    void verifyCustomImpl() {
+    void verifyCustomImpl() throws Throwable {
         val opt = CookieGenerationContext.builder()
             .sameSitePolicy(CustomCookieSameSitePolicy.class.getName())
             .build();
@@ -56,7 +56,7 @@ class DefaultCookieSameSitePolicyTests {
     }
 
     @Test
-    void verifyGroovyImpl() {
+    void verifyGroovyImpl() throws Throwable {
         val opt = CookieGenerationContext.builder().sameSitePolicy("classpath:/SameSiteCookie.groovy").build();
         assertEquals("SameSite=Something;", getPolicyResult(opt).get());
     }

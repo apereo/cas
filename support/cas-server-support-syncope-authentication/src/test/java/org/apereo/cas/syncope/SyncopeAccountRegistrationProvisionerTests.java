@@ -45,7 +45,7 @@ class SyncopeAccountRegistrationProvisionerTests {
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @Test
-    void verifySubmitUser() throws Exception {
+    void verifySubmitUser() throws Throwable {
         val registrationRequest = new AccountRegistrationRequest(
             Map.of("username", UUID.randomUUID().toString(),
                 "password", RandomUtils.randomAlphabetic(8),
@@ -56,7 +56,7 @@ class SyncopeAccountRegistrationProvisionerTests {
     }
 
     @Test
-    void verifySubmitUserByUnknownRealm() throws Exception {
+    void verifySubmitUserByUnknownRealm() throws Throwable {
         val registrationRequest = new AccountRegistrationRequest(
             Map.of("username", UUID.randomUUID().toString(),
                 "realm", "unknown-realm",

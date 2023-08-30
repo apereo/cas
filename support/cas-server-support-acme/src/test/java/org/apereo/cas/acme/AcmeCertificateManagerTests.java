@@ -55,7 +55,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(acmeCertificateManager);
         acmeCertificateManager.fetchCertificate(casProperties.getAcme().getDomains());
     }

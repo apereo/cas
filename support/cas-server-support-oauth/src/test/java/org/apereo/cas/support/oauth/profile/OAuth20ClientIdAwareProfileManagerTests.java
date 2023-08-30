@@ -48,7 +48,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfiles() {
+    void verifyGetProfiles() throws Throwable {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());
@@ -59,7 +59,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfilesWithoutSavedClientId() {
+    void verifyGetProfilesWithoutSavedClientId() throws Throwable {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());

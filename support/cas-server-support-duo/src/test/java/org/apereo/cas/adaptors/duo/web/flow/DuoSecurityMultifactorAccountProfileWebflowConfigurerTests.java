@@ -75,7 +75,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
     private MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class ServiceRegistryListenerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val listener = ServiceRegistryListener.noOp();
         assertNotNull(listener.postLoad(mock(RegisteredService.class)));
         assertNotNull(listener.preSave(mock(RegisteredService.class)));

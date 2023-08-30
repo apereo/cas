@@ -38,7 +38,7 @@ class MetadataRegistrationAuthorityAttributeReleasePolicyTests extends BaseSamlI
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyNoMatch() {
+    void verifyNoMatch() throws Throwable {
         val filter = new MetadataRegistrationAuthorityAttributeReleasePolicy();
         filter.setRegistrationAuthority("^nothing.+");
         filter.setAllowedAttributes(List.of("sn"));
@@ -55,7 +55,7 @@ class MetadataRegistrationAuthorityAttributeReleasePolicyTests extends BaseSamlI
     }
 
     @Test
-    void verifyMatch() {
+    void verifyMatch() throws Throwable {
         val filter = new MetadataRegistrationAuthorityAttributeReleasePolicy();
         filter.setRegistrationAuthority("urn:mace:.+");
         filter.setAllowedAttributes(List.of("sn"));

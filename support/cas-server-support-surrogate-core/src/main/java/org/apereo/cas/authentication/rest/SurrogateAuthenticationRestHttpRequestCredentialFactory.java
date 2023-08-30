@@ -46,7 +46,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     }
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) throws Throwable {
         val credentials = super.fromRequest(request, requestBody);
         if (credentials.isEmpty()) {
             return credentials;

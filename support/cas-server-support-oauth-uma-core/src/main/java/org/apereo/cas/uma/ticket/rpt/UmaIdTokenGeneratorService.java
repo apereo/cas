@@ -37,7 +37,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) throws Throwable {
         val timeoutInSeconds = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         LOGGER.debug("Attempting to produce claims for the RPT access token [{}]", accessToken);

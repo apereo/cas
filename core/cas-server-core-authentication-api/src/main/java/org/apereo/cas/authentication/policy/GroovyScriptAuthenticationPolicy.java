@@ -62,7 +62,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         final Authentication auth,
         final Set<AuthenticationHandler> authenticationHandlers,
         final ConfigurableApplicationContext applicationContext,
-        final Optional<Serializable> assertion) throws Exception {
+        final Optional<Serializable> assertion) throws Throwable {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {
@@ -92,7 +92,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         }
     }
 
-    private Optional<Exception> getScriptExecutionResult(final Authentication auth) {
+    private Optional<Exception> getScriptExecutionResult(final Authentication auth) throws Throwable {
         val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
         executableScript.setBinding(args);
         return executableScript.execute(args.values().toArray(), Optional.class);

@@ -35,7 +35,7 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
      * @throws Exception the exception
      */
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {

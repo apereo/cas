@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UmaAuthorizationNeedInfoResponseTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val info = new UmaAuthorizationNeedInfoResponse();
         info.setRedirectUser(true);
         info.setRequiredClaims(List.of("claim"));

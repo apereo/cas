@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 class AttributeValuesPerLineProtocolAttributesRendererTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val r = new AttributeValuesPerLineProtocolAttributesRenderer();
         val results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render((Map) results).isEmpty());
     }
 
     @Test
-    void verifyActionWithSpaces() {
+    void verifyActionWithSpaces() throws Throwable {
         val r = new AttributeValuesPerLineProtocolAttributesRenderer();
         val results = Map.of("attribute name", "attribute-value");
         val rendered = r.render((Map) results);

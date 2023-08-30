@@ -55,7 +55,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())

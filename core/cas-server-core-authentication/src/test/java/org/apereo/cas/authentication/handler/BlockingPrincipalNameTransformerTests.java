@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class BlockingPrincipalNameTransformerTests {
     @Test
-    void verifyBlocked() {
+    void verifyBlocked() throws Throwable {
         val pt = new BlockingPrincipalNameTransformer("[abc]");
         assertThrows(PreventedException.class, () -> pt.transform("casuser"));
         assertEquals("helloworld", pt.transform("helloworld"));

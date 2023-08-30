@@ -35,14 +35,14 @@ class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
     protected Action action;
 
     @Test
-    void verifyBadCaptcha() throws Exception {
+    void verifyBadCaptcha() throws Throwable {
         val context = getRequestContext("good", "bad");
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
     }
 
     @Test
-    void verifyAccountUnlock() throws Exception {
+    void verifyAccountUnlock() throws Throwable {
         val context = getRequestContext("good", "good");
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

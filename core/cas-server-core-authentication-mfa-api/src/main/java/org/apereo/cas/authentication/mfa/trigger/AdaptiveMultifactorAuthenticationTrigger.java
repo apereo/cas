@@ -71,7 +71,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   final Service service) throws Throwable {
 
         val multifactorMap = casProperties.getAuthn().getAdaptive().getPolicy().getRequireMultifactor();
 
@@ -123,7 +123,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
     private boolean checkRequestGeoLocation(final HttpServletRequest httpServletRequest,
                                             final String clientIp, final String mfaMethod,
-                                            final String pattern) {
+                                            final String pattern) throws Throwable {
         if (this.geoLocationService == null) {
             LOGGER.trace("No geolocation service is defined");
             return false;

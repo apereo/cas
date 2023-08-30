@@ -50,7 +50,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
     }
 
     @Test
-    void verifyPredicateFails() {
+    void verifyPredicateFails() throws Throwable {
         val filter = new MetadataEntityAttributesAttributeReleasePolicy();
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val authzRequest = OAuth20AuthorizationRequest.builder()
             .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())
             .build();
@@ -40,7 +40,7 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
     }
 
     @Test
-    void verifyBuild() throws Exception {
+    void verifyBuild() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));

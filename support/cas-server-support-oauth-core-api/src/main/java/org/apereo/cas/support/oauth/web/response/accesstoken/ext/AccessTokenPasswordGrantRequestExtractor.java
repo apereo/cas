@@ -31,7 +31,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public AccessTokenRequestContext extractRequest(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
         val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getKey();

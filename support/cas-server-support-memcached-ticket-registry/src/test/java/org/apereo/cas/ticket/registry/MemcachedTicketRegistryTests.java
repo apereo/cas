@@ -96,7 +96,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyCreatePgt() throws Exception {
+    void verifyCreatePgt() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         newTicketRegistry.addTicket(tgt);
         val service = RegisteredServiceTestUtils.getService();
@@ -112,7 +112,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyOAuthCodeIsAddedToMemcached() throws Exception {
+    void verifyOAuthCodeIsAddedToMemcached() throws Throwable {
         val factory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString());
         val code = factory.create(RegisteredServiceTestUtils.getService(),
@@ -128,7 +128,7 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyFailures() throws Exception {
+    void verifyFailures() throws Throwable {
         val pool = mock(ObjectPool.class);
         val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));

@@ -48,7 +48,7 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Testing Strategy
 
-The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `422` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
@@ -56,7 +56,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 A CAS server installation and deployment process can be tuned to build and run 
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). 
-The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) have selectively switched
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.

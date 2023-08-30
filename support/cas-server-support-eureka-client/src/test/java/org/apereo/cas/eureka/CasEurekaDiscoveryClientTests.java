@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -40,10 +41,11 @@ public class CasEurekaDiscoveryClientTests {
     @Nested
     class DefaultTlsTests {
         @Autowired
+        @Qualifier("eurekaClientConfigBean")
         private EurekaClientConfigBean eurekaClientConfigBean;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(eurekaClientConfigBean);
         }
     }
@@ -60,10 +62,11 @@ public class CasEurekaDiscoveryClientTests {
     @Nested
     class CasSslTests {
         @Autowired
+        @Qualifier("eurekaClientConfigBean")
         private EurekaClientConfigBean eurekaClientConfigBean;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(eurekaClientConfigBean);
         }
     }

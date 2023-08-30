@@ -46,7 +46,7 @@ class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    void verifyByProps() {
+    void verifyByProps() throws Throwable {
         val strategy = new DefaultCaptchaActivationStrategy(mock(ServicesManager.class));
         val context = getRequestContext(new MockHttpServletRequest());
 
@@ -58,7 +58,7 @@ class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    void verifyByIpPattern() {
+    void verifyByIpPattern() throws Throwable {
         val strategy = new DefaultCaptchaActivationStrategy(mock(ServicesManager.class));
         val request = new MockHttpServletRequest();
         val context = getRequestContext(request);
@@ -73,7 +73,7 @@ class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    void verifyByIpPatternPerService() {
+    void verifyByIpPatternPerService() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
 
         val strategy = new DefaultCaptchaActivationStrategy(servicesManager);
@@ -98,7 +98,7 @@ class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
-    void verifyByService() {
+    void verifyByService() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
 
         val strategy = new DefaultCaptchaActivationStrategy(servicesManager);

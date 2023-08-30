@@ -115,7 +115,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
-        final Map<String, List<Object>> profileAttributes) throws Exception {
+        final Map<String, List<Object>> profileAttributes) throws Throwable {
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
@@ -132,13 +132,13 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
         final Map<String, List<Object>> profileAttributes,
-        final Credential c) throws Exception {
+        final Credential credential) throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val tgt = new MockTicketGrantingTicket(actualPrincipalId, c, profileAttributes);
+        val tgt = new MockTicketGrantingTicket(actualPrincipalId, credential, profileAttributes);
         ticketRegistry.addTicket(tgt);
-        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(credential.getId(), profileAttributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         return context;

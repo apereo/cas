@@ -90,7 +90,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
@@ -99,21 +99,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         }
     }
 
-    /**
-     * Generate registration access token access token.
-     *
-     * @param request             the request
-     * @param response            the response
-     * @param registeredService   the registered service
-     * @param registrationRequest the registration request
-     * @return the access token
-     * @throws Exception the exception
-     */
     protected OAuth20AccessToken generateRegistrationAccessToken(
         final HttpServletRequest request,
         final HttpServletResponse response,
         final OidcRegisteredService registeredService,
-        final OidcClientRegistrationRequest registrationRequest) throws Exception {
+        final OidcClientRegistrationRequest registrationRequest) throws Throwable {
         val authn = DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
             .build();

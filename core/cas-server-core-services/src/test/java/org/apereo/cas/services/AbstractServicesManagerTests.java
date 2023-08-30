@@ -63,7 +63,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifySaveAndGet() {
+    void verifySaveAndGet() throws Throwable {
         val services = new CasRegisteredService();
         services.setId(1100);
         services.setName(TEST);
@@ -81,7 +81,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifySaveInRegistryAndGetById() {
+    void verifySaveInRegistryAndGetById() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(2100);
         service.setName(TEST);
@@ -94,7 +94,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifySaveInRegistryAndGetByServiceId() {
+    void verifySaveInRegistryAndGetByServiceId() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(3100);
         service.setName(TEST);
@@ -108,7 +108,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifyDelete() {
+    void verifyDelete() throws Throwable {
         val r = new CasRegisteredService();
         r.setId(1000);
         r.setName(TEST);
@@ -122,7 +122,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifyExpiredNotify() {
+    void verifyExpiredNotify() throws Throwable {
         val r = new CasRegisteredService();
         r.setId(2000);
         r.setName(TEST);
@@ -136,7 +136,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     @Test
-    void verifyExpiredNotifyAndDelete() {
+    void verifyExpiredNotifyAndDelete() throws Throwable {
         val r = new CasRegisteredService();
         r.setId(2001);
         r.setName(TEST);
@@ -159,7 +159,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
      * @throws Exception in case threads cannot be started or joined.
      */
     @Test
-    void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Exception {
+    void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(RandomUtils.nextLong());
         service.setName(UUID.randomUUID().toString());

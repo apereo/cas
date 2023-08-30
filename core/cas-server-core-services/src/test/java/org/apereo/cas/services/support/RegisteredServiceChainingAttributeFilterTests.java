@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisteredServiceChainingAttributeFilterTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val chain = new RegisteredServiceChainingAttributeFilter();
         chain.getFilters().add(new RegisteredServiceRegexAttributeFilter(RegexUtils.MATCH_NOTHING_PATTERN.pattern()));
         assertTrue(chain.filter(CoreAuthenticationTestUtils.getAttributes()).isEmpty());

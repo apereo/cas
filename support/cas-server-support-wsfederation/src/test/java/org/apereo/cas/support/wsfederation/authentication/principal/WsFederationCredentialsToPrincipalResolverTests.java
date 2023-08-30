@@ -28,14 +28,14 @@ class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsFederati
     private AuthenticationManager authenticationManager;
 
     @Test
-    void verifyAuth() {
+    void verifyAuth() throws Throwable {
         val creds = getCredential();
         val auth = authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(creds));
         assertNotNull(auth);
     }
 
     @Test
-    void verifyMultipleAttributes() {
+    void verifyMultipleAttributes() throws Throwable {
         val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
         attributes.put("upn", List.of("cas1", "cas2"));
         val creds = getCredential(attributes);

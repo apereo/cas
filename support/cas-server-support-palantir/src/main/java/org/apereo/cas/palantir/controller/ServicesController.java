@@ -32,11 +32,22 @@ public class ServicesController {
     private final ObjectProvider<ServicesManager> servicesManager;
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
 
+    /**
+     * Gets all services.
+     *
+     * @return the all services
+     */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAllServices() {
         return ResponseEntity.ok(registeredServiceSerializer.fromList(servicesManager.getObject().getAllServices()));
     }
 
+    /**
+     * Gets service by numeric id.
+     *
+     * @param id the id
+     * @return the service by numeric id
+     */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getServiceByNumericId(@PathVariable("id") final long id) {
         val registeredService = servicesManager.getObject().findServiceBy(id);
@@ -45,11 +56,23 @@ public class ServicesController {
             : ResponseEntity.notFound().build();
     }
 
+    /**
+     * Delete service by numeric id response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteServiceByNumericId(@PathVariable("id") final long id) {
         return ResponseEntity.ok(registeredServiceSerializer.toString(servicesManager.getObject().delete(id)));
     }
 
+    /**
+     * Save service response entity.
+     *
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveService(@RequestBody final String registeredServiceBody) {
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
@@ -58,6 +81,12 @@ public class ServicesController {
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
     }
 
+    /**
+     * Update service response entity.
+     *
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateService(@RequestBody final String registeredServiceBody) {
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);

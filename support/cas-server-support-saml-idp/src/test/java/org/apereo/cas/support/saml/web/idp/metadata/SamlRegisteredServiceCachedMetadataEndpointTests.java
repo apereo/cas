@@ -44,13 +44,13 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    void verifyInvalidate() {
+    void verifyInvalidate() throws Throwable {
         endpoint.invalidate(samlRegisteredService.getServiceId(), null);
         endpoint.invalidate(StringUtils.EMPTY, null);
     }
 
     @Test
-    void verifyInvalidateByEntityId() {
+    void verifyInvalidateByEntityId() throws Throwable {
         endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), true);
         endpoint.invalidate(samlRegisteredService.getName(), samlRegisteredService.getServiceId());
         val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), false);
@@ -59,7 +59,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    void verifyCachedMetadataObject() {
+    void verifyCachedMetadataObject() throws Throwable {
         val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), StringUtils.EMPTY, true);
         val results = response.getBody();
         assertNotNull(results);
@@ -67,7 +67,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    void verifyCachedServiceWithoutResolution() {
+    void verifyCachedServiceWithoutResolution() throws Throwable {
         val response = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getName()), UUID.randomUUID().toString(), false);
         val results = response.getBody();
         assertNotNull(results);
@@ -75,7 +75,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    void verifyCachedService() {
+    void verifyCachedService() throws Throwable {
         Stream.of(Boolean.TRUE, Boolean.FALSE)
             .map(force -> endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY, force))
             .map(HttpEntity::getBody)
@@ -86,7 +86,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    void verifyBadService() {
+    void verifyBadService() throws Throwable {
         val response = endpoint.getCachedMetadataObject("bad-service-id", StringUtils.EMPTY, true);
         val results = response.getBody();
         assertNotNull(results);

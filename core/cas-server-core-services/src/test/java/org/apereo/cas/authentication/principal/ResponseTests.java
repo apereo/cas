@@ -20,7 +20,7 @@ class ResponseTests {
     private static final String TICKET_VALUE = "foobar";
 
     @Test
-    void verifyConstructionWithoutFragmentAndNoQueryString() {
+    void verifyConstructionWithoutFragmentAndNoQueryString() throws Throwable {
         val url = "http://localhost:8080/foo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -29,7 +29,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyConstructionWithoutFragmentButHasQueryString() {
+    void verifyConstructionWithoutFragmentButHasQueryString() throws Throwable {
         val url = "http://localhost:8080/foo?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -38,7 +38,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyConstructionWithFragmentAndQueryString() {
+    void verifyConstructionWithFragmentAndQueryString() throws Throwable {
         val url = "http://localhost:8080/foo?test=boo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -47,7 +47,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyConstructionWithFragmentAndNoQueryString() {
+    void verifyConstructionWithFragmentAndNoQueryString() throws Throwable {
         val url = "http://localhost:8080/foo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -56,7 +56,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyConstructionWithFragmentAndNoQueryString2() {
+    void verifyConstructionWithFragmentAndNoQueryString2() throws Throwable {
         val url = "http://localhost:8080/foo#hello?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
@@ -65,7 +65,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyUrlSanitization() {
+    void verifyUrlSanitization() throws Throwable {
         val url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
@@ -75,7 +75,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyUrlWithUnicode() {
+    void verifyUrlWithUnicode() throws Throwable {
         val url = "https://www.example.com/πολιτικῶν";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
@@ -84,7 +84,7 @@ class ResponseTests {
     }
 
     @Test
-    void verifyUrlWithUrn() {
+    void verifyUrlWithUrn() throws Throwable {
         val url = "urn:applis-cri:java-sso";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-123456");

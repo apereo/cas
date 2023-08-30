@@ -22,7 +22,7 @@ public class GoogleAuthenticatorPrepareLoginAction extends AbstractMultifactorAu
     protected final OneTimeTokenCredentialRepository repository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val enabled = casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()
             && repository.count(principal.getId()) >= 1;

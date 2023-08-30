@@ -22,7 +22,7 @@ class CapacityTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         verify("1B", "1b", "1 b", "100 B", "12.5mb", "123.564 GB", "66.66Kb", "43.12 TB");
     }
 }

@@ -33,7 +33,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
-        void verifyGroovyOperationByService() throws Exception {
+        void verifyGroovyOperationByService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("classpath:SamlAuthnContext.groovy");
             val authnRequest = getAuthnRequestFor(service);
@@ -52,7 +52,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByService() throws Exception {
+        void verifyOperationByService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("some-context-class");
             val authnRequest = getAuthnRequestFor(service);
@@ -71,7 +71,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByAuthnRequest() throws Exception {
+        void verifyOperationByAuthnRequest() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
             val context = mock(RequestedAuthnContext.class);
@@ -91,7 +91,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByAssertion() throws Exception {
+        void verifyOperationByAssertion() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -119,7 +119,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
 
         @Test
-        void verifyRefedsContext() throws Exception {
+        void verifyRefedsContext() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -152,7 +152,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     class MappedToValueTests extends BaseSamlIdPConfigurationTests {
 
         @Test
-        void verifyRefedsContextWithPrincipalAttribute() throws Exception {
+        void verifyRefedsContextWithPrincipalAttribute() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -172,7 +172,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyRefedsContextWithoutPrincipalAttribute() throws Exception {
+        void verifyRefedsContextWithoutPrincipalAttribute() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 

@@ -41,7 +41,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
-    public Set<Event> resolve(final RequestContext context) {
+    public Set<Event> resolve(final RequestContext context) throws Throwable {
         LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
         WebUtils.putWarnCookieIfRequestParameterPresent(configurationContext.getWarnCookieGenerator(), context);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
@@ -49,7 +49,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         val events = resolve(context);
         if (events == null || events.isEmpty()) {
             LOGGER.trace("No event could be determined");
@@ -123,34 +123,16 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    /**
-     * Resolve service from authentication request.
-     *
-     * @param service the service
-     * @return the service
-     */
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
         return configurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
     }
 
-    /**
-     * Resolve service from authentication request service.
-     *
-     * @param context the context
-     * @return the service
-     */
-    protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) {
+    protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) throws Throwable {
         val ctxService = WebUtils.getService(context);
         return resolveServiceFromAuthenticationRequest(ctxService);
     }
 
-    /**
-     * Handle authentication transaction and grant ticket granting ticket.
-     *
-     * @param context the context
-     * @return the set
-     */
-    protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) {
+    protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) throws Throwable {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
             val credential = getCredentialFromContext(context);

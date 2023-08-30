@@ -24,11 +24,11 @@ public interface IdTokenGeneratorService {
      * @param grantType         the grant type
      * @param registeredService the registered service
      * @return the string
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     String generate(OAuth20AccessToken accessToken,
                     UserProfile userProfile,
                     OAuth20ResponseTypes responseType,
                     OAuth20GrantTypes grantType,
-                    OAuthRegisteredService registeredService) throws Exception;
+                    OAuthRegisteredService registeredService) throws Throwable;
 }

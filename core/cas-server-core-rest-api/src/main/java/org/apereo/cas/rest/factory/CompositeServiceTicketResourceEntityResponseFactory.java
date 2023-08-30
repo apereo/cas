@@ -29,9 +29,9 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         resourceResolverName = AuditResourceResolvers.REST_API_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService service,
-                                        final AuthenticationResult authenticationResult) {
+                                        final AuthenticationResult authenticationResult) throws Throwable {
         val factory = chain.stream()
-            .filter(f -> f.supports(service, authenticationResult))
+            .filter(responseFactory -> responseFactory.supports(service, authenticationResult))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate a response entity factory to build a service ticket. "
                                                             + "This generally is due to a configuration issue where CAS is unable to recognize the incoming request"));

@@ -53,7 +53,7 @@ class ReturnStaticAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyReleaseRules() {
+    void verifyReleaseRules() throws Throwable {
         val policy = new ReturnStaticAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap("Hello", CollectionUtils.wrapList("World")));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -73,7 +73,7 @@ class ReturnStaticAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyExpressions() {
+    void verifyExpressions() throws Throwable {
         System.setProperty("MY_ATTR", "World");
         val policy = new ReturnStaticAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap("Hello",

@@ -1,6 +1,5 @@
 {
   "dependencies": "pac4j-webflow,reports",
-
   "conditions": {
     "docker": "true"
   },
@@ -22,6 +21,11 @@
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
     "--cas.authn.pac4j.saml[0].sign-service-provider-metadata=true",
 
+    "--cas.authn.pac4j.saml[0].saml2-attribute-converter=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/AttributeConverter.groovy",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
     "--logging.level.org.apereo.cas=info"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"

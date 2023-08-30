@@ -89,15 +89,15 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
                + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
                + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
                + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
-               + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
-               + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
-               + "  <samlp:Status>%n"
-               + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
-               + "  </samlp:Status>%n"
+               + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">"
+               + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>"
+               + "  <samlp:Status>"
+               + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>"
+               + "  </samlp:Status>"
                + "</samlp:LogoutResponse>";
     }
 
-    protected void assertStartAuthentication(final Service service) throws Exception {
+    protected void assertStartAuthentication(final Service service) throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         val response = new MockHttpServletResponse();
