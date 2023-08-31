@@ -4,13 +4,14 @@ import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
-
+import { SnackbarProvider } from 'notistack';
 import { store } from './store/store';
 import CasThemeProvider from './theme/CasThemeProvider';
 
 import { routes } from './views/Routes';
 
-import { APP_PATH } from './App.constant';
+import { API_PATH, APP_PATH } from './App.constant';
+
 
 const router = createBrowserRouter(
     [
@@ -25,7 +26,9 @@ function App() {
     return (
         <Provider store={store}>
             <CasThemeProvider>
-                <RouterProvider router={router} />
+                <SnackbarProvider>
+                    <RouterProvider router={router} />
+                </SnackbarProvider>
             </CasThemeProvider>
         </Provider>
     )

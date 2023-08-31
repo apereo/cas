@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Tab, Tabs, Toolbar } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import {
     and,
     deriveLabelForUISchemaElement,
@@ -89,7 +89,6 @@ export const MuiSidebarCategorizationRenderer = (
     };
 
     const onTabChange = (value) => {
-        console.log(value)
         if (onChange) {
             onChange(value, safeCategory);
         }
@@ -103,11 +102,11 @@ export const MuiSidebarCategorizationRenderer = (
     const drawerWidth = 240;
 
     return (
-        <Box sx={{ display: 'flex', flexGrow: 1 }}>
-            <List sx={{ minWidth: '240px', borderRight: `1px solid rgba(0, 0, 0, 0.3)`, boxShadow: 1 }}>
+        <Box sx={{ display: 'flex' }}>
+            <List sx={{ minWidth: `${drawerWidth}px`, borderRight: `1px solid rgba(0, 0, 0, 0.1)`, boxShadow: 0 }}>
                 {categories.map((_, idx) => (
                     <ListItem key={idx} disablePadding>
-                        <ListItemButton onClick={() => onTabChange(idx)}>
+                        <ListItemButton onClick={() => onTabChange(idx)} selected={activeCategory === idx}>
                             <ListItemText primary={tabLabels[idx]} />
                         </ListItemButton>
                     </ListItem>
