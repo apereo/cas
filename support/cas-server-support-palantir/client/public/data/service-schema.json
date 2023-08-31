@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$defs": {
         "": {
             "type": "object"
@@ -223,7 +224,6 @@
             }
         },
         "CasRegisteredService": {
-            "title": "CAS Registered Service",
             "type": "object",
             "properties": {
                 "acceptableUsagePolicy": {
@@ -724,6 +724,12 @@
         "DefaultRegisteredServiceWebflowInterruptPolicy": {
             "type": "object",
             "properties": {
+                "attributeName": {
+                    "type": "string"
+                },
+                "attributeValue": {
+                    "type": "string"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
@@ -1839,8 +1845,10 @@
             ]
         }
     },
-    "type": "object",
     "anyOf": [
+        {
+            "$ref": "#/$defs/BaseWebBasedRegisteredService"
+        },
         {
             "$ref": "#/$defs/CasRegisteredService"
         }
