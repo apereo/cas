@@ -110,7 +110,7 @@ public class SamlIdPSessionManager {
                 .or(Unchecked.supplier(() -> {
                     val applicationContext = openSamlConfigBean.getApplicationContext();
                     val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
-                    val service = argumentExtractor.extractService(JEEContext.class.cast(context).getNativeRequest());
+                    val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
                     return Optional.ofNullable(service)
                         .map(Unchecked.function(__ -> {
                             val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);

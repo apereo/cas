@@ -263,7 +263,7 @@ class DefaultDelegatedClientFactoryTests {
         void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
-            val client = SAML2Client.class.cast(clients.iterator().next());
+            val client = (SAML2Client) clients.iterator().next();
             assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
             assertTrue(client.getConfiguration().getMetadataSigner() instanceof DefaultSAML2MetadataSigner);
         }
@@ -381,7 +381,7 @@ class DefaultDelegatedClientFactoryTests {
         void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
-            val client = SAML2Client.class.cast(clients.iterator().next());
+            val client = (SAML2Client) clients.iterator().next();
             assertTrue(client.getConfiguration().getSamlMessageStoreFactory() instanceof HttpSessionStoreFactory);
         }
     }

@@ -62,7 +62,7 @@ public class TicketRegistrySessionStore implements SessionStore {
             .orElseGet(() -> {
                 val newSessionId = UUID.randomUUID().toString();
                 LOGGER.trace("Generated session id: [{}]", newSessionId);
-                val webContext = JEEContext.class.cast(context);
+                val webContext = (JEEContext) context;
                 cookieGenerator.addCookie(webContext.getNativeRequest(), webContext.getNativeResponse(), newSessionId);
                 context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, newSessionId);
                 return newSessionId;
@@ -94,7 +94,7 @@ public class TicketRegistrySessionStore implements SessionStore {
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
             FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(ticketId));
-            val context = JEEContext.class.cast(webContext);
+            val context = (JEEContext) webContext;
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
         }
@@ -125,7 +125,7 @@ public class TicketRegistrySessionStore implements SessionStore {
         var sessionId = (String) webContext.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
         if (StringUtils.isBlank(sessionId)) {
             LOGGER.trace("Session id not found as a request attribute; checking session cookie [{}]", cookieGenerator.getCookieName());
-            val context = JEEContext.class.cast(webContext);
+            val context = (JEEContext) webContext;
             sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
         }
         LOGGER.trace("Fetched session id: [{}]", sessionId);

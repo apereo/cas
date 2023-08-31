@@ -55,6 +55,6 @@ class GroovyDelegatedClientAuthenticationCredentialResolverTests {
         assertEquals("resolved-casuser", profile.getId());
         assertTrue(profile.getAttributes().containsKey("memberOf"));
         assertTrue(profile.getAttributes().containsKey("uid"));
-        DisposableBean.class.cast(groovyDelegatedClientAuthenticationCredentialResolver).destroy();
+        ((DisposableBean) groovyDelegatedClientAuthenticationCredentialResolver).destroy();
     }
 }

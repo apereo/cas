@@ -130,7 +130,7 @@ class CasKryoTranscoderTests {
         assertThrows(KryoException.class, () -> transcoder.decode(data));
         
         if (transcoder instanceof CasKryoTranscoder) {
-            val enc = CasKryoTranscoder.class.cast(this.transcoder);
+            val enc = (CasKryoTranscoder) this.transcoder;
             assertNotNull(enc.getKryo());
         }
     }

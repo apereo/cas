@@ -81,7 +81,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
         @Override
         public void afterTestClass(final TestContext testContext) throws Exception {
             var registry = testContext.getApplicationContext().getBean("cassandraServiceRegistry", ServiceRegistry.class);
-            DisposableBean.class.cast(registry).destroy();
+            ((DisposableBean) registry).destroy();
         }
     }
 }

@@ -138,7 +138,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket 
     protected void updateTicketGrantingTicketState() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
-            val state = Ticket.class.cast(ticketGrantingTicket);
+            val state = (Ticket) ticketGrantingTicket;
             state.update();
         }
     }

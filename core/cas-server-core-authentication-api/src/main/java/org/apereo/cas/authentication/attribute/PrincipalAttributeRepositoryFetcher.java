@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Synchronized;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,6 +46,7 @@ public class PrincipalAttributeRepositoryFetcher {
      *
      * @return the map
      */
+    @Synchronized
     public Map<String, List<Object>> retrieve() {
         val query = new LinkedHashMap<String, Object>();
         if (currentPrincipal != null) {

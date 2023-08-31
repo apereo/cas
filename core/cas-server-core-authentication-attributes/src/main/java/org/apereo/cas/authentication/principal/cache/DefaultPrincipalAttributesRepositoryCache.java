@@ -5,13 +5,11 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCach
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;
@@ -41,12 +39,14 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
      */
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
         val key = registeredService.getId() + "@" + registeredService.getName();
-        return DigestUtils.sha512(key);
+        val cacheKey = DigestUtils.sha512(key);
+        LOGGER.trace("Built registered service cache key [{}] for [{}]:", cacheKey, key);
+        return cacheKey;
     }
 
     private static Cache<String, Map<String, List<Object>>> initializeCache(
         final RegisteredServicePrincipalAttributesRepository repository) {
-        val cachedRepository = CachingPrincipalAttributesRepository.class.cast(repository);
+        val cachedRepository = (CachingPrincipalAttributesRepository) repository;
         val unit = TimeUnit.valueOf(StringUtils.defaultIfBlank(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
             .initialCapacity(DEFAULT_MAXIMUM_CACHE_SIZE)
@@ -60,40 +60,30 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         invalidate();
     }
 
-    /**
-     * Invalidate all.
-     */
     @Override
-    public void invalidate() {
+    public synchronized void invalidate() {
         registeredServicesCache.values().forEach(Cache::invalidateAll);
     }
 
     @Override
-    public Map<String, List<Object>> fetchAttributes(final RegisteredService registeredService,
-                                                     final RegisteredServicePrincipalAttributesRepository repository,
-                                                     final Principal principal) {
+    public synchronized Map<String, List<Object>> fetchAttributes(final RegisteredService registeredService,
+                                                                  final RegisteredServicePrincipalAttributesRepository repository,
+                                                                  final Principal principal) {
         val cache = getRegisteredServiceCacheInstance(registeredService, repository);
-        return cache.get(principal.getId(), s -> {
+        return cache.get(principal.getId(), __ -> {
             LOGGER.debug("No cached attributes could be found for [{}]", principal.getId());
             return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         });
     }
 
     @Override
-    public void putAttributes(final RegisteredService registeredService,
-                              final RegisteredServicePrincipalAttributesRepository repository,
-                              final String id, final Map<String, List<Object>> attributes) {
+    public synchronized void putAttributes(final RegisteredService registeredService,
+                                           final RegisteredServicePrincipalAttributesRepository repository,
+                                           final String id, final Map<String, List<Object>> attributes) {
         val cache = getRegisteredServiceCacheInstance(registeredService, repository);
         cache.put(id, attributes);
     }
 
-    /**
-     * Gets registered service cache instance.
-     *
-     * @param registeredService the registered service
-     * @param repository        the repository
-     * @return the registered service cache instance
-     */
     private Cache<String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(
         final RegisteredService registeredService, final RegisteredServicePrincipalAttributesRepository repository) {
 

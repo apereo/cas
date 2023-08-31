@@ -69,6 +69,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(oidcRegisteredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);

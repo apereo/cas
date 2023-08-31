@@ -82,10 +82,9 @@ class ChainingAttributeReleasePolicyTests {
 
         val repository = chain.getPrincipalAttributesRepository();
         assertTrue(repository instanceof ChainingPrincipalAttributesRepository);
-        assertNotNull(repository.getAttributes(releasePolicyContext.getPrincipal(), releasePolicyContext.getRegisteredService()));
+        assertNotNull(repository.getAttributes(releasePolicyContext));
         assertDoesNotThrow(() -> repository.update(releasePolicyContext.getPrincipal().getId(),
-            releasePolicyContext.getPrincipal().getAttributes(),
-            releasePolicyContext.getRegisteredService()));
+            releasePolicyContext.getPrincipal().getAttributes(), releasePolicyContext));
     }
 
     @Test

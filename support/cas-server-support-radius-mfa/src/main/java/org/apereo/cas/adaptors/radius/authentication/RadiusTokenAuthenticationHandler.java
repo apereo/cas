@@ -87,7 +87,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
             val stateValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
             if (stateValue.isPresent()) {
-                val stateAttr = AttributeValue.class.cast(stateValue.get());
+                val stateAttr = (AttributeValue) stateValue.get();
                 state = Optional.of(stateAttr.getValueObject());
             }
         }

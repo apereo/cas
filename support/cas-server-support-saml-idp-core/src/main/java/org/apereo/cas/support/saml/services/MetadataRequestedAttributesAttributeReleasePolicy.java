@@ -13,7 +13,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
@@ -56,8 +54,8 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        val entityId = getEntityIdFromRequest(context.getService());
-        val facade = determineServiceProviderMetadataFacade((SamlRegisteredService) context.getRegisteredService(), entityId);
+        val entityId = getEntityIdFromRequest(context);
+        val facade = determineServiceProviderMetadataFacade(context, entityId);
         return facade
             .map(SamlRegisteredServiceMetadataAdaptor::ssoDescriptor)
             .map(sso -> sso.getAttributeConsumingServices()

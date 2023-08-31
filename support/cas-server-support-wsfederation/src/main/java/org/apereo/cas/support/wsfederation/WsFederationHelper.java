@@ -333,7 +333,7 @@ public class WsFederationHelper {
         val func = FunctionUtils.doIf(Predicates.instanceOf(EncryptedData.class),
             () -> {
                 LOGGER.trace("Security token is encrypted. Attempting to decrypt to extract the assertion");
-                val encryptedData = EncryptedData.class.cast(securityTokenFromAssertion);
+                val encryptedData = (EncryptedData) securityTokenFromAssertion;
                 val it = config.iterator();
                 while (it.hasNext()) {
                     try {

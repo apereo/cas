@@ -100,7 +100,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     }
 
     private DuoSecurityAuthenticationResult authenticateDuoCredential(final Credential creds) throws Exception {
-        val signedRequestToken = DuoSecurityCredential.class.cast(creds).getSignedDuoResponse();
+        val signedRequestToken = ((DuoSecurityCredential) creds).getSignedDuoResponse();
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }

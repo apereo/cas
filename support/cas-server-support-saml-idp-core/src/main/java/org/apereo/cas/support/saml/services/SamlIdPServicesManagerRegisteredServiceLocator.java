@@ -51,7 +51,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 .stream()
                 .anyMatch(entityId -> {
                     LOGGER.trace("Resolving metadata for service [{}] via entity id [{}]", registeredService.getName(), entityId);
-                    val samlService = SamlRegisteredService.class.cast(registeredService);
+                    val samlService = (SamlRegisteredService) registeredService;
                     val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, entityId);
                     return adaptor.isPresent();
                 });

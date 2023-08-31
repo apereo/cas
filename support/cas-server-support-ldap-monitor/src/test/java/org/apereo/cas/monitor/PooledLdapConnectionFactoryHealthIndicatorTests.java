@@ -47,7 +47,7 @@ class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Test
     void verifyObserve() throws Throwable {
         val results = monitor.stream()
-            .map(it -> HealthIndicator.class.cast(it.getContributor()))
+            .map(it -> (HealthIndicator) it.getContributor())
             .map(it -> it.health().getStatus()).toList();
         assertFalse(results.isEmpty());
         assertEquals(Status.UP, results.get(0));
