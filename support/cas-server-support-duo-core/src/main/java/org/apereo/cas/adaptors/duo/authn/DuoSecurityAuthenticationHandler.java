@@ -104,7 +104,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) throws Exception {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val creds = DuoSecurityPasscodeCredential.class.cast(credential);
+            val creds = (DuoSecurityPasscodeCredential) credential;
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = principalFactory.createPrincipal(creds.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
@@ -134,7 +134,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val creds = DuoSecurityDirectCredential.class.cast(credential);
+            val creds = (DuoSecurityDirectCredential) credential;
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = resolvePrincipal(creds.getPrincipal());
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());

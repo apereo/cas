@@ -22,7 +22,7 @@ public class SurrogateEligibilitySelectionAuditResourceResolver extends ReturnVa
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "Event must not be null");
-        val resultEvent = Event.class.cast(returnValue);
+        val resultEvent = (Event) returnValue;
         val resultAttributeName = new EventFactorySupport().getResultAttributeName();
         if (resultEvent.getAttributes().contains(resultAttributeName)) {
             val values = new HashMap<String, Object>(resultEvent.getAttributes().get(resultAttributeName, Map.class));

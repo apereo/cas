@@ -64,7 +64,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
             val authentication = currentAuthn.get();
             var principal = authentication.getPrincipal();
             if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
-                principal = SurrogatePrincipal.class.cast(authentication.getPrincipal()).getPrimary();
+                principal = ((SurrogatePrincipal) authentication.getPrincipal()).getPrimary();
             }
 
             val surrogateUsername = mutableCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)

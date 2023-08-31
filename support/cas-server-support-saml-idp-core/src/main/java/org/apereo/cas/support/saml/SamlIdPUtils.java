@@ -142,7 +142,7 @@ public class SamlIdPUtils {
                     : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
-                    ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
+                    ? ((AuthnRequest) authnRequest).getAssertionConsumerServiceIndex()
                     : null;
 
                 if (StringUtils.isNotBlank(acsUrl) && locations.stream().anyMatch(acsUrl::equalsIgnoreCase)) {

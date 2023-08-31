@@ -87,7 +87,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
             attributeList.add(clientIpAttribute);
         }
 
-        state.ifPresent(value -> attributeList.add(new Attr_State(Serializable.class.cast(value))));
+        state.ifPresent(value -> attributeList.add(new Attr_State((Serializable) value)));
 
         if (StringUtils.isNotBlank(configurationContext.getNasIpAddress())) {
             attributeList.add(new Attr_NASIPAddress(configurationContext.getNasIpAddress()));

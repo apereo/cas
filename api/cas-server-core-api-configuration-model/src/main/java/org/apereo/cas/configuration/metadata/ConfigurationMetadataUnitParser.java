@@ -43,7 +43,7 @@ public class ConfigurationMetadataUnitParser {
             if (!cu.getTypes().isEmpty()) {
                 val type = cu.getType(0);
                 if (type.isClassOrInterfaceDeclaration()) {
-                    val decl = ClassOrInterfaceDeclaration.class.cast(type);
+                    val decl = (ClassOrInterfaceDeclaration) type;
                     for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                         val parentType = decl.getExtendedTypes().get(i);
 

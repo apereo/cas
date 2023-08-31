@@ -253,7 +253,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        val client = BaseClient.class.cast(clientResult.get());
+        val client = (BaseClient) clientResult.get();
         client.init();
         return client;
     }

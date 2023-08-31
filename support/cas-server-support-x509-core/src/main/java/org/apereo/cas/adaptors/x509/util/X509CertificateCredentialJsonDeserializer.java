@@ -28,7 +28,7 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
     public X509CertificateCredential deserialize(final JsonParser jp,
                                                  final DeserializationContext deserializationContext) throws IOException {
         val oc = jp.getCodec();
-        val node = JsonNode.class.cast(oc.readTree(jp));
+        val node = (JsonNode) oc.readTree(jp);
 
         val certificates = node.findValues("certificates");
         val certs = new ArrayList<X509Certificate>(certificates.size());

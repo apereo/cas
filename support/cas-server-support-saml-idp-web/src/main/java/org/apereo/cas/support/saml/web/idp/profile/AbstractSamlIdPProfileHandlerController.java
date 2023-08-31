@@ -372,7 +372,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                           final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
                                           final Optional<AuthenticatedAssertionContext> casAssertion,
                                           final String binding) throws Exception {
-        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
+        val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest);
 
         val entityId = pair.getValue().getEntityId();
@@ -406,7 +406,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         final Pair<? extends SignableSAMLObject, MessageContext> pair,
         final HttpServletRequest request,
         final HttpServletResponse response) throws Throwable {
-        val authnRequest = AuthnRequest.class.cast(pair.getLeft());
+        val authnRequest = (AuthnRequest) pair.getLeft();
         if (authnRequest.isForceAuthn()) {
             LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
             return Optional.empty();
@@ -587,7 +587,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
-            val context = Pair.of(AuthnRequest.class.cast(result.getLeft()), result.getRight());
+            val context = Pair.of((AuthnRequest) result.getLeft(), result.getRight());
             return initiateAuthenticationRequest(context, response, request);
         }, WebUtils::produceErrorView).get();
     }
@@ -615,7 +615,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
-        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
+        val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest);
         val facade = pair.getValue();
 

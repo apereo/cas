@@ -2,14 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -20,9 +18,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import jakarta.persistence.PostLoad;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,19 +85,20 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         if (supports(context)) {
             LOGGER.debug("Initiating attributes release phase via [{}] for principal [{}] "
-                         + "accessing service [{}] defined by registered service [{}]...",
+                    + "accessing service [{}] defined by registered service [{}]...",
                 getClass().getSimpleName(), context.getPrincipal().getId(),
                 context.getService(), context.getRegisteredService().getServiceId());
 
-            val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(context.getPrincipal(), context.getRegisteredService());
+            val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(context);
             LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, context.getPrincipal().getId());
 
             val availableAttributes = resolveAttributesFromAttributeDefinitionStore(context, principalAttributes);
             LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store",
                 availableAttributes, context.getPrincipal().getId());
 
-            getRegisteredServicePrincipalAttributesRepository()
-                .ifPresent(repository -> repository.update(context.getPrincipal().getId(), availableAttributes, context.getRegisteredService()));
+            val repository = getRegisteredServicePrincipalAttributesRepository(context);
+            repository.update(context.getPrincipal().getId(), availableAttributes, context);
+
             LOGGER.trace("Updating principal attributes repository cache for [{}] with [{}]", context.getPrincipal().getId(), availableAttributes);
 
             LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]",
@@ -175,7 +172,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             })
             .orElseGet(() -> {
                 LOGGER.debug("No consent policy is defined for service [{}]. "
-                             + "Using the collection of attributes released for consent", context.getService());
+                    + "Using the collection of attributes released for consent", context.getService());
                 return attributes;
             });
         LOGGER.debug("Finalized set of consentable attributes are [{}]", results);
@@ -222,15 +219,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return principalAttributes;
     }
 
-    protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final Principal principal,
-                                                                                          final RegisteredService registeredService) {
-        val attributes = getRegisteredServicePrincipalAttributesRepository()
-            .map(repository -> {
-                LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
-                return repository.getAttributes(principal, registeredService);
-            })
-            .orElseGet(principal::getAttributes);
-        LOGGER.debug("Attributes retrieved from principal attribute repository for [{}] are [{}]", principal.getId(), attributes);
+    protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final RegisteredServiceAttributeReleasePolicyContext context) {
+        val repository = getRegisteredServicePrincipalAttributesRepository(context);
+        LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
+        val attributes = repository.getAttributes(context);
+        LOGGER.debug("Attributes retrieved from principal attribute repository for [{}] are [{}]", context.getPrincipal().getId(), attributes);
         return attributes;
     }
 
@@ -296,8 +289,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return new ArrayList<>();
     }
 
-    private Optional<RegisteredServicePrincipalAttributesRepository> getRegisteredServicePrincipalAttributesRepository() {
+    private RegisteredServicePrincipalAttributesRepository getRegisteredServicePrincipalAttributesRepository(
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         return Optional.ofNullable(principalAttributesRepository)
-            .or(ApplicationContextProvider::getPrincipalAttributesRepository);
+            .orElseGet(() -> context.getApplicationContext()
+                .getBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY, RegisteredServicePrincipalAttributesRepository.class));
     }
 }

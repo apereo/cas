@@ -24,13 +24,15 @@ import java.util.Set;
 @Slf4j
 public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> {
     private static final Duration EXPIRATION_AFTER_ACCESS = Duration.ofHours(8);
+    private static final int INITIAL_CAPACITY = 100;
+    private static final int MAXIMUM_SIZE = 1000;
 
     private final Cache<String, ExecutableCompiledGroovyScript> cache;
 
     public GroovyScriptResourceCacheManager() {
         this.cache = Caffeine.newBuilder()
-            .initialCapacity(100)
-            .maximumSize(1000)
+            .initialCapacity(INITIAL_CAPACITY)
+            .maximumSize(MAXIMUM_SIZE)
             .expireAfterAccess(EXPIRATION_AFTER_ACCESS)
             .removalListener((RemovalListener<String, ExecutableCompiledGroovyScript>) (key, value, cause) -> {
                 LOGGER.trace("Removing script [{}] from cache under [{}]; removal cause is [{}]", value, key, cause);

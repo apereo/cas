@@ -200,7 +200,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             refreshToken.getAccessTokens().add(accessToken.getId());
             ticketRegistry.updateTicket(refreshToken);
         } else if (holder.isCodeToken()) {
-            val codeState = Ticket.class.cast(holder.getToken());
+            val codeState = (Ticket) holder.getToken();
             codeState.update();
 
             if (holder.getToken().isExpired()) {

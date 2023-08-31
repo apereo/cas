@@ -156,7 +156,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected void handleIdentityProviderWithDynamicContent(final RequestContext requestContext,
                                                             final IndirectClient client,
                                                             final RedirectionAction action) throws Exception {
-        val seeOtherAction = WithContentAction.class.cast(action);
+        val seeOtherAction = (WithContentAction) action;
         val view = new DynamicHtmlView(seeOtherAction.getContent());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
@@ -168,7 +168,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected void handleIdentityProviderWithExternalRedirect(final RequestContext requestContext,
                                                               final IndirectClient client,
                                                               final RedirectionAction action) throws Exception {
-        val foundAction = WithLocationAction.class.cast(action);
+        val foundAction = (WithLocationAction) action;
         val builder = new URIBuilder(foundAction.getLocation());
         val url = builder.toString();
         LOGGER.debug("Redirecting to [{}] via client [{}]", url, client.getName());

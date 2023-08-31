@@ -149,7 +149,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             .build();
         val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
-        assertEquals(2, Collection.class.cast(result.get("attr1")).size());
+        assertEquals(2, ((Collection) result.get("attr1")).size());
     }
 
     @Test

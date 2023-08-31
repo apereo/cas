@@ -107,7 +107,7 @@ public class CasConfigurationMetadataCatalog {
             .filter(hint -> StringUtils.isNotBlank(hint.getDescription()))
             .filter(hint -> hint.getDescription().equals(RequiresModule.class.getName()))
             .anyMatch(hint -> {
-                val valueHint = ValueHint.class.cast(hint);
+                val valueHint = (ValueHint) hint;
                 val results = reasonJsonValueAsMap(valueHint.getValue().toString());
                 val module = results.get("module").toString();
                 return query.getModules().contains(module);

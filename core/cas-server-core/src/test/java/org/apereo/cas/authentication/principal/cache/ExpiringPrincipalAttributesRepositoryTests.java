@@ -8,10 +8,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -24,7 +21,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Handles tests for {@link CachingPrincipalAttributesRepository}.
+ * Handles tests for {@link ExpiringPrincipalAttributesRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 7.0.0
  */
 @Tag("Attributes")
-class CachingPrincipalAttributesRepositoryTests {
+class ExpiringPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 
     private static final Map<String, List<Object>> REPOSITORY_ATTRIBUTES;
@@ -66,92 +62,58 @@ class CachingPrincipalAttributesRepositoryTests {
         PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal(UUID.randomUUID().toString(),
                 Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
-
     }
 
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
-    
+
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
-        CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
+        ExpiringPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
     })
-    public class MergingTests {
-        private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
-
-        private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(true).build().toObjectMapper();
+    public class CachingTests {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
-
         @Test
-        void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Throwable {
-
-            val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
-            repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
-            MAPPER.writeValue(JSON_FILE, repositoryWritten);
-            val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
-            assertEquals(repositoryWritten, repositoryRead);
-        }
-
-        @Test
-        void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Throwable {
+        void checkExpiredCachedAttributes() throws Exception {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
                 .build();
-            try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-                repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
-                repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
-                val repositoryAttributes = repository.getAttributes(context);
-                assertTrue(repositoryAttributes.containsKey(MAIL));
-                val emailValue = repositoryAttributes.get(MAIL).get(0).toString();
-                assertEquals("final@school.com", emailValue);
-            }
-        }
-
-        @Test
-        void verifyMergingStrategyWithReplacingAttributeAdder() throws Throwable {
-            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
-                .applicationContext(applicationContext)
-                .principal(PRINCIPAL)
-                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
-                .build();
-
-            try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-                repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
+                var repoAttrs = repository.getAttributes(context);
+                assertEquals(1, repoAttrs.size());
+                assertTrue(repoAttrs.containsKey(MAIL));
+                Thread.sleep(1_000);
                 repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
-                val repositoryAttributes = repository.getAttributes(context);
-                assertTrue(repositoryAttributes.containsKey(MAIL));
-                val emailValue = repositoryAttributes.get(MAIL).get(0).toString();
-                assertEquals("final@example.com", emailValue, () -> "Attributes found are %s".formatted(repositoryAttributes));
+                repository.setAttributeRepositoryIds(Set.of("Stub"));
+                repoAttrs = repository.getAttributes(context);
+                assertEquals(1, repoAttrs.size());
+                assertFalse(repoAttrs.containsKey("uid"));
+                assertEquals("final@school.com", repoAttrs.get(MAIL).get(0));
             }
         }
 
         @Test
-        void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Throwable {
+        void ensureCachedAttributesWithUpdate() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
                 .build();
-
             try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
-                repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
-                repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-                val repositoryAttributes = repository.getAttributes(context);
-                val mailAttr = repositoryAttributes.get(MAIL);
-                assertTrue(mailAttr.contains("final@example.com"), () -> "Attributes found are %s".formatted(repositoryAttributes));
-                assertTrue(mailAttr.contains("final@school.com"), () -> "Attributes found are %s".formatted(repositoryAttributes));
+                assertEquals(1, repository.getAttributes(context).size());
+                assertTrue(repository.getAttributes(context).containsKey(MAIL));
+                REPOSITORY_ATTRIBUTES.clear();
+                assertTrue(repository.getAttributes(context).containsKey(MAIL));
             }
         }
-
     }
     
     @TestConfiguration
