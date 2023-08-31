@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -45,8 +46,8 @@ public class SchemaController {
      * @return the response entity
      */
     @GetMapping(path = "/schema/services",
-                consumes = MediaType.APPLICATION_JSON_VALUE,
-                produces = MediaType.APPLICATION_JSON_VALUE)
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity schema() {
         val results = generateJsonSchemaFor(BaseRegisteredService.class, List.of(RegexRegisteredService.class.getName()));
         return ResponseEntity.ok(results);
@@ -94,17 +95,24 @@ public class SchemaController {
 
         @Override
         public List<ResolvedType> findSubtypes(final ResolvedType declaredType, final SchemaGenerationContext context) {
+            if (declaredType.isInstanceOf(Map.class) && declaredType.getTypeBindings().size() == 2) {
+                val mapKeyType = declaredType.getTypeBindings().getBoundType(1);
+                return resolveSubtypes(mapKeyType, context);
+            }
+            return resolveSubtypes(declaredType, context);
+
+        }
+
+        private List<ResolvedType> resolveSubtypes(final ResolvedType declaredType, final SchemaGenerationContext context) {
             if (!declaredType.getErasedType().equals(Object.class)) {
                 val subtypes = declaredType.isInterface()
                     ? getScanResult().getClassesImplementing(declaredType.getErasedType())
                     : getScanResult().getSubclasses(declaredType.getErasedType());
-                if (!subtypes.isEmpty()) {
-                    val typeContext = context.getTypeContext();
-                    return subtypes.loadClasses(true)
-                        .stream()
-                        .map(subclass -> typeContext.resolveSubtype(declaredType, subclass))
-                        .collect(Collectors.toList());
-                }
+                val typeContext = context.getTypeContext();
+                return subtypes.loadClasses(true)
+                    .stream()
+                    .map(subclass -> typeContext.resolveSubtype(declaredType, subclass))
+                    .collect(Collectors.toList());
             }
             return null;
         }
