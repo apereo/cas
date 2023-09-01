@@ -2,10 +2,10 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,6 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
     @Override
     protected Collection<IndirectClient> loadClients() {
         val restProperties = casProperties.getAuthn().getPac4j().getRest();
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(restProperties.getBasicAuthPassword())
             .basicAuthUsername(restProperties.getBasicAuthUsername())
             .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))

@@ -4,10 +4,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.RestfulConsentProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -18,7 +18,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
@@ -85,7 +84,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
@@ -118,7 +117,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("principal", authentication.getPrincipal().getId());
                 headers.putAll(properties.getHeaders());
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
@@ -147,7 +146,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.POST)
@@ -176,7 +175,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.DELETE)
@@ -199,7 +198,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -223,7 +222,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
                 val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.DELETE)

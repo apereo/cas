@@ -9,11 +9,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,7 +27,6 @@ import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +44,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     public RestfulSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
-                                                     final OpenSamlConfigBean configBean) {
+                                                        final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
 
@@ -60,7 +59,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_XML_VALUE);
             headers.putAll(rest.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))

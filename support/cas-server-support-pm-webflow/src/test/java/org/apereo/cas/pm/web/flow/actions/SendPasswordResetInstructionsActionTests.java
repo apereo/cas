@@ -10,11 +10,10 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -33,7 +32,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -108,7 +106,7 @@ class SendPasswordResetInstructionsActionTests {
             request.addParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
-            
+
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
@@ -164,18 +162,18 @@ class SendPasswordResetInstructionsActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @SpringBootTest(classes = {
-            BasePasswordManagementActionTests.SharedTestConfiguration.class,
-            CasPersonDirectoryTestConfiguration.class
+        BasePasswordManagementActionTests.SharedTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class
     }, properties = {
-            "spring.mail.host=localhost",
-            "spring.mail.port=25000",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
 
-            "cas.authn.pm.core.enabled=true",
-            "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
-            "cas.authn.pm.forgot-username.mail.from=cas@example.org",
-            "cas.authn.pm.reset.mail.from=cas@example.org",
-            "cas.authn.pm.reset.security-questions-enabled=true",
-            "cas.authn.pm.reset.number-of-uses=1"
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+        "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+        "cas.authn.pm.reset.mail.from=cas@example.org",
+        "cas.authn.pm.reset.security-questions-enabled=true",
+        "cas.authn.pm.reset.number-of-uses=1"
     })
     class MultiUseTests extends BasePasswordManagementActionTests {
 

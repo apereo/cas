@@ -17,8 +17,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.BaseDelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -26,7 +26,6 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -48,14 +47,12 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -73,8 +70,7 @@ class DelegatedClientAuthenticationActionTests {
     static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
-            final DelegatedClientAuthenticationConfigurationContext configurationContext) {
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME) final DelegatedClientAuthenticationConfigurationContext configurationContext) {
             return new TestBaseDelegatedClientAuthenticationCredentialResolver(configurationContext);
         }
     }

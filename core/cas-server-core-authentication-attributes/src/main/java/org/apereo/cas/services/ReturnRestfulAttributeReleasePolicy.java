@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -25,7 +25,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -70,7 +69,7 @@ public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeRele
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
             headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.valueOf(this.method))
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpoint))
                 .parameters(CollectionUtils.wrap("principal", context.getPrincipal().getId(),

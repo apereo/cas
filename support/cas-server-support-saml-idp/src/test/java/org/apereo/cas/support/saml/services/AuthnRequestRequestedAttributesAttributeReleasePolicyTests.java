@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -94,7 +94,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
 
         saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
         saml2MessageContext.setSaml2Configuration(saml2Configuration);
-        
+
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
         assertNotNull(peer);
         peer.setEntityId("https://cas.example.org/idp");
@@ -232,7 +232,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         authnRequest.setID(UUID.randomUUID().toString());
 
         storeSamlAuthnRequest(authnRequest);
-        
+
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())

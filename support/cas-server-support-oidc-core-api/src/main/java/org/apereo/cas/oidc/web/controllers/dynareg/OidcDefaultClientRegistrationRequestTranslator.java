@@ -13,11 +13,11 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
@@ -118,7 +117,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         val urls = org.springframework.util.StringUtils.collectionToCommaDelimitedString(
             registrationRequest.getPostLogoutRedirectUris());
         registeredService.setLogoutUrl(urls);
-        
+
         FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()));
         FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
         FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
@@ -143,7 +142,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
     }
 
     private void processScopesAndResponsesAndGrants(final OidcClientRegistrationRequest registrationRequest,
-                                                           final OidcRegisteredService registeredService) {
+                                                    final OidcRegisteredService registeredService) {
         val context = configurationContext.getObject();
         FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
             __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
@@ -184,7 +183,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg(),
             __ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()));
-        
+
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding(),
             __ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
     }
@@ -240,7 +239,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(registeredService.getSectorIdentifierUri())
                     .build();

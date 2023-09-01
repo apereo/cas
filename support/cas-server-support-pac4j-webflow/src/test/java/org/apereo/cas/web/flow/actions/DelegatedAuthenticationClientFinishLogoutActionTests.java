@@ -1,14 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -29,7 +28,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +44,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
     private Action delegatedAuthenticationClientFinishLogoutAction;
-    
+
     @Autowired
     @Qualifier("builtClients")
     private Clients builtClients;
@@ -85,10 +83,10 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
         val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
         logoutProcessor.setPostLogoutURL("https://google.com");
-        
+
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
-        
+
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
         assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());

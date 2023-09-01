@@ -3,10 +3,11 @@ package org.apereo.cas.aup;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +64,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val service = WebUtils.getService(requestContext);
             FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
             LOGGER.debug("Sending AUP acceptance payload [{}] to [{}]", rest.getUrl(), parameters);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -89,7 +90,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -131,7 +132,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 val service = WebUtils.getService(requestContext);
                 FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(rest.getBasicAuthPassword())
                     .basicAuthUsername(rest.getBasicAuthUsername())
                     .method(HttpMethod.GET)

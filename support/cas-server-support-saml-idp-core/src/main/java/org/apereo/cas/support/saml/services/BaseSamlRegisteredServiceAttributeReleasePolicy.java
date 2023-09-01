@@ -11,9 +11,9 @@ import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -113,7 +113,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             .getLeft();
         return Optional.of(authnRequest);
     }
-    
+
     @JsonIgnore
     protected static Optional<SamlRegisteredServiceMetadataAdaptor> determineServiceProviderMetadataFacade(
         final RegisteredServiceAttributeReleasePolicyContext context, final String entityId) {

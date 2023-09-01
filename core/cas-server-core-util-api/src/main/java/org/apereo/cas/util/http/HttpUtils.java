@@ -1,14 +1,10 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.http;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpClientFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,15 +33,11 @@ import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-
 import javax.net.ssl.SSLHandshakeException;
-
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -112,11 +104,7 @@ public class HttpUtils {
      */
     public void close(final HttpResponse response) {
         if (response instanceof final CloseableHttpResponse closeableHttpResponse) {
-            try {
-                closeableHttpResponse.close();
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+            FunctionUtils.doAndHandle(__ -> closeableHttpResponse.close());
         }
     }
 
@@ -201,11 +189,11 @@ public class HttpUtils {
         requestConfig.setConnectTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS));
         requestConfig.setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS));
 
-        val builder =HttpClientBuilder
+        val builder = HttpClientBuilder
             .create()
             .useSystemProperties()
             .setDefaultRequestConfig(requestConfig.build());
-        
+
         val socketFactory = Optional.ofNullable(execution.getHttpClient())
             .map(HttpClient::httpClientFactory)
             .filter(factory -> Objects.nonNull(factory.getSslSocketFactory()))
@@ -235,49 +223,4 @@ public class HttpUtils {
         return builder.build();
     }
 
-    @SuperBuilder
-    @Getter
-    public static class HttpExecutionRequest {
-        private final HttpClient httpClient;
-
-        @NonNull
-        private final HttpMethod method;
-
-        @NonNull
-        private final String url;
-
-        private final String basicAuthUsername;
-
-        private final String basicAuthPassword;
-
-        private final String entity;
-
-        private final String proxyUrl;
-
-        private final String bearerToken;
-
-        @Builder.Default
-        private final Map<String, String> parameters = new LinkedHashMap<>();
-
-        @Builder.Default
-        private final Map<String, String> headers = new LinkedHashMap<>();
-
-        /**
-         * Is basic authentication?
-         *
-         * @return true/false
-         */
-        private boolean isBasicAuthentication() {
-            return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
-        }
-
-        /**
-         * Is bearer authentication?
-         *
-         * @return true/false
-         */
-        private boolean isBearerAuthentication() {
-            return StringUtils.isNotBlank(bearerToken);
-        }
-    }
 }
