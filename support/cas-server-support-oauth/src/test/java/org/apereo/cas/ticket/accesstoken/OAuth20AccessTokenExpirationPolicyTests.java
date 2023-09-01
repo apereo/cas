@@ -4,10 +4,12 @@ import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -21,6 +23,8 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("OAuthToken")
 class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
+
     @Test
     void verifyAccessTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();
