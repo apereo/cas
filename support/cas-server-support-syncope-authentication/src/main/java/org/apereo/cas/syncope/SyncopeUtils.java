@@ -5,10 +5,10 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.syncope.BaseSyncopeSearchProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
@@ -20,7 +20,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,7 +63,7 @@ public class SyncopeUtils {
 
         var name = attributeMappings.getOrDefault("key", "syncopeUserKey");
         attributes.put(name, CollectionUtils.wrapList(user.get("key").asText()));
-        
+
         name = attributeMappings.getOrDefault("username", "username");
         attributes.put(name, CollectionUtils.wrapList(user.get("username").asText()));
 
@@ -169,12 +168,12 @@ public class SyncopeUtils {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
             val fiql = EncodingUtils.urlEncode(filter);
             val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
-                                 + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
+                + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();
             requestHeaders.put("X-Syncope-Domain", properties.getDomain());
             requestHeaders.putAll(properties.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(properties.getBasicAuthUsername())

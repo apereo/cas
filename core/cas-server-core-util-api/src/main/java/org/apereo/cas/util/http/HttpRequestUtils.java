@@ -1,9 +1,9 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.http;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.LinkedHashMap;

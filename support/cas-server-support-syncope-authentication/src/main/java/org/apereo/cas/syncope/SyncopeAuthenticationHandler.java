@@ -10,8 +10,9 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationP
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,7 +78,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/self");
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(credential.getUsername())

@@ -6,15 +6,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,7 +29,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
-
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -94,8 +93,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Override
     public void setThemeName(
-        @Nonnull
-        final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
+        @Nonnull final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
     }
 
     protected String determineThemeNameToChoose(final HttpServletRequest request,
@@ -115,7 +113,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .parameters(CollectionUtils.wrap("service", service.getId()))
                     .url(url)
                     .method(HttpMethod.GET)

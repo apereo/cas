@@ -4,9 +4,10 @@ import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.configuration.model.support.account.provision.RestfulAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +81,7 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
         headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(properties.getHeaders());
 
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(properties.getBasicAuthPassword())
             .basicAuthUsername(properties.getBasicAuthUsername())
             .method(HttpMethod.POST)

@@ -5,10 +5,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateRestfulAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +18,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +48,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
@@ -68,7 +67,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     public Collection<String> getImpersonationAccounts(final String username) {
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))

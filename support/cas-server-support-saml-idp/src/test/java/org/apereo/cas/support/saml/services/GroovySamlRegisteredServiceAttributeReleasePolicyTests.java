@@ -10,18 +10,15 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -89,7 +86,7 @@ class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdP
 
         val request = (MockHttpServletRequest) HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         request.removeParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        
+
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()

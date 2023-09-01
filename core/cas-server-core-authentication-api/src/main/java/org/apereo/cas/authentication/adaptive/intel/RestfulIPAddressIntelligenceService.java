@@ -2,9 +2,9 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -13,7 +13,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -38,7 +37,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
             val parameters = new HashMap<String, String>();
             parameters.put("clientIpAddress", clientIpAddress);
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)

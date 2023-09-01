@@ -3,9 +3,8 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;

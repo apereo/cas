@@ -5,16 +5,14 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 import java.util.Locale;
 
@@ -47,7 +45,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                         + "service [{}] and provider [{}] via REST endpoint [{}]",
+                    + "service [{}] and provider [{}] via REST endpoint [{}]",
                 principal.getId(), registeredService, provider, rest.getUrl());
 
             val parameters = CollectionUtils.<String, String>wrap("principal", principal.getId(), "provider", provider.getId());
@@ -55,7 +53,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 parameters.put("service", registeredService.getServiceId());
             }
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))

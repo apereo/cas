@@ -6,10 +6,9 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -27,11 +26,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

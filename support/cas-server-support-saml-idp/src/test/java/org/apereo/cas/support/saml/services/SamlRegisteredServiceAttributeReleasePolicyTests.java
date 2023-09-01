@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -141,7 +141,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
                 return resolver;
             }
         }
-        
+
     }
 
     @Nested
