@@ -11,7 +11,7 @@ const auth = require('basic-auth');
             res.set('WWW-Authenticate', 'Basic realm="Authentication Required"');
             res.status(401).send('Authentication Required');
         } else {
-            console.log("Authenentication successful");
+            console.log("Authentication successful");
             next();
         }
     };

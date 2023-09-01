@@ -67,7 +67,7 @@ exports.removeDirectory = async (directory) => {
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         let buttonNode = document.querySelector(button);
-        console.log(`Clicking element ${button} with link ${buttonNode.href}`);
+        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 };

@@ -5,6 +5,7 @@ import org.apereo.cas.aup.RestAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -31,15 +32,17 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
+        @Qualifier("httpClient")
+        final HttpClient httpClient,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
-        final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+        final TicketRegistrySupport ticketRegistrySupport) {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val aup = casProperties.getAcceptableUsagePolicy();
-                return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup);
+                return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, httpClient, aup);
             })
             .otherwise(AcceptableUsagePolicyRepository::noOp)
             .get();

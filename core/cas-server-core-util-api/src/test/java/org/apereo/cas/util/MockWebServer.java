@@ -68,6 +68,10 @@ public class MockWebServer implements Closeable {
         this(getRandomPort(), status);
     }
 
+    public MockWebServer(final int port, final String resource, final HttpStatus status) {
+        this(port, new ByteArrayResource(resource.getBytes(StandardCharsets.UTF_8), "Output"), status);
+    }
+
     public MockWebServer(final String resource, final HttpStatus status) {
         this(getRandomPort(), new ByteArrayResource(resource.getBytes(StandardCharsets.UTF_8), "Output"),
             MediaType.APPLICATION_JSON_VALUE, status);

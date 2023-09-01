@@ -1,0 +1,10 @@
+{
+  "@class":"org.apereo.cas.services.CasRegisteredService",
+  "id": 1,
+  "serviceId": "^http://localhost:9889/anything/app1",
+  "name":"Sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false
+  }
+}

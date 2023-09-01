@@ -99,7 +99,7 @@ while (( "$#" )); do
         flags+=" --no-watch-fs "
         shift
         ;;
-    --test)
+    --test|--tests)
         tests="--tests \"$2\" "
         shift 2
         ;;
