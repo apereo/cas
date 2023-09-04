@@ -9,7 +9,7 @@
     <Loggers>
         <Logger name="org.apereo.cas" level="error"/>
         <Logger name="PROTOCOL_MESSAGE" level="info"/>
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

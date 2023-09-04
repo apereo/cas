@@ -57,7 +57,6 @@ class PasswordManagementWebflowConfigurerTests {
         PasswordManagementForgotUsernameConfiguration.class
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DisabledTests extends BaseWebflowConfigurerTests {
         @Autowired
         @Qualifier("passwordResetHandlerAdapter")
@@ -105,7 +104,6 @@ class PasswordManagementWebflowConfigurerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
     @Import({
         CasSimpleMultifactorAuthenticationConfiguration.class,
@@ -153,15 +151,15 @@ class PasswordManagementWebflowConfigurerTests {
 
             assertTrue(passwordManagementMultifactorWebflowCustomizer.getWebflowAttributeMappings()
                 .contains(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY));
-            
+
             val handler = mock(FlowHandler.class);
             when(handler.getFlowId()).thenReturn(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             assertTrue(passwordResetHandlerAdapter.supports(handler));
 
-            val startState =(ActionState) flow.getStartState();
+            val startState = (ActionState) flow.getStartState();
             assertEquals(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS,
                 startState.getTransition(CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD).getTargetStateId());
-            
+
             val sendAcct = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);
             assertEquals(sendAcct.getTransition(casSimpleMultifactorAuthenticationProvider.getId()).getTargetStateId(),
                 casSimpleMultifactorAuthenticationProvider.getId());

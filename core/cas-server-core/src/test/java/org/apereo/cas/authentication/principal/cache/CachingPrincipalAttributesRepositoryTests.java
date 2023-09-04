@@ -72,9 +72,8 @@ class CachingPrincipalAttributesRepositoryTests {
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
-    
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
@@ -153,7 +152,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
     }
-    
+
     @TestConfiguration
     static class CacheTestConfiguration {
         @Bean

@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +13,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,16 +52,7 @@ class ReturnMappedAttributeReleasePolicyTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @BeforeEach
-    public void beforeEach() {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            new GroovyScriptResourceCacheManager(), ScriptResourceCacheManager.BEAN_NAME);
-        ApplicationContextProvider.getScriptResourceCacheManager()
-            .ifPresent(ScriptResourceCacheManager::clear);
-    }
-
+    
     @Test
     void verifyAttributeMappingWorksForCollections() throws Throwable {
         val file = Files.createTempFile("attr", ".json").toFile();

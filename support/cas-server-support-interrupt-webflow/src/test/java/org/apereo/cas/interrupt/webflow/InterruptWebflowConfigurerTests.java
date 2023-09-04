@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasInterruptWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +15,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,7 +43,6 @@ class InterruptWebflowConfigurerTests {
     })
     @Nested
     @Tag("WebflowConfig")
-    @SuppressWarnings("ClassCanBeStatic")
     class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
 
         @Test
@@ -67,7 +64,6 @@ class InterruptWebflowConfigurerTests {
     })
     @Nested
     @Tag("WebflowConfig")
-    @SuppressWarnings("ClassCanBeStatic")
     class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
         @Test
         void verifyOperation() throws Throwable {

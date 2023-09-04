@@ -10,7 +10,7 @@
         <Logger name="org.opensaml" level="warn" />
         <Logger name="PROTOCOL_MESSAGE" level="warn" />
         <Logger name="org.apache.xml.security" level="off" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

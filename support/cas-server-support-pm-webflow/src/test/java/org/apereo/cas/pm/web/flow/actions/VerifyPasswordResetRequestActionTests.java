@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 class VerifyPasswordResetRequestActionTests {
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = "cas.ticket.tst.number-of-uses=2")
     class PasswordResetTokenMultiUse extends BasePasswordManagementActionTests {
@@ -67,7 +66,6 @@ class VerifyPasswordResetRequestActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.reset.security-questions-enabled=false")
     class SecurityQuestionsDisabled extends BasePasswordManagementActionTests {
@@ -94,7 +92,6 @@ class VerifyPasswordResetRequestActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class SecurityQuestionsEnabled extends BasePasswordManagementActionTests {
         @Test

@@ -87,17 +87,10 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     @Override
     public boolean isTokenAuthorizedFor(final int token, final OneTimeTokenAccount account) {
-        return this.googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        LOGGER.debug("Authorizing token [{}] against account [{}]", token, account);
+        return googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
     }
 
-    /**
-     * Gets authorized scratch code for token.
-     *
-     * @param tokenCredential the token credential
-     * @param authentication  the authentication
-     * @param accounts        the accounts
-     * @return the authorized scratch code for token
-     */
     protected Optional<GoogleAuthenticatorAccount> getAuthorizedScratchCodeForToken(
         final GoogleAuthenticatorTokenCredential tokenCredential,
         final Authentication authentication,
@@ -120,13 +113,6 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .findFirst();
     }
 
-    /**
-     * Gets authorized account for token.
-     *
-     * @param tokenCredential the token credential
-     * @param accounts        the accounts
-     * @return the authorized account for token
-     */
     protected Optional<GoogleAuthenticatorAccount> getAuthorizedAccountForToken(
         final GoogleAuthenticatorTokenCredential tokenCredential,
         final Collection<? extends OneTimeTokenAccount> accounts) {

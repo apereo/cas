@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@Execution(ExecutionMode.SAME_THREAD)
 class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
@@ -44,7 +47,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         })
     @Nested
     @Tag("WebflowMfaActions")
-    @SuppressWarnings("ClassCanBeStatic")
     class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
@@ -86,7 +88,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
     @Nested
     @Tag("WebflowMfaActions")
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 

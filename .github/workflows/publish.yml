@@ -42,7 +42,7 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -67,7 +67,7 @@ jobs:
      continue-on-error: false
      if: ${{ github.event_name == 'push' }}
      steps:
-       - uses: actions/checkout@v3
+       - uses: actions/checkout@v4
        - name: Set up JDK
          uses: actions/setup-java@v3
          with:
@@ -100,7 +100,7 @@ jobs:
     continue-on-error: false
     if: ${{ github.event_name == 'push' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:

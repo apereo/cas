@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +26,6 @@ class OidcInitialAccessTokenControllerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class OpenRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")
@@ -49,7 +46,6 @@ class OidcInitialAccessTokenControllerTests {
         "cas.authn.oidc.registration.initial-access-token-password=Mellon"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ProtectedRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")

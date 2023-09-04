@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class GroovyShellScriptTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ConcurrentTests {
         @Test
         void verifyOperation() {
@@ -53,7 +52,7 @@ class GroovyShellScriptTests {
 
             val testHasFailed = new AtomicBoolean();
             val threads = new ArrayList<Thread>();
-            for (var i = 1; i <= 20; i++) {
+            for (var i = 1; i <= 50; i++) {
                 val runnable = i % 2 == 0
                     ? new ScriptedAttribute(attributes1, shellScript, "CASADMIN")
                     : new ScriptedAttribute(attributes2, shellScript, "123456");
@@ -86,16 +85,19 @@ class GroovyShellScriptTests {
 
             @Override
             public void run() {
-                shellScript.setBinding(CollectionUtils.wrap("attributes", attributes));
-                val returnValue = shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, List.class);
-                assertEquals(1, returnValue.size());
-                assertEquals(expectedAttribute, returnValue.get(0));
+                try {
+                    shellScript.setBinding(CollectionUtils.wrap("attributes", attributes));
+                    val returnValue = shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, List.class);
+                    assertEquals(1, returnValue.size());
+                    assertEquals(expectedAttribute, returnValue.get(0));
+                } catch (final Throwable e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests {
         @Test
         void verifyExec() {

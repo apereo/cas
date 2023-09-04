@@ -19,7 +19,6 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -38,9 +37,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -77,7 +74,6 @@ class RestPasswordManagementServiceTests {
 
     @Nested
     @SpringBootTest(classes = SharedTestConfiguration.class)
-    @SuppressWarnings("ClassCanBeStatic")
     public class UndefinedConfigurationOperations {
         @Autowired
         @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
@@ -107,7 +103,6 @@ class RestPasswordManagementServiceTests {
             "cas.authn.pm.rest.endpoint-username=username",
             "cas.authn.pm.rest.endpoint-password=password"
         })
-    @SuppressWarnings("ClassCanBeStatic")
     public class BasicOperations {
         @Autowired
         @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)

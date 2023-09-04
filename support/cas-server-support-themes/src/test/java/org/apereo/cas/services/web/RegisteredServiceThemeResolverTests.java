@@ -5,7 +5,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -21,10 +20,8 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.io.File;
 import java.util.UUID;
-
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +40,6 @@ class RegisteredServiceThemeResolverTests {
             "cas.theme.default-theme-name=example"
         })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ExternalThemeTests extends BaseThemeTests {
         @Test
         void verifyCustomSource() throws Throwable {
@@ -68,7 +64,6 @@ class RegisteredServiceThemeResolverTests {
     @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
         properties = "cas.theme.default-theme-name=example")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ExampleThemeTests extends BaseThemeTests {
         @Test
         void verifyNoAccess() throws Throwable {

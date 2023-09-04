@@ -43,7 +43,7 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) {
+        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 
@@ -52,9 +52,6 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
             .map(RegistrationInfo.class::cast)
             .anyMatch(info -> RegexUtils.find(this.registrationAuthority, info.getRegistrationAuthority()));
 
-        if (matched) {
-            return authorizeReleaseOfAllowedAttributes(context, attributes);
-        }
-        return new HashMap<>(0);
+        return matched ? authorizeReleaseOfAllowedAttributes(context, attributes) : new HashMap<>();
     }
 }

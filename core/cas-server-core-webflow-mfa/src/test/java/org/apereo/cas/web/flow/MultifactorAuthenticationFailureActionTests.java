@@ -7,11 +7,12 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,7 +21,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@Execution(ExecutionMode.SAME_THREAD)
 class MultifactorAuthenticationFailureActionTests {
     private static class BaseMultifactorActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
@@ -65,7 +66,6 @@ class MultifactorAuthenticationFailureActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class UnavailableModes extends BaseMultifactorActionTests {
         @Test
         void verifyOperations() throws Throwable {
@@ -76,7 +76,6 @@ class MultifactorAuthenticationFailureActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class OpenMode extends BaseMultifactorActionTests {
         @Test
         void verifyOperations() throws Throwable {
@@ -85,7 +84,6 @@ class MultifactorAuthenticationFailureActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class PhantomMode extends BaseMultifactorActionTests {
         @Test
         void verifyOperations() throws Throwable {

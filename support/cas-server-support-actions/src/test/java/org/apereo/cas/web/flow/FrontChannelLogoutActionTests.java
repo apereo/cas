@@ -7,7 +7,6 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -23,12 +22,10 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 class FrontChannelLogoutActionTests {
-    
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=true")
     class SingleLogoutDisabledTests extends AbstractWebflowActionsTests {
 
@@ -76,7 +72,6 @@ class FrontChannelLogoutActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=false")
     class SingleLogoutEnabledTests extends AbstractWebflowActionsTests {
 
@@ -137,7 +132,7 @@ class FrontChannelLogoutActionTests {
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROPAGATE, event.getId());
         }
-        
+
         @Test
         void verifyNoRequests() throws Throwable {
             val context = new MockRequestContext();

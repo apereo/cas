@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" additivity="false" />
+        <Logger name="org.apereo" level="error" additivity="false" />
         <Logger name="com.okta" level="warn" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

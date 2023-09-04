@@ -36,7 +36,6 @@ class DelegatedAuthenticationGenerateClientsActionTests {
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class MenuSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
@@ -76,7 +75,6 @@ class DelegatedAuthenticationGenerateClientsActionTests {
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DynamicSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)

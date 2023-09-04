@@ -36,7 +36,6 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file={\"keys\": []}")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class EmbeddedKeystoreTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -49,7 +48,6 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:/encrypted.jwks")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class EncryptedKeystoreTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -62,7 +60,6 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         private File keystore;
 

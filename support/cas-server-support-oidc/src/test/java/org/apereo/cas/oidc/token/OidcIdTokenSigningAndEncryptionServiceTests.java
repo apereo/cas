@@ -11,10 +11,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Optional;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcIdTokenSigningAndEncryptionServiceTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:multiple-keys.jwks")
     class KeystoreWithMultipleKeysTests extends AbstractOidcTests {
         @Test
@@ -55,7 +52,6 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=RS256,RS384,RS512",
         "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"

@@ -14,7 +14,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -30,7 +29,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +39,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +65,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String PRINCIPAL_ID = "principalId";
 
-    @TestConfiguration
+    @TestConfiguration(proxyBeanMethods = false)
     public static class CommonTestConfiguration {
         @Bean
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
@@ -82,7 +79,6 @@ class RegisteredServiceAttributeReleasePolicyTests {
         RefreshAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    @SuppressWarnings("ClassCanBeStatic")
     public class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -353,7 +349,6 @@ class RegisteredServiceAttributeReleasePolicyTests {
         RefreshAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
-    @SuppressWarnings("ClassCanBeStatic")
     public class AttributeRepositoryTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -382,7 +377,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             assertEquals(1, attr.size());
         }
 
-        @TestConfiguration
+        @TestConfiguration(proxyBeanMethods = false)
         public static class AttributeRepositoryTestConfiguration {
             @Bean
             public IPersonAttributeDao attributeRepository() {

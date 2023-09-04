@@ -6,7 +6,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.BaseSamlIdPWebflowTests;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -23,9 +22,7 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +36,6 @@ import static org.mockito.Mockito.*;
 class SamlIdPSingleSignOnParticipationStrategyTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseSamlIdPWebflowTests {
         @Autowired
         @Qualifier("samlIdPSingleSignOnParticipationStrategy")
@@ -93,7 +89,6 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
     class MfaProviderTests extends BaseSamlIdPWebflowTests {
         @Autowired
@@ -110,7 +105,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            
+
             val issuer = UUID.randomUUID().toString();
             val authnRequest = getAuthnRequestFor(issuer);
             val ssoRequest = SingleSignOnParticipationRequest.builder()

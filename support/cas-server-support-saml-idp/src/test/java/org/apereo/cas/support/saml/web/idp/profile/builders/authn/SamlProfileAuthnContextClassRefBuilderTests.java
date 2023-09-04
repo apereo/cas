@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -13,11 +12,9 @@ import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +27,6 @@ import static org.mockito.Mockito.*;
 @Tag("SAMLResponse")
 class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
         void verifyGroovyOperationByService() throws Throwable {
@@ -113,8 +109,8 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals(AuthnContext.PPT_AUTHN_CTX, result.getAuthnContextClassRef().getURI());
         }
     }
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
     class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
 
@@ -143,8 +139,8 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals("https://refeds.org/profile/mfa", result.getAuthnContextClassRef().getURI());
         }
     }
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.mfa.core.authentication-context-attribute=amr",
         "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"

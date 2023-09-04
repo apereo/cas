@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcHandlerInterceptorAdapterTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
     class PushedAuthorizationTests extends AbstractOidcTests {
         @Test
@@ -49,7 +48,6 @@ class OidcHandlerInterceptorAdapterTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
     class DefaultTests extends AbstractOidcTests {
         @Test

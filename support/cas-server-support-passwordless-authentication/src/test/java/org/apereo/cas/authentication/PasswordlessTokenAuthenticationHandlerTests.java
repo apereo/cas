@@ -11,7 +11,6 @@ import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -19,11 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +34,6 @@ class PasswordlessTokenAuthenticationHandlerTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.passwordless.core.enabled=false")
-    @SuppressWarnings("ClassCanBeStatic")
     class DisabledTests extends BasePasswordlessUserAccountStoreTests {
 
         @Autowired
@@ -53,7 +48,6 @@ class PasswordlessTokenAuthenticationHandlerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests {
         @Test
         void verifyAction() throws Throwable {

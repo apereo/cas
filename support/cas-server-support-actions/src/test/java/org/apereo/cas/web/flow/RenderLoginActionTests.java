@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -20,9 +19,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
-
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
@@ -39,7 +36,6 @@ class RenderLoginActionTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
@@ -58,7 +54,6 @@ class RenderLoginActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.webflow.login-decorator.groovy.location=classpath:/GroovyLoginWebflowDecorator.groovy")
     class GroovyRendererTests extends AbstractWebflowActionsTests {
         @Autowired
@@ -79,7 +74,6 @@ class RenderLoginActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.webflow.login-decorator.rest.url=http://localhost:1234")
     class RestfulRendererTests extends AbstractWebflowActionsTests {
         @Autowired

@@ -42,7 +42,7 @@ jobs:
     runs-on: macos-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -71,7 +71,7 @@ jobs:
           - undertow
     name: locust - ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -115,7 +115,7 @@ jobs:
           - saml
     name: jmeter - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:

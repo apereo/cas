@@ -7,18 +7,14 @@ import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -116,7 +112,7 @@ class DefaultAuthenticationBuilderTests {
         builder2.addWarning(new DefaultMessageDescriptor("code"));
         val authn2 = builder2.build();
 
-        authn.updateAll(authn2);
+        authn.replaceAttributes(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
     }

@@ -56,7 +56,6 @@ class ReturnAllowedAttributeReleasePolicyTests {
         properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class AttributeDefinitionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -112,17 +111,16 @@ class ReturnAllowedAttributeReleasePolicyTests {
     },
         properties = {
             "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json",
-        "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
+            "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
         })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class DefaultTests {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;
-        
+
         @Test
         void verifySerialization() throws IOException {
             val allowedAttributes = new ArrayList<String>();
@@ -268,7 +266,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
     }
 
-    @TestConfiguration
+    @TestConfiguration(proxyBeanMethods = false)
     static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {

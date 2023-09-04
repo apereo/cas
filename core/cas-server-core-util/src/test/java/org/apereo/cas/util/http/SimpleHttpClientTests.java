@@ -56,7 +56,6 @@ class SimpleHttpClientTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests {
         @Test
         void verifyMessageRejected() throws Throwable {
@@ -142,7 +141,6 @@ class SimpleHttpClientTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @EnabledIfListeningOnPort(port = 9859)
     class HttpBinTests {
         @Test

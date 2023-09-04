@@ -3,7 +3,6 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +20,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockParameterMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,7 +48,6 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.forgot-username.mail.text=classpath:ForgotUsernameEmailBody.groovy")
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BasePasswordManagementActionTests {
 
         @Autowired
@@ -88,7 +85,6 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
     @Nested
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
-    @SuppressWarnings("ClassCanBeStatic")
     class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
 
         @Autowired
