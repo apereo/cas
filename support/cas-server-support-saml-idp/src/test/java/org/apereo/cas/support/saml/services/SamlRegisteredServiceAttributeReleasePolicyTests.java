@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
 @Tag("SAMLAttributes")
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         DefaultTests.SamlTestConfiguration.class,
         RefreshAutoConfiguration.class
@@ -125,7 +124,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         }
 
 
-        @TestConfiguration
+        @TestConfiguration(proxyBeanMethods = false)
         static class SamlTestConfiguration {
             @Bean
             public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() throws Throwable {
@@ -145,7 +144,6 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         NoServiceProvider.SamlTestConfiguration.class,
         RefreshAutoConfiguration.class
@@ -171,7 +169,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
             assertTrue(attributes.isEmpty());
         }
 
-        @TestConfiguration
+        @TestConfiguration(proxyBeanMethods = false)
         static class SamlTestConfiguration {
             @Bean
             public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {

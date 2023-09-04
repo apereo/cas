@@ -19,7 +19,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,11 +36,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,7 +50,6 @@ import static org.mockito.Mockito.*;
 class InitialFlowSetupActionTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractWebflowActionsTests {
 
         private static final String CONST_CONTEXT_PATH = "/test";
@@ -152,7 +148,6 @@ class InitialFlowSetupActionTests {
         "cas.tgc.crypto.enabled=false"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SsoDisabledTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)

@@ -3,7 +3,6 @@ package org.apereo.cas.notifications.sms;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -22,9 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulSmsSenderTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
@@ -85,7 +81,6 @@ class RestfulSmsSenderTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
@@ -96,7 +91,7 @@ class RestfulSmsSenderTests {
             "cas.sms-provider.rest.style=QUERY_PARAMETERS",
             "cas.sms-provider.rest.url=http://localhost:8132"
         })
-    
+
     public class RequestParameters {
         @Autowired
         @Qualifier(CommunicationsManager.BEAN_NAME)

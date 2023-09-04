@@ -1,4 +1,4 @@
-import java.util.regex.*
+import java.util.regex.Pattern
 
 enum TestCategories {
     ActiveDirectory,
@@ -82,7 +82,7 @@ enum TestCategories {
     SAMLMetadata,
     SAMLServiceProvider(true),
     SAMLLogout,
-    SAMLAttributes,
+    SAMLAttributes(true),
     SAMLResponse,
     SCIM,
     SHELL(true),
@@ -91,19 +91,19 @@ enum TestCategories {
     Spnego(true),
     Syncope,
     Tickets,
-    UMA,
+    UMA(true),
     Utility(true),
     Web(true),
     WebApp(true),
-    Webflow,
-    WebflowActions,
-    WebflowAccountActions,
-    WebflowServiceActions,
-    WebflowAuthenticationActions,
-    WebflowConfig,
-    WebflowMfaConfig,
-    WebflowEvents,
-    WebflowMfaActions,
+    Webflow(true),
+    WebflowActions(true),
+    WebflowAccountActions(true),
+    WebflowServiceActions(true),
+    WebflowAuthenticationActions(true),
+    WebflowConfig(true),
+    WebflowMfaConfig(true),
+    WebflowEvents(true),
+    WebflowMfaActions(true),
     WSFederation,
     X509(true),
     ZooKeeper
@@ -113,7 +113,7 @@ enum TestCategories {
     TestCategories() {
         parallelEnabled = false
     }
-    
+
     TestCategories(boolean parallelEnabled) {
         this.parallelEnabled = parallelEnabled
     }
@@ -126,7 +126,7 @@ if (rootProject.tasks.findByName("testCategories") == null) {
             def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
-                    .findAll {it.name().find(categoryMatchPattern) }
+                    .findAll { it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
@@ -204,7 +204,7 @@ tasks.withType(Test).configureEach {
     it.inputs.property("github.repository") {
         System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
     }
-    
+
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
@@ -220,7 +220,6 @@ tasks.withType(Test).configureEach {
     systemProperty("CI", ci)
 
 
-    
     failFast = true
 
     def list = []
@@ -243,7 +242,7 @@ tasks.withType(Test).configureEach {
     list.add("jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED")
     list.add("--add-exports")
     list.add("java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED")
-    
+
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
     list.add("--add-opens")
@@ -265,7 +264,7 @@ tasks.withType(Test).configureEach {
 
     list.add("-Xms512m")
     list.add("-Xmx4g")
-    
+
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
@@ -290,7 +289,7 @@ tasks.withType(Test).configureEach {
             beforeTest { desc ->
                 ansi.cyan "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
             }
-            
+
             afterTest { desc, result ->
                 ansi.green """
 Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
@@ -323,7 +322,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
         }
     }
-    
+
     filter {
         setFailOnNoMatchingTests(false)
         excludeTestsMatching "*TestsSuite"

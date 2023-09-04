@@ -21,7 +21,6 @@ import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,12 +34,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -60,13 +57,12 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private static final String PROMISCUOUS_CLIENT_ID = UUID.randomUUID().toString();
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oauth.code.remove-related-access-tokens=true")
     class RemovingInvalidTokenTests extends AbstractOAuth20Tests {
         @Autowired
         @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
         private OAuth20TokenRequestValidator validator;
-        
+
         @Test
         void verifyPreviousAccessTokensRemoved() throws Throwable {
             val request = new MockHttpServletRequest();
@@ -101,7 +97,6 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOAuth20Tests {
         private OAuth20Code supportingServiceTicket;
 

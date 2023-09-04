@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -10,9 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,7 +57,6 @@ class OidcDefaultJsonWebKeystoreRotationServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rotation.jwks")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class EmptyKeystoreTests extends AbstractOidcTests {
 
         @Test
@@ -94,7 +90,6 @@ class OidcDefaultJsonWebKeystoreRotationServiceTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/current.jwks")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ExistingKeystoreTests extends AbstractOidcTests {
 
         @Test

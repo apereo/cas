@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.apereo.cas.web.flow.CasWebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +46,6 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
     class DefaultTests extends BaseWebflowConfigurerTests {
 
@@ -67,7 +64,6 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import({
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
@@ -106,7 +102,6 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
      * @deprecated Since 6.6.
      */
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import({
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,

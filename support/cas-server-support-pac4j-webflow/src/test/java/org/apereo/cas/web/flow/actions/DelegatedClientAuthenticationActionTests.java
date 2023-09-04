@@ -77,7 +77,6 @@ class DelegatedClientAuthenticationActionTests {
 
     @Import(CredentialTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class CredentialSelectionTests extends BaseDelegatedClientAuthenticationActionTests {
 
         @Test
@@ -132,7 +131,6 @@ class DelegatedClientAuthenticationActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
         void verifyStartAuthenticationNoService() throws Throwable {

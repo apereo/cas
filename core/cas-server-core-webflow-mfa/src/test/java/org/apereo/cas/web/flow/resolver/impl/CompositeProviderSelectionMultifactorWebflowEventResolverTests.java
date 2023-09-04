@@ -14,7 +14,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -37,13 +36,10 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -77,7 +73,6 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @Import(CompositeProviderSelectionMultifactorWebflowEventResolverTests.MultifactorBypassTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
     class BypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
@@ -107,7 +102,6 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @Import(CompositeProviderSelectionMultifactorWebflowEventResolverTests.MultifactorTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired

@@ -9,7 +9,7 @@
         <Logger name="org.apereo" level="error" additivity="false" />
         <Logger name="org.eclipse.persistence" level="warn" additivity="false" />
 
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

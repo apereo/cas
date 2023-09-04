@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSele
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.model.TriStateBoolean;
-
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
@@ -32,9 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -66,7 +63,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
     })
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
 
         @Autowired
@@ -98,7 +94,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
     })
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)

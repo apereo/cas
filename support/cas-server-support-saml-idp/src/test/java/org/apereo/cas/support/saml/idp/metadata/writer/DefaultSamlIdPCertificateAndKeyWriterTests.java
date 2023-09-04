@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -9,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.StringWriter;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfigurationTests {
     @Nested
     @Tag("SAMLMetadata")
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",
@@ -48,7 +44,6 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
 
     @Nested
     @Tag("SAMLMetadata")
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",

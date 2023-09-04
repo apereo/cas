@@ -1,18 +1,14 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.time.Duration;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -23,22 +19,10 @@ import java.util.Set;
  */
 @Slf4j
 public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> {
-    private static final Duration EXPIRATION_AFTER_ACCESS = Duration.ofHours(8);
-    private static final int INITIAL_CAPACITY = 100;
-    private static final int MAXIMUM_SIZE = 1000;
-
     private final Cache<String, ExecutableCompiledGroovyScript> cache;
 
-    public GroovyScriptResourceCacheManager() {
-        this.cache = Caffeine.newBuilder()
-            .initialCapacity(INITIAL_CAPACITY)
-            .maximumSize(MAXIMUM_SIZE)
-            .expireAfterAccess(EXPIRATION_AFTER_ACCESS)
-            .removalListener((RemovalListener<String, ExecutableCompiledGroovyScript>) (key, value, cause) -> {
-                LOGGER.trace("Removing script [{}] from cache under [{}]; removal cause is [{}]", value, key, cause);
-                Objects.requireNonNull(value).close();
-            })
-            .build();
+    public GroovyScriptResourceCacheManager(final ExpiringSimpleCacheProperties properties) {
+        this.cache = Beans.newCacheBuilder(properties).build();
     }
 
     @Override

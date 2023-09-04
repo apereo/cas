@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
@@ -150,7 +151,7 @@ public class ServiceRegistryProperties implements Serializable {
      * Registry caching settings.
      */
     @NestedConfigurationProperty
-    private ServiceRegistryCacheProperties cache = new ServiceRegistryCacheProperties();
+    private ExpiringSimpleCacheProperties cache = new ExpiringSimpleCacheProperties();
 
     /**
      * Registry core/common settings.

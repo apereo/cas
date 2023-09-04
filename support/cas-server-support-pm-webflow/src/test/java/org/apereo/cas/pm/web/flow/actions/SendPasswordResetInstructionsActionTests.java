@@ -58,7 +58,6 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @SpringBootTest(classes = {
         BasePasswordManagementActionTests.SharedTestConfiguration.class,
@@ -112,7 +111,6 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class DefaultTests extends BasePasswordManagementActionTests {
 
@@ -159,7 +157,6 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @SpringBootTest(classes = {
         BasePasswordManagementActionTests.SharedTestConfiguration.class,
@@ -191,7 +188,6 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @Import(PasswordManagementTestConfiguration.class)
     class WithoutTokens extends BasePasswordManagementActionTests {

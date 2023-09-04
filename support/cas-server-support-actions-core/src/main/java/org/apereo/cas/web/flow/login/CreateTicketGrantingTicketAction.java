@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +22,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -97,7 +95,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         }
         return success();
     }
-    
+
     protected Authentication buildFinalAuthentication(final AuthenticationResult authenticationResult) {
         return authenticationResult.getAuthentication();
     }
@@ -124,7 +122,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             }
             LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             val tgt = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
+            tgt.getAuthentication().updateAttributes(authentication);
             configurationContext.getTicketRegistry().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {

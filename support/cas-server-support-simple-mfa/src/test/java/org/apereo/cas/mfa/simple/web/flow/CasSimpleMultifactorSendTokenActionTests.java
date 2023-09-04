@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
 class CasSimpleMultifactorSendTokenActionTests {
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = {
         "spring.mail.host=localhost",
@@ -65,7 +64,6 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = {
         "spring.mail.host=localhost",
@@ -101,7 +99,6 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = {
         "spring.mail.host=localhost",
@@ -153,7 +150,6 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class NoCommunicationStrategyTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test

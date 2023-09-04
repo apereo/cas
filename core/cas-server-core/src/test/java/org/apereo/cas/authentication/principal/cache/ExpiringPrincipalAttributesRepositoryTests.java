@@ -69,7 +69,6 @@ class ExpiringPrincipalAttributesRepositoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         ExpiringPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
@@ -115,7 +114,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
             }
         }
     }
-    
+
     @TestConfiguration
     static class CacheTestConfiguration {
         @Bean

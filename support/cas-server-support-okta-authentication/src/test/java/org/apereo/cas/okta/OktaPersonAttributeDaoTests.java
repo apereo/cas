@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import com.okta.sdk.client.Client;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserProfile;
@@ -21,10 +20,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-
 import java.util.Date;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +65,6 @@ class OktaPersonAttributeDaoTests {
         "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class OktaPersonDirectoryConfigurationTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")
@@ -101,7 +97,6 @@ class OktaPersonAttributeDaoTests {
         "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class OktaPersonDirectoryMockTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")

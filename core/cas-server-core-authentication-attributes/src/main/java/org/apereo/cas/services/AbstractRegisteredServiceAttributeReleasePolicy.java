@@ -179,16 +179,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return results;
     }
 
-    /**
-     * Gets the attributes internally from the implementation.
-     *
-     * @param context    the context
-     * @param attributes the principal attributes
-     * @return the attributes allowed for release
-     */
-    public abstract Map<String, List<Object>> getAttributesInternal(
+    protected abstract Map<String, List<Object>> getAttributesInternal(
         RegisteredServiceAttributeReleasePolicyContext context,
-        Map<String, List<Object>> attributes);
+        Map<String, List<Object>> attributes) throws Throwable;
 
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
         return true;

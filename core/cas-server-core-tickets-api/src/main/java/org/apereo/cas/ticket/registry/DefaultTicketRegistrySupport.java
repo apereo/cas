@@ -5,12 +5,10 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +72,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val tgt = (TicketGrantingTicket) getTicket(ticketGrantingTicketId);
             if (tgt != null && !tgt.isExpired()) {
-                tgt.getAuthentication().update(authentication);
+                tgt.getAuthentication().updateAttributes(authentication);
                 ticketRegistry.updateTicket(tgt);
             }
         }

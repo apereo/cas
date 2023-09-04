@@ -8,7 +8,7 @@
     <Loggers>
         <Logger name="org.apereo" level="off" additivity="false" />
         <Logger name="org.springframework.data" level="off" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

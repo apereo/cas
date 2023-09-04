@@ -15,7 +15,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,9 +28,8 @@ class SingleSignOnSessionCreatedActionTests {
 
     @Nested
     @TestPropertySource(properties = "cas.webflow.groovy.actions."
-                                     + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
-                                     + "=classpath:/SingleSignOnSessionCreated.groovy")
-    @SuppressWarnings("ClassCanBeStatic")
+        + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
+        + "=classpath:/SingleSignOnSessionCreated.groovy")
     class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
@@ -53,9 +51,8 @@ class SingleSignOnSessionCreatedActionTests {
 
     @Nested
     @TestPropertySource(properties = "cas.webflow.groovy.actions."
-                                     + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
-                                     + "=classpath:/Unknown12345.groovy")
-    @SuppressWarnings("ClassCanBeStatic")
+        + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
+        + "=classpath:/Unknown12345.groovy")
     class UnknownScriptTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)

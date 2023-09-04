@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +34,6 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @EnabledIfListeningOnPort(port = 18080)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
@@ -45,6 +42,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopeAuthenticationHandlers")
         private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
+
         @Test
         void verifyHandlerPasses() throws Throwable {
             assertNotNull(syncopeAuthenticationHandlers);
@@ -56,7 +54,6 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = "cas.authn.syncope.url=http://localhost:8096")

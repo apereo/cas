@@ -2,7 +2,6 @@ package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,7 +58,6 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
@@ -77,7 +74,6 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=false")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
@@ -94,7 +90,6 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
@@ -110,7 +105,6 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CasFeatureModuleDisabledByDefaultTestConfiguration.class
@@ -126,7 +120,6 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         CasFeatureModuleMultipleConditionsTestConfiguration.class

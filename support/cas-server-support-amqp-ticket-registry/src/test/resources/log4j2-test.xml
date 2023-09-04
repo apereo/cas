@@ -6,11 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.apereo" level="error" />
         <Logger name="org.springframework.boot" level="warn" />
         <Logger name="org.springframework.amqp" level="warn" />
-        <Logger name="com.rabbitmq" level="info" />
-        <Root level="off">
+        <Logger name="com.rabbitmq" level="warn" />
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

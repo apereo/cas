@@ -28,7 +28,6 @@ class DefaultCentralAuthenticationServiceLockingTests {
     private static final int TICKETS_PER_REQUEST = 10;
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.crypto.enabled=true",
         "cas.ticket.registry.in-memory.crypto.enabled=true",
@@ -74,7 +73,6 @@ class DefaultCentralAuthenticationServiceLockingTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.crypto.enabled=true",
         "cas.ticket.registry.in-memory.crypto.enabled=true",

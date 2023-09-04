@@ -36,7 +36,6 @@ class SendTicketGrantingTicketActionTests {
     private static final String LOCALHOST_IP = "127.0.0.1";
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class PublicWorkstationCookie extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -75,7 +74,6 @@ class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class CreateSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -136,7 +134,6 @@ class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
     class IgnoreSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
