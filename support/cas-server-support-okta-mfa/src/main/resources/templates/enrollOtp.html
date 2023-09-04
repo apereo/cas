@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title th:text="#{cas.mfa.oktaVerify.pagetitle}">Okta Verify Login View</title>
+    <link href="./cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+    <body>
+        <main role="main" class="container mt-3 mb-3">
+            <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+                <p class="text-center">Veuillez scanner le code QR avec votre application pour enregistrer et activer le facteur.</p>
+                <p class="text-center">Une fois effectué, appuyez sur "Suivant"</p>
+                <div class="text-center">
+                    <img th:src="${qrCodeData}" alt="QR Code for Okta Verify" />
+                </div>
+                <form method="post" id="fm1" th:action="@{/login}">
+                    <input type="hidden" name="_eventId_submit" value="LOGIN" />
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                    <input type="hidden" name="geolocation" />
+                    <button class="mdc-button mdc-button--raised" accesskey="l">
+                        <span class="mdc-button__label">Suivant</span>
+                    </button>
+                </form>
+                <form method="post" id="fm2" th:action="@{/login}">
+                    <input type="hidden" name="_eventId_returnToMfaSelection" value="LOGIN" />
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                    <input type="hidden" name="geolocation" />
+                    <button class="mdc-button mdc-button--raised" accesskey="r">
+                        <span class="mdc-button__label">Retourner à la sélection des facteurs MFA</span>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>

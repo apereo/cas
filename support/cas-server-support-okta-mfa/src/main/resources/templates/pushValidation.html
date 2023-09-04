@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title th:text="${status == 'enroll' ? 'Enrôlement' : 'Vérification'}"> de votre facteur MFA</title>
+    <link href="./cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+            <!-- Display Factor Type -->
+            <h3 class="text-center">Okta MFA : Vérification du facteur</h3>
+
+            <div th:text="'Debug: factorType = ' + ${factorType}"></div> <!-- Debug factorType -->
+
+            <p>
+                Veuillez valider votre notification push depuis votre application pour vérifier votre appareil.
+            </p>
+            <p>
+                Confirmez ensuite via le bouton suivant :
+            </p>
+
+            <div>
+                <!-- Push Notification Validation Form -->
+                <div>
+                    <form method="post" id="pushValidationForm" th:action="@{/login}">
+                        <input type="hidden" name="_eventId_submit" value="LOGIN" />
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+
+
+                        <button class="mdc-button mdc-button--raised" accesskey="p">
+                            <span class="mdc-button__label">J'ai validé ma notification push</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <!-- Return to MFA Selection Button -->
+                    <form method="post" id="fm3" th:action="@{/login}">
+                        <input type="hidden" name="_eventId_returnToMfaSelection" value="LOGIN" />
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                        <input type="hidden" name="geolocation" />
+                        <button class="mdc-button mdc-button--raised" accesskey="r">
+                            <span class="mdc-button__label">Retourner à la sélection des facteurs MFA</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

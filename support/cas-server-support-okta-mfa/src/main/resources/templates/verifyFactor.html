@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title th:text="${status == 'enroll' ? 'Enrôlement' : 'Vérification'}"> de votre facteur MFA</title>
+    <link href="./cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+            <!-- Display Factor Type -->
+            <h3 class="text-center">Okta MFA : Vérification du facteur</h3>
+
+            <div th:text="'Debug: factorType = ' + ${factorType}"></div> <!-- Debug factorType -->
+
+            <div th:if="${factorType} == 'sms' OR ${factorType} == 'email'">
+                <p>Veuillez saisir le code que vous avez reçu pour <span th:text="${status == 'enroll' ? 'enregistrer' : 'vérifier'}"></span> votre appareil.</p>
+            </div>
+
+            <!-- Text for TOTP Enroll and Challenge -->
+            <p th:if="${factorType == 'token:software:totp' && status == 'enroll'}">
+                Veuillez saisir le code TOTP de votre application pour enregistrer votre appareil.
+            </p>
+            <p th:if="${factorType == 'token:software:totp' && status == 'challenge'}">
+                Veuillez saisir le code TOTP de votre application pour vérifier votre appareil.
+            </p>
+
+            <!-- Form for Code Validation -->
+            <form method="post" id="fm1" th:action="@{/login}" th:object="${code}">
+                <input type="hidden" name="_eventId_submit" value="LOGIN"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="geolocation"/>
+
+                <div id="msg" class="banner banner-danger alert alert-danger my-2" role="alert"
+                     th:if="${#fields.hasErrors('*')}">
+                    <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">this error block and text is only shown
+                        if there are errors</span>
+                </div>
+                <div class="cas-field form-group my-3 mdc-input-group d-flex">
+                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                        <div class="d-flex caps-check">
+                            <label for="secretCode"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control pwd"
+                                       type="text"
+                                       name="secretCode"
+                                       id="secretCode"
+                                       th:field="*{secretCode}"
+                                       size="25"
+                                       autocomplete="off" required/>
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <button class="mdc-button mdc-button--raised" accesskey="l">
+                        <span class="mdc-button__label">Validate</span>
+                    </button>
+                </div>
+            </form>
+
+            <div>
+                <div th:if="${factorType} == 'sms' OR ${factorType} == 'email'">
+                    <!-- Resend code button -->
+                    <form method="post" id="fm2" th:action="@{/login}">
+                        <input type="hidden" name="_eventId_resend" value="LOGIN"/>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="geolocation"/>
+                        <button class="mdc-button mdc-button--raised" accesskey="l">
+                            <span class="mdc-button__label">Renvoyer le code</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <!-- Return to MFA Selection Button -->
+                    <form method="post" id="fm3" th:action="@{/login}">
+                        <input type="hidden" name="_eventId_returnToMfaSelection" value="LOGIN" />
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                        <input type="hidden" name="geolocation" />
+                        <button class="mdc-button mdc-button--raised" accesskey="r">
+                            <span class="mdc-button__label">Retourner à la sélection des facteurs MFA</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

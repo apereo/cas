@@ -1,0 +1,641 @@
+/* Root / Reset */
+
+
+:root {
+    --mdc-text-button-label-text-color: #f7f7f7;
+    --mdc-theme-error: #d9534f;
+    --cas-theme-primary: #153e50;
+    --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
+    --cas-theme-button-bg: #26418f;
+    --cas-theme-primary-light: #006d85;
+    --cas-theme-secondary: #74C163;
+    --cas-theme-success: var(--cas-theme-secondary);
+    --cas-theme-danger: var(--mdc-theme-error);
+    --cas-theme-warning: #e6a210;
+    --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
+    --mdc-theme-primary: var(--cas-theme-primary, #153e50);
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background: #EFEFEF;
+}
+
+a {
+    color: #153e50;
+    color: var(--cas-theme-primary, #153e50);
+}
+
+a:hover, a:visited, a:active {
+    color: #006d85;
+    color: var(--cas-theme-primary-light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+}
+
+aside, section, main {
+    display: block;
+}
+
+/* Material */
+
+.mdc-drawer {
+    top: 56px;
+}
+
+.mdc-drawer-app-content {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+}
+
+.main-content {
+    display: flex;
+}
+
+.mdc-top-app-bar {
+    z-index: 7;
+}
+
+div#content {
+    box-shadow:1px 1px 3px #888;
+}
+/* widgets */
+
+.notifications-count {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background-color: #b00020;
+    background-color: var(--cas-theme-danger);
+    color: #fff;
+    border-radius: 50%;
+    padding: 1px 3px;
+    font: 8px Verdana;
+}
+
+.cas-brand {
+    height: 48px;
+    width: auto;
+}
+
+header>nav .cas-brand path.cls-1 {
+    fill: white;
+}
+
+header>nav .cas-brand .cas-logo {
+    height: 100%;
+}
+
+.caps-warn {
+    display: none;
+}
+
+.caps-on {
+    display: block;
+}
+
+.login-section {
+    border-right: 1px solid rgba(0, 0, 0, .2);
+    border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+    padding: 2rem 2.5rem;
+    flex: 1 1 auto;
+    /* IE flex fix */
+}
+
+.login-section:last-child {
+    border: none;
+}
+
+@media screen and (max-width: 767.99px) {
+    .login-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, .2);
+        border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+        max-width: none;
+        padding: 0 1.5rem;
+    }
+}
+
+.noborder {
+    border: 0 none;
+}
+
+.close {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    text-transform: none;
+    text-decoration: none;
+}
+
+button.close {
+    background-color: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.banner {
+    border: 1px solid rgba(0, 0, 0, .2);
+    border: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+    position: relative;
+    padding-left: 10px;
+    box-shadow:1px 1px 3px #888;
+    border-radius:.5em;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.banner>span {
+    vertical-align: top;
+}
+
+.banner .banner-message {
+    margin: 0.375rem 0;
+}
+
+.banner .banner-heading:first-child {
+    margin-top: 0;
+}
+
+.banner .banner-message:first-child {
+    margin-top: 0;
+}
+
+.banner .banner-message:last-child {
+    margin-bottom: 0;
+}
+
+.banner-primary {
+    border-color: #153e50;
+    border-color: var(--cas-theme-primary, #153e50);
+}
+
+.banner-primary .mdi {
+    color: #153e50;
+    color: var(--cas-theme-primary, #153e50);
+}
+
+.banner-danger h1:before,
+.banner-danger h2:before,
+.banner-danger h3:before,
+.banner-danger h4:before,
+.banner-danger h5:before {
+    content: "\F0027";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
+.banner-danger {
+    border-color: #b00020;
+    border-color: var(--cas-theme-danger, #b00020);
+    color: #D8000C;
+    background-color: #FFD2D2;
+}
+
+.banner-danger .mdi {
+    color: #b00020;
+    color: var(--cas-theme-danger, #b00020);
+}
+
+.banner-warning {
+    border-color: #e6a210;
+    border-color: var(--cas-theme-warning, #e6a210);
+    color: #e6a210;
+    color: var(--cas-theme-warning, #e6a210);
+}
+
+.banner-warning .mdi {
+    color: #e6a210;
+    color: var(--cas-theme-warning, #e6a210);
+}
+
+.banner-success h1:before,
+.banner-success h2:before,
+.banner-success h3:before,
+.banner-success h4:before,
+.banner-success h5:before {
+    content: "\F012D";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
+.banner-success {
+    border-color: var(--cas-theme-success);
+    color: var(--cas-theme-primary, #153e50);
+    background-color: #b3e7f8;
+}
+
+.banner-dismissible {
+    padding-right: 4rem;
+}
+
+.banner-dismissible .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .75rem 1.25rem;
+    color: inherit;
+}
+
+.login-provider-item {
+    list-style: none;
+}
+
+.login-provider-item .mdc-button .mdi {
+    margin-right: 0.375rem;
+}
+
+@media screen and (max-width: 767.99px) {
+    .logout-banner {
+        width: 100%;
+    }
+}
+
+.cas-footer {
+    background-color: var(--mdc-theme-primary, #6200ee);
+    color: whitesmoke;
+}
+
+.cas-footer a {
+    color: deepskyblue;
+}
+
+.cas-footer>* {
+    margin-right: 0.25rem;
+    display: inline-block;
+}
+
+.cas-footer>*:last-child {
+    margin: 0;
+}
+
+.cas-notification-dialog .mdc-dialog__content>.cas-notification-message:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+}
+
+.mdc-dialog__title::before {
+    display: none;
+}
+
+.mdi {
+    content: "";
+}
+
+.mdi:before {
+    font-size: 24px;
+}
+
+/* custom components */
+
+.custom-select {
+    display: inline-block;
+    min-width: 80%;
+    height: 56px;
+    padding: .375rem 1.75rem .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.87);
+    vertical-align: middle;
+    background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    -webkit-appearance: none;
+}
+
+/* utilities */
+
+.bg-primary {
+    background-color: rgba(21, 62, 80, 0.2);
+    background-color: var(--cas-theme-primary-bg, rgba(21, 62, 80, 0.2));
+}
+
+.border-bottom {
+    border-color: #153e50;
+    border-bottom: 1px solid var(--cas-theme-primary, #153e50);
+}
+
+.strong {
+    font-weight: bold;
+}
+
+.text-warning {
+    color: #e6a210;
+    color: var(--cas-theme-warning, #e6a210);
+}
+
+.text-danger {
+    color: #b00020;
+    color: var(--cas-theme-danger, #b00020);
+}
+
+.text-secondary, .text-success {
+    color: var(--cas-theme-secondary);
+}
+
+.progress-bar-danger .mdc-linear-progress__bar-inner {
+    border-color: #b00020;
+    border-color: var(--cas-theme-danger, #b00020);
+}
+
+.progress-bar-warning .mdc-linear-progress__bar-inner {
+    border-color: #e6a210;
+    border-color: var(--cas-theme-warning, #e6a210);
+}
+
+.progress-bar-success .mdc-linear-progress__bar-inner {
+    border-color: var(--cas-theme-success);
+}
+
+.word-break-all {
+    word-break: break-all;
+}
+
+.mdc-text-field {
+    width: 100%;
+}
+
+.mdc-text-field>.mdc-text-field__input, .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea)>.mdc-text-field__input {
+    border-color: #153e50;
+    border: 1px solid var(--cas-theme-primary, #153e50);
+    border-radius: 4px;
+}
+
+.mdc-input-group .mdc-input-group-field .mdc-text-field {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-append {
+    order: 2;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-prepend, .mdc-input-group .mdc-input-group-append {
+    height: 56px;
+}
+
+.mdc-input-group .mdc-input-group-prepend {
+    order: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-prepend .mdc-text-field>.mdc-text-field__input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.mdc-input-group .mdc-input-group-field.mdc-input-group-field-append .mdc-text-field>.mdc-text-field__input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.text-danger, .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__icon.text-danger, .mdc-text-field:not(.mdc-text-field--disabled)+.mdc-text-field-helper-line .mdc-text-field-helper-text.text-danger {
+    color: #b00020;
+    color: var(--cas-theme-danger);
+}
+
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: #153e50;
+    color: var(--cas-theme-primary, #153e50);
+}
+
+.mdc-button--outline:not(:disabled) {
+    background-color: #428bca;
+    border-radius: 12px 4px;
+}
+
+.mdc-button--raised:not(:disabled) {
+    margin-right: 4px;
+    border-radius: 12px 4px;
+    background-color: var(--cas-theme-primary, #153E50);
+}
+
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.pad-0 {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.w-66 {
+    width: 66%;
+}
+
+.w-33 {
+    width: 33%;
+}
+
+.w-25 {
+    width: 25%;
+}
+
+.w-50 {
+    width: 50%;
+}
+
+.w-75 {
+    width: 75%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.w-auto {
+    width: auto;
+}
+
+.h-25 {
+    height: 25%;
+}
+
+.h-50 {
+    height: 50%;
+}
+
+.h-75 {
+    height: 75%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.h-auto {
+    height: auto;
+}
+
+.mw-100 {
+    max-width: 100% !important;
+}
+
+.mh-100 {
+    max-height: 100%;
+}
+
+.min-vw-100 {
+    min-width: 100vw;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+.vw-100 {
+    width: 100vw;
+}
+
+.vh-100 {
+    height: 100vh;
+}
+
+.mw-50 {
+    max-width: 50%;
+}
+
+.border-rounded {
+    border-color: #153e50;
+    border: 1px solid var(--cas-theme-primary, #153e50);
+    border-radius: 4px;
+}
+
+.border-bottom {
+    border-color: #153e50;
+    border-bottom: 1px solid var(--cas-theme-primary, #153e50);
+}
+
+@media all and (min-width: 768px) {
+    .w-md-50 {
+        width: 50%;
+    }
+    .w-md-66 {
+        width: 66%;
+    }
+}
+
+@media all and (min-width: 992px) {
+    .w-lg-50 {
+        width: 50%;
+    }
+    .w-lg-66 {
+        width: 66%;
+    }
+}
+
+@media all and (max-width: 767.99px) {
+    .w-md-50 {
+        width: 100%;
+    }
+    .w-md-66 {
+        width: 100%;
+    }
+}
+
+@media all and (max-width: 991.99px) {
+    .w-lg-50 {
+        width: 100%;
+    }
+    .w-lg-66 {
+        width: 100%;
+    }
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+#duo_iframe {
+    width: 100%;
+    min-width: 304px;
+    height: 330px;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dataTables_wrapper {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+#serviceui {
+    background-color: #17a3b844;
+    border-radius: 4px;
+}
+
+#heroimg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* IE flex fix */
+
+#main-content {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+/* oddly, the auto right and left margins caused the login form to not be centered in IE */
+
+@media all and (min-width: 768px) {
+    .login-section {
+        flex: 1 1 500px;
+        /* according to flexbugs, flex-basis should be explicitly set for IE */
+        /* https://github.com/philipwalton/flexbugs#flexbug-4 */
+    }
+}
+
+/* flex-basis: auto works in IE with the column view,
+     but a specific value needs to be set for row view
+   */
+
+/* fix for not showing password reveal icon on MSEdge and MSIE */
+.pwd::-ms-reveal,
+.pwd::-ms-clear {
+    display: none;
+}
+
+@media (min-width: 1400px) {
+    .container-xxl {
+        max-width: 90%;
+    }
+}
