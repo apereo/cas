@@ -13,9 +13,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,18 +24,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -73,12 +64,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsToFindToken() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
@@ -90,12 +76,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsPrincipal() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
@@ -110,12 +91,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsExpiredToken() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
@@ -136,12 +112,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);

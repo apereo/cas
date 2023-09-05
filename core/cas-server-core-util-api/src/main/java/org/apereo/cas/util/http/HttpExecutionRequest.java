@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is {@link org.apereo.cas.util.http.HttpExecutionRequest}.
+ * This is {@link HttpExecutionRequest}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0

@@ -7,7 +7,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.shell.Input;
 import org.springframework.shell.InputProvider;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @EnableScheduling
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)

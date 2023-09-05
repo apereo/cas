@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
@@ -11,16 +12,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.ViewFactory;
-import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 import java.util.Map;
@@ -64,12 +62,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyRenderAction() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        MockRequestContext.create();
 
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val cfg = casWebflowExecutionPlan.getWebflowConfigurers().iterator().next();
