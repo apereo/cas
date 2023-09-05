@@ -5,6 +5,7 @@ import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -127,7 +128,7 @@ class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointCont
     private String getPermissionTicketWith(final List<String> scopes) throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
 
-        var body = createUmaResourceRegistrationRequest(1000, scopes).toJson();
+        var body = createUmaResourceRegistrationRequest(RandomUtils.nextInt(), scopes).toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
 

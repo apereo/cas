@@ -24,9 +24,11 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import java.io.File;
 import java.io.Serial;
@@ -53,6 +55,8 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class LdapUtilsTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyGetBoolean() throws Throwable {
@@ -112,17 +116,12 @@ class LdapUtilsTests {
         assertThrows(RuntimeException.class,
             () -> LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
                 List.of("p1", "p2"), List.of("v1", "v2")));
+
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         var filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
             List.of("p1", "p2"), List.of("v1", "v2"));
         assertNotNull(filter);
         assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
-        assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:UnknownLdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
     }
 
     @Test

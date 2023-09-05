@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
@@ -14,7 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
 import java.util.List;
 import java.util.UUID;
@@ -27,8 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-@SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-                properties = "cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true")
+@SpringBootTest(classes = {
+    GoogleAuthenticatorPrepareLoginActionTests.TestMultifactorTestConfiguration.class,
+    BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
+},
+    properties = "cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true")
 class GoogleAuthenticatorPrepareLoginActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN)
@@ -39,12 +44,12 @@ class GoogleAuthenticatorPrepareLoginActionTests {
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    @Qualifier("dummyProvider")
+    private MultifactorAuthenticationProvider dummyProvider;
 
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create();
-
         val acct = GoogleAuthenticatorAccount
             .builder()
             .username("casuser")
@@ -56,11 +61,17 @@ class GoogleAuthenticatorPrepareLoginActionTests {
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
-        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
-        
+        WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertNull(action.execute(context));
         assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
         assertNotNull(WebUtils.getOneTimeTokenAccounts(context));
+    }
+
+    @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)
+    static class TestMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }
