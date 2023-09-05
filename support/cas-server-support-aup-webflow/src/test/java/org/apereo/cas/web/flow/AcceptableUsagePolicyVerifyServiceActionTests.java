@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -11,12 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Map;
 
@@ -40,17 +36,13 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
 
     @Test
     void verifyNoService() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = org.apereo.cas.util.MockRequestContext.create();
         assertNull(acceptableUsagePolicyVerifyAction.execute(context));
     }
 
     @Test
     void verifyDisabledService() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = org.apereo.cas.util.MockRequestContext.create();
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService("https://aup.service.disabled");
@@ -68,9 +60,7 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
 
     @Test
     void verifyMustAccept() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService("https://aup.service");

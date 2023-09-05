@@ -81,7 +81,6 @@ import org.springframework.web.bind.annotation.RestController;
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCoreWebflowConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,

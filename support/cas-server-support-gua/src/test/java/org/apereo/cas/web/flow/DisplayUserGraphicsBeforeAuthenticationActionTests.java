@@ -2,17 +2,11 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,10 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
     void verifyAction() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter("username", "casuser");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
+        context.setParameter("username", "casuser");
         val event = displayUserGraphicsBeforeAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue(WebUtils.containsGraphicalUserAuthenticationImage(context));
@@ -37,9 +29,7 @@ class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphic
 
     @Test
     void verifyMissingUser() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
         assertThrows(UnauthorizedServiceException.class, () -> displayUserGraphicsBeforeAuthenticationAction.execute(context));
     }
 

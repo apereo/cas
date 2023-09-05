@@ -30,8 +30,8 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +39,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.transaction.support.TransactionOperations;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Map;
 
@@ -107,16 +100,15 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
     protected TransactionOperations jdbcAcceptableUsagePolicyTransactionTemplate;
     
-    protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
+    protected String determinePrincipalId(final String actualPrincipalId,
+                                          final Map<String, List<Object>> profileAttributes) throws Exception {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
             ticketRegistrySupport,
             aupProperties, acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);

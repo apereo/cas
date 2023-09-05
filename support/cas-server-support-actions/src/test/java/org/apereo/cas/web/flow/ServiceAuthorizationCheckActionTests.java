@@ -5,23 +5,16 @@ import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPo
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -47,9 +40,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyNoServiceFound() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("invalid-service-123"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
     }
@@ -63,9 +54,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
         svc22.setAccessStrategy(strategy);
         servicesManager.save(svc22);
 
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-disabled"));
         assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));
@@ -82,9 +71,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
         svc23.setAccessStrategy(strategy23);
         servicesManager.save(svc23);
 
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-delegation"));
         assertDoesNotThrow(() -> this.action.execute(context));
         assertFalse(WebUtils.isCasLoginFormViewable(context));

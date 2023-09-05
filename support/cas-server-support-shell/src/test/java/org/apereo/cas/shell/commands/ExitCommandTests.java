@@ -3,7 +3,6 @@ package org.apereo.cas.shell.commands;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 @Order(Order.DEFAULT + 1)
 class ExitCommandTests extends BaseCasShellCommandTests {

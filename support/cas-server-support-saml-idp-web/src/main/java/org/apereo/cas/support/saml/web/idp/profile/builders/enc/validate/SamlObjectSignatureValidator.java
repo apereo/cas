@@ -201,7 +201,7 @@ public class SamlObjectSignatureValidator {
 
         FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            return new SamlException("No valid signing credentials for validation could not be resolved");
+            return new SamlException("No valid signing credentials for authentication request validation could be resolved");
         });
     }
 
@@ -235,7 +235,7 @@ public class SamlObjectSignatureValidator {
 
         FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            return new SamlException("No valid signing credentials for validation could not be resolved");
+            return new SamlException("No valid signing credentials for profile request validation could be resolved");
         });
     }
 

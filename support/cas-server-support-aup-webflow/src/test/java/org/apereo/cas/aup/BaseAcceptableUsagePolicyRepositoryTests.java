@@ -133,9 +133,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
         final Map<String, List<Object>> profileAttributes,
         final Credential credential) throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = org.apereo.cas.util.MockRequestContext.create();
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, credential, profileAttributes);
         ticketRegistry.addTicket(tgt);
         val principal = CoreAuthenticationTestUtils.getPrincipal(credential.getId(), profileAttributes);

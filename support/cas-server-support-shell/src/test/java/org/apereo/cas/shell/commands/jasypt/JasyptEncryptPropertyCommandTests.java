@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test

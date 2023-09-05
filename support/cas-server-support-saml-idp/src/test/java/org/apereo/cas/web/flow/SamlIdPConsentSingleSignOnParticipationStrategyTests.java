@@ -10,7 +10,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,17 +19,8 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,12 +39,7 @@ class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWe
 
     @Test
     void verifyIdPNeedsConsentOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System"));
         val authn = RegisteredServiceTestUtils.getAuthentication(principal);
@@ -66,8 +52,8 @@ class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWe
 
         val authnRequest = getAuthnRequestFor(issuer);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
-            .httpServletRequest(request)
-            .httpServletResponse(response)
+            .httpServletRequest(context.getHttpServletRequest())
+            .httpServletResponse(context.getHttpServletResponse())
             .requestContext(context)
             .build()
             .attribute(AuthnRequest.class.getName(), authnRequest)

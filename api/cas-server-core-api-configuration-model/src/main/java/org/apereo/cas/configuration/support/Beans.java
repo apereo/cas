@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
-import com.github.benmanes.caffeine.cache.RemovalListener;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -168,8 +167,8 @@ public class Beans {
         if (cache instanceof final ExpiringSimpleCacheProperties expiring) {
             builder.expireAfterWrite(newDuration(expiring.getDuration()));
         }
-        builder.removalListener((RemovalListener<String, ?>) (key, value, cause) -> {
-            LOGGER.trace("Removing cached value [{}] from cache under [{}]; removal cause is [{}]", value, key, cause);
+        builder.removalListener((key, value, cause) -> {
+            LOGGER.trace("Removing cached value [{}] linked to cache key [{}]; removal cause is [{}]", value, key, cause);
             Unchecked.consumer(__ -> {
                 if (value instanceof final AutoCloseable closeable) {
                     Objects.requireNonNull(closeable).close();
