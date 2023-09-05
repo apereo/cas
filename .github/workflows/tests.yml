@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -68,7 +68,7 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -96,7 +96,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -148,7 +148,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [tests]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:

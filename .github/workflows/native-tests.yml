@@ -58,7 +58,7 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -82,7 +82,7 @@ jobs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -112,7 +112,7 @@ jobs:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
@@ -174,7 +174,7 @@ jobs:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
