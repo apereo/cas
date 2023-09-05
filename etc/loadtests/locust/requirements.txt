@@ -1,5 +1,5 @@
 Flask==2.3.3
-gevent==23.7.0
+gevent==23.9.0.post1
 click==8.1.7
 geventhttpclient-wheels==1.3.1.dev3
 idna==3.4
