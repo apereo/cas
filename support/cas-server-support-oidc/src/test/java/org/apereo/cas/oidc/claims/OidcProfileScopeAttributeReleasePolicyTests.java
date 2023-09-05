@@ -35,6 +35,7 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(oidcConfigurationContext.getApplicationContext())
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
