@@ -805,10 +805,10 @@ class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
-        if (!service.isRenewRefreshToken()) {
-            assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-        } else {
+        if (service.isRenewRefreshToken()) {
             assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
+        } else {
+            assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
         }
         val newRefreshToken = service.isRenewRefreshToken()
             ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
