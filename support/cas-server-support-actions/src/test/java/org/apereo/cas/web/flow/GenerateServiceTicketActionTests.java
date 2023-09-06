@@ -64,8 +64,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyTicketGrantingTicketFromRequest() throws Throwable {
         val context = MockRequestContext.create();
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
@@ -76,8 +75,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyServiceTicketWithAccessStrategyMapped() throws Throwable {
         val context = MockRequestContext.create();
         val serviceId = UUID.randomUUID().toString();
@@ -93,8 +91,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyServiceTicketWithAccessStrategyDenied() throws Throwable {
         val context = MockRequestContext.create();
         val serviceId = UUID.randomUUID().toString();
@@ -111,8 +108,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyServiceTicketWithAccessStrategyMultivalued() throws Throwable {
         val context = MockRequestContext.create();
         val serviceId = UUID.randomUUID().toString();
@@ -132,8 +128,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyTicketGrantingTicketNoTgt() throws Throwable {
         val context = MockRequestContext.create();
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
@@ -144,8 +139,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyTicketGrantingTicketExpiredTgt() throws Throwable {
         val context = MockRequestContext.create();
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
@@ -169,8 +163,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_GATEWAY, action.execute(context).getId());
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyWarnCookie() throws Throwable {
         val context = MockRequestContext.create();
         val randomService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());

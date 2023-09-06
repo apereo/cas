@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
@@ -15,7 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
@@ -29,7 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebflowMfaActions")
-@SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = {
+    GoogleAuthenticatorValidateTokenActionTests.TestMultifactorTestConfiguration.class,
+    BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
+})
 class GoogleAuthenticatorValidateTokenActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_TOKEN)
@@ -40,7 +45,9 @@ class GoogleAuthenticatorValidateTokenActionTests {
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    @Qualifier("dummyProvider")
+    private MultifactorAuthenticationProvider dummyProvider;
+
 
     @Test
     void verifySuccessfulValidation() throws Throwable {
@@ -57,9 +64,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
-        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
-
+        WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertThrows(IllegalArgumentException.class, () -> action.execute(context));
 
         context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "111222");
@@ -68,5 +73,13 @@ class GoogleAuthenticatorValidateTokenActionTests {
 
         context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, acct.getScratchCodes().get(0).toString());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+    }
+
+    @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)
+    static class TestMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

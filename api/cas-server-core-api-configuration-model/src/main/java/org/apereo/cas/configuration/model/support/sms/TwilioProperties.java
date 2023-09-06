@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiresModule(name = "cas-server-support-sms-twilio")
+@RequiresModule(name = "cas-server-support-twilio")
 @Getter
 @Accessors(chain = true)
 @Setter
