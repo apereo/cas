@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -24,16 +23,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DetermineMultifactorPasswordlessAuthenticationActionTests}.
@@ -152,9 +148,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         @Test
         @Order(4)
         void verifyUserHasNoContactInfo() throws Throwable {
-            val context = mock(RequestContext.class);
-            when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-            when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+            val context = org.apereo.cas.util.MockRequestContext.create();
 
             val account = PasswordlessUserAccount.builder()
                 .username("casuser")
