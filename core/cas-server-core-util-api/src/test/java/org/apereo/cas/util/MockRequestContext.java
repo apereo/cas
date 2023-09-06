@@ -6,8 +6,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockFlowExecutionContext;
 import java.util.Objects;
 import static org.mockito.Mockito.*;
 
@@ -43,6 +45,16 @@ public class MockRequestContext extends org.springframework.webflow.test.MockReq
         return this;
     }
 
+    public MockRequestContext setParameter(final String name, final String[] value) {
+        getHttpServletRequest().setParameter(name, value);
+        putRequestParameter(name, value);
+        return this;
+    }
+
+    public MockRequestContext setActiveFlow(final Flow flow) {
+        setFlowExecutionContext(new MockFlowExecutionContext(flow));
+        return this;
+    }
 
     public static MockRequestContext create() throws Exception {
         val requestContext = new MockRequestContext();
