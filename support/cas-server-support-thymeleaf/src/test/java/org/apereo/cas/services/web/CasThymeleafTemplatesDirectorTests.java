@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import org.thymeleaf.context.WebEngineContext;
 import java.net.URI;
 import java.time.Clock;
