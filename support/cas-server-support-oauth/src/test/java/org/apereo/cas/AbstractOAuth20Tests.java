@@ -90,6 +90,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -403,7 +404,7 @@ public abstract class AbstractOAuth20Tests {
                                                                  final String secret,
                                                                  final Set<OAuth20GrantTypes> grantTypes) {
         val service = new OAuthRegisteredService();
-        service.setName("The registered service name");
+        service.setName("RegisteredService-" + RandomUtils.randomAlphabetic(6));
         service.setServiceId(serviceId);
         service.setClientId(clientId);
         service.setClientSecret(secret);
