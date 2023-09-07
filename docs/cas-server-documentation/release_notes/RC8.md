@@ -70,6 +70,12 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
 
+### Testing Strategy
+
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `432` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
 ## Other Stuff
                           
 - U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
