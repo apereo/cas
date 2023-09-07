@@ -30,13 +30,13 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
         this.resource = script;
         if (ResourceUtils.doesResourceExist(script)) {
             if (ResourceUtils.isFile(script) && enableWatcher) {
-                this.watcherService = FunctionUtils.doUnchecked(
+                watcherService = FunctionUtils.doUnchecked(
                     () -> new FileWatcherService(script.getFile(),
                         Unchecked.consumer(file -> {
                             LOGGER.info("Reloading script at [{}]", file);
                             compileScriptResource(script);
                         })));
-                this.watcherService.start(script.getFilename());
+                watcherService.start(script.getFilename());
             }
             compileScriptResource(script);
         }

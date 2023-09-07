@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,6 @@ import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.beans.factory.DisposableBean;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
@@ -133,7 +131,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-        final String originalPassword) throws Throwable {
+                                                                                        final String originalPassword) throws Throwable {
         val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {
@@ -171,23 +169,27 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         LOGGER.debug("LDAP principal identifier created is [{}]", id);
         val attributeMap = collectAttributesForLdapEntry(ldapEntry, id);
         LOGGER.debug("Created LDAP principal for id [{}] and [{}] attributes", id, attributeMap.size());
-        return this.principalFactory.createPrincipal(id, attributeMap);
+        return principalFactory.createPrincipal(id, attributeMap);
     }
 
     protected Map<String, List<Object>> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
         val attributeMap = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
-        principalAttributeMap.forEach((key, names) -> {
-            val attributeNames = CollectionUtils.toCollection(names, ArrayList.class);
-            if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> name.toString().endsWith(";"))) {
-                val attrs = ldapEntry.getAttributes()
-                    .stream()
-                    .filter(attr -> attr.getName().startsWith(key.concat(";"))).toList();
-                attrs.forEach(attr -> attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, attr.getName(), List.of())));
-            } else {
-                attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, key, attributeNames));
-            }
-        });
+        principalAttributeMap
+            .entrySet()
+            .stream()
+            .filter(entry -> !StringUtils.equalsIgnoreCase(entry.getKey(), "*") && !StringUtils.equalsIgnoreCase(entry.getKey(), "+"))
+            .forEach(entry -> {
+                val attributeNames = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
+                if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> name.toString().endsWith(";"))) {
+                    val attrs = ldapEntry.getAttributes()
+                        .stream()
+                        .filter(attr -> attr.getName().startsWith(entry.getKey().concat(";"))).toList();
+                    attrs.forEach(attr -> attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, attr.getName(), List.of())));
+                } else {
+                    attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, entry.getKey(), attributeNames));
+                }
+            });
         if (this.collectDnAttribute) {
             LOGGER.debug("Recording principal DN attribute as [{}]", this.principalDnAttributeName);
             attributeMap.put(this.principalDnAttributeName, CollectionUtils.wrapList(ldapEntry.getDn()));
@@ -251,7 +253,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     private static Map<String, List<Object>> collectAttributeValueForEntry(final LdapEntry ldapEntry, final String key,
-        final Collection<String> attributeNames) {
+                                                                           final Collection<String> attributeNames) {
         val attributeMap = new HashMap<String, List<Object>>();
         val attr = ldapEntry.getAttribute(key);
         if (attr != null) {
