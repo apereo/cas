@@ -31,6 +31,7 @@ class OidcOpenIdScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         assertTrue(policy.determineRequestedAttributeDefinitions(context).isEmpty());
     }

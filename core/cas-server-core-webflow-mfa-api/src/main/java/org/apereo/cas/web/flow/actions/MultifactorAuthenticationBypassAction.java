@@ -55,14 +55,6 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
         return yes();
     }
 
-    /**
-     * Is multifactor authentication bypassed?
-     *
-     * @param requestContext the request context
-     * @param service        the service
-     * @param provider       the provider
-     * @return true/false
-     */
     protected boolean isMultifactorAuthenticationBypass(final RequestContext requestContext,
                                                         final RegisteredService service,
                                                         final MultifactorAuthenticationProvider provider) {

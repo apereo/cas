@@ -37,11 +37,23 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
 
     /**
      * Name of LDAP attribute that represents the account locked status.
-     * The value of the attribute is set to {@code "true"} if the account is
-     * ever updated to indicated a locked status.
+     * The value of the attribute is typically set to {@code "true"} if the account is
+     * ever updated to indicated a locked status. For Active Directory, this attribute
+     * might be called {@code lockedoutTime}.
      */
     @RequiredProperty
     private String accountLockedAttribute = "pwdLockout";
+
+    /**
+     * When CAS is about to unlock the user account,
+     * it will use the {@link #accountLockedAttribute} setting to
+     * locate the appropriate attribute for the user entry. This attribute
+     * will then be assigned the value(s) defined here to unlock the account.
+     * For Active Directory and in scenarios where {@link #accountLockedAttribute} is set to
+     * {@code lockedoutTime}, this value might be set to zero. A value of zero means
+     * that the account is not currently locked out.
+     */
+    private String[] accountUnlockedAttributeValues = {"false"};
 
     /**
      * The specific variant of LDAP

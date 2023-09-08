@@ -51,6 +51,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(attrs.containsKey("phone_number"));
@@ -70,6 +71,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
