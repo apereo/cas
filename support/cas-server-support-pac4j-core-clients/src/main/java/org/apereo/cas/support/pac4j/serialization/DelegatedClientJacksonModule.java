@@ -3,12 +3,10 @@ package org.apereo.cas.support.pac4j.serialization;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.pac4j.core.profile.CommonProfile;
 
-import java.io.IOException;
 import java.io.Serial;
 
 /**
