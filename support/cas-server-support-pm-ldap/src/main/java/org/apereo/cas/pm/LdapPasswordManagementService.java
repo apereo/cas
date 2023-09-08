@@ -104,15 +104,13 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        findEntries(CollectionUtils.wrap(credential.getId()))
-            .forEach((entry, ldap) -> {
-                LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(ldap.getLdapUrl()));
-                val attributes = new LinkedHashMap<String, Set<String>>();
-                attributes.put(ldap.getAccountLockedAttribute(), Set.of("false"));
-                ldapConnectionFactory.executeModifyOperation(entry.getDn(), attributes);
-            });
-        return true;
+        return findEntries(CollectionUtils.wrap(credential.getId())).entrySet().stream().allMatch(entry -> {
+            LOGGER.debug("Located LDAP entry [{}] in the response", entry);
+            val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
+            val attributes = new LinkedHashMap<String, Set<String>>();
+            attributes.put(entry.getValue().getAccountLockedAttribute(), Set.of(entry.getValue().getAccountUnlockedAttributeValues()));
+            return ldapConnectionFactory.executeModifyOperation(entry.getKey().getDn(), attributes);
+        });
     }
 
     @Override
