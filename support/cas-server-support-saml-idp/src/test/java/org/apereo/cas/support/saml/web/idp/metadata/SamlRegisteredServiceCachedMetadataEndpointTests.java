@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlIdPRegisteredServiceMetadataCache.enabled=true"
 })
+@Execution(ExecutionMode.SAME_THREAD)
 class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceCachedMetadataEndpoint")
@@ -39,7 +42,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
 
     @BeforeEach
     public void beforeEach() {
-        this.samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(samlRegisteredService);
     }
 

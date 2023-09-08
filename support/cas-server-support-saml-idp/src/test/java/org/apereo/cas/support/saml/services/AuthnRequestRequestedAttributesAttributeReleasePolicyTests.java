@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.core.session-replication.cookie.auto-configure-cookie-path=true",
     "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata46"
 })
 class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "AuthnRequestRequestedAttributesAttributeReleasePolicyTests.json");
