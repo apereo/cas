@@ -49,11 +49,12 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
      * it will use the {@link #accountLockedAttribute} setting to
      * locate the appropriate attribute for the user entry. This attribute
      * will then be assigned the value(s) defined here to unlock the account.
-     * For Active Directory and in scenarios where {@link #accountLockedAttribute} is set to
+     * <p>For Active Directory and in scenarios where {@link #accountLockedAttribute} is set to
      * {@code lockedoutTime}, this value might be set to zero. A value of zero means
      * that the account is not currently locked out.
+     * <p>Note that the value defined here may be treated as case sensitive by the LDAP server.
      */
-    private String[] accountUnlockedAttributeValues = {"false"};
+    private String[] accountUnlockedAttributeValues = {"FALSE"};
 
     /**
      * The specific variant of LDAP
