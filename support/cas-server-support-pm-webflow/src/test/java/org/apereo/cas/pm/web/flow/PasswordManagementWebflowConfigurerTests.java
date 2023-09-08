@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProvid
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -20,20 +21,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.stream.StreamSupport;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -88,10 +84,7 @@ class PasswordManagementWebflowConfigurerTests {
             when(handler.getFlowId()).thenReturn(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             assertTrue(passwordResetHandlerAdapter.supports(handler));
 
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifySecurityQuestionsAction.execute(context).getId());
@@ -164,10 +157,7 @@ class PasswordManagementWebflowConfigurerTests {
             assertEquals(sendAcct.getTransition(casSimpleMultifactorAuthenticationProvider.getId()).getTargetStateId(),
                 casSimpleMultifactorAuthenticationProvider.getId());
 
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifySecurityQuestionsAction.execute(context).getId());

@@ -40,6 +40,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
@@ -58,6 +59,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertEquals(List.of("cas@example.org"), attrs.get("email"));
@@ -69,6 +71,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(serviceTicketPrincipal)
+            .applicationContext(applicationContext)
             .build();
         val releaseAttrs = policy.getAttributes(releasePolicyContext2);
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email"));

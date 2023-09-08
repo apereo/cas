@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -14,8 +15,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.Action;
@@ -36,6 +35,10 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
     private Action action;
+
+    @Autowired
+    @Qualifier("dummyProvider")
+    private MultifactorAuthenticationProvider dummyProvider;
 
     private TicketGrantingTicket ticketGrantingTicket;
 
@@ -150,8 +153,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
+    @Test
     void verifyTicketGrantingTicketNotTgtButGateway() throws Throwable {
         val context = MockRequestContext.create();
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);

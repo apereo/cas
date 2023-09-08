@@ -112,7 +112,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
                 val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(ldap.getLdapUrl()));
                 val attributes = new LinkedHashMap<String, Set<String>>();
-                attributes.put(ldap.getAccountLockedAttribute(), Set.of("false"));
+                attributes.put(ldap.getAccountLockedAttribute(), Set.of(ldap.getAccountUnlockedAttributeValues()));
                 ldapConnectionFactory.executeModifyOperation(entry.getDn(), attributes);
             });
         return true;

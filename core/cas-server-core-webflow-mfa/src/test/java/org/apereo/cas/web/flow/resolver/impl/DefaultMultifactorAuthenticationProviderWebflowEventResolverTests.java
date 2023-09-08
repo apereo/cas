@@ -12,9 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +30,9 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -57,13 +53,6 @@ class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends 
     @Autowired
     @Qualifier("globalAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver;
-
-    @Override
-    @BeforeEach
-    public void setup() {
-        super.setup();
-        servicesManager.deleteAll();
-    }
 
     @Test
     void verifyEventResolverWithMfa() throws Throwable {

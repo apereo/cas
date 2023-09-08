@@ -3,27 +3,25 @@ package org.apereo.cas.authentication.bypass;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 
 /**
- * Multifactor bypass provider that will never allow MFA to execute and will always bypass.
+ * Multifactor Bypass provider that will never allow MFA to execute and will always bypass.
  *
  * @author Misagh Moayyed
- * @since 6.0
+ * @since 7.0
  */
 @Slf4j
-public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+public class AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
     @Serial
-    private static final long serialVersionUID = -2433888418344342672L;
+    private static final long serialVersionUID = -1433888418344342672L;
 
     private static MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
 
-    protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
-        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
+    protected AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator() {
+        super(AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
     }
 
 
@@ -34,7 +32,7 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
      */
     public static MultifactorAuthenticationProviderBypassEvaluator getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new NeverAllowMultifactorAuthenticationProviderBypassEvaluator();
+            INSTANCE = new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator();
         }
         return INSTANCE;
     }
@@ -44,7 +42,7 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
-        LOGGER.debug("Provider [{}] will always allow multifactor authentication to execute", provider.getId());
-        return true;
+        LOGGER.debug("Provider [{}] will not allow multifactor authentication to execute", provider.getId());
+        return false;
     }
 }
