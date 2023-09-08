@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.val;
@@ -62,5 +63,9 @@ public abstract class BaseSamlIdPServicesTests {
         criteriaSet1.add(new EntityIdCriterion(entityId));
         criteriaSet1.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         return criteriaSet1;
+    }
+
+    protected UrlResourceMetadataResolver getMetadataResolver() {
+        return new UrlResourceMetadataResolver(httpClient, casProperties.getAuthn().getSamlIdp(), openSamlConfigBean);
     }
 }

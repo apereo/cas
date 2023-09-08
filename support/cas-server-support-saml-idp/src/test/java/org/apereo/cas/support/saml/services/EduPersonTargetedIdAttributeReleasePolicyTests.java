@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata5"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata55"
 })
 class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EduPersonTargetedIdAttributeReleasePolicyTests.json");

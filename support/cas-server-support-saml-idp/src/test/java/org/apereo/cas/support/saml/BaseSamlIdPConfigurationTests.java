@@ -114,13 +114,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
-                properties = {
-                    "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
-                    "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
-                    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-                    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
-                })
+@SpringBootTest(
+    classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
+        "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
+        "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata116"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
@@ -296,7 +297,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration",
-                       proxyBeanMethods = false)
+        proxyBeanMethods = false)
     static class SamlIdPMetadataTestConfiguration {
 
         @Bean
@@ -305,10 +306,9 @@ public abstract class BaseSamlIdPConfigurationTests {
             return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
                 new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver.getObject());
         }
-        
+
         @Bean
-        public SamlIdPMetadataCustomizer samlIdPMetadataCustomizer(@Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                   final OpenSamlConfigBean openSamlConfigBean) {
+        public SamlIdPMetadataCustomizer samlIdPMetadataCustomizer(@Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME) final OpenSamlConfigBean openSamlConfigBean) {
             return (entityDescriptor, registeredService) -> {
                 val organization = (Organization) openSamlConfigBean.getBuilderFactory()
                     .getBuilder(Organization.DEFAULT_ELEMENT_NAME).buildObject(Organization.DEFAULT_ELEMENT_NAME);

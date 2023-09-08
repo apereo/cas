@@ -23,7 +23,7 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
     @Tag("SAMLMetadata")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata76",
         "cas.authn.saml-idp.metadata.core.certificate-algorithm=SHA512withRSA",
         "cas.authn.saml-idp.metadata.core.key-size=4096"
     })
@@ -46,7 +46,7 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
     @Tag("SAMLMetadata")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata35",
         "cas.authn.saml-idp.metadata.core.certificate-algorithm=SHA256withRSA",
         "cas.authn.saml-idp.metadata.core.key-size=2048"
     })
