@@ -3,7 +3,15 @@ package org.apereo.cas.pac4j.serialization;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.pkce.CodeVerifier;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
@@ -13,6 +21,8 @@ import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
 
 import java.io.Serial;
+import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +43,9 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         setMixInAnnotation(Scope.class, ScopeMixin.class);
         setMixInAnnotation(Scope.Value.class, ScopeValueMixin.class);
         setMixInAnnotation(AccessTokenType.class, AccessTokenTypeMixin.class);
+        setMixInAnnotation(JWT.class, JWTMixin.class);
+        setMixInAnnotation(PlainJWT.class, PlainJWTMixin.class);
+        setMixInAnnotation(SignedJWT.class, SignedJWTMixin.class);
     }
 
     private static final class AccessTokenTypeMixin {
@@ -133,6 +146,25 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         @JsonIgnore
         public byte[] getSHA256() {
             return super.getSHA256();
+        }
+    }
+
+    private abstract static class JWTMixin {
+        @JsonValue
+        public abstract String serialize();
+    }
+
+    private static class PlainJWTMixin {
+        @JsonCreator
+        public static PlainJWT parse(final String value) throws ParseException {
+            return PlainJWT.parse(value);
+        }
+    }
+
+    private static class SignedJWTMixin {
+        @JsonCreator
+        public static SignedJWT parse(final String value) throws ParseException {
+            return SignedJWT.parse(value);
         }
     }
 }
