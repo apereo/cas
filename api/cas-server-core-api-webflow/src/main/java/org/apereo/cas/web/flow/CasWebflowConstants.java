@@ -190,6 +190,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'continue'.
+     */
+    String TRANSITION_ID_CONTINUE = "continue";
+
+    /**
      * The transition state 'restore'.
      */
     String TRANSITION_ID_RESTORE = "restore";
@@ -286,6 +291,12 @@ public interface CasWebflowConstants {
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+
+
+    /**
+     * The transition state 'failure'.
+     */
+    String TRANSITION_ID_FAILURE = "failure";
 
     /**
      * The transition state 'generate'.

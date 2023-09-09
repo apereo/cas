@@ -39,7 +39,7 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
      * Name of LDAP attribute that represents the account locked status.
      * The value of the attribute is typically set to {@code "true"} if the account is
      * ever updated to indicated a locked status. For Active Directory, this attribute
-     * might be called {@code lockedoutTime}.
+     * might be called {@code lockoutTime}.
      */
     @RequiredProperty
     private String accountLockedAttribute = "pwdLockout";
@@ -50,7 +50,7 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
      * locate the appropriate attribute for the user entry. This attribute
      * will then be assigned the value(s) defined here to unlock the account.
      * <p>For Active Directory and in scenarios where {@link #accountLockedAttribute} is set to
-     * {@code lockedoutTime}, this value might be set to zero. A value of zero means
+     * {@code lockoutTime}, this value might be set to zero. A value of zero means
      * that the account is not currently locked out.
      * <p>Note that the value defined here may be treated as case sensitive by the LDAP server.
      */
