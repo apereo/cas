@@ -153,18 +153,16 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     protected Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
                                                                final Credential credential,
                                                                final WebApplicationService service) {
-        val result = (exception instanceof AuthenticationException || exception instanceof AbstractTicketException)
-            ? Optional.of(exception)
-            : (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException)
-            ? Optional.of(exception.getCause())
-            : Optional.empty();
-        return result
+        var result = (Throwable) exception;
+        if (exception instanceof AuthenticationException || exception instanceof AbstractTicketException) {
+            result = exception;
+        } else if (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException) {
+            result = exception.getCause();
+        }
+        return Optional.ofNullable(result)
             .map(Exception.class::cast)
             .map(ex -> {
-                FunctionUtils.doIf(LOGGER.isDebugEnabled(),
-                        e -> LOGGER.debug(ex.getMessage(), ex),
-                        e -> LOGGER.warn(ex.getMessage()))
-                    .accept(exception);
+                LoggingUtils.warn(LOGGER, ex);
                 val attributes = new LocalAttributeMap<Serializable>(CasWebflowConstants.TRANSITION_ID_ERROR, ex);
                 attributes.put(Credential.class.getName(), credential);
                 attributes.put(WebApplicationService.class.getName(), service);

@@ -503,6 +503,17 @@ public interface CasWebflowConfigurer extends Ordered {
                                         String targetState, boolean removeExisting);
 
     /**
+     * Insert transition for state.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    Transition insertTransitionForState(TransitionableState state, String criteriaOutcome,
+                                        String targetState);
+
+    /**
      * Create expression expression.
      *
      * @param expression   the expression
