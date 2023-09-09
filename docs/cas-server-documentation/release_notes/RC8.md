@@ -69,11 +69,16 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
+ 
+### Weak Password Detection
+
+[Password Management facilities](../password_management/Password-Management.html) in CAS are able to intercept the user's password after a successful authentication attempt
+to evaluate its strength. Passwords detected as weak or insure then force the flow and the user to update and reset their password.
 
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `432` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `434` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
