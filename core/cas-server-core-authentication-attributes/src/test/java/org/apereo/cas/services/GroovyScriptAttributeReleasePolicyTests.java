@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("GroovyServices")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-    CasCoreUtilConfiguration.class}
-)
 class GroovyScriptAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "groovyScriptAttributeReleasePolicy.json");
 

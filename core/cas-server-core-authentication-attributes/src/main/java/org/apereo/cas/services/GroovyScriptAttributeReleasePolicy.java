@@ -2,10 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,13 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
 
 
 /**
@@ -46,23 +41,20 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     private Map<String, List<Object>> fetchAttributeValueFromExternalGroovyScript(final String file,
-                                                                                         final RegisteredServiceAttributeReleasePolicyContext context,
-                                                                                         final Map<String, List<Object>> attributes) {
-        return ApplicationContextProvider.getScriptResourceCacheManager()
-            .map(cacheMgr -> {
-                val script = cacheMgr.resolveScriptableResource(file, file);
-                return FunctionUtils.doIf(script != null,
-                    () -> fetchAttributeValueFromScript(script, context, attributes),
-                    TreeMap<String, List<Object>>::new).get();
-            })
-            .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));
+                                                                                  final RegisteredServiceAttributeReleasePolicyContext context,
+                                                                                  final Map<String, List<Object>> attributes) throws Throwable {
+        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
+        val script = cacheMgr.resolveScriptableResource(file, file);
+        return script != null
+            ? fetchAttributeValueFromScript(script, context, attributes)
+            : new HashMap<>();
     }
 
-    private Map<String, List<Object>> fetchAttributeValueFromScript(
+    protected Map<String, List<Object>> fetchAttributeValueFromScript(
         final ExecutableCompiledGroovyScript script,
         final RegisteredServiceAttributeReleasePolicyContext context,
-        final Map<String, List<Object>> attributes) {
-        Object[] args = new Object[] {attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
+        final Map<String, List<Object>> attributes) throws Throwable {
+        val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
         val result = (Map<String, List<Object>>) script.execute(args, Map.class, false);
         if (result != null) {
             LOGGER.debug("Attribute release policy returned attributes [{}] from script [{}]", result, groovyScript);
@@ -74,7 +66,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                           final Map<String, List<Object>> attributes) {
+                                                           final Map<String, List<Object>> attributes) throws Throwable {
         try {
             LOGGER.debug("Invoking Groovy script with attributes=[{}], principal=[{}], service=[{}] and default logger",
                 attributes, context.getPrincipal(), context.getRegisteredService());
