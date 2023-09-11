@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -21,8 +20,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,19 +47,16 @@ class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifact
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
     private Action duoNonWebAuthenticationAction;
 
-    private RequestContext context;
 
-    @Override
     @BeforeEach
     public void setup() {
-        super.setup();
-        context = BaseDuoSecurityTests.getMockRequestContext(applicationContext);
         configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
             .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
     }
 
     @Test
     void verifyOperation() throws Throwable {
+        val context = BaseDuoSecurityTests.getMockRequestContext(applicationContext);
         val provider = BaseDuoSecurityTests.getDuoSecurityMultifactorAuthenticationProvider();
         WebUtils.putMultifactorAuthenticationProvider(context, provider);
         val event = duoNonWebAuthenticationAction.execute(context);

@@ -16,8 +16,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
-import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
-import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -39,10 +37,8 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -194,44 +190,6 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
             return handler;
         }
 
-    }
-
-    @Configuration(value = "DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DelegatedAuthenticationEventExecutionPlanProvisionerConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingGraalVMNativeImage
-        public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(Supplier.class)
-                .when(BeanCondition.on("cas.authn.pac4j.provisioning.groovy.location").exists().given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
-                    val script = provisioning.getGroovy().getLocation();
-                    return () -> new GroovyDelegatedClientUserProfileProvisioner(script);
-                })
-                .otherwise(() -> DelegatedClientUserProfileProvisioner::noOp)
-                .get();
-        }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "restDelegatedClientUserProfileProvisioner")
-        public Supplier<DelegatedClientUserProfileProvisioner> restDelegatedClientUserProfileProvisioner(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(Supplier.class)
-                .when(BeanCondition.on("cas.authn.pac4j.provisioning.rest.url").exists().given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
-                    return () -> new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest());
-                })
-                .otherwise(() -> DelegatedClientUserProfileProvisioner::noOp)
-                .get();
-        }
     }
 
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanProvisionConfiguration", proxyBeanMethods = false)
