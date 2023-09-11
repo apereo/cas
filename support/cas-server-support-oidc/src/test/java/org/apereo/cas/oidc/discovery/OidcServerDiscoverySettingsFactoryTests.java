@@ -31,7 +31,7 @@ class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         assertTrue(oidcServerDiscoverySettings.isRequestParameterSupported());
         assertTrue(oidcServerDiscoverySettings.isClaimsParameterSupported());
         

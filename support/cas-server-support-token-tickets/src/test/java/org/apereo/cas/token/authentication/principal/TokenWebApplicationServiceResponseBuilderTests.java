@@ -29,6 +29,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
@@ -77,6 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -114,7 +116,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyDecrypt() {
+    void verifyDecrypt() throws Throwable {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
@@ -124,12 +126,12 @@ class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    void verifyBuilderSupport() {
+    void verifyBuilderSupport() throws Throwable {
         assertTrue(responseBuilder.supports(serviceFactory.createService("test")));
     }
 
     @Test
-    void verifyTokenBuilder() throws Exception {
+    void verifyTokenBuilder() throws Throwable {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("jwtservice");
         val user = UUID.randomUUID().toString();
         val authentication = CoreAuthenticationTestUtils.getAuthentication(user);
@@ -146,10 +148,9 @@ class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    void verifyTokenBuilderWithoutServiceTicket() throws Exception {
+    void verifyTokenBuilderWithoutServiceTicket() throws Throwable {
         val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
-            StringUtils.EMPTY,
-            CoreAuthenticationTestUtils.getAuthentication());
+            StringUtils.EMPTY, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);
         assertFalse(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }

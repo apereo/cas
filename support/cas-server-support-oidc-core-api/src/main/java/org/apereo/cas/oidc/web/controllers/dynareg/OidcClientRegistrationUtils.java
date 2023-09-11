@@ -63,7 +63,7 @@ public class OidcClientRegistrationUtils {
         clientResponse.setContacts(
             registeredService.getContacts()
                 .stream()
-                .map(contact -> StringUtils.defaultString(contact.getEmail(), contact.getName()))
+                .map(contact -> StringUtils.defaultIfBlank(contact.getEmail(), contact.getName()))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList())
         );

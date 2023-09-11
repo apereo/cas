@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -20,9 +19,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.security.Principal;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +37,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -61,7 +58,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
 
 
     @Test
-    void verifyError() throws Exception {
+    void verifyError() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -75,7 +72,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
     }
 
     @Test
-    void verifyAdaptiveError() throws Exception {
+    void verifyAdaptiveError() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));

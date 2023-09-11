@@ -90,6 +90,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val principal = resolvePrincipalForAttributeQuery(authentication, registeredService);
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .service(ticket.getService())
                 .principal(principal)
                 .build();
@@ -105,6 +106,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .registeredService(registeredService)
                 .service(ticket.getService())
                 .principal(authentication.getPrincipal())
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .build();
             
             val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
@@ -125,7 +127,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .messageContext(ctx)
                 .build();
             getConfigurationContext().getResponseBuilder().build(buildContext);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
@@ -141,7 +143,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
     }
 
     private Principal resolvePrincipalForAttributeQuery(final Authentication authentication,
-                                                        final RegisteredService registeredService) {
+                                                        final RegisteredService registeredService) throws Throwable {
         val repositories = new HashSet<String>(0);
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy()

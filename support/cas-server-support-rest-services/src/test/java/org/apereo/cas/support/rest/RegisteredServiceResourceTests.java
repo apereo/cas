@@ -42,33 +42,33 @@ class RegisteredServiceResourceTests {
     private ServicesManager servicesManager;
 
     @Test
-    void checkNoCredentials() throws Exception {
+    void checkNoCredentials() throws Throwable {
         runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
         runTest("memberOf", "something", ":", status().isBadRequest());
     }
 
     @Test
-    void checkRegisteredServiceNotAuthorized() throws Exception {
+    void checkRegisteredServiceNotAuthorized() throws Throwable {
         runTest("memberOf", "something", "test:test", status().isForbidden());
     }
 
     @Test
-    void checkRegisteredServiceNormal() throws Exception {
+    void checkRegisteredServiceNormal() throws Throwable {
         runTest("memberOf", "admin", "test:test", status().isOk());
     }
 
     @Test
-    void checkRegisteredServiceNoAuthn() throws Exception {
+    void checkRegisteredServiceNoAuthn() throws Throwable {
         runTest("memberOf", "something", "testfail:something", status().isUnauthorized());
     }
 
     @Test
-    void checkRegisteredServiceNoAttributeValue() throws Exception {
+    void checkRegisteredServiceNoAttributeValue() throws Throwable {
         runTest("memberOf", null, "test:test", status().isForbidden());
     }
 
     @Test
-    void checkRegisteredServiceNoAttribute() throws Exception {
+    void checkRegisteredServiceNoAttribute() throws Throwable {
         runTest(null, null, "test:test", status().isForbidden());
     }
 
@@ -85,7 +85,7 @@ class RegisteredServiceResourceTests {
             .build();
     }
 
-    private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
+    private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) throws Throwable {
         val mgmr = mock(AuthenticationManager.class);
         lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test"))))
             .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -97,7 +97,7 @@ class RegisteredServiceResourceTests {
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials,
-                         final ResultMatcher result) throws Exception {
+                         final ResultMatcher result) throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);

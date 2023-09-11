@@ -9,13 +9,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,6 +44,8 @@ public class DefaultConsentEngine implements ConsentEngine {
 
     private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)
@@ -54,7 +55,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final Authentication authentication,
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
-                                                final ConsentReminderOptions options) throws Exception {
+                                                final ConsentReminderOptions options) throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         attributes.replaceAll((key, value) -> {
             var attr = CasConsentableAttribute.builder()
@@ -91,9 +92,10 @@ public class DefaultConsentEngine implements ConsentEngine {
     }
 
     @Override
-    public Map<String, List<Object>> resolveConsentableAttributesFrom(final Authentication authentication,
-                                                                      final Service service,
-                                                                      final RegisteredService registeredService) {
+    public Map<String, List<Object>> resolveConsentableAttributesFrom(
+        final Authentication authentication,
+        final Service service,
+        final RegisteredService registeredService) throws Throwable {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
@@ -101,6 +103,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                 .registeredService(registeredService)
                 .service(service)
                 .principal(authentication.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val consentableAttributes = policy.getConsentableAttributes(context);
             consentableAttributes.entrySet().removeIf(entry -> {
@@ -125,7 +128,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     @Override
     public ConsentQueryResult isConsentRequiredFor(final Service service,
                                                    final RegisteredService registeredService,
-                                                   final Authentication authentication) {
+                                                   final Authentication authentication) throws Throwable {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());

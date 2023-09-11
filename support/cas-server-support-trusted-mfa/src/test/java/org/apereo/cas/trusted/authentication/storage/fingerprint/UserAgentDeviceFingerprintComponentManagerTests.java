@@ -1,8 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentManager;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
@@ -12,7 +11,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFATrustedDevices")
 class UserAgentDeviceFingerprintComponentManagerTests {
     @Test
-    void verifyAgentFingerprintNotFound() {
+    void verifyAgentFingerprintNotFound() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
@@ -35,7 +33,7 @@ class UserAgentDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    void verifyAgentFingerprintFound() {
+    void verifyAgentFingerprintFound() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");

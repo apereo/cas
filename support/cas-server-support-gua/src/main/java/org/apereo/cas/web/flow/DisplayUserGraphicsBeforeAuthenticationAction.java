@@ -26,7 +26,7 @@ public class DisplayUserGraphicsBeforeAuthenticationAction extends BaseCasWebflo
     private final UserGraphicalAuthenticationRepository repository;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);

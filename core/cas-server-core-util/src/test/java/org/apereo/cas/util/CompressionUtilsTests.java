@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CompressionUtilsTests {
 
     @Test
-    void verifyInflation() {
+    void verifyInflation() throws Throwable {
         val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                      + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
                      + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
@@ -33,7 +33,7 @@ class CompressionUtilsTests {
     }
 
     @Test
-    void verifyStringCompression() {
+    void verifyStringCompression() throws Throwable {
         val srcTxt =
             "lamEiLCJhZG1pbiI6dHJ1ZX0.|..03f329983b86f7d9a9f5fef85305880101d5e302afafa20154d094b229f757|eyJhbGciO"
             + "iJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzY290Y2guaW8iLCJleHAiOjEzMDA4MTkzODAsIm5hbWUiOiJDaHJpcyBTZXZpbG"

@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
@@ -39,6 +40,13 @@ public interface CommunicationsManager {
     boolean isNotificationSenderDefined();
 
     /**
+     * Is phone operator defined?.
+     *
+     * @return true/false
+     */
+    boolean isPhoneOperatorDefined();
+
+    /**
      * Notify.
      *
      * @param principal the principal
@@ -61,8 +69,18 @@ public interface CommunicationsManager {
      *
      * @param request the request
      * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean sms(SmsRequest request);
+    boolean sms(SmsRequest request) throws Throwable;
+
+    /**
+     * make a phone call.
+     *
+     * @param request the request
+     * @return true /false
+     * @throws Throwable the throwable
+     */
+    boolean phoneCall(PhoneCallRequest request) throws Throwable;
 
     /**
      * Validate.

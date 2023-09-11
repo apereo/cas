@@ -1,17 +1,15 @@
 package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-
+import org.apereo.cas.util.ResourceUtils;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.springframework.util.ResourceUtils;
-
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,10 +37,10 @@ public class SmsBodyBuilder implements Supplier<String> {
             return StringUtils.EMPTY;
         }
         try {
-            val templateFile = ResourceUtils.getFile(properties.getText());
-            val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
+            val templateFile = ResourceUtils.getResourceFrom(properties.getText());
+            val contents = IOUtils.toString(templateFile.getInputStream(), StandardCharsets.UTF_8);
             return formatSmsBody(contents);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LOGGER.trace(e.getMessage(), e);
         }
         return formatSmsBody(properties.getText());

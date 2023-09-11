@@ -58,13 +58,13 @@ class CasServicesStreamingKafkaConfigurationTests {
     private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val o = DistributedCacheObject.<RegisteredService>builder()
             .value(RegisteredServiceTestUtils.getRegisteredService())
             .publisherIdentifier(new PublisherIdentifier())
@@ -79,7 +79,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyListener() throws Exception {
+    void verifyListener() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val publisherId = new PublisherIdentifier();
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -97,7 +97,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = registeredServiceDistributedCacheManager.get(registeredService);
         assertNull(obj);
@@ -128,7 +128,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyPublisher() {
+    void verifyPublisher() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,

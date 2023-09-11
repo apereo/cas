@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayInputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,10 +29,10 @@ class SamlCompliantLogoutMessageCreatorTests {
     private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();
 
     @Test
-    void verifyMessageBuilding() throws Exception {
+    void verifyMessageBuilding() throws Throwable {
 
         val service = RegisteredServiceTestUtils.getService(TEST_URL);
-        val logoutUrl = new URL(service.getOriginalUrl());
+        val logoutUrl = new URI(service.getOriginalUrl()).toURL();
         val request = DefaultSingleLogoutRequestContext.builder()
             .ticketId("TICKET-ID")
             .service(service)

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -10,6 +11,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -28,12 +34,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class ReturnRestfulAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "ReturnRestfulAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyJson() throws IOException {
@@ -46,7 +57,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyPolicy() throws IOException {
+    void verifyPolicy() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -56,6 +67,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policyWritten.getAttributes(releasePolicyContext);
             assertFalse(attributes.isEmpty());
@@ -63,7 +75,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyPolicyWithMappedAttributes() throws IOException {
+    void verifyPolicyWithMappedAttributes() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER"));
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -71,10 +83,12 @@ class ReturnRestfulAttributeReleasePolicyTests {
             val policyWritten = new ReturnRestfulAttributeReleasePolicy()
                 .setEndpoint("http://localhost:9299")
                 .setAllowedAttributes(Map.of("givenName", List.of("givenName1", "givenName2")));
+
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policyWritten.getAttributes(releasePolicyContext);
             assertEquals(2, attributes.size());
@@ -84,17 +98,17 @@ class ReturnRestfulAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyBadPolicy() {
+    void verifyBadPolicy() throws Throwable {
         try (val webServer = new MockWebServer(9298,
             new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
             val policy = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9298");
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .applicationContext(applicationContext)
                 .build();
             val attributes = policy.getAttributes(releasePolicyContext);
             assertTrue(attributes.isEmpty());

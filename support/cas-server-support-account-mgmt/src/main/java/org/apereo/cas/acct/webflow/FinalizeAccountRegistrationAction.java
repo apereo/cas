@@ -26,7 +26,7 @@ public class FinalizeAccountRegistrationAction extends BaseCasWebflowAction {
     private final AccountRegistrationService accountRegistrationService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val registrationRequest = AccountRegistrationUtils.getAccountRegistrationRequest(requestContext);
             Objects.requireNonNull(registrationRequest).putProperties(requestContext.getRequestParameters().asAttributeMap().asMap());
@@ -34,7 +34,7 @@ public class FinalizeAccountRegistrationAction extends BaseCasWebflowAction {
             if (response.isSuccess()) {
                 return success(response);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         WebUtils.addErrorMessageToContext(requestContext, "cas.screen.acct.error.provision");

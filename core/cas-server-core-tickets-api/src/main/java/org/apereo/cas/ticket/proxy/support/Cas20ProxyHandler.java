@@ -33,9 +33,9 @@ public class Cas20ProxyHandler implements ProxyHandler {
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
-    public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
+    public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) throws Throwable {
         val serviceCredentials = (HttpBasedServiceCredential) credential;
-        val proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
+        val proxyIou = uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
         val callbackUrl = serviceCredentials.getCallbackUrl();
         val serviceCredentialsAsString = callbackUrl.toExternalForm();

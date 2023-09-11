@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.DefaultCommunicationsManager;
+import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.notifications.mail.DefaultEmailSender;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
@@ -54,8 +55,9 @@ public class CasCoreNotificationsConfiguration {
     public CommunicationsManager communicationsManager(
         @Qualifier(SmsSender.BEAN_NAME) final SmsSender smsSender,
         @Qualifier(EmailSender.BEAN_NAME) final EmailSender emailSender,
+        @Qualifier(PhoneCallOperator.BEAN_NAME) final PhoneCallOperator phoneCallOperator,
         @Qualifier("notificationSender") final NotificationSender notificationSender) {
-        return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender);
+        return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender, phoneCallOperator);
     }
 
     @Bean
@@ -65,6 +67,13 @@ public class CasCoreNotificationsConfiguration {
         @Qualifier("messageSource") final HierarchicalMessageSource messageSource,
         @Qualifier("mailSender") final ObjectProvider<JavaMailSender> mailSender) {
         return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = PhoneCallOperator.BEAN_NAME)
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PhoneCallOperator phoneCallOperator(final CasConfigurationProperties casProperties) {
+        return PhoneCallOperator.noOp();
     }
 
     @Bean

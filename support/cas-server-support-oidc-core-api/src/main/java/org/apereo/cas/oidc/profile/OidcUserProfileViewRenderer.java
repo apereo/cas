@@ -95,7 +95,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
 
     protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
                                                                      final HttpServletResponse response,
-                                                                     final OidcRegisteredService registeredService) {
+                                                                     final OidcRegisteredService registeredService) throws Throwable {
         val claims = convertUserProfileIntoClaims(userProfile);
         claims.setAudience(registeredService.getClientId());
         claims.setIssuedAt(NumericDate.now());
@@ -125,7 +125,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
     protected Object determineAttributeValue(final String name, final Object attrValue) {
         val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
         val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
-        return result.map(defn -> defn.isSingleValue() && values.size() == 1 ? values.get(0) : attrValue)
+        return result.map(defn -> defn.toAttributeValue(values))
             .orElseGet(() -> values.size() == 1 ? values.get(0) : values);
     }
 }

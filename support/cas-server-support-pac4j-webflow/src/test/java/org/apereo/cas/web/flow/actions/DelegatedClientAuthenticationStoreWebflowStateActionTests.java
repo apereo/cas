@@ -2,10 +2,9 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +37,7 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     private Action delegatedAuthenticationStoreWebflowAction;
 
     @Test
-    void verifyMissingClient() throws Exception {
+    void verifyMissingClient() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -51,7 +49,7 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     }
 
     @Test
-    void verifyClient() throws Exception {
+    void verifyClient() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");

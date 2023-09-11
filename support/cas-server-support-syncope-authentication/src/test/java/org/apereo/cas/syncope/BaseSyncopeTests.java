@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
@@ -34,7 +35,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -58,12 +58,11 @@ import java.util.UUID;
  * @since 6.5.0
  */
 public abstract class BaseSyncopeTests {
-
     protected static final ObjectMapper MAPPER =
         JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
 
-    @SneakyThrows
-    protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status, final int port) {
+    protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status,
+                                                  final int port) throws Exception {
         val data = MAPPER.writeValueAsString(json);
         val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -142,6 +141,7 @@ public abstract class BaseSyncopeTests {
         CasCoreWebConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreNotificationsConfiguration.class,

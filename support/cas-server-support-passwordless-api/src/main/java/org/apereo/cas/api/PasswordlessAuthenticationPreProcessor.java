@@ -24,12 +24,13 @@ public interface PasswordlessAuthenticationPreProcessor extends Ordered {
      * @param credential                  the credential
      * @param token                       the token
      * @return the authentication result builder
+     * @throws Throwable the throwable
      */
     AuthenticationResultBuilder process(AuthenticationResultBuilder authenticationResultBuilder,
                                         PasswordlessUserAccount principal,
                                         Service service,
                                         Credential credential,
-                                        PasswordlessAuthenticationToken token);
+                                        PasswordlessAuthenticationToken token) throws Throwable;
 
     @Override
     default int getOrder() {

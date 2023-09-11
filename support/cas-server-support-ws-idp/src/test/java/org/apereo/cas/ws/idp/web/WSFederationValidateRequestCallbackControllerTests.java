@@ -65,7 +65,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyWithTicketGrantingTicket() throws Exception {
+    void verifyWithTicketGrantingTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -110,7 +110,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     @Test
-    void verifyWithoutTicketGrantingTicket() throws Exception {
+    void verifyWithoutTicketGrantingTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -160,7 +160,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         }
 
         @Bean
-        public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
+        public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() throws Throwable {
             val token = new SecurityToken(UUID.randomUUID().toString());
             val fetcher = mock(SecurityTokenServiceTokenFetcher.class);
             when(fetcher.fetch(any(), anyString())).thenReturn(Optional.of(token));

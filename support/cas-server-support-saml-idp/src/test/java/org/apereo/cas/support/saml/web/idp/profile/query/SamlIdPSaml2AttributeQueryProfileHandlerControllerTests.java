@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
-
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,12 +34,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=false")
     class DisabledTests extends BaseSamlIdPConfigurationTests {
         @Autowired
@@ -61,7 +57,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -72,7 +68,6 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
@@ -94,7 +89,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyUnknownService() throws Exception {
+        void verifyUnknownService() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -135,7 +130,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyTicketExpired() throws Exception {
+        void verifyTicketExpired() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -175,7 +170,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyEncryptedNameIDFails() throws Exception {
+        void verifyEncryptedNameIDFails() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -215,7 +210,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyOK() throws Exception {
+        void verifyOK() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -252,7 +247,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        void verifyFault() throws Exception {
+        void verifyFault() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");

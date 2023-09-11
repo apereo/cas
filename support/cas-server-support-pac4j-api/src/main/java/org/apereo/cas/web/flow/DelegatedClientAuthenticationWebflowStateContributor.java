@@ -26,10 +26,10 @@ public interface DelegatedClientAuthenticationWebflowStateContributor {
      * @param webContext     the web context
      * @param client         the client
      * @return the map
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     Map<String, ? extends Serializable> store(RequestContext requestContext,
-                                    WebContext webContext, Client client) throws Exception;
+                                    WebContext webContext, Client client) throws Throwable;
 
     /**
      * Restore.
@@ -39,8 +39,8 @@ public interface DelegatedClientAuthenticationWebflowStateContributor {
      * @param ticket         the ticket
      * @param client         the client
      * @return the service
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     Service restore(RequestContext requestContext, WebContext webContext,
-                    Optional<TransientSessionTicket> ticket, Client client) throws Exception;
+                    Optional<TransientSessionTicket> ticket, Client client) throws Throwable;
 }

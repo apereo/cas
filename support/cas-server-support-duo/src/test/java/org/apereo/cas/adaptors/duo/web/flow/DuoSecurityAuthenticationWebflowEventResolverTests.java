@@ -37,7 +37,7 @@ class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowM
     private CasWebflowEventResolver resolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val event = resolver.resolveSingle(BaseDuoSecurityTests.getMockRequestContext(applicationContext));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

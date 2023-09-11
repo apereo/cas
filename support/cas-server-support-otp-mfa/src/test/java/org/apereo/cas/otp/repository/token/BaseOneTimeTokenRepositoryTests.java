@@ -1,6 +1,5 @@
 package org.apereo.cas.otp.repository.token;
 
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -25,12 +24,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
-
-import lombok.val;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -39,8 +36,6 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * This is {@link BaseOneTimeTokenRepositoryTests}.
  *
@@ -48,23 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 public abstract class BaseOneTimeTokenRepositoryTests {
-    public static final String CASUSER = "casuser";
 
-    @Test
-    void verifyTokenSave() {
-        val token = new OneTimeToken(1234, CASUSER);
-        val repository = getRepository();
-        repository.store(token);
-        repository.store(token);
-        assertEquals(2, repository.count(CASUSER));
-        repository.clean();
-        assertTrue(repository.exists(CASUSER, 1234));
-        repository.remove(CASUSER);
-        repository.remove(1234);
-        repository.remove(CASUSER, 1234);
-        assertNull(repository.get(CASUSER, 1234));
-        assertEquals(0, repository.count());
-    }
 
     public abstract OneTimeTokenRepository getRepository();
 
@@ -91,6 +70,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,

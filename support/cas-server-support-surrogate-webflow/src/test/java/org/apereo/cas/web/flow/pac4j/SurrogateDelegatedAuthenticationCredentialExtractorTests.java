@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.config.DelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationDelegationConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationRequestParser;
@@ -17,13 +18,6 @@ import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,13 +44,8 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;
 
     @Test
-    void verifyClientCredentialExtracted() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyClientCredentialExtracted() throws Throwable {
+        val context = MockRequestContext.create();
         val client = mock(BaseClient.class);
 
         val uid = UUID.randomUUID().toString();

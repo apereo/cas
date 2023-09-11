@@ -55,6 +55,13 @@ public class PrincipalAttributesCoreProperties implements Serializable {
     private boolean recoverExceptions = true;
 
     /**
+     * When {@link #aggregation} is set to {@link AggregationStrategyTypes#CASCADE},
+     * this setting controls whether subsequent attribute repositories need to be contacted
+     * for person attributes, if the first attribute repository's query does not produce any results.
+     */
+    private boolean stopCascadingWhenNoInitialResults = true;
+
+    /**
      * Merging strategies can be used to resolve conflicts when the same attributes are found from multiple sources.
      * A merging strategy is used to handle conflicts for both principal attributes as well as those that are captured
      * by the authentication attempt. Conflicts arise when the multiple attribute sources or repositories produce the same
@@ -133,6 +140,6 @@ public class PrincipalAttributesCoreProperties implements Serializable {
          * Multivalued attributes.
          * Combines all values into a single attribute, essentially creating a multi-valued attribute.
          */
-        MULTIVALUED;
+        MULTIVALUED
     }
 }

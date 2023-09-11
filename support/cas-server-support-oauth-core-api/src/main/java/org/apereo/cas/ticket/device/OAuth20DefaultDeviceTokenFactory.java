@@ -38,7 +38,7 @@ public class OAuth20DefaultDeviceTokenFactory implements OAuth20DeviceTokenFacto
     protected final ServicesManager servicesManager;
 
     @Override
-    public OAuth20DeviceToken createDeviceCode(final Service service) {
+    public OAuth20DeviceToken createDeviceCode(final Service service) throws Throwable {
         val codeId = deviceTokenIdGenerator.getNewTicketId(OAuth20DeviceToken.PREFIX);
         val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicy, service);
         return new OAuth20DefaultDeviceToken(codeId, service, expirationPolicyToUse);

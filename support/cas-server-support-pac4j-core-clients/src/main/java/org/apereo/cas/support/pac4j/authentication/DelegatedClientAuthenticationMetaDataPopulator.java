@@ -22,7 +22,7 @@ public class DelegatedClientAuthenticationMetaDataPopulator extends BaseAuthenti
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(clientCredential -> {
-            val credentials = ClientCredential.class.cast(clientCredential);
+            val credentials = (ClientCredential) clientCredential;
             builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, credentials.getClientName());
         });
     }

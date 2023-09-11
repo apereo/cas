@@ -52,7 +52,7 @@ class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends BaseSamlIdP
     private LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy;
 
     @Test
-    void verifyOperationForPostBinding() throws Exception {
+    void verifyOperationForPostBinding() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "CasRelayState");

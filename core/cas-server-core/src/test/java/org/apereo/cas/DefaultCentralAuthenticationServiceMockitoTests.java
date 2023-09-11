@@ -51,7 +51,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.ZoneOffset;
@@ -138,7 +137,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @BeforeEach
-    public void prepareNewCAS() {
+    public void prepareNewCAS() throws Throwable {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         val metadata = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal");
@@ -182,11 +181,8 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
 
-
-        val ctx = new StaticApplicationContext();
-        ctx.refresh();
         val context = CentralAuthenticationServiceContext.builder()
-            .applicationContext(ctx)
+            .applicationContext(applicationContext)
             .ticketRegistry(ticketRegMock)
             .servicesManager(smMock)
             .ticketFactory(factory)
@@ -202,12 +198,12 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
         assertThrows(InvalidTicketException.class, () -> cas.createProxyGrantingTicket("bad-st", getAuthenticationContext()));
     }
 
     @Test
-    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
         assertThrows(UnauthorizedServiceException.class, () -> this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext()));
     }
 
@@ -218,7 +214,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifyChainedAuthenticationsOnValidation() {
+    void verifyChainedAuthenticationsOnValidation() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         val st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);

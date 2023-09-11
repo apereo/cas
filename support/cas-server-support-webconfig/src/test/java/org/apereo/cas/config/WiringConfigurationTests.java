@@ -74,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
@@ -107,13 +108,13 @@ class WiringConfigurationTests {
     private FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter;
 
     @Test
-    void verifyConfigurationClasses() {
+    void verifyConfigurationClasses() throws Throwable {
         assertNotNull(applicationContext);
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 
     @Test
-    void verifyRootController() throws Exception {
+    void verifyRootController() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpGet.METHOD_NAME);
         request.setRequestURI("/cas/example");
@@ -122,7 +123,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    void verifyLocale() {
+    void verifyLocale() throws Throwable {
         var request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.ENGLISH));
         assertEquals(Locale.ENGLISH, localeResolver.resolveLocale(request));
@@ -133,7 +134,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    void verifyAuthFilterClearing() throws Exception {
+    void verifyAuthFilterClearing() throws Throwable {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
         val filter = currentCredentialsAndAuthenticationClearingFilter.getFilter();
         filter.init(new MockFilterConfig());

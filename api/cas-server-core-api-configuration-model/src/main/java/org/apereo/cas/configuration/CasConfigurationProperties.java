@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.model.core.CasServerCoreProperties;
 import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -356,6 +357,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AccountManagementRegistrationProperties accountRegistration = new AccountManagementRegistrationProperties();
+
+    /**
+     * Core internal settings.
+     */
+    @NestedConfigurationProperty
+    private CasServerCoreProperties core = new CasServerCoreProperties();
 
     /**
      * Hold configuration settings in a parent

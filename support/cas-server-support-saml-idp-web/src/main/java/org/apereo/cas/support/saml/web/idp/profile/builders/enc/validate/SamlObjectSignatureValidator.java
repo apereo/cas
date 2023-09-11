@@ -90,7 +90,7 @@ public class SamlObjectSignatureValidator {
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
                                                  final MetadataResolver resolver,
                                                  final HttpServletRequest request,
-                                                 final MessageContext context) throws Exception {
+                                                 final MessageContext context) throws Throwable {
 
         val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
@@ -115,7 +115,7 @@ public class SamlObjectSignatureValidator {
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
                                                  final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                  final HttpServletRequest request,
-                                                 final MessageContext context) throws Exception {
+                                                 final MessageContext context) throws Throwable {
 
         verifySamlProfileRequestIfNeeded(profileRequest, adaptor.metadataResolver(), request, context);
     }
@@ -139,7 +139,7 @@ public class SamlObjectSignatureValidator {
     private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest,
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
-                                                          final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
+                                                          final RoleDescriptorResolver roleDescriptorResolver) throws Throwable {
         val peer = context.ensureSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
@@ -201,13 +201,13 @@ public class SamlObjectSignatureValidator {
 
         FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            return new SamlException("No valid signing credentials for validation could not be resolved");
+            return new SamlException("No valid signing credentials for authentication request validation could be resolved");
         });
     }
 
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
                                                    final Signature signature,
-                                                   final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
+                                                   final RoleDescriptorResolver roleDescriptorResolver) throws Throwable {
         val validator = new SAMLSignatureProfileValidator();
         LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(),
             validator.getClass().getSimpleName());
@@ -235,7 +235,7 @@ public class SamlObjectSignatureValidator {
 
         FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            return new SamlException("No valid signing credentials for validation could not be resolved");
+            return new SamlException("No valid signing credentials for profile request validation could be resolved");
         });
     }
 

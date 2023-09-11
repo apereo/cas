@@ -58,10 +58,54 @@ Note that Spring Framework `6.1` provides a first-class experience on JDK `21` a
 runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of
 Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
 
-As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
+As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline 
 in the next few release candidates.
 
-## Other Stuff
+### Graal VM Native Images
 
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
+ 
+### Weak Password Detection
+
+[Password Management facilities](../password_management/Password-Management.html) in CAS are able to intercept the user's password after a successful authentication attempt
+to evaluate its strength. Passwords detected as weak or insure then force the flow and the user to update and reset their password.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `434` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
+
+## Other Stuff
+                          
+- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
+- Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
+- Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
+- OpenID Connect claims can now be [optionally decorated](../authentication./OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
 
 ## Library Upgrades
+   
+- Spring Boot
+- Nimbus OIDC
+- Spring Boot Admin Server
+- SnakeYAML
+- Spring Cloud
+- Spring Security
+- Spring Integration
+- Spring Framework
+- Spring Shell
+- Spring AMQP
+- Apache Tomcat
+- Gradle
+- Hazelcast
+- Oshi
+- Apache Ignite
+- Pac4j
+- OpenSAML
+- Hibernate

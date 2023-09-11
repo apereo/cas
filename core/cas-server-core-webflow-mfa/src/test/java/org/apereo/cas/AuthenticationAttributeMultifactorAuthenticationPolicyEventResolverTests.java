@@ -47,7 +47,7 @@ class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests e
     private CasWebflowEventResolver authenticationAttributeMultifactorAuthenticationPolicyEventResolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

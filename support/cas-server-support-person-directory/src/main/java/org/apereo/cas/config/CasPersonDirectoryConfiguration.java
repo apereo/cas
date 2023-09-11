@@ -10,17 +10,14 @@ import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanC
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryCustomizer;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +40,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -166,7 +162,7 @@ public class CasPersonDirectoryConfiguration {
                 case CASCADE -> {
                     val dao = new CascadingPersonAttributeDao();
                     dao.setAddOriginalAttributesToQuery(true);
-                    dao.setStopIfFirstDaoReturnsNull(true);
+                    dao.setStopIfFirstDaoReturnsNull(properties.getCore().isStopCascadingWhenNoInitialResults());
                     return dao;
                 }
                 default -> {
@@ -252,48 +248,6 @@ public class CasPersonDirectoryConfiguration {
                     LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
                 }
             }).accept(null);
-        }
-    }
-
-    @Configuration(value = "CasPersonDirectoryStaticSubAttributeRepositoryConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasPersonDirectoryStaticSubAttributeRepositoryConfiguration {
-
-        @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
-        @EnableConfigurationProperties(CasConfigurationProperties.class)
-        public static class StubAttributeRepositoryConfiguration {
-            @ConditionalOnMissingBean(name = "stubAttributeRepositories")
-            @Bean
-            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
-                val list = new ArrayList<IPersonAttributeDao>();
-                val stub = casProperties.getAuthn().getAttributeRepository().getStub();
-                val attrs = stub.getAttributes();
-                if (!attrs.isEmpty()) {
-                    val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
-                    list.add(dao);
-                }
-                return BeanContainer.of(list);
-            }
-        }
-
-        @Configuration(value = "StubAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
-        @EnableConfigurationProperties(CasConfigurationProperties.class)
-        public static class StubAttributeRepositoryPlanConfiguration {
-            @Bean
-            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")
-            public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
-                @Qualifier("stubAttributeRepositories")
-                final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
-                return plan -> {
-                    val results = stubAttributeRepositories.toList()
-                        .stream()
-                        .filter(repo -> (Boolean) repo.getTags().get("state"))
-                        .collect(Collectors.toList());
-                    plan.registerAttributeRepositories(results);
-                };
-            }
         }
     }
 }

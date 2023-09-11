@@ -56,8 +56,8 @@ public class LogoutAction extends AbstractLogoutAction {
 
         logoutExecutionPlan.getLogoutRedirectionStrategies()
             .stream()
-            .filter(s -> s.supports(context))
-            .forEach(s -> s.handle(context));
+            .filter(strategy -> strategy.supports(context))
+            .forEach(strategy -> strategy.handle(context));
 
         if (needFrontSlo) {
             LOGGER.trace("Proceeding forward with front-channel single logout");

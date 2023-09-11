@@ -132,7 +132,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    void verifyMalformedJsonFile() throws Exception {
+    void verifyMalformedJsonFile() throws Throwable {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
 
         FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", CasRegisteredService.FRIENDLY_NAME,
@@ -148,7 +148,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    void verifyPullFails() throws Exception {
+    void verifyPullFails() throws Throwable {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));

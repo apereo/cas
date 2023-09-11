@@ -1,15 +1,13 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClientInfoAuthenticationMetaDataPopulatorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.000");
         request.setLocalAddr("123.456.789.000");

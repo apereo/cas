@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InweboCredentialTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = new InweboCredential("user");
         results.setAlreadyAuthenticated(true);
         results.setDeviceName("DeviceName");

@@ -33,7 +33,7 @@ public class GeoLocationDeviceFingerprintComponentManager implements DeviceFinge
     @Override
     public Optional<String> extractComponent(final String principal,
                                              final HttpServletRequest request,
-                                             final HttpServletResponse response) {
+                                             final HttpServletResponse response) throws Throwable {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 
         if (loc != null && loc.isValid()) {

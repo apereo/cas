@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 class SamlIdPAuthenticationContextTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val messageContext = new MessageContext();
         messageContext.ensureSubcontext(SAMLBindingContext.class).setRelayState(UUID.randomUUID().toString());
         messageContext.ensureSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);

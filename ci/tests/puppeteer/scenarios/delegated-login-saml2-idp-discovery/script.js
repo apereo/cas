@@ -10,7 +10,7 @@ const path = require('path');
     await page.waitForTimeout(5000);
     await cas.type(page, "#idpSelectInput", "simplesaml");
     await page.waitForTimeout(1000);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForTimeout(4000);
     console.log(`Page url: ${ await page.url()}`);
 

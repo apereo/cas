@@ -102,7 +102,7 @@ class UserAuthenticationResourceTests {
     }
 
     @Test
-    void verifyAuthWithMfaFails() throws Exception {
+    void verifyAuthWithMfaFails() throws Throwable {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
@@ -117,7 +117,7 @@ class UserAuthenticationResourceTests {
     }
 
     @Test
-    void verifyAuthWithMfa() throws Exception {
+    void verifyAuthWithMfa() throws Throwable {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         val result = builder.build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
@@ -134,7 +134,7 @@ class UserAuthenticationResourceTests {
     }
 
     @Test
-    void verifyStatus() throws Exception {
+    void verifyStatus() throws Throwable {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         val result = builder.build(new DefaultPrincipalElectionStrategy());
         lenient().when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
@@ -150,7 +150,7 @@ class UserAuthenticationResourceTests {
     }
 
     @Test
-    void verifyStatusAuthnFails() throws Exception {
+    void verifyStatusAuthnFails() throws Throwable {
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
                 .param("username", "casuser")
                 .param("password", "Mellon"))
@@ -158,14 +158,14 @@ class UserAuthenticationResourceTests {
     }
 
     @Test
-    void verifyBadRequest() throws Exception {
+    void verifyBadRequest() throws Throwable {
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
                 .param("unknown-param", "casuser"))
             .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void verifyStatusAuthnException() throws Exception {
+    void verifyStatusAuthnException() throws Throwable {
         val ex = new AuthenticationException(CollectionUtils.wrap("error", new FailedLoginException()));
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenThrow(ex);
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)

@@ -23,7 +23,7 @@ class DefaultPrincipalFactoryTests {
     private static final String UID = "uid";
 
     @Test
-    void checkCreatingSimplePrincipal() {
+    void checkCreatingSimplePrincipal() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
@@ -31,7 +31,7 @@ class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    void checkCreatingSimplePrincipalWithAttributes() {
+    void checkCreatingSimplePrincipalWithAttributes() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID, Collections.singletonMap("mail", List.of("final@example.com")));
         assertEquals(UID, p.getId());
@@ -40,7 +40,7 @@ class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    void checkCreatingSimplePrincipalWithDefaultRepository() {
+    void checkCreatingSimplePrincipalWithDefaultRepository() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
@@ -48,7 +48,7 @@ class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
         val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
         assertEquals("casuser", p.getId());

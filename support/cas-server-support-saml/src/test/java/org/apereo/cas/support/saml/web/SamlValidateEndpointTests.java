@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasValidationConfiguration;
@@ -10,7 +11,7 @@ import org.apereo.cas.config.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.SamlServiceFactoryConfiguration;
 import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreSamlConfiguration.class,
     SamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     SamlServiceFactoryConfiguration.class,
     SamlUniqueTicketIdGeneratorConfiguration.class,
     SamlAuthenticationEventExecutionPlanConfiguration.class,
@@ -41,10 +43,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 },
-                properties = {
-                    "management.endpoints.web.exposure.include=*",
-                    "management.endpoint.samlValidate.enabled=true"
-                })
+    properties = {
+        "management.endpoints.web.exposure.include=*",
+        "management.endpoint.samlValidate.enabled=true"
+    })
 @Tag("SAML1")
 class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Autowired
@@ -53,15 +55,15 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("samlProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
         assertNotNull(samlValidateEndpoint);
         val request = new MockHttpServletRequest();
@@ -71,7 +73,7 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyWithoutPassword() {
+    void verifyWithoutPassword() throws Throwable {
         val service = CoreAuthenticationTestUtils.getService();
         assertNotNull(samlValidateEndpoint);
         val request = new MockHttpServletRequest();

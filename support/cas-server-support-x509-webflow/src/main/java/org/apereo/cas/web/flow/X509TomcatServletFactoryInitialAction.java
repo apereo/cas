@@ -26,7 +26,7 @@ public class X509TomcatServletFactoryInitialAction extends BaseCasWebflowAction 
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
         val endpoint = UriComponentsBuilder
             .fromUriString(casProperties.getServer().getLoginUrl())

@@ -44,7 +44,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private static String getStringProperty(final Optional<Object> result,
                                             final RegisteredServiceProperties property) {
         if (result.isPresent()) {
-            val registeredService = RegisteredService.class.cast(result.get());
+            val registeredService = (RegisteredService) result.get();
             LOGGER.trace("Resolved registered service [{}] from request to enforce response headers", registeredService);
             val properties = registeredService.getProperties();
             if (!properties.containsKey(property.getPropertyName())) {
@@ -78,7 +78,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     @Override
     protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                            final HttpServletRequest httpServletRequest) {
+                                                            final HttpServletRequest httpServletRequest) throws Throwable {
         try {
             return getRegisteredServiceFromRequest(httpServletRequest);
         } catch (final Exception e) {
@@ -195,19 +195,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         }
     }
 
-    /**
-     * Gets registered service from request.
-     * Reading the request body by the argument extractor here may cause the underlying request stream
-     * to close. If there are any underlying controllers or components that expect to read
-     * or parse the request body, like those that handle ticket validation, they would fail given the
-     * {@link HttpServletRequest#getReader()} is consumed by the argument extractor here and not available anymore.
-     * Therefor, any of the inner components of the extractor might have to cache the request body
-     * as an attribute, etc so they can re-process and re-extract as needed.
-     *
-     * @param request the request
-     * @return the registered service from request
-     */
-    private Optional<Object> getRegisteredServiceFromRequest(final HttpServletRequest request) {
+    private Optional<Object> getRegisteredServiceFromRequest(final HttpServletRequest request) throws Throwable {
         val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
             LOGGER.trace("Attempting to resolve service for [{}]", service);

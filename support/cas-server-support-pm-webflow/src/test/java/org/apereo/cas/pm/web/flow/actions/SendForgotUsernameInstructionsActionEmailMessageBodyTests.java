@@ -1,29 +1,19 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockParameterMap;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SendForgotUsernameInstructionsActionEmailMessageBodyTests}.
@@ -35,22 +25,8 @@ import static org.mockito.Mockito.*;
 @Tag("Mail")
 class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePasswordManagementActionTests {
 
-    private static RequestContext getRequestContext(final MockHttpServletRequest request,
-                                                    final MockHttpServletResponse response) {
-        val context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
-        return context;
-    }
-
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.forgot-username.mail.text=classpath:ForgotUsernameEmailBody.groovy")
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BasePasswordManagementActionTests {
 
         @Autowired
@@ -58,24 +34,20 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        void verifyOp() throws Exception {
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            val context = getRequestContext(request, response);
+        void verifyOp() throws Throwable {
+            val context = MockRequestContext.create();
 
-            request.setParameter("email", "casuser@apereo.org");
+            context.setParameter("email", "casuser@apereo.org");
             val result = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         }
 
         @Test
-        void verifyBodyContainsUsername() throws Exception {
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            val context = getRequestContext(request, response);
+        void verifyBodyContainsUsername() throws Throwable {
+            val context = MockRequestContext.create();
 
-            request.setParameter("username", "casuser");
-            request.setParameter("email", "casuser@apereo.org");
+            context.setParameter("username", "casuser");
+            context.setParameter("email", "casuser@apereo.org");
             val resultEvent = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resultEvent.getId());
 
@@ -88,7 +60,6 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
     @Nested
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
-    @SuppressWarnings("ClassCanBeStatic")
     class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
 
         @Autowired
@@ -96,13 +67,11 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        void verifyBodyContainsUsername() throws Exception {
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            val context = getRequestContext(request, response);
+        void verifyBodyContainsUsername() throws Throwable {
+            val context = MockRequestContext.create();
 
-            request.setParameter("username", "casuser");
-            request.setParameter("email", "casuser@apereo.org");
+            context.setParameter("username", "casuser");
+            context.setParameter("email", "casuser@apereo.org");
             val resultEvent = sendForgotUsernameInstructionsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resultEvent.getId());
 

@@ -31,7 +31,7 @@ class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcActionWithoutMDUI() throws Exception {
+    void verifyOidcActionWithoutMDUI() throws Throwable {
         val ctx = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(ctx, null);
         val event = oidcRegisteredServiceUIAction.execute(ctx);
@@ -40,7 +40,7 @@ class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcActionWithMDUI() throws Exception {
+    void verifyOidcActionWithMDUI() throws Throwable {
         val ctx = new MockRequestContext();
         servicesManager.save(getOidcRegisteredService());
         WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(

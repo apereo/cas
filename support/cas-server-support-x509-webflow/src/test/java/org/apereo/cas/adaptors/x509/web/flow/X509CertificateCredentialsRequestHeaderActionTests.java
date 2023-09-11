@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
-    void verifyCredentialsResultsInAuthnFailure() throws Exception {
+    void verifyCredentialsResultsInAuthnFailure() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -43,7 +43,7 @@ class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificate
     }
 
     @Test
-    void verifyErrorInRequestResultsInError() throws Exception {
+    void verifyErrorInRequestResultsInError() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -53,8 +53,7 @@ class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificate
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             request, new MockHttpServletResponse()));
         context.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR,
-            action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
     }
 
 }

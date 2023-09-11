@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -24,15 +23,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SubmitAccountRegistrationActionTests}.
@@ -63,7 +58,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     private Action submitAccountRegistrationAction;
 
     @Test
-    void verifySuccessOperation() throws Exception {
+    void verifySuccessOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
@@ -83,19 +78,8 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyFailingOperation() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        
-        val context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        val external = new ServletExternalContext(new MockServletContext(), request, response);
-        when(context.getExternalContext()).thenReturn(external);
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(external);
+    void verifyFailingOperation() throws Throwable {
+        val context = org.apereo.cas.util.MockRequestContext.create();
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }

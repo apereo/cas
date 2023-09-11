@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -9,9 +8,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.security.Security;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +36,7 @@ public abstract class AbstractRadiusServerTests {
     }
 
     @Test
-    void verifyAuthenticationSuccess() throws Exception {
+    void verifyAuthenticationSuccess() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.code());
@@ -51,7 +48,7 @@ public abstract class AbstractRadiusServerTests {
     public abstract RadiusServer getRadiusServer();
 
     @Test
-    void verifyAuthenticationFails() throws Exception {
+    void verifyAuthenticationFails() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "badpsw");
         assertNull(response);

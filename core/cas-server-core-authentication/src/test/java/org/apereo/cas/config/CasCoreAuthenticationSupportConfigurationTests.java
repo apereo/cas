@@ -90,7 +90,7 @@ class CasCoreAuthenticationSupportConfigurationTests {
     private AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(groovyAuthenticationHandlerResolver);
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(authenticationManager);

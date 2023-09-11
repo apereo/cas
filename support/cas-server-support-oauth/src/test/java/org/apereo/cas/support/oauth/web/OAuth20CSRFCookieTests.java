@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20CSRFCookieTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyPropertiesSet() {
+    void verifyPropertiesSet() throws Throwable {
         val csrfCookie = casProperties.getAuthn().getOauth().getCsrfCookie();
         assertEquals(3600, csrfCookie.getMaxAge());
         assertEquals("/cas", csrfCookie.getPath());

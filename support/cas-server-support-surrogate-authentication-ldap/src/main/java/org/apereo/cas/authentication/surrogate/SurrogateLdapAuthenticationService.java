@@ -46,7 +46,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal) throws Throwable {
         return super.isWildcardedAccount(surrogate, principal)
             && doesSurrogateAccountExistInLdap(surrogate);
     }

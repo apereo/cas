@@ -155,7 +155,7 @@ public class CollectionUtils {
             val set = (Set<Map.Entry>) map.entrySet();
             resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            if (byte[].class.isInstance(obj)) {
+            if (obj instanceof byte[]) {
                 resultingSet.add(obj);
             } else {
                 resultingSet.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));

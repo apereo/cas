@@ -87,7 +87,7 @@ public class DelegatedSaml2ClientMetadataController {
         @PathVariable("client")
         final String client) {
         val saml2Client = builtClients.findClient(client);
-        return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
+        return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
@@ -102,7 +102,7 @@ public class DelegatedSaml2ClientMetadataController {
         @PathVariable("client")
         final String client) {
         val saml2Client = builtClients.findClient(client);
-        return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
+        return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 

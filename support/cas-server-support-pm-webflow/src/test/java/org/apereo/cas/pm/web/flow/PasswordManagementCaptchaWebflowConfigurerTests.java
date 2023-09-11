@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow;
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -14,17 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,19 +46,14 @@ class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflowConfigu
     private Action initCaptchaAction;
 
     @Test
-    void verifyCaptcha() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyCaptcha() throws Throwable {
+        val context = MockRequestContext.create();
         initCaptchaAction.execute(context);
         assertTrue(WebUtils.isRecaptchaPasswordManagementEnabled(context));
     }
     
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);

@@ -57,7 +57,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   final Service service) throws Throwable {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();

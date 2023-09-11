@@ -141,7 +141,7 @@ public class RadiusClient {
                             valueObject = Integer.valueOf(value);
                         }
                         try {
-                            m.invoke(auth, new Object[]{valueObject});
+                            m.invoke(auth, valueObject);
                         } catch (final Exception e) {
                             RadiusLog.error("Error setting attribute " + name + " for authenticator " + protocolName, e);
                         }

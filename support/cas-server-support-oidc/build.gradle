@@ -16,8 +16,6 @@ dependencies {
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
     
-    compileOnly project(":support:cas-server-support-mongo-core")
-
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oidc-core-api")
@@ -50,9 +48,7 @@ dependencies {
 
     api libraries.jose4j
     api libraries.nimbus
-
-    compileOnly libraries.mongo
-
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")

@@ -7,10 +7,10 @@ import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalProvisioningProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.util.Objects;
 
 /**
@@ -75,7 +74,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
             headers.putAll(properties.getHeaders());
 
             val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserUpdateEntity(principal, getSyncopeRealm(principal)));
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.PATCH)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -110,7 +109,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
 
             val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(principal, getSyncopeRealm(principal)));
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(properties.getBasicAuthUsername())

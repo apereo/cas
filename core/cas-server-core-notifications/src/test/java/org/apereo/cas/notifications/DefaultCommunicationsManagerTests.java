@@ -53,7 +53,7 @@ class DefaultCommunicationsManagerTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyMailSender() {
+    void verifyMailSender() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         var props = new EmailProperties();
@@ -76,7 +76,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyEmailWithLocalizedSubject() {
+    void verifyEmailWithLocalizedSubject() throws Throwable {
         val props = new EmailProperties();
         props.setText("Hello World");
         props.setSubject("#{my.subject}");
@@ -89,7 +89,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailSenderWithTemplateBody() throws Exception {
+    void verifyMailSenderWithTemplateBody() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         val tempFile = Files.createTempFile("prefix", "postfix").toFile();
@@ -108,7 +108,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailNoAtr() {
+    void verifyMailNoAtr() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
         val emailRequest = EmailMessageRequest.builder()
             .principal(mock(Principal.class))
@@ -119,7 +119,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifySmsNoAtr() {
+    void verifySmsNoAtr() throws Throwable {
         assertFalse(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder()
             .principal(mock(Principal.class))
@@ -130,13 +130,13 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyNoSmsSender() {
+    void verifyNoSmsSender() throws Throwable {
         assertFalse(communicationsManager.isSmsSenderDefined());
         assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test
-    void verifyValidate() {
+    void verifyValidate() throws Throwable {
         assertTrue(communicationsManager.validate());
     }
 }

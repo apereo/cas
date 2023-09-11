@@ -250,7 +250,7 @@ public class OidcJsonWebKeyStoreUtils {
         final RegisteredService registeredService,
         final OidcRegisteredServiceJwtCipherExecutor cipherExecutor,
         final boolean fallbackToDefault) {
-        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val issuer = cipherExecutor.getOidcIssuerService().determineIssuer(Optional.of(oidcRegisteredService));
         LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
         var jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
@@ -282,7 +282,7 @@ public class OidcJsonWebKeyStoreUtils {
      */
     public static Optional<JsonWebKeySet> fetchJsonWebKeySetForEncryption(final RegisteredService registeredService,
                                                                           final OidcRegisteredServiceJwtCipherExecutor cipherExecutor) {
-        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
             new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.ENCRYPTION)));
         if (jwks.isEmpty()) {

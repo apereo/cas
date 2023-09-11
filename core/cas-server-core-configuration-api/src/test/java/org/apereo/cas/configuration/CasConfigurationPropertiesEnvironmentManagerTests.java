@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class CasConfigurationPropertiesEnvironmentManagerTests {
     @Test
-    void verifyOperationByFile() throws Exception {
+    void verifyOperationByFile() throws Throwable {
         val env = new MockEnvironment();
         val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
         env.getPropertySources().addFirst(sources);
@@ -39,7 +39,7 @@ class CasConfigurationPropertiesEnvironmentManagerTests {
     }
 
     @Test
-    void verifyOperationByDir() throws Exception {
+    void verifyOperationByDir() throws Throwable {
         val env = new MockEnvironment();
         val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
         env.getPropertySources().addFirst(sources);

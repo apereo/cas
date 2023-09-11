@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriUtils;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -57,7 +58,7 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public URL build(final String username, final WebApplicationService service) throws Exception {
+    public URL build(final String username, final WebApplicationService service) throws Throwable {
         val query = PasswordManagementQuery.builder().username(username).build();
         LOGGER.debug("Creating password reset URL designed for [{}]", username);
 
@@ -82,7 +83,7 @@ public class DefaultPasswordResetUrlBuilder implements PasswordResetUrlBuilder {
 
             val url = resetUrl.toString();
             LOGGER.debug("Final password reset URL designed for [{}] is [{}]", username, url);
-            return new URL(url);
+            return new URI(url).toURL();
         }
         LOGGER.error("Could not create password reset url since no reset token could be generated");
         return null;

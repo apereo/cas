@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -42,14 +41,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
 
     private final CasConfigurationProperties casProperties;
 
-    /**
-     * Gets authentication principal.
-     *
-     * @param ticketGrantingTicketId the ticket granting ticket id
-     * @return the authentication principal, or {@link NullPrincipal}
-     * if none was available.
-     */
-    public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
+    private Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
             val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return Optional.of(ticketGrantingTicket.getAuthentication());
@@ -61,7 +53,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
         if (StringUtils.isNotBlank(redirectUrl)) {
             val service = this.serviceFactory.createService(redirectUrl);
@@ -81,7 +73,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                                 return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                                     registeredService, authn.getPrincipal().getId(),
                                     (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
-                            } catch (final Exception e) {
+                            } catch (final Throwable e) {
                                 LOGGER.info(e.getMessage(), e);
                                 return false;
                             }

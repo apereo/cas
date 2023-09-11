@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,16 +58,18 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal,
-                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
         val principals = new ArrayList<Principal>(chain.size());
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
                 LOGGER.debug("Invoking principal resolver [{}]", resolver.getName());
-                val p = resolver.resolve(credential, principal, handler, service);
-                if (p != null) {
-                    LOGGER.debug("Resolved principal [{}]", p);
-                    principals.add(p);
+                val resolvedPrincipal = FunctionUtils.doUnchecked(() -> resolver.resolve(credential, principal, handler, service));
+                if (resolvedPrincipal != null) {
+                    LOGGER.debug("Resolved principal [{}]", resolvedPrincipal);
+                    principals.add(resolvedPrincipal);
+                } else {
+                    LOGGER.warn("Unable to resolve principal via [{}]", resolver.getName());
                 }
             });
         if (principals.isEmpty()) {
@@ -77,10 +78,10 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         }
         val attributes = new HashMap<String, List<Object>>();
         val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-        principals.forEach(p -> {
-            if (p != null) {
-                LOGGER.debug("Resolved principal [{}]", p);
-                val principalAttributes = p.getAttributes();
+        principals.forEach(resolvedPrincipal -> {
+            if (resolvedPrincipal != null) {
+                LOGGER.debug("Resolved principal [{}]", resolvedPrincipal);
+                val principalAttributes = resolvedPrincipal.getAttributes();
                 if (principalAttributes != null && !principalAttributes.isEmpty()) {
                     LOGGER.debug("Adding attributes [{}] for the final principal", principalAttributes);
                     attributes.putAll(CoreAuthenticationUtils.mergeAttributes(attributes, principalAttributes, merger));

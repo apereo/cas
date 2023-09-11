@@ -2,9 +2,9 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,7 +19,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public Resource generate() throws Exception {
         val rest = oidcProperties.getJwks().getRest();
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())
             .basicAuthUsername(rest.getBasicAuthUsername())
             .method(HttpMethod.GET)
@@ -65,7 +64,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val rest = oidcProperties.getJwks().getRest();
         val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(rest.getHeaders());
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())
             .basicAuthUsername(rest.getBasicAuthUsername())
             .method(HttpMethod.POST)

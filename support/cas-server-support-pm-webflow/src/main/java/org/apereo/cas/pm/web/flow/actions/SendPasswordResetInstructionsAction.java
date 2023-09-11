@@ -110,7 +110,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
            actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
            resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined() && !communicationsManager.isSmsSenderDefined()) {
             return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);
@@ -121,32 +121,34 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
-        val email = passwordManagementService.findEmail(query);
-        val phone = passwordManagementService.findPhone(query);
+        val email = FunctionUtils.doUnchecked(() -> passwordManagementService.findEmail(query));
+        val phone = FunctionUtils.doUnchecked(() -> passwordManagementService.findPhone(query));
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
             return getInvalidContactEvent(requestContext);
         }
         WebUtils.putPasswordManagementQuery(requestContext, query);
-        if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
-            return switchToMultifactorAuthenticationFlow(requestContext);
-        }
-        val service = WebUtils.getService(requestContext);
-        val url = buildPasswordResetUrl(query.getUsername(), service);
-        if (url != null) {
-            val pm = casProperties.getAuthn().getPm();
-            val duration = Beans.newDuration(pm.getReset().getExpiration());
-            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
-            val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
-            val sendSms = sendPasswordResetSmsToAccount(phone, url);
-            if (sendEmail.isSuccess() || sendSms) {
-                return success(url);
+        return FunctionUtils.doUnchecked(() -> {
+            if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
+                return switchToMultifactorAuthenticationFlow(requestContext);
             }
-        } else {
-            LOGGER.error("No password reset URL could be built and sent to [{}]", email);
-        }
-        LOGGER.error("Failed to notify account [{}]", email);
-        return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
+            val service = WebUtils.getService(requestContext);
+            val url = buildPasswordResetUrl(query.getUsername(), service);
+            if (url != null) {
+                val pm = casProperties.getAuthn().getPm();
+                val duration = Beans.newDuration(pm.getReset().getExpiration());
+                LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
+                val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
+                val sendSms = sendPasswordResetSmsToAccount(phone, url);
+                if (sendEmail.isSuccess() || sendSms) {
+                    return success(url);
+                }
+            } else {
+                LOGGER.error("No password reset URL could be built and sent to [{}]", email);
+            }
+            LOGGER.error("Failed to notify account [{}]", email);
+            return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
+        });
     }
 
     protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
@@ -156,7 +158,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             && !providers.isEmpty() && StringUtils.isBlank(providerId);
     }
 
-    protected Event switchToMultifactorAuthenticationFlow(final RequestContext requestContext) {
+    protected Event switchToMultifactorAuthenticationFlow(final RequestContext requestContext) throws Throwable {
         val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
         val principal = principalResolver.resolve(new BasicIdentifiableCredential(query.getUsername()));
         val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
@@ -172,7 +174,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
-                                                                                        final Principal principal) {
+                                                                                        final Principal principal) throws Throwable {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         return multifactorAuthenticationProviderSelector.resolve(providers.values(), registeredService, principal);
@@ -197,7 +199,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
     }
 
-    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
+    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) throws Throwable {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
@@ -209,10 +211,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected EmailCommunicationResult sendPasswordResetEmailToAccount(
-        final String username,
-        final String to,
-        final URL url,
-        final RequestContext requestContext) {
+        final String username, final String to, final URL url, final RequestContext requestContext) throws Throwable {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (StringUtils.isNotBlank(to)) {
@@ -250,16 +249,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }
 
-    /**
-     * Utility method to generate a password reset URL.
-     *
-     * @param username username
-     * @param service  service from the flow scope
-     * @return URL a user can use to start the password reset process
-     * @throws Exception the exception
-     */
     protected URL buildPasswordResetUrl(final String username,
-                                        final WebApplicationService service) throws Exception {
+                                        final WebApplicationService service) throws Throwable {
         return passwordResetUrlBuilder.build(username, service);
     }
 }

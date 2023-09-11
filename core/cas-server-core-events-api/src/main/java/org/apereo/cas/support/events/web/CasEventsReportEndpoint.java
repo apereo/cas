@@ -99,7 +99,7 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Upload CAS events and store them into the event repository")
-    public ResponseEntity uploadEvents(final HttpServletRequest request) throws Exception {
+    public ResponseEntity uploadEvents(final HttpServletRequest request) throws Throwable {
         val contentType = request.getContentType();
         if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
             return importEventsAsStream(request);
@@ -107,7 +107,7 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
         return importSingleEvent(request);
     }
 
-    private ResponseEntity<CasEvent> importSingleEvent(final HttpServletRequest request) throws Exception {
+    private ResponseEntity<CasEvent> importSingleEvent(final HttpServletRequest request) throws Throwable {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
         val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
@@ -115,7 +115,7 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
         return ResponseEntity.ok().build();
     }
 
-    private ResponseEntity<CasEvent> importEventsAsStream(final HttpServletRequest request) throws Exception {
+    private ResponseEntity<CasEvent> importEventsAsStream(final HttpServletRequest request) throws Throwable {
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {

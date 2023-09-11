@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,13 +15,13 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -49,13 +49,13 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     @Override
     public Map<String, List<Object>> getAttributesInternal(
         final RegisteredServiceAttributeReleasePolicyContext context,
-        final Map<String, List<Object>> attributes) {
+        final Map<String, List<Object>> attributes) throws Throwable {
         return authorizeReleaseOfAllowedAttributes(context, attributes);
     }
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes();
+        return getAllowedAttributes().stream().filter(key -> !ScriptingUtils.isInlineGroovyScript(key)).collect(Collectors.toList());
     }
 
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
@@ -68,22 +68,27 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
             if (resolvedAttributes.containsKey(attr)) {
                 LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
                 attributesToRelease.put(attr, resolvedAttributes.get(attr));
-            } else {
-                val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attr);
-                if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                    val inlineGroovy = matcherInline.group(1);
-                    try (val executableScript = new GroovyShellScript(inlineGroovy)) {
-                        val args = CollectionUtils.<String, Object>wrap(
-                            "context", context,
-                            "attributes", attributes,
-                            "logger", LOGGER);
-                        executableScript.setBinding(args);
-                        val scriptedAttributes = executableScript.execute(args.values().toArray(), Map.class);
-                        attributesToRelease.putAll(scriptedAttributes);
-                    }
-                }
+            } else if (CasRuntimeHintsRegistrar.notInNativeImage()) {
+                attributesToRelease.putAll(executeInlineGroovyScript(context, attributes, attr));
             }
         });
         return attributesToRelease;
+    }
+
+    private static Map<String, List<Object>> executeInlineGroovyScript(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                                       final Map<String, List<Object>> resolvedAttributes, final String attribute) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attribute);
+        if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val inlineGroovy = matcherInline.group(1);
+            try (val executableScript = new GroovyShellScript(inlineGroovy)) {
+                val args = CollectionUtils.<String, Object>wrap(
+                    "context", context,
+                    "attributes", resolvedAttributes,
+                    "logger", LOGGER);
+                executableScript.setBinding(args);
+                return FunctionUtils.doUnchecked(() -> executableScript.execute(args.values().toArray(), Map.class));
+            }
+        }
+        return new HashMap<>();
     }
 }

@@ -29,7 +29,7 @@ class CasConfigurationWatchServiceTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperationByFile() throws Exception {
+    void verifyOperationByFile() throws Throwable {
         val cas = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
         val service = new CasConfigurationWatchService(applicationContext);

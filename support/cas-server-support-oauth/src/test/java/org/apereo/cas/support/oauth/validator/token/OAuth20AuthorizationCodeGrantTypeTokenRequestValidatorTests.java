@@ -21,7 +21,6 @@ import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,12 +34,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -60,15 +57,14 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private static final String PROMISCUOUS_CLIENT_ID = UUID.randomUUID().toString();
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oauth.code.remove-related-access-tokens=true")
     class RemovingInvalidTokenTests extends AbstractOAuth20Tests {
         @Autowired
         @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
         private OAuth20TokenRequestValidator validator;
-        
+
         @Test
-        void verifyPreviousAccessTokensRemoved() throws Exception {
+        void verifyPreviousAccessTokensRemoved() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -101,7 +97,6 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOAuth20Tests {
         private OAuth20Code supportingServiceTicket;
 
@@ -114,7 +109,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         private OAuth20TokenRequestValidator validator;
 
         @BeforeEach
-        public void before() throws Exception {
+        public void before() throws Throwable {
             val supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
                 SUPPORTING_CLIENT_ID,
@@ -142,7 +137,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        void verifyBadToken() throws Exception {
+        void verifyBadToken() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -160,7 +155,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        void verifyBadService() throws Exception {
+        void verifyBadService() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -178,7 +173,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        void verifyBadRequest() throws Exception {
+        void verifyBadRequest() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -194,7 +189,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
+        void verifyUnknownCodeRevokesPreviousAccessTokens() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -223,7 +218,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -262,7 +257,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             assertTrue(this.validator.validate(new JEEContext(request, response)));
         }
 
-        private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Exception {
+        private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Throwable {
             val builder = new OAuth20DefaultCasAuthenticationBuilder(
                 PrincipalFactoryUtils.newPrincipalFactory(),
                 new WebApplicationServiceFactory(),

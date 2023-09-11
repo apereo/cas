@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -19,9 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
-import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
-
 import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
@@ -107,8 +104,7 @@ public class CasConfigurationMetadataCatalog {
             .filter(hint -> StringUtils.isNotBlank(hint.getDescription()))
             .filter(hint -> hint.getDescription().equals(RequiresModule.class.getName()))
             .anyMatch(hint -> {
-                val valueHint = ValueHint.class.cast(hint);
-                val results = reasonJsonValueAsMap(valueHint.getValue().toString());
+                val results = reasonJsonValueAsMap(hint.getValue().toString());
                 val module = results.get("module").toString();
                 return query.getModules().contains(module);
             });

@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,6 +39,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import java.io.Serial;
+import java.net.InetAddress;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -342,70 +343,61 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New subject subject.
+     * New subject confirmation.
      *
-     * @param nameIdFormat the name id format
-     * @param nameIdValue  the name id value
      * @param recipient    the recipient
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
      * @param notBefore    the not before
+     * @param address      the address
+     * @return the subject confirmation
+     */
+    public SubjectConfirmation newSubjectConfirmation(final String recipient, final ZonedDateTime notOnOrAfter,
+                                                      final String inResponseTo, final ZonedDateTime notBefore,
+                                                      final InetAddress address) {
+        LOGGER.debug("Building subject confirmation for recipient [{}], in response to [{}]", recipient, inResponseTo);
+        val confirmation = newSamlObject(SubjectConfirmation.class);
+        confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
+        val data = newSamlObject(SubjectConfirmationData.class);
+        FunctionUtils.doIfNotBlank(recipient, data::setRecipient);
+        FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo);
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostName()));
+        FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
+        FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
+        confirmation.setSubjectConfirmationData(data);
+        return confirmation;
+    }
+
+    /**
+     * New subject subject.
+     *
+     * @param nameIdFormat        the name id format
+     * @param nameIdValue         the name id value
+     * @param subjectConfirmation the subject confirmation
      * @return the subject
      */
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final String recipient, final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo, final ZonedDateTime notBefore) {
+                              final SubjectConfirmation subjectConfirmation) {
         val nameID = getNameID(nameIdFormat, nameIdValue);
-        return newSubject(nameID, null, recipient, notOnOrAfter, inResponseTo, notBefore);
+        return newSubject(nameID, null, subjectConfirmation);
     }
 
     /**
      * New subject element.
      *
-     * @param nameId            the nameId
-     * @param subjectConfNameId the subject conf name id
-     * @param recipient         the recipient
-     * @param notOnOrAfter      the not on or after
-     * @param inResponseTo      the in response to
-     * @param notBefore         the not before
+     * @param nameId              the nameId
+     * @param subjectConfNameId   the subject conf name id
+     * @param subjectConfirmation the subject confirmation
      * @return the subject
      */
     public Subject newSubject(final SAMLObject nameId,
                               final SAMLObject subjectConfNameId,
-                              final String recipient,
-                              final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo,
-                              final ZonedDateTime notBefore) {
+                              final SubjectConfirmation subjectConfirmation) {
 
-        LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
-        val confirmation = newSamlObject(SubjectConfirmation.class);
-        confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
-        val data = newSamlObject(SubjectConfirmationData.class);
-
-        if (StringUtils.isNotBlank(recipient)) {
-            data.setRecipient(recipient);
-            val ip = InetAddressUtils.getByName(recipient);
-            if (ip != null) {
-                data.setAddress(ip.getHostName());
-            }
-        }
-
-        if (notOnOrAfter != null) {
-            data.setNotOnOrAfter(notOnOrAfter.toInstant());
-        }
-
-        if (StringUtils.isNotBlank(inResponseTo)) {
-            data.setInResponseTo(inResponseTo);
-        }
-
-        if (notBefore != null) {
-            data.setNotBefore(notBefore.toInstant());
-        }
-
-        confirmation.setSubjectConfirmationData(data);
+        LOGGER.debug("Building subject for NameID [{}]", nameId);
         val subject = newSamlObject(Subject.class);
         subject.setNameID(null);
-        subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
+        subject.getSubjectConfirmations().forEach(confirmation -> confirmation.setNameID(null));
 
         if (nameId instanceof final NameID instance) {
             subject.setNameID(instance);
@@ -416,15 +408,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             subject.setEncryptedID(instance);
         }
         if (subjectConfNameId instanceof final NameID instance) {
-            confirmation.setNameID(instance);
-            confirmation.setEncryptedID(null);
+            subjectConfirmation.setNameID(instance);
+            subjectConfirmation.setEncryptedID(null);
         }
         if (subjectConfNameId instanceof final EncryptedID instance) {
-            confirmation.setNameID(null);
-            confirmation.setEncryptedID(instance);
+            subjectConfirmation.setNameID(null);
+            subjectConfirmation.setEncryptedID(instance);
         }
-        subject.getSubjectConfirmations().add(confirmation);
-
+        subject.getSubjectConfirmations().add(subjectConfirmation);
         LOGGER.debug("Built subject [{}]", subject);
         return subject;
     }

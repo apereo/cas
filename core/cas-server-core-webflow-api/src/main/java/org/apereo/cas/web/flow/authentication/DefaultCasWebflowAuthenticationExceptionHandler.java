@@ -56,31 +56,31 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
      * for for the first handler
      * error that is configured. If no match is found, {@value #UNKNOWN} is returned.
      *
-     * @param e              Authentication error to handle.
+     * @param exception              Authentication error to handle.
      * @param requestContext the spring context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
-        if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
+    protected String handleAuthenticationException(final AuthenticationException exception, final RequestContext requestContext) {
+        if (exception.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
             val url = WebUtils.getUnauthorizedRedirectUrlFromFlowScope(requestContext);
             if (url != null) {
                 LOGGER.warn("Unauthorized service access for principal; CAS will be redirecting to [{}]", url);
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
             }
         }
-        val values = e.getHandlerErrors().values().stream().map(Throwable::getClass).toList();
+        val values = exception.getHandlerErrors().values().stream().map(Throwable::getClass).toList();
         val handlerErrorName = errors.getRegisteredExceptions()
             .stream()
             .filter(values::contains)
             .map(Class::getSimpleName)
             .findFirst()
             .orElseGet(() -> {
-                LOGGER.debug("Unable to translate handler errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
+                LOGGER.debug("Unable to translate handler errors of the authentication exception [{}]. Returning [{}]", exception, UNKNOWN);
                 return UNKNOWN;
             });
 
         val messageCode = this.messageBundlePrefix + handlerErrorName;
-        WebUtils.addErrorMessageToContext(requestContext, messageCode, StringUtils.EMPTY, e.getArgs().toArray());
+        WebUtils.addErrorMessageToContext(requestContext, messageCode, StringUtils.EMPTY, exception.getArgs().toArray());
         return handlerErrorName;
     }
 }

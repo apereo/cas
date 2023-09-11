@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata2"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata222"
 })
 class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "MetadataEntityAttributesAttributeReleasePolicyTests.json");
@@ -50,7 +50,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
     }
 
     @Test
-    void verifyPredicateFails() {
+    void verifyPredicateFails() throws Throwable {
         val filter = new MetadataEntityAttributesAttributeReleasePolicy();
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");
@@ -60,6 +60,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("givenName", UUID.randomUUID().toString())))

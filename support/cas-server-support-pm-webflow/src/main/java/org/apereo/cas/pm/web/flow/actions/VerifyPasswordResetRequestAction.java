@@ -45,7 +45,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         PasswordResetRequest resetRequest = null;
@@ -60,7 +60,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             val query = PasswordManagementQuery.builder().username(resetRequest.getUsername()).build();
             val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
-                val questions = PasswordManagementService.canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
+                val questions = FunctionUtils.doUnchecked(() -> PasswordManagementService.canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query)));
                 if (questions.isEmpty()) {
                     LOGGER.warn("No security questions could be found for [{}]", resetRequest);
                     return error();

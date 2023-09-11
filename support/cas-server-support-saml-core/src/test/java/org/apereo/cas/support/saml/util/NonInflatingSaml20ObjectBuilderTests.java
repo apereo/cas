@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
-
+import org.apereo.cas.util.InetAddressUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.xs.XSObject;
@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.ZoneOffset;
@@ -30,7 +29,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,9 +44,9 @@ class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;
-    
+
     @Test
-    void verifyAttrValueTypeString() {
+    void verifyAttrValueTypeString() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("cas@example.org"),
@@ -57,7 +55,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeUri() {
+    void verifyAttrValueTypeUri() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("cas@example.org"),
@@ -66,7 +64,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSBoolean() {
+    void verifyAttrValueTypeXSBoolean() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("false"),
@@ -75,7 +73,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSInteger() {
+    void verifyAttrValueTypeXSInteger() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("12345678"),
@@ -84,7 +82,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSDateTime() {
+    void verifyAttrValueTypeXSDateTime() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(ZonedDateTime.now(ZoneOffset.UTC).toString()),
@@ -93,7 +91,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSBinary() {
+    void verifyAttrValueTypeXSBinary() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(EncodingUtils.encodeBase64("values")),
@@ -102,7 +100,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSObject() {
+    void verifyAttrValueTypeXSObject() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(new TicketGrantingTicketExpirationPolicy(100, 100)),
@@ -111,7 +109,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeNone() {
+    void verifyAttrValueTypeNone() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(),
@@ -120,7 +118,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttributes() {
+    void verifyAttributes() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val formats = Map.of("mail", "basic", "name", "unspecified", "cn", StringUtils.EMPTY);
         assertNotNull(builder.newAttribute("email", "mail",
@@ -137,27 +135,31 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifySubject() {
+    void verifySubject() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, "https://www.apereo.org/app/sp", ZonedDateTime.now(ZoneOffset.UTC),
-            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+
+        val confirmation = builder.newSubjectConfirmation("https://www.apereo.org/app/sp",
+            ZonedDateTime.now(ZoneOffset.UTC), "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2",
+            ZonedDateTime.now(ZoneOffset.UTC), InetAddressUtils.getByName("https://www.apereo.org/app/sp"));
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 
     @Test
-    void verifySubjectNoRecipient() {
+    void verifySubjectNoRecipient() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, null, ZonedDateTime.now(ZoneOffset.UTC),
-                "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+        val confirmation = builder.newSubjectConfirmation(null, ZonedDateTime.now(ZoneOffset.UTC),
+            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC), null);
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 
     @Test
-    void verifyQName() {
+    void verifyQName() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertThrows(IllegalStateException.class,
             () -> builder.getSamlObjectQName(Object.class));

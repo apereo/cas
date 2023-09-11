@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -72,7 +71,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      * @throws GeneralSecurityException general security exception for errors
      */
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Exception {
         if (credential instanceof DuoSecurityPasscodeCredential) {
             LOGGER.debug("Attempting to authenticate credential via duo passcode");
             return authenticateDuoPasscodeCredential(credential);
@@ -102,24 +101,21 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             .map(r -> r.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
-
-    @SneakyThrows
-    private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) {
+    private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) throws Exception {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val creds = DuoSecurityPasscodeCredential.class.cast(credential);
+            val creds = (DuoSecurityPasscodeCredential) credential;
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = principalFactory.createPrincipal(creds.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo passcode authentication has failed");
     }
 
-    @SneakyThrows
-    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential givenCredential) {
+    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential givenCredential) throws Exception {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             val credential = (DuoSecurityUniversalPromptCredential) givenCredential;
@@ -129,7 +125,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Duo Security has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Duo Security universal prompt authentication has failed");
@@ -138,7 +134,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val creds = DuoSecurityDirectCredential.class.cast(credential);
+            val creds = (DuoSecurityDirectCredential) credential;
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
                 val principal = resolvePrincipal(creds.getPrincipal());
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
@@ -173,7 +169,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             throw new FailedLoginException("Duo authentication username "
                                            + primaryCredentialsUsername + " does not match Duo response: " + userId);
 
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }

@@ -124,7 +124,7 @@ the ticket continues to actively issue service tickets, etc.
 {% tab ssoservicepolicy Attributes %}
 
 The policy calculation here typically includes evaluating all authentication and principal attributes linked to the SSO session to check whether
-the ticket continues to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal
+the ticket-granting ticket may continue to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal
 and authentication attribute and for each match, the attribute value is then examined against the defined pattern in the policy.
 Successful matches allow for SSO participation. The `requireAllAttributes` flag controls whether *all* attribute conditions defined the policy
 must produce successful matches. 

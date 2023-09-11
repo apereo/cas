@@ -44,7 +44,7 @@ public class CasProtocolValidationEndpoint {
      *
      * @param request  the request
      * @param response the response
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(value = "/validate",
                  produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -55,7 +55,7 @@ public class CasProtocolValidationEndpoint {
                    @Parameter(name = "password", required = false),
                    @Parameter(name = "service", required = true)
                })
-    public void validate(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, LegacyValidateController.class);
     }
 
@@ -64,7 +64,7 @@ public class CasProtocolValidationEndpoint {
      *
      * @param request  the request
      * @param response the response
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(value = "/serviceValidate",
                  produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -75,7 +75,7 @@ public class CasProtocolValidationEndpoint {
                    @Parameter(name = "password", required = false),
                    @Parameter(name = "service", required = true)
                })
-    public void serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, ServiceValidateController.class);
     }
 
@@ -84,7 +84,7 @@ public class CasProtocolValidationEndpoint {
      *
      * @param request  the request
      * @param response the response
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(value = "/p3/serviceValidate",
                  produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -95,13 +95,13 @@ public class CasProtocolValidationEndpoint {
                    @Parameter(name = "password", required = false),
                    @Parameter(name = "service", required = true)
                })
-    public void p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, V3ServiceValidateController.class);
     }
 
     protected void renderValidationView(final HttpServletRequest request,
                                         final HttpServletResponse response,
-                                        final Class viewClass) throws Exception {
+                                        final Class viewClass) throws Throwable {
         val selectedService = (WebApplicationService) configurationContext.getServiceFactory()
             .createService(request, WebApplicationService.class);
         Assert.notNull(selectedService, "Service is missing and must be specified");
@@ -115,12 +115,14 @@ public class CasProtocolValidationEndpoint {
         val authentication = buildAuthentication(request, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(configurationContext.getApplicationContext())
             .service(selectedService)
             .principal(authentication.getPrincipal())
             .build();
 
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
+            configurationContext.getApplicationContext(),
             authentication.getPrincipal(),
             configurationContext.getPrincipalFactory(),
             attributesToRelease,
@@ -143,7 +145,7 @@ public class CasProtocolValidationEndpoint {
     }
 
     protected Authentication buildAuthentication(final HttpServletRequest request,
-                                                 final WebApplicationService selectedService) {
+                                                 final WebApplicationService selectedService) throws Throwable {
         val password = request.getParameter("password");
         val username = FunctionUtils.throwIfBlank(request.getParameter("username"));
         if (StringUtils.isNotBlank(password)) {

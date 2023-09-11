@@ -50,13 +50,13 @@ class MemcachedHealthIndicatorTests {
     private HealthIndicator monitor;
 
     @Test
-    void verifyMonitorNotRunning() {
+    void verifyMonitorNotRunning() throws Throwable {
         val health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 
     @Test
-    void verifyUnavailableServers() throws Exception {
+    void verifyUnavailableServers() throws Throwable {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenReturn(List.of(new InetSocketAddress(1234)));
         when(memcached.getAvailableServers()).thenReturn(List.of(new InetSocketAddress(11212)));
@@ -68,7 +68,7 @@ class MemcachedHealthIndicatorTests {
     }
 
     @Test
-    void verifyMonitorError() throws Exception {
+    void verifyMonitorError() throws Throwable {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenThrow(new RuntimeException("error"));
         when(memcached.getAvailableServers()).thenThrow(new RuntimeException("error"));
@@ -80,7 +80,7 @@ class MemcachedHealthIndicatorTests {
     }
 
     @Test
-    void verifyMonitorSuccess() throws Exception {
+    void verifyMonitorSuccess() throws Throwable {
         val memcached = mock(MemcachedClientIF.class);
         when(memcached.getUnavailableServers()).thenReturn(List.of());
         val socket = new InetSocketAddress("localhost", 11212);

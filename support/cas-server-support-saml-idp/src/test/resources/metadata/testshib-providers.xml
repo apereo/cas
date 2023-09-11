@@ -190,17 +190,21 @@
                       xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
 
         <Extensions>
-            
             <mdattr:EntityAttributes>
                 <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                    <saml:AttributeValue>
-                        http://id.incommon.org/category/research-and-scholarship
-                    </saml:AttributeValue>
+                    <saml:AttributeValue>http://id.incommon.org/category/research-and-scholarship</saml:AttributeValue>
                 </saml:Attribute>
                 <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                    <saml:AttributeValue>
-                        http://refeds.org/category/research-and-scholarship
-                    </saml:AttributeValue>
+                    <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://refeds.org/category/personalized</saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://refeds.org/category/pseudonymous</saml:AttributeValue>
+                </saml:Attribute>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://refeds.org/category/anonymous</saml:AttributeValue>
                 </saml:Attribute>
             </mdattr:EntityAttributes>
 

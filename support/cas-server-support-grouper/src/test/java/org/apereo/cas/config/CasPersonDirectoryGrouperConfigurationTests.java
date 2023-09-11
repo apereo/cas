@@ -27,7 +27,7 @@ class CasPersonDirectoryGrouperConfigurationTests {
     private BeanContainer<IPersonAttributeDao> grouperAttributeRepositories;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(grouperAttributeRepositories);
     }
 

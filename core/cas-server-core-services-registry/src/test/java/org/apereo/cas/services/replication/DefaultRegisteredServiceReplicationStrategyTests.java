@@ -49,7 +49,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifySetInCache() {
+    void verifySetInCache() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -66,7 +66,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndRemove() {
+    void verifyGetInCacheAndRemove() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -90,7 +90,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndSave() {
+    void verifyGetInCacheAndSave() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -112,7 +112,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndUpdate() {
+    void verifyGetInCacheAndUpdate() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -137,7 +137,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndMatch() {
+    void verifyGetInCacheAndMatch() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -160,7 +160,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithMatch() {
+    void verifyUpdateWithMatch() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -186,7 +186,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithNoMatch() {
+    void verifyUpdateWithNoMatch() throws Throwable {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

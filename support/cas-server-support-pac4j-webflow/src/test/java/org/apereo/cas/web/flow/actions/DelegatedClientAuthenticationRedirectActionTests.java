@@ -5,11 +5,10 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,10 +24,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.LinkedHashMap;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,7 +47,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyRedirect() throws Exception {
+    void verifyRedirect() throws Throwable {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("CasClient");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);
@@ -62,7 +59,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
     }
 
     @Test
-    void verifyPost() throws Exception {
+    void verifyPost() throws Throwable {
         val context = getMockRequestContext();
         val sessionTicket = getTransientSessionTicket("SAML2ClientPostBinding");
         context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);

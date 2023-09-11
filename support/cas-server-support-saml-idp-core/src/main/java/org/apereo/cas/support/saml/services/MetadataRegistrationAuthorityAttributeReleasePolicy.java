@@ -13,7 +13,6 @@ import lombok.val;
 import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -41,11 +40,10 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) {
+        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 
@@ -54,9 +52,6 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
             .map(RegistrationInfo.class::cast)
             .anyMatch(info -> RegexUtils.find(this.registrationAuthority, info.getRegistrationAuthority()));
 
-        if (matched) {
-            return authorizeReleaseOfAllowedAttributes(context, attributes);
-        }
-        return new HashMap<>(0);
+        return matched ? authorizeReleaseOfAllowedAttributes(context, attributes) : new HashMap<>();
     }
 }

@@ -16,7 +16,6 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +38,7 @@ public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
+        final String originalPassword) throws Throwable {
         val account = (RedisUserAccount) redisTemplate.opsForValue().get(credential.getUsername());
         if (account == null) {
             throw new AccountNotFoundException();

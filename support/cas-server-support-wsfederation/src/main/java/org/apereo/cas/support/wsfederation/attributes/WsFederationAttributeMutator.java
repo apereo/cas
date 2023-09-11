@@ -19,8 +19,9 @@ public interface WsFederationAttributeMutator extends Serializable {
      *
      * @param attributes the attribute returned by the IdP.
      * @return the map
+     * @throws Throwable the throwable
      */
-    Map<String, List<Object>> modifyAttributes(Map<String, List<Object>> attributes);
+    Map<String, List<Object>> modifyAttributes(Map<String, List<Object>> attributes) throws Throwable;
 
     /**
      * NoOp ws federation attribute mutator.

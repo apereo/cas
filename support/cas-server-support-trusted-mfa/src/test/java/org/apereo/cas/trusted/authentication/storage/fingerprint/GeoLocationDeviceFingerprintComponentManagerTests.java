@@ -4,8 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintComponentManager;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("GeoLocation")
 class GeoLocationDeviceFingerprintComponentManagerTests {
     @Test
-    void verifyGeoLocationDevice() {
+    void verifyGeoLocationDevice() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
@@ -47,7 +45,7 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    void verifyNoGeoLocationDevice() {
+    void verifyNoGeoLocationDevice() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val geoResp = new GeoLocationResponse();

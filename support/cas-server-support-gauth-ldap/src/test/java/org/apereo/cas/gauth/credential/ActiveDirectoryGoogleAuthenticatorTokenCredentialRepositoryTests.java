@@ -8,7 +8,6 @@ import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -43,8 +42,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnabledIfListeningOnPort(port = 10636)
 class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
-    @SneakyThrows
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         val uid = "aham";
 
         val bindInit = new BindConnectionInitializer("CN=admin,CN=Users,DC=cas,DC=example,DC=org", new Credential("P@ssw0rd"));

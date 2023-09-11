@@ -60,7 +60,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -72,7 +72,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    void verifyTrustedDevice() {
+    void verifyTrustedDevice() throws Throwable {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());

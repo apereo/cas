@@ -34,9 +34,10 @@ public interface SmsSender {
      * @param from    the from
      * @param to      the to
      * @param message the message
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    default boolean send(final String from, final String to, final String message) {
+    default boolean send(final String from, final String to, final String message) throws Throwable {
         return false;
     }
 

@@ -3,7 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * This is {@link org.apereo.cas.ticket.RenewableServiceTicket}.
+ * This is {@link RenewableServiceTicket}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0

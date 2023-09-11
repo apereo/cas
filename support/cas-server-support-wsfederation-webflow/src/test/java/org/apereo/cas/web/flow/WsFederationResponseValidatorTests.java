@@ -7,9 +7,8 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -31,12 +30,10 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -78,7 +75,7 @@ class WsFederationResponseValidatorTests {
 
     @Test
     @Order(2)
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val zdt = ZonedDateTime.of(2014, 2, 26, 22, 51, 10, 0, ZoneOffset.UTC);
         val clock = Clock.fixed(zdt.toInstant(), ZoneOffset.UTC);
         wsFederationHelper.setClock(clock);
@@ -89,7 +86,7 @@ class WsFederationResponseValidatorTests {
 
     @Test
     @Order(1)
-    public void verifyFailedOperation() throws Exception {
+    void verifyFailedOperation() throws Throwable {
         val context = prepareContext();
         assertThrows(IllegalArgumentException.class, () -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
     }

@@ -30,7 +30,8 @@ public interface RestAuthenticationService {
      * @param request     the request
      * @param response    the response
      * @return the optional
+     * @throws Throwable the throwable
      */
     Optional<AuthenticationResult> authenticate(MultiValueMap<String, String> requestBody,
-                                                HttpServletRequest request, HttpServletResponse response);
+                                                HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

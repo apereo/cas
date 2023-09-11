@@ -146,7 +146,7 @@ public class CasPersonDirectoryJdbcConfiguration {
                 .supply(() -> plan -> {
                     val results = jdbcAttributeRepositories.toList()
                         .stream()
-                        .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                        .filter(IPersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

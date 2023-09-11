@@ -53,7 +53,7 @@ class TicketStatusResourceTests {
     }
 
     @Test
-    void verifyStatus() throws Exception {
+    void verifyStatus() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
@@ -62,14 +62,14 @@ class TicketStatusResourceTests {
     }
 
     @Test
-    void verifyStatusNotFound() throws Exception {
+    void verifyStatusNotFound() throws Throwable {
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenThrow(InvalidTicketException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    void verifyStatusError() throws Exception {
+    void verifyStatusError() throws Throwable {
         when(ticketRegistry.getTicket(anyString())).thenThrow(RuntimeException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isInternalServerError());

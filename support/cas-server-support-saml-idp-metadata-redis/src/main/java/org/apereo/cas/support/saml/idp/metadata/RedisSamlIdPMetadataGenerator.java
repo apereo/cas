@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGen
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,7 +25,7 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
      */
     public static final String CAS_PREFIX = SamlIdPMetadataDocument.class.getSimpleName() + ':';
 
-    private final transient CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
+    private final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
     public RedisSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
                                          final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {
@@ -33,8 +34,8 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception{
-        generate(Optional.empty());
+    public void afterPropertiesSet() {
+        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 
     @Override

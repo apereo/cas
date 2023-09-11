@@ -1,15 +1,12 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -28,10 +25,9 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     })
     @EnabledIfListeningOnPort(port = 10389)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()
@@ -44,11 +40,10 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         "cas.authn.ldap[0].password-policy.custom-policy-class=org.apereo.cas.authentication.UnknownAuthenticationResponseHandler"
     })
     @EnabledIfListeningOnPort(port = 10389)
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()

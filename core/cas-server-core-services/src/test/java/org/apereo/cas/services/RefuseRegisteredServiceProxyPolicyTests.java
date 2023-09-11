@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,10 +26,10 @@ class RefuseRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyJson() throws IOException {
+    void verifyJson() throws Throwable {
         val policyWritten = new RefuseRegisteredServiceProxyPolicy();
         assertFalse(policyWritten.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
-            new URL("https://github.com")));
+            new URI("https://github.com").toURL()));
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
         assertEquals(policyWritten, policyRead);

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20DeviceTokenExpirationPolicyBuilderTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = deviceTokenExpirationPolicy.buildTicketExpirationPolicy();
         assertNotNull(results);
     }

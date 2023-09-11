@@ -83,7 +83,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
         val registeredService = WebUtils.getRegisteredService(context);
         val service = WebUtils.getService(context);
@@ -161,7 +161,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) {
+    public Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 

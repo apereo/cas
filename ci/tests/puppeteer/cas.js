@@ -38,19 +38,19 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.logy = async (text) => {
-    console.log(colors.yellow(text));
+    console.log(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    console.log(colors.blue(text));
+    console.log(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    console.log(colors.green(text));
+    console.log(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    console.log(colors.red(text));
+    console.log(`⛔ ${colors.red(text)}`);
 };
 
 exports.removeDirectory = async (directory) => {
@@ -67,7 +67,7 @@ exports.removeDirectory = async (directory) => {
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         let buttonNode = document.querySelector(button);
-        console.log(`Clicking element ${button} with link ${buttonNode.href}`);
+        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 };
@@ -95,14 +95,26 @@ exports.innerText = async (page, selector) => {
     return text;
 };
 
-exports.innerTexts = async (page, selector) => {
-    return await page.evaluate((button) => {
+exports.elementValue = async (page, selector, valueToSet = undefined) => {
+    let text = await page.$eval(selector, el => el.value.trim());
+    if (valueToSet !== undefined && valueToSet !== null) {
+        console.log(`Setting value for selector [${selector}] to: [${valueToSet}]`);
+        await page.$eval(selector, (el, toSet) => {
+            el.value = toSet;
+        }, valueToSet);
+    } else {
+        console.log(`Value for selector [${selector}] is: [${text}]`);
+    }
+    return text;
+};
+
+exports.innerTexts = async (page, selector) =>
+    await page.evaluate((button) => {
         let results = [];
         let elements = document.querySelectorAll(button);
         elements.forEach(entry => results.push(entry.innerText.trim()));
         return results;
     }, selector);
-};
 
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
@@ -132,7 +144,7 @@ exports.uploadImage = async (imagePath) => {
     }
 };
 
-exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
+exports.waitForElement = async (page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
 exports.loginWith = async (page,
                            user = "casuser",
@@ -146,7 +158,7 @@ exports.loginWith = async (page,
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
 
-    await page.keyboard.press('Enter');
+    await this.pressEnter(page);
     return await page.waitForNavigation();
 };
 
@@ -177,29 +189,27 @@ exports.assertInvisibility = async (page, selector) => {
 };
 
 
-exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
+exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
         console.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName
     });
     console.log(`Found cookies ${cookies.length}`);
-    if (present) {
-        console.log(`Checking for cookie ${cookieName}`);
+    if (cookieMustBePresent) {
+        console.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
         console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
         return cookies[0];
+    }
+    console.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
+    if (cookies.length === 0) {
+        await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        if (cookies.length > 0) {
-            let ck = cookies[0];
-            console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
-        }
-        const result = cookies.length === 0;
-        if (result) {
-            await this.logg(`Cookie ${cookieName} can be found`);
-        } else {
-            await this.logr(`Cookie ${cookieName} cannot be found`);
-        }
-        assert(result);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found`);
+        let ck = cookies[0];
+        let msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
+        await this.logb(msg);
+        throw msg;
     }
 };
 
@@ -214,6 +224,11 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
         page.$eval(selector, form => form.submit()),
         page.waitForTimeout(3000)
     ]);
+};
+
+exports.pressEnter = async (page) => {
+    page.keyboard.press('Enter');
+    page.waitForTimeout(1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
@@ -289,7 +304,7 @@ exports.doRequest = async (url, method = "GET",
             rejectUnauthorized: false,
             headers: headers
         };
-        options.agent = new https.Agent( options );
+        options.agent = new https.Agent(options);
 
         console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
         const handler = (res) => {
@@ -503,7 +518,7 @@ exports.verifyJwt = async (token, secret, options) => {
     return decoded;
 };
 
-exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.verifyJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     await this.logg("Using key to verify JWT:");
     console.log(keyContent);
     const secretKey = await jose.importJWK(keyContent, alg);
@@ -513,7 +528,7 @@ exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     return decoded;
 };
 
-exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
+exports.decryptJwt = async (ticket, keyPath, alg = "RS256") => {
     console.log(`Using private key path ${keyPath}`);
     if (fs.existsSync(keyPath)) {
         const keyContent = fs.readFileSync(keyPath, 'utf8');
@@ -528,7 +543,7 @@ exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
     throw `Unable to locate private key ${keyPath} to verify JWT`
 };
 
-exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.decryptJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
     console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
@@ -537,7 +552,7 @@ exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     return decoded;
 };
 
-exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
+exports.decryptJwtWithSecret = async (jwt, secret, options = {}) => {
     console.log(`Decrypting JWT with key ${secret}`);
     const buff = jose.base64url.decode(secret);
     const decoded = await jose.jwtDecrypt(jwt, buff, options);
@@ -548,7 +563,7 @@ exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
 
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
-    
+
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
@@ -596,9 +611,9 @@ exports.screenshot = async (page) => {
     }
 };
 
-exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+exports.isCiEnvironment = async () => process.env.CI !== undefined && process.env.CI === "true";
 
-exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
+exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
@@ -674,11 +689,11 @@ exports.killProcess = async (command, arguments) => {
     });
 };
 
-exports.sha256 = async(value) => CryptoJS.SHA256(value);
+exports.sha256 = async (value) => CryptoJS.SHA256(value);
 
-exports.base64Url = async(value) => CryptoJS.enc.Base64url.stringify(value);
+exports.base64Url = async (value) => CryptoJS.enc.Base64url.stringify(value);
 
-exports.pageVariable = async(page, name) => await page.evaluate(name);
+exports.pageVariable = async (page, name) => await page.evaluate(name);
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
@@ -703,9 +718,15 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.refreshContext = async(url = "https://localhost:8443/cas") => {
+exports.refreshContext = async (url = "https://localhost:8443/cas") => {
     console.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
+    console.log(response);
+};
+
+exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
+    console.log(`Refreshing CAS application context in ${url}`);
+    const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
     console.log(response);
 };
 
@@ -747,7 +768,7 @@ exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") =>
             console.log(`Submitting Duo Security bypass code ${bypassCode}`);
             await this.type(page, "input[name='passcode']", bypassCode);
             await this.screenshot(page);
-            await page.keyboard.press('Enter');
+            await this.pressEnter(page);
             console.log(`Waiting for Duo Security to accept bypass code...`);
             await page.waitForTimeout(10000);
             let error = await this.isVisible(page, "div.message.error");

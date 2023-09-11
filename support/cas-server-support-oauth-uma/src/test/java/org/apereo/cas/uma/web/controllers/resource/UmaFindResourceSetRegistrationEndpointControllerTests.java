@@ -1,18 +1,16 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-
 import java.util.Collection;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,15 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
+@Execution(ExecutionMode.SAME_THREAD)
 class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
-
-    @BeforeEach
-    public void beforeEach() {
-        umaResourceSetRepository.removeAll();
-    }
-
+    
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -42,7 +36,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyUnAuthOperation() throws Exception {
+    void verifyUnAuthOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -57,7 +51,7 @@ class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    void verifyFailsToFind() {
+    void verifyFailsToFind() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

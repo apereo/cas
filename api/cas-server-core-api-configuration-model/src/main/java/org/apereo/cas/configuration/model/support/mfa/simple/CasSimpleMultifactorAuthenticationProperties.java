@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa.simple;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.configuration.model.support.phone.PhoneProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -56,6 +57,12 @@ public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifacto
      */
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();
+
+    /**
+     * Phone call settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private PhoneProperties phone = new PhoneProperties();
 
     /**
      * Settings related to throttling requests using bucket4j.

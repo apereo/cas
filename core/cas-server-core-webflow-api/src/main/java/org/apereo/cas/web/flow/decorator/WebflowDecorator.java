@@ -18,6 +18,7 @@ public interface WebflowDecorator {
      *
      * @param requestContext     the context
      * @param applicationContext the application context
+     * @throws Throwable the throwable
      */
-    void decorate(RequestContext requestContext, ApplicationContext applicationContext);
+    void decorate(RequestContext requestContext, ApplicationContext applicationContext) throws Throwable;
 }

@@ -19,9 +19,10 @@ public interface MultifactorAuthenticationTrustedDeviceBypassEvaluator {
      * @param registeredService the registered service
      * @param service           the service
      * @param authentication    the authentication
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
     boolean shouldBypassTrustedDevice(RegisteredService registeredService,
                                       Service service,
-                                      Authentication authentication);
+                                      Authentication authentication) throws Throwable;
 }

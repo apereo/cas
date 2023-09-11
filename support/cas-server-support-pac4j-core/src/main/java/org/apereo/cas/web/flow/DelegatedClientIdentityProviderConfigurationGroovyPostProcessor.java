@@ -24,7 +24,7 @@ public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessor
 
     @Override
     public void process(final RequestContext context,
-                        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
+                        final Set<DelegatedClientIdentityProviderConfiguration> providers) throws Throwable {
         val args = new Object[]{context, providers, LOGGER};
         watchableScript.execute(args, Void.class);
     }

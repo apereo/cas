@@ -55,7 +55,7 @@ class RestAuditTrailManagerTests {
 
 
     @Test
-    void verifyRemoval() {
+    void verifyRemoval() throws Throwable {
         try (val webServer = new MockWebServer(9296,
             new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY), HttpStatus.OK)) {
             webServer.start();
@@ -65,7 +65,7 @@ class RestAuditTrailManagerTests {
     }
 
     @Test
-    void verifyGet() throws Exception {
+    void verifyGet() throws Throwable {
         val audit = new AuditActionContext("casuser", "resource", "action",
             "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("123.456.789.000", "123.456.789.000", "GoogleChrome", "London"));

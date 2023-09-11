@@ -14,8 +14,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -42,8 +44,11 @@ class WSFederationClaimsReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    void verifyAttributeReleaseNone() {
+    void verifyAttributeReleaseNone() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
@@ -51,6 +56,7 @@ class WSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -59,13 +65,14 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    void verifyAttributeReleaseInlineGroovy() {
+    void verifyAttributeReleaseInlineGroovy() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "groovy { return attributes['cn'][0] + '@example.org' }"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -76,7 +83,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    void verifyAttributeReleaseScriptGroovy() throws Exception {
+    void verifyAttributeReleaseScriptGroovy() throws Throwable {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         val script = IOUtils.toString(new ClassPathResource("wsfed-attr.groovy").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.write(file, script, StandardCharsets.UTF_8);
@@ -88,6 +95,7 @@ class WSFederationClaimsReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();
@@ -98,7 +106,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    void verifyAttributeRelease() {
+    void verifyAttributeRelease() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn",
@@ -112,6 +120,7 @@ class WSFederationClaimsReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();

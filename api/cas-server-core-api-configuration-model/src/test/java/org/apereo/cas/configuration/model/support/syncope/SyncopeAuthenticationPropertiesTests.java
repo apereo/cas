@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SyncopeAuthenticationPropertiesTests {
 
     @Test
-    void verifyUndefined() {
+    void verifyUndefined() throws Throwable {
         val props = new SyncopeAuthenticationProperties();
         assertTrue(props.isUndefined());
         assertFalse(props.isDefined());
     }
 
     @Test
-    void verifyDefined() {
+    void verifyDefined() throws Throwable {
         val props = new SyncopeAuthenticationProperties();
         props.setUrl("https://syncope.apache.org");
         props.setDomain("Master");

@@ -73,13 +73,13 @@ class SurrogateAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val listener = new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             Map.of("phone", List.of("1234567890"), "mail", List.of("cas@example.org")));
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Throwable {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate", clientInfo));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
@@ -89,12 +89,12 @@ class SurrogateAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         val listener = new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of());
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Throwable {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate", clientInfo));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
@@ -108,7 +108,7 @@ class SurrogateAuthenticationEventListenerTests {
 
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 }

@@ -2,10 +2,15 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
-
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockFlowExecutionContext;
 import java.util.Objects;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,5 +28,45 @@ public class MockRequestContext extends org.springframework.webflow.test.MockReq
 
     public MockRequestContext() throws Exception {
         this(mock(MessageContext.class));
+    }
+
+    public MockHttpServletRequest getHttpServletRequest() {
+        return (MockHttpServletRequest) getExternalContext().getNativeRequest();
+    }
+
+    public MockHttpServletResponse getHttpServletResponse() {
+        return (MockHttpServletResponse) getExternalContext().getNativeResponse();
+    }
+
+
+    public MockRequestContext setParameter(final String name, final String value) {
+        getHttpServletRequest().setParameter(name, value);
+        putRequestParameter(name, value);
+        return this;
+    }
+
+    public MockRequestContext setParameter(final String name, final String[] value) {
+        getHttpServletRequest().setParameter(name, value);
+        putRequestParameter(name, value);
+        return this;
+    }
+
+    public MockRequestContext setActiveFlow(final Flow flow) {
+        setFlowExecutionContext(new MockFlowExecutionContext(flow));
+        return this;
+    }
+
+    public static MockRequestContext create() throws Exception {
+        val requestContext = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val externalContext = new MockExternalContext();
+        externalContext.setNativeContext(new MockServletContext());
+        externalContext.setNativeRequest(request);
+        externalContext.setNativeResponse(response);
+        requestContext.setExternalContext(externalContext);
+        RequestContextHolder.setRequestContext(requestContext);
+        ExternalContextHolder.setExternalContext(externalContext);
+        return requestContext;
     }
 }

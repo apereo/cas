@@ -7,11 +7,11 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +22,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -57,12 +56,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             .collect(Collectors.toSet());
     }
 
-    /**
-     * Adds a warning message to the message context.
-     *
-     * @param context Message context.
-     * @param warning Warning message.
-     */
     protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
         val builder = new MessageBuilder()
             .warning()
@@ -73,14 +66,14 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
-        val authenticationResult = configurationContext.getAuthenticationSystemSupport()
-            .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        val authenticationResult = FunctionUtils.doUnchecked(() -> configurationContext.getAuthenticationSystemSupport()
+            .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service));
         LOGGER.trace("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = determineTicketGrantingTicketId(context);
@@ -103,12 +96,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         return success();
     }
 
-    /**
-     * Build final authentication authentication.
-     *
-     * @param authenticationResult the authentication result
-     * @return the authentication
-     */
     protected Authentication buildFinalAuthentication(final AuthenticationResult authenticationResult) {
         return authenticationResult.getAuthentication();
     }
@@ -135,13 +122,13 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             }
             LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             val tgt = configurationContext.getTicketRegistry().getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
+            tgt.getAuthentication().updateAttributes(authentication);
             configurationContext.getTicketRegistry().updateTicket(tgt);
             return tgt;
         } catch (final PrincipalException e) {
             LoggingUtils.error(LOGGER, e);
             throw e;
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new InvalidTicketException(ticketGrantingTicket);
         }

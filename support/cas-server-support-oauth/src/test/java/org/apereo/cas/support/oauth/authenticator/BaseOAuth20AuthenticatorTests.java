@@ -70,7 +70,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -184,7 +184,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
-            new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
+            new ReturnAllowedAttributeReleasePolicy(List.of("eduPersonAffiliation")));
 
         servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }
@@ -230,10 +230,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     protected static OAuth20AccessToken getAccessToken() {
         val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService();
-
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getId()).thenReturn(UUID.randomUUID().toString());
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());

@@ -63,7 +63,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final String clientId,
                               final Map<String, Map<String, Object>> requestClaims,
                               final OAuth20ResponseTypes responseType,
-                              final OAuth20GrantTypes grantType) {
+                              final OAuth20GrantTypes grantType) throws Throwable {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val codeId = oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);

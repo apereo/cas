@@ -52,7 +52,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
             throw new AuthenticationException("Unable to determine authentication from the request context");
@@ -64,7 +64,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
             return AcceptableUsagePolicyStatus.accepted(principal);
         }
 
-        LOGGER.warn("Acceptable usage policy policy has not been accepted by [{}]", principal.getId());
+        LOGGER.info("Acceptable usage policy has not been accepted by [{}]", principal.getId());
         return AcceptableUsagePolicyStatus.denied(principal);
     }
 

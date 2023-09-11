@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "environmentVariables": [
     "CAS_LDAP_BIND_DN=cn=Directory Manager"
   ],

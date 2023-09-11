@@ -43,7 +43,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
         action = new InweboCheckUserAction(service, casProperties);
     }
 
-    private InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
+    private static InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
         val response = new InweboLoginSearchResponse();
         response.setResult(InweboResult.OK);
         response.setCount(1);
@@ -53,10 +53,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyNoUser() {
+    void verifyNoUser() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, 0));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -64,10 +64,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyInweboException() {
+    void verifyInweboException() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenThrow(new RuntimeException());
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -75,12 +75,12 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserBlocked() {
+    void verifyUserBlocked() throws Throwable {
         val loginSearch = loginSearchOk(3, USER_ID);
         loginSearch.setUserStatus(1);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearch);
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -88,10 +88,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserNotRegisteredVA() {
+    void verifyUserNotRegisteredVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(VA, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -99,11 +99,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUserNotRegisteredMA() {
+    void verifyUserNotRegisteredMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertTrue((Boolean) flowScope.get(MUST_ENROLL));
@@ -111,10 +111,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPush() {
+    void verifyPush() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(PUSH, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -122,11 +122,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAuto() {
+    void verifyPushAuto() throws Throwable {
         inwebo.setPushAuto(false);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(SELECT, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -134,10 +134,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUnexpectedStatus2() {
+    void verifyUnexpectedStatus2() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -145,10 +145,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyUnexpectedStatus3() {
+    void verifyUnexpectedStatus3() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(3, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -156,10 +156,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyBrowserVA() {
+    void verifyBrowserVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(VA, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -167,11 +167,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyBrowserMA() {
+    void verifyBrowserMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(4, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(MA, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -179,10 +179,10 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserVA() {
+    void verifyPushAndBrowserVA() throws Throwable {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(SELECT, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -190,11 +190,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserMA() {
+    void verifyPushAndBrowserMA() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(SELECT, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -202,11 +202,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushAndBrowserNone() {
+    void verifyPushAndBrowserNone() throws Throwable {
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(PUSH, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -214,11 +214,11 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserVA() {
+    void verifyPushDisabledAndBrowserVA() throws Throwable {
         inwebo.setPushEnabled(false);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(VA, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -226,12 +226,12 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserMA() {
+    void verifyPushDisabledAndBrowserMA() throws Throwable {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(MA, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));
@@ -239,12 +239,12 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
     }
 
     @Test
-    void verifyPushDisabledAndBrowserNone() {
+    void verifyPushDisabledAndBrowserNone() throws Throwable {
         inwebo.setPushEnabled(false);
         inwebo.setBrowserAuthenticator(InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.NONE);
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(5, USER_ID));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         val flowScope = requestContext.getFlowScope();
         assertFalse(flowScope.contains(MUST_ENROLL));

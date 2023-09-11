@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
 
     await cas.type(page,'#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
@@ -26,7 +26,7 @@ const cas = require('../../cas.js');
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await cas.screenshot(page);

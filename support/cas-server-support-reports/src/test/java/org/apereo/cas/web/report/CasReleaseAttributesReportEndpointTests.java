@@ -41,7 +41,7 @@ class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @ParameterizedTest
     @ValueSource(strings = "casuser")
     @NullAndEmptySource
-    public void verifyOperation(final String password) {
+    void verifyOperation(final String password) throws Throwable {
         val response = endpoint.releasePrincipalAttributes("casuser", password, registeredService.getServiceId());
         assertNotNull(response);
         assertFalse(response.isEmpty());

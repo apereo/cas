@@ -57,7 +57,7 @@ class CasRestConfigurationTests {
     private TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(ticketGrantingTicketResourceEntityResponseFactory);
     }
 }

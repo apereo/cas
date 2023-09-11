@@ -41,7 +41,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val resultMap = new HashMap<String, Object>();
         try {
             val credential = WebUtils.getCredential(requestContext);
@@ -65,11 +65,11 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                 LOGGER.debug("Credential is not supported [{}]", credential);
             }
             return success(resultMap);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             WebUtils.addErrorMessageToContext(requestContext, "screen.surrogates.account.selection.error",
                 "Unable to accept or authorize selection");
             LoggingUtils.error(LOGGER, e);
-            return error(e);
+            return error(new RuntimeException(e));
         }
     }
 }

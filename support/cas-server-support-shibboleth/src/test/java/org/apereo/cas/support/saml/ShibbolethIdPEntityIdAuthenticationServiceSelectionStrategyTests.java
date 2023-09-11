@@ -80,7 +80,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     private AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy;
 
     @Test
-    void verifyServiceNotFound() {
+    void verifyServiceNotFound() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals(svc.getId(), result.getId());
@@ -88,7 +88,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @Test
-    void verifyServiceFound() {
+    void verifyServiceFound() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://idp.example.org", result.getId());
@@ -96,7 +96,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @Test
-    void verifyServiceFoundEncoded() {
+    void verifyServiceFoundEncoded() throws Throwable {
         val serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
         val svc = RegisteredServiceTestUtils.getService(
             "https://cas.example.com/login?service=" + serviceUrl);
@@ -105,7 +105,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @Test
-    void verifyQueryStrings() {
+    void verifyQueryStrings() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?name=value");
         val context = new MockRequestContext();
 

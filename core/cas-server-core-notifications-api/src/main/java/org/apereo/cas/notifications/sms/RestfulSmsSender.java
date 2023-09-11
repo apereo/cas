@@ -2,10 +2,10 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
@@ -13,7 +13,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -43,7 +42,7 @@ public record RestfulSmsSender(RestfulSmsProperties restProperties) implements S
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
 
-            var exec = HttpUtils.HttpExecutionRequest.builder()
+            var exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH)))

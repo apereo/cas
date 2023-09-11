@@ -37,7 +37,7 @@ class CasInterruptConfigurationTests {
     private InterruptInquiryExecutionPlan interruptInquirer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertEquals(2, interruptInquirer.getInterruptInquirers().size());
     }
 

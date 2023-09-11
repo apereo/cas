@@ -502,6 +502,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
+    public Transition insertTransitionForState(final TransitionableState state, final String criteriaOutcome,
+                                               final String targetState) {
+        val transition = createTransition(criteriaOutcome, targetState, new Action[0]);
+        val field = ReflectionUtils.findField(state.getTransitionSet().getClass(), "transitions");
+        ReflectionUtils.makeAccessible(field);
+        val transitions = (List<Transition>) ReflectionUtils.getField(field, state.getTransitionSet());
+        Objects.requireNonNull(transitions).add(0, transition);
+        LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
+        return transition;
+    }
+
+    @Override
     public Expression createExpression(final String expression, final Class expectedType) {
         val parserContext = new FluentParserContext().expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);

@@ -3,7 +3,6 @@ package org.apereo.cas.pm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
 import java.io.Serial;
 
 /**
@@ -26,4 +25,11 @@ public class InvalidPasswordException extends RuntimeException {
     private final String validationMessage;
 
     private final Object[] params;
+
+    protected InvalidPasswordException(final String message) {
+        super(message);
+        this.code = "pm.passwordFailedCriteria";
+        this.validationMessage = null;
+        this.params = null;
+    }
 }

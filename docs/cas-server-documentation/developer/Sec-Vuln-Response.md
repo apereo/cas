@@ -14,6 +14,26 @@ Members involved in [CAS application security](/cas/Mailing-Lists.html):
 - Create and maintain recommendations on good practices for CAS implementation around hardening, configuration, failing safe, security by default, etc.
 
 To review the old archives of the application security working group, [please see this guide](https://wiki.jasig.org/display/CAS/CAS+AppSec+Working+Group).
+     
+## Context & Definition
+
+What is a security vulnerability? how and when discovered defects may be tagged as a vulnerability?
+
+A security vulnerability is almost always a software defect and typically is a direct result of a CAS deployment behaving in unexpected ways
+despite correct system configuration and application state. Correctness and intention is typically judged against available CAS documentation or a project/community member
+acting as a subject-matter expert who may be able to clarify intended, expected behavior. Security bugs and vulnerabilities that present themselves as a result of CAS misconfiguration, misuse 
+or misunderstanding of how features and use cases work do not qualify. Likewise, scenarios that stem from *plausible deniability* (i.e. "I had no idea X works this way")
+generally do not qualify. While features and enhancements can always be reviewed and debated to remove or improve a degree of flexibility, and project documentation can always be further improved to clarify intended behavior, a lack of understanding or 
+intentional misuse are almost always seen as a normal defect or opportunity for improvement. You are more than welcome to contribute.
+
+Furthermore, in an ecosystem that involves many moving and variable parts, the CAS project generally tends to only focus on the CAS piece
+and does not make a serious claim or attempt to secure (or even at times explain or document) the behavior of the systems present in its deployment environment particularly when such systems are not owned, managed or controlled by CAS and are seen as completely external. For example, if you
+are managing a clustered CAS deployment backed by Hazelcast Enterprise that sits in front of a proxy, behind a load balancer, connecting to Active Directory and is deployed via Docker and Kubernetes,
+CAS security only then goes as far as CAS itself. You are, *independently and separately*, responsible for managing and securing all other external components that live in this ecosystem.
+Your proxy might allow untrusted data to pass through or your LDAP directory could support insecure connections, or you may intentionally configure CAS to accept authentication 
+requests from any application on this planet and beyond. None of these constitute a CAS security vulnerability.
+
+If you find that aspects of the CAS documentation can be improved to clarify and explain a specific situation better, you are more than welcome to contribute.
 
 ## Response Model
 
@@ -66,10 +86,22 @@ report contains enough diagnostics data to expedite reviews and feedback:
 Before posting a possible security issue, please make sure the affected CAS release line 
 is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases that are 
 considered EOL will not receive further updates and/or attention from designated project members.
+ 
+## Time to Respond
+
+If you have posted a question or reported a possible vulnerability to the appropriate channels and mailing lists and have yet to receive a response, 
+it is likely that your submission matches one of the categories listed below:
+
+- Activity on the mailing lists and all other support channels is entirely voluntary. Contractually, there exists no sense of urgency in the response model. When in doubt, please consult the project license to learn more.
+- The report description lacks fundamental details about the problem or fails to adequately follow the recommended format to justify spending time and/or resource.
+- The report describes a vulnerable CAS deployment in the wild owned by a different organization, company or entity. Instead of reporting issues to the appropriate system owners, the reporter intends to report this vulnerable deployment to the Apereo CAS project.
+- The reported vulnerability is the direct result of system misconfiguration or misuse that is carried out by the CAS operator.
+
+If you would rather not wait for project volunteers to find the time to respond to security issues and reports, please consider negotiating a professional support agreement with Apereo commercial [service/support providers](/cas/Support.html) particularly if your organization's livelihood and reputation depend on a successful and secure Apereo CAS deployment.
 
 ## Time to Fix
 
-Remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official 
+As stated above, remember that activity on the mailing lists and all other support channels is entirely voluntary. There is no official 
 meaning or sense of urgency built into the response model and as such, fixes to potential security issues are 100% dependent 
 on individuals' availability and willingness. We strongly recommend that you study the project's license for more information 
 on this matter. If you are interested in contractual obligations, SLAs and a response model based on calculated levels of 

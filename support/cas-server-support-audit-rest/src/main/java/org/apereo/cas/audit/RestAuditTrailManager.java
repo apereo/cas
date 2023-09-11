@@ -4,11 +4,11 @@ import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,6 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -55,11 +54,11 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         try {
             val auditJson = serializer.toString(audit);
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
-                "userAgent", StringUtils.defaultString(audit.getClientInfo().getUserAgent(), "N/A"));
+                "userAgent", StringUtils.defaultIfBlank(audit.getClientInfo().getUserAgent(), "N/A"));
             headers.putAll(properties.getHeaders());
 
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -83,7 +82,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             FunctionUtils.doIf(whereClause.containsKey(WhereClauseFields.PRINCIPAL),
                     c -> parameters.put("principial", whereClause.get(WhereClauseFields.PRINCIPAL).toString()))
                 .accept(whereClause);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -110,7 +109,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         HttpResponse response = null;
         try {
             LOGGER.debug("Sending query to audit REST endpoint to delete records");
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)

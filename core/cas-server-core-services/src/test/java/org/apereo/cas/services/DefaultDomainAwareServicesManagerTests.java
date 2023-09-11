@@ -26,7 +26,7 @@ class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTest
     private DefaultDomainAwareServicesManager domainServicesManager;
 
     @Test
-    void verifyChangingDomain() {
+    void verifyChangingDomain() throws Throwable {
         servicesManager.deleteAll();
 
         var r = new CasRegisteredService();
@@ -50,7 +50,7 @@ class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTest
     }
 
     @Test
-    void verifyDeleteEmptyDomains() {
+    void verifyDeleteEmptyDomains() throws Throwable {
         servicesManager.deleteAll();
 
         var r = new CasRegisteredService();

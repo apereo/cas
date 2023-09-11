@@ -103,24 +103,24 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * Generate keystore for OIDC.
      *
      * @return the resource
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    Resource generate() throws Exception;
+    Resource generate() throws Throwable;
 
     /**
      * Store json web key set.
      *
      * @param jsonWebKeySet the json web key set
      * @return the json web key set
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    JsonWebKeySet store(JsonWebKeySet jsonWebKeySet) throws Exception;
+    JsonWebKeySet store(JsonWebKeySet jsonWebKeySet) throws Throwable;
 
     /**
      * Find keystore resource for the issuer.
      *
      * @return the optional
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    Optional<Resource> find() throws Exception;
+    Optional<Resource> find() throws Throwable;
 }

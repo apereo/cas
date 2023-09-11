@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 class TransientSessionTicketImplTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val ticket = new TransientSessionTicketImpl("TST-1", NeverExpiresExpirationPolicy.INSTANCE,
             CoreAuthenticationTestUtils.getService(), Map.of("key", "value"));
         ticket.put("key2", "value2");

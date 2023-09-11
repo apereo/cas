@@ -46,7 +46,7 @@ class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
-    void verifyRedirectByParam() throws Exception {
+    void verifyRedirectByParam() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         request.addParameter("customParam", "customValue");
@@ -54,11 +54,11 @@ class DefaultDelegatedAuthenticationNavigationControllerTests {
         var view = controller.redirectResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
         assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
-            .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
+            .stream().anyMatch(valuePair -> valuePair.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
         view = controller.postResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
         assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
-            .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
+            .stream().anyMatch(valuePair -> valuePair.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
     }
 
 }

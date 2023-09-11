@@ -47,7 +47,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
+    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         LOGGER.debug("Calculating principal from principals [{}]", principals);
         val result = principals
             .stream()

@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -35,7 +34,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val otc = (OneTimePasswordCredential) credential;
         val token = passwordlessTokenRepository.findToken(otc.getId());
         if (token.isPresent()) {

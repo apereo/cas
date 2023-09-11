@@ -11,6 +11,7 @@ import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -77,25 +78,19 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
      * @return the registered service for consent
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
-        val serviceToUse = this.authenticationRequestServiceSelectionStrategies.resolveService(service);
-        val registeredService = this.servicesManager.findServiceBy(serviceToUse);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        return registeredService;
+        return FunctionUtils.doUnchecked(() -> {
+            val serviceToUse = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            val registeredService = this.servicesManager.findServiceBy(serviceToUse);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            return registeredService;
+        });
     }
 
-    /**
-     * Prepare consent for request context.
-     * The original service is kept, and the resolved service is
-     * added to the flash-scope only to ensure consent works
-     * for all other callback services that deal with different protocols.
-     *
-     * @param requestContext the request context
-     */
-    protected void prepareConsentForRequestContext(final RequestContext requestContext) {
+    protected void prepareConsentForRequestContext(final RequestContext requestContext) throws Throwable {
         val consentProperties = casProperties.getConsent().getCore();
 
         val originalService = WebUtils.getService(requestContext);
-        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(originalService);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         val registeredService = getRegisteredServiceForConsent(requestContext, service);
         val authentication = WebUtils.getAuthentication(requestContext);
         val attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);

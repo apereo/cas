@@ -3,7 +3,6 @@ package org.apereo.cas.validation;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.ticket.AbstractTicketException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,9 +28,9 @@ public interface TicketValidator {
      * @param ticket  the ticket
      * @param service the service
      * @return the validation result
-     * @throws AbstractTicketException the abstract ticket exception
+     * @throws Throwable the throwable
      */
-    ValidationResult validate(String ticket, String service) throws AbstractTicketException;
+    ValidationResult validate(String ticket, String service) throws Throwable;
 
     @SuperBuilder
     @Getter

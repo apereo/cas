@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.util.AbstractSamlObjectBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
@@ -134,6 +135,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             .registeredService(registeredService)
             .service(service)
             .principal(principal)
+            .applicationContext(getSamlObjectBuilder().getOpenSamlConfigBean().getApplicationContext())
             .build();
         val userId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 
@@ -151,8 +153,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             currentDateTime.plusSeconds(skew), service.getId());
         assertion.setConditions(conditions);
 
-        val subject = samlObjectBuilder.newSubject(NameIDType.EMAIL, userId,
-            service.getId(), currentDateTime.plusSeconds(skew), service.getRequestId(), null);
+        val subjectConfirmation = samlObjectBuilder.newSubjectConfirmation(service.getId(),
+            currentDateTime.plusSeconds(skew), service.getRequestId(), null,
+            InetAddressUtils.getByName(service.getRequestId()));
+        val subject = samlObjectBuilder.newSubject(NameIDType.EMAIL, userId, subjectConfirmation);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);

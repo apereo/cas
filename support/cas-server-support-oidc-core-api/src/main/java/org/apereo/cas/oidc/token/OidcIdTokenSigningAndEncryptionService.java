@@ -39,7 +39,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        val svc = OidcRegisteredService.class.cast(registeredService);
+        val svc = (OidcRegisteredService) registeredService;
         if (StringUtils.isBlank(svc.getIdTokenSigningAlg())) {
             return super.getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
         }

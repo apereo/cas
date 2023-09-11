@@ -35,7 +35,7 @@ class X509CrlDistributionCheckerCachingTests {
     private RevocationChecker crlDistributionPointRevocationChecker;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(crlDistributionPointRevocationChecker);
     }
 }

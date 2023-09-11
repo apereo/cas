@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultPasswordPolicyHandlingStrategyTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val s = new DefaultPasswordPolicyHandlingStrategy<>();
         assertTrue(s.handle(new Object(), null).isEmpty());
         val cfg = new PasswordPolicyContext(30);

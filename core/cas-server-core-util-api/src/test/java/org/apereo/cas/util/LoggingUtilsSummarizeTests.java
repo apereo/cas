@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class LoggingUtilsSummarizeTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> {
             LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
             LoggingUtils.warn(LOGGER, "error", new RuntimeException("error"));

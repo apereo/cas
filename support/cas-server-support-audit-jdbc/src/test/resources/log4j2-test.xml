@@ -9,7 +9,7 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.springframework.jdbc" level="error" />
         <Logger name="org.hibernate" level="error" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

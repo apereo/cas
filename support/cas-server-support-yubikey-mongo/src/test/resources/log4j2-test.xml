@@ -9,7 +9,7 @@
         <Logger name="org.apereo" level="error"  />
         <Logger name="com.mongodb" level="warn"  />
 
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

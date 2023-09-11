@@ -4,12 +4,9 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,15 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthToken")
 class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
-
-    @BeforeEach
-    public void initialize() {
-        clearAllServices();
-        ticketRegistry.deleteAll();
-    }
-
     @Test
-    void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
+    void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Throwable {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);
@@ -39,7 +29,7 @@ class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
-        this.ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
+        ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
         val at2 = ticketRegistry.getTicket(at.getId(), OAuth20AccessToken.class);
         assertNotNull(at2);
 
@@ -51,18 +41,18 @@ class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRenewingRefreshToken() throws Exception {
+    void verifyRenewingRefreshToken() throws Throwable {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setRenewRefreshToken(true);
 
         val result = assertClientOK(service, true);
 
-        val at = this.ticketRegistry.getTicket(result.getLeft(), OAuth20AccessToken.class);
+        val at = ticketRegistry.getTicket(result.getLeft(), OAuth20AccessToken.class);
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
-        val rt = this.ticketRegistry.getTicket(result.getRight(), OAuth20RefreshToken.class);
+        val rt = ticketRegistry.getTicket(result.getRight(), OAuth20RefreshToken.class);
         assertNotNull(rt);
 
         val result2 = assertRefreshTokenOk(service, rt, createPrincipal());
@@ -72,7 +62,7 @@ class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
         val rt2 = result2.getRight();
         assertNotEquals(rt.getId(), rt2.getId());
 
-        val oldRt = this.ticketRegistry.getTicket(result.getRight(), ticket -> true);
+        val oldRt = ticketRegistry.getTicket(result.getRight(), ticket -> true);
         assertNull(oldRt);
     }
 }

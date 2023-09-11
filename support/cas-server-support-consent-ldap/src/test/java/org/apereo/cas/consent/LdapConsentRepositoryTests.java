@@ -65,13 +65,13 @@ class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     }
 
     @Test
-    void verifyConsentNotFound() {
+    void verifyConsentNotFound() throws Throwable {
         assertNotNull(consentLdapConnectionFactory);
         assertTrue(getRepository().findConsentDecisions("unknown-user").isEmpty());
     }
 
     @Test
-    void verifyNoConsent() throws Exception {
+    void verifyNoConsent() throws Throwable {
         val ldap = casProperties.getConsent().getLdap();
         val factory = mock(ConnectionFactory.class);
         val repo = new LdapConsentRepository(new LdapConnectionFactory(factory), ldap);

@@ -27,7 +27,7 @@ class DefaultMessageDescriptorTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultMessageDescriptorTests.json");
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val d = new DefaultMessageDescriptor("sample.code");
         MAPPER.writeValue(JSON_FILE, d);
         val read = MAPPER.readValue(JSON_FILE, MessageDescriptor.class);

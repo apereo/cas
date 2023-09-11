@@ -22,7 +22,7 @@ public class CredentialCustomFieldsAttributeMetaDataPopulator extends BaseAuthen
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(cred -> {
-            val upc = UsernamePasswordCredential.class.cast(cred);
+            val upc = (UsernamePasswordCredential) cred;
             upc.getCustomFields().forEach((key, value) -> builder.mergeAttribute(key, CollectionUtils.toCollection(value)));
         });
     }

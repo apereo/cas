@@ -50,7 +50,7 @@ class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityP
     }
 
     @Test
-    void verifyClientSecurityRequest() {
+    void verifyClientSecurityRequest() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
         assertNotNull(securityTokenServiceClientBuilder.buildClientForSecurityTokenRequests(registeredService));
         val bus = BusFactory.getDefaultBus();
@@ -68,7 +68,7 @@ class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityP
     }
 
     @Test
-    void verifyRelyingPartyTokenResponses() {
+    void verifyRelyingPartyTokenResponses() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
         val token = new SecurityToken(UUID.randomUUID().toString());
         assertNotNull(securityTokenServiceClientBuilder.buildClientForRelyingPartyTokenResponses(token, registeredService));

@@ -28,13 +28,13 @@ class PrincipalBearingCredentialsAuthenticationHandlerTests {
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
-    void verifyNonNullPrincipal() {
+    void verifyNonNullPrincipal() throws Throwable {
         val credentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials, mock(Service.class)));
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val credentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));

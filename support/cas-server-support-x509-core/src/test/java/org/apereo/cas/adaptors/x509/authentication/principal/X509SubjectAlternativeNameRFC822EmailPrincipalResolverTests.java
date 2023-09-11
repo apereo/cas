@@ -92,10 +92,10 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyResolvePrincipalInternal(final String certPath,
+    void verifyResolvePrincipalInternal(final String certPath,
                                                final String expectedResult,
                                                final String alternatePrincipalAttribute,
-                                               final String requiredAttribute) throws Exception {
+                                               final String requiredAttribute) throws Throwable {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -134,7 +134,7 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     }
 
     @Test
-    void verifyAlternate() throws Exception {
+    void verifyAlternate() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)

@@ -22,7 +22,7 @@ class CasDefaultFlowUrlHandlerTests {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
-    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
+    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -34,7 +34,7 @@ class CasDefaultFlowUrlHandlerTests {
     }
 
     @Test
-    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
+    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");

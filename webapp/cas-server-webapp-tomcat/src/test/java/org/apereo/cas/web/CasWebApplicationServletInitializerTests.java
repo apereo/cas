@@ -23,7 +23,7 @@ class CasWebApplicationServletInitializerTests {
     }
 
     @Test
-    void verifyInitializr() {
+    void verifyInitializr() throws Throwable {
         val servletInitializer = new CasWebApplicationServletInitializer();
         val context = new MockServletContext();
         assertDoesNotThrow(() -> servletInitializer.onStartup(context));

@@ -24,13 +24,13 @@ public class GroovyGeoLocationService extends AbstractGeoLocationService {
     private final ApplicationContext applicationContext;
 
     @Override
-    public GeoLocationResponse locate(final InetAddress address) {
+    public GeoLocationResponse locate(final InetAddress address) throws Throwable {
         val args = new Object[]{address, applicationContext, LOGGER};
         return watchableScript.execute("locateByAddress", GeoLocationResponse.class, args);
     }
 
     @Override
-    public GeoLocationResponse locate(final Double latitude, final Double longitude) {
+    public GeoLocationResponse locate(final Double latitude, final Double longitude) throws Throwable {
         val args = new Object[]{latitude, longitude, applicationContext, LOGGER};
         return watchableScript.execute("locateByCoordinates", GeoLocationResponse.class, args);
     }

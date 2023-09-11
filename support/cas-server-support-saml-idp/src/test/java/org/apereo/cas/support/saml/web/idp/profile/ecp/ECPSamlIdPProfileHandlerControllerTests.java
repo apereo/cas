@@ -4,8 +4,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.HttpUtils;
-
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,10 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -54,7 +51,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyOK() throws Exception {
+    void verifyOK() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -71,7 +68,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyBadAuthn() throws Exception {
+    void verifyBadAuthn() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -90,7 +87,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyNoCredentials() throws Exception {
+    void verifyNoCredentials() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -104,7 +101,7 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
     }
 
     @Test
-    void verifyFailures() throws Exception {
+    void verifyFailures() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val headers = HttpUtils.createBasicAuthHeaders("casuser", "casuser");

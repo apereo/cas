@@ -31,7 +31,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
-    public void verifyNoProviders() throws Exception {
+    void verifyNoProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         val file = File.createTempFile("example", ".txt");
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
@@ -43,7 +43,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
 
     @Test
     @Order(1)
-    public void verifyOperationByHeader() {
+    void verifyOperationByHeader() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new ClassPathResource("GroovyPredicate.groovy"));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
@@ -54,7 +54,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
 
     @Test
     @Order(3)
-    public void verifyNoPredicate() throws Exception {
+    void verifyNoPredicate() throws Throwable {
         val props = new CasConfigurationProperties();
         val file = File.createTempFile("predicate", ".txt");
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);

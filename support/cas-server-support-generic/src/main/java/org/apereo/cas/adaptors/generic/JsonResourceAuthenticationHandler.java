@@ -31,7 +31,6 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -68,8 +67,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException, PreventedException {
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
 
         val map = readAccountsFromResource();
         val username = credential.getUsername();
@@ -130,7 +128,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
         }
 
         account.getWarnings().forEach(warning -> warnings.add(new DefaultMessageDescriptor(warning, warning, new Serializable[]{username})));
-        val principal = this.principalFactory.createPrincipal(username, account.getAttributes());
+        val principal = principalFactory.createPrincipal(username, account.getAttributes());
         return createHandlerResult(credential, principal, warnings);
     }
 

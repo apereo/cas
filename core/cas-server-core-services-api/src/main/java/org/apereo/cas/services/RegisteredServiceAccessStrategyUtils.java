@@ -105,7 +105,7 @@ public class RegisteredServiceAccessStrategyUtils {
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
 
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
             if (ticketGrantingTicket.getProxiedBy() != null) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO for proxying.", service.getId());
@@ -114,8 +114,7 @@ public class RegisteredServiceAccessStrategyUtils {
             if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn(
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
-                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(),
-                    service.getId());
+                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
         }
@@ -131,11 +130,12 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param principalId       the principal id
      * @param attributes        the attributes
      * @return true/false
+     * @throws Throwable the throwable
      */
     public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                    final RegisteredService registeredService,
                                                                    final String principalId,
-                                                                   final Map<String, List<Object>> attributes) {
+                                                                   final Map<String, List<Object>> attributes) throws Throwable {
         ensureServiceAccessIsAllowed(service, registeredService);
         LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].",
             service != null ? service.getId() : "unknown", principalId, attributes);

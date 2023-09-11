@@ -29,7 +29,7 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     }
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         return watchableScript.execute(new Object[]{id, attributes, LOGGER}, Principal.class);
     }
 }

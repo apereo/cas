@@ -42,7 +42,7 @@ class SurrogateAuthorizationActionTests {
     private Action surrogateAuthorizationCheck;
 
     @Test
-    void verifyAuthorized() throws Exception {
+    void verifyAuthorized() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
@@ -56,7 +56,7 @@ class SurrogateAuthorizationActionTests {
     }
 
     @Test
-    void verifyNotAuthorized() throws Exception {
+    void verifyNotAuthorized() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 

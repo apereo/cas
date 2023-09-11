@@ -39,10 +39,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -54,9 +51,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -69,6 +64,8 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    AopAutoConfiguration.class,
+
     BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -95,7 +92,6 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
-    AopAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreWebflowConfiguration.class,
@@ -109,6 +105,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -118,15 +115,6 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
-
-    @BeforeEach
-    public void setup() {
-        this.applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
     static class TestAuthenticationConfiguration {
@@ -139,7 +127,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     static class GeoLocationServiceTestConfiguration {
         @Bean
-        public GeoLocationService geoLocationService() {
+        public GeoLocationService geoLocationService() throws Throwable {
             val service = mock(GeoLocationService.class);
             val response = new GeoLocationResponse();
             response.addAddress("MSIE");

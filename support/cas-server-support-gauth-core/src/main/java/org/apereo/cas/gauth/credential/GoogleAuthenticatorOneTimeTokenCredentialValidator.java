@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -46,8 +45,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     @Override
     public GoogleAuthenticatorToken validate(final Authentication authentication,
-                                             final GoogleAuthenticatorTokenCredential tokenCredential)
-        throws GeneralSecurityException, PreventedException {
+                                             final GoogleAuthenticatorTokenCredential tokenCredential) throws Throwable {
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.");
@@ -58,7 +56,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         LOGGER.trace("Received OTP [{}] assigned to account [{}]", otp, tokenCredential.getAccountId());
 
         LOGGER.trace("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
-        val accounts = this.credentialRepository.get(uid);
+        val accounts = credentialRepository.get(uid);
         if (accounts == null || accounts.isEmpty()) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
@@ -89,17 +87,10 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
 
     @Override
     public boolean isTokenAuthorizedFor(final int token, final OneTimeTokenAccount account) {
-        return this.googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        LOGGER.debug("Authorizing token [{}] against account [{}]", token, account);
+        return googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
     }
 
-    /**
-     * Gets authorized scratch code for token.
-     *
-     * @param tokenCredential the token credential
-     * @param authentication  the authentication
-     * @param accounts        the accounts
-     * @return the authorized scratch code for token
-     */
     protected Optional<GoogleAuthenticatorAccount> getAuthorizedScratchCodeForToken(
         final GoogleAuthenticatorTokenCredential tokenCredential,
         final Authentication authentication,
@@ -122,13 +113,6 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .findFirst();
     }
 
-    /**
-     * Gets authorized account for token.
-     *
-     * @param tokenCredential the token credential
-     * @param accounts        the accounts
-     * @return the authorized account for token
-     */
     protected Optional<GoogleAuthenticatorAccount> getAuthorizedAccountForToken(
         final GoogleAuthenticatorTokenCredential tokenCredential,
         final Collection<? extends OneTimeTokenAccount> accounts) {

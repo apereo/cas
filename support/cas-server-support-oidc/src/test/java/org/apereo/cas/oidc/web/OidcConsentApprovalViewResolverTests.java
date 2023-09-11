@@ -10,8 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,10 +18,8 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Collection;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
-    void verifyBypassedBySession() throws Exception {
+    void verifyBypassedBySession() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val response = new MockHttpServletResponse();
@@ -46,7 +43,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedByPrompt() throws Exception {
+    void verifyBypassedByPrompt() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
@@ -61,7 +58,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedForPushAuthz() throws Exception {
+    void verifyBypassedForPushAuthz() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
@@ -74,7 +71,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPushedAuthz() throws Exception {
+    void verifyPushedAuthz() throws Throwable {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");
@@ -106,7 +103,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBypassedWithoutPrompt() throws Exception {
+    void verifyBypassedWithoutPrompt() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setRequestURI("https://cas.org/something");

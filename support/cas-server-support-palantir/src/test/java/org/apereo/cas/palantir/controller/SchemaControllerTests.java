@@ -33,8 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ServletWebServerFactoryAutoConfiguration.class,
         CasPalantirConfiguration.class
     },
-    properties = "server.port=8080",
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
@@ -51,7 +50,7 @@ public class SchemaControllerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         mvc.perform(get("/palantir/schema/services")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())

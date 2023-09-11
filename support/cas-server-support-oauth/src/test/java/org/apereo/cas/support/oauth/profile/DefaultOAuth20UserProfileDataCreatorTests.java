@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,7 +25,7 @@ class DefaultOAuth20UserProfileDataCreatorTests extends AbstractOAuth20Tests {
     private OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
 

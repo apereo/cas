@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -119,7 +119,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                              || context.getRegisteredService().getSignAssertions().isTrue();
         if (!signAssertions) {
             signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
-                List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
+                List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
                     Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
         }
         

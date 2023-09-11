@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -9,6 +10,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,12 +31,17 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Attributes")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class ReturnEncryptedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySerialization() throws IOException {
         val allowedAttributes = new ArrayList<String>();
@@ -43,11 +54,12 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyNoPublicKey() {
+    void verifyNoPublicKey() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .applicationContext(applicationContext)
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
@@ -62,7 +74,7 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyBadCipher() {
+    void verifyBadCipher() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = mock(RegisteredServicePublicKey.class);
@@ -71,6 +83,7 @@ class ReturnEncryptedAttributeReleasePolicyTests {
         when(registeredService.getPublicKey()).thenReturn(servicePublicKey);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
@@ -79,13 +92,14 @@ class ReturnEncryptedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyEncrypt() {
+    void verifyEncrypt() throws Throwable {
         val policy = new ReturnEncryptedAttributeReleasePolicy(CollectionUtils.wrapList("cn", "uid", "mail"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         when(registeredService.getPublicKey()).thenReturn(servicePublicKey);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();

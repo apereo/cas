@@ -49,8 +49,9 @@ public interface SurrogateAuthenticationService {
      * @param principal the principal
      * @param service   the service
      * @return true if the given surrogate can authenticate as the user
+     * @throws Throwable the throwable
      */
-    default boolean canImpersonate(final String surrogate, final Principal principal, final Optional<Service> service) {
+    default boolean canImpersonate(final String surrogate, final Principal principal, final Optional<Service> service) throws Throwable {
         return false;
     }
 
@@ -59,17 +60,19 @@ public interface SurrogateAuthenticationService {
      *
      * @param username The username of the surrogate
      * @return collection of usernames
+     * @throws Throwable the throwable
      */
-    Collection<String> getImpersonationAccounts(String username);
+    Collection<String> getImpersonationAccounts(String username) throws Throwable;
 
     /**
      * Is wildcarded account authorized?.
      *
      * @param surrogate the surrogate
      * @param principal the principal
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    default boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+    default boolean isWildcardedAccount(final String surrogate, final Principal principal) throws Throwable{
         val accounts = getImpersonationAccounts(principal.getId());
         return isWildcardedAccount(accounts);
     }

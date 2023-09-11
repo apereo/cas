@@ -41,6 +41,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -73,7 +75,7 @@ public abstract class BaseConsentRepositoryTests {
     public abstract ConsentRepository getRepository();
     
     @Test
-    void verifyConsentDecisionIsNotFound() throws Exception {
+    void verifyConsentDecisionIsNotFound() throws Throwable {
         val user = getUser();
         val repo = getRepository();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -86,7 +88,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    void verifyConsentDecisionIsFound() throws Exception {
+    void verifyConsentDecisionIsFound() throws Throwable {
         val user = getUser();
         val repo = getRepository();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -107,7 +109,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    void verifyDeleteRecordsForPrincipal() throws Exception {
+    void verifyDeleteRecordsForPrincipal() throws Throwable {
         val user = getUser();
         val repo = getRepository();
         repo.deleteAll();
@@ -128,7 +130,10 @@ public abstract class BaseConsentRepositoryTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        ServletWebServerFactoryAutoConfiguration.class,
+        DispatcherServletAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({

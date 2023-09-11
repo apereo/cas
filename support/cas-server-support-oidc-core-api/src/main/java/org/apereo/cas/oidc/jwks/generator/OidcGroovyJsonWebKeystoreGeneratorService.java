@@ -29,7 +29,7 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
     }
 
     @Override
-    public Optional<Resource> find() {
+    public Optional<Resource> find() throws Throwable {
         val args = new Object[]{LOGGER};
         val result = watchableScript.execute("find", JsonWebKeySet.class, args);
         LOGGER.debug("Received JWKS resource from [{}] as [{}]", watchableScript, result);
@@ -37,7 +37,7 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
     }
 
     @Override
-    public Resource generate() {
+    public Resource generate() throws Throwable {
         val args = new Object[]{LOGGER};
         val result = watchableScript.execute(args, String.class);
         LOGGER.debug("Received payload result from [{}] as [{}]", watchableScript, result);
@@ -45,7 +45,7 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
     }
 
     @Override
-    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Throwable {
         val args = new Object[]{jsonWebKeySet, LOGGER};
         val result = watchableScript.execute("store", JsonWebKeySet.class, args);
         LOGGER.debug("Received payload result from [{}] as [{}]", watchableScript, result);

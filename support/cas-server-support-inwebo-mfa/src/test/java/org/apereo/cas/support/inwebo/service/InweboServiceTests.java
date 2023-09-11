@@ -8,6 +8,7 @@ import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResult;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.ssl.SSLUtils;
 
@@ -48,6 +49,8 @@ class InweboServiceTests {
 
     private InweboService service;
 
+    private int serviceApiPort;
+
     @BeforeEach
     public void setUp() {
         val casProperties = new CasConfigurationProperties();
@@ -60,7 +63,10 @@ class InweboServiceTests {
 
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         inwebo.setClientCertificate(clientCertificate);
-        inwebo.setServiceApiUrl("http://localhost:8282");
+
+        serviceApiPort = RandomUtils.nextInt(4000, 9999);
+        inwebo.setServiceApiUrl("http://localhost:" + serviceApiPort);
+
         inwebo.setConsoleAdminUrl("http://localhost:8288");
 
         val sslContext = SSLUtils.buildSSLContext(clientCertificate);
@@ -73,12 +79,12 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyCallFails() {
+    void verifyCallFails() throws Throwable {
         assertThrows(SSLHandshakeException.class, () -> service.call("https://untrusted-root.badssl.com/"));
     }
 
     @Test
-    void verifyLoginSearch() {
+    void verifyLoginSearch() throws Throwable {
         val result = new LoginSearchResult();
         result.setErr("OK");
         result.setCount(COUNT);
@@ -96,7 +102,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyLoginSearchNoAuthenticatorForceBrowserAuthentication() {
+    void verifyLoginSearchNoAuthenticatorForceBrowserAuthentication() throws Throwable {
         val loginSearchResult = new LoginSearchResult();
         loginSearchResult.setErr("OK");
         loginSearchResult.setCount(COUNT);
@@ -118,7 +124,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyLoginSearchOneAuthenticatorStayPushAuthentication() {
+    void verifyLoginSearchOneAuthenticatorStayPushAuthentication() throws Throwable {
         val loginSearchResult = new LoginSearchResult();
         loginSearchResult.setErr("OK");
         loginSearchResult.setCount(COUNT);
@@ -142,7 +148,7 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyLoginSearchOneAuthenticatorAmongSeveralForcePushAndBrowserAuthentication() {
+    void verifyLoginSearchOneAuthenticatorAmongSeveralForcePushAndBrowserAuthentication() throws Throwable {
         val loginSearchResult = new LoginSearchResult();
         loginSearchResult.setErr("OK");
         loginSearchResult.setCount(COUNT);
@@ -167,9 +173,9 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyCheckPushResult() throws Exception {
+    void verifyCheckPushResult() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -178,9 +184,9 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyAuthExtended() throws Exception {
+    void verifyAuthExtended() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -189,9 +195,9 @@ class InweboServiceTests {
     }
 
     @Test
-    void verifyPush() throws Exception {
+    void verifyPush() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -201,61 +207,61 @@ class InweboServiceTests {
 
 
     @Test
-    void verifyErrOk() {
+    void verifyErrOk() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "OK");
         assertEquals(InweboResult.OK, response.getResult());
     }
 
     @Test
-    void verifyErrNopush() {
+    void verifyErrNopush() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:NOPUSH");
         assertEquals(InweboResult.NOPUSH, response.getResult());
     }
 
     @Test
-    void verifyErrNoma() {
+    void verifyErrNoma() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:NOMA");
         assertEquals(InweboResult.NOMA, response.getResult());
     }
 
     @Test
-    void verifyErrNologin() {
+    void verifyErrNologin() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:NOLOGIN");
         assertEquals(InweboResult.NOLOGIN, response.getResult());
     }
 
     @Test
-    void verifyErrSn() {
+    void verifyErrSn() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:SN");
         assertEquals(InweboResult.SN, response.getResult());
     }
 
     @Test
-    void verifyErrSrv() {
+    void verifyErrSrv() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:srv unknown");
         assertEquals(InweboResult.UNKNOWN_SERVICE, response.getResult());
     }
 
     @Test
-    void verifyErrWaiting() {
+    void verifyErrWaiting() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:WAITING");
         assertEquals(InweboResult.WAITING, response.getResult());
     }
 
     @Test
-    void verifyErrRefused() {
+    void verifyErrRefused() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:REFUSED");
         assertEquals(InweboResult.REFUSED, response.getResult());
     }
 
     @Test
-    void verifyErrTimeout() {
+    void verifyErrTimeout() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:TIMEOUT");
         assertEquals(InweboResult.TIMEOUT, response.getResult());
     }
 
     @Test
-    void verifyErrOther() {
+    void verifyErrOther() throws Throwable {
         val response = service.buildResponse(new InweboDeviceNameResponse(), OPERATION, "NOK:other");
         assertEquals(InweboResult.NOK, response.getResult());
     }

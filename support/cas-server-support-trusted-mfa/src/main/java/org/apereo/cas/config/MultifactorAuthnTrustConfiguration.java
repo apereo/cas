@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
-import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
@@ -45,6 +44,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import java.time.Duration;
 import java.time.ZoneOffset;
@@ -119,7 +119,7 @@ public class MultifactorAuthnTrustConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
-            return new PseudoPlatformTransactionManager();
+            return new PseudoTransactionManager();
         }
     }
 

@@ -37,7 +37,7 @@ class DomainServicesManagerConfigurationTests {
     private ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(domainServicesManagerExecutionPlanConfigurer);
     }
 }

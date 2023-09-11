@@ -1,7 +1,6 @@
 package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -76,7 +74,7 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @Test
-    void verifyAccessToEndpoints() throws Exception {
+    void verifyAccessToEndpoints() throws Throwable {
         mvc.perform(get("/cas/actuator/beans")).andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/info")
                 .with(httpBasic("casuser", "Mellon")))
@@ -105,7 +103,6 @@ class CasWebSecurityConfigurerAdapterWebTests {
 
         @RestController("TestController")
         @RequestMapping("/oidc/accessToken")
-        @SuppressWarnings("ClassCanBeStatic")
         public class TestController {
             @GetMapping
             public ResponseEntity getMethod() {

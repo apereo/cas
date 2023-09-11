@@ -39,7 +39,7 @@ class InterruptSingleSignOnParticipationStrategyTests {
     private SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy;
 
     @Test
-    void verifyStrategyWithoutInterrupt() {
+    void verifyStrategyWithoutInterrupt() throws Throwable {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
             .httpServletResponse(new MockHttpServletResponse())
@@ -49,7 +49,7 @@ class InterruptSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyStrategyWithInterruptDisabled() {
+    void verifyStrategyWithInterruptDisabled() throws Throwable {
         val ctx = new MockRequestContext();
         val response = new InterruptResponse();
         response.setSsoEnabled(false);

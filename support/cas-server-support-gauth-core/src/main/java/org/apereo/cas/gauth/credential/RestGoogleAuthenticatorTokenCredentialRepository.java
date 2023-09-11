@@ -3,11 +3,11 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -22,7 +22,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +61,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE,
                 "id", String.valueOf(id));
             headers.putAll(rest.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -100,7 +99,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 "id", String.valueOf(id), "username", username);
             headers.putAll(rest.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -137,7 +136,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "username", username);
             headers.putAll(rest.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -174,7 +173,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -227,7 +226,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
             headers.putAll(rest.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -257,7 +256,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -278,7 +277,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 "Accept", MediaType.APPLICATION_JSON_VALUE,
                 "username", username);
             headers.putAll(rest.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -298,7 +297,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         try {
             val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
             headers.putAll(rest.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -319,7 +318,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val headers = CollectionUtils.<String, String>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
             val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -354,7 +353,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.putAll(rest.getHeaders());
 
             val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)

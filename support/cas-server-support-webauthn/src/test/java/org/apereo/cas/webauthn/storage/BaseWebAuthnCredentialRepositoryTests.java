@@ -11,7 +11,6 @@ import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.UserIdentity;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +50,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
     protected CipherExecutor<String, String> cipherExecutor;
-
-    @SneakyThrows
-    public static CredentialRegistration getCredentialRegistration(final String username) {
+    public static CredentialRegistration getCredentialRegistration(final String username) throws Exception {
         return CredentialRegistration.builder()
             .registrationTime(Instant.now(Clock.systemUTC()))
             .credential(RegisteredCredential.builder()
@@ -70,7 +67,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     }
 
     @Test
-    protected void verifyOperation() throws Exception {
+    protected void verifyOperation() throws Throwable {
         val id = getUsername();
         val registration = getCredentialRegistration(id.toLowerCase(Locale.ENGLISH));
 
@@ -110,7 +107,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertDoesNotThrow(() -> webAuthnCredentialRepository.clean());
     }
 
-    protected String getUsername() {
+    protected String getUsername() throws Exception {
         return UUID.randomUUID().toString();
     }
 }

@@ -1,0 +1,9 @@
+{
+  "@class": "java.util.TreeMap",
+  "organization": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "organization",
+    "name": "org.apereo.cas.entity",
+    "structured": true
+  }
+}

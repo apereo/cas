@@ -2,9 +2,9 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.support.InvalidCookieException;
 import com.google.common.base.Splitter;

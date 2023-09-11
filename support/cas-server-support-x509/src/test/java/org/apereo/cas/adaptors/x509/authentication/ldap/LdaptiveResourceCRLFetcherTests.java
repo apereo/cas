@@ -9,7 +9,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -30,11 +29,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.net.URI;
 import java.net.URL;
 import java.security.cert.CertificateException;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,26 +65,25 @@ class LdaptiveResourceCRLFetcherTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val config = mock(ConnectionConfig.class);
         val operation = mock(SearchOperation.class);
         val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
         assertNull(fetcher.fetch(new URI("https://github.com")));
-        assertNull(fetcher.fetch(new URL("https://github.com")));
+        assertNull(fetcher.fetch(new URI("https://github.com").toURL()));
         assertNull(fetcher.fetch("https://github.com"));
     }
 
     @Nested
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=cn")
-    @SuppressWarnings("ClassCanBeStatic")
     class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -97,14 +93,13 @@ class LdaptiveResourceCRLFetcherTests {
     @Nested
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=unknown")
-    @SuppressWarnings("ClassCanBeStatic")
     class UnknownAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -113,14 +108,13 @@ class LdaptiveResourceCRLFetcherTests {
 
     @Nested
     @Tag("Ldap")
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Throwable {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertNotNull(fetcher.fetch(resource));

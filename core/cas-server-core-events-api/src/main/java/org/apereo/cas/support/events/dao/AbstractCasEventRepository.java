@@ -54,7 +54,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     }
 
     @Override
-    public CasEvent save(final CasEvent event) throws Exception {
+    public CasEvent save(final CasEvent event) throws Throwable {
         if (getEventRepositoryFilter().shouldSaveEvent(event)) {
             val result = saveInternal(event);
             Optional.ofNullable(applicationEventPublisher).ifPresent(publisher -> {

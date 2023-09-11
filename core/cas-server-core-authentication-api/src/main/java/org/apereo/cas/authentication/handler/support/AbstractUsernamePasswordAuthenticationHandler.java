@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.handler.support;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -25,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -58,7 +56,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @Override
     public boolean supports(final Credential credential) {
-        if (!UsernamePasswordCredential.class.isInstance(credential)) {
+        if (!(credential instanceof UsernamePasswordCredential)) {
             LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
             return false;
         }
@@ -78,7 +76,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val originalUserPass = (UsernamePasswordCredential) credential;
         val userPass = new UsernamePasswordCredential();
         FunctionUtils.doUnchecked(__ -> BeanUtils.copyProperties(userPass, originalUserPass));
@@ -107,13 +105,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         userPass.assignPassword(transformedPsw);
     }
 
-    /**
-     * Transform username.
-     *
-     * @param userPass the user pass
-     * @throws AccountNotFoundException the account not found exception
-     */
-    protected void transformUsername(final UsernamePasswordCredential userPass) throws AccountNotFoundException {
+    protected void transformUsername(final UsernamePasswordCredential userPass) throws Throwable {
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
@@ -131,14 +123,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      *
      * @param credential       the credential object bearing the transformed username and password.
      * @param originalPassword original password from credential before password encoding
-     * @return AuthenticationHandlerExecutionResult resolved from credential on authentication success or null if no principal could be resolved
-     * from the credential.
-     * @throws GeneralSecurityException On authentication failure.
-     * @throws PreventedException       On the indeterminate case when authentication is prevented.
+     * @return AuthenticationHandlerExecutionResult resolved from credential on authentication success or null if no principal could be resolved from the credential.
+     * @throws Throwable the throwable
      */
     protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         UsernamePasswordCredential credential,
-        String originalPassword) throws GeneralSecurityException, PreventedException;
+        String originalPassword) throws Throwable;
 
     /**
      * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded

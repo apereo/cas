@@ -1,0 +1,8 @@
+[
+    {
+        "id": 1,
+        "@class": "org.apereo.cas.services.RegexRegisteredService",
+        "type": "CASRegisteredService",
+        "name": "Test service"
+    }
+]

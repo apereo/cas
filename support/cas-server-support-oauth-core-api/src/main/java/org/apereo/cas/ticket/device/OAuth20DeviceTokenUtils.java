@@ -34,7 +34,7 @@ public class OAuth20DeviceTokenUtils {
         if (!(registeredService instanceof OAuthRegisteredService)) {
             return expirationPolicy.buildTicketExpirationPolicy();
         }
-        val oauthService = OAuthRegisteredService.class.cast(registeredService);
+        val oauthService = (OAuthRegisteredService) registeredService;
         if (oauthService.getDeviceTokenExpirationPolicy() != null) {
             val policy = oauthService.getDeviceTokenExpirationPolicy();
             val ttl = policy.getTimeToKill();

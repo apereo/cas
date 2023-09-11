@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 
@@ -78,11 +78,9 @@ public class CasWebAppSecurityConfiguration {
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addViewControllers(
-                    @Nonnull
-                    final ViewControllerRegistry registry) {
+                public void addViewControllers(@Nonnull final ViewControllerRegistry registry) {
                     if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
-                        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                        registry.addViewController(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                             .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
                         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
                     }
@@ -150,7 +148,7 @@ public class CasWebAppSecurityConfiguration {
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) {
@@ -166,7 +164,7 @@ public class CasWebAppSecurityConfiguration {
             final SecurityContextRepository securityContextRepository,
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
-            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) throws Exception {

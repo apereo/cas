@@ -23,9 +23,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.NonNull;
@@ -40,8 +40,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
@@ -127,7 +127,7 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
-        val servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
         }
@@ -151,7 +151,7 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
-        val servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
         }
@@ -1605,7 +1605,7 @@ public class WebUtils {
      */
     public static RegisteredService resolveRegisteredService(final RequestContext requestContext,
                                                              final ServicesManager servicesManager,
-                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) throws Throwable {
         val registeredService = getRegisteredService(requestContext);
         if (registeredService != null) {
             return registeredService;

@@ -40,11 +40,11 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) throws Exception {
+                                     final HttpServletRequest request) throws Throwable {
         val ctx = decodeSoapRequest(request);
         val artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {

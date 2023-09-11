@@ -92,6 +92,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
                 val metadata = metadataTemplate
                     .replace("${entityId}", sp.getEntityId())
                     .replace("${certificate}", sp.getCertificate())
+                    .replace("${binding}", sp.getBinding())
                     .replace("${assertionConsumerServiceUrl}", sp.getAssertionConsumerServiceUrl());
                 val metadataResource = new ByteArrayInputStream(metadata.getBytes(StandardCharsets.UTF_8));
                 val resolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
@@ -134,6 +135,8 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         private String certificate;
 
         private String assertionConsumerServiceUrl;
+
+        private String binding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
     }
 
     private Map<String, SamlServiceProviderMetadata> readDecisionsFromJsonResource() {

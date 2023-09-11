@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.apereo.cas.web.flow.CasWebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,12 +46,11 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
     class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -67,7 +64,6 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import({
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
@@ -89,7 +85,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         private CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer;
 
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
@@ -106,7 +102,6 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
      * @deprecated Since 6.6.
      */
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import({
         DuoSecurityConfiguration.class,
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
@@ -122,7 +117,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     @Deprecated(since = "6.5.0", forRemoval = true)
     class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState("mfa-duo");
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

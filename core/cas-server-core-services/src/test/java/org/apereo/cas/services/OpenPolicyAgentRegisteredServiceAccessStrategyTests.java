@@ -47,7 +47,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val strategy = new OpenPolicyAgentRegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");
         strategy.setDecision("example/authz/allow");

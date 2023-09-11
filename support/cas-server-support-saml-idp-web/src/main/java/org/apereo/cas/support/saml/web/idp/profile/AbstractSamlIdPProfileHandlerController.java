@@ -178,21 +178,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return registeredService;
     }
 
-    /**
-     * Build  cas assertion.
-     *
-     * @param authentication      the authentication
-     * @param service             the service
-     * @param registeredService   the registered service
-     * @param attributesToCombine the attributes to combine
-     * @return the assertion
-     */
     protected AuthenticatedAssertionContext buildCasAssertion(final Authentication authentication,
                                                               final Service service,
                                                               final RegisteredService registeredService,
-                                                              final Map<String, List<Object>> attributesToCombine) {
+                                                              final Map<String, List<Object>> attributesToCombine) throws Throwable {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
             .service(service)
             .principal(authentication.getPrincipal())
             .build();
@@ -202,6 +194,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .registeredService(registeredService)
             .service(service)
             .principal(authentication.getPrincipal())
+            .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         attributes.putAll(attributesToCombine);
@@ -309,11 +302,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param response the response
      * @param request  the request
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     protected ModelAndView initiateAuthenticationRequest(final Pair<? extends RequestAbstractType, MessageContext> pair,
                                                          final HttpServletResponse response,
-                                                         final HttpServletRequest request) throws Exception {
+                                                         final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
         verifySamlAuthenticationRequest(pair, request);
         val sso = singleSignOnSessionExists(pair, request, response);
@@ -340,7 +333,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         final Pair<? extends RequestAbstractType, MessageContext> context,
         final TicketGrantingTicket ticketGrantingTicket,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response) throws Throwable {
         val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
@@ -379,7 +372,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                           final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
                                           final Optional<AuthenticatedAssertionContext> casAssertion,
                                           final String binding) throws Exception {
-        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
+        val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest);
 
         val entityId = pair.getValue().getEntityId();
@@ -399,14 +392,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return samlResponse;
     }
 
-    /**
-     * Build authentication context pair pair.
-     *
-     * @param request      the request
-     * @param response     the response
-     * @param authnContext the authn context
-     * @return the pair
-     */
     protected Pair<? extends RequestAbstractType, MessageContext> buildAuthenticationContextPair(
         final HttpServletRequest request,
         final HttpServletResponse response,
@@ -417,19 +402,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return Pair.of(authnContext.getLeft(), messageContext);
     }
 
-    /**
-     * Single sign on session exists.
-     *
-     * @param pair     the pair
-     * @param request  the request
-     * @param response the response
-     * @return true/false
-     */
     protected Optional<TicketGrantingTicket> singleSignOnSessionExists(
         final Pair<? extends SignableSAMLObject, MessageContext> pair,
         final HttpServletRequest request,
-        final HttpServletResponse response) {
-        val authnRequest = AuthnRequest.class.cast(pair.getLeft());
+        final HttpServletResponse response) throws Throwable {
+        val authnRequest = (AuthnRequest) pair.getLeft();
         if (authnRequest.isForceAuthn()) {
             LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
             return Optional.empty();
@@ -467,17 +444,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return ssoAvailable ? Optional.of(ticketGrantingTicket) : Optional.empty();
     }
 
-    /**
-     * Verify saml authentication request.
-     *
-     * @param authenticationContext the pair
-     * @param request               the request
-     * @return the pair
-     * @throws Exception the exception
-     */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> verifySamlAuthenticationRequest(
         final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-        final HttpServletRequest request) throws Exception {
+        final HttpServletRequest request) throws Throwable {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         LOGGER.debug("Located issuer [{}] from authentication request", issuer);
@@ -516,7 +485,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                        final SamlRegisteredService registeredService) throws Exception {
+                                                        final SamlRegisteredService registeredService) throws Throwable {
         val ctx = authenticationContext.getValue();
         verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
     }
@@ -535,7 +504,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
-                                                        final SamlRegisteredService registeredService) throws Exception {
+                                                        final SamlRegisteredService registeredService) throws Throwable {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("The authentication context is not signed");
             if (adaptor.isAuthnRequestsSigned() && !registeredService.isSkipValidatingAuthnRequest()) {
@@ -549,12 +518,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
     }
 
-    /**
-     * Gets registered service and facade.
-     *
-     * @param request the request
-     * @return the registered service and facade
-     */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> getRegisteredServiceAndFacade(
         final AuthnRequest request) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(request);
@@ -573,12 +536,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return Pair.of(registeredService, facade);
     }
 
-    /**
-     * Decode soap 11 context.
-     *
-     * @param request the request
-     * @return the soap 11 context
-     */
     protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
         return FunctionUtils.doAndHandle(new CheckedSupplier<MessageContext>() {
             @Override
@@ -601,11 +558,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }, throwable -> null).get();
     }
 
-    /**
-     * Auto configure cookie path.
-     *
-     * @param request the request
-     */
     protected void autoConfigureCookiePath(final HttpServletRequest request) {
         val casProperties = configurationContext.getCasProperties();
         val core = casProperties.getAuthn().getSamlIdp().getCore();
@@ -635,7 +587,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
-            val context = Pair.of(AuthnRequest.class.cast(result.getLeft()), result.getRight());
+            val context = Pair.of((AuthnRequest) result.getLeft(), result.getRight());
             return initiateAuthenticationRequest(context, response, request);
         }, WebUtils::produceErrorView).get();
     }
@@ -663,7 +615,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
-        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
+        val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest);
         val facade = pair.getValue();
 

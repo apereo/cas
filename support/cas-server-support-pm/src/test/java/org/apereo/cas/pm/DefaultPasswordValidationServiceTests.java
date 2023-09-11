@@ -57,7 +57,7 @@ class DefaultPasswordValidationServiceTests {
     private PasswordHistoryService passwordHistoryService;
 
     @Test
-    void verifyReuseOldPassword() {
+    void verifyReuseOldPassword() throws Throwable {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordValidationService.isValid(request));
         request.setPassword("This!$P@$$".toCharArray());
@@ -66,7 +66,7 @@ class DefaultPasswordValidationServiceTests {
     }
 
     @Test
-    void verifyValidity() {
+    void verifyValidity() throws Throwable {
         assertFalse(passwordValidationService.isValid(
             new PasswordChangeRequest("casuser", "current-psw".toCharArray(), null, null)));
         assertFalse(passwordValidationService.isValid(

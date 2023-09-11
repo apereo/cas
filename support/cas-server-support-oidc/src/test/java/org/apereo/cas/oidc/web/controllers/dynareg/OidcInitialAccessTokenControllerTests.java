@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,14 +26,13 @@ class OidcInitialAccessTokenControllerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class OpenRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyNotAllowed() throws Exception {
+        void verifyNotAllowed() throws Throwable {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);
@@ -49,14 +46,13 @@ class OidcInitialAccessTokenControllerTests {
         "cas.authn.oidc.registration.initial-access-token-password=Mellon"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ProtectedRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyMismatchedEndpoint() throws Exception {
+        void verifyMismatchedEndpoint() throws Throwable {
             val request = getHttpRequestForEndpoint("unknown/issuer");
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
@@ -66,7 +62,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyPasses() throws Exception {
+        void verifyPasses() throws Throwable {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
@@ -76,7 +72,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyAuthFails() throws Exception {
+        void verifyAuthFails() throws Throwable {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
@@ -85,7 +81,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyAuthMissing() throws Exception {
+        void verifyAuthMissing() throws Throwable {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);

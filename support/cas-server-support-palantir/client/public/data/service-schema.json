@@ -1,0 +1,1856 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "": {
+            "type": "object"
+        },
+        "AbstractPrincipalAttributesRepository": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/DefaultPrincipalAttributesRepository"
+                },
+                {
+                    "$ref": "#/$defs/CachingPrincipalAttributesRepository"
+                }
+            ]
+        },
+        "AbstractRegisteredServiceAttributeReleasePolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/BaseMappedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/DenyAllAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/GroovyScriptAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/PatternMatchingAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnAllAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnAllowedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnEncryptedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnLinkedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnMappedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnRestfulAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnStaticAttributeReleasePolicy"
+                }
+            ]
+        },
+        "AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object"
+        },
+        "AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object"
+        },
+        "AnonymousRegisteredServiceUsernameAttributeProvider": {
+            "type": "object",
+            "properties": {
+                "canonicalizationMode": {
+                    "type": "string"
+                },
+                "encryptUsername": {
+                    "type": "boolean"
+                },
+                "persistentIdGenerator": {
+                    "$ref": "#/$defs/PersistentIdGenerator"
+                },
+                "removePattern": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                }
+            }
+        },
+        "AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object",
+            "properties": {
+                "tryAll": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "AttributeBasedRegisteredServiceAccessStrategyActivationCriteria": {
+            "type": "object",
+            "properties": {
+                "allowIfInactive": {
+                    "type": "boolean"
+                },
+                "operator": {
+                    "$ref": "#/$defs/LogicalOperatorTypes"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "requiredAttributes": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                }
+            }
+        },
+        "AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "$ref": "#/$defs/Map(String,List(String))"
+                },
+                "requireAllAttributes": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy": {
+            "type": "object",
+            "properties": {
+                "createCookieOnRenewedAuthentication": {
+                    "$ref": "#/$defs/TriStateBoolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "timeUnit": {
+                    "$ref": "#/$defs/TimeUnit"
+                },
+                "timeValue": {
+                    "type": "integer"
+                }
+            }
+        },
+        "BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy"
+                }
+            ]
+        },
+        "BaseMappedAttributeReleasePolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/ReturnLinkedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnMappedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnRestfulAttributeReleasePolicy"
+                }
+            ]
+        },
+        "BaseRegisteredServiceAccessStrategy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/HttpRequestRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/OpenFGARegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/OpenPolicyAgentRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/RemoteEndpointServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/TimeBasedRegisteredServiceAccessStrategy"
+                }
+            ]
+        },
+        "BaseRegisteredServiceUsernameAttributeProvider": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AnonymousRegisteredServiceUsernameAttributeProvider"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/PrincipalAttributeRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/StaticRegisteredServiceUsernameProvider"
+                }
+            ]
+        },
+        "BaseWebBasedRegisteredService": {
+            "$ref": "#/$defs/CasRegisteredService"
+        },
+        "CachingPrincipalAttributesRepository": {
+            "type": "object",
+            "properties": {
+                "attributeRepositoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "expiration": {
+                    "type": "integer"
+                },
+                "ignoreResolvedAttributes": {
+                    "type": "boolean"
+                },
+                "mergingStrategy": {
+                    "$ref": "#/$defs/MergingStrategyTypes"
+                },
+                "timeUnit": {
+                    "type": "string"
+                }
+            }
+        },
+        "CasRegisteredService": {
+            "type": "object",
+            "properties": {
+                "acceptableUsagePolicy": {
+                    "$ref": "#/$defs/RegisteredServiceAcceptableUsagePolicy"
+                },
+                "accessStrategy": {
+                    "$ref": "#/$defs/RegisteredServiceAccessStrategy"
+                },
+                "attributeReleasePolicy": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeReleasePolicy"
+                },
+                "authenticationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceAuthenticationPolicy"
+                },
+                "contacts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceContact"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "environments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "evaluationOrder": {
+                    "type": "integer"
+                },
+                "expirationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceExpirationPolicy"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "informationUrl": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "logoutType": {
+                    "$ref": "#/$defs/RegisteredServiceLogoutType"
+                },
+                "logoutUrl": {
+                    "type": "string"
+                },
+                "matchingStrategy": {
+                    "$ref": "#/$defs/RegisteredServiceMatchingStrategy"
+                },
+                "multifactorAuthenticationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceMultifactorPolicy"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "privacyUrl": {
+                    "type": "string"
+                },
+                "properties": {
+                    "$ref": "#/$defs/Map(String,RegisteredServiceProperty)"
+                },
+                "proxyGrantingTicketExpirationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceProxyGrantingTicketExpirationPolicy"
+                },
+                "proxyPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceProxyPolicy"
+                },
+                "proxyTicketExpirationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceProxyTicketExpirationPolicy"
+                },
+                "publicKey": {
+                    "$ref": "#/$defs/RegisteredServicePublicKey"
+                },
+                "redirectUrl": {
+                    "type": "string"
+                },
+                "responseType": {
+                    "type": "string"
+                },
+                "serviceId": {
+                    "type": "string"
+                },
+                "serviceTicketExpirationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceServiceTicketExpirationPolicy"
+                },
+                "singleSignOnParticipationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                "supportedProtocols": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "templateName": {
+                    "type": "string"
+                },
+                "theme": {
+                    "type": "string"
+                },
+                "ticketGrantingTicketExpirationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceTicketGrantingTicketExpirationPolicy"
+                },
+                "usernameAttributeProvider": {
+                    "$ref": "#/$defs/RegisteredServiceUsernameAttributeProvider"
+                },
+                "webflowInterruptPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceWebflowInterruptPolicy"
+                }
+            }
+        },
+        "ChainingAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "mergingPolicy": {
+                    "$ref": "#/$defs/MergingStrategyTypes"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "policies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceAttributeReleasePolicy"
+                    }
+                }
+            }
+        },
+        "ChainingPrincipalAttributesRepository": {
+            "type": "object",
+            "properties": {
+                "repositories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                    }
+                }
+            }
+        },
+        "ChainingRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "operator": {
+                    "$ref": "#/$defs/LogicalOperatorTypes"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "strategies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceAccessStrategy"
+                    }
+                },
+                "unauthorizedRedirectUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "ChainingRegisteredServiceAccessStrategyActivationCriteria": {
+            "type": "object",
+            "properties": {
+                "conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceAccessStrategyActivationCriteria"
+                    }
+                },
+                "operator": {
+                    "$ref": "#/$defs/LogicalOperatorTypes"
+                }
+            }
+        },
+        "ChainingRegisteredServiceConsentPolicy": {
+            "type": "object",
+            "properties": {
+                "policies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                    }
+                }
+            }
+        },
+        "ChainingRegisteredServiceDelegatedAuthenticationPolicy": {
+            "type": "object",
+            "properties": {
+                "operator": {
+                    "$ref": "#/$defs/LogicalOperatorTypes"
+                },
+                "strategies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceDelegatedAuthenticationPolicy"
+                    }
+                }
+            }
+        },
+        "ChainingRegisteredServiceSingleSignOnParticipationPolicy": {
+            "type": "object",
+            "properties": {
+                "policies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceSingleSignOnParticipationPolicy"
+                    }
+                }
+            }
+        },
+        "DefaultPrincipalAttributesRepository": {
+            "type": "object",
+            "properties": {
+                "attributeRepositoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ignoreResolvedAttributes": {
+                    "type": "boolean"
+                },
+                "mergingStrategy": {
+                    "$ref": "#/$defs/MergingStrategyTypes"
+                }
+            }
+        },
+        "DefaultRegisteredServiceAcceptableUsagePolicy": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "messageCode": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "activationCriteria": {
+                    "$ref": "#/$defs/RegisteredServiceAccessStrategyActivationCriteria"
+                },
+                "caseInsensitive": {
+                    "type": "boolean"
+                },
+                "delegatedAuthenticationPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceDelegatedAuthenticationPolicy"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "rejectedAttributes": {
+                    "$ref": "#/$defs/Map(String,Set(String))"
+                },
+                "requireAllAttributes": {
+                    "type": "boolean"
+                },
+                "requiredAttributes": {
+                    "$ref": "#/$defs/Map(String,Set(String))"
+                },
+                "ssoEnabled": {
+                    "type": "boolean"
+                },
+                "unauthorizedRedirectUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceAuthenticationPolicy": {
+            "type": "object",
+            "properties": {
+                "criteria": {
+                    "$ref": "#/$defs/RegisteredServiceAuthenticationPolicyCriteria"
+                },
+                "excludedAuthenticationHandlers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "requiredAuthenticationHandlers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "DefaultRegisteredServiceConsentPolicy": {
+            "type": "object",
+            "properties": {
+                "excludedAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "excludedServices": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "includeOnlyAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/$defs/TriStateBoolean"
+                }
+            }
+        },
+        "DefaultRegisteredServiceContact": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceDelegatedAuthenticationPolicy": {
+            "type": "object",
+            "properties": {
+                "allowedProviders": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exclusive": {
+                    "type": "boolean"
+                },
+                "permitUndefined": {
+                    "type": "boolean"
+                },
+                "selectionStrategy": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceExpirationPolicy": {
+            "type": "object",
+            "properties": {
+                "deleteWhenExpired": {
+                    "type": "boolean"
+                },
+                "expirationDate": {
+                    "type": "string"
+                },
+                "notifyWhenDeleted": {
+                    "type": "boolean"
+                },
+                "notifyWhenExpired": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "DefaultRegisteredServiceMultifactorPolicy": {
+            "type": "object",
+            "properties": {
+                "bypassEnabled": {
+                    "type": "boolean"
+                },
+                "bypassIfMissingPrincipalAttribute": {
+                    "type": "boolean"
+                },
+                "bypassPrincipalAttributeName": {
+                    "type": "string"
+                },
+                "bypassPrincipalAttributeValue": {
+                    "type": "string"
+                },
+                "bypassTrustedDeviceEnabled": {
+                    "type": "boolean"
+                },
+                "failureMode": {
+                    "$ref": "#/$defs/MultifactorAuthenticationProviderFailureModes"
+                },
+                "forceExecution": {
+                    "type": "boolean"
+                },
+                "multifactorAuthenticationProviders": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "principalAttributeNameTrigger": {
+                    "type": "string"
+                },
+                "principalAttributeValueToMatch": {
+                    "type": "string"
+                },
+                "script": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy": {
+            "type": "object",
+            "properties": {
+                "maxTimeToLiveInSeconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "DefaultRegisteredServiceProxyTicketExpirationPolicy": {
+            "type": "object",
+            "properties": {
+                "numberOfUses": {
+                    "type": "integer"
+                },
+                "timeToLive": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceServiceTicketExpirationPolicy": {
+            "type": "object",
+            "properties": {
+                "numberOfUses": {
+                    "type": "integer"
+                },
+                "timeToLive": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceSingleSignOnParticipationPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy"
+                }
+            ]
+        },
+        "DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy": {
+            "type": "object",
+            "properties": {
+                "maxTimeToLiveInSeconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "DefaultRegisteredServiceUsernameProvider": {
+            "type": "object",
+            "properties": {
+                "canonicalizationMode": {
+                    "type": "string"
+                },
+                "encryptUsername": {
+                    "type": "boolean"
+                },
+                "removePattern": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                }
+            }
+        },
+        "DefaultRegisteredServiceWebflowInterruptPolicy": {
+            "type": "object",
+            "properties": {
+                "attributeName": {
+                    "type": "string"
+                },
+                "attributeValue": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "forceExecution": {
+                    "$ref": "#/$defs/TriStateBoolean"
+                }
+            }
+        },
+        "DenyAllAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object"
+        },
+        "FullRegexRegisteredServiceMatchingStrategy": {
+            "type": "object"
+        },
+        "GroovyRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "groovyScript": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "GroovyRegisteredServiceAccessStrategyActivationCriteria": {
+            "type": "object",
+            "properties": {
+                "groovyScript": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "GroovyRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object",
+            "properties": {
+                "script": {
+                    "type": "string"
+                }
+            }
+        },
+        "GroovyRegisteredServiceUsernameProvider": {
+            "type": "object",
+            "properties": {
+                "canonicalizationMode": {
+                    "type": "string"
+                },
+                "encryptUsername": {
+                    "type": "boolean"
+                },
+                "groovyScript": {
+                    "type": "string"
+                },
+                "removePattern": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                }
+            }
+        },
+        "GroovyScriptAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "groovyScript": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "HttpRequestRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "$ref": "#/$defs/Map(String,String)"
+                },
+                "ipAddress": {
+                    "type": "string"
+                },
+                "userAgent": {
+                    "type": "string"
+                }
+            }
+        },
+        "LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy": {
+            "type": "object",
+            "properties": {
+                "createCookieOnRenewedAuthentication": {
+                    "$ref": "#/$defs/TriStateBoolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "timeUnit": {
+                    "$ref": "#/$defs/TimeUnit"
+                },
+                "timeValue": {
+                    "type": "integer"
+                }
+            }
+        },
+        "LiteralRegisteredServiceMatchingStrategy": {
+            "type": "object",
+            "properties": {
+                "caseInsensitive": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "LogicalOperatorTypes": {
+            "type": "string",
+            "enum": [
+                "AND",
+                "OR"
+            ]
+        },
+        "Map(String,List(Object))": {
+            "type": "object"
+        },
+        "Map(String,List(String))": {
+            "type": "object"
+        },
+        "Map(String,Object)": {
+            "type": "object"
+        },
+        "Map(String,RegisteredServiceProperty)": {
+            "type": "object"
+        },
+        "Map(String,Rule)": {
+            "type": "object"
+        },
+        "Map(String,Set(String))": {
+            "type": "object"
+        },
+        "Map(String,String)": {
+            "type": "object"
+        },
+        "MergingStrategyTypes": {
+            "type": "string",
+            "enum": [
+                "REPLACE",
+                "ADD",
+                "SOURCE",
+                "DESTINATION",
+                "MULTIVALUED"
+            ]
+        },
+        "MultifactorAuthenticationProviderFailureModes": {
+            "type": "string",
+            "enum": [
+                "OPEN",
+                "CLOSED",
+                "PHANTOM",
+                "NONE",
+                "UNDEFINED"
+            ]
+        },
+        "NeverRegisteredServiceSingleSignOnParticipationPolicy": {
+            "type": "object"
+        },
+        "NotPreventedRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object"
+        },
+        "OpenFGARegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "apiUrl": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "relation": {
+                    "type": "string"
+                },
+                "storeId": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "OpenPolicyAgentRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "apiUrl": {
+                    "type": "string"
+                },
+                "context": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "PartialRegexRegisteredServiceMatchingStrategy": {
+            "type": "object"
+        },
+        "Pattern": {
+            "type": "object",
+            "properties": {
+                "flags": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            }
+        },
+        "PatternMatchingAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "$ref": "#/$defs/Map(String,Rule)"
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "PersistentIdGenerator": {
+            "$ref": "#/$defs/ShibbolethCompatiblePersistentIdGenerator"
+        },
+        "PrincipalAttributeRegisteredServiceUsernameProvider": {
+            "type": "object",
+            "properties": {
+                "canonicalizationMode": {
+                    "type": "string"
+                },
+                "encryptUsername": {
+                    "type": "boolean"
+                },
+                "removePattern": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "usernameAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "RefuseRegisteredServiceProxyPolicy": {
+            "type": "object"
+        },
+        "RegexMatchingRegisteredServiceProxyPolicy": {
+            "type": "object",
+            "properties": {
+                "exactMatch": {
+                    "type": "boolean"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "useServiceId": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "RegisteredServiceAcceptableUsagePolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceAcceptableUsagePolicy"
+        },
+        "RegisteredServiceAccessStrategy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/BaseRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/ChainingRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/HttpRequestRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/OpenFGARegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/OpenPolicyAgentRegisteredServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/RemoteEndpointServiceAccessStrategy"
+                },
+                {
+                    "$ref": "#/$defs/TimeBasedRegisteredServiceAccessStrategy"
+                }
+            ]
+        },
+        "RegisteredServiceAccessStrategyActivationCriteria": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AttributeBasedRegisteredServiceAccessStrategyActivationCriteria"
+                },
+                {
+                    "$ref": "#/$defs/ChainingRegisteredServiceAccessStrategyActivationCriteria"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceAccessStrategyActivationCriteria"
+                }
+            ]
+        },
+        "RegisteredServiceAttributeFilter": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/RegisteredServiceChainingAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceMappedRegexAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceMutantRegexAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceRegexAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceReverseMappedRegexAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceScriptedAttributeFilter"
+                }
+            ]
+        },
+        "RegisteredServiceAttributeReleasePolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AbstractRegisteredServiceAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/BaseMappedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ChainingAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/DenyAllAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/GroovyScriptAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/PatternMatchingAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceChainingAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnAllAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnAllowedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnEncryptedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnLinkedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnMappedAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnRestfulAttributeReleasePolicy"
+                },
+                {
+                    "$ref": "#/$defs/ReturnStaticAttributeReleasePolicy"
+                }
+            ]
+        },
+        "RegisteredServiceAuthenticationPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceAuthenticationPolicy"
+        },
+        "RegisteredServiceAuthenticationPolicyCriteria": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/NotPreventedRegisteredServiceAuthenticationPolicyCriteria"
+                },
+                {
+                    "$ref": "#/$defs/RestfulRegisteredServiceAuthenticationPolicyCriteria"
+                }
+            ]
+        },
+        "RegisteredServiceChainingAttributeFilter": {
+            "type": "object",
+            "properties": {
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                    }
+                }
+            }
+        },
+        "RegisteredServiceChainingAttributeReleasePolicy": {
+            "$ref": "#/$defs/ChainingAttributeReleasePolicy"
+        },
+        "RegisteredServiceConsentPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/ChainingRegisteredServiceConsentPolicy"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceConsentPolicy"
+                }
+            ]
+        },
+        "RegisteredServiceContact": {
+            "$ref": "#/$defs/DefaultRegisteredServiceContact"
+        },
+        "RegisteredServiceDelegatedAuthenticationPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/ChainingRegisteredServiceDelegatedAuthenticationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceDelegatedAuthenticationPolicy"
+                }
+            ]
+        },
+        "RegisteredServiceExpirationPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceExpirationPolicy"
+        },
+        "RegisteredServiceLogoutType": {
+            "type": "string",
+            "enum": [
+                "NONE",
+                "BACK_CHANNEL",
+                "FRONT_CHANNEL"
+            ]
+        },
+        "RegisteredServiceMappedRegexAttributeFilter": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/RegisteredServiceMutantRegexAttributeFilter"
+                },
+                {
+                    "$ref": "#/$defs/RegisteredServiceReverseMappedRegexAttributeFilter"
+                }
+            ]
+        },
+        "RegisteredServiceMatchingStrategy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/FullRegexRegisteredServiceMatchingStrategy"
+                },
+                {
+                    "$ref": "#/$defs/LiteralRegisteredServiceMatchingStrategy"
+                },
+                {
+                    "$ref": "#/$defs/PartialRegexRegisteredServiceMatchingStrategy"
+                }
+            ]
+        },
+        "RegisteredServiceMultifactorPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceMultifactorPolicy"
+        },
+        "RegisteredServiceMutantRegexAttributeFilter": {
+            "type": "object",
+            "properties": {
+                "caseInsensitive": {
+                    "type": "boolean"
+                },
+                "completeMatch": {
+                    "type": "boolean"
+                },
+                "excludeUnmappedAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "patterns": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                }
+            }
+        },
+        "RegisteredServicePrincipalAttributesRepository": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/ChainingPrincipalAttributesRepository"
+                },
+                {
+                    "$ref": "#/$defs/DefaultPrincipalAttributesRepository"
+                },
+                {
+                    "$ref": "#/$defs/AbstractPrincipalAttributesRepository"
+                },
+                {
+                    "$ref": "#/$defs/CachingPrincipalAttributesRepository"
+                }
+            ]
+        },
+        "RegisteredServiceProxyGrantingTicketExpirationPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy"
+        },
+        "RegisteredServiceProxyPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/RefuseRegisteredServiceProxyPolicy"
+                },
+                {
+                    "$ref": "#/$defs/RegexMatchingRegisteredServiceProxyPolicy"
+                },
+                {
+                    "$ref": "#/$defs/RestfulRegisteredServiceProxyPolicy"
+                }
+            ]
+        },
+        "RegisteredServiceProxyTicketExpirationPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceProxyTicketExpirationPolicy"
+        },
+        "RegisteredServicePublicKey": {
+            "$ref": "#/$defs/RegisteredServicePublicKeyImpl"
+        },
+        "RegisteredServicePublicKeyImpl": {
+            "type": "object",
+            "properties": {
+                "algorithm": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                }
+            }
+        },
+        "RegisteredServiceRegexAttributeFilter": {
+            "type": "object",
+            "properties": {
+                "compiledPattern": {
+                    "$ref": "#/$defs/Pattern"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            }
+        },
+        "RegisteredServiceReverseMappedRegexAttributeFilter": {
+            "type": "object",
+            "properties": {
+                "caseInsensitive": {
+                    "type": "boolean"
+                },
+                "completeMatch": {
+                    "type": "boolean"
+                },
+                "excludeUnmappedAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "patterns": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                }
+            }
+        },
+        "RegisteredServiceScriptedAttributeFilter": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "integer"
+                },
+                "script": {
+                    "type": "string"
+                }
+            }
+        },
+        "RegisteredServiceServiceTicketExpirationPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceServiceTicketExpirationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/"
+                }
+            ]
+        },
+        "RegisteredServiceSingleSignOnParticipationPolicy": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/ChainingRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy"
+                },
+                {
+                    "$ref": "#/$defs/NeverRegisteredServiceSingleSignOnParticipationPolicy"
+                }
+            ]
+        },
+        "RegisteredServiceTicketGrantingTicketExpirationPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy"
+        },
+        "RegisteredServiceUsernameAttributeProvider": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/AnonymousRegisteredServiceUsernameAttributeProvider"
+                },
+                {
+                    "$ref": "#/$defs/BaseRegisteredServiceUsernameAttributeProvider"
+                },
+                {
+                    "$ref": "#/$defs/DefaultRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/GroovyRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/PrincipalAttributeRegisteredServiceUsernameProvider"
+                },
+                {
+                    "$ref": "#/$defs/StaticRegisteredServiceUsernameProvider"
+                }
+            ]
+        },
+        "RegisteredServiceWebflowInterruptPolicy": {
+            "$ref": "#/$defs/DefaultRegisteredServiceWebflowInterruptPolicy"
+        },
+        "RemoteEndpointServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "acceptableResponseCodes": {
+                    "type": "string"
+                },
+                "endpointUrl": {
+                    "type": "string"
+                },
+                "headers": {
+                    "$ref": "#/$defs/Map(String,String)"
+                },
+                "method": {
+                    "type": "string"
+                }
+            }
+        },
+        "RestfulRegisteredServiceAuthenticationPolicyCriteria": {
+            "type": "object",
+            "properties": {
+                "basicAuthPassword": {
+                    "type": "string"
+                },
+                "basicAuthUsername": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "RestfulRegisteredServiceProxyPolicy": {
+            "type": "object",
+            "properties": {
+                "endpoint": {
+                    "type": "string"
+                },
+                "headers": {
+                    "$ref": "#/$defs/Map(String,String)"
+                }
+            }
+        },
+        "ReturnAllAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "excludedAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnAllowedAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnEncryptedAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnLinkedAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnMappedAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnRestfulAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "$ref": "#/$defs/Map(String,Object)"
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "headers": {
+                    "$ref": "#/$defs/Map(String,String)"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ReturnStaticAttributeReleasePolicy": {
+            "type": "object",
+            "properties": {
+                "allowedAttributes": {
+                    "$ref": "#/$defs/Map(String,List(Object))"
+                },
+                "attributeFilter": {
+                    "$ref": "#/$defs/RegisteredServiceAttributeFilter"
+                },
+                "authorizedToReleaseAuthenticationAttributes": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseCredentialPassword": {
+                    "type": "boolean"
+                },
+                "authorizedToReleaseProxyGrantingTicket": {
+                    "type": "boolean"
+                },
+                "consentPolicy": {
+                    "$ref": "#/$defs/RegisteredServiceConsentPolicy"
+                },
+                "excludeDefaultAttributes": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "principalAttributesRepository": {
+                    "$ref": "#/$defs/RegisteredServicePrincipalAttributesRepository"
+                },
+                "principalIdAttribute": {
+                    "type": "string"
+                }
+            }
+        },
+        "ShibbolethCompatiblePersistentIdGenerator": {
+            "type": "object",
+            "properties": {
+                "attribute": {
+                    "type": "string"
+                },
+                "salt": {
+                    "type": "string"
+                }
+            }
+        },
+        "StaticRegisteredServiceUsernameProvider": {
+            "type": "object",
+            "properties": {
+                "canonicalizationMode": {
+                    "type": "string"
+                },
+                "encryptUsername": {
+                    "type": "boolean"
+                },
+                "removePattern": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "TimeBasedRegisteredServiceAccessStrategy": {
+            "type": "object",
+            "properties": {
+                "endingDateTime": {
+                    "type": "string"
+                },
+                "startingDateTime": {
+                    "type": "string"
+                },
+                "zoneId": {
+                    "type": "string"
+                }
+            }
+        },
+        "TimeUnit": {
+            "type": "string",
+            "enum": [
+                "NANOSECONDS",
+                "MICROSECONDS",
+                "MILLISECONDS",
+                "SECONDS",
+                "MINUTES",
+                "HOURS",
+                "DAYS"
+            ]
+        },
+        "TriStateBoolean": {
+            "type": "string",
+            "enum": [
+                "TRUE",
+                "FALSE",
+                "UNDEFINED"
+            ]
+        }
+    },
+    "anyOf": [
+        {
+            "$ref": "#/$defs/BaseWebBasedRegisteredService"
+        },
+        {
+            "$ref": "#/$defs/CasRegisteredService"
+        }
+    ]
+}

@@ -40,7 +40,7 @@ class ThemeFileTemplateResolverTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperationByDefaultValue() throws Exception {
+    void verifyOperationByDefaultValue() throws Throwable {
         val themeDir = new File(FileUtils.getTempDirectory(), "test");
         if (!themeDir.exists() && !themeDir.mkdir()) {
             fail(() -> "Unable to create directory " + themeDir);

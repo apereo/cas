@@ -20,7 +20,7 @@ public class DefaultClientInfoResolver implements ClientInfoResolver {
         if (clientInfo != null) {
             return resolveClientInfo(clientInfo);
         }
-        LOGGER.warn("No ClientInfo could be found.  Returning empty ClientInfo object.");
+        LOGGER.warn("No ClientInfo could be found. Returning empty ClientInfo object.");
         return ClientInfo.empty();
     }
 

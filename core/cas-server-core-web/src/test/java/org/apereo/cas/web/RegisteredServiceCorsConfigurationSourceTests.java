@@ -50,7 +50,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
@@ -70,7 +70,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     }
 
     @Test
-    void verifyService() {
+    void verifyService() throws Throwable {
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(),
             new DefaultRegisteredServiceProperty("false"));

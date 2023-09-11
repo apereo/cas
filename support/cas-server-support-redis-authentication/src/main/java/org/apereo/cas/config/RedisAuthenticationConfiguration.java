@@ -172,7 +172,7 @@ public class RedisAuthenticationConfiguration {
         final BeanContainer<IPersonAttributeDao> redisPersonAttributeDaos) {
         return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> plan -> redisPersonAttributeDaos.toList().forEach(plan::registerAttributeRepository))
+            .supply(() -> plan -> redisPersonAttributeDaos.toList().stream().filter(IPersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository))
             .otherwiseProxy()
             .get();
     }

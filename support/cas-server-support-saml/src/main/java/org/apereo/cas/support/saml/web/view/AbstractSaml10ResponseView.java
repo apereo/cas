@@ -11,17 +11,14 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
-
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -104,6 +101,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         if (service == null || StringUtils.isBlank(service.getId())) {
             return "UNKNOWN";
         }
-        return FunctionUtils.doAndHandle(() -> new URL(service.getId()).getHost());
+        return FunctionUtils.doAndHandle(() -> new URI(service.getId()).getHost());
     }
 }

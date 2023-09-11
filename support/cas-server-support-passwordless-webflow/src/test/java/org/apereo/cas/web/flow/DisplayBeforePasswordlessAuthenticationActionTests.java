@@ -47,7 +47,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
     
@@ -60,7 +60,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -71,7 +71,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    void verifyNoUser() throws Exception {
+    void verifyNoUser() throws Throwable {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -80,7 +80,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    void verifyUnknownUser() throws Exception {
+    void verifyUnknownUser() throws Throwable {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -90,7 +90,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    void verifyError() throws Exception {
+    void verifyError() throws Throwable {
         val context = new MockRequestContext();
         val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
