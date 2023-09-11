@@ -518,6 +518,7 @@ ext.libraries = [
         },
         cqengine                   : [
                 dependencies.create("com.googlecode.cqengine:cqengine:$cqEngineVersion") {
+                    exclude(group: 'org.xerial', module: "sqlite-jdbc")
                 }
         ],
         maxmind                    : [
