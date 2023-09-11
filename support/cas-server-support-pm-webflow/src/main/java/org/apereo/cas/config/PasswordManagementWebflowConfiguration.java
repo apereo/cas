@@ -353,7 +353,7 @@ public class PasswordManagementWebflowConfiguration {
         }
     }
 
-    @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "PasswordManagementPolicyConfiguration", proxyBeanMethods = false)
     public static class PasswordManagementPolicyConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.core.password-policy-pattern");
 
