@@ -5,7 +5,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,14 +13,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import javax.validation.constraints.NotNull;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 
 
 /**
@@ -46,8 +42,8 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     private Map<String, List<Object>> fetchAttributeValueFromExternalGroovyScript(final String file,
-                                                                                         final RegisteredServiceAttributeReleasePolicyContext context,
-                                                                                         final Map<String, List<Object>> attributes) {
+                                                                                  final RegisteredServiceAttributeReleasePolicyContext context,
+                                                                                  final Map<String, List<Object>> attributes) {
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
                 val script = cacheMgr.resolveScriptableResource(file, file);
@@ -58,12 +54,11 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));
     }
 
-    private Map<String, List<Object>> fetchAttributeValueFromScript(
-        @NotNull
-        final ExecutableCompiledGroovyScript script,
+    protected Map<String, List<Object>> fetchAttributeValueFromScript(
+        @NotNull final ExecutableCompiledGroovyScript script,
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> attributes) {
-        Object[] args = new Object[] {attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
+        val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
         val result = (Map<String, List<Object>>) script.execute(args, Map.class, false);
         if (result != null) {
             LOGGER.debug("Attribute release policy returned attributes [{}] from script [{}]", result, groovyScript);
