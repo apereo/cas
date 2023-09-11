@@ -82,7 +82,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
   "id" : 100,
-  "accessTokenExpirationPolicy": {
+  "deviceTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
     "timeToKill": "100"
   }
@@ -99,7 +99,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
   "id" : 100,
-  "accessTokenExpirationPolicy": {
+  "refreshTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
     "timeToKill": "100"
   }
