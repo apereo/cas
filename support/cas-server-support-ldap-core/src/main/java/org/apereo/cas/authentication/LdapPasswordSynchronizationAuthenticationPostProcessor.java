@@ -48,7 +48,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
         }
 
         try {
-            val credential = UsernamePasswordCredential.class.cast(primaryCredential.get());
+            val credential = (UsernamePasswordCredential) primaryCredential.get();
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(credential.getUsername()));
             LOGGER.trace("Constructed LDAP filter [{}] to locate user and update password", filter);

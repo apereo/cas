@@ -41,7 +41,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyLoadWithBadTicketInSession() {
+    void verifyLoadWithBadTicketInSession() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -54,7 +54,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyLoadWithValidTicket() throws Exception {
+    void verifyLoadWithValidTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -71,7 +71,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyLoadNoProfileWhenNoTgtAvailable() {
+    void verifyLoadNoProfileWhenNoTgtAvailable() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

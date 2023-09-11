@@ -18,7 +18,6 @@ class Bucket4jThrottledRequestExecutorTests {
         "cas.authn.throttle.bucket4j.blocking=true"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class BlockingTests extends BaseBucket4jThrottledRequestTests {
     }
 
@@ -27,7 +26,6 @@ class Bucket4jThrottledRequestExecutorTests {
         "cas.authn.throttle.bucket4j.blocking=true"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class NonBlockingTests extends BaseBucket4jThrottledRequestTests {
     }
 }

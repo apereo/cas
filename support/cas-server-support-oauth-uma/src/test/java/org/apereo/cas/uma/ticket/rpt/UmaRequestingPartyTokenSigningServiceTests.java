@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyUnknownJwks() {
+    void verifyUnknownJwks() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getOauth().getUma().getCore().setIssuer("cas");
         val jwks = new ClassPathResource("nothing.jwks");

@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGen
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,7 +32,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        generate(Optional.empty());
+        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 
     @Override

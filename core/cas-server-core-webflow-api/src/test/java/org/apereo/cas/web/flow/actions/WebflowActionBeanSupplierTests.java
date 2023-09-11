@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -10,14 +11,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,7 +27,7 @@ class WebflowActionBeanSupplierTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyUnknownScript() throws Exception {
+    void verifyUnknownScript() throws Throwable {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "unknown");
 
@@ -46,17 +39,12 @@ class WebflowActionBeanSupplierTests {
             .build()
             .get();
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
         assertEquals("pass", action.execute(context).getId());
     }
 
     @Test
-    void verifyScript() throws Exception {
+    void verifyScript() throws Throwable {
         val properties = new CasConfigurationProperties();
         properties.getWebflow().getGroovy().getActions().put("customActionId", "classpath:/GroovyWebflowAction.groovy");
 
@@ -68,12 +56,7 @@ class WebflowActionBeanSupplierTests {
             .build()
             .get();
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create();
         assertEquals("result", action.execute(context).getId());
     }
 }

@@ -6,7 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -67,10 +67,10 @@ class CasCoreLogoutConfigurationTests {
 
     @Autowired
     @Qualifier("casProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> casProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> casProtocolEndpointConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);

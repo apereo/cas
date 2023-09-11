@@ -39,7 +39,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     private final ServicesManager servicesManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal());
 

@@ -41,7 +41,7 @@ class InitializeCaptchaActionTests {
     private Action initializeCaptchaAction;
 
     @Test
-    void verifyCaptchaValidated() throws Exception {
+    void verifyCaptchaValidated() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

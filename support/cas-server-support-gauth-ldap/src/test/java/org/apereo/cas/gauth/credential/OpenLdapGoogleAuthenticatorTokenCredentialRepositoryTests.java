@@ -5,7 +5,6 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -39,8 +38,7 @@ import java.nio.charset.StandardCharsets;
 class OpenLdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Override
-    @SneakyThrows
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         val uid = super.getUsernameUnderTest();
 
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));

@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,9 +21,10 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class RegisteredServicePrincipalAttributesRepositoryTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(RegisteredServicePrincipalAttributesRepository.class);
         doCallRealMethod().when(policy).update(any(), any(), any());
-        assertDoesNotThrow(() -> policy.update(UUID.randomUUID().toString(), Map.of(), mock(RegisteredService.class)));
+        assertDoesNotThrow(() -> policy.update(UUID.randomUUID().toString(),
+            Map.of(), mock(RegisteredServiceAttributeReleasePolicyContext.class)));
     }
 }

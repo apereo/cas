@@ -9,5 +9,11 @@
     "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
     "key": "cn",
     "singleValue": true
+  },
+  "organization": {
+    "@class": "org.apereo.cas.oidc.claims.OidcAttributeDefinition",
+    "key": "organization",
+    "name": "org.apereo.cas.entity",
+    "structured": true
   }
 }

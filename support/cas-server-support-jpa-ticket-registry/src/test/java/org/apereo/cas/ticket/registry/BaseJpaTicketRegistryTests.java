@@ -78,7 +78,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     protected CloseableDataSource dataSourceTicket;
 
     @AfterAll
-    public static void afterAllTests() throws Exception {
+    public static void afterAllTests() throws Throwable {
         ApplicationContextProvider.getApplicationContext()
             .getBean("dataSourceTicket", CloseableDataSource.class).close();
     }
@@ -90,7 +90,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
-    public void verifyLargeDataset() throws Exception {
+    void verifyLargeDataset() throws Throwable {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
@@ -109,7 +109,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
-    public void verifySecurityTokenTicket() throws Exception {
+    void verifySecurityTokenTicket() throws Throwable {
         val securityTokenTicketFactory = new DefaultSecurityTokenTicketFactory(
             new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder());
@@ -128,7 +128,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
-    public void verifyLogoutCascades() throws Exception {
+    void verifyLogoutCascades() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),

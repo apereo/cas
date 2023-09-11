@@ -65,7 +65,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilter() {
+    void verifyPatternFilter() throws Throwable {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
@@ -73,7 +73,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPattern() {
+    void verifyPattern() throws Throwable {
         this.filter = new RegisteredServiceMappedRegexAttributeFilter(Collections.singletonMap("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
@@ -81,7 +81,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilterExcludeUnmatched() {
+    void verifyPatternFilterExcludeUnmatched() throws Throwable {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
         val attrs = this.filter.filter(givenAttributesMap);
@@ -90,7 +90,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilterFullMatch() {
+    void verifyPatternFilterFullMatch() throws Throwable {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setCompleteMatch(true);
         val attrs = this.filter.filter(givenAttributesMap);
@@ -99,10 +99,9 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val data = SerializationUtils.serialize(this.filter);
-        val secondFilter =
-            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+        val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 

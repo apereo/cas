@@ -59,7 +59,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
-        return result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()
+        return result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
                && Objects.requireNonNull(result.getBody()).booleanValue();
     }
 
@@ -76,7 +76,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlUser(), HttpMethod.GET, entity, String.class);
 
-        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
         return null;
@@ -114,7 +114,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlPhone(), HttpMethod.GET, entity, String.class);
 
-        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
         return null;
@@ -133,7 +133,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
             HttpMethod.GET, entity, Map.class);
 
-        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
         return null;

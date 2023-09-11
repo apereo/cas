@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SurrogateSessionExpirationPolicyTests {
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val policy = new SurrogateSessionExpirationPolicy();
         assertEquals(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, policy.getExpirationPolicyNameFor(tgt));
     }
 
     @Test
-    void verifySurrogate() {
+    void verifySurrogate() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
             Map.of(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, List.of("principal"),
                 SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, List.of("user")));

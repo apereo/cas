@@ -33,7 +33,7 @@ class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    void verifyTerminateAction() throws Exception {
+    void verifyTerminateAction() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
@@ -42,7 +42,7 @@ class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    void verifyTerminateActionByCookie() throws Exception {
+    void verifyTerminateActionByCookie() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setCookies(new Cookie("TGC", "TGT-123456-something"));

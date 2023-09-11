@@ -11,7 +11,8 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jose.Header;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
@@ -20,8 +21,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -51,27 +50,15 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             if (StringUtils.isBlank(tokenId)) {
                 LOGGER.warn("No access token is provided to decode");
                 return null;
             }
             val header = JWTParser.parse(tokenId).getHeader();
-            var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
-            if (oAuthRegisteredService == null) {
-                val serviceId = header.getCustomParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID);
-                if (serviceId != null) {
-                    val serviceIdentifier = Long.parseLong(serviceId.toString());
-                    oAuthRegisteredService = accessTokenJwtBuilder.getServicesManager()
-                        .findServiceBy(serviceIdentifier, OAuthRegisteredService.class);
-                }
-            }
-            val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(oAuthRegisteredService), tokenId);
+            val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
             return claims.getJWTID();
-        } catch (final ParseException e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return tokenId;
+        }, e -> tokenId).get();
     }
 
     @Override
@@ -121,7 +108,20 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService,
                                         final OAuth20AccessToken accessToken) {
         return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
-               || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
-               || accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+            || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
+            || accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+    }
+
+    protected RegisteredService resolveRegisteredService(final Header header) {
+        var oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
+        if (oAuthRegisteredService == null) {
+            val serviceId = header.getCustomParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID);
+            if (serviceId != null) {
+                val serviceIdentifier = Long.parseLong(serviceId.toString());
+                oAuthRegisteredService = accessTokenJwtBuilder.getServicesManager()
+                    .findServiceBy(serviceIdentifier, OAuthRegisteredService.class);
+            }
+        }
+        return oAuthRegisteredService;
     }
 }

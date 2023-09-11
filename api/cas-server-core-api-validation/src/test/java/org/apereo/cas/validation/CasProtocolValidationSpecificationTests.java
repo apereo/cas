@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasProtocolValidationSpecificationTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val spec = (CasProtocolValidationSpecification) (assertion, request) -> false;
         assertEquals(0, spec.getOrder());
         assertDoesNotThrow(spec::reset);

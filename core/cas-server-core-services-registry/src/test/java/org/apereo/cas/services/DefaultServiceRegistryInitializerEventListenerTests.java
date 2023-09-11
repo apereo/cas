@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class DefaultServiceRegistryInitializerEventListenerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val initializer = mock(ServiceRegistryInitializer.class);
         val listener = new DefaultServiceRegistryInitializerEventListener(new DirectObjectProvider<>(initializer));
         assertDoesNotThrow(new Executable() {

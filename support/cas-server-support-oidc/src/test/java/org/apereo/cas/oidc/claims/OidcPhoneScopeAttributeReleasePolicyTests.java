@@ -7,16 +7,12 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,25 +24,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcPhoneScopeAttributeReleasePolicyTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.core.claims-map.phone_number=cell_phone")
     class ClaimMappingsTests extends AbstractOidcTests {
         @Test
-        void verifyMappedToUnknown() {
+        void verifyMappedToUnknown() throws Throwable {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
-            
+
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(attrs.containsKey("phone_number"));
         }
 
         @Test
-        void verifyMapped() {
+        void verifyMapped() throws Throwable {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(
                 CollectionUtils.wrap("cell_phone", List.of("12134321245")));
@@ -55,6 +51,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(attrs.containsKey("phone_number"));
@@ -62,10 +59,9 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.PHONE.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());
@@ -75,6 +71,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
@@ -82,15 +79,13 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifySerialization() {
-            val appCtx = new StaticApplicationContext();
-            appCtx.refresh();
+        void verifySerialization() throws Throwable {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy);
             val service = getOidcRegisteredService();
             service.setAttributeReleasePolicy(chain);
-            val serializer = new RegisteredServiceJsonSerializer(appCtx);
+            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val json = serializer.toString(service);
             assertNotNull(json);
             assertNotNull(serializer.from(json));

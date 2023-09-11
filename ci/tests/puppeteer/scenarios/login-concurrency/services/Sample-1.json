@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/.+",
+  "id": 1,
+  "name": "Sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "expected" :
+        '''
+        groovy {
+          if (attributes['entitlements'].contains("normal")) {
+            return attributes['label'].get(0).toUpperCase()
+          }
+          return attributes['name'].get(0).toUpperCase()
+        }
+        '''
+    }
+  }
+}

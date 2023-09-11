@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InetAddressUtilsTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val host = InetAddressUtils.getCasServerHostAddress("https://github.com");
         assertNotNull(host);
     }

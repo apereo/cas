@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -115,7 +116,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
                                                                             final List<Object> currentValues,
                                                                             final String file,
-                                                                            final AttributeDefinitionResolutionContext context) {
+                                                                            final AttributeDefinitionResolutionContext context) throws Throwable {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
@@ -133,10 +134,10 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                                         final String inlineGroovy,
                                                                         final AttributeDefinitionResolutionContext context) {
         return ApplicationContextProvider.getScriptResourceCacheManager()
-            .map(cacheManager -> {
+            .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
                 val script = cacheManager.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
                 return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
-            }).orElseGet(() -> {
+            })).orElseGet(() -> {
                 LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
                 return new ArrayList<>(0);
             });
@@ -145,7 +146,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
                                                               final String attributeKey,
                                                               final List<Object> currentValues,
-                                                              final AttributeDefinitionResolutionContext context) {
+                                                              final AttributeDefinitionResolutionContext context) throws Throwable {
         val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues, "logger", LOGGER,
             "registeredService", context.getRegisteredService(),
@@ -163,7 +164,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     @JsonIgnore
     @Override
-    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
+    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) throws Throwable {
         List<Object> currentValues = new ArrayList<>(context.getAttributeValues());
         if (StringUtils.isNotBlank(getScript())) {
             currentValues = getScriptedAttributeValue(key, currentValues, context);
@@ -222,7 +223,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private List<Object> getScriptedAttributeValue(final String attributeKey,
                                                    final List<Object> currentValues,
-                                                   final AttributeDefinitionResolutionContext context) {
+                                                   final AttributeDefinitionResolutionContext context) throws Throwable {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
 
@@ -244,13 +245,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(patternedValue);
         if (matcherInline.find()) {
             return ApplicationContextProvider.getScriptResourceCacheManager()
-                .map(cacheManager -> {
+                .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
                     val script = cacheManager.resolveScriptableResource(patternedValue);
                     val args = CollectionUtils.<String, Object>wrap("context", context,
                         "currentValue", currentValue, "logger", LOGGER);
                     script.setBinding(args);
                     return script.execute(args.values().toArray(), String.class);
-                })
+                }))
                 .orElse(patternedValue);
         }
         return patternedValue;

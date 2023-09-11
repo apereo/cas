@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -18,7 +19,6 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
-import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolver;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorDeviceProviderAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
@@ -133,7 +133,7 @@ public class WebAuthnWebflowConfiguration {
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return BeanSupplier.of(CasWebflowEventResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnAuthenticationWebflowEventResolver(casWebflowConfigurationContext))
+                .supply(() -> new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext))
                 .otherwiseProxy()
                 .get();
         }

@@ -46,7 +46,7 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
         val service = ssoRequest.getAttributeValue(Service.class.getName(), Service.class);
         val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
         val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);
@@ -74,7 +74,7 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationTrigger(
         final Service service, final RegisteredService registeredService,
         final Authentication authentication, final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final HttpServletResponse response) throws Throwable {
         return multifactorTriggerSelectionStrategy.resolve(request, response,
             registeredService, authentication, service);
     }

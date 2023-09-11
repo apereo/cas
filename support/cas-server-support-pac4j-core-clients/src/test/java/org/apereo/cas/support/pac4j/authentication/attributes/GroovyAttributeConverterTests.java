@@ -28,16 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 class GroovyAttributeConverterTests {
     @Test
-    void verifyUnknownType() {
-        val c = new GroovyAttributeConverter();
-        assertFalse(c.accept("unknown"));
-        assertEquals("value", c.convert("value"));
+    void verifyUnknownType() throws Throwable {
+        val converter = new GroovyAttributeConverter();
+        assertFalse(converter.accept("unknown"));
+        assertEquals("value", converter.convert("value"));
     }
 
     @Test
-    void verifyScript() {
-        val c = new GroovyAttributeConverter();
-        assertTrue(c.accept("groovy { return attribute.toString() + '-test' }"));
-        assertEquals("value-test", c.convert("value"));
+    void verifyScript() throws Throwable {
+        val converter = new GroovyAttributeConverter();
+        assertTrue(converter.accept("groovy { return attribute.toString() + '-test' }"));
+        assertEquals("value-test", converter.convert("value"));
     }
 }

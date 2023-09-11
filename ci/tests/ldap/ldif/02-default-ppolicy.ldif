@@ -1,0 +1,23 @@
+dn: ou=pwpolicies,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pwpolicies
+
+dn: cn=default,ou=pwpolicies,{{ LDAP_BASE_DN }}
+objectClass: top
+objectClass: device
+objectClass: pwdPolicy
+cn: default
+pwdAttribute: userPassword
+pwdAllowUserChange: TRUE
+pwdCheckQuality: 1
+pwdExpireWarning: 3600
+pwdFailureCountInterval: 3600
+pwdInHistory: 3
+pwdLockout: TRUE
+pwdLockoutDuration: 300
+pwdMaxAge: 0
+pwdMaxFailure: 5
+pwdMinLength: 6
+pwdMustChange: FALSE
+pwdSafeModify: FALSE

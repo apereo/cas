@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +31,7 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param responseType         the response type
      * @param grantType            the grant type
      * @return the access token
+     * @throws Throwable the throwable
      */
     OAuth20AccessToken create(Service service,
                               Authentication authentication,
@@ -41,7 +41,7 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
                               String clientId,
                               Map<String, Map<String, Object>> requestClaims,
                               OAuth20ResponseTypes responseType,
-                              OAuth20GrantTypes grantType);
+                              OAuth20GrantTypes grantType) throws Throwable;
 
     /**
      * Create access token.
@@ -53,13 +53,14 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param responseType   the response type
      * @param grantType      the grant type
      * @return the access token
+     * @throws Throwable the throwable
      */
     default OAuth20AccessToken create(final Service service,
                                       final Authentication authentication,
                                       final Collection<String> scopes,
                                       final String clientId,
                                       final OAuth20ResponseTypes responseType,
-                                      final OAuth20GrantTypes grantType) {
+                                      final OAuth20GrantTypes grantType) throws Throwable {
         return create(service, authentication, null, scopes, null, clientId,
             new HashMap<>(), responseType, grantType);
     }

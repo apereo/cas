@@ -38,7 +38,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service)
-        throws Exception {
+        throws Throwable {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
@@ -46,7 +46,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     }
 
     protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential, Service service)
-        throws Exception;
+        throws Throwable;
 
     /**
      * Helper method to construct a handler result

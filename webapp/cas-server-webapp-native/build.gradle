@@ -156,6 +156,8 @@ graalvmNative {
 }
 
 processAot {
+    enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+
     def list = []
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")

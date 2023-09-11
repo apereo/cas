@@ -48,7 +48,7 @@ class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyResponse() throws Exception {
+    void verifyResponse() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");

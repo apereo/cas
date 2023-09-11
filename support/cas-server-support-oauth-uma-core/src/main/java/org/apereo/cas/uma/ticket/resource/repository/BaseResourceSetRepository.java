@@ -31,7 +31,6 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
 
     @Override
     public ResourceSet save(final ResourceSet set) {
-
         if (!validateResourceSetScopes(set)) {
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }

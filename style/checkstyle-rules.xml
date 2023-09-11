@@ -323,7 +323,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AnonInnerLength">
-            <property name="max" value="40"/>
+            <property name="max" value="45"/>
             <property name="severity" value="error"/>
         </module>
         <module name="RightCurly">

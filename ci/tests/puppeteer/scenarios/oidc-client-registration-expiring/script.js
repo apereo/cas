@@ -20,10 +20,9 @@ const assert = require('assert');
     console.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
-
     console.log("Using registration entry to get a token...");
     await executeRequest(entity.client_id, entity.client_secret, false);
-    await cas.sleep(5000);
+    await cas.sleep(11000);
     console.log("Re-using a now-expired registration entry to get a token, which must fail...");
     await executeRequest(entity.client_id, entity.client_secret, true);
 

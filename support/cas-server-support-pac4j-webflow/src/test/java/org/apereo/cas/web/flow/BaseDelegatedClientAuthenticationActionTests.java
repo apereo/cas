@@ -7,13 +7,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Clients;
@@ -39,12 +38,10 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -85,19 +82,19 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
 
     protected String getLogoutResponse() {
         return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-               + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
-               + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
-               + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-               + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
-               + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
-               + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
-               + "  <samlp:Status>%n"
-               + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
-               + "  </samlp:Status>%n"
-               + "</samlp:LogoutResponse>";
+            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
+            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
+            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
+            + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
+            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">"
+            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>"
+            + "  <samlp:Status>"
+            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>"
+            + "  </samlp:Status>"
+            + "</samlp:LogoutResponse>";
     }
 
-    protected void assertStartAuthentication(final Service service) throws Exception {
+    protected void assertStartAuthentication(final Service service) throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         val response = new MockHttpServletResponse();

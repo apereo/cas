@@ -5,6 +5,7 @@ import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -14,15 +15,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.Map;
 
@@ -48,24 +45,18 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     private RequestContext context;
 
     @BeforeEach
-    public void setup() {
-        this.context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        RequestContextHolder.setRequestContext(context);
+    public void setup() throws Exception {
+        this.context = MockRequestContext.create();
     }
 
     @Test
-    void verifyOperationFailsWithMissingRequest() throws Exception {
+    void verifyOperationFailsWithMissingRequest() throws Throwable {
         val results = finalizeAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }
 
     @Test
-    void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Throwable {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         AccountRegistrationUtils.putAccountRegistrationRequest(context, registrationRequest);
         val results = finalizeAccountRegistrationAction.execute(context);
@@ -75,7 +66,7 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     @TestConfiguration(value = "FinalizeAccountRegistrationActionTestConfiguration", proxyBeanMethods = false)
     static class FinalizeAccountRegistrationActionTestConfiguration {
         @Bean
-        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Exception {
+        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Throwable {
             val response = new AccountRegistrationResponse();
             response.putProperty("success", true);
             val provisioner = mock(AccountRegistrationProvisioner.class);

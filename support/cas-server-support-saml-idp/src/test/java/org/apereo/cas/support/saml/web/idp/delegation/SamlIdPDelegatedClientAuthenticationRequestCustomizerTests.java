@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
     @Test
-    void verifyAuthorization() throws Exception {
+    void verifyAuthorization() throws Throwable {
         val saml2Client = mock(SAML2Client.class);
 
         val request = new MockHttpServletRequest();

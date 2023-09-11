@@ -19,13 +19,13 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class GroovyAuthenticationPreProcessorTests {
     @Test
-    void verifyAction() {
-        val g = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
+    void verifyAction() throws Throwable {
+        val processor = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
         val transaction = mock(AuthenticationTransaction.class);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         when(transaction.getPrimaryCredential()).thenReturn(Optional.of(creds));
-        assertTrue(g.process(transaction));
-        assertTrue(g.supports(creds));
-        g.destroy();
+        assertTrue(processor.process(transaction));
+        assertTrue(processor.supports(creds));
+        processor.destroy();
     }
 }

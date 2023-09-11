@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class GrouperMultifactorAuthenticationTriggerTests {
 
     @Test
-    void verifyOperationFails() {
+    void verifyOperationFails() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

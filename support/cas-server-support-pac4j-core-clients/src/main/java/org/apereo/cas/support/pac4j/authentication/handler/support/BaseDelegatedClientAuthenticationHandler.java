@@ -21,7 +21,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,11 +49,10 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         this.sessionStore = sessionStore;
     }
 
-
     protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
                                                                 final UserProfile profile,
                                                                 final BaseClient client,
-                                                                final Service service) throws GeneralSecurityException {
+                                                                final Service service) throws Throwable {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
@@ -77,7 +75,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
     }
 
     protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
-                                                        final ClientCredential credentials, final Service service) {
+                                                        final ClientCredential credentials, final Service service) throws Throwable {
         return initialPrincipal;
     }
 
@@ -85,7 +83,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                                                                                        final Principal principal,
                                                                                        final UserProfile profile,
                                                                                        final BaseClient client,
-                                                                                       final Service service) {
+                                                                                       final Service service) throws Throwable {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
         val result = createHandlerResult(credentials, principal, new ArrayList<>(0));
         return postFinalizeAuthenticationHandlerResult(result, credentials, principal, client, service);
@@ -101,7 +99,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
 
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
                                                           final UserProfile profile, final BaseClient client,
-                                                          final Service service) {
+                                                          final Service service) throws Throwable {
     }
 
     /**

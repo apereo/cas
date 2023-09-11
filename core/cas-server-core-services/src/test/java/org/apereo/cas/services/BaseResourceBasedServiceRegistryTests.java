@@ -3,21 +3,17 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
-import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,15 +23,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Getter
 public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     protected ResourceBasedServiceRegistry newServiceRegistry;
-
-    public static Stream<Class<? extends RegisteredService>> getParameters() {
-        return AbstractServiceRegistryTests.getParameters();
-    }
 
     @Override
     public void tearDownServiceRegistry() throws Exception {
@@ -43,12 +34,18 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
         super.tearDownServiceRegistry();
     }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    public void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        r.setName("hell/o@world:*");
-        assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(r));
+    @Override
+    protected ServiceRegistry getNewServiceRegistry() throws Exception {
+        return newServiceRegistry;
+    }
+
+    @Test
+    void verifyServiceWithInvalidFileName() {
+        getRegisteredServiceTypes().forEach(type -> {
+            val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
+            registeredService.setName("hell/o@world:*");
+            assertThrows(IllegalArgumentException.class, () -> newServiceRegistry.save(registeredService));
+        });
     }
 
     @Test
@@ -74,10 +71,8 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     void verify() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-
         val serializer = mock(StringSerializer.class);
         doThrow(new RuntimeException()).when(serializer).to(any(OutputStream.class), any());
-
         val registry = new AbstractResourceBasedServiceRegistry(FileUtils.getTempDirectory().toPath(),
             serializer, applicationContext, mock(RegisteredServiceReplicationStrategy.class),
             new DefaultRegisteredServiceResourceNamingStrategy(), List.of(), mock(WatcherService.class)) {

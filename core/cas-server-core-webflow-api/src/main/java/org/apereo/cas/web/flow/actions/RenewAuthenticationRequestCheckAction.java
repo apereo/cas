@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -21,15 +22,17 @@ public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val ssoRequest = SingleSignOnParticipationRequest.builder()
-            .requestContext(requestContext)
-            .build();
-        val ssoParticipation = singleSignOnParticipationStrategy.supports(ssoRequest)
-                               && singleSignOnParticipationStrategy.isParticipating(ssoRequest);
-        if (ssoParticipation) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
-        }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RENEW);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> {
+            val ssoRequest = SingleSignOnParticipationRequest.builder()
+                .requestContext(requestContext)
+                .build();
+            val ssoParticipation = singleSignOnParticipationStrategy.supports(ssoRequest)
+                && singleSignOnParticipationStrategy.isParticipating(ssoRequest);
+            if (ssoParticipation) {
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
+            }
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RENEW);
+        });
     }
 }

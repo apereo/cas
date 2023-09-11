@@ -45,21 +45,16 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
             val token = requestContext.getRequestParameters().getRequiredInteger(REQUEST_PARAMETER_TOKEN);
             if (validator.isTokenAuthorizedFor(token, account)) {
                 LOGGER.debug("Successfully validated token [{}]", token);
-                val gtoken = new GoogleAuthenticatorToken(token, account.getUsername());
-                validator.getTokenRepository().store(gtoken);
+                val googleAuthenticatorToken = new GoogleAuthenticatorToken(token, account.getUsername());
+                validator.getTokenRepository().store(googleAuthenticatorToken);
                 return true;
             }
+            LOGGER.warn("Unable to authorize given token [{}] for account [{}]", token, account);
             return false;
         }, e -> false)
         .apply(account);
     }
 
-    /**
-     * Gets error event.
-     *
-     * @param requestContext the request context
-     * @return the error event
-     */
     @Override
     protected Event getErrorEvent(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

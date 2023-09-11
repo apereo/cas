@@ -105,7 +105,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
                 return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid));
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }

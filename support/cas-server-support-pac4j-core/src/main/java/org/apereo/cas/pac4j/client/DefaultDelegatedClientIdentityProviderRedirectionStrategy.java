@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -69,7 +70,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
 
                 if (StringUtils.isNotBlank(delegatedPolicy.getSelectionStrategy())) {
                     return ApplicationContextProvider.getScriptResourceCacheManager()
-                        .map(cacheMgr -> {
+                        .map(Unchecked.function(cacheMgr -> {
                             val strategy = SpringExpressionLanguageValueResolver.getInstance()
                                 .resolve(delegatedPolicy.getSelectionStrategy());
                             val script = cacheMgr.resolveScriptableResource(strategy,
@@ -81,7 +82,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
                             script.setBinding(args);
                             val result = script.execute(args.values().toArray(), DelegatedClientIdentityProviderConfiguration.class, false);
                             return Optional.ofNullable(result);
-                        })
+                        }))
                         .orElseThrow(() -> new RuntimeException("No groovy script cache manager"));
                 }
             }

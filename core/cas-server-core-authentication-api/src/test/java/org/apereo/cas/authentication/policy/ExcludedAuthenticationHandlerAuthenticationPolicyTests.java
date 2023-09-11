@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

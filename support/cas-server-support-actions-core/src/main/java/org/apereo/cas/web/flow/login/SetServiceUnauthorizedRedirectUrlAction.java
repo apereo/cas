@@ -25,7 +25,7 @@ public class SetServiceUnauthorizedRedirectUrlAction extends BaseCasWebflowActio
     protected final ServicesManager servicesManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         LOGGER.trace("Found registered service [{}] from the context", registeredService);
         if (registeredService != null && registeredService.getAccessStrategy() != null) {

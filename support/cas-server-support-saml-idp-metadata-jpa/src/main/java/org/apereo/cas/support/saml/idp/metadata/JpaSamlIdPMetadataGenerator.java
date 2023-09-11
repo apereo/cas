@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFactory;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -54,7 +55,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        generate(Optional.empty());
+        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 
     @Override

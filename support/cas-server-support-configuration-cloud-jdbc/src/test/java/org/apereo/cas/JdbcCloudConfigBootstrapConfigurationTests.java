@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -38,8 +37,7 @@ class JdbcCloudConfigBootstrapConfigurationTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeAll
-    @SneakyThrows
-    public static void initialize() {
+    public static void initialize() throws Exception {
         val jpa = new Jpa();
         val ds = JpaBeans.newDataSource(jpa);
         try (val connection = ds.getConnection();
@@ -51,7 +49,7 @@ class JdbcCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 

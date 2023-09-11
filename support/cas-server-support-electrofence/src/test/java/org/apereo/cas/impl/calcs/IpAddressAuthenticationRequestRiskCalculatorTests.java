@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
-    void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("nobody");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -33,7 +33,7 @@ class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticati
     }
 
     @Test
-    void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();

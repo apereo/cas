@@ -57,7 +57,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyNoRequestedAuthenticationContext() {
+    void verifyNoRequestedAuthenticationContext() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val servicesManager = mock(ServicesManager.class);
@@ -72,7 +72,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyExecutionIgnoredPerService() {
+    void verifyExecutionIgnoredPerService() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -103,7 +103,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyRequestedAuthenticationContextChained() {
+    void verifyRequestedAuthenticationContextChained() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val casProperties = new CasConfigurationProperties();
@@ -134,7 +134,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyRequestedAuthenticationContextBypassed() {
+    void verifyRequestedAuthenticationContextBypassed() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -154,7 +154,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyRequestedAuthenticationContextNotBypassed() {
+    void verifyRequestedAuthenticationContextNotBypassed() throws Throwable {
         val applicationContext = buildApplicationContext();
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -175,7 +175,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyRequestedAuthenticationIsAlreadyBypass() {
+    void verifyRequestedAuthenticationIsAlreadyBypass() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -203,7 +203,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyRequestedAuthenticationContextNoProvider() {
+    void verifyRequestedAuthenticationContextNoProvider() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val servicesManager = mock(ServicesManager.class);
@@ -220,7 +220,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyGlobalFailureModeFailsOpen() {
+    void verifyGlobalFailureModeFailsOpen() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -243,7 +243,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyGlobalFailureModeFailsClosed() {
+    void verifyGlobalFailureModeFailsClosed() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -269,7 +269,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyServiceFailureModeFailsOpen() {
+    void verifyServiceFailureModeFailsOpen() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -294,7 +294,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyServiceFailureModeFailsClosed() {
+    void verifyServiceFailureModeFailsClosed() throws Throwable {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

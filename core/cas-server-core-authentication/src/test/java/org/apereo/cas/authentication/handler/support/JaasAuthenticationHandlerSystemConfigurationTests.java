@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,8 +35,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     private JaasAuthenticationHandler handler;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+        public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
@@ -53,7 +51,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    void verifyWithAlternativeRealm() {
+    void verifyWithAlternativeRealm() throws Throwable {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
             () -> handler.authenticate(
@@ -61,20 +59,20 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
+    void verifyWithAlternativeRealmAndValidCredentials() throws Throwable {
         handler.setRealm("TEST");
         assertNotNull(handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME), mock(Service.class)));
     }
 
     @Test
-    void verifyWithValidCredentials() throws Exception {
+    void verifyWithValidCredentials() throws Throwable {
         assertNotNull(handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
-    void verifyWithInvalidCredentials() {
+    void verifyWithInvalidCredentials() throws Throwable {
         assertThrows(LoginException.class,
             () -> handler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));

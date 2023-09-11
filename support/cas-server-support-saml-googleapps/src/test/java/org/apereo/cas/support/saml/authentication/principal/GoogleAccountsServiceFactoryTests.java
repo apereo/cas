@@ -70,12 +70,12 @@ class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyNoService() {
+    void verifyNoService() throws Throwable {
         assertNull(factory.createService(new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyAuthnRequest() {
+    void verifyAuthnRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         val samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

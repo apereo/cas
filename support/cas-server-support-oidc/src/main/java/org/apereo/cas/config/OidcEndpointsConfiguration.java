@@ -42,7 +42,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -233,12 +233,12 @@ public class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ProtocolEndpointWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer(
+        public CasWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer(
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             final CasConfigurationProperties casProperties) {
             val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+            return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(baseEndpoint);

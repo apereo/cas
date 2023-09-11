@@ -110,7 +110,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     protected String determineLogoutResponseBindingType(final SamlRegisteredService samlRegisteredService) {
         val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val binding = StringUtils.defaultIfBlank(samlRegisteredService.getLogoutResponseBinding(), logout.getLogoutResponseBinding());
-        return StringUtils.defaultString(binding, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        return StringUtils.defaultIfBlank(binding, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     /**

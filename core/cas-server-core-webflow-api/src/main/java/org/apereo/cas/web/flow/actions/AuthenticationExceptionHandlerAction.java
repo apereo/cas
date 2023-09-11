@@ -1,15 +1,14 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -36,26 +35,27 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
      * Maps an authentication exception onto a state name.
      * Also sets an ERROR severity message in the message context.
      *
-     * @param e              Authentication error to handle.
+     * @param exception      Authentication error to handle.
      * @param requestContext the spring  context
      * @return Name of next flow state to transition to or {@value CasWebflowExceptionHandler#UNKNOWN}
      */
-    public String handle(final Exception e, final RequestContext requestContext) {
+    protected Event handle(final Exception exception, final RequestContext requestContext) {
         val handlers = webflowExceptionHandlers
             .stream()
-            .filter(handler -> handler.supports(e, requestContext)).toList();
+            .filter(BeanSupplier::isNotProxy)
+            .filter(Unchecked.predicate(handler -> handler.supports(exception, requestContext)))
+            .toList();
 
         return handlers
             .stream()
-            .map(handler -> handler.handle(e, requestContext))
+            .map(Unchecked.function(handler -> handler.handle(exception, requestContext)))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseGet(this::error)
-            .getId();
+            .orElseGet(this::error);
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 
@@ -64,7 +64,7 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
             LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
             val event = handle(error, requestContext);
             LOGGER.debug("Final event id resolved from the error is [{}]", event);
-            return new EventFactorySupport().event(this, event, currentEvent.getAttributes());
+            return event;
         }
         return error();
     }

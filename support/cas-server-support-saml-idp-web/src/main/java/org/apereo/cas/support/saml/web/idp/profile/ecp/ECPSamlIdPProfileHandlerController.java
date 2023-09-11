@@ -120,7 +120,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
             buildEcpFaultResponse(context, error);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             buildEcpFaultResponse(context, e.getMessage());
         }
@@ -138,15 +138,8 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         getConfigurationContext().getSamlFaultResponseBuilder().build(context);
     }
 
-    /**
-     * Authenticate ecp request.
-     *
-     * @param credential   the credential
-     * @param authnRequest the authn request
-     * @return the authentication
-     */
     protected Authentication authenticateEcpRequest(final Credential credential,
-                                                    final Pair<AuthnRequest, MessageContext> authnRequest) {
+                                                    final Pair<AuthnRequest, MessageContext> authnRequest) throws Throwable {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 

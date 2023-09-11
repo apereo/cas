@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class SingleSignOnParticipationRequestTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val requestContext = new MockRequestContext();

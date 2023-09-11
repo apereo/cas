@@ -26,10 +26,11 @@ public interface ConsentActivationStrategy {
      * @param registeredService the registered service
      * @param authentication    the authentication
      * @param request           the request
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
     boolean isConsentRequired(Service service,
                               RegisteredService registeredService,
                               Authentication authentication,
-                              HttpServletRequest request);
+                              HttpServletRequest request) throws Throwable;
 }

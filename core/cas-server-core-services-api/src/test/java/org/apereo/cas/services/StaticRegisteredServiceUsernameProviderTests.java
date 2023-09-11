@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 
@@ -28,12 +29,16 @@ class StaticRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        
         System.setProperty("CAS_UID", "casuser");
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .applicationContext(applicationContext)
             .build();
         val provider = new StaticRegisteredServiceUsernameProvider();
         provider.setValue("${#systemProperties['CAS_UID']}");

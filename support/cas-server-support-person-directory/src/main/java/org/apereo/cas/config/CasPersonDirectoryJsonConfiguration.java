@@ -100,7 +100,7 @@ public class CasPersonDirectoryJsonConfiguration {
                 .supply(() -> plan -> {
                     val results = jsonAttributeRepositories.toList()
                         .stream()
-                        .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                        .filter(IPersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

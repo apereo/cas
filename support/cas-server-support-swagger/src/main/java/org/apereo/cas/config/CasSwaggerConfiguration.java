@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -34,14 +34,14 @@ public class CasSwaggerConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSwaggerEndpointConfigurer")
-    public ProtocolEndpointWebSecurityConfigurer<Void> casSwaggerEndpointConfigurer(
+    public CasWebSecurityConfigurer<Void> casSwaggerEndpointConfigurer(
         final SwaggerUiConfigProperties swaggerUiConfigProperties,
         final SpringDocConfigProperties springDocConfigProperties) {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+        return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                val apiDocs = StringUtils.defaultString(springDocConfigProperties.getApiDocs().getPath(), "/v3/api-docs");
-                val swaggerUI = StringUtils.defaultString(swaggerUiConfigProperties.getPath(), "/swagger-ui");
+                val apiDocs = StringUtils.defaultIfBlank(springDocConfigProperties.getApiDocs().getPath(), "/v3/api-docs");
+                val swaggerUI = StringUtils.defaultIfBlank(swaggerUiConfigProperties.getPath(), "/swagger-ui");
                 return List.of(apiDocs, swaggerUI);
             }
         };

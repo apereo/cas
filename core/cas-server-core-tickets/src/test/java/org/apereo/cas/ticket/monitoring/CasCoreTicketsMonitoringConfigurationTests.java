@@ -49,7 +49,7 @@ class CasCoreTicketsMonitoringConfigurationTests {
 
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         ticketRegistry.addTicket(new MockTicketGrantingTicket("casuser"));
         val tickets = ticketRegistry.getTickets();
         assertFalse(tickets.isEmpty());

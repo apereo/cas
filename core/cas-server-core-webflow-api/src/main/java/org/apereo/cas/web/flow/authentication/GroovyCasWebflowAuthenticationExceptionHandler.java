@@ -24,9 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class GroovyCasWebflowAuthenticationExceptionHandler implements CasWebflowExceptionHandler<Exception> {
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
-    private final transient ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     private int order = Integer.MIN_VALUE;
 
@@ -37,13 +37,13 @@ public class GroovyCasWebflowAuthenticationExceptionHandler implements CasWebflo
 
 
     @Override
-    public Event handle(final Exception exception, final RequestContext requestContext) {
+    public Event handle(final Exception exception, final RequestContext requestContext) throws Throwable {
         val args = new Object[]{exception, requestContext, applicationContext, LOGGER};
         return watchableScript.execute(args, Event.class);
     }
 
     @Override
-    public boolean supports(final Exception exception, final RequestContext requestContext) {
+    public boolean supports(final Exception exception, final RequestContext requestContext) throws Throwable {
         val args = new Object[]{exception, requestContext, applicationContext, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
     }

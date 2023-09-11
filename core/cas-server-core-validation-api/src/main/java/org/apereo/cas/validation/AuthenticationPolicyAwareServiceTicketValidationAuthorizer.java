@@ -61,7 +61,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
                 if (!result.isSuccess()) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 LoggingUtils.error(LOGGER, e);
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
             }

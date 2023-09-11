@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
-    void verifyUniqueGenerationOfTicketIds() {
+    void verifyUniqueGenerationOfTicketIds() throws Throwable {
         val generator = new DefaultUniqueTicketIdGenerator(10);
         assertNotSame(generator.getNewTicketId("TEST"), generator.getNewTicketId("TEST"));
     }
 
     @Test
-    void verifyUniqueGeneration() {
+    void verifyUniqueGeneration() throws Throwable {
         val generator = new DefaultUniqueTicketIdGenerator(
             new DefaultLongNumericGenerator(8),
             new HexRandomStringGenerator(16), "suffix");
@@ -31,7 +31,7 @@ class DefaultUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    void verifySuffix() {
+    void verifySuffix() throws Throwable {
         val suffix = "suffix";
         val generator = new DefaultUniqueTicketIdGenerator(10, suffix);
 
@@ -39,7 +39,7 @@ class DefaultUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    void verifyNullSuffix() {
+    void verifyNullSuffix() throws Throwable {
         val lengthWithoutSuffix = 23;
         val generator = new DefaultUniqueTicketIdGenerator(12, null);
         val ticketId = generator.getNewTicketId("test");

@@ -37,12 +37,6 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
 
     private final CasConfigurationProperties casProperties;
 
-    /**
-     * Build one time token account.
-     *
-     * @param requestContext the request context
-     * @return the one time token account
-     */
     protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
         val accountName = requestContext.getRequestParameters().getRequired(REQUEST_PARAMETER_ACCOUNT_NAME);
@@ -55,19 +49,13 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             .build();
     }
 
-    /**
-     * Gets candidate account from.
-     *
-     * @param requestContext the request context
-     * @return the candidate account from
-     */
     protected T getCandidateAccountFrom(final RequestContext requestContext) {
         return (T) requestContext.getFlowScope()
             .get(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, OneTimeTokenAccount.class);
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val currentAcct = getCandidateAccountFrom(requestContext);
             if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()) {
@@ -78,7 +66,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             }
             val account = (T) buildOneTimeTokenAccount(requestContext);
             if (!validate(account, requestContext)) {
-                LOGGER.error("Unable to validate account");
+                LOGGER.error("Unable to validate account [{}]", account);
                 return getErrorEvent(requestContext);
             }
 
@@ -94,23 +82,10 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
         return getErrorEvent(requestContext);
     }
 
-    /**
-     * Validate account and context.
-     *
-     * @param account        the account
-     * @param requestContext the request context
-     * @return true/false
-     */
     protected boolean validate(final T account, final RequestContext requestContext) {
         return true;
     }
 
-    /**
-     * Gets error event.
-     *
-     * @param requestContext the request context
-     * @return the error event
-     */
     protected Event getErrorEvent(final RequestContext requestContext) {
         return error();
     }

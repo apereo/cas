@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
 class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
-    void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() throws Throwable {
         val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);
         svc.setProxyTicketExpirationPolicy(
             new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, "1984"));
@@ -47,7 +47,7 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyDefaultExpirationPolicy() {
+    void verifyDefaultExpirationPolicy() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -62,7 +62,7 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyMismatchedClass() {
+    void verifyMismatchedClass() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -75,7 +75,7 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyDefaultTicketIdGenerator() {
+    void verifyDefaultTicketIdGenerator() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");

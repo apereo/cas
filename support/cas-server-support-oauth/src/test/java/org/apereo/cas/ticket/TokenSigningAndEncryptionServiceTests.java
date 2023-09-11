@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val publicKey = mock(PublicJsonWebKey.class);
         when(publicKey.getPublicKey()).thenReturn(null);
 
@@ -36,7 +36,7 @@ class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadSignatureOperation() {
+    void verifyBadSignatureOperation() throws Throwable {
         val publicKey = mock(PublicJsonWebKey.class);
         when(publicKey.getPublicKey()).thenReturn(mock(PublicKey.class));
 

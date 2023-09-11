@@ -90,7 +90,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             }
 
             return formatEmailBody(contents);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LOGGER.trace(e.getMessage(), e);
             return formatEmailBody(properties.getText());
         }

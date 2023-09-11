@@ -28,43 +28,60 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     private OidcIdTokenClaimCollector oidcIdTokenClaimCollector;
 
     @Test
-    void verifyEmptyValue() {
+    void verifyEmptyValue() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "unknown", List.of());
         assertEquals(0, claims.getClaimNames().size());
     }
 
     @Test
-    void verifyUnknownDefinition() throws Exception {
+    void verifyUnknownDefinition() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1", "value2"));
         assertEquals(2, claims.getStringListClaimValue("unknown").size());
     }
 
     @Test
-    void verifyUnknownDefinitionAsSingle() throws Exception {
+    void verifyUnknownDefinitionAsSingle() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "unknown", List.of("value1"));
         assertEquals("value1", claims.getStringClaimValue("unknown"));
     }
 
     @Test
-    void verifyMultiValueAsList() throws Exception {
+    void verifyMultiValueAsList() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "mail", List.of("cas1@example.org", "cas2@example.org"));
         assertEquals(2, claims.getStringListClaimValue("mail").size());
     }
 
+    @Test
+    void verifyStructuredClaim() throws Throwable {
+        val claims = new JwtClaims();
+        oidcIdTokenClaimCollector.collect(claims, "organization", List.of("example.org", "apereo.org"));
+        assertNull(claims.getClaimValue("organization"));
+        val value = claims.getClaimValueAsString("org");
+        assertEquals("{apereo={cas={entity=[example.org, apereo.org]}}}", value);
+    }
 
     @Test
-    void verifySingleValueAsList() throws Exception {
+    void verifyStructuredClaimByDefnName() throws Throwable {
+        val claims = new JwtClaims();
+        oidcIdTokenClaimCollector.collect(claims, "org.apereo.cas.entity", List.of("example.org", "apereo.org"));
+        assertNull(claims.getClaimValue("organization"));
+        val value = claims.getClaimValueAsString("org");
+        assertEquals("{apereo={cas={entity=[example.org, apereo.org]}}}", value);
+    }
+    
+    @Test
+    void verifySingleValueAsList() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "mail", List.of("cas@example.org"));
         assertEquals(1, claims.getStringListClaimValue("mail").size());
     }
 
     @Test
-    void verifySingleValueAsSingleValue() throws Exception {
+    void verifySingleValueAsSingleValue() throws Throwable {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "cn", List.of("casuser"));
         assertEquals("casuser", claims.getStringClaimValue("cn"));

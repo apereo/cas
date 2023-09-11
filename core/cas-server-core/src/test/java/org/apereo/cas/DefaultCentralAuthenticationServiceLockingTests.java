@@ -4,16 +4,14 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +28,6 @@ class DefaultCentralAuthenticationServiceLockingTests {
     private static final int TICKETS_PER_REQUEST = 10;
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.crypto.enabled=true",
         "cas.ticket.registry.in-memory.crypto.enabled=true",
@@ -38,19 +35,21 @@ class DefaultCentralAuthenticationServiceLockingTests {
     })
     class WithLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() throws Throwable {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
             Runnable runnable = () -> {
-                for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
-                    val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
-                    val mockService = RegisteredServiceTestUtils.getService(serviceName);
-                    val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
-                    val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
-                    serviceTicketIds.add(serviceTicketId.getId());
-                }
+                FunctionUtils.doUnchecked(u -> {
+                    for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
+                        val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
+                        val mockService = RegisteredServiceTestUtils.getService(serviceName);
+                        val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
+                        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
+                        serviceTicketIds.add(serviceTicketId.getId());
+                    }
+                });
             };
             val threads = new ArrayList<Thread>();
             for (var i = 0; i < REQUEST_IN_BROWSER_CONCURRENCY; i++) {
@@ -74,7 +73,6 @@ class DefaultCentralAuthenticationServiceLockingTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.crypto.enabled=true",
         "cas.ticket.registry.in-memory.crypto.enabled=true",
@@ -82,19 +80,21 @@ class DefaultCentralAuthenticationServiceLockingTests {
     })
     class WithoutLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() throws Throwable {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
             Runnable runnable = () -> {
-                for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
-                    val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
-                    val mockService = RegisteredServiceTestUtils.getService(serviceName);
-                    val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
-                    val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
-                    serviceTicketIds.add(serviceTicketId.getId());
-                }
+                FunctionUtils.doUnchecked(u -> {
+                    for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
+                        val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
+                        val mockService = RegisteredServiceTestUtils.getService(serviceName);
+                        val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
+                        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
+                        serviceTicketIds.add(serviceTicketId.getId());
+                    }
+                });
             };
             val threads = new ArrayList<Thread>();
             for (var i = 0; i < REQUEST_IN_BROWSER_CONCURRENCY; i++) {

@@ -32,14 +32,14 @@ public interface ConsentEngine extends Serializable {
      * @param reminderTimeUnit  the reminder time unit
      * @param options           the options
      * @return the stored decision
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     ConsentDecision storeConsentDecision(Service service,
                                          RegisteredService registeredService,
                                          Authentication authentication,
                                          long reminder,
                                          ChronoUnit reminderTimeUnit,
-                                         ConsentReminderOptions options) throws Exception;
+                                         ConsentReminderOptions options) throws Throwable;
 
     /**
      * Find consent decision consent decision.
@@ -60,10 +60,11 @@ public interface ConsentEngine extends Serializable {
      * @param service           the service
      * @param registeredService the registered service
      * @return the consentable attributes
+     * @throws Throwable the throwable
      */
     Map<String, List<Object>> resolveConsentableAttributesFrom(Authentication authentication,
                                                                Service service,
-                                                               RegisteredService registeredService);
+                                                               RegisteredService registeredService) throws Throwable;
 
     /**
      * Gets consentable attributes from an existing consent decision.
@@ -82,8 +83,9 @@ public interface ConsentEngine extends Serializable {
      * @param registeredService the registered service
      * @param authentication    the authentication
      * @return true /false
+     * @throws Throwable the throwable
      */
-    ConsentQueryResult isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication);
+    ConsentQueryResult isConsentRequiredFor(Service service, RegisteredService registeredService, Authentication authentication) throws Throwable;
 
     /**
      * Gets consent repository.

@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -10,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -82,15 +80,16 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public void update(final Authentication authn) {
-        this.attributes.putAll(authn.getAttributes());
-        this.authenticationDate = authn.getAuthenticationDate();
+    public void updateAttributes(final Authentication authentication) {
+        attributes.putAll(authentication.getAttributes());
+        authenticationDate = authentication.getAuthenticationDate();
+        principal.getAttributes().putAll(authentication.getPrincipal().getAttributes());
     }
 
     @Override
-    public void updateAll(final Authentication authn) {
-        this.attributes.clear();
-        update(authn);
+    public void replaceAttributes(final Authentication authentication) {
+        attributes.clear();
+        updateAttributes(authentication);
     }
 
     @Override

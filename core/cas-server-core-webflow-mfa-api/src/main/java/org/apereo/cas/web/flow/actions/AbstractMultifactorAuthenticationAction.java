@@ -22,7 +22,7 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
     /**
      * The resolved provider for this flow.
      */
-    protected transient T provider;
+    protected T provider;
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {

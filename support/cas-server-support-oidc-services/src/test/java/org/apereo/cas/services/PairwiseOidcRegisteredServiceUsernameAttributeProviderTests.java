@@ -6,6 +6,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,20 +19,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     @Test
-    void verifyNonCompatibleService() {
+    void verifyNonCompatibleService() throws Throwable {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
-
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"))
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .applicationContext(applicationContext)
             .build();
         val uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
     }
 
     @Test
-    void verifyUndefinedOrPublicSubjectType() {
+    void verifyUndefinedOrPublicSubjectType() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
 
         val registeredService = new OidcRegisteredService();
@@ -46,6 +52,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
             .registeredService(registeredService)
             .service(RegisteredServiceTestUtils.getService())
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .applicationContext(applicationContext)
             .build();
         var uid = provider.resolveUsername(usernameContext);
         assertEquals("casuser", uid);
@@ -60,7 +67,10 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifySubjectType() {
+    void verifySubjectType() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();
         provider.setPersistentIdGenerator(new ShibbolethCompatiblePersistentIdGenerator("cpaOl1pwGZ439!!"));
 
@@ -75,6 +85,7 @@ class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
             .registeredService(registeredService)
             .service(RegisteredServiceTestUtils.getService())
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .applicationContext(applicationContext)
             .build();
 
         val uid = provider.resolveUsername(usernameContext);

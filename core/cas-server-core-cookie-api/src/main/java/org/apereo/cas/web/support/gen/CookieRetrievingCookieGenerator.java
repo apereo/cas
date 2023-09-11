@@ -9,7 +9,6 @@ import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +16,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -174,6 +171,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                         StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
                         StringUtils.appendIfMissing(getCookiePath(), "/"))
                     .distinct()
+                    .filter(StringUtils::isNotBlank)
                     .forEach(path -> {
                         val crm = new Cookie(cookie.getName(), cookie.getValue());
                         crm.setMaxAge(0);
@@ -185,14 +183,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                     })));
     }
 
-    /**
-     * Add cookie header to response.
-     *
-     * @param cookie   the cookie
-     * @param request  the request
-     * @param response the response
-     * @return the cookie
-     */
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) {
@@ -229,9 +219,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     private String cleanCookiePath(final String givenPath) {
-        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
-            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
-            return StringUtils.defaultIfBlank(path, "/");
-        }, () -> givenPath).get();
+        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()),
+            () -> {
+                val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+                return StringUtils.defaultIfBlank(path, "/");
+            },
+            () -> StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH)).get();
     }
 }

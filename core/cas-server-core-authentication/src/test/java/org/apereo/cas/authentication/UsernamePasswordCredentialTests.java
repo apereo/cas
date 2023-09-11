@@ -41,7 +41,7 @@ class UsernamePasswordCredentialTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential("casuser", "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
@@ -59,7 +59,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifyInvalidEvent() {
+    void verifyInvalidEvent() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential(null, "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
 
@@ -74,7 +74,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetUsername() {
+    void verifySetGetUsername() throws Throwable {
         val credential = new UsernamePasswordCredential();
         val userName = "test";
         credential.setUsername(userName);
@@ -82,7 +82,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetPassword() {
+    void verifySetGetPassword() throws Throwable {
         val credential = new UsernamePasswordCredential();
         val password = "test";
 
@@ -91,7 +91,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifyEquals() {
+    void verifyEquals() throws Throwable {
         val c1 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         assertNotEquals(null, c1);
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");

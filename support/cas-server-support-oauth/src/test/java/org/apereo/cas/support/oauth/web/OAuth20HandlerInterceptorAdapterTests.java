@@ -4,7 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -12,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -34,7 +32,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAuthorizationAuth() throws Exception {
+    void verifyAuthorizationAuth() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -58,7 +56,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRevocationNeedsAuthn() throws Exception {
+    void verifyRevocationNeedsAuthn() throws Throwable {
         var request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
         request.setRequestURI('/' + OAuth20Constants.REVOCATION_URL);
@@ -72,7 +70,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRevocationAuth() throws Exception {
+    void verifyRevocationAuth() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -86,7 +84,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessToken() throws Exception {
+    void verifyAccessToken() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -99,7 +97,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyProfile() throws Exception {
+    void verifyProfile() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

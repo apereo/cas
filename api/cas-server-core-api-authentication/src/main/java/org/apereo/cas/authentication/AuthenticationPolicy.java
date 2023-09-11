@@ -25,12 +25,12 @@ public interface AuthenticationPolicy extends Ordered, Serializable {
      * @param applicationContext     the application context
      * @param assertion              the assertion
      * @return Authentication policy execution result
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     AuthenticationPolicyExecutionResult isSatisfiedBy(Authentication authentication,
                                                       Set<AuthenticationHandler> authenticationHandlers,
                                                       ConfigurableApplicationContext applicationContext,
-                                                      Optional<Serializable> assertion) throws Exception;
+                                                      Optional<Serializable> assertion) throws Throwable;
 
     @Override
     default int getOrder() {

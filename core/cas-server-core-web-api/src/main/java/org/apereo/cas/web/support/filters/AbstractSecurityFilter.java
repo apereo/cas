@@ -25,14 +25,19 @@ public abstract class AbstractSecurityFilter {
     /**
      * Throw fatal errors if set.
      */
-    private static boolean THROW_ON_ERRORS;
+    private static final ThreadLocal<Boolean> THROW_ON_ERRORS = new ThreadLocal<>();
 
     public static boolean isThrowOnErrors() {
-        return THROW_ON_ERRORS;
+        return THROW_ON_ERRORS.get();
     }
 
+    /**
+     * Sets throw on errors.
+     *
+     * @param throwOnErrors the throw on errors
+     */
     public static void setThrowOnErrors(final boolean throwOnErrors) {
-        THROW_ON_ERRORS = throwOnErrors;
+        THROW_ON_ERRORS.set(throwOnErrors);
     }
 
     /**

@@ -1,14 +1,13 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.profile.converter.AbstractAttributeConverter;
-
 import java.io.Serializable;
 
 /**
@@ -25,12 +24,19 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
         super(Serializable.class);
     }
 
+    public GroovyAttributeConverter(final ExecutableCompiledGroovyScript script) {
+        this();
+        this.script = script;
+    }
+
     @Override
     public synchronized Object convert(final Object attribute) {
         if (script != null) {
-            val args = CollectionUtils.wrap("attribute", attribute, "logger", LOGGER);
-            script.setBinding(args);
-            return script.execute(args.values().toArray(), Object.class, false);
+            return FunctionUtils.doUnchecked(() -> {
+                val args = CollectionUtils.wrap("attribute", attribute, "logger", LOGGER);
+                script.setBinding(args);
+                return script.execute(args.values().toArray(), Object.class, false);
+            });
         }
         return attribute;
     }

@@ -8,15 +8,17 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.io.File;
@@ -36,6 +38,8 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
@@ -51,36 +55,29 @@ class RegisteredServiceRegexAttributeFilterTests {
 
     private static final String UID = "uid";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private final RegisteredServiceAttributeFilter filter;
 
     private final Map<String, List<Object>> givenAttributesMap;
 
     RegisteredServiceRegexAttributeFilterTests() {
-        this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
+        filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
-        this.givenAttributesMap = new HashMap<>();
-        this.givenAttributesMap.put(UID, List.of("loggedInTestUid"));
-        this.givenAttributesMap.put(PHONE, List.of("1290"));
-        this.givenAttributesMap.put(FAMILY_NAME, List.of("Smith"));
-        this.givenAttributesMap.put(GIVEN_NAME, List.of("John"));
-        this.givenAttributesMap.put("employeeId", List.of("E1234"));
-        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
-        this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toList()));
+        givenAttributesMap = new HashMap<>();
+        givenAttributesMap.put(UID, List.of("loggedInTestUid"));
+        givenAttributesMap.put(PHONE, List.of("1290"));
+        givenAttributesMap.put(FAMILY_NAME, List.of("Smith"));
+        givenAttributesMap.put(GIVEN_NAME, List.of("John"));
+        givenAttributesMap.put("employeeId", List.of("E1234"));
+        givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
+        givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toList()));
     }
-
-    @BeforeEach
-    public void initialize() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
-
+    
     @Test
-    void verifyPatternFilter() {
-
-        val attrs = this.filter.filter(this.givenAttributesMap);
+    void verifyPatternFilter() throws Throwable {
+        val attrs = filter.filter(givenAttributesMap);
         assertEquals(5, attrs.size());
 
         assertFalse(attrs.containsKey(PHONE));
@@ -98,7 +95,7 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
+    void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() throws Throwable {
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
@@ -115,6 +112,7 @@ class RegisteredServiceRegexAttributeFilterTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("test"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = policy.getAttributes(context);
@@ -129,14 +127,14 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerialization() {
-        val data = SerializationUtils.serialize(this.filter);
+    void verifySerialization() throws Throwable {
+        val data = SerializationUtils.serialize(filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
-        assertEquals(secondFilter, this.filter);
+        assertEquals(secondFilter, filter);
     }
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val data = mock(RegisteredServiceAttributeFilter.class);
         when(data.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
@@ -227,24 +228,21 @@ public abstract class AbstractCasView extends AbstractView {
         return model;
     }
 
-    /**
-     * Prepare cas response attributes for view model.
-     *
-     * @param model the model
-     */
     protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
-        val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
-        val registeredService = this.servicesManager.findServiceBy(service);
+        FunctionUtils.doUnchecked(__ -> {
+            val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
+            val registeredService = this.servicesManager.findServiceBy(service);
 
-        val principalAttributes = getCasPrincipalAttributes(model, registeredService);
-        val attributes = new HashMap<String, Object>(principalAttributes);
+            val principalAttributes = getCasPrincipalAttributes(model, registeredService);
+            val attributes = new HashMap<String, Object>(principalAttributes);
 
-        LOGGER.trace("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
-        val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
-        attributes.putAll(protocolAttributes);
+            LOGGER.trace("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
+            val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
+            attributes.putAll(protocolAttributes);
 
-        LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
-        putCasResponseAttributesIntoModel(model, attributes, registeredService, attributesRenderer);
+            LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
+            putCasResponseAttributesIntoModel(model, attributes, registeredService, attributesRenderer);
+        });
     }
 
     /**

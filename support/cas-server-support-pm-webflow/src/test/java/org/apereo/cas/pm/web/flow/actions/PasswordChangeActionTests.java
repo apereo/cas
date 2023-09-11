@@ -4,6 +4,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -12,15 +13,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,13 +32,8 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     private Action passwordChangeAction;
 
     @Test
-    void verifyFailNoCreds() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyFailNoCreds() throws Throwable {
+        val context = org.apereo.cas.util.MockRequestContext.create();
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
         changeReq.setPassword("123456".toCharArray());
@@ -53,13 +42,8 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyFailsValidation() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyFailsValidation() throws Throwable {
+        val context = org.apereo.cas.util.MockRequestContext.create();
 
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
@@ -71,13 +55,8 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyChange() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyChange() throws Throwable {
+        val context = org.apereo.cas.util.MockRequestContext.create();
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Th!$isT3$t"));
@@ -92,13 +71,8 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyChangeFails() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyChangeFails() throws Throwable {
+        val context = org.apereo.cas.util.MockRequestContext.create();
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("bad-credential", "P@ssword"));
@@ -112,13 +86,8 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     }
 
     @Test
-    void verifyPasswordRejected() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyPasswordRejected() throws Throwable {
+        val context = MockRequestContext.create();
 
         WebUtils.putCredential(context,
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("error-credential", "P@ssword"));

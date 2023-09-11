@@ -62,6 +62,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -495,7 +496,7 @@ public class CasCoreAuditConfiguration {
                     manager.setUseSingleLine(slf4j.isUseSingleLine());
                     manager.setEntrySeparator(slf4j.getSinglelineSeparator());
                     if (!slf4j.getAuditableFields().isEmpty()) {
-                        val fields = org.springframework.util.StringUtils.commaDelimitedListToSet(slf4j.getAuditableFields())
+                        val fields = StringUtils.commaDelimitedListToSet(slf4j.getAuditableFields())
                             .stream()
                             .map(field -> AuditTrailManager.AuditableFields.valueOf(field.toUpperCase(Locale.ENGLISH)))
                             .toList();

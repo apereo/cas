@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class JsonWebTokenEncryptorTests {
     @Test
-    void verifyEncryptionFails() {
+    void verifyEncryptionFails() throws Throwable {
         val secret = new DefaultRandomStringGenerator().getNewString(16);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val encryptor = JsonWebTokenEncryptor.builder()
@@ -40,7 +40,7 @@ class JsonWebTokenEncryptorTests {
     }
 
     @Test
-    void verifyA128GCM() throws Exception {
+    void verifyA128GCM() throws Throwable {
         val secret = new DefaultRandomStringGenerator().getNewString(16);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val result = JsonWebTokenEncryptor.builder()
@@ -54,7 +54,7 @@ class JsonWebTokenEncryptorTests {
     }
 
     @Test
-    void verifyA512GCM() throws Exception {
+    void verifyA512GCM() throws Throwable {
         val secret = new DefaultRandomStringGenerator().getNewString(32);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val result = JsonWebTokenEncryptor.builder()
@@ -68,7 +68,7 @@ class JsonWebTokenEncryptorTests {
     }
 
     @Test
-    void verifyA256KW() throws Exception {
+    void verifyA256KW() throws Throwable {
         val secret = new DefaultRandomStringGenerator().getNewString(32);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val result = JsonWebTokenEncryptor.builder()

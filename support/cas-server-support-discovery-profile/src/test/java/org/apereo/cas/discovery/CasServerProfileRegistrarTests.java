@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDiscoveryProfileConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -78,7 +80,7 @@ class CasServerProfileRegistrarTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);

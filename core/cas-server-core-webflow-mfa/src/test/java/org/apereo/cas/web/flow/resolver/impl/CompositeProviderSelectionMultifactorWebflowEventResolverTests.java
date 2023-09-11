@@ -12,9 +12,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -25,25 +25,17 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -77,7 +69,6 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @Import(CompositeProviderSelectionMultifactorWebflowEventResolverTests.MultifactorBypassTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
     class BypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
@@ -85,11 +76,8 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         private CasWebflowEventResolver compositeResolver;
 
         @Test
-        void verifyCompositeBypass() {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        void verifyCompositeBypass() throws Throwable {
+            val context = MockRequestContext.create();
 
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
@@ -107,7 +95,6 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
     @Import(CompositeProviderSelectionMultifactorWebflowEventResolverTests.MultifactorTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
@@ -115,7 +102,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         private CasWebflowEventResolver compositeResolver;
 
         @Test
-        void verifyComposite() {
+        void verifyComposite() throws Throwable {
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
 
@@ -135,7 +122,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         @Test
-        void verifyCompositeWithAuthnContextValidated() {
+        void verifyCompositeWithAuthnContextValidated() throws Throwable {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
@@ -156,18 +143,16 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         }
 
         @Test
-        void verifyNoComposite() {
+        void verifyNoComposite() throws Throwable {
             val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, provider.getId()));
             val result = assertCompositeProvider(resolvedEvents, RegisteredServiceTestUtils.getAuthentication());
             assertEquals(provider.getId(), result.iterator().next().getId());
         }
 
-        private Set<Event> assertCompositeProvider(final Set<Event> resolvedEvents, final Authentication authentication) {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        private Set<Event> assertCompositeProvider(final Set<Event> resolvedEvents,
+                                                   final Authentication authentication) throws Throwable {
+            val context = MockRequestContext.create();
 
             val service = RegisteredServiceTestUtils.getRegisteredService();
             servicesManager.save(service);

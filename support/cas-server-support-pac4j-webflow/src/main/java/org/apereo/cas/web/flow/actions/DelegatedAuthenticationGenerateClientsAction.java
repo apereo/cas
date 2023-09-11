@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnEvaluator;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,17 +30,14 @@ public class DelegatedAuthenticationGenerateClientsAction extends BaseCasWebflow
     private final DelegatedAuthenticationSingleSignOnEvaluator singleSignOnEvaluator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        produceDelegatedAuthenticationClientsForContext(requestContext);
-        return success();
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+        return FunctionUtils.doUnchecked(() -> {
+            produceDelegatedAuthenticationClientsForContext(requestContext);
+            return success();
+        });
     }
 
-    /**
-     * Produce delegated authentication clients for context.
-     *
-     * @param context the context
-     */
-    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context) {
+    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context) throws Throwable {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val providers = singleSignOnEvaluator.configurationContext()
             .getDelegatedClientIdentityProvidersProducer().produce(context);

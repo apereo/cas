@@ -39,7 +39,7 @@ public class AzureMapsGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(geoLocationService.locate("8.8.8.8"));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40, Double.valueOf(resp.getLatitude()).intValue());

@@ -3,16 +3,13 @@ package org.apereo.cas.support.saml.web.support;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WebUtilTests {
 
     @Test
-    void verifyFindService() {
+    void verifyFindService() throws Throwable {
         val casArgumentExtractor =
             new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         val request = new MockHttpServletRequest();
@@ -36,7 +33,7 @@ class WebUtilTests {
     }
 
     @Test
-    void verifyFoundNoService() {
+    void verifyFoundNoService() throws Throwable {
         val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");

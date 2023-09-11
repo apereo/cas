@@ -72,7 +72,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Test
     @Order(Integer.MAX_VALUE)
-    public void verifyFailOps() {
+    void verifyFailOps() throws Throwable {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
     }
@@ -81,7 +81,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
         @Override
         public void afterTestClass(final TestContext testContext) throws Exception {
             var registry = testContext.getApplicationContext().getBean("cassandraServiceRegistry", ServiceRegistry.class);
-            DisposableBean.class.cast(registry).destroy();
+            ((DisposableBean) registry).destroy();
         }
     }
 }

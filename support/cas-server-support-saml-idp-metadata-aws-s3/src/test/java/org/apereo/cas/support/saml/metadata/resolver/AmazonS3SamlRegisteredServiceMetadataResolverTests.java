@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdPAmazonS3RegisteredServiceMetadataConfiguration.class,
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml22",
     
     "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=cassamlmetadata",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
@@ -52,7 +52,7 @@ class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     private SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("SAML");
         service.setId(100);

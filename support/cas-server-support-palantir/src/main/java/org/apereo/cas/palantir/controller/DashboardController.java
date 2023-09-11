@@ -16,14 +16,25 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(PalantirConstants.URL_PATH_PALANTIR)
 public class DashboardController {
+    private static final ModelAndView VIEW_DASHBOARD = new ModelAndView("palantir/dashboard");
 
     /**
-     * Dashboard home.
+     * Dashboard root.
      *
      * @return the model and view
      */
-    @GetMapping (path = "/dashboard", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView dashboardRoot() {
+        return VIEW_DASHBOARD;
+    }
+
+    /**
+     * Dashboard home page explicitly defined.
+     *
+     * @return the model and view
+     */
+    @GetMapping(path = {"/dashboard", "/", "/dashboard/**"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView dashboardHome() {
-        return new ModelAndView("palantir/dashboard");
+        return VIEW_DASHBOARD;
     }
 }

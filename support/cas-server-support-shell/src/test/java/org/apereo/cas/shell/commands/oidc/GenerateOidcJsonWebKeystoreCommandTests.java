@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,11 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 class GenerateOidcJsonWebKeystoreCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val location = FileUtils.getTempDirectoryPath();
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-oidc-jwks --jwksFile " + location + " --jwksKeyId cas"));
     }

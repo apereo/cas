@@ -32,10 +32,10 @@ public interface DelegatedClientAuthenticationWebflowManager {
      * @param webContext     the web context
      * @param client         the client
      * @return the transient session ticket
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     TransientSessionTicket store(RequestContext requestContext,
-                                 JEEContext webContext, Client client) throws Exception;
+                                 JEEContext webContext, Client client) throws Throwable;
 
     /**
      * Retrieve.
@@ -44,7 +44,7 @@ public interface DelegatedClientAuthenticationWebflowManager {
      * @param webContext     the web context
      * @param client         the client
      * @return the service
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    Service retrieve(RequestContext requestContext, WebContext webContext, Client client) throws Exception;
+    Service retrieve(RequestContext requestContext, WebContext webContext, Client client) throws Throwable;
 }

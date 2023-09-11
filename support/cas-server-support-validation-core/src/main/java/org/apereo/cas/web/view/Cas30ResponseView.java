@@ -39,6 +39,5 @@ public class Cas30ResponseView extends Cas20ResponseView {
         super.prepareMergedOutputModel(model, request, response);
         prepareCasResponseAttributesForViewModel(model);
     }
-
-
+    
 }

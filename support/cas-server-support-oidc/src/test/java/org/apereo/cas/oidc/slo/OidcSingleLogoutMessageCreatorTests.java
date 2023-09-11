@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.text.ParseException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +38,7 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     private SingleLogoutMessageCreator oidcSingleLogoutMessageCreator;
 
     @Test
-    void verifyBackChannelLogout() throws ParseException {
+    void verifyBackChannelLogout() throws Throwable {
         val service = getOidcRegisteredService(true, false);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -68,7 +67,7 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyFrontChannelLogout() {
+    void verifyFrontChannelLogout() throws Throwable {
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
             .build();

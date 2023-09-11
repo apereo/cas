@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     let pswd = await page.$('#password');
     assert(pswd == null);
     await cas.type(page, '#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#login h3", "Use your registered YubiKey device(s) to authenticate.");
     await browser.close();

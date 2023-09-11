@@ -16,7 +16,6 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +38,7 @@ public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
         soapAuthenticationClient.setCredentials(credential);
 
         val request = new ObjectFactory().createGetSoapAuthenticationRequest();
@@ -53,22 +52,22 @@ public class SoapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         val httpStatus = HttpStatus.valueOf(response.getStatus());
-        if (httpStatus.equals(HttpStatus.FORBIDDEN)) {
+        if (httpStatus == HttpStatus.FORBIDDEN) {
             throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
         }
-        if (httpStatus.equals(HttpStatus.UNAUTHORIZED)) {
+        if (httpStatus == HttpStatus.UNAUTHORIZED) {
             throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
         }
-        if (httpStatus.equals(HttpStatus.NOT_FOUND)) {
+        if (httpStatus == HttpStatus.NOT_FOUND) {
             throw new AccountNotFoundException("Could not locate account for " + credential.getUsername());
         }
-        if (httpStatus.equals(HttpStatus.LOCKED)) {
+        if (httpStatus == HttpStatus.LOCKED) {
             throw new AccountLockedException("Could not authenticate locked account for " + credential.getUsername());
         }
-        if (httpStatus.equals(HttpStatus.PRECONDITION_FAILED)) {
+        if (httpStatus == HttpStatus.PRECONDITION_FAILED) {
             throw new AccountExpiredException("Could not authenticate expired account for " + credential.getUsername());
         }
-        if (httpStatus.equals(HttpStatus.PRECONDITION_REQUIRED)) {
+        if (httpStatus == HttpStatus.PRECONDITION_REQUIRED) {
             throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
         }
         throw new FailedLoginException("SOAP endpoint returned an unknown status code "

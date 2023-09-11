@@ -46,16 +46,16 @@ public class WsFederationAction extends AbstractAuthenticationAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
-                return super.doExecute(context);
+                return super.doExecuteInternal(context);
             }
             return wsFederationRequestBuilder.buildAuthenticationRequestEvent(context);
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LoggingUtils.error(LOGGER, ex);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, ex.getMessage());
         }

@@ -25,7 +25,7 @@ public class ImmutableNativeJavaSetSerializer extends Serializer<Set<Object>> {
     @Override
     public void write(final Kryo kryo, final Output output, final Set<Object> object) {
         output.writeInt(object.size(), true);
-        for (final val elm : object) {
+        for (val elm : object) {
             kryo.writeClassAndObject(output, elm);
         }
     }

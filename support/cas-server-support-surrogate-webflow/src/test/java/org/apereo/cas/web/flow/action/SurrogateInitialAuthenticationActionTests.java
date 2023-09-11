@@ -36,7 +36,7 @@ class SurrogateInitialAuthenticationActionTests {
     private Action initialAuthenticationAction;
 
     @Test
-    void verifyNoCredentialsFound() throws Exception {
+    void verifyNoCredentialsFound() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
             new MockHttpServletResponse()));
@@ -45,7 +45,7 @@ class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    void verifySurrogateCredentialsFound() throws Exception {
+    void verifySurrogateCredentialsFound() throws Throwable {
         val context = new MockRequestContext();
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
@@ -57,7 +57,7 @@ class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    void verifySelectingSurrogateList() throws Exception {
+    void verifySelectingSurrogateList() throws Throwable {
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("+casuser");
@@ -72,7 +72,7 @@ class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    void verifyUsernamePasswordCredentialsFound() throws Exception {
+    void verifyUsernamePasswordCredentialsFound() throws Throwable {
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("cassurrogate+casuser");
@@ -88,7 +88,7 @@ class SurrogateInitialAuthenticationActionTests {
     }
 
     @Test
-    void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() throws Exception {
+    void verifyUsernamePasswordCredentialsBadPasswordAndCancelled() throws Throwable {
         val context = new MockRequestContext();
         var credential = new UsernamePasswordCredential();
         credential.setUsername("cassurrogate+casuser");

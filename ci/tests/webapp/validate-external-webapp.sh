@@ -20,10 +20,6 @@ case "$1" in
         sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
         ;;
-    discovery-server)
-        project="cas-server-webapp-eureka-server"
-        url=""
-        ;;
     *)
         echo -e "Unable to determine web application project $1"
         exit 1

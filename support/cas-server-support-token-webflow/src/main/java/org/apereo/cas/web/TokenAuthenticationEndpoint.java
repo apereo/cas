@@ -65,6 +65,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @param service  the service
      * @return the map
+     * @throws Throwable the throwable
      */
     @WriteOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Produce an authentication token for the user and the intended application", parameters = {
@@ -72,7 +73,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> produceToken(@Selector final String username,
-                                  final String service) {
+                                  final String service) throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = NumberUtils.isCreatable(service)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
@@ -98,6 +99,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
      * @param token   the token
      * @param service the service
      * @return the map
+     * @throws Throwable the throwable
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Validate an authentication token for the user and the intended application", parameters = {
@@ -105,7 +107,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> validateToken(@Selector final String token,
-                                  final String service) {
+                                  final String service) throws Throwable {
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = NumberUtils.isCreatable(service)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(service))

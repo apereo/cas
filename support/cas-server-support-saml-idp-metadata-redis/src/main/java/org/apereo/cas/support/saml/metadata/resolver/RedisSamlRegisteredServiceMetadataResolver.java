@@ -32,7 +32,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
      */
     public static final String CAS_PREFIX = SamlMetadataDocument.class.getSimpleName() + ':';
 
-    private final transient CasRedisTemplate<String, SamlMetadataDocument> redisTemplate;
+    private final CasRedisTemplate<String, SamlMetadataDocument> redisTemplate;
 
     private final long scanCount;
 

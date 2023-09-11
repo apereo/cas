@@ -19,7 +19,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,11 +36,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,7 +50,6 @@ import static org.mockito.Mockito.*;
 class InitialFlowSetupActionTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractWebflowActionsTests {
 
         private static final String CONST_CONTEXT_PATH = "/test";
@@ -112,32 +108,32 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        void verifySettingContextPath() {
+        void verifySettingContextPath() throws Throwable {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-            action.doExecute(context);
+            action.execute(context);
 
             assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
             assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
         }
 
         @Test
-        void verifyResettingContextPath() {
+        void verifyResettingContextPath() throws Throwable {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-            this.action.doExecute(context);
+            this.action.execute(context);
 
             assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
             assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
 
             request.setContextPath(CONST_CONTEXT_PATH_2);
-            this.action.doExecute(context);
+            this.action.execute(context);
 
             assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.warnCookieGenerator.getCookiePath());
             assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.tgtCookieGenerator.getCookiePath());
@@ -152,14 +148,13 @@ class InitialFlowSetupActionTests {
         "cas.tgc.crypto.enabled=false"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SsoDisabledTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
         private Action action;
 
         @Test
-        void verifyResponseStatusAsError() throws Exception {
+        void verifyResponseStatusAsError() throws Throwable {
             val context = new MockRequestContext();
             var response = new MockHttpServletResponse();
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -169,7 +164,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        void verifyNoServiceFound() throws Exception {
+        void verifyNoServiceFound() throws Throwable {
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -179,7 +174,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        void verifyServiceFound() throws Exception {
+        void verifyServiceFound() throws Throwable {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
@@ -193,7 +188,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        void verifyServiceStrategy() throws Exception {
+        void verifyServiceStrategy() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
@@ -214,7 +209,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        void verifyTgtNoSso() throws Exception {
+        void verifyTgtNoSso() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
 

@@ -44,7 +44,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
-                                                                              final Credential... credential) throws AuthenticationException {
+                                                                              final Credential... credential) throws Throwable {
         val builder = authenticationResultBuilderFactory.newBuilder();
         if (credential != null) {
             Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
@@ -55,7 +55,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final Service service,
                                                                        final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                       final Credential... credentials) throws AuthenticationException {
+                                                                       final Credential... credentials) throws Throwable {
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials)
             .collect(authenticationResultBuilder.getAuthentications());
@@ -65,13 +65,13 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResult finalizeAllAuthenticationTransactions(@NonNull final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                      final Service service) {
+                                                                      final Service service) throws Throwable {
         return authenticationResultBuilder.build(principalElectionStrategy, service);
     }
 
     @Override
     public AuthenticationResult finalizeAuthenticationTransaction(final Service service, final Credential... credential)
-        throws AuthenticationException {
+        throws Throwable {
 
         return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);
     }

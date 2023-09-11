@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -17,7 +18,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RequiresModule(name = "cas-server-support-sms-twilio")
+@RequiresModule(name = "cas-server-support-twilio")
 @Getter
 @Accessors(chain = true)
 @Setter
@@ -31,11 +32,24 @@ public class TwilioProperties implements Serializable {
      * Twilio account identifier used for authentication.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String accountId;
 
     /**
      * Twilio secret token used for authentication.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String token;
+
+    /**
+     * Whether the module is enabled or not, defaults to true.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
+    /**
+     * Controls whether Twilio support should also handle making phone calls.
+     */
+    private boolean phoneCallsEnabled;
 }

@@ -18,11 +18,12 @@ import java.util.Arrays;
 @NoArgsConstructor
 public class Log4jInitialization implements ApplicationEntrypointInitializer {
     @Override
-    public void initialize(final String[] mainArguments) {
+    public ApplicationEntrypointInitializer initialize(final String[] mainArguments) {
         val args = Arrays.stream(mainArguments)
             .filter(arg -> arg.startsWith("--logging.level"))
             .map(arg -> StringUtils.replace(arg, "=", " "))
             .toArray(String[]::new);
         MainMapLookup.setMainArguments(args);
+        return this;
     }
 }

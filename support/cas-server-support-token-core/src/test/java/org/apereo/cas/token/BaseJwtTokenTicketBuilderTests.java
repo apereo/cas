@@ -101,7 +101,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
         }
 
         @Bean
-        public TicketValidator tokenTicketValidator() {
+        public TicketValidator tokenTicketValidator() throws Throwable {
             val validator = mock(TicketValidator.class);
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser",
                 CollectionUtils.wrap("name", List.of("value"),

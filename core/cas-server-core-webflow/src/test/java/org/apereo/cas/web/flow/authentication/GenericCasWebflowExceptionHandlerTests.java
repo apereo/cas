@@ -1,17 +1,11 @@
 package org.apereo.cas.web.flow.authentication;
 
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.binding.message.MessageContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockParameterMap;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -20,7 +14,6 @@ import javax.security.auth.login.CredentialExpiredException;
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GenericCasWebflowExceptionHandlerTests}.
@@ -31,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class GenericCasWebflowExceptionHandlerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(AccountLockedException.class);
         errors.add(CredentialExpiredException.class);
@@ -39,12 +32,7 @@ class GenericCasWebflowExceptionHandlerTests {
         val catalog = new DefaultCasWebflowExceptionCatalog();
         catalog.registerExceptions(errors);
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create();
 
         val handler = new GenericCasWebflowExceptionHandler(catalog, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         assertTrue(handler.supports(new AccountExpiredException(), context));

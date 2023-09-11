@@ -13,7 +13,7 @@ async function startAuthFlow(page, username) {
     await cas.screenshot(page);
     await cas.type(page, '#username', username);
     await page.waitForTimeout(1000);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     console.log(`Page url: ${await page.url()}`);

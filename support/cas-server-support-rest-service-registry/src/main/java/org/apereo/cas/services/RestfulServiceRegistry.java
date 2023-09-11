@@ -3,10 +3,10 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -18,7 +18,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +59,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         try {
             invokeServiceRegistryListenerPreSave(registeredService);
             val entity = this.serializer.toString(registeredService);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -88,7 +87,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
                 .concat(Long.toString(registeredService.getId()));
             invokeServiceRegistryListenerPreSave(registeredService);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -109,7 +108,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public void deleteAll() {
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -127,7 +126,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         HttpResponse response = null;
         val clientInfo = ClientInfoHolder.getClientInfo();
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -158,7 +157,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         HttpResponse response = null;
         try {
             val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/").concat(Long.toString(id));
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)

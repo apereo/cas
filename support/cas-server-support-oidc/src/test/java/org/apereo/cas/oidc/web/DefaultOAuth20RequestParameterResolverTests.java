@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("JavaUtilDate")
 class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     @Test
-    void verifySignedJwtWithClientId() {
+    void verifySignedJwtWithClientId() throws Throwable {
         val registeredService = getOidcRegisteredService("client");
         servicesManager.save(registeredService);
 

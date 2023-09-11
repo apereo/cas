@@ -45,7 +45,7 @@ class HazelcastDockerSwarmDiscoveryStrategyTests {
     }
 
     @Test
-    void verifyOperationDns() {
+    void verifyOperationDns() throws Throwable {
         val cluster = new HazelcastClusterProperties();
         val swarm = cluster.getDiscovery().getDockerSwarm();
 
@@ -66,7 +66,7 @@ class HazelcastDockerSwarmDiscoveryStrategyTests {
     }
 
     @Test
-    void verifyOperationMembers() {
+    void verifyOperationMembers() throws Throwable {
         val cluster = new HazelcastClusterProperties();
         val swarm = cluster.getDiscovery().getDockerSwarm();
 

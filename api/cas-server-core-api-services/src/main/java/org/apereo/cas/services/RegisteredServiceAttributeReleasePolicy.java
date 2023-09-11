@@ -77,16 +77,18 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @param context the context
      * @return the attributes
+     * @throws Throwable the throwable
      */
-    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context);
+    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context) throws Throwable;
 
     /**
      * Gets the attributes that qualify for consent.
      *
      * @param context the context
      * @return the attributes
+     * @throws Throwable the throwable
      */
-    default Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+    default Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
         return getAttributes(context);
     }
 

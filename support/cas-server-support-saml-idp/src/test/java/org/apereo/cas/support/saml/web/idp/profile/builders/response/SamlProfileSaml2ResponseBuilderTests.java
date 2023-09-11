@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifySamlResponseAllSigned() throws Exception {
+    void verifySamlResponseAllSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -64,7 +64,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseWithIssuerEntityId() throws Exception {
+    void verifySamlResponseWithIssuerEntityId() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -83,7 +83,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseWithAttributeQuery() throws Exception {
+    void verifySamlResponseWithAttributeQuery() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -108,7 +108,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAllSignedEncrypted() throws Exception {
+    void verifySamlResponseAllSignedEncrypted() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -128,7 +128,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAssertionSigned() throws Exception {
+    void verifySamlResponseAssertionSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -150,7 +150,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseResponseSigned() throws Exception {
+    void verifySamlResponseResponseSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -167,7 +167,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseNothingSigned() throws Exception {
+    void verifySamlResponseNothingSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -185,7 +185,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseSha1SigningAndDigest() throws Exception {
+    void verifySamlResponseSha1SigningAndDigest() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -215,7 +215,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseSha256SigningAndDigest() throws Exception {
+    void verifySamlResponseSha256SigningAndDigest() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -251,7 +251,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithCBC() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithCBC() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -278,7 +278,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithGCM() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithGCM() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -305,7 +305,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 

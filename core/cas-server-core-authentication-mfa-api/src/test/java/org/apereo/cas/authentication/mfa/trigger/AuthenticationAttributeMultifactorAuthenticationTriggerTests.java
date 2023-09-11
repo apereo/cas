@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
@@ -41,7 +41,7 @@ class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseM
 
     @Test
     @Order(2)
-    public void verifyMultipleProvider() {
+    void verifyMultipleProvider() throws Throwable {
         val otherProvider = new TestMultifactorAuthenticationProvider();
         otherProvider.setId("mfa-other");
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
@@ -59,7 +59,7 @@ class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseM
 
     @Test
     @Order(3)
-    public void verifyNoMatch() {
+    void verifyNoMatch() throws Throwable {
 
         val props = new CasConfigurationProperties();
         val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();

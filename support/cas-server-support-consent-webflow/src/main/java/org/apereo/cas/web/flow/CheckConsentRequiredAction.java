@@ -9,8 +9,8 @@ import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -45,22 +45,18 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        val consentEvent = determineConsentEvent(requestContext);
-        if (StringUtils.isBlank(consentEvent)) {
-            return null;
-        }
-        prepareConsentForRequestContext(requestContext);
-        return new EventFactorySupport().event(this, consentEvent);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> {
+            val consentEvent = determineConsentEvent(requestContext);
+            if (StringUtils.isBlank(consentEvent)) {
+                return null;
+            }
+            prepareConsentForRequestContext(requestContext);
+            return new EventFactorySupport().event(this, consentEvent);
+        });
     }
 
-    /**
-     * Determine consent event string.
-     *
-     * @param requestContext the request context
-     * @return the string
-     */
-    protected String determineConsentEvent(final RequestContext requestContext) {
+    protected String determineConsentEvent(final RequestContext requestContext) throws Throwable {
         val webService = WebUtils.getService(requestContext);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         if (service == null) {
@@ -76,19 +72,10 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
         return isConsentRequired(service, registeredService, authentication, requestContext);
     }
 
-    /**
-     * Is consent required ?
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @param requestContext    the request context
-     * @return the event id.
-     */
     protected String isConsentRequired(final Service service,
                                        final RegisteredService registeredService,
                                        final Authentication authentication,
-                                       final RequestContext requestContext) {
+                                       final RequestContext requestContext) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val required = consentActivationStrategy.isConsentRequired(service,
             registeredService, authentication, request);

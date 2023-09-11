@@ -22,6 +22,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -60,7 +61,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val credential = getCredentialFromContext(context);
 
         val service = locateServiceForRequest(context);
@@ -140,10 +141,10 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         return this.orderedResolvers
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .map(resolver -> {
+            .map(Unchecked.function(resolver -> {
                 LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
                 return resolver.resolveSingle(context);
-            })
+            }))
             .filter(Objects::nonNull)
             .sorted(Comparator.comparing(Event::getId))
             .collect(Collectors.toList());
@@ -152,18 +153,16 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     protected Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
                                                                final Credential credential,
                                                                final WebApplicationService service) {
-        val result = (exception instanceof AuthenticationException || exception instanceof AbstractTicketException)
-            ? Optional.of(exception)
-            : (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException)
-            ? Optional.of(exception.getCause())
-            : Optional.empty();
-        return result
+        var result = (Throwable) exception;
+        if (exception instanceof AuthenticationException || exception instanceof AbstractTicketException) {
+            result = exception;
+        } else if (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException) {
+            result = exception.getCause();
+        }
+        return Optional.ofNullable(result)
             .map(Exception.class::cast)
             .map(ex -> {
-                FunctionUtils.doIf(LOGGER.isDebugEnabled(),
-                        e -> LOGGER.debug(ex.getMessage(), ex),
-                        e -> LOGGER.warn(ex.getMessage()))
-                    .accept(exception);
+                LoggingUtils.warn(LOGGER, ex);
                 val attributes = new LocalAttributeMap<Serializable>(CasWebflowConstants.TRANSITION_ID_ERROR, ex);
                 attributes.put(Credential.class.getName(), credential);
                 attributes.put(WebApplicationService.class.getName(), service);
@@ -172,7 +171,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .orElse(null);
     }
 
-    private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
+    private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) throws Throwable {
         if (service == null) {
             return null;
         }
@@ -195,6 +194,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .registeredService(registeredService)
             .service(service)
             .principal(authn.getPrincipal())
+            .applicationContext(getConfigurationContext().getApplicationContext())
             .build();
         val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
         releasingAttributes.putAll(authn.getAttributes());

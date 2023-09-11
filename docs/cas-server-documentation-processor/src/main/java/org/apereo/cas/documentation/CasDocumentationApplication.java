@@ -453,7 +453,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -485,7 +485,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -517,7 +517,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -549,7 +549,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
-                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -687,8 +687,8 @@ public class CasDocumentationApplication {
             var param = method.getParameters()[i];
             var selector = param.getAnnotation(Selector.class) != null;
             selector = selector || param.getAnnotation(PathVariable.class) != null;
-
             if (selector) {
+                map.put("selector", selector);
                 var path = (String) map.get("path");
 
                 if (path.indexOf('{') == -1) {
@@ -735,8 +735,8 @@ public class CasDocumentationApplication {
                     var requestParamAnn = parameter.getAnnotation(RequestParam.class);
                     if (requestParamAnn != null) {
                         var paramData = new LinkedHashMap<String, Object>();
-                        var name = StringUtils.defaultString(requestParamAnn.name(), requestParamAnn.value());
-                        name = StringUtils.defaultString(name, parameter.getName());
+                        var name = StringUtils.defaultIfBlank(requestParamAnn.name(), requestParamAnn.value());
+                        name = StringUtils.defaultIfBlank(name, parameter.getName());
                         paramData.put("name", name);
                         paramData.put("description", "Request query parameter");
                         paramData.put("required", requestParamAnn.required());

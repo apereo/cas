@@ -18,7 +18,7 @@ public class ElasticApmAgentInitializer implements ApplicationEntrypointInitiali
     static final String SETTING_ELASTIC_APM_AGENT_ENABLED = "ELASTIC_APM_AGENT_ENABLED";
 
     @Override
-    public void initialize(final String[] mainArguments) {
+    public ApplicationEntrypointInitializer initialize(final String[] mainArguments) {
         val apmEnabled = StringUtils.defaultIfBlank(System.getProperty(SETTING_ELASTIC_APM_AGENT_ENABLED,
             System.getenv(SETTING_ELASTIC_APM_AGENT_ENABLED)), "true");
         if (BooleanUtils.toBoolean(apmEnabled)) {
@@ -27,5 +27,6 @@ public class ElasticApmAgentInitializer implements ApplicationEntrypointInitiali
             //CHECKSTYLE:ON
             ElasticApmAttacher.attach();
         }
+        return this;
     }
 }

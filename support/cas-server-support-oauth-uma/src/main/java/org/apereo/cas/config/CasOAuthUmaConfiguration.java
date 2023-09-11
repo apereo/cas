@@ -192,6 +192,7 @@ public class CasOAuthUmaConfiguration {
             val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION,
                 OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
             headerClient.setName(clientName);
+            headerClient.init();
             val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);

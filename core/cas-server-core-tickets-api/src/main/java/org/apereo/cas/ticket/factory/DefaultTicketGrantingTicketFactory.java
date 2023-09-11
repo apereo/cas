@@ -59,8 +59,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication,
-                                                     final Service service,
-                                                     final Class<T> clazz) {
+                                                     final Service service, final Class<T> clazz) throws Throwable {
         val tgtId = produceTicketIdentifier(authentication);
         return produceTicket(authentication, tgtId, service, clazz);
     }
@@ -102,7 +101,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
             .or(() -> Optional.of(ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy()));
     }
 
-    protected String produceTicketIdentifier(final Authentication authentication) {
+    protected String produceTicketIdentifier(final Authentication authentication) throws Throwable {
         var tgtId = ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (cipherExecutor != null && cipherExecutor.isEnabled()) {
             LOGGER.trace("Attempting to encode ticket-granting ticket [{}]", tgtId);

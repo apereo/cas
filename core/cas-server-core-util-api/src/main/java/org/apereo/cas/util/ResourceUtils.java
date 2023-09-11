@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -81,7 +80,7 @@ public class ResourceUtils {
      * that is picked up by the GraalVM native image.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public boolean isEmbeddedResource(final String resource) {
         val lowerCase = resource.toLowerCase(Locale.ENGLISH);
@@ -224,57 +223,60 @@ public class ResourceUtils {
      * @param containsName the resource name pattern
      * @return the file
      */
-    @SneakyThrows
     @SuppressWarnings("JdkObsolete")
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {
-        LOGGER.trace("Preparing possible classpath resource [{}]", resource);
-        if (resource == null) {
-            LOGGER.debug("No resource defined to prepare. Returning null");
-            return null;
-        }
+        try {
+            LOGGER.trace("Preparing possible classpath resource [{}]", resource);
+            if (resource == null) {
+                LOGGER.debug("No resource defined to prepare. Returning null");
+                return null;
+            }
 
-        if (isFileURL(resource.getURL())) {
-            return resource;
-        }
+            if (isFileURL(resource.getURL())) {
+                return resource;
+            }
 
-        val url = extractArchiveURL(resource.getURL());
-        val file = getFile(url);
+            val url = extractArchiveURL(resource.getURL());
+            val file = getFile(url);
 
-        val destination = new File(FileUtils.getTempDirectory(), Objects.requireNonNull(resource.getFilename()));
-        if (isDirectory) {
-            LOGGER.trace("Creating resource directory [{}]", destination);
-            FileUtils.forceMkdir(destination);
-            FileUtils.cleanDirectory(destination);
-        } else if (destination.exists()) {
-            LOGGER.trace("Deleting resource directory [{}]", destination);
-            FileUtils.forceDelete(destination);
-        }
+            val destination = new File(FileUtils.getTempDirectory(), Objects.requireNonNull(resource.getFilename()));
+            if (isDirectory) {
+                LOGGER.trace("Creating resource directory [{}]", destination);
+                FileUtils.forceMkdir(destination);
+                FileUtils.cleanDirectory(destination);
+            } else if (destination.exists()) {
+                LOGGER.trace("Deleting resource directory [{}]", destination);
+                FileUtils.forceDelete(destination);
+            }
 
-        LOGGER.trace("Processing file [{}]", file);
-        try (val jFile = new JarFile(file)) {
-            val e = jFile.entries();
-            while (e.hasMoreElements()) {
-                val entry = e.nextElement();
-                val name = entry.getName();
-                LOGGER.trace("Comparing [{}] against [{}] and pattern [{}]", name, resource.getFilename(), containsName);
-                if (name.contains(resource.getFilename()) && RegexUtils.find(containsName, name)) {
-                    try (val stream = jFile.getInputStream(entry)) {
-                        var copyDestination = destination;
-                        if (isDirectory) {
-                            val entryFileName = new File(name);
-                            copyDestination = new File(destination, entryFileName.getName());
-                        }
-                        LOGGER.trace("Copying resource entry [{}] to [{}]", name, copyDestination);
-                        try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
-                            IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+            LOGGER.trace("Processing file [{}]", file);
+            try (val jFile = new JarFile(file)) {
+                val e = jFile.entries();
+                while (e.hasMoreElements()) {
+                    val entry = e.nextElement();
+                    val name = entry.getName();
+                    LOGGER.trace("Comparing [{}] against [{}] and pattern [{}]", name, resource.getFilename(), containsName);
+                    if (name.contains(resource.getFilename()) && RegexUtils.find(containsName, name)) {
+                        try (val stream = jFile.getInputStream(entry)) {
+                            var copyDestination = destination;
+                            if (isDirectory) {
+                                val entryFileName = new File(name);
+                                copyDestination = new File(destination, entryFileName.getName());
+                            }
+                            LOGGER.trace("Copying resource entry [{}] to [{}]", name, copyDestination);
+                            try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
+                                IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+                            }
                         }
                     }
                 }
             }
+            return new FileSystemResource(destination);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        return new FileSystemResource(destination);
     }
 
 
@@ -350,8 +352,9 @@ public class ResourceUtils {
      *
      * @param artifact the artifact
      * @return the resource
+     * @throws Throwable the throwable
      */
-    public static Resource toFileSystemResource(final File artifact) {
+    public static Resource toFileSystemResource(final File artifact) throws Throwable {
         val canonicalPath = FunctionUtils.doUnchecked(artifact::getCanonicalPath);
         FunctionUtils.throwIf(artifact.exists() && !artifact.canRead(),
             () -> new IllegalArgumentException("Resource " + canonicalPath + " is not readable."));

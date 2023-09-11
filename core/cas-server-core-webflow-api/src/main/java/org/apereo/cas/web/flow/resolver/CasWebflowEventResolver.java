@@ -19,16 +19,18 @@ public interface CasWebflowEventResolver {
      *
      * @param context the context
      * @return the event
+     * @throws Throwable the throwable
      */
-    Set<Event> resolve(RequestContext context);
+    Set<Event> resolve(RequestContext context) throws Throwable;
 
     /**
      * Resolve single event.
      *
      * @param context the context
      * @return the event
+     * @throws Throwable the throwable
      */
-    Event resolveSingle(RequestContext context);
+    Event resolveSingle(RequestContext context) throws Throwable;
 
     /**
      * Define the name of this even resolver.
@@ -44,6 +46,7 @@ public interface CasWebflowEventResolver {
      *
      * @param context the context
      * @return the event
+     * @throws Throwable the throwable
      */
-    Set<Event> resolveInternal(RequestContext context);
+    Set<Event> resolveInternal(RequestContext context) throws Throwable;
 }

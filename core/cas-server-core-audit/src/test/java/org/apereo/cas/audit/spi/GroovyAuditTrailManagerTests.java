@@ -48,7 +48,7 @@ class GroovyAuditTrailManagerTests {
     private AuditTrailManager auditTrailManager;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val ctx = new AuditActionContext("casuser",
             "TEST", "TEST", "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));

@@ -45,14 +45,14 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadCredentialsOperation() {
+    void verifyBadCredentialsOperation() throws Throwable {
         val registeredService = addRegisteredService();
         val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation("---", registeredService);
         assertNotNull(body.getError());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = addRegisteredService();
         val auth = service.getClientId() + ':' + CLIENT_SECRET;
         val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth, service);
@@ -63,7 +63,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadSecret() {
+    void verifyBadSecret() throws Throwable {
         val service = addRegisteredService(SERVICE_URL, UUID.randomUUID().toString());
         val auth = service.getClientId() + ':' + CLIENT_SECRET;
         val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation(auth, service);
@@ -71,7 +71,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyOperationFromOtherClient() {
+    void verifyOperationFromOtherClient() throws Throwable {
         val registeredService2 = getRegisteredService(REDIRECT_URI, CLIENT_ID2, CLIENT_SECRET);
         servicesManager.save(registeredService2);
         val registeredService = addRegisteredService();
@@ -84,7 +84,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoService() {
+    void verifyNoService() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -103,7 +103,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyUnauthzOperation() {
+    void verifyUnauthzOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val result = introspectionEndpoint.handleRequest(request, response);
@@ -111,7 +111,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadOperation() {
+    void verifyBadOperation() throws Throwable {
         val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -123,7 +123,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     protected BaseOAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth,
-                                                                                  final OAuthRegisteredService registeredService) {
+                                                                                  final OAuthRegisteredService registeredService) throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -7,6 +8,7 @@ import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 /**
@@ -18,12 +20,12 @@ import org.springframework.util.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultPasswordValidationService implements PasswordValidationService {
-    private final String policyPattern;
+    private final CasConfigurationProperties casProperties;
 
     private final PasswordHistoryService passwordHistoryService;
 
     @Override
-    public boolean isValid(final PasswordChangeRequest bean) {
+    public boolean isValid(final PasswordChangeRequest bean) throws Throwable {
         if (!StringUtils.hasText(bean.toPassword())) {
             LOGGER.error("Provided password is blank");
             return false;
@@ -36,10 +38,12 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             LOGGER.error("Provided password does not match the confirmed password");
             return false;
         }
-        if (!RegexUtils.find(policyPattern, bean.toPassword())) {
-            LOGGER.error("Provided password does not match the pattern required for password policy [{}]", policyPattern);
+
+        if (!isAcceptedByPasswordPolicy(bean.toPassword())) {
+            LOGGER.error("Provided password does not match the pattern required for password policy");
             return false;
         }
+
         if (passwordHistoryService.exists(bean)) {
             LOGGER.error("Recycled password from password history is not allowed for [{}]", bean.getUsername());
             return false;
@@ -47,12 +51,13 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
         return validatePassword(bean);
     }
 
-    /**
-     * Validate password.
-     *
-     * @param bean the bean
-     * @return true/false
-     */
+    @Override
+    public boolean isAcceptedByPasswordPolicy(final String password) {
+        val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
+        LOGGER.debug("Checking provided password against pattern required for password policy: [{}]", policyPattern);
+        return RegexUtils.find(policyPattern, password);
+    }
+
     protected boolean validatePassword(final PasswordChangeRequest bean) {
         return true;
     }

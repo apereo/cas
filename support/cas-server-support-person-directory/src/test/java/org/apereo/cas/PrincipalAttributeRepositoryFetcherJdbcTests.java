@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    void verifyOperationWithUsernamePasswordCredentialType() {
+    void verifyOperationWithUsernamePasswordCredentialType() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
@@ -48,15 +48,15 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNotNull(p);
-        assertTrue(p.getAttributes().containsKey("PersonName"));
+        assertNotNull(principal);
+        assertTrue(principal.getAttributes().containsKey("PersonName"));
     }
 
     @Test
-    void verifyOperationWithoutUsernamePasswordCredentialType() {
+    void verifyOperationWithoutUsernamePasswordCredentialType() throws Throwable {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -68,10 +68,10 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getHttpBasedServiceCredentials();
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNull(p);
+        assertNull(principal);
     }
 
     @Override

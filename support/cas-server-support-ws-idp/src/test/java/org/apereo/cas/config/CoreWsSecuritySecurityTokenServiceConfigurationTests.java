@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
@@ -35,15 +35,15 @@ class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSec
 
     @Autowired
     @Qualifier("wsFederationProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(cxfServlet);
         assertNotNull(transportSTSProviderBean);
         assertNotNull(casRealm);

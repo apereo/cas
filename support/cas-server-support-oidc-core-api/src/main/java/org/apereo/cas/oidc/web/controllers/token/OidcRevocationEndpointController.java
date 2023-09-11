@@ -34,7 +34,7 @@ public class OidcRevocationEndpointController extends OAuth20RevocationEndpointC
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) throws Exception {
+                                      final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REVOCATION_URL)) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");

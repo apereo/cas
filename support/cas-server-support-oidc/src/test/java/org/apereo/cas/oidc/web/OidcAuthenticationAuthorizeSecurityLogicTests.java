@@ -39,7 +39,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         super.initialize();
         ticketGrantingTicketCookieGenerator = mock(CasCookieBuilder.class);
         ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
@@ -47,7 +47,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -64,7 +64,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyMaxAgeOperation() {
+    void verifyMaxAgeOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(OidcConstants.MAX_AGE, "5");
         val response = new MockHttpServletResponse();
@@ -85,7 +85,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyLoadNoProfileWhenNoTgtAvailable() {
+    void verifyLoadNoProfileWhenNoTgtAvailable() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

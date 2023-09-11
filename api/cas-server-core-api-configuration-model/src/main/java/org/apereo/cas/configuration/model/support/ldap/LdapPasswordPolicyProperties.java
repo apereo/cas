@@ -36,4 +36,12 @@ public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
      */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 
+    /**
+     * This is used to calculate an expiration period for the account password.
+     * When defined, LDAP password policy handling will use the {@code pwdLastSet} attribute
+     * which must be returned from the LDAP authentication attempt.
+     * LDAP password policy handling will emit a warning for the {@code pwdLastSet}
+     * value plus the expiration amount.
+     */
+    private int passwordExpirationNumberOfDays = 180;
 }

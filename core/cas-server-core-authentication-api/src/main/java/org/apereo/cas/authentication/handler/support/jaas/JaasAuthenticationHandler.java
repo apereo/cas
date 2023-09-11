@@ -57,9 +57,9 @@ import java.util.Arrays;
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @see javax.security.auth.callback.CallbackHandler
- * @see javax.security.auth.callback.PasswordCallback
- * @see javax.security.auth.callback.NameCallback
+ * @see CallbackHandler
+ * @see PasswordCallback
+ * @see NameCallback
  * @since 3.0.0
  */
 @Slf4j
@@ -111,7 +111,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
         if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -138,7 +138,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return the principal
      * @throws GeneralSecurityException the general security exception
      */
-    protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws GeneralSecurityException {
+    protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws Throwable {
         val lc = getLoginContext(credential);
         try {
             lc.login();

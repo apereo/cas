@@ -40,7 +40,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNoGivenToken() throws Exception {
+    void verifyNoGivenToken() throws Throwable {
         val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         servicesManager.save(registeredService);
 
@@ -57,7 +57,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenInvalidClientId() throws Exception {
+    void verifyGivenInvalidClientId() throws Throwable {
         val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         servicesManager.save(registeredService);
 
@@ -75,7 +75,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenInvalidClientSecret() throws Exception {
+    void verifyGivenInvalidClientSecret() throws Throwable {
         val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         servicesManager.save(registeredService);
 
@@ -93,7 +93,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenTokenNotInRegistry() throws Exception {
+    void verifyGivenTokenNotInRegistry() throws Throwable {
         val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         servicesManager.save(registeredService);
         servicesManager.save(getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>()));
@@ -118,7 +118,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenUnsupportedToken() throws Exception {
+    void verifyGivenUnsupportedToken() throws Throwable {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         servicesManager.save(service);
@@ -139,7 +139,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenAccessTokenInRegistry() throws Exception {
+    void verifyGivenAccessTokenInRegistry() throws Throwable {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         val publicService = getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>());
@@ -184,7 +184,7 @@ class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGivenRefreshTokenInRegistry() throws Exception {
+    void verifyGivenRefreshTokenInRegistry() throws Throwable {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         val publicService = getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>());

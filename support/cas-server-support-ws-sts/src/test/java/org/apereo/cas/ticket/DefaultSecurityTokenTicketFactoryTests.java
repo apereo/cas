@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    void verifyTicket() {
+    void verifyTicket() throws Throwable {
         val securityTokenTicketFactory = (SecurityTokenTicketFactory) ticketFactory.get(SecurityTokenTicket.class);
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgt = new TicketGrantingTicketImpl("TGT-1234567890", originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);

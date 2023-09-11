@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.RequiredArgsConstructor;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 
@@ -21,8 +22,8 @@ public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegated
 
     @Override
     public void execute(final Principal principal, final UserProfile profile,
-                        final BaseClient client, final Credential credential) {
-        provisioners.forEach(provisioner -> provisioner.execute(principal, profile, client, credential));
+                        final BaseClient client, final Credential credential) throws Throwable {
+        provisioners.forEach(Unchecked.consumer(provisioner -> provisioner.execute(principal, profile, client, credential)));
     }
 
     /**

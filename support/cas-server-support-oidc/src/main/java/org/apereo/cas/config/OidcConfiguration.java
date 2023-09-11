@@ -303,13 +303,14 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
             @Qualifier(OidcAttributeReleasePolicyFactory.BEAN_NAME)
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory,
             final CasConfigurationProperties casProperties) {
             return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory,
-                casProperties, oidcAttributeReleasePolicyFactory);
+                casProperties, oidcAttributeReleasePolicyFactory, applicationContext);
         }
 
     }
@@ -664,6 +665,8 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcTokenIntrospectionSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenIntrospectionSigningAndEncryptionService,
             @Qualifier("oidcClientRegistrationRequestTranslator")
@@ -797,6 +800,7 @@ public class OidcConfiguration {
                 .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
                 .accessTokenJwtBuilder(accessTokenJwtBuilder)
                 .clientSecretValidator(oauth20ClientSecretValidator)
+                .attributeDefinitionStore(attributeDefinitionStore)
                 .build();
         }
     }

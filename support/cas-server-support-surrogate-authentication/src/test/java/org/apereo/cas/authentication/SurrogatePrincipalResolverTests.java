@@ -63,7 +63,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
@@ -80,7 +80,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverDefault() {
+    void verifyResolverDefault() throws Throwable {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
@@ -94,7 +94,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverWithNoAttributes() {
+    void verifyResolverWithNoAttributes() throws Throwable {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, mock(IPersonAttributeDao.class));
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             context.getAttributeRepository(),
@@ -112,7 +112,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverAttribute() {
+    void verifyResolverAttribute() throws Throwable {
         val context = getPrincipalResolutionContext("cn", CoreAuthenticationTestUtils.getAttributeRepository());
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
@@ -126,7 +126,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverSurrogateWithoutPrincipal() {
+    void verifyResolverSurrogateWithoutPrincipal() throws Throwable {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -141,7 +141,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverSurrogate() {
+    void verifyResolverSurrogate() throws Throwable {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -160,7 +160,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyPrincipalResolutionPlan() {
+    void verifyPrincipalResolutionPlan() throws Throwable {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));

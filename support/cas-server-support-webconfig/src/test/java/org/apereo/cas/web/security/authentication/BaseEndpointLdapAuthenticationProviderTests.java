@@ -2,9 +2,7 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -42,8 +40,7 @@ public abstract class BaseEndpointLdapAuthenticationProviderTests {
     protected CasConfigurationProperties casProperties;
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    public static void bootstrap() throws Exception {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         localhost.connect("localhost", LDAP_PORT);

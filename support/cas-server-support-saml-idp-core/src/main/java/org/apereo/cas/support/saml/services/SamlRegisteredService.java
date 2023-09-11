@@ -16,6 +16,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +60,12 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String requiredAuthenticationContextClass;
 
-    private String metadataCriteriaDirection;
+    private String metadataCriteriaDirection = "INCLUDE";
 
     private String metadataCriteriaPattern;
 
+    private Map<String, List<String>> metadataCriteriaEntityAttributes = new HashMap<>();
+    
     private String requiredNameIdFormat;
 
     @ExpressionLanguageCapable
@@ -101,6 +104,8 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
     private boolean skipGeneratingSubjectConfirmationRecipient;
+
+    private boolean skipGeneratingSubjectConfirmationAddress;
 
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 

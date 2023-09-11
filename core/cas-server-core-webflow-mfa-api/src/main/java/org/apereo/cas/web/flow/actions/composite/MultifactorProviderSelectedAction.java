@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val eventId = requestContext.getRequestParameters().get("mfaProvider", String.class);
         return new EventFactorySupport().event(this, eventId);
     }

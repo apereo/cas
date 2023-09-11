@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -17,9 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,14 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlProfileSamlAssertionBuilderTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class AssertionWithDefaultMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAssertionBuilder")
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        void verifyAssertionWithDefaultIssuer() throws Exception {
+        void verifyAssertionWithDefaultIssuer() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
@@ -61,7 +57,6 @@ class SamlProfileSamlAssertionBuilderTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
     class AssertionWithServiceProviderMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
@@ -69,7 +64,7 @@ class SamlProfileSamlAssertionBuilderTests {
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        void verifyAssertionWithServiceMetadataAndIssuer() throws Exception {
+        void verifyAssertionWithServiceMetadataAndIssuer() throws Throwable {
             val service = getSamlRegisteredServiceFor("https://cassp.example.org");
             service.setId(1000);
             service.setName("ObjectSignerTest");

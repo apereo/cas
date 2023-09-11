@@ -36,7 +36,7 @@ const assert = require('assert');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(2000);
+    await page.waitForTimeout(2000);
     const url = `${await page.url()}`;
     console.log(`Page URL: ${url}`);
     assert(url.includes(service));

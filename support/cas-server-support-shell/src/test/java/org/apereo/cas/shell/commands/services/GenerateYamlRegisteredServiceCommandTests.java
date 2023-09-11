@@ -8,7 +8,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
@@ -23,11 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val file = File.createTempFile("service", ".json");

@@ -27,7 +27,7 @@ class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests exte
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setUserPrincipal(() -> "test");
 
@@ -39,7 +39,7 @@ class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests exte
     }
 
     @Test
-    void verifyRemoteUserDoesntExists() throws Exception {
+    void verifyRemoteUserDoesntExists() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));

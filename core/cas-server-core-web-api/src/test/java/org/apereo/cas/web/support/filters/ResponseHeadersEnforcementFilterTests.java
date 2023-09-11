@@ -40,13 +40,13 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyUnrecognizedParam() {
+    void verifyUnrecognizedParam() throws Throwable {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
 
     @Test
-    void verifyParam() {
+    void verifyParam() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -66,7 +66,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamJpeg() {
+    void verifyNoCacheParamJpeg() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -81,7 +81,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamPng() {
+    void verifyNoCacheParamPng() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();

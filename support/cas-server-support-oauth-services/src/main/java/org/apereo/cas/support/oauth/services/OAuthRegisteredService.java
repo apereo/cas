@@ -42,6 +42,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean jwtAccessToken;
 
+    private String jwtAccessTokenSigningAlg;
+
     private Set<String> audience = new HashSet<>();
     
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;

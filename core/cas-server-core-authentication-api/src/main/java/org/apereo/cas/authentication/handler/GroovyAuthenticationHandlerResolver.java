@@ -41,14 +41,15 @@ public class GroovyAuthenticationHandlerResolver implements AuthenticationHandle
     }
 
     @Override
-    public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
+    public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
+                                              final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{candidateHandlers, transaction, servicesManager, LOGGER};
         return watchableScript.execute(args, Set.class);
     }
 
     @Override
 
-    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
+    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{handlers, transaction, servicesManager, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
     }

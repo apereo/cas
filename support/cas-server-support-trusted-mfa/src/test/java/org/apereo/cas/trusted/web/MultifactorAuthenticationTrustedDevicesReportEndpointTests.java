@@ -41,7 +41,7 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(endpoint);
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = mfaTrustEngine.save(record);
@@ -54,7 +54,7 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
     }
 
     @Test
-    void verifyImportExport() throws Exception {
+    void verifyImportExport() throws Throwable {
         var record = MultifactorAuthenticationTrustRecord.newInstance(
             UUID.randomUUID().toString(), "london", "fingerprint");
         val request = new MockHttpServletRequest();

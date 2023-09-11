@@ -19,11 +19,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,7 +37,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -107,7 +106,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 return true;
             }
         }
-        
+
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
             return super.sendMessageToEndpoint(msg, request, logoutMessage);
@@ -122,7 +121,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 encoder.doEncode();
                 val redirectUrl = encoder.getRedirectUrl();
                 LOGGER.trace("Final logout redirect URL is [{}]", redirectUrl);
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(redirectUrl)
                     .httpClient(getHttpClient())
@@ -135,7 +134,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
                 LOGGER.trace("Logout message encoded in base64 is [{}]", message);
 
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)
                     .url(msg.getUrl().toExternalForm())
                     .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message))

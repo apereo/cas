@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * This is {@link UmaCreatePolicyForResourceSetEndpointController}.
@@ -63,7 +64,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), ResourceSetPolicy.class);
             resourceSet.getPolicies().add(umaRequest);
-            val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
+            val saved = Objects.requireNonNull(getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet));
 
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.CREATED);
             return new ResponseEntity(model, HttpStatus.OK);

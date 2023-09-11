@@ -4,8 +4,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -15,9 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,11 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcHandlerInterceptorAdapterTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
     class PushedAuthorizationTests extends AbstractOidcTests {
         @Test
-        void verifyAuthzUrl() throws Exception {
+        void verifyAuthzUrl() throws Throwable {
             val svc = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://oauth.example.org");
             servicesManager.save(svc);
 
@@ -52,11 +48,10 @@ class OidcHandlerInterceptorAdapterTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyNothing() throws Exception {
+        void verifyNothing() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             val response = new MockHttpServletResponse();
@@ -64,7 +59,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyNoOIDC() throws Exception {
+        void verifyNoOIDC() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OAuth20Constants.DEVICE_AUTHZ_URL);
@@ -73,7 +68,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyConfigUrl() throws Exception {
+        void verifyConfigUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.CLIENT_CONFIGURATION_URL);
@@ -82,7 +77,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyRegUrl() throws Exception {
+        void verifyRegUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
@@ -91,7 +86,7 @@ class OidcHandlerInterceptorAdapterTests {
         }
 
         @Test
-        void verifyPushAuthzUrl() throws Exception {
+        void verifyPushAuthzUrl() throws Throwable {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
             request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);

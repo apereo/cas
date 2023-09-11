@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Tickets")
 class ServiceTicketGeneratorAuthorityTests {
     @Test
-    void verifyAllow() {
+    void verifyAllow() throws Throwable {
         val allow = ServiceTicketGeneratorAuthority.allow();
         assertTrue(allow.supports(mock(AuthenticationResult.class), mock(Service.class)));
         assertTrue(allow.shouldGenerate(mock(AuthenticationResult.class), mock(Service.class)));

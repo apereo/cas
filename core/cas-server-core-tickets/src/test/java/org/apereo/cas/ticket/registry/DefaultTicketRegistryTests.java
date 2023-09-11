@@ -33,7 +33,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyCountsUnknown() {
+    void verifyCountsUnknown() throws Throwable {
         val registry = mock(DefaultTicketRegistry.class);
         when(registry.stream()).thenThrow(IllegalArgumentException.class);
         when(registry.sessionCount()).thenCallRealMethod();
@@ -43,7 +43,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyCountForPrincipal() throws Exception {
+    void verifyCountForPrincipal() throws Throwable {
         val user = UUID.randomUUID().toString();
         val tgt = new MockTicketGrantingTicket(user);
         val st = new MockServiceTicket("ST-123456", RegisteredServiceTestUtils.getService(), tgt);
@@ -57,7 +57,7 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
 
     @RepeatedTest(1)
-    public void verifyEncodeFails() throws Exception {
+    void verifyEncodeFails() throws Throwable {
         val cipher = new DefaultTicketCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
         val reg = new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog());

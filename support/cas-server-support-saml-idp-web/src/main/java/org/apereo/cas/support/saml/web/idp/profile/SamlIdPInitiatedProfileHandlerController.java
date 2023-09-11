@@ -50,7 +50,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
     protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
-                                                        final HttpServletRequest request) throws Exception {
+                                                        final HttpServletRequest request) throws Throwable {
         val providerId = extractProviderId(request);
         val registeredService = verifySamlRegisteredService(providerId);
         val adaptor = getSamlMetadataFacadeFor(registeredService, providerId);

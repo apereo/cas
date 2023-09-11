@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.sba.CasServerInstanceIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.codecentric.boot.admin.client.config.ClientProperties;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientEnabledCondition;
@@ -102,15 +102,15 @@ public class CasSpringBootAdminConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "springBootAdminEndpointConfigurer")
-        public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer(final AdminServerProperties properties) {
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+        public CasWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer(final AdminServerProperties properties) {
+            return new CasWebSecurityConfigurer<>() {
                 @Override
                 public int getOrder() {
                     return Ordered.LOWEST_PRECEDENCE;
                 }
 
                 @Override
-                public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
+                public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
                     val adminContextPath = StringUtils.prependIfMissing(properties.getContextPath(), "/");
                     val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                     successHandler.setTargetUrlParameter("redirectTo");

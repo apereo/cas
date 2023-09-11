@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("Radius")
 class RadiusUtilsTests {
     @Test
-    void verifyActionPasses() throws Exception {
+    void verifyActionPasses() throws Throwable {
         val server = mock(RadiusServer.class);
         val attribute = new Attr_ClientId("client_id");
         val response = new CasRadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
@@ -34,7 +34,7 @@ class RadiusUtilsTests {
     }
 
     @Test
-    void verifyActionFailsWithFailOver() throws Exception {
+    void verifyActionFailsWithFailOver() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
         val result = RadiusUtils.authenticate("casuser", "Mellon",
@@ -43,7 +43,7 @@ class RadiusUtilsTests {
     }
 
     @Test
-    void verifyActionFails() throws Exception {
+    void verifyActionFails() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
         assertThrows(FailedLoginException.class,
@@ -52,7 +52,7 @@ class RadiusUtilsTests {
     }
 
     @Test
-    void verifyActionFailsWithException() throws Exception {
+    void verifyActionFailsWithException() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(FailedLoginException.class);
         assertThrows(FailedLoginException.class,

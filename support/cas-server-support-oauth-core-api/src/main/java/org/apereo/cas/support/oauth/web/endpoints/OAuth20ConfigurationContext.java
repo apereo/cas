@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -137,6 +138,8 @@ public class OAuth20ConfigurationContext {
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     private final ArgumentExtractor argumentExtractor;
+
+    private final AttributeDefinitionStore attributeDefinitionStore;
 
     /**
      * Gets ticket granting ticket.

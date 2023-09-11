@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -22,10 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Locale;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,18 +38,17 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
     static class NullPrincipalTestConfiguration {
         @Bean
-        public PrincipalResolver defaultPrincipalResolver() {
+        public PrincipalResolver defaultPrincipalResolver() throws Throwable {
             val mockPrincipalResolver = mock(PrincipalResolver.class);
             when(mockPrincipalResolver.resolve(any())).thenReturn(NullPrincipal.getInstance());
             return mockPrincipalResolver;
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
-        public void verifyAuthentication() {
+        void verifyAuthentication() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -62,7 +58,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypePassword() {
+        void verifyAuthenticationWithGrantTypePassword() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -72,7 +68,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithBadSecret() throws Exception {
+        void verifyAuthenticationWithBadSecret() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -87,7 +83,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithCodeChallengePkce() throws Exception {
+        void verifyAuthenticationWithCodeChallengePkce() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -107,7 +103,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
+        void verifyAuthenticationWithGrantTypeRefreshToken() throws Throwable {
             val refreshToken = getRefreshToken(serviceWithoutSecret);
             ticketRegistry.addTicket(refreshToken);
 
@@ -144,7 +140,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithAttributesMapping() {
+        void verifyAuthenticationWithAttributesMapping() throws Throwable {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -157,12 +153,11 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(NullPrincipalTestConfiguration.class)
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        void verifyAuthenticationWithoutResolvedPrincipal() {
+        void verifyAuthenticationWithoutResolvedPrincipal() throws Throwable {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();

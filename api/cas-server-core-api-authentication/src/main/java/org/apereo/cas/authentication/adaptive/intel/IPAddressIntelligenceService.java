@@ -35,6 +35,7 @@ public interface IPAddressIntelligenceService {
      * @param context         the context
      * @param clientIpAddress the client ip address
      * @return the ip address intelligence response
+     * @throws Throwable the throwable
      */
-    IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress);
+    IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress) throws Throwable;
 }

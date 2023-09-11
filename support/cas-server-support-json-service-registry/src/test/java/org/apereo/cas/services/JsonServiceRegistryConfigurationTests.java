@@ -39,7 +39,7 @@ class JsonServiceRegistryConfigurationTests {
     private ServiceRegistry serviceRegistry;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(this.serviceRegistry);
     }
 }

@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.jee.context.JEEContext;
@@ -37,7 +38,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     private final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> configurationContext;
 
     @Override
-    public Set<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext context) {
+    public Set<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext context) throws Throwable {
         val currentService = WebUtils.getService(context);
 
         val selectionStrategies = configurationContext.getObject().getAuthenticationRequestServiceSelectionStrategies();
@@ -55,7 +56,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .filter(client -> client instanceof IndirectClient
                               && isDelegatedClientAuthorizedForService(client, service, context))
             .map(IndirectClient.class::cast)
-            .map(client -> produce(context, client))
+            .map(Unchecked.function(client -> produce(context, client)))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -87,7 +88,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
-                                                                          final IndirectClient client) {
+                                                                          final IndirectClient client) throws Throwable {
         return FunctionUtils.doAndHandle(() -> {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
@@ -101,7 +102,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val customizers = configurationContext.getObject().getDelegatedClientAuthenticationRequestCustomizers();
             if (customizers.isEmpty() || customizers.stream()
                 .filter(BeanSupplier::isNotProxy)
-                .anyMatch(clientConfig -> clientConfig.isAuthorized(webContext, client, currentService))) {
+                .anyMatch(Unchecked.predicate(clientConfig -> clientConfig.isAuthorized(webContext, client, currentService)))) {
                 return DelegatedClientIdentityProviderConfigurationFactory.builder()
                     .client(client)
                     .webContext(webContext)
@@ -114,7 +115,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty()).get();
     }
 
-    protected void initializeClientIdentityProvider(final IndirectClient client) {
+    protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
         client.init();
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
@@ -124,6 +125,6 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                                                             final RequestContext context) {
         return configurationContext.getObject().getDelegatedClientIdentityProviderAuthorizers()
             .stream()
-            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(client, service, context));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, context)));
     }
 }

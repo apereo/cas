@@ -55,7 +55,7 @@ class WsFederationClientRedirectActionTests {
     private ServerProperties serverProperties;
 
     @Test
-    void verifyRequestOperation() throws Exception {
+    void verifyRequestOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

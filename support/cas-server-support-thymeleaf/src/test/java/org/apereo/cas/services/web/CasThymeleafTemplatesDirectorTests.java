@@ -2,20 +2,14 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,20 +26,15 @@ import static org.mockito.Mockito.*;
 @Tag("Web")
 class CasThymeleafTemplatesDirectorTests {
     @Test
-    void verifyOperation() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyOperation() throws Throwable {
+        MockRequestContext.create();
 
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.getWebflowLoginContextProviders()).thenReturn(List.of());
 
         val director = new CasThymeleafTemplatesDirector(plan);
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
-        assertNotNull(director.getUrlExternalForm(new URL(RegisteredServiceTestUtils.CONST_TEST_URL)));
+        assertNotNull(director.getUrlExternalForm(new URI(RegisteredServiceTestUtils.CONST_TEST_URL).toURL()));
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));

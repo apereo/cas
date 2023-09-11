@@ -25,8 +25,9 @@ public interface DelegatedClientIdentityProviderConfigurationProducer {
      *
      * @param context the context
      * @return the set
+     * @throws Throwable the throwable
      */
-    Set<DelegatedClientIdentityProviderConfiguration> produce(RequestContext context);
+    Set<DelegatedClientIdentityProviderConfiguration> produce(RequestContext context) throws Throwable;
 
     /**
      * Produce.
@@ -34,6 +35,7 @@ public interface DelegatedClientIdentityProviderConfigurationProducer {
      * @param requestContext the request context
      * @param client         the client
      * @return the optional
+     * @throws Throwable the throwable
      */
-    Optional<DelegatedClientIdentityProviderConfiguration> produce(RequestContext requestContext, IndirectClient client);
+    Optional<DelegatedClientIdentityProviderConfiguration> produce(RequestContext requestContext, IndirectClient client) throws Throwable;
 }

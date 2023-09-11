@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -33,14 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,13 +74,8 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @Test
-    void verifySkip() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifySkip() throws Throwable {
+        val context = MockRequestContext.create();
 
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
@@ -94,32 +83,21 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     }
 
     @Test
-    void verifyError() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyError() throws Throwable {
+        val context = MockRequestContext.create();
 
-        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, "bad-code");
-        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, "bad-state");
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, "bad-code");
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, "bad-state");
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
     }
 
     @Test
-    void verifyPass() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val webContext = new JEEContext(request, response);
-
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+    void verifyPass() throws Throwable {
+        val context = MockRequestContext.create();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        
         val identifier = casProperties.getAuthn().getMfa().getDuo().get(0).getId();
         val provider = TestMultifactorAuthenticationProvider
             .registerProviderIntoApplicationContext(applicationContext, new TestMultifactorAuthenticationProvider(identifier));
@@ -150,10 +128,10 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
             .getSessionAttributes();
 
         val code = UUID.randomUUID().toString();
-        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
-        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
+        context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
             attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
-        request.addParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, storage.getPayload());
+        context.setParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, storage.getPayload());
 
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);

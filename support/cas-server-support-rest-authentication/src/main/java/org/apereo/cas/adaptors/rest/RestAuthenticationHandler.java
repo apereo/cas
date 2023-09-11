@@ -13,11 +13,11 @@ import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMes
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,13 +27,11 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -82,11 +80,11 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
+        final String originalPassword) throws Throwable {
 
         var response = (HttpResponse) null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest
+            val exec = HttpExecutionRequest
                 .builder()
                 .basicAuthUsername(credential.getUsername())
                 .basicAuthPassword(credential.toPassword())
@@ -111,24 +109,16 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
     }
 
-    /**
-     * Build principal from response.
-     *
-     * @param credential the credential
-     * @param response   the response
-     * @return the authentication handler execution result
-     * @throws GeneralSecurityException the general security exception
-     */
     protected AuthenticationHandlerExecutionResult buildPrincipalFromResponse(
         final UsernamePasswordCredential credential,
-        final HttpResponse response) throws GeneralSecurityException {
+        final HttpResponse response) throws Throwable {
         try {
             val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("REST authentication response received: [{}]", result);
             val principalFromRest = MAPPER.readValue(result, Principal.class);
             val principal = principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
             return createHandlerResult(credential, principal, getWarnings(response));
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Unable to detect the authentication principal for " + credential.getUsername());
         }

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PublicKeyFactoryBeanTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("publickey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         val object = factory.getObject();
@@ -26,7 +26,7 @@ class PublicKeyFactoryBeanTests {
     }
 
     @Test
-    void verifyFails() {
+    void verifyFails() throws Throwable {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         assertNull(factory.toCipher());

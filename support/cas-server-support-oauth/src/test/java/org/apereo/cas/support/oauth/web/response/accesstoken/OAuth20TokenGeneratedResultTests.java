@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20TokenGeneratedResultTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = OAuth20TokenGeneratedResult.builder().accessToken(getAccessToken())
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))

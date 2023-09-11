@@ -16,7 +16,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -59,8 +58,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+                                                                                        final String originalPassword) throws Throwable {
         try {
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");

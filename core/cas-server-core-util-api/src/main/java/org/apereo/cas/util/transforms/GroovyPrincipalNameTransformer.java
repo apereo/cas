@@ -16,14 +16,14 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyPrincipalNameTransformer(final Resource groovyResource) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
     }
 
     @Override
-    public String transform(final String formUserId) {
+    public String transform(final String formUserId) throws Throwable{
         return watchableScript.execute(new Object[]{formUserId, LOGGER}, String.class, true);
     }
 }

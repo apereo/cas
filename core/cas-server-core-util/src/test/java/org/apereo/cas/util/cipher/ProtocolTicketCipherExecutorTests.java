@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cipher")
 class ProtocolTicketCipherExecutorTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val cipher = new ProtocolTicketCipherExecutor();
         val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));
@@ -27,7 +27,7 @@ class ProtocolTicketCipherExecutorTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val crypto = new TicketProperties().getCrypto();
         val cipher = CipherExecutorUtils.newStringCipherExecutor(crypto, ProtocolTicketCipherExecutor.class);
         val encoded = cipher.encode("ST-1234567890");

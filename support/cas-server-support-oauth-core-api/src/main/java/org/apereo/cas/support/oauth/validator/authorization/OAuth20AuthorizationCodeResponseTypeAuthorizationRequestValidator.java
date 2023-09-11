@@ -61,7 +61,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean supports(final WebContext context) throws Exception {
+    public boolean supports(final WebContext context) throws Throwable {
         if (preValidate(context)) {
             val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
                 .map(String::valueOf)

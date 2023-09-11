@@ -55,7 +55,7 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
     @ParameterizedTest
     @ValueSource(strings = "Mellon")
     @NullAndEmptySource
-    void verifyEndpoints(final String password) throws Exception {
+    void verifyEndpoints(final String password) throws Throwable {
         val request = prepareRequest(password);
         val response = new MockHttpServletResponse();
 

@@ -3,7 +3,7 @@ package org.apereo.cas.util.http;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class HttpMessageTests {
 
     @Test
-    void verifyAsyncArgIsTakenIntoAccount() throws Exception {
-        assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend").isAsynchronous());
-        assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend", true).isAsynchronous());
-        assertFalse(new HttpMessage(new URL("http://www.google.com"), "messageToSend", false).isAsynchronous());
-        assertFalse(new HttpMessage(new URL("http://www.google.com"), null, false).isAsynchronous());
+    void verifyAsyncArgIsTakenIntoAccount() throws Throwable {
+        assertTrue(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend").isAsynchronous());
+        assertTrue(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend", true).isAsynchronous());
+        assertFalse(new HttpMessage(new URI("http://www.google.com").toURL(), "messageToSend", false).isAsynchronous());
+        assertFalse(new HttpMessage(new URI("http://www.google.com").toURL(), null, false).isAsynchronous());
     }
 
 }

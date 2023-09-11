@@ -6,8 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -224,17 +222,6 @@ public class MultifactorAuthenticationUtils {
                 .map(Optional::get)
                 .collect(Collectors.toSet()))
             .orElseGet(HashSet::new);
-    }
-
-    /**
-     * Find the MultifactorAuthenticationProvider in the application contact that matches the specified providerId (e.g. "mfa-duo").
-     *
-     * @param providerId the provider id
-     * @return the registered service multifactor authentication provider
-     */
-    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
-        final String providerId) {
-        return getMultifactorAuthenticationProviderFromApplicationContext(providerId, ApplicationContextProvider.getApplicationContext());
     }
 
     /**

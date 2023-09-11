@@ -60,7 +60,7 @@ class DefaultTicketStringSerializationManagerTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,7 +73,7 @@ class DefaultTicketStringSerializationManagerTests {
     }
 
     @Test
-    void verifyBadClass() {
+    void verifyBadClass() throws Throwable {
         assertThrows(NullPointerException.class, () -> ticketSerializationManager.serializeTicket(mock(Ticket.class)));
         assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, StringUtils.EMPTY));
         assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, "something"));

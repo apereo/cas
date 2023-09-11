@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow.decorator;
 
 import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
         FunctionUtils.doUnchecked(__ -> {
             HttpResponse response = null;
             try {
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(restProperties.getBasicAuthPassword())
                     .basicAuthUsername(restProperties.getBasicAuthUsername())
                     .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))

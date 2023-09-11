@@ -32,7 +32,7 @@ class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);
         registeredService.setDeviceTokenExpirationPolicy(null);
@@ -43,7 +43,7 @@ class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCustom() {
+    void verifyCustom() throws Throwable {
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().clear();
         val registeredService = getRegisteredService(service.getId(), UUID.randomUUID().toString(), CLIENT_SECRET);

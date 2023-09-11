@@ -23,7 +23,7 @@ public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
 
     @Override
     public String summarizeStackTrace(final String message, final Throwable throwable) {
-        val builder = new StringBuilder(StringUtils.defaultString(message, throwable.getClass().getName())).append('\n');
+        val builder = new StringBuilder(StringUtils.defaultIfBlank(message, throwable.getClass().getName())).append('\n');
         Arrays.stream(throwable.getStackTrace()).limit(LINES_TO_SUMMARIZE).forEach(trace -> {
             val error = String.format("\t%s:%s:%s%n", trace.getFileName(), trace.getMethodName(), trace.getLineNumber());
             builder.append(error);

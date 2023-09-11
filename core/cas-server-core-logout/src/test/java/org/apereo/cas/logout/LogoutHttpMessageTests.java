@@ -4,7 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Logout")
 class LogoutHttpMessageTests {
     @Test
-    void verifyOperation() throws Exception {
-        val message = new LogoutHttpMessage(new URL("https://github.com"), "LogoutMessage", false);
+    void verifyOperation() throws Throwable {
+        val message = new LogoutHttpMessage(new URI("https://github.com").toURL(), "LogoutMessage", false);
         assertTrue(message.getMessage().startsWith(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER));
     }
 }

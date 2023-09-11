@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -32,21 +31,21 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
 
     @Test
     @Override
-    protected void verifyOperation() throws Exception {
+    protected void verifyOperation() throws Throwable {
         assertRegistrationIsFound();
         assertRegistrationBadStatus();
         assertRegistrationBadInput();
     }
 
     @Test
-    void verifyLoadOperation() throws Exception {
+    void verifyLoadOperation() throws Throwable {
         assertLoadIsFound();
         assertLoadBadStatus();
         assertLoadBadInput();
     }
 
     @Test
-    void verifyUpdate() {
+    void verifyUpdate() throws Throwable {
         try (val webServer = new MockWebServer(9559, HttpStatus.OK)) {
             webServer.start();
             webAuthnCredentialRepository.removeAllRegistrations("casuser");
@@ -62,7 +61,7 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
         }
     }
 
-    private void assertLoadBadInput() {
+    private void assertLoadBadInput() throws Exception {
         val records = getCredentialRegistration("casuser");
         try (val webServer = new MockWebServer(9559,
             new ByteArrayResource("_-@@-_".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.OK)) {
@@ -81,7 +80,7 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
         }
     }
 
-    private void assertLoadBadStatus() {
+    private void assertLoadBadStatus() throws Exception {
         val records = getCredentialRegistration("casuser");
         try (val webServer = new MockWebServer(9559,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.NOT_FOUND)) {
@@ -91,7 +90,7 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
         }
     }
 
-    private void assertRegistrationIsFound() throws JsonProcessingException {
+    private void assertRegistrationIsFound() throws Exception {
         val records = getCredentialRegistration("casuser");
         val results = cipherExecutor.encode(WebAuthnUtils.getObjectMapper()
             .writeValueAsString(CollectionUtils.wrapList(records)));
@@ -103,7 +102,7 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
         }
     }
 
-    private void assertLoadIsFound() throws JsonProcessingException {
+    private void assertLoadIsFound() throws Exception {
         val records = getCredentialRegistration("casuser");
         val results = cipherExecutor.encode(WebAuthnUtils.getObjectMapper()
             .writeValueAsString(CollectionUtils.wrapList(records)));

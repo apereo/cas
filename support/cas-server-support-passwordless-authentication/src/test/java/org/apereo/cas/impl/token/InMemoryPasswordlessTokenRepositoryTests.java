@@ -28,7 +28,7 @@ class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccou
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    void verifyToken() {
+    void verifyToken() throws Throwable {
         passwordlessTokenRepository.clean();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(CAS_USER).build();

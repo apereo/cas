@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jooq.lambda.Unchecked;
 
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -55,24 +55,24 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
     @Override
     public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) {
         if (operator == LogicalOperatorTypes.OR) {
-            return conditions.stream()
-                .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
-                .anyMatch(condition -> condition.shouldActivate(request));
+            return conditions
+                .stream()
+                .anyMatch(Unchecked.predicate(condition -> condition.shouldActivate(request)));
         }
-        return conditions.stream()
-            .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
-            .allMatch(condition -> condition.shouldActivate(request));
+        return conditions
+            .stream()
+            .allMatch(Unchecked.predicate(condition -> condition.shouldActivate(request)));
     }
 
     @Override
     public boolean isAllowIfInactive() {
         if (operator == LogicalOperatorTypes.OR) {
-            return conditions.stream()
-                .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
+            return conditions
+                .stream()
                 .anyMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
         }
-        return conditions.stream()
-            .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
+        return conditions
+            .stream()
             .allMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
     }
 }

@@ -17,8 +17,6 @@ import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
@@ -34,9 +32,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -61,8 +57,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     @Qualifier("determineDuoUserAccountAction")
     private Action determineDuoUserAccountAction;
 
-    @SneakyThrows
-    private RequestContext verifyOperation(final DuoSecurityUserAccountStatus status, final String eventId) {
+    private RequestContext verifyOperation(final DuoSecurityUserAccountStatus status, final String eventId) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -87,7 +82,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
         registration.getCrypto().setEnabled(true);
 
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("registration.duo.com"));
-        
+
         when(provider.getRegistration()).thenReturn(registration);
         when(provider.matches(anyString())).thenReturn(Boolean.TRUE);
 
@@ -106,7 +101,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     }
 
     @Test
-    void verifyOperationEnroll() throws Exception {
+    void verifyOperationEnroll() throws Throwable {
         val context = verifyOperation(DuoSecurityUserAccountStatus.ENROLL, CasWebflowConstants.TRANSITION_ID_ENROLL);
         val url = context.getFlowScope().get("duoRegistrationUrl", String.class);
         assertNotNull(url);
@@ -114,22 +109,22 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
     }
 
     @Test
-    void verifyOperationAllow() {
+    void verifyOperationAllow() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.ALLOW, CasWebflowConstants.TRANSITION_ID_BYPASS);
     }
 
     @Test
-    void verifyOperationDeny() {
+    void verifyOperationDeny() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.DENY, CasWebflowConstants.TRANSITION_ID_DENY);
     }
 
     @Test
-    void verifyOperationUnavailable() {
+    void verifyOperationUnavailable() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
     }
 
     @Test
-    void verifyOperationAuth() {
+    void verifyOperationAuth() throws Throwable {
         verifyOperation(DuoSecurityUserAccountStatus.AUTH, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

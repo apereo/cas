@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -36,33 +37,47 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
 
     @Test
     void checkDefaultAttributes() {
-        val rep = new DefaultPrincipalAttributesRepository();
-        val principal = CoreAuthenticationTestUtils.getPrincipal();
-        assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(),
-            rep.getAttributes(principal, CoreAuthenticationTestUtils.getRegisteredService()).size());
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .applicationContext(applicationContext)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .build();
+        try (val rep = new DefaultPrincipalAttributesRepository()) {
+            assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(), rep.getAttributes(context).size());
+        }
     }
 
     @Test
-    void checkInitialAttributes() {
-        val p = PrincipalFactoryUtils.newPrincipalFactory()
+    void checkInitialAttributes() throws Throwable {
+        val principal = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
-        val rep = new DefaultPrincipalAttributesRepository();
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        assertEquals(1, rep.getAttributes(p, registeredService).size());
-        assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
+        try (val rep = new DefaultPrincipalAttributesRepository()) {
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .principal(principal)
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .build();
+            assertEquals(1, rep.getAttributes(context).size());
+            assertTrue(rep.getAttributes(context).containsKey("mail"));
+        }
     }
 
     @Test
-    void checkAttributesWithRepository() {
-        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
+    void checkAttributesWithRepository() throws Throwable {
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
-        val rep = new DefaultPrincipalAttributesRepository();
-        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
-        rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .applicationContext(applicationContext)
+            .principal(principal)
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .build();
 
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        assertEquals(1, rep.getAttributes(p, registeredService).size());
-        assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
+        try (val rep = new DefaultPrincipalAttributesRepository()) {
+            rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
+            rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
+            assertEquals(1, rep.getAttributes(context).size());
+            assertTrue(rep.getAttributes(context).containsKey("mail"));
+        }
     }
 
     @Test

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("DynamoDb")
 class DynamoDbTableUtilsTests {
     @Test
-    void verifyCreateTable() {
+    void verifyCreateTable() throws Throwable {
         val client = mock(DynamoDbClient.class);
         when(client.createTable(any(CreateTableRequest.class)))
             .thenThrow(SdkException.create("error", new IllegalArgumentException()));
@@ -39,7 +39,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyWaitUntilTable() {
+    void verifyWaitUntilTable() throws Throwable {
         val client = mock(DynamoDbClient.class);
         val description = TableDescription.builder().tableStatus(TableStatus.CREATING).build();
         val table = DescribeTableResponse.builder().table(description).build();
@@ -49,7 +49,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyWaitUntilTableNotFound() {
+    void verifyWaitUntilTableNotFound() throws Throwable {
         val client = mock(DynamoDbClient.class);
         when(client.describeTable(any(DescribeTableRequest.class)))
             .thenThrow(SdkException.create("fail", new IllegalArgumentException()));
@@ -59,7 +59,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyCreateTableWithBillingModeProvisioned() {
+    void verifyCreateTableWithBillingModeProvisioned() throws Throwable {
         val client = mock(DynamoDbClient.class);
         val readCapacity = 7L;
         val writeCapacity = 9L;
@@ -90,7 +90,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyCreateTableWithBillingModePayPerRequest() {
+    void verifyCreateTableWithBillingModePayPerRequest() throws Throwable {
         val client = mock(DynamoDbClient.class);
 
         val createTableArgMatcher = new CreateTableRequestArgumentMatcher();
@@ -146,7 +146,7 @@ class DynamoDbTableUtilsTests {
         }
     }
 
-    private void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
+    private static void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
         when(client.createTable(argThat(matcher)))
             .thenReturn(CreateTableResponse.builder().build());
         val description = TableDescription.builder().tableStatus(TableStatus.ACTIVE).build();

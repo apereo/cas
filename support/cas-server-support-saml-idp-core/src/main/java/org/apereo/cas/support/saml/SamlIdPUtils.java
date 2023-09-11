@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -12,7 +13,6 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -36,7 +36,6 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -143,7 +142,7 @@ public class SamlIdPUtils {
                     : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
-                    ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
+                    ? ((AuthnRequest) authnRequest).getAssertionConsumerServiceIndex()
                     : null;
 
                 if (StringUtils.isNotBlank(acsUrl) && locations.stream().anyMatch(acsUrl::equalsIgnoreCase)) {
@@ -334,22 +333,37 @@ public class SamlIdPUtils {
     }
 
     /**
-     * Does entity descriptor match entity attribute boolean.
+     * Does entity descriptor match entity attribute.
      *
      * @param entityDescriptor the entity descriptor
      * @param candidates       the candidates
-     * @return the boolean
+     * @return true/false
      */
     public static boolean doesEntityDescriptorMatchEntityAttribute(final EntityDescriptor entityDescriptor,
-                                                                   final List<Triple<String, String, ? extends Collection<String>>> candidates) {
-        val attributes = candidates.stream().map(entry -> {
-            val attr = new EntityAttributesPredicate.Candidate(entry.getLeft(), entry.getMiddle());
-            attr.setValues(entry.getRight());
-            return attr;
-        }).toList();
-        val predicate = new EntityAttributesPredicate(attributes, true);
+                                                                   final List<MetadataEntityAttributeQuery> candidates) {
+        val predicate = buildEntityAttributePredicate(candidates);
         return predicate.test(entityDescriptor);
     }
+
+    /**
+     * Build entity attributes predicate.
+     *
+     * @param candidates the candidates
+     * @return the entity attributes predicate
+     */
+    public static EntityAttributesPredicate buildEntityAttributePredicate(final List<MetadataEntityAttributeQuery> candidates) {
+        val attributes = candidates
+            .stream()
+            .map(entry -> {
+                val attr = new EntityAttributesPredicate.Candidate(entry.getName(), entry.getFormat());
+                attr.setValues(entry.getValues());
+                return attr;
+            })
+            .toList();
+        return new EntityAttributesPredicate(attributes, true);
+    }
+
+
 }
 
 

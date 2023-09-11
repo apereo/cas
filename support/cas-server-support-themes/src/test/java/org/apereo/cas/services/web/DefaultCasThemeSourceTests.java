@@ -33,7 +33,7 @@ class DefaultCasThemeSourceTests {
     private ThemeSource themeSource;
 
     @Test
-    void verifyCustomSource() {
+    void verifyCustomSource() throws Throwable {
         val theme = themeSource.getTheme("my-theme");
         assertNotNull(theme);
         val message = theme.getMessageSource().getMessage("cas.theme.name",

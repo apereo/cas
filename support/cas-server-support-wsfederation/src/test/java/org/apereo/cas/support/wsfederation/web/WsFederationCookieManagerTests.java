@@ -3,8 +3,7 @@ package org.apereo.cas.support.wsfederation.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -15,7 +14,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WSFederation")
 class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -55,7 +53,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyNoContext() {
+    void verifyNoContext() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +62,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyNoCookieValue() {
+    void verifyNoCookieValue() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

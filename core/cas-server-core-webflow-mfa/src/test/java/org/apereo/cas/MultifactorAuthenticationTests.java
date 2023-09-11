@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -70,7 +69,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
+    void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Throwable {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -79,7 +78,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
+    void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Throwable {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -88,7 +87,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyDeniesAccessToHighSecurityServiceWithPassword() {
+    void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Throwable {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -96,7 +95,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyDeniesAccessToHighSecurityServiceWithOTP() {
+    void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Throwable {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -104,7 +103,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Throwable {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE,
             newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
@@ -116,7 +115,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Throwable {
         val ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
@@ -138,7 +137,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
         assertTrue(authn.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
-    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
+    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws Throwable {
         return this.authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
     }
 }

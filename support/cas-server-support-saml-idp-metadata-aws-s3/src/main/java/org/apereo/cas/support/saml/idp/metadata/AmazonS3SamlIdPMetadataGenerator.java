@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
-    private final transient S3Client s3Client;
+    private final S3Client s3Client;
 
     private final String bucketName;
 

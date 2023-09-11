@@ -7,7 +7,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -16,10 +15,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -33,14 +30,13 @@ import static org.mockito.Mockito.*;
 class OidcUserProfileDataCreatorTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oauth.core.user-profile-view-type=FLAT",
         "cas.authn.oidc.core.claims-map.email=email-address"
     })
     class WithClaimMappingsTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("email", List.of("casuser@example.org"),
@@ -55,14 +51,13 @@ class OidcUserProfileDataCreatorTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() throws Throwable {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val accessToken = getAccessToken();
             val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
@@ -80,7 +75,7 @@ class OidcUserProfileDataCreatorTests {
         }
 
         @Test
-        void verifyTokenWithClaims() throws Exception {
+        void verifyTokenWithClaims() throws Throwable {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = new JEEContext(request, response);

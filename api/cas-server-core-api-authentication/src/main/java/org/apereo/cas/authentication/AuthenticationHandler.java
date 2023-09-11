@@ -59,29 +59,12 @@ public interface AuthenticationHandler extends Ordered {
      *
      * @param credential The credential to authenticate.
      * @param service    the requesting service, if any.
-     * @return A result object containing metadata about a successful authentication event that includes at a minimum the name of the handler that
-     * authenticated the credential and some credential metadata. The following data is optional:
-     * <ul>
-     * <li>{@link Principal}</li>
-     * <li>Messages issued by the handler about the credential (e.g. impending password expiration warning)</li>
-     * </ul>
-     * @throws Exception On authentication failures, could throw {@link GeneralSecurityException} where the root cause is security related, e.g. invalid credential.
-     *                   Implementing classes SHOULD be as specific as possible in communicating the reason for
-     *                   authentication failure. Recommendations for common cases:
-     *                                                 <ul>
-     *                                                 <li>Bad password: {@code javax.security.auth.login.FailedLoginException}</li>
-     *                                                 <li>Expired password: {@code javax.security.auth.login.CredentialExpiredException}</li>
-     *                                                 <li>User account expired: {@code javax.security.auth.login.AccountExpiredException}</li>
-     *                                                 <li>User account locked: {@code javax.security.auth.login.AccountLockedException}</li>
-     *                                                 <li>User account not found: {@code javax.security.auth.login.AccountNotFoundException}</li>
-     *                                                 <li>Time of authentication not allowed: {@code org.apereo.cas.authentication.InvalidLoginTimeException}</li>
-     *                                                 <li>Location of authentication not allowed: {@code org.apereo.cas.authentication.InvalidLoginLocationException}</li>
-     *                                                 <li>Expired X.509 certificate: {@code java.security.cert.CertificateExpiredException}</li>
-     *                                                 </ul>
-     * On errors that prevented authentication from occurring, could throw {@link PreventedException}. Implementing classes SHOULD take care to populate
-     * the cause, where applicable, with the error that prevented authentication.
+     * @return A result object containing metadata about a successful authentication event that includes at a
+     * minimum the name of the handler that authenticated the credential and some credential metadata. The following data
+     * is optional: <ul> <li>{@link Principal}</li> <li>Messages issued by the handler about the credential (e.g. impending password expiration warning)</li> </ul>
+     * @throws Throwable the throwable
      */
-    AuthenticationHandlerExecutionResult authenticate(Credential credential, Service service) throws Exception;
+    AuthenticationHandlerExecutionResult authenticate(Credential credential, Service service) throws Throwable;
 
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,

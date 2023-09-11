@@ -25,7 +25,7 @@ docker run --rm -d -p 3000:3000 --name "grafana-server" \
   -e GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource \
   -e "GF_LOG_MODE=console file" \
   grafana/grafana-oss
-sleep 5
+sleep 20
 docker ps | grep "grafana-server"
 retVal=$?
 if [ $retVal == 0 ]; then
@@ -64,3 +64,8 @@ generate_post_data
 curl -v -X POST http://admin:admin@localhost:3000/api/datasources \
   -H 'Content-Type: application/json' \
   -d "$(generate_post_data)"
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "Grafana data source setup failed"
+    exit $retVal
+fi

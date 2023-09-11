@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class StaticUserGraphicalAuthenticationRepositoryTests {
 
     @Test
-    void verifyImage() throws Exception {
+    void verifyImage() throws Throwable {
         val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("image.jpg")));
         assertFalse(repo.getGraphics("casuser").isEmpty());
     }
 
     @Test
-    void verifyBadImage() throws Exception {
+    void verifyBadImage() throws Throwable {
         val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("missing.jpg")));
         assertTrue(repo.getGraphics("casuser").isEmpty());
     }

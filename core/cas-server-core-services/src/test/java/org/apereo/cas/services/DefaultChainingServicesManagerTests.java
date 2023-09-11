@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val mock = mock(ServicesManager.class);
         when(mock.findServiceBy(anyLong(), any())).thenCallRealMethod();
         when(mock.findServiceByName(anyString(), any())).thenCallRealMethod();
@@ -38,7 +38,7 @@ class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<D
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
@@ -50,7 +50,7 @@ class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<D
     }
 
     @Test
-    void verifySaveWithDomains() {
+    void verifySaveWithDomains() throws Throwable {
         val svc = new CasRegisteredService();
         svc.setId(RandomUtils.nextLong());
         svc.setName("domainService2");
@@ -61,7 +61,7 @@ class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<D
     }
 
     @Test
-    void verifySaveInBulk() {
+    void verifySaveInBulk() throws Throwable {
         servicesManager.deleteAll();
         servicesManager.save(() -> {
             val svc = new CasRegisteredService();
@@ -75,7 +75,7 @@ class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<D
     }
 
     @Test
-    void verifySaveInStreams() {
+    void verifySaveInStreams() throws Throwable {
         servicesManager.deleteAll();
         val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
         val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);

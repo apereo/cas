@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.slf4j.Logger;
@@ -33,11 +33,10 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
     /**
      * Gets attributes for the given principal id.
      *
-     * @param principal         the principal whose attributes need to be retrieved.
-     * @param registeredService the registered service
+     * @param context the context
      * @return the attributes
      */
-    Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
+    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context);
 
     /**
      * Gets attribute repository ids that should be used to
@@ -51,12 +50,12 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
     /**
      * Add principal attributes into the underlying cache instance.
      *
-     * @param id                identifier used by the cache as key.
-     * @param attributes        attributes to cache
-     * @param registeredService the registered service
+     * @param id         identifier used by the cache as key.
+     * @param attributes attributes to cache
+     * @param context    the context
      * @since 4.2
      */
-    default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredService registeredService) {
+    default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredServiceAttributeReleasePolicyContext context) {
         LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes [{}]", id, getClass().getSimpleName(), attributes);
     }
 }

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class DelegatedAuthenticationAuditResourceResolverTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val r = new DelegatedAuthenticationAuditResourceResolver();
         val result = AuditableExecutionResult.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

@@ -35,7 +35,7 @@ class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends Abstract
     private static final String NONCE = UUID.randomUUID().toString();
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
         servicesManager.save(registeredService);
 

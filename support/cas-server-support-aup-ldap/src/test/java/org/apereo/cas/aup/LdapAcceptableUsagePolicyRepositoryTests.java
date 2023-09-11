@@ -59,7 +59,7 @@ class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicy
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @BeforeAll
-    public static void bootstrap() throws Exception {
+    public static void bootstrap() throws Throwable {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
@@ -77,15 +77,15 @@ class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicy
     }
 
     @Test
-    void verifyMissingUser() throws Exception {
+    void verifyMissingUser() throws Throwable {
         val actualPrincipalId = UUID.randomUUID().toString();
-        val c = getCredential(actualPrincipalId);
-        val context = getRequestContext(actualPrincipalId, Map.of(), c);
+        val credential = getCredential(actualPrincipalId);
+        val context = getRequestContext(actualPrincipalId, Map.of(), credential);
         assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));

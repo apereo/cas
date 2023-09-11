@@ -5,6 +5,7 @@ import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,6 +45,6 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
 
     @Override
     public void run() {
-        publish();
+        FunctionUtils.doUnchecked(__ -> publish());
     }
 }

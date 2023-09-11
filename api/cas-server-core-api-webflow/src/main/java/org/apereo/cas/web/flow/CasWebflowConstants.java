@@ -190,6 +190,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'continue'.
+     */
+    String TRANSITION_ID_CONTINUE = "continue";
+
+    /**
      * The transition state 'restore'.
      */
     String TRANSITION_ID_RESTORE = "restore";
@@ -286,6 +291,12 @@ public interface CasWebflowConstants {
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+
+
+    /**
+     * The transition state 'failure'.
+     */
+    String TRANSITION_ID_FAILURE = "failure";
 
     /**
      * The transition state 'generate'.
@@ -1800,16 +1811,6 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
     /**
-     * Action id 'authyAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_AUTHY_AUTHENTICATION = "authyAuthenticationWebflowAction";
-
-    /**
-     * Action id 'authyAuthenticationRegistrationWebflowAction'.
-     */
-    String ACTION_ID_AUTHY_REGISTRATION = "authyAuthenticationRegistrationWebflowAction";
-
-    /**
      * Action id 'loadAccountRegistrationPropertiesAction'.
      */
     String ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES = "loadAccountRegistrationPropertiesAction";
@@ -1899,31 +1900,6 @@ public interface CasWebflowConstants {
      * Action id 'validatePasswordResetTokenAction'.
      */
     String ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN = "validatePasswordResetTokenAction";
-
-    /**
-     * Action id 'u2fAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_U2F_AUTHENTICATION = "u2fAuthenticationWebflowAction";
-
-    /**
-     * Action id 'u2fStartAuthenticationAction'.
-     */
-    String ACTION_ID_U2F_START_AUTHENTICATION = "u2fStartAuthenticationAction";
-
-    /**
-     * Action id 'u2fStartRegistrationAction'.
-     */
-    String ACTION_ID_U2F_START_REGISTRATION = "u2fStartRegistrationAction";
-
-    /**
-     * Action id 'u2fCheckAccountRegistrationAction'.
-     */
-    String ACTION_ID_U2F_CHECK_REGISTRATION = "u2fCheckAccountRegistrationAction";
-
-    /**
-     * Action id 'u2fSaveAccountRegistrationAction'.
-     */
-    String ACTION_ID_U2F_SAVE_REGISTRATION = "u2fSaveAccountRegistrationAction";
 
     /**
      * Action id 'remoteAddressCheck'.

@@ -18,7 +18,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -71,7 +71,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
             val url = buildUrlHttpScheme(duoApiHost.concat("/rest/v1/ping"));
             LOGGER.trace("Pinging Duo Security @ [{}]", url);
 
-            val msg = httpClient.sendMessageToEndPoint(new URL(url));
+            val msg = httpClient.sendMessageToEndPoint(new URI(url).toURL());
             if (msg != null) {
                 val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received Duo ping response [{}]", response);
@@ -100,7 +100,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     }
 
     private DuoSecurityAuthenticationResult authenticateDuoCredential(final Credential creds) throws Exception {
-        val signedRequestToken = DuoSecurityCredential.class.cast(creds).getSignedDuoResponse();
+        val signedRequestToken = ((DuoSecurityCredential) creds).getSignedDuoResponse();
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }

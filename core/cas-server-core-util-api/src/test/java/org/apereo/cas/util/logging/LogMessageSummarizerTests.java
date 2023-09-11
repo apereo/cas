@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class LogMessageSummarizerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val summarizer = new DisabledLogMessageSummarizer();
         assertFalse(summarizer.shouldSummarize(LOGGER));
         assertTrue(summarizer.summarizeStackTrace("Message", new IllegalArgumentException("Error")).isEmpty());
     }
 
     @Test
-    void verifyExceptionMessageIsNull() {
+    void verifyExceptionMessageIsNull() throws Throwable {
         val defaultLogMessageSummarizer = new DefaultLogMessageSummarizer();
         assertNotNull(defaultLogMessageSummarizer.summarizeStackTrace(null, new IllegalArgumentException()));
     }

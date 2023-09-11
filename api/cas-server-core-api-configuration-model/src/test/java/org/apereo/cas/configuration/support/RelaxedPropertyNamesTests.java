@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RelaxedPropertyNamesTests {
 
     @Test
-    void verifyValues() {
+    void verifyValues() throws Throwable {
         val names = RelaxedPropertyNames.forCamelCase("casProperties");
         assertNotNull(names.getValues());
         assertTrue(names.iterator().hasNext());
@@ -30,7 +30,7 @@ class RelaxedPropertyNamesTests {
     }
 
     @Test
-    void verifyTransforms() {
+    void verifyTransforms() throws Throwable {
         Arrays.stream(RelaxedPropertyNames.NameManipulations.values())
             .forEach(mani -> assertEquals(StringUtils.EMPTY, mani.apply(StringUtils.EMPTY)));
 

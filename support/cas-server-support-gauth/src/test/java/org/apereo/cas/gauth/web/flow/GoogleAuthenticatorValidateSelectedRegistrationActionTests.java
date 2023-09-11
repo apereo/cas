@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));

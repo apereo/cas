@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SerializationUtilsTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val result = SerializationUtils.serialize(100);
         assertThrows(ClassCastException.class,
             () -> SerializationUtils.deserializeAndCheckObject(result, String.class));

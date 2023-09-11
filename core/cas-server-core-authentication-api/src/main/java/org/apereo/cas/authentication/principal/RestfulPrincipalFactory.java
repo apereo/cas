@@ -2,9 +2,9 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -42,7 +41,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
     private final RestEndpointProperties properties;
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         HttpResponse response = null;
         try {
             val current = super.createPrincipal(id, attributes);
@@ -51,7 +50,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)

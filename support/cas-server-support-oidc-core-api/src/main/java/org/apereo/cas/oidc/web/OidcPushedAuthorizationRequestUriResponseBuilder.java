@@ -47,7 +47,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
     @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
         val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
         val uri = factory.create(holder);
         LOGGER.debug("Generated pushed authorization URI code: [{}]", uri);

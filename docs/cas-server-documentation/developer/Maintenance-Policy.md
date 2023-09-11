@@ -19,7 +19,7 @@ The project release schedule is [available here](https://github.com/apereo/cas/m
 <div class="alert alert-info">:information_source: <strong>Which version is more stable?</strong><p>CAS releases are strictly time-based releases; they 
 are not scheduled or based on specific benchmarks, statistics or completion of features or bug fixes. To gain confidence in a 
 release, you should start early by experimenting with release candidates and/or follow-up snapshots.
-In terms of stabillity, all versions of the Apereo CAS software are loosely based on the <i>Schrödinger's Cat</i> theory: there are no guarantees 
+In terms of stability, all versions of the Apereo CAS software are loosely based on the <i>Schrödinger's Cat</i> theory: there are no guarantees 
 until you open the box. Software distributed under the project license is distributed on an "AS IS" basis without warranties or conditions 
 of any kind, either express or implied. See the project license file for the specific language.
 </p></div>
@@ -58,7 +58,7 @@ The following CAS releases will transition into a security-patch mode (SPM) only
 
 | Release |  SPM Starting Date  |            Full EOL |
 |---------|:-------------------:|--------------------:|
-| `6.6.x` | September 1st, 2023 |    March 31st, 2024 |
+| `6.6.x` | December 31st, 2023 |     June 31st, 2024 |
 | `6.5.x` | September 2nd, 2022 | December 31st, 2023 |
 
 All previous releases absent in the above table are considered EOLed.

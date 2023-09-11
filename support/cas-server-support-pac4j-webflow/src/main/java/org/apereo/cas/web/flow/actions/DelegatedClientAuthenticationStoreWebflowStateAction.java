@@ -46,7 +46,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
@@ -91,7 +91,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()
-            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext)));
     }
 
 }

@@ -63,12 +63,12 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
     private AuditTrailManager auditTrailManager;
 
     @Test
-    void verifyCleaner() {
+    void verifyCleaner() throws Throwable {
         inspektrAuditTrailCleaner.clean();
     }
 
     @Test
-    void verifyLargeResource() {
+    void verifyLargeResource() throws Throwable {
         val context = new AuditActionContext(
             UUID.randomUUID().toString(),
             RandomUtils.randomAlphabetic(10_000),

@@ -11,7 +11,7 @@
         <Logger name="org.opensaml" level="error" />
         <Logger name="PROTOCOL_MESSAGE" level="off" />
         <Logger name="org.apache.xml.security" level="off"  />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

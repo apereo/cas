@@ -11,10 +11,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Optional;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,11 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcIdTokenSigningAndEncryptionServiceTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:multiple-keys.jwks")
     class KeystoreWithMultipleKeysTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val claims = getClaims();
 
             val es512 = getOidcRegisteredService("ES512");
@@ -55,34 +52,33 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=RS256,RS384,RS512",
         "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val claims = getClaims();
             val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
             assertNotNull(result);
         }
 
         @Test
-        void verifyWrongType() {
+        void verifyWrongType() throws Throwable {
             assertFalse(oidcTokenSigningAndEncryptionService.shouldEncryptToken(getOAuthRegisteredService("1", "http://localhost/cas")));
             assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
         }
 
         @Test
-        void verifySkipSigning() {
+        void verifySkipSigning() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(false, false);
             val result = oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService);
             assertFalse(result);
         }
 
         @Test
-        void verifyValidationOperation() {
+        void verifyValidationOperation() throws Throwable {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
@@ -91,14 +87,14 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        void verifyDecodingFailureBadToken() {
+        void verifyDecodingFailureBadToken() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             assertThrows(IllegalArgumentException.class,
                 () -> oidcTokenSigningAndEncryptionService.decode("bad-token", Optional.of(oidcRegisteredService)));
         }
 
         @Test
-        void verifyDecodingFailureNoIssuer() {
+        void verifyDecodingFailureNoIssuer() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setIssuer(StringUtils.EMPTY);
@@ -108,7 +104,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        void verifyDecodingFailureBadIssuer() {
+        void verifyDecodingFailureBadIssuer() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setIssuer("bad-issuer");
@@ -118,7 +114,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        void verifyDecodingFailureBadClient() {
+        void verifyDecodingFailureBadClient() throws Throwable {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setStringClaim(OAuth20Constants.CLIENT_ID, StringUtils.EMPTY);
@@ -128,7 +124,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        void verifyNoneNotSupported() {
+        void verifyNoneNotSupported() throws Throwable {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService();
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.NONE);
@@ -139,7 +135,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        void verifyNoneSupported() {
+        void verifyNoneSupported() throws Throwable {
             val discovery = new OidcServerDiscoverySettings(casProperties.getAuthn().getOidc().getCore().getIssuer());
             discovery.setIdTokenSigningAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
             discovery.setIdTokenEncryptionAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
