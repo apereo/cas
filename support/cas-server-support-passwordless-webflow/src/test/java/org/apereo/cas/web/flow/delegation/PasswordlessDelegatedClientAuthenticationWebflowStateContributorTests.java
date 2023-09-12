@@ -4,11 +4,11 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,12 +18,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,8 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
-    extends BasePasswordlessAuthenticationActionTests {
+class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessDelegatedClientAuthenticationWebflowStateContributor")
     private DelegatedClientAuthenticationWebflowStateContributor contributor;
@@ -44,14 +38,14 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     @Test
     void verifyStore() throws Throwable {
         val client = new CasClient();
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
 
         val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username("casuser").build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
-        
-        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
         val stored = contributor.store(context, webContext, client);
         assertTrue(stored.containsKey(PasswordlessUserAccount.class.getName()));
         assertTrue(stored.containsKey(PasswordlessAuthenticationRequest.class.getName()));
@@ -60,7 +54,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     @Test
     void verifyRestore() throws Throwable {
         val client = new CasClient();
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create();
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         val sessionTicket = mock(TransientSessionTicket.class);
         val service = RegisteredServiceTestUtils.getService();
@@ -70,9 +64,8 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
         when(sessionTicket.getProperty(ArgumentMatchers.eq(PasswordlessUserAccount.class.getName()), any())).thenReturn(account);
         when(sessionTicket.getProperty(ArgumentMatchers.eq(PasswordlessAuthenticationRequest.class.getName()), any())).thenReturn(passwordlessRequest);
 
-        val stored = contributor.restore(context,
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
-            Optional.of(sessionTicket), client);
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val stored = contributor.restore(context, webContext, Optional.of(sessionTicket), client);
         assertEquals(stored, service);
         assertNotNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));
     }
@@ -80,8 +73,8 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     @Test
     void verifyRestoreWithoutSessionTicket() throws Throwable {
         val client = new CasClient();
-        val context = new MockRequestContext();
-        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val context = MockRequestContext.create();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
         val stored = contributor.restore(context, webContext, Optional.empty(), client);
         assertNull(stored);
         assertNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(context, PasswordlessUserAccount.class));

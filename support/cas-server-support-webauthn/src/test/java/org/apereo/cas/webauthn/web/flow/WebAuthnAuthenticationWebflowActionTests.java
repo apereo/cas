@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -19,18 +20,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Optional;
 
@@ -58,30 +50,20 @@ class WebAuthnAuthenticationWebflowActionTests {
     @Qualifier("webAuthnSessionManager")
     private SessionManager webAuthnSessionManager;
 
-    private static RequestContext getRequestContext() {
-        val context = new MockRequestContext();
-        val messageContext = (DefaultMessageContext) context.getMessageContext();
-        messageContext.setMessageSource(mock(MessageSource.class));
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        return context;
-    }
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyFailsNoAuthn() throws Throwable {
-        val context = getRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putCredential(context, new WebAuthnCredential(EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8))));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
         val result = webAuthnAuthenticationWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
     }
 
     @Test
     void verifyFailsNoReg() throws Throwable {
-        val context = getRequestContext();
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         WebUtils.putAuthentication(authn, context);
@@ -92,9 +74,7 @@ class WebAuthnAuthenticationWebflowActionTests {
 
     @Test
     void verifyToken() throws Throwable {
-        val context = getRequestContext();
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         WebUtils.putAuthentication(authn, context);

@@ -1,19 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
-import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,20 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-class YubiKeyAuthenticationPrepareLoginActionTests {
-    @BeforeEach
-    public void setup() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, new YubiKeyMultifactorAuthenticationProvider());
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-    }
-    
+class YubiKeyAuthenticationPrepareLoginActionTests extends BaseYubiKeyActionTests {
+
     @Test
     void verifyActionSuccess() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         val casProperties = new CasConfigurationProperties();
         val action = new YubiKeyAuthenticationPrepareLoginAction(casProperties);
         assertNull(action.execute(context));

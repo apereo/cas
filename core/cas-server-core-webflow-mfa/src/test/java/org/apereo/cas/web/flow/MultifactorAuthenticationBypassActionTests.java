@@ -78,9 +78,10 @@ class MultifactorAuthenticationBypassActionTests {
         @Qualifier("dummyProviderAlwaysBypass")
         private MultifactorAuthenticationProvider dummyProvider;
 
+
         @Test
         void verifyOperations() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
@@ -113,7 +114,7 @@ class MultifactorAuthenticationBypassActionTests {
 
         @Test
         void verifyOperations() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
@@ -146,7 +147,7 @@ class MultifactorAuthenticationBypassActionTests {
 
         @Test
         void verifyOperations() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val policy = new DefaultRegisteredServiceMultifactorPolicy();

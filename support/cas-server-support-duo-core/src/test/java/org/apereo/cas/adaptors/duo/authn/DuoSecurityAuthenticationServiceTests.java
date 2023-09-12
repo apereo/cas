@@ -13,6 +13,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,6 +49,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("DuoSecurity")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class DuoSecurityAuthenticationServiceTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

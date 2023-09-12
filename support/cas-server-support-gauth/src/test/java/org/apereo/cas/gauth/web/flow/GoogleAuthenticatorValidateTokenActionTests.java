@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
 import javax.security.auth.login.FailedLoginException;
@@ -48,14 +49,16 @@ class GoogleAuthenticatorValidateTokenActionTests {
     @Qualifier("dummyProvider")
     private MultifactorAuthenticationProvider dummyProvider;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySuccessfulValidation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val acct = GoogleAuthenticatorAccount
             .builder()
-            .username("casuser")
+            .username(UUID.randomUUID().toString())
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
             .validationCode(123456)

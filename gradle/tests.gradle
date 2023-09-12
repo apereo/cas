@@ -20,7 +20,7 @@ enum TestCategories {
     Consent(true),
     Cookie(true),
     Delegation(true),
-    DuoSecurity,
+    DuoSecurity(false),
     DynamoDb,
     Elastic,
     ExpirationPolicy(true),

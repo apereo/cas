@@ -4,13 +4,12 @@ import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -32,7 +31,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
@@ -70,12 +68,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;
 
-    @Autowired
-    private ConfigurableApplicationContext configurableApplicationContext;
-
     @Test
     void verifySkip() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
@@ -84,7 +79,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
 
     @Test
     void verifyError() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, "bad-code");
         context.setParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, "bad-state");
@@ -95,19 +90,15 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
 
     @Test
     void verifyPass() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
-        
-        val identifier = casProperties.getAuthn().getMfa().getDuo().get(0).getId();
-        val provider = TestMultifactorAuthenticationProvider
-            .registerProviderIntoApplicationContext(applicationContext, new TestMultifactorAuthenticationProvider(identifier));
-
-        configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
-            .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
 
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(
+            DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, applicationContext).orElseThrow();
         WebUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putTargetTransition(context, "targetDestination");
 

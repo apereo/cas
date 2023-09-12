@@ -80,6 +80,7 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
         if (StringUtils.isBlank(clientId)) {
             val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
+            OAuth20Utils.validateRedirectUri(redirectUri);
             val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
             clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
         }

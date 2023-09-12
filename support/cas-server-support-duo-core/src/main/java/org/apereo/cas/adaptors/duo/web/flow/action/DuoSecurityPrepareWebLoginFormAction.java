@@ -23,7 +23,7 @@ public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAut
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
+        val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class);
         Objects.requireNonNull(credential).setUsername(principal.getId());
         credential.setProviderId(provider.getId());

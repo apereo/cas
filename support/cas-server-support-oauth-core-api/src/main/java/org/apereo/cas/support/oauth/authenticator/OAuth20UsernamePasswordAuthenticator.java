@@ -84,6 +84,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             }
             val redirectUri = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
+            OAuth20Utils.validateRedirectUri(redirectUri);
             val service = StringUtils.isNotBlank(redirectUri)
                 ? webApplicationServiceFactory.createService(redirectUri)
                 : webApplicationServiceFactory.createService(clientId);

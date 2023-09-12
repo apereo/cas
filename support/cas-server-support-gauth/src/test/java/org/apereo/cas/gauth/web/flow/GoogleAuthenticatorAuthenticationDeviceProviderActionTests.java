@@ -9,7 +9,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +39,10 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
-    @BeforeEach
-    public void beforeEach() {
-        googleAuthenticatorAccountRegistry.deleteAll();
-    }
-
     @Test
     void verifyOperation() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
-            .username("casuser")
+            .username(UUID.randomUUID().toString())
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
             .validationCode(123456)
@@ -58,7 +52,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
 
         val context = MockRequestContext.create();
 
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
         assertNull(googleAccountDeviceProviderAction.execute(context));
         assertEquals(1, WebUtils.getMultifactorAuthenticationRegisteredDevices(context).size());
     }
