@@ -87,7 +87,7 @@ are now configured to run with parallelism enabled.
 - U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
 - Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
 - Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
-- OpenID Connect claims can now be [optionally decorated](../authentication./OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
+- OpenID Connect claims can now be [optionally decorated](../authentication/OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
 
 ## Library Upgrades
    

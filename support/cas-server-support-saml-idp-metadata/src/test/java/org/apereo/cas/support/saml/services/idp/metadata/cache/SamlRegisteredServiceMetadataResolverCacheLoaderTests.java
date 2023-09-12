@@ -4,7 +4,9 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
@@ -29,7 +31,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     @Test
     void verifyClasspathByExpression() throws Throwable {
         System.setProperty("CLASSPATH_SP", "classpath:sample-sp.xml");
-        val loader = buildCacheLoader();
+        val loader = buildCacheLoader(new ClasspathResourceMetadataResolver(new SamlIdPProperties(), openSamlConfigBean));
         val service = new SamlRegisteredService();
         service.setName(RandomUtils.randomAlphabetic(4));
         service.setId(RandomUtils.nextLong());
@@ -70,12 +72,18 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader() throws Throwable {
-        val props = new SamlIdPProperties();
         val file = new File(FileUtils.getTempDirectory(), RandomUtils.randomAlphabetic(4));
-        file.mkdirs();
+        if (!file.mkdirs()) {
+            fail(() -> "Failed to create directory " + file);
+        }
+        val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(file.getCanonicalPath());
+        return buildCacheLoader(new FileSystemResourceMetadataResolver(props, openSamlConfigBean));
+    }
+
+    private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader(final SamlRegisteredServiceMetadataResolver resolver) {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
-        plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(props, openSamlConfigBean));
+        plan.registerMetadataResolver(resolver);
         return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
     }
 }

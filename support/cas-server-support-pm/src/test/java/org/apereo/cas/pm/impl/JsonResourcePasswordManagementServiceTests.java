@@ -90,7 +90,7 @@ class JsonResourcePasswordManagementServiceTests {
     private PasswordManagementService passwordChangeService;
 
     @Autowired
-    @Qualifier("passwordValidationService")
+    @Qualifier(PasswordValidationService.BEAN_NAME)
     private PasswordValidationService passwordValidationService;
 
     @Test

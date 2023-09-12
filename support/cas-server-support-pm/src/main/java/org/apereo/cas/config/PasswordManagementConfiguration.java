@@ -62,7 +62,7 @@ public class PasswordManagementConfiguration {
     @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementValidationConfiguration {
-        @ConditionalOnMissingBean(name = "passwordValidationService")
+        @ConditionalOnMissingBean(name = PasswordValidationService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,

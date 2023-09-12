@@ -249,7 +249,7 @@ public class PasswordManagementWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
-            @Qualifier("passwordValidationService") final PasswordValidationService passwordValidationService) {
+            @Qualifier(PasswordValidationService.BEAN_NAME) final PasswordValidationService passwordValidationService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -363,7 +363,7 @@ public class PasswordManagementWebflowConfiguration {
         public AuthenticationPostProcessor passwordStrengthAuthenticationPostProcessor(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("passwordValidationService") final PasswordValidationService passwordValidationService) {
+            @Qualifier(PasswordValidationService.BEAN_NAME) final PasswordValidationService passwordValidationService) {
             return BeanSupplier.of(AuthenticationPostProcessor.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new PasswordStrengthAuthenticationPostProcessor(passwordValidationService))

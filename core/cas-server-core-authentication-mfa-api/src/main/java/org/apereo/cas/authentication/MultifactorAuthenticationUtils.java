@@ -295,8 +295,7 @@ public class MultifactorAuthenticationUtils {
      * @return - Optional
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(
-        final String providerId,
-        final ApplicationContext context) {
+        final String providerId, final ApplicationContext context) {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()
