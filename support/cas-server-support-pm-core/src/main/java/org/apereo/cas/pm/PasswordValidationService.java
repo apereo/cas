@@ -8,6 +8,11 @@ package org.apereo.cas.pm;
  */
 public interface PasswordValidationService {
     /**
+     * Bean name.
+     */
+    String BEAN_NAME = "passwordValidationService";
+
+    /**
      * Validate password.
      *
      * @param bean the bean

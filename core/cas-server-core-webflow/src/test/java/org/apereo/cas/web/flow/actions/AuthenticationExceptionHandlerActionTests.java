@@ -55,8 +55,8 @@ class AuthenticationExceptionHandlerActionTests {
 
         val map = new HashMap<String, Throwable>();
         map.put("notFound", new AccountNotFoundException());
-        val id = handler.handle(new AuthenticationException(map), req);
-        assertEquals(AccountNotFoundException.class.getSimpleName(), id);
+        val event = handler.handle(new AuthenticationException(map), req);
+        assertEquals(AccountNotFoundException.class.getSimpleName(), event.getId());
     }
 
     @Test
@@ -65,8 +65,8 @@ class AuthenticationExceptionHandlerActionTests {
         val req = MockRequestContext.create();
         val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
-        val id = handler.handle(new AuthenticationException(map), req);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, id);
+        val event = handler.handle(new AuthenticationException(map), req);
+        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
     }
 
     @Test
@@ -94,8 +94,8 @@ class AuthenticationExceptionHandlerActionTests {
     void handleUnknownTicketExceptionByDefault() throws Exception {
         val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
         val req = MockRequestContext.create();
-        val id = handler.handle(new InvalidTicketException("TGT"), req);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, id);
+        val event = handler.handle(new InvalidTicketException("TGT"), req);
+        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
     }
 
     @Test

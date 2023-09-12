@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("PasswordOps")
 class DefaultPasswordValidationServiceTests {
     @Autowired
-    @Qualifier("passwordValidationService")
+    @Qualifier(PasswordValidationService.BEAN_NAME)
     private PasswordValidationService passwordValidationService;
 
     @Autowired
