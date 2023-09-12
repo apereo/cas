@@ -6,8 +6,9 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
@@ -39,8 +40,8 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
     }
 
     protected Principal resolvePrincipal(final Principal principal, final RequestContext requestContext) {
-        val resolvers = new ArrayList<>(requestContext.getActiveFlow().getApplicationContext()
-            .getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        val beanFactory = ((ConfigurableApplicationContext) requestContext.getActiveFlow().getApplicationContext()).getBeanFactory();
+        val resolvers = new ArrayList<>(BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, MultifactorAuthenticationPrincipalResolver.class).values());
         AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers
             .stream()

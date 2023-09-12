@@ -10,11 +10,12 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -277,10 +278,11 @@ public class MultifactorAuthenticationUtils {
     public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
         final ApplicationContext applicationContext) {
         try {
-            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
+            val beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
+            return BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
             LOGGER.trace("No beans of type [{}] are available in the application context. "
-                         + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
+                    + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
                 MultifactorAuthenticationProvider.class);
         }
         return new HashMap<>(0);
