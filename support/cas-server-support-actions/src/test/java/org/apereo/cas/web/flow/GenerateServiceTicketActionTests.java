@@ -53,7 +53,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyServiceTicketFromCookie() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticketGrantingTicket.getId());
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -64,7 +64,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyTicketGrantingTicketFromRequest() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
@@ -75,7 +75,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyServiceTicketWithAccessStrategyMapped() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val serviceId = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("Role", Set.of(".*developer.*")));
         registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
@@ -91,7 +91,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyServiceTicketWithAccessStrategyDenied() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val serviceId = UUID.randomUUID().toString();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
@@ -108,7 +108,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyServiceTicketWithAccessStrategyMultivalued() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val serviceId = UUID.randomUUID().toString();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId,
@@ -128,7 +128,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyTicketGrantingTicketNoTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val tgt = mock(TicketGrantingTicket.class);
@@ -139,7 +139,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyTicketGrantingTicketExpiredTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
@@ -150,7 +150,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyTicketGrantingTicketNotTgtButGateway() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context.setParameter(CasProtocolConstants.PARAMETER_GATEWAY, "true");
@@ -162,7 +162,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyWarnCookie() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val randomService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, randomService);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(randomService.getId());
