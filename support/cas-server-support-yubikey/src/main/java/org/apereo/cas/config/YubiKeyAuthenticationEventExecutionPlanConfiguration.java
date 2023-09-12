@@ -200,6 +200,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         return new YubiKeyAccountRegistryEndpoint(casProperties, yubiKeyAccountRegistry);
     }
 
+    @ConditionalOnMissingBean(name = "yubikeyMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider(
@@ -213,13 +214,13 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("failureModeEvaluator")
         final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient, httpClient);
-        p.setBypassEvaluator(yubikeyBypassEvaluator);
-        p.setFailureMode(yubi.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator);
-        p.setOrder(yubi.getRank());
-        p.setId(yubi.getId());
-        return p;
+        val provider = new YubiKeyMultifactorAuthenticationProvider(yubicoClient, httpClient);
+        provider.setBypassEvaluator(yubikeyBypassEvaluator);
+        provider.setFailureMode(yubi.getFailureMode());
+        provider.setFailureModeEvaluator(failureModeEvaluator);
+        provider.setOrder(yubi.getRank());
+        provider.setId(yubi.getId());
+        return provider;
     }
 
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
