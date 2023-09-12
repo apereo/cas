@@ -56,7 +56,6 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     @Test
     void verifyServiceDisallowed() throws Throwable {
         val context = MockRequestContext.create();
-
         val id = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
@@ -70,7 +69,6 @@ class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultif
     @Test
     void verifyNoAuthn() throws Throwable {
         val context = MockRequestContext.create();
-
         val id = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         servicesManager.save(registeredService);

@@ -1,12 +1,16 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
@@ -53,6 +57,13 @@ public class MockRequestContext extends org.springframework.webflow.test.MockReq
 
     public MockRequestContext setActiveFlow(final Flow flow) {
         setFlowExecutionContext(new MockFlowExecutionContext(flow));
+        return this;
+    }
+
+    public MockRequestContext addGlobalTransition(final String transitionId, final String targetState) {
+        val targetResolver = new DefaultTargetStateResolver(targetState);
+        val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(transitionId)), targetResolver);
+        getRootFlow().getGlobalTransitionSet().add(transition);
         return this;
     }
 

@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
     @Test
     void verifyClasspathByExpression() throws Throwable {
-        System.setProperty("SP_REF", "classpath:sample-sp.xml");
+        System.setProperty("CLASSPATH_SP", "classpath:sample-sp.xml");
         val loader = buildCacheLoader();
         val service = new SamlRegisteredService();
         service.setName(RandomUtils.randomAlphabetic(4));
         service.setId(RandomUtils.nextLong());
         service.setServiceId("https://example.org/saml");
-        service.setMetadataLocation("${#systemProperties['SP_REF']}");
+        service.setMetadataLocation("${#systemProperties['CLASSPATH_SP']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
         assertNotNull(loader.load(key));
     }
@@ -44,14 +44,14 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         val mdFile = File.createTempFile("spsamlmetadata", ".xml");
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(mdFile, content, StandardCharsets.UTF_8);
-        System.setProperty("SP_REF", mdFile.getCanonicalPath());
+        System.setProperty("FILE_EXPR_SP", mdFile.getCanonicalPath());
 
         val loader = buildCacheLoader();
         val service = new SamlRegisteredService();
         service.setName(RandomUtils.randomAlphabetic(4));
         service.setId(RandomUtils.nextLong());
         service.setServiceId("https://example.org/saml");
-        service.setMetadataLocation("${#systemProperties['SP_REF']}");
+        service.setMetadataLocation("${#systemProperties['FILE_EXPR_SP']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
         assertNotNull(loader.load(key));
     }
@@ -60,12 +60,11 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     void verifyEmptyResolvers() throws Throwable {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
-
         val service = new SamlRegisteredService();
         service.setName(RandomUtils.randomAlphabetic(4));
         service.setId(RandomUtils.nextLong());
         service.setServiceId("https://example.org/saml");
-        service.setMetadataLocation("${#systemProperties['SP_REF']}");
+        service.setMetadataLocation("${#systemProperties['EMPTY_SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
         assertThrows(SamlException.class, () -> loader.load(key));
     }
@@ -75,7 +74,6 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         val file = new File(FileUtils.getTempDirectory(), RandomUtils.randomAlphabetic(4));
         file.mkdirs();
         props.getMetadata().getFileSystem().setLocation(file.getCanonicalPath());
-
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(props, openSamlConfigBean));
         return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
