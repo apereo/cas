@@ -28,7 +28,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
 
         val bypass = provider.getBypassEvaluator();
-        val principal = resolvePrincipal(authentication.getPrincipal());
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val bypassAllowed = isMultifactorAuthenticationBypass(requestContext, registeredService, provider);
         if (bypassAllowed) {
             LOGGER.debug("Bypass triggered by MFA webflow for MFA for user [{}] for provider [{}]",

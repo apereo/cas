@@ -88,6 +88,8 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
     public ModelAndView buildResponseModelAndView(final JEEContext context, final ServicesManager servicesManager,
                                                   final String clientId, final String redirectUrl,
                                                   final Map<String, String> parameters) throws Exception {
+        OAuth20Utils.validateRedirectUri(redirectUrl);
+
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         val responseType = requestParameterResolver.resolveResponseModeType(context);
 

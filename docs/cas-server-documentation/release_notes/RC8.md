@@ -88,6 +88,7 @@ are now configured to run with parallelism enabled.
 - Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
 - Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
 - OpenID Connect claims can now be [optionally decorated](../authentication/OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
+- Following the recommendations of the [OAuth Security Workshop](https://oauth.secworkshop.events/osw2023), the validation rules of `redirect_uri` parameters are now tightened to ensure the parameter value does not have URL fragments, invalid schemes such as `javascript` or `data` or suspicious parameters such as `code`, `state`, etc.
 
 ## Library Upgrades
    

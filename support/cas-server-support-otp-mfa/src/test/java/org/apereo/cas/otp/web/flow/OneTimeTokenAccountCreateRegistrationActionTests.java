@@ -36,6 +36,7 @@ class OneTimeTokenAccountCreateRegistrationActionTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+        
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())
@@ -47,7 +48,7 @@ class OneTimeTokenAccountCreateRegistrationActionTests {
         when(repository.create(anyString())).thenReturn(account);
         val action = new OneTimeTokenAccountCreateRegistrationAction(repository, "CAS", "CAS");
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putMultifactorAuthenticationProvider(context, provider);

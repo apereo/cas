@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
 import java.util.List;
@@ -47,20 +48,22 @@ class GoogleAuthenticatorPrepareLoginActionTests {
     @Qualifier("dummyProvider")
     private MultifactorAuthenticationProvider dummyProvider;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val acct = GoogleAuthenticatorAccount
             .builder()
-            .username("casuser")
+            .username(UUID.randomUUID().toString())
             .name(UUID.randomUUID().toString())
-            .secretKey("secret")
+            .secretKey(UUID.randomUUID().toString())
             .validationCode(123456)
-            .scratchCodes(List.of())
+            .scratchCodes(List.of(987345))
             .build();
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
-
         WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertNull(action.execute(context));
         assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));

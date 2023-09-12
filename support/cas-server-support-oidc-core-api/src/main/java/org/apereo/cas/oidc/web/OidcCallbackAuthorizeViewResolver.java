@@ -61,6 +61,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             val clientId = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
 
+            OAuth20Utils.validateRedirectUri(originalRedirectUrl.get());
             val responseType = oauthRequestParameterResolver.resolveResponseModeType(context);
             val redirect = FunctionUtils.doIf(OAuth20ResponseModeFactory.isResponseModeTypeFormPost(registeredService, responseType),
                     originalRedirectUrl::get,

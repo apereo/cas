@@ -31,9 +31,10 @@ class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMult
     @Qualifier("webAuthnAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver;
 
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456"));
         val event = webAuthnAuthenticationWebflowEventResolver.resolveSingle(context);

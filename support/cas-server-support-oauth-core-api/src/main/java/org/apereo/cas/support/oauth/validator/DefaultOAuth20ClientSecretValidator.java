@@ -45,7 +45,7 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
     }
 
     /**
-     * Is client secret defined for boolean.
+     * Is client secret defined.
      *
      * @param registeredService the registered service
      * @return true/false

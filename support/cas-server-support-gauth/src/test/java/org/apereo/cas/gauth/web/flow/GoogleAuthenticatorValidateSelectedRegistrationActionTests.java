@@ -49,7 +49,7 @@ class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
 
         val acct = OneTimeTokenAccount.builder()
-            .username("casuser")
+            .username(UUID.randomUUID().toString())
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
             .validationCode(123456)

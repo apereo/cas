@@ -10,7 +10,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,15 +25,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.ByteArrayResource;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link BasicDuoSecurityAuthenticationServiceTests}.
@@ -96,7 +90,7 @@ class BasicDuoSecurityAuthenticationServiceTests {
     void verifyAuthNDirect() throws Throwable {
         val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0),
             httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
-        try (val webServer = new MockWebServer(6342)) {
+        try (val webServer = new MockWebServer()) {
             webServer.start();
             val creds = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getAuthentication().getPrincipal(), "mfa-duo");
             assertFalse(service.authenticate(creds).isSuccess());
@@ -113,22 +107,23 @@ class BasicDuoSecurityAuthenticationServiceTests {
 
     @Test
     void verifyPasscode() throws Throwable {
-        val props = new DuoSecurityMultifactorAuthenticationProperties();
-        BeanUtils.copyProperties(props, casProperties.getAuthn().getMfa().getDuo().get(0));
-        props.setDuoApiHost("localhost:6342");
-        val service = new BasicDuoSecurityAuthenticationService(props,
-            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build()) {
-            @Serial
-            private static final long serialVersionUID = 1756840642345094968L;
-
-            @Override
-            protected JSONObject executeDuoApiRequest(final Http request) {
-                return new JSONObject(Map.of("stat", "OK", "result", "allow"));
-            }
-        };
-
-        try (val webServer = new MockWebServer(6342)) {
+        try (val webServer = new MockWebServer()) {
             webServer.start();
+
+            val props = new DuoSecurityMultifactorAuthenticationProperties();
+            BeanUtils.copyProperties(props, casProperties.getAuthn().getMfa().getDuo().get(0));
+            props.setDuoApiHost("localhost:%s".formatted(webServer.getPort()));
+            val service = new BasicDuoSecurityAuthenticationService(props,
+                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build()) {
+                @Serial
+                private static final long serialVersionUID = 1756840642345094968L;
+
+                @Override
+                protected JSONObject executeDuoApiRequest(final Http request) {
+                    return new JSONObject(Map.of("stat", "OK", "result", "allow"));
+                }
+            };
+
             val creds = new DuoSecurityPasscodeCredential("casuser", "123456", "mfa-duo");
             assertTrue(service.authenticate(creds).isSuccess());
         }
@@ -224,10 +219,9 @@ class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     void verifyPing() throws Throwable {
         var entity = MAPPER.writeValueAsString(Map.of("stat", "OK", "response", "pong"));
-        try (val webServer = new MockWebServer(9310,
-            new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
+        try (val webServer = new MockWebServer(entity)) {
             webServer.start();
-            val props = new DuoSecurityMultifactorAuthenticationProperties().setDuoApiHost("http://localhost:9310");
+            val props = new DuoSecurityMultifactorAuthenticationProperties().setDuoApiHost("http://localhost:%s".formatted(webServer.getPort()));
             val service = new BasicDuoSecurityAuthenticationService(props, httpClient,
                 List.of(MultifactorAuthenticationPrincipalResolver.identical()),
                 Caffeine.newBuilder().build());

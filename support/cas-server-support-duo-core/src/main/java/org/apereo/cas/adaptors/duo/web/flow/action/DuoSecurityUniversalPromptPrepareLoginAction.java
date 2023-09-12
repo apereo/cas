@@ -80,7 +80,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(registeredService -> properties.put(RegisteredService.class.getSimpleName(), registeredService));
 
-        val principal = resolvePrincipal(authentication.getPrincipal());
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val authUrl = client.createAuthUrl(principal.getId(), state);
 
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", authUrl);

@@ -41,7 +41,7 @@ class MultifactorAuthenticationAvailableActionTests {
 
         @Test
         void verifyOperations() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService();
             servicesManager.save(service);
@@ -70,7 +70,7 @@ class MultifactorAuthenticationAvailableActionTests {
 
         @Test
         void verifyOperations() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService();
             servicesManager.save(service);
