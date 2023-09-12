@@ -106,8 +106,8 @@ class AuthenticationExceptionHandlerActionTests {
         val req = MockRequestContext.create();
 
         val policy = new TestContextualAuthenticationPolicy();
-        val id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
-        assertEquals(UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), id);
+        val event = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
+        assertEquals(UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), event.getId());
     }
 
     private static final class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {

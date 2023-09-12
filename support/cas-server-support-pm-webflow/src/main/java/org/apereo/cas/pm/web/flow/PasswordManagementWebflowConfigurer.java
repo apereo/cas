@@ -73,8 +73,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, CasWebflowConstants.STATE_ID_INVALID_WORKSTATION, "login-error/casBadWorkstationView");
         createViewState(flow, CasWebflowConstants.STATE_ID_INVALID_AUTHENTICATION_HOURS, "login-error/casBadHoursView");
         createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, "password-reset/casPasswordUpdateSuccessView");
-
-
+        createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED, "login-error/casAccountLockedView");
+        createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED, "login-error/casAccountDisabledView");
+        
         val pm = casProperties.getAuthn().getPm();
         if (pm.getCore().isEnabled()) {
             configurePasswordManagementWebflow(flow);
@@ -87,9 +88,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void configurePasswordManagementWebflow(final Flow flow) {
-        val accountLockedState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED, "login-error/casAccountLockedView");
-        val accountDisabledState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED, "login-error/casAccountDisabledView");
-
         configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD, "login-error/casExpiredPassView");
         configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD, "login-error/casMustChangePassView");
         configurePasswordMustChangeForAuthnWarnings(flow);
@@ -107,6 +105,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
         createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW,
             "password-reset/casResetPasswordErrorView");
+
+        val accountLockedState = getState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED, ViewState.class);
+        val accountDisabledState = getState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED, ViewState.class);
 
         val enableUnlockAction = createSetAction("viewScope.enableAccountUnlock", "true");
         Stream.of(accountLockedState, accountDisabledState).forEach(state -> {
