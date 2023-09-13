@@ -245,6 +245,17 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public boolean approve(final String organization, final String repository, final PullRequest pr) {
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
+        val params = new HashMap<String, String>();
+        params.put("commit_id", pr.getHead().getSha());
+        params.put("body", "This pull request is reviewed and approved. Thank you!");
+        params.put("event", "APPROVE");
+        val responseEntity = this.rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
+        return responseEntity.getStatusCode().is2xxSuccessful();
+    }
+
+    @Override
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
             val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
@@ -255,7 +266,7 @@ public class GitHubTemplate implements GitHubOperations {
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 log.info("Merged pull request {} with base", pr);
             } else {
-                log.error("Unable to merge pulfl request {} with base {}", pr, responseEntity);
+                log.error("Unable to merge pull request {} with base {}", pr, responseEntity);
             }
             return pr;
         }

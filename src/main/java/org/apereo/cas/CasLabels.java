@@ -136,6 +136,7 @@ public enum CasLabels {
     LABEL_UNDER_REVIEW("Under Review", ""),
     LABEL_RECAPTCHA("reCAPTCHA", "\\bcaptcha\\b"),
     LABEL_PUPPETEER("Puppeteer", "puppeteer"),
+    LABEL_RENOVATE("Renovate"),
     LABEL_BOT("Bot");
 
     private final String title;

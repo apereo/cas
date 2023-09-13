@@ -26,11 +26,6 @@ public class CasPullRequestListener implements PullRequestListener {
     public void onOpenPullRequest(final PullRequest givenPullRequest) {
         val pr = repository.getPullRequest(givenPullRequest.getNumber());
         log.debug("Processing {}", pr);
-
-        if (pr.isWorkInProgress() && !pr.isDraft()) {
-            //repository.convertPullRequestToDraft(pr);
-        }
-
         if (shouldDisregardPullRequest(pr)) {
             log.info("{} is considered invalid and will not be processed", pr);
             return;
@@ -43,6 +38,19 @@ public class CasPullRequestListener implements PullRequestListener {
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
         checkForPullRequestDescription(pr);
+        processAutomaticMergeByChangeset(pr);
+    }
+
+    private void processAutomaticMergeByChangeset(final PullRequest pr) {
+        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_RENOVATE)) {
+            var files = repository.getPullRequestFiles(pr);
+            if (files.size() == 1 && files.get(0).getFilename().endsWith("locust/requirements.txt")) {
+                log.info("Merging pull request {}", pr);
+                if (repository.approvePullRequest(pr)) {
+                    repository.mergePullRequestIntoBase(pr);
+                }
+            }
+        }
     }
 
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
@@ -130,7 +138,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         val files = repository.getPullRequestFiles(pr);
-
+        
         val modifiesJava = files.stream().anyMatch(file ->
             !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
 

@@ -44,6 +44,10 @@ public class MonitoredRepository {
 
     private Version currentVersionInMaster;
 
+    public boolean approvePullRequest(final PullRequest pr) {
+        return gitHub.approve(getOrganization(), getName(), pr);
+    }
+
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
         return l -> l.getName().equals(name.getTitle());
     }
@@ -151,7 +155,7 @@ public class MonitoredRepository {
         var milestones = getActiveMilestones();
 
         var currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
-        var result = milestones
+        return milestones
             .stream()
             .sorted()
             .filter(milestone -> {
@@ -160,7 +164,6 @@ public class MonitoredRepository {
                     && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
             })
             .findFirst();
-        return result;
     }
 
     public PullRequest mergePullRequestWithBase(final PullRequest pr) {
