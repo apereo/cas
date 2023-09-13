@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
@@ -55,10 +53,8 @@ class CasSimpleMultifactorSendTokenActionTests {
             var event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
             assertEquals("selectEmails", event.getId());
             assertTrue(requestContext.getFlowScope().contains("emailRecipients", Map.class));
-
             val emailRecipients = requestContext.getFlowScope().get("emailRecipients", Map.class);
-            val request = (MockHttpServletRequest) WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            emailRecipients.keySet().forEach(key -> request.setParameter(key.toString(), "nothing"));
+            emailRecipients.keySet().forEach(key -> requestContext.setParameter(key.toString(), "nothing"));
             event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         }

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -47,10 +46,7 @@ class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowCo
     @Autowired
     @Qualifier("webAuthnMultifactorAuthenticationProvider")
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Override
     protected String getMultifactorEventId() {
         return WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN;

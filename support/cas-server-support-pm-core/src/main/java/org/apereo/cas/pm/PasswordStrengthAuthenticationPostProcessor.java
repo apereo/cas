@@ -27,7 +27,7 @@ public class PasswordStrengthAuthenticationPostProcessor implements Authenticati
     }
 
     @Override
-    public boolean supports(final Credential credential) throws Throwable {
+    public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
     }
 }
