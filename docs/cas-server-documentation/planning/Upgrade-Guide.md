@@ -76,7 +76,9 @@ Your changes typically are:
 
 ## Prepare Development Environment
 
-<img src="http://i.imgur.com/jcdDHWb.jpg" width="160px" height="200px">
+<a href="http://i.imgur.com/jcdDHWb.jpg" data-lightbox="image-1">
+  <img src="http://i.imgur.com/jcdDHWb.jpg" width="160px" height="200px">
+</a>
 
 Um, No. 
 
