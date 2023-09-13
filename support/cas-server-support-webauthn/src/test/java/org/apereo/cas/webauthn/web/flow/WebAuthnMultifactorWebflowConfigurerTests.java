@@ -7,7 +7,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
