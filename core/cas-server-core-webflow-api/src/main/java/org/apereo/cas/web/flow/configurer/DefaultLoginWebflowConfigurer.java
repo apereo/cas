@@ -18,7 +18,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.StringToCharArrayConverter;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,13 +30,11 @@ import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.Locale;
 import java.util.Map;
 
@@ -150,20 +147,14 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createRealSubmitAction(final Flow flow) {
         val state = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
             CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_WARN,
-            CasWebflowConstants.STATE_ID_WARN);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-            CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
-            CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-            CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_ERROR,
-            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID,
-            CasWebflowConstants.STATE_ID_SERVICE_CHECK);
-        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET,
-            CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
 
     protected void createTicketGrantingTicketCheckAction(final Flow flow) {

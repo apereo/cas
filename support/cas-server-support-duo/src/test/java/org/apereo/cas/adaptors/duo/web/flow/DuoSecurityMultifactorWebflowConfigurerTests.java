@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
 import java.util.UUID;
@@ -46,9 +45,6 @@ class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflo
         System.setProperty("DUO_SECURITY_ADMIN_SKEY", UUID.randomUUID().toString());
         System.setProperty("DUO_SECURITY_ADMIN_IKEY", UUID.randomUUID().toString());
     }
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("duoAdminApiEndpoint")

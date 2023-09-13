@@ -1,6 +1,7 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.web.flow.resolver.CasWebflowAware;
 import java.io.Serial;
 
 /**
@@ -10,7 +11,7 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class WeakPasswordException extends InvalidPasswordException {
+public class WeakPasswordException extends InvalidPasswordException implements CasWebflowAware {
     @Serial
     private static final long serialVersionUID = 458954862481279L;
 
