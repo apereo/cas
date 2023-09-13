@@ -51,12 +51,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
-
-    @BeforeEach
-    public void cleanUp() {
-        registry.deleteAll();
-    }
-
+    
     @Test
     void verifySave() {
         val username = UUID.randomUUID().toString();
