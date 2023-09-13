@@ -255,7 +255,7 @@ public class CasPullRequestListener implements PullRequestListener {
     private boolean processDependencyUpgradesPullRequests(final PullRequest pr) {
         var committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
         if (!committer && !pr.isLabeledAs(CasLabels.LABEL_SEE_SECURITY_POLICY)
-            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft() && !pr.isBot()) {
+            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft() && !pr.isBot() && !pr.isTargetedAtMasterBranch()) {
             var files = repository.getPullRequestFiles(pr);
             if (files.size() == 1 && files.get(0).getFilename().endsWith("gradle.properties")) {
                 var template = IOUtils.toString(new ClassPathResource("template-security-policy.md").getInputStream(), StandardCharsets.UTF_8);
