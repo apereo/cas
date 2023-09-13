@@ -293,6 +293,9 @@ public class RedisObjectFactory {
         if (StringUtils.hasText(redis.getPassword())) {
             sentinelConfig.setPassword(RedisPassword.of(redis.getPassword()));
         }
+        if (StringUtils.hasText(redis.getSentinel().getPassword())) {
+            sentinelConfig.setSentinelPassword(RedisPassword.of(redis.getSentinel().getPassword()));
+        }
         return sentinelConfig;
     }
 

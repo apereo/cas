@@ -20,6 +20,8 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master
 
@@ -32,6 +34,8 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master
 
@@ -44,5 +48,7 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master
