@@ -35,11 +35,6 @@ public class RedisSentinelProperties implements Serializable {
     private String master;
 
     /**
-     * Login password of the sentinel server.
-     */
-    private String password;
-
-    /**
      * list of host:port pairs.
      */
     private List<String> node = new ArrayList<>(0);
