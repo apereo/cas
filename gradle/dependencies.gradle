@@ -23,6 +23,11 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
+        permitio          : [
+                dependencies.create("io.permit:permit-sdk-java:$permitioVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         googlecloudlogging          : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-starter-logging:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
