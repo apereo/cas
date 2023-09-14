@@ -6,7 +6,7 @@ category: Notifications
 
 {% include variables.html %}
 
-# Twilio SMS Messaging
+# Twilio Messaging
 
 To learn more, [visit this site](https://www.twilio.com/).
 

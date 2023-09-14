@@ -145,7 +145,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val grantType = requestParameterResolver.resolveGrantType(context);
 
         if (grantType == OAuth20GrantTypes.PASSWORD) {
-            LOGGER.debug("Skipping Client credential authentication to use password authentication");
+            LOGGER.debug("Skipping client credential authentication to use password authentication");
             return false;
         }
 
