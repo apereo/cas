@@ -92,6 +92,8 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean signUnsolicitedAuthnRequest;
 
+    private boolean skipGeneratingSubjectConfirmationAddress;
+
     private boolean skipGeneratingAssertionNameId;
 
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
