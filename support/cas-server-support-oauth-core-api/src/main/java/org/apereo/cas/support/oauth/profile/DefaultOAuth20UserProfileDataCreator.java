@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -57,7 +58,9 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
 
     protected Map<String, List<Object>> collectAttributes(final Principal principal,
                                                           final RegisteredService registeredService) {
-        return principal.getAttributes();
+        val attributes = new HashMap<>(principal.getAttributes());
+        attributes.entrySet().removeIf(entry -> entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE));
+        return attributes;
     }
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
