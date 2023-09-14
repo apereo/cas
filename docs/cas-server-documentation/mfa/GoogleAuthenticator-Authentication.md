@@ -22,11 +22,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
-
-Signing and encryption can be configured as well:
-
-{% include_cached casproperties.html properties="cas.authn.mfa.gauth.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth" includes=".core,.crypto" %}
 
 ## Actuator Endpoints
 
