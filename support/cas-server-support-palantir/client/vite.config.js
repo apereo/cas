@@ -2,12 +2,10 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 
-
 const base = '/cas/palantir';
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
-    console.log(mode);
     return ({
         define: {
             'process.env.NODE_ENV': JSON.stringify(mode),

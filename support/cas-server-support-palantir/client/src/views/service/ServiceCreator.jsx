@@ -5,13 +5,18 @@ import { ServiceForm } from './ServiceForm';
 import { useCreateServiceMutation } from '../../store/ServiceApi';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { getDefaultServiceType } from '../../data/service-types';
+
+const def = getDefaultServiceType();
 
 export function ServiceCreator () {
     const { enqueueSnackbar } = useSnackbar();
     const [createService, createResult] = useCreateServiceMutation();
     const navigate = useNavigate();
 
-    const service = useMemo(() => ({}), []);
+    const service = useMemo(() => ({
+        '@class': def['@class']
+    }), []);
 
     const create = useCallback((s) => {
         createService(s);
