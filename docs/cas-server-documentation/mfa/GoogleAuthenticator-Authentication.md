@@ -24,6 +24,10 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
+Signing and encryption can be configured as well:
+
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.crypto" %}
+
 ## Repository Cleaner
 
 A background *cleaner* process is also automatically scheduled to scan the
