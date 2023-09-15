@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDeleteServiceMutation, useGetServicesQuery } from '../../store/ServiceApi';
 
 import Table from '@mui/material/Table';
