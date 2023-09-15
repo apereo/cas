@@ -1,6 +1,5 @@
 package org.apereo.cas.permit;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -10,10 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

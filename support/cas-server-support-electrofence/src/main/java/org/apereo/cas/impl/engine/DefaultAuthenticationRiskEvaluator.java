@@ -40,9 +40,10 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
                                         final RegisteredService service,
                                         final HttpServletRequest request) {
 
-        val activeCalculators = this.calculators
+        val activeCalculators = calculators
             .stream()
-            .filter(BeanSupplier::isNotProxy).toList();
+            .filter(BeanSupplier::isNotProxy)
+            .toList();
 
         if (activeCalculators.isEmpty()) {
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
@@ -50,10 +51,12 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
 
         val scores = activeCalculators
             .stream()
-            .map(r -> r.calculate(authentication, service, request))
-            .filter(Objects::nonNull).toList();
+            .map(riskCalculator -> riskCalculator.calculate(authentication, service, request))
+            .filter(Objects::nonNull)
+            .toList();
 
-        val sum = scores.stream()
+        val sum = scores
+            .stream()
             .map(AuthenticationRiskScore::score)
             .filter(Objects::nonNull)
             .reduce(BigDecimal.ZERO, BigDecimal::add);

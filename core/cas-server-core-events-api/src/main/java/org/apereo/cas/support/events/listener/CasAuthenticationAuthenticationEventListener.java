@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
 import lombok.Getter;
@@ -46,15 +47,13 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
         dto.setCreationTime(dt.toString());
         val clientInfo = event.getClientInfo();
-        if (clientInfo != null) {
+        FunctionUtils.doIfNotNull(clientInfo, __ -> {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
             dto.putServerIpAddress(clientInfo.getServerIpAddress());
             dto.putAgent(clientInfo.getUserAgent());
             val location = determineGeoLocationFor(clientInfo);
             dto.putGeoLocation(location);
-        } else {
-            LOGGER.trace("No client information is available. The final event cannot track client location, user agent or IP addresses");
-        }
+        });
         return dto;
     }
 

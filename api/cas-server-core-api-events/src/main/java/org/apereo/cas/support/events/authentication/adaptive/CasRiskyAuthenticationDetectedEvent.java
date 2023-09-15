@@ -29,7 +29,8 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
     private final Object score;
 
 
-    public CasRiskyAuthenticationDetectedEvent(final Object source, final Authentication authentication,
+    public CasRiskyAuthenticationDetectedEvent(final Object source,
+                                               final Authentication authentication,
                                                final RegisteredService service,
                                                final Object riskScore,
                                                final ClientInfo clientInfo) {

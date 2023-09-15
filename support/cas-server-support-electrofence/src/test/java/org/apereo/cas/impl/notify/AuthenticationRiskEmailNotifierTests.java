@@ -7,10 +7,14 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
@@ -41,12 +45,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(MailSenderAutoConfiguration.class)
 @Tag("Mail")
 class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
+    @BeforeEach
+    public void onSetUp() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.100");
+        request.setLocalAddr("223.456.789.200");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+    }
+    
     @Test
     void verifyOperation() throws Throwable {
         authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
+        authenticationRiskEmailNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
         authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
         assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
@@ -57,6 +70,7 @@ class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRisk
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("nothing", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
+        authenticationRiskEmailNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
         authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
         assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
