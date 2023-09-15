@@ -23,7 +23,9 @@ import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -147,20 +149,30 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager);
+            return new AuthenticationRiskEmailNotifier(casProperties,
+                communicationsManager, servicesManager, cookieCipherExecutor);
         }
 
         @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager);
+            return new AuthenticationRiskSmsNotifier(casProperties,
+                communicationsManager, servicesManager, cookieCipherExecutor);
         }
 
     }

@@ -28,9 +28,10 @@ public interface AuthenticationRiskMitigator {
      * @param score          the score
      * @param request        the request
      * @return the responses
+     * @throws Throwable the throwable
      */
     AuthenticationRiskContingencyResponse mitigate(Authentication authentication,
                                                    RegisteredService service,
                                                    AuthenticationRiskScore score,
-                                                   HttpServletRequest request);
+                                                   HttpServletRequest request) throws Throwable;
 }

@@ -98,6 +98,16 @@ public class JwtBuilder {
     }
 
     /**
+     * Unpack jwt claims set.
+     *
+     * @param jwtJson the jwt json
+     * @return the jwt claims set
+     */
+    public JWTClaimsSet unpack(final String jwtJson) {
+        return unpack(Optional.empty(), jwtJson);
+    }
+
+    /**
      * Unpack jwt.
      *
      * @param service the service

@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashMap;
@@ -44,6 +45,7 @@ public class AuditableContext {
     private final Object httpResponse;
 
     @Builder.Default
+    @Getter
     private Map<String, Object> properties = new LinkedHashMap<>(0);
 
     public Optional<Service> getService() {
@@ -80,9 +82,5 @@ public class AuditableContext {
 
     public Optional<TicketGrantingTicket> getTicketGrantingTicket() {
         return Optional.ofNullable(ticketGrantingTicket);
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
     }
 }

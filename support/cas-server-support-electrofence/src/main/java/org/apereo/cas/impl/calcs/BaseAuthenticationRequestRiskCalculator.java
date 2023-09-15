@@ -33,14 +33,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
 
-    /**
-     * CAS event repository instance.
-     */
     protected final CasEventRepository casEventRepository;
 
-    /**
-     * CAS settings.
-     */
     protected final CasConfigurationProperties casProperties;
 
     @Override
@@ -64,12 +58,6 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         return HIGHEST_RISK_SCORE;
     }
 
-    /**
-     * Gets cas ticket granting ticket created events.
-     *
-     * @param principal the principal
-     * @return the cas ticket granting ticket created events for
-     */
     protected Stream<? extends CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
@@ -91,13 +79,6 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         return getFinalAveragedScore(count, eventCount);
     }
 
-    /**
-     * Gets final averaged score.
-     *
-     * @param eventCount the event count
-     * @param total      the total
-     * @return the final averaged score
-     */
     protected BigDecimal getFinalAveragedScore(final long eventCount, final long total) {
         val score = BigDecimal.valueOf(eventCount)
             .divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_UP);

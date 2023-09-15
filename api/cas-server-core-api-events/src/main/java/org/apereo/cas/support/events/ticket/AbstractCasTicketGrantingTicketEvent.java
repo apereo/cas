@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 
 
@@ -20,7 +21,8 @@ import java.time.ZonedDateTime;
 @Getter
 public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEvent {
 
-    public static final long serialVersionUID = 5815205609847140811L;
+    @Serial
+    private static final long serialVersionUID = 5815205609847140811L;
 
     private final TicketGrantingTicket ticketGrantingTicket;
 

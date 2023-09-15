@@ -18,28 +18,6 @@ be considered to achieve suitable security.
 please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues 
 properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
-## Announcements
-     
-- [February 2023](https://apereo.github.io/2023/02/20/x509-vuln/)
-- [August 2022](https://apereo.github.io/2022/08/03/oidc-vuln/)
-- [July 2022](https://apereo.github.io/2022/07/01/oidc-vuln/)
-- [June 2022](https://apereo.github.io/2022/06/23/oidc-vuln/)
-- [March 2022](https://apereo.github.io/2022/03/31/spring-vuln/)
-- [March 2022](https://apereo.github.io/2022/03/06/oidc-vuln/)
-- [December 2021](https://apereo.github.io/2021/12/11/log4j-vuln/)
-- [October 2021](https://apereo.github.io/2021/10/18/restvuln/)
-- [Feb 2021](https://apereo.github.io/2021/02/13/gauthvuln/)
-- [Oct 2020](https://apereo.github.io/2020/10/14/gauthvuln/)
-- [July 2020](https://apereo.github.io/2020/07/24/credvuln/)
-- [Feb 2020](https://apereo.github.io/2020/02/08/webflowcrypto/)
-- [Dec 2019](https://apereo.github.io/2019/12/20/surrogatevuln/)
-- [Nov 2019](https://apereo.github.io/2019/11/24/smfavuln/)
-- [Sep 2019](https://apereo.github.io/2019/09/27/numvulndisc/)
-- [Sep 2018](https://apereo.github.io/2018/09/26/mfavulndisc/)
-- [Mar 2017](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
-- [Oct 2016](https://apereo.github.io/2016/10/24/servlvulndisc/)
-- [Apr 2016](https://apereo.github.io/2016/04/08/commonsvulndisc/)
-
 ## System Security Considerations
 
 Infrastructure security matters to consider may include the following.

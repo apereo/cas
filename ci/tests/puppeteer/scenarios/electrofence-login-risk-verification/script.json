@@ -21,25 +21,17 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
+    "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
+
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    
     "--cas.authn.adaptive.risk.response.mail.html=false",
     "--cas.authn.adaptive.risk.response.mail.from=cas@example.org",
-    "--cas.authn.adaptive.risk.response.mail.subject=CasRiskyAuthN"
+    "--cas.authn.adaptive.risk.response.mail.subject=CasRiskyAuthN",
+    "--cas.authn.adaptive.risk.response.mail.text=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/email.gtemplate"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
-  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
-  "SPRING_APPLICATION_JSON": {
-    "cas": {
-      "authn": {
-        "adaptive": {
-          "risk": {
-            "response": {
-              "mail": {
-                "text": "groovy { return authentication.principal.id + ' with score ' + riskScore.score }"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

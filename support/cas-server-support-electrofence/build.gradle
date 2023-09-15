@@ -13,6 +13,9 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
 
+    implementation libraries.jose4j
+    implementation libraries.nimbus
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
@@ -24,6 +27,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":support:cas-server-support-token-core-api")
 
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-geolocation-googlemaps")

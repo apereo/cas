@@ -1067,6 +1067,10 @@ public interface CasWebflowConstants {
      * State id 'viewRegistrationWebAuthn'.
      */
     String STATE_ID_WEBAUTHN_VIEW_REGISTRATION = "viewRegistrationWebAuthn";
+    /**
+     * State id 'checkRiskVerificationToken'.
+     */
+    String STATE_ID_RISK_AUTHENTICATION_TOKEN_CHECK = "checkRiskVerificationToken";
 
     /**
      * State id 'validateWebAuthnToken'.
@@ -2043,7 +2047,10 @@ public interface CasWebflowConstants {
      * Action id 'baseSpnegoClientAction'.
      */
     String ACTION_ID_SPNEGO_CLIENT_BASE = "baseSpnegoClientAction";
-
+    /**
+     * Action id 'riskAuthenticationTokenCheckAction'.
+     */
+    String ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK = "riskAuthenticationCheckTokenAction";
     /**
      * The action id 'spnego'.
      */
@@ -2052,4 +2059,5 @@ public interface CasWebflowConstants {
      * The action id 'syncopePrincipalProvisionerAction'.
      */
     String ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION = "syncopePrincipalProvisionerAction";
+
 }

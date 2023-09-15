@@ -34,6 +34,11 @@ import java.util.Map;
 public interface CasWebflowConfigurer extends Ordered {
 
     /**
+     * Flow id for risk-based authentication's verification.
+     */
+    String FLOW_ID_RISK_VERIFICATION = "riskauthverify";
+
+    /**
      * Flow id for delegated authentication redirect.
      */
     String FLOW_ID_DELEGATION_REDIRECT = "clientredirect";

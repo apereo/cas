@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -180,6 +181,14 @@ public class RiskBasedAuthenticationProperties implements Serializable {
          */
         private String riskyAuthenticationAttribute = "triggeredRiskBasedAuthentication";
 
+        /**
+         * Control the expiration window of the verification token
+         * that can be used to verify and confirm risky authentication
+         * attempts.
+         */
+        @DurationCapable
+        private String riskVerificationTokenExpiration = "PT5M";
+        
         /**
          * Email settings for notifications,
          * If an authentication attempt is deemed risky.
