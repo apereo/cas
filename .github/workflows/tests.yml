@@ -126,7 +126,7 @@ jobs:
           shell: bash
           command: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v3"
+        uses: "codecov/codecov-action@v4"
         continue-on-error: true
         if: ${{ env.CODECOV_TOKEN != null }}
         with:
