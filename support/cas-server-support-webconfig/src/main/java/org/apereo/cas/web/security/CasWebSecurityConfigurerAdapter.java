@@ -27,7 +27,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -81,38 +80,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     }
 
     /**
-     * Disable Spring Security configuration for protocol endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints where necessary.
-     *
-     * @param web web security
-     */
-    public void configureWebSecurity(final WebSecurity web) {
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-        patterns.add("/webjars/**");
-        patterns.add("/themes/**");
-        patterns.add("/js/**");
-        patterns.add("/css/**");
-        patterns.add("/images/**");
-        patterns.add("/static/**");
-        patterns.add("/error");
-        patterns.add("/favicon.ico");
-        patterns.add("/");
-        patterns.add(webEndpointProperties.getBasePath());
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-
-        val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
-        web.debug(LOGGER.isDebugEnabled())
-            .ignoring()
-            .requestMatchers(matchers);
-    }
-
-    /**
      * Configure http security.
      *
      * @param http the http
@@ -142,6 +109,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/static/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
+        patterns.add("/");
+        patterns.add(webEndpointProperties.getBasePath());
 
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         var requests = http.authorizeHttpRequests(customizer -> {
