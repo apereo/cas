@@ -35,19 +35,10 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends BaseTokenSigningAndEncryptionService {
-    /**
-     * The default keystore for OIDC tokens.
-     */
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
 
-    /**
-     * The service keystore for OIDC tokens.
-     */
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
 
-    /**
-     * Issuer service.
-     */
     protected final OidcIssuerService issuerService;
 
     @Override

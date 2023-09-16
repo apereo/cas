@@ -41,9 +41,9 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
             .orElseGet(ArrayList::new);
         return new JsonWebKeySet(keys
             .stream()
-            .filter(k -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(k).isCurrent())
+            .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent())
             .map(PublicJsonWebKey.class::cast)
-            .filter(k -> k.getPrivateKey() != null)
+            .filter(key -> key.getPrivateKey() != null)
             .collect(Collectors.toList()));
     }
 
@@ -99,10 +99,10 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
             }
             val badKeysCount = jsonWebKeySet.getJsonWebKeys()
                 .stream()
-                .filter(k ->
-                    StringUtils.isBlank(k.getAlgorithm())
-                    && StringUtils.isBlank(k.getKeyId())
-                    && StringUtils.isBlank(k.getKeyType())).count();
+                .filter(key ->
+                    StringUtils.isBlank(key.getAlgorithm())
+                    && StringUtils.isBlank(key.getKeyId())
+                    && StringUtils.isBlank(key.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                 LOGGER.warn("No valid JSON web keys could be found. The keys that are found in the keystore "
