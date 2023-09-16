@@ -6,7 +6,7 @@ networks:
 
 services:
   zookeeper-server:
-    image: 'bitnami/zookeeper:3.8.1'
+    image: 'bitnami/zookeeper:3.9.0'
     networks:
       - kafka-net
     ports:
@@ -14,7 +14,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: 'bitnami/kafka:3.4.0'
+    image: 'bitnami/kafka:3.4.1'
     networks:
       - kafka-net
     ports:

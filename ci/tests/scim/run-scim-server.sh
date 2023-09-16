@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Running SCIM docker image..."
 docker stop scim-server || true && docker rm scim-server || true
-docker run --rm --name="scim-server" -p 9666:8080 -d personify/personify-scim-server:2.0.9.RELEASE
+docker run --rm --name="scim-server" -p 9666:8080 -d personify/personify-scim-server:2.1.2.RELEASE
 echo "Waiting for SCIM image to prepare..."
 sleep 10
 docker ps | grep "scim-server"
