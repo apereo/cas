@@ -93,13 +93,6 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         return resultingResource;
     }
 
-    /**
-     * Generate.
-     *
-     * @param file the file
-     * @return the resource
-     * @throws Exception the exception
-     */
     protected Resource generate(final Resource file) throws Exception {
         if (ResourceUtils.doesResourceExist(file)) {
             LOGGER.trace("Located JSON web keystore at [{}]", file);
@@ -111,11 +104,11 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
 
-    private AbstractResource determineJsonWebKeystoreResource() throws Exception {
+    protected AbstractResource determineJsonWebKeystoreResource() throws Exception {
         val file = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
         try {
-            val jsonKeys = new JsonWebKeySet(file).toJson();
+            val jsonKeys = new JsonWebKeySet(file).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
             return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
         } catch (final Exception e) {
             LOGGER.debug("Given resource [{}] cannot be parsed as a raw JSON web keystore", file);
