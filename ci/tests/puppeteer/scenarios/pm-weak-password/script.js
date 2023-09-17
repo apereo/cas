@@ -8,6 +8,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertCookie(page, false);
+    await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Weak Password Detected");
     await cas.click(page, "#submit");
     await page.waitForNavigation();

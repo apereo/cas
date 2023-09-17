@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.config.CasCoreEventsConfiguration;
@@ -58,8 +57,7 @@ public class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigur
         authenticationRiskEmailNotifier.setRegisteredService(RegisteredServiceTestUtils.getRegisteredService());
         authenticationRiskEmailNotifier.setAuthentication(RegisteredServiceTestUtils.getAuthentication());
         authenticationRiskEmailNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
-        authenticationRiskEmailNotifier.setAuthenticationRiskScore(
-            new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.LOWEST_RISK_SCORE));
+        authenticationRiskEmailNotifier.setAuthenticationRiskScore(AuthenticationRiskScore.lowestRiskScore());
     }
 
     @Test

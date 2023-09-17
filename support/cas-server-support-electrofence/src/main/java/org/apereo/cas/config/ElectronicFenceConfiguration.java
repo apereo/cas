@@ -45,6 +45,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,8 +87,15 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskEvaluator authenticationRiskEvaluator(
-            final List<AuthenticationRequestRiskCalculator> ipAddressAuthenticationRequestRiskCalculators) {
-            return new DefaultAuthenticationRiskEvaluator(ipAddressAuthenticationRequestRiskCalculators);
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository eventRepository,
+            final CasConfigurationProperties casProperties,
+            final List<AuthenticationRequestRiskCalculator> riskCalculators) {
+            val activeCalculators = new ArrayList<>(riskCalculators)
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .toList();
+            return new DefaultAuthenticationRiskEvaluator(activeCalculators, casProperties, eventRepository);
         }
     }
 

@@ -27,7 +27,7 @@ class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthenticati
         val authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
@@ -41,7 +41,7 @@ class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthenticati
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold()));
     }
 }

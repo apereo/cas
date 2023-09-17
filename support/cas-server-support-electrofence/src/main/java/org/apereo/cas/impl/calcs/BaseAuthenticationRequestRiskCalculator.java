@@ -13,8 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZoneOffset;
@@ -40,22 +41,23 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     @Override
     public final AuthenticationRiskScore calculate(final Authentication authentication,
                                                    final RegisteredService service,
-                                                   final HttpServletRequest request) {
+                                                   final ClientInfo clientInfo) {
         val principal = authentication.getPrincipal();
         val events = getCasTicketGrantingTicketCreatedEventsFor(principal.getId()).collect(Collectors.toList());
         if (events.isEmpty()) {
-            return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
+            return AuthenticationRiskScore.highestRiskScore();
         }
-        val score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
-        LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
-        return score;
+        val score = calculateScore(clientInfo, authentication, service, events);
+        val authenticationRiskScore = new AuthenticationRiskScore(score).withClientInfo(ClientInfoHolder.getClientInfo());
+        LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), authenticationRiskScore);
+        return authenticationRiskScore;
     }
 
-    protected BigDecimal calculateScore(final HttpServletRequest request,
+    protected BigDecimal calculateScore(final ClientInfo clientInfo,
                                         final Authentication authentication,
                                         final RegisteredService service,
                                         final List<? extends CasEvent> events) {
-        return HIGHEST_RISK_SCORE;
+        return AuthenticationRiskScore.highestRiskScore().getScore();
     }
 
     protected Stream<? extends CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
@@ -74,7 +76,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         if (count == eventCount) {
             LOGGER.debug("Principal [{}] is assigned to the lowest risk score with attempted count of [{}]",
                 authentication.getPrincipal(), count);
-            return LOWEST_RISK_SCORE;
+            return AuthenticationRiskScore.lowestRiskScore().getScore();
         }
         return getFinalAveragedScore(count, eventCount);
     }
@@ -82,6 +84,6 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected BigDecimal getFinalAveragedScore(final long eventCount, final long total) {
         val score = BigDecimal.valueOf(eventCount)
             .divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_UP);
-        return HIGHEST_RISK_SCORE.subtract(score);
+        return AuthenticationRiskScore.highestRiskScore().getScore().subtract(score);
     }
 }

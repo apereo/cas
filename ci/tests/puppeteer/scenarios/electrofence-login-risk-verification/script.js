@@ -8,10 +8,10 @@ const assert = require("assert");
     let service = "https://localhost:9859/anything/adaptive";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertInnerTextContains(page, "#loginErrorsPanel p", "authentication attempt is determined to be risky");
-
+    await cas.assertCookie(page, false);
     await cas.goto(page, "http://localhost:8282");
     await page.waitForTimeout(5000);
     await cas.click(page, "table tbody td a");
@@ -24,5 +24,14 @@ const assert = require("assert");
     console.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.assertInnerText(page, "#content h2", "Risky Authentication attempt is confirmed.");
+
+    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
+    await page.waitForTimeout(1000);
+    await cas.loginWith(page);
+    await page.waitForTimeout(1000);
+    await cas.assertCookie(page);
+
     await browser.close();
 })();

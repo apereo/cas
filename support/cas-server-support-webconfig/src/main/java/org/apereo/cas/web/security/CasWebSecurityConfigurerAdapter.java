@@ -27,6 +27,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -80,6 +81,14 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     }
 
     /**
+     * Configure web security for spring security.
+     *
+     * @param web web security
+     */
+    public void configureWebSecurity(final WebSecurity web) {
+    }
+
+    /**
      * Configure http security.
      *
      * @param http the http
@@ -117,7 +126,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
-        
+
         protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
@@ -254,10 +263,10 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     private boolean isLdapAuthorizationActive() {
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         return StringUtils.isNotBlank(ldap.getBaseDn())
-               && StringUtils.isNotBlank(ldap.getLdapUrl())
-               && StringUtils.isNotBlank(ldap.getSearchFilter())
-               && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
-                   || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
+            && StringUtils.isNotBlank(ldap.getLdapUrl())
+            && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
+            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 
     private void configureLdapAuthenticationProvider(final HttpSecurity http,
