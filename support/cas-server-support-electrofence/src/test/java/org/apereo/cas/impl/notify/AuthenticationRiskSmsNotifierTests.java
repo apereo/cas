@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +41,7 @@ class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCa
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskSmsNotifier.setAuthentication(authentication);
-        authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        authenticationRiskSmsNotifier.setAuthenticationRiskScore(AuthenticationRiskScore.highestRiskScore());
         assertDoesNotThrow(() -> authenticationRiskSmsNotifier.publish());
     }
 }

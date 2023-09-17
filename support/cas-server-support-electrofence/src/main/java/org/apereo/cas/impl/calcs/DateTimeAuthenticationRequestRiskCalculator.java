@@ -6,11 +6,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import jakarta.servlet.http.HttpServletRequest;
+import org.apereo.inspektr.common.web.ClientInfo;
 import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -32,7 +30,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
     }
 
     @Override
-    protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
+    protected BigDecimal calculateScore(final ClientInfo clientInfo, final Authentication authentication,
                                         final RegisteredService service, final List<? extends CasEvent> events) {
         val windowInHours = casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours();
         val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
@@ -49,10 +47,9 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
                 val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
-            .filter(hour ->
-                hoursBeforeNow <= hoursFromNow
-                    ? (hour >= hoursBeforeNow && hour <= hoursFromNow)
-                    : (hour >= hoursBeforeNow || hour <= hoursFromNow)
+            .filter(hour -> hoursBeforeNow <= hoursFromNow
+                ? (hour >= hoursBeforeNow && hour <= hoursFromNow)
+                : (hour >= hoursBeforeNow || hour <= hoursFromNow)
             )
             .count();
 

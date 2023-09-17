@@ -5,11 +5,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import jakarta.servlet.http.HttpServletRequest;
+import org.apereo.inspektr.common.web.ClientInfo;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -28,11 +27,11 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
     }
 
     @Override
-    protected BigDecimal calculateScore(final HttpServletRequest request,
+    protected BigDecimal calculateScore(final ClientInfo clientInfo,
                                         final Authentication authentication,
                                         final RegisteredService service,
                                         final List<? extends CasEvent> events) {
-        val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        val agent = clientInfo.getUserAgent();
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
         val count = events.stream()
             .filter(e -> StringUtils.isNotBlank(e.getAgent()))

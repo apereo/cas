@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,7 +29,7 @@ class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticatio
         val authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
@@ -37,7 +38,7 @@ class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticatio
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isLowestRisk());
     }
 

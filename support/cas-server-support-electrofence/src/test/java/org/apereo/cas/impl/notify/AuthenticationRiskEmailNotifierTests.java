@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +59,7 @@ class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRisk
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
         authenticationRiskEmailNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
-        authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        authenticationRiskEmailNotifier.setAuthenticationRiskScore(AuthenticationRiskScore.highestRiskScore());
         assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
 
@@ -71,7 +70,7 @@ class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRisk
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskEmailNotifier.setAuthentication(authentication);
         authenticationRiskEmailNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
-        authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        authenticationRiskEmailNotifier.setAuthenticationRiskScore(AuthenticationRiskScore.highestRiskScore());
         assertDoesNotThrow(() -> authenticationRiskEmailNotifier.publish());
     }
 }

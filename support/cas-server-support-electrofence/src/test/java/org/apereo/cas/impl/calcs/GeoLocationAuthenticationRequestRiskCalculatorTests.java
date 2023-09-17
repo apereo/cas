@@ -44,7 +44,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
@@ -56,7 +56,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
         request.setParameter("geolocation", "40,70,1000,100");
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
@@ -71,7 +71,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
         request.setRemoteAddr("172.217.11.174");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 

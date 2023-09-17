@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +38,7 @@ class MultifactorAuthenticationContingencyPlanTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertThrows(AuthenticationException.class, () -> plan.execute(authentication, registeredService,
-            new AuthenticationRiskScore(BigDecimal.ONE), new MockHttpServletRequest()));
+            AuthenticationRiskScore.highestRiskScore(), new MockHttpServletRequest()));
 
     }
 
@@ -58,7 +57,7 @@ class MultifactorAuthenticationContingencyPlanTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertThrows(AuthenticationException.class, () -> plan.execute(authentication, registeredService,
-            new AuthenticationRiskScore(BigDecimal.ONE), new MockHttpServletRequest()));
+            AuthenticationRiskScore.highestRiskScore(), new MockHttpServletRequest()));
 
     }
 
