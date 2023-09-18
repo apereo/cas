@@ -1,17 +1,20 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { JsonForms } from '@jsonforms/react';
-import { materialRenderers } from '@jsonforms/material-renderers';
+import { MaterialAnyOfRenderer, materialRenderers } from '@jsonforms/material-renderers';
 import { useGetSchemaQuery } from '../../store/SchemaApi';
 
-import { muiSidebarCategorizationTester, MuiSidebarCategorizationRenderer } from '../../components/renderers/MuiSidebarCategorizationRenderer';
+import MuiSidebarCategorizationRenderer, { muiSidebarCategorizationTester } from '../../components/renderers/MuiSidebarCategorizationRenderer';
 import { defaultServiceClass, updateService, useServiceData } from '../../store/ServiceSlice';
 import { useUiSchema } from '../../data/service-types';
 import { Button, Divider, Grid, Toolbar } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
 
 const renderers = [
+    { tester: muiSidebarCategorizationTester, renderer: MuiSidebarCategorizationRenderer },
+    { tester: muiAnyOfControlTester, renderer: MuiAnyOfRenderer },
     ...materialRenderers,
-    { tester: muiSidebarCategorizationTester, renderer: MuiSidebarCategorizationRenderer }
+    
 ];
 
 export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {

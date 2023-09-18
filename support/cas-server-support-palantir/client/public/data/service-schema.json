@@ -653,6 +653,17 @@
                 }
             }
         },
+        "DefaultRegisteredServiceProperty": {
+            "type": "object",
+            "properties": {
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy": {
             "type": "object",
             "properties": {
@@ -917,7 +928,7 @@
             "type": "object"
         },
         "Map(String,RegisteredServiceProperty)": {
-            "type": "object"
+            "$ref": "#/$defs/DefaultRegisteredServiceProperty"
         },
         "Map(String,Rule)": {
             "type": "object"
@@ -1156,9 +1167,6 @@
                 },
                 {
                     "$ref": "#/$defs/BaseMappedAttributeReleasePolicy"
-                },
-                {
-                    "$ref": "#/$defs/ChainingAttributeReleasePolicy"
                 },
                 {
                     "$ref": "#/$defs/DenyAllAttributeReleasePolicy"

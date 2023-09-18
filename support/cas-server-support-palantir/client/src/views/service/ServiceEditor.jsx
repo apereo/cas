@@ -22,11 +22,17 @@ export function ServiceEditor () {
     }, [updateService]);
 
     useEffect(() => {
-        const { isSuccess } = updateResult;
-        if (isSuccess) {
-            enqueueSnackbar('Service Updated', { variant: 'success' });
-            navigate('/services');
+        const { isSuccess, isUninitialized, isError } = updateResult;
+        if (!isUninitialized) {
+            if (isSuccess) {
+                enqueueSnackbar('Service Updated', { variant: 'success' });
+                navigate('/services');
+            } else if (isError) {
+                const { error } = updateResult;
+                enqueueSnackbar(`Updated failed: ${error.data}`, { variant: 'error' });
+            }
         }
+        
     }, [updateResult]);
 
     return (

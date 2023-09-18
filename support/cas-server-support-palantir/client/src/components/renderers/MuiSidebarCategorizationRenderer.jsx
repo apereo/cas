@@ -15,8 +15,7 @@ import {
     MaterialLayoutRenderer,
     withAjvProps,
 } from '@jsonforms/material-renderers';
-import { defaultTranslator } from '@jsonforms/core'
-import { useTheme } from '@emotion/react';
+import { defaultTranslator } from '@jsonforms/core';
 
 export const isSingleLevelCategorization = and(
     uiTypeIs('Categorization'),
@@ -67,8 +66,6 @@ export const MuiSidebarCategorizationRenderer = (
         [categorization, data, ajv]
     );
 
-    const theme = useTheme();
-
     if (categorization !== previousCategorization) {
         setActiveCategory(0);
         setPreviousCategorization(categorization);
@@ -83,7 +80,7 @@ export const MuiSidebarCategorizationRenderer = (
         path,
         direction: 'column',
         enabled,
-        visible: !visible,
+        visible,
         renderers,
         cells,
     };
