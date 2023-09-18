@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_PATH } from '../App.constant';
 
+import { dereference } from '../jsonschema/dereference';
+
 // Define a schema using a base URL and expected endpoints
 export const schemaApi = createApi({
     reducerPath: 'schemaApi',
@@ -17,6 +19,7 @@ export const schemaApi = createApi({
             transformResponse: response => {
                 response.type = 'object';
                 delete response.$schema;
+
                 return response;
             }
         }),
