@@ -470,6 +470,7 @@ layout: null
     *   [Overview](/cas/{{ version }}/protocol/Protocol-Overview.html)
     *   [CAS](#casprotocol)
         * [Overview](/cas/{{ version }}/protocol/CAS-Protocol.html)
+        * [Validation](/cas/{{ version }}/authentication/CAS-Protocol-TicketValidation.html)
         * [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [OAuth2](#oauth2)
         *   [Overview](/cas/{{ version }}/protocol/OAuth-Protocol.html)
