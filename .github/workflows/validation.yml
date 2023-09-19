@@ -9,7 +9,7 @@ env:
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   TERM: xterm-256color
-  JDK_CURRENT: 21-ea
+  JDK_CURRENT: 21
 
 ##########################################################################
 

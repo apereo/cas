@@ -46,7 +46,7 @@ const cas = require('../../cas.js');
         res => {
             assert(res.status === 200);
             let length = res.data.Resources.length;
-            await cas.log(`Found ${length} record`);
+            cas.log(`Found ${length} record`);
             assert(length === 1);
             assert(res.data.Resources[0].userName === "casuser")
         },
