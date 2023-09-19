@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useDeleteServiceMutation, useGetServicesQuery } from '../../store/ServiceApi';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,12 +9,17 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, Container, Divider, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import ConfirmDialog from '../../components/Confirm';
-import { getServiceType } from '../../data/service-types';
+import { useSnackbar } from 'notistack';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { useSnackbar } from 'notistack';
+import CodeIcon from '@mui/icons-material/Code';
+import HistoryIcon from '@mui/icons-material/History';
+
+import ConfirmDialog from '../../components/Confirm';
+import { getServiceType } from '../../data/service-types';
+import { useDeleteServiceMutation, useGetServicesQuery } from '../../store/ServiceApi';
+
 
 export function ServiceList () {
     const { data = [], error, isLoading } = useGetServicesQuery();
@@ -96,17 +100,29 @@ export function ServiceList () {
                                     {getServiceType(row['@class'])?.label}
                                 </TableCell>
                                 <TableCell align="right">
+                                    <Button component={NavLink} to={`/services/${row.id}/view`}
+                                        variant='contained'
+                                        color="warning"
+                                        sx={{mx: 1}}>
+                                            <CodeIcon />&nbsp; View
+                                    </Button>
+                                    <Button component={NavLink} to={`/services/${row.id}/diff`}
+                                        variant='contained'
+                                        color="info"
+                                        sx={{mx: 1}}>
+                                            <HistoryIcon />&nbsp; History
+                                    </Button>
                                     <Button component={NavLink} to={`/services/${row.id}`}
                                         variant='contained'
                                         color="primary"
                                         sx={{mx: 1}}>
-                                            <EditIcon /> Edit
+                                            <EditIcon />&nbsp; Edit
                                     </Button>
                                     <Button onClick={ () => setDeleting(row.id) }
                                         variant='contained'
                                         color="error"
                                         sx={{mx: 1}}>
-                                            <DeleteForeverIcon /> Delete
+                                            <DeleteForeverIcon />&nbsp; Delete
                                     </Button>
                                 </TableCell>
                             </TableRow>

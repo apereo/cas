@@ -1,9 +1,12 @@
+import { Link as RouterLink } from 'react-router-dom';
+import { Link } from '@mui/material';
+
 import { Services } from './Services';
 import { ServiceList } from './ServiceList';
 import { ServiceEditor } from './ServiceEditor';
-import { Link as RouterLink } from 'react-router-dom';
-import { Link } from '@mui/material';
 import { ServiceCreator } from './ServiceCreator';
+import { ServiceViewer } from './ServiceViewer';
+import { ServiceHistory } from './ServiceHistory';
 
 export default {
     path: "services",
@@ -19,6 +22,14 @@ export default {
         {
             path: 'new',
             element: <ServiceCreator />
+        },
+        {
+            path: ':id/diff',
+            element: <ServiceHistory />
+        },
+        {
+            path: ':id/view',
+            element: <ServiceViewer />
         },
         {
             path: ':id',
