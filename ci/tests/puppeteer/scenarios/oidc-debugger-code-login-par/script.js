@@ -17,13 +17,13 @@ const assert = require("assert");
     let url = `${authzUrl}?${params}`;
     let response = await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    console.log(`Status: ${response.status()} ${response.statusText()}`);
+    await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
 
     let value = `client:secret`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
 
     const body = await cas.doRequest(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${params}`, 'POST', {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,15 +31,15 @@ const assert = require("assert");
         'Authorization': authzHeader
     }, 201);
     let result = JSON.parse(body);
-    console.log(result);
+    await cas.log(result);
     let requestUri = result.request_uri;
     assert(requestUri !== null);
 
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
-    console.log(`Going to ${url}`);
+    await cas.log(`Going to ${url}`);
     response = await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    console.log(`Status: ${response.status()} ${response.statusText()}`);
+    await cas.log(`Status: ${response.status()} ${response.statusText()}`);
 
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000);
@@ -49,12 +49,12 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    console.log(`Attempting to use request_uri ${requestUri}`);
+    await cas.log(`Attempting to use request_uri ${requestUri}`);
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
-    console.log(`Going to ${url}`);
+    await cas.log(`Going to ${url}`);
     response = await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    console.log(`Status: ${response.status()} ${response.statusText()}`);
+    await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(403 === response.status());
     
     await browser.close();

@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
         resource_scopes: ["create", "read"]
     };
     let resourceRequest = JSON.stringify(resourceObject);
-    console.log(`Creating resource ${resourceRequest}`);
+    await cas.log(`Creating resource ${resourceRequest}`);
     let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource);
+    await cas.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
@@ -63,7 +63,7 @@ const cas = require('../../cas.js');
         ]
     };
     let policyRequest = JSON.stringify(policyObject);
-    console.log(`Creating policy ${policyRequest}`);
+    await cas.log(`Creating policy ${policyRequest}`);
     let result = JSON.parse(await cas.doRequest(policyUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
@@ -71,7 +71,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
+    await cas.log(result);
 
     let permissionObject = {
         resource_id: resource.resourceId,
@@ -82,7 +82,7 @@ const cas = require('../../cas.js');
     };
 
     let permissionRequest = JSON.stringify(permissionObject);
-    console.log(`Creating permission ${permissionRequest}`);
+    await cas.log(`Creating permission ${permissionRequest}`);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/permission", "POST",
         {
             "Authorization": `Bearer ${at}`,
@@ -90,12 +90,12 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, permissionRequest));
-    console.log(result);
+    await cas.log(result);
     assert(result.ticket !== null);
     assert(result.code !== null);
 
 
-    console.log("Checking for claims");
+    await cas.log("Checking for claims");
     params = `client_id=client&ticket=${result.ticket}&state=12345&redirect_uri=https://apereo.github.io`;
     await cas.doRequest(`https://localhost:8443/cas/oauth2.0/rqpClaims?${params}`, "GET",
         {
@@ -104,7 +104,7 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 302, undefined,
         res => {
-            console.log(res.headers);
+            cas.log(res.headers);
             assert(res.headers.location.includes(
                 "https://apereo.github.io?authorization_state=claims_submitted&state=12345"));
         });

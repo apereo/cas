@@ -29,7 +29,7 @@ const assert = require('assert');
     await page3.waitForTimeout(1000);
     let body = await cas.textContent(page3, "div[name=bodyPlainText] .well");
     await cas.screenshot(page);
-    console.log(`Email message body is: ${body}`);
+    await cas.log(`Email message body is: ${body}`);
     assert(body.includes("casuser with score 1.00"));
     await page3.close();
 
@@ -38,7 +38,7 @@ const assert = require('assert');
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
     const url = `${await page.url()}`;
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 

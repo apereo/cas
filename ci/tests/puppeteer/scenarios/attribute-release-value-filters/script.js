@@ -15,13 +15,13 @@ const cas = require('../../cas.js');
 })();
 
 async function executeRequest(page, service, attribute, attributeValue) {
-    console.log(`Running tests for service ${service} with attribute requirements ${attribute}:${attributeValue}`);
+    await cas.log(`Running tests for service ${service} with attribute requirements ${attribute}:${attributeValue}`);
     
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
     const ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body);
+    await cas.log(body);
     const json = JSON.parse(body);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
@@ -33,7 +33,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await page.waitForTimeout(1000);
-    console.log("============================");
+    await cas.log("============================");
     
     return authenticationSuccess;
 }

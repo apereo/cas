@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
     await cas.doGet(baseUrl, res => {
         assert(res.status === 200);
         const length = res.data[1].length;
-        console.log(`Services found: ${length}`);
+        cas.log(`Services found: ${length}`);
         assert(length === 2);
         res.data[1].forEach(service => {
             assert(service.accessStrategy !== undefined);

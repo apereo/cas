@@ -8,12 +8,12 @@ const express = require('express');
 
     let app = express();
     app.post("/aup", (req, res) => {
-        console.log(`Accepting AUP...`);
+        cas.log(`Accepting AUP...`);
         aupAccepted = true;
         res.status(200).send("Accepted");
     });
     app.get("/aup/status", (req, res) => {
-        console.log(`AUP status: ${aupAccepted}`);
+        cas.log(`AUP status: ${aupAccepted}`);
         if (aupAccepted) {
             res.status(202).send("Accepted");
         } else {
@@ -22,7 +22,7 @@ const express = require('express');
     });
     app.get("/aup/policy", (req, res) => {
         try {
-            console.log("Received AUP policy terms request");
+            cas.log("Received AUP policy terms request");
             const data = {
                 "@class": "org.apereo.cas.aup.AcceptableUsagePolicyTerms",
                 "code": "screen.aup.policyterms.some.key",
@@ -52,18 +52,18 @@ const express = require('express');
         let authenticationSuccess = JSON.parse(body).serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.user === "casuser");
 
-        console.log("Logging in again, now with SSO");
+        await cas.log("Logging in again, now with SSO");
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
         await cas.assertTicketParameter(page);
         await cas.goto(page, `https://localhost:8443/cas/logout`);
 
-        console.log("Logging in again, now without SSO");
+        await cas.log("Logging in again, now without SSO");
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
         await cas.loginWith(page);
         await cas.assertTicketParameter(page);
 
         server.close(() => {
-            console.log('Exiting server...');
+            cas.log('Exiting server...');
             browser.close();
         });
     });

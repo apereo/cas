@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#register');
     await page.waitForTimeout(1000);
 
-    console.log("Deleting a registered device now");
+    await cas.log("Deleting a registered device now");
     await cas.click(page, "#delButton-1");
     await page.waitForTimeout(1000);
 
@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, '#name-RecordName');
     await cas.assertInvisibility(page, '#id-1');
 
-    console.log("Switching to login view");
+    await cas.log("Switching to login view");
     await cas.assertVisibility(page, "#login");
     await cas.assertVisibility(page, "#cancel");
     await cas.assertVisibility(page, "#token");

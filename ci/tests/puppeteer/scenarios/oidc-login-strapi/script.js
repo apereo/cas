@@ -19,11 +19,11 @@ const cas = require('../../cas.js');
     let element = await page.$('body pre');
     if (element == null) {
         let errorpage = await cas.textContent(page, 'body div main');
-        console.log(errorpage);
+        await cas.log(errorpage);
         throw "failed";
     }
     let jwt = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(jwt);
+    await cas.log(jwt);
     assert(jwt.includes("jwt"));
     await browser.close();
 })();

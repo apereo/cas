@@ -9,7 +9,7 @@ const path = require("path");
         const page = await cas.newPage(browser);
         let response = await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(3000);
-        console.log(`${response.status()} ${response.statusText()}`);
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok());
 
         await cas.loginWith(page);
@@ -20,12 +20,12 @@ const path = require("path");
 
         await cas.goto(page, "https://localhost:8443/cas/logout");
         let url = await page.url();
-        console.log(`Page url: ${url}`);
+        await cas.log(`Page url: ${url}`);
         assert(url === "https://localhost:8443/cas/logout");
         await page.waitForTimeout(1000);
         await cas.assertCookie(page, false);
 
-        console.log("Logging in using external SAML2 identity provider...");
+        await cas.log("Logging in using external SAML2 identity provider...");
         await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(1000);
         await cas.click(page, "li #SAML2Client");

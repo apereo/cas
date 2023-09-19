@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
 
     await cas.loginWith(page);
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     await cas.assertTicketParameter(page);
     await browser.close();
 })();

@@ -5,7 +5,7 @@ const assert = require("assert");
 async function gotoPage(page, instanceId, pageId) {
     let response = await cas.goto(page, `https://localhost:8443/cas/sba/instances/${instanceId}/${pageId}`);
     await page.waitForTimeout(1000);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 }
 
@@ -22,10 +22,10 @@ async function gotoPage(page, instanceId, pageId) {
     await cas.click(page, "div#CAS li");
     await page.waitForTimeout(2000);
     let url = await page.url();
-    console.log(url);
+    await cas.log(url);
     const pathArray = url.split('/');
     const instanceId = pathArray[pathArray.length - 2];
-    console.log(`Instance ID ${instanceId}`);
+    await cas.log(`Instance ID ${instanceId}`);
 
     await gotoPage(page, instanceId, "metrics");
     await gotoPage(page, instanceId, "env");

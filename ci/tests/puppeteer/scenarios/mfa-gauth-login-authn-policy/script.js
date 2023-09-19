@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    console.log(`Using scratch code ${scratch} to login...`);
+    await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();

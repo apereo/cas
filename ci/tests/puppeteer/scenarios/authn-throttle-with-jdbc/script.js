@@ -5,14 +5,14 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
 
-    console.log("Log in attempt: #1");
+    await cas.log("Log in attempt: #1");
     await submitLoginFailure(page);
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
-    console.log("Log in attempt: #2");
+    await cas.log("Log in attempt: #2");
     await submitLoginFailure(page);
 
-    console.log("Log in attempt: #3");
+    await cas.log("Log in attempt: #3");
     await submitLoginFailure(page);
 
     await cas.assertInnerText(page, "#content h2", "Access Denied");

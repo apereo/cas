@@ -12,12 +12,12 @@ const path = require('path');
     await page.waitForTimeout(1000);
     await cas.pressEnter(page);
     await page.waitForTimeout(4000);
-    console.log(`Page url: ${ await page.url()}`);
+    await cas.log(`Page url: ${ await page.url()}`);
 
     await cas.loginWith(page, "user1", "password");
     await page.waitForTimeout(2000);
 
-    console.log(`Page url: ${ await page.url()}`);
+    await cas.log(`Page url: ${ await page.url()}`);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertCookie(page);

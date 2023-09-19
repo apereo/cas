@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
     const service = "https://apereo.github.io";
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    console.log(`Navigating to ${service}`);
+    await cas.log(`Navigating to ${service}`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000);
     await cas.click(page, "div .idp span");

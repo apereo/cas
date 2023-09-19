@@ -8,12 +8,12 @@ const cas = require('../../cas.js');
 
     let response = await cas.goto(page, "https://localhost:8443/cas/v3/api-docs");
     await page.waitForTimeout(1000);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     response = await cas.goto(page, "https://localhost:8443/cas/swagger-ui/index.html");
     await page.waitForTimeout(1000);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await browser.close();

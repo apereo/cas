@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.doPost(url, params, {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
+        cas.log(res.data);
         assert(res.data.access_token !== null);
         cas.decodeJwt(res.data.access_token, true).then(decoded => {
             assert(decoded !== null);

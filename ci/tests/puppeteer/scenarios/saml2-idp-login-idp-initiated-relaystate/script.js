@@ -13,7 +13,7 @@ async function unsolicited(page, target) {
     await cas.goto(page, url);
     await page.waitForTimeout(8000);
     const result = await page.url();
-    console.log(`Page url: ${result}`);
+    await cas.log(`Page url: ${result}`);
     assert(result.includes(target));
 }
 
@@ -21,7 +21,7 @@ async function unsolicited(page, target) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.goto(page, "https://localhost:8443/cas/login");

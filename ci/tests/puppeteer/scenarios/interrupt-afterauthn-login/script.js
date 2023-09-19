@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "duobypass", "Mellon");
-    console.log(await page.url());
+    await cas.log(await page.url());
     await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");

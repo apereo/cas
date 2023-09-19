@@ -12,7 +12,7 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     let url = await page.url();
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     assert(url === "https://localhost:9859/anything/info");
     await browser.close();
 })();

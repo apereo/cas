@@ -9,7 +9,7 @@ const assert = require('assert');
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20profile%20email&redirect_uri=${redirectUri}`;
 
     await cas.goto(page, url);
-    console.log(`Page URL: ${page.url()}`);
+    await cas.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000);
@@ -19,7 +19,7 @@ const assert = require('assert');
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`Current code is ${code}`);
+    await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
 
@@ -27,7 +27,7 @@ const assert = require('assert');
     await page.waitForTimeout(2000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub !== null);
     assert(decoded.client_id !== null);

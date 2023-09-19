@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
         "description": "This is the Apereo CAS server"
     };
     let body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
 
     body = await cas.doRequest("https://localhost:8443/cas/v1/services", "POST", {
         'Authorization': 'Basic Y2FzdXNlcjpNZWxsb24=',
@@ -17,5 +17,5 @@ const cas = require('../../cas.js');
         'Content-Length': body.length,
         'Content-Type': 'application/json'
     }, 200, body);
-    console.log(body);
+    await cas.log(body);
 })();

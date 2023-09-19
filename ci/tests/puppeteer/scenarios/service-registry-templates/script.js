@@ -9,16 +9,16 @@ const assert = require("assert");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await cas.loginWith(page, "casuser", "Mellon");
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, res => {
         assert(res.status === 200);
-        console.log(`Services found: ${res.data[1].length}`);
+        cas.log(`Services found: ${res.data[1].length}`);
 
         res.data[1].forEach(svc => {
-            console.log(`Checking service ${svc.name}-${svc.id}`);
+            cas.log(`Checking service ${svc.name}-${svc.id}`);
             assert(svc.description === "My Application");
             assert(svc.attributeReleasePolicy.allowedAttributes[1].includes("email"));
             assert(svc.attributeReleasePolicy.allowedAttributes[1].includes("username"))

@@ -14,10 +14,10 @@ const fs = require("fs");
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    console.log(`Page url: ${await page.url()}\n`);
+    await cas.log(`Page url: ${await page.url()}\n`);
     let response = await cas.assertParameter(page, "response");
 
-    console.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
+    await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
     const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, 'utf8'));
     cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
         assert(verified.payload.aud === "client");

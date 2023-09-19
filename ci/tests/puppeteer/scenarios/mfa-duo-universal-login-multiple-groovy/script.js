@@ -19,7 +19,7 @@ async function login(page, service, providerId) {
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
-    console.log(`Trying with service ${service}`);
+    await cas.log(`Trying with service ${service}`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000);
     await cas.loginWith(page, "duobypass", "Mellon");

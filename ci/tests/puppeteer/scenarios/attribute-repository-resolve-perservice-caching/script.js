@@ -22,7 +22,7 @@ const path = require("path");
     await cas.loginWith(page, "casuser", "Mellon");
     let ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body);
+    await cas.log(body);
     let json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
     assert(json.lastName[0] === "Johnson");
     assert(json.employeeNumber[0] === "123456");
@@ -42,14 +42,14 @@ const path = require("path");
     for (let i = 1; i <= 3; i++) {
         await cas.logg(`Validation attempt ${i}; still within cache time window`);
         body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        console.log(body);
+        await cas.log(body);
         json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
         assert(json.firstName[0] === originalFirstName);
     }
     await cas.sleep(5500);
     await cas.logg(`Validating again to get new attribute updates, expecting ${newFirstName}`);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body);
+    await cas.log(body);
     json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
     assert(json.firstName[0] === newFirstName);
 

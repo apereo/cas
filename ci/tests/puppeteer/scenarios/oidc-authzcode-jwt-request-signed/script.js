@@ -11,7 +11,7 @@ const assert = require("assert");
     
     const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&client_id=client&redirect_uri=https://unknown.net`;
 
-    console.log(`Browsing to ${url}`);
+    await cas.log(`Browsing to ${url}`);
     await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
 
@@ -21,7 +21,7 @@ const assert = require("assert");
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -29,19 +29,19 @@ const assert = require("assert");
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
+        await cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log(`Received access token ${accessToken}`);
+        await cas.log(`Received access token ${accessToken}`);
 
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
         assert(decoded.sub === "casuser");
         assert(decoded.jti.startsWith("TGT-"));

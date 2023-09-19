@@ -13,14 +13,14 @@ const path = require("path");
     ];
     for (const entityId of entityIds) {
         let url = `https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO?providerId=${entityId}`;
-        console.log(`Navigating to ${url}`);
+        await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await cas.screenshot(page);
         await page.waitForTimeout(2000);
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));
-        console.log(content);
+        await cas.log(content);
         assert(content.form.SAMLResponse != null);
         await cas.goto(page, "https://localhost:8443/cas/logout");
     }

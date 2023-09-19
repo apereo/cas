@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.assertVisibility(page, '#twitter-link');
     await cas.assertVisibility(page, '#youtube-link');
-    console.log(await page.url());
+    await cas.log(await page.url());
     await page.waitForTimeout(8000);
     await cas.assertTicketParameter(page);
 
@@ -22,9 +22,9 @@ const cas = require('../../cas.js');
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
-        console.log(`Calling endpoint ${url}`);
+        await cas.log(`Calling endpoint ${url}`);
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`);
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok())
     }
     await browser.close();

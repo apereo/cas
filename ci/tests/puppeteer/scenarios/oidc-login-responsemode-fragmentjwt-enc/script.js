@@ -15,9 +15,9 @@ const fs = require("fs");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     const pageUrl = await page.url();
-    console.log(`Page url: ${pageUrl}\n`);
+    await cas.log(`Page url: ${pageUrl}\n`);
     const response = new URL(pageUrl).hash.replace("#response=", "");
-    console.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
+    await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
     const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, 'utf8'));
     cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
         assert(verified.payload.aud === "client");

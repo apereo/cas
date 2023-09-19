@@ -12,9 +12,7 @@ const assert = require("assert");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     await cas.doGet("https://casuser:Mellon@localhost:8443/cas/actuator/info",
-        res => {
-            assert(res.status === 200)
-        }, err => {
+        res => assert(res.status === 200), err => {
             throw err;
         });
 

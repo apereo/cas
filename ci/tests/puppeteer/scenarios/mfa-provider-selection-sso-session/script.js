@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(500);
     await cas.assertInvisibility(page, "#username");
 
-    console.log("Selecting mfa-gauth");
+    await cas.log("Selecting mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
     await cas.assertVisibility(page, '#mfa-yubikey');
 
@@ -25,7 +25,7 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(500);
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    console.log(`Using scratch code ${scratch} to login...`);
+    await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
@@ -39,13 +39,13 @@ const cas = require("../../cas.js");
     
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url.startsWith("https://github.com/"));
 
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.assertCookie(page, false);
 
-    console.log("Starting with MFA selection menu");
+    await cas.log("Starting with MFA selection menu");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await page.waitForTimeout(500);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -53,12 +53,12 @@ const cas = require("../../cas.js");
     await page.waitForTimeout(500);
 
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    console.log(`Using scratch code ${scratch} to login...`);
+    await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
 
-    console.log("Navigating to second service with SSO session");
+    await cas.log("Navigating to second service with SSO session");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo");
     await page.waitForTimeout(1000);
     await cas.assertInvisibility(page, "#username");

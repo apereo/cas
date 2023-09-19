@@ -7,10 +7,10 @@ const jwkToPem = require('jwk-to-pem');
 (async () => {
     const configFilePath = path.join(__dirname, '/keystore.json');
     const key = JSON.parse(fs.readFileSync(configFilePath)).keys[0];
-    console.log(`Using JWK:\n${JSON.stringify(key)}\n`);
+    await cas.log(`Using JWK:\n${JSON.stringify(key)}\n`);
     
     const privateKey = jwkToPem(key, {private: true});
-    console.log(`Using private key (PEM):\n${privateKey}`);
+    await cas.log(`Using private key (PEM):\n${privateKey}`);
     
     const jwt = await cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",

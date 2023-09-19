@@ -5,14 +5,14 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Service has disabled interrupt, but will establish single sign-on session");
+    await cas.log("Service has disabled interrupt, but will establish single sign-on session");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/get?nointerrupt");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page);
 
-    console.log("Service has force-execution for interrupt; every attempt must force interrupt");
+    await cas.log("Service has force-execution for interrupt; every attempt must force interrupt");
     for (let i = 1; i <= 3; i++) {
         await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/get?interrupt-forced");
         await page.waitForTimeout(3000);

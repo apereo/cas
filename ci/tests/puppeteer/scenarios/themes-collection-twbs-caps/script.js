@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '.caps-warn');
     const caps = await page.$('.caps-warn');
-    console.log(`Caps warning is ${caps !== null ? 'NOT' : ''} hidden`);
+    await cas.log(`Caps warning is ${caps !== null ? 'NOT' : ''} hidden`);
 
     await browser.close();
 })();

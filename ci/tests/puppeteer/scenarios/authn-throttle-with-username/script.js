@@ -12,9 +12,9 @@ const cas = require('../../cas.js');
     await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
 
     const url = "https://localhost:8443/cas/actuator/throttles";
-    console.log(`Trying ${url}`);
+    await cas.log(`Trying ${url}`);
     const response = await cas.goto(page, url);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await browser.close();

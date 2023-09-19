@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000);
 
-    console.log("Using scratch code to login...");
+    await cas.log("Using scratch code to login...");
     await cas.type(page,'#token', "83766843");
     await cas.submitForm(page, "#fm1");
 

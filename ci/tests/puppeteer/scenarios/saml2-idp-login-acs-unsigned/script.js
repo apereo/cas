@@ -11,11 +11,11 @@ async function cleanUp() {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
-        console.log("Trying without an exising SSO session...");
+        await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);
         await page.waitForSelector('#idpForm', {visible: true});
@@ -23,7 +23,7 @@ async function cleanUp() {
         await page.waitForTimeout(9000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
-        console.log("Trying with an exising SSO session...");
+        await cas.log("Trying with an exising SSO session...");
         await cas.goto(page, "https://localhost:8443/cas/logout");
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
@@ -39,7 +39,7 @@ async function cleanUp() {
         await cleanUp();
     }, async error => {
         await cleanUp();
-        console.log(error);
+        await cas.log(error);
         throw error;
     })
 })();
