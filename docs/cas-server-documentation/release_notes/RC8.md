@@ -78,7 +78,7 @@ to evaluate its strength. Passwords detected as weak or insure then force the fl
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `434` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `436` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -89,6 +89,8 @@ are now configured to run with parallelism enabled.
 - Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
 - OpenID Connect claims can now be [optionally decorated](../authentication/OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
 - Following the recommendations of the [OAuth Security Workshop](https://oauth.secworkshop.events/osw2023), the validation rules of `redirect_uri` parameters are now tightened to ensure the parameter value does not have URL fragments, invalid schemes such as `javascript` or `data` or suspicious parameters such as `code`, `state`, etc.
+- [Risk-based authentication](../authentication/Configuring-RiskBased-Authentication.html) now supports a *Risk Confirmation* flow via a special link sent to the user via email, sms, etc.
+- Multifactor provider selection is now skipped when a valid [multifactor-enabled trusted device](../mfa/Multifactor-TrustedDevice-Authentication.html) is found for the user record.
 
 ## Library Upgrades
    
