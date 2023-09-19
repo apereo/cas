@@ -32,7 +32,7 @@ public class OidcRegisteredServiceJwtResponseModeCipherExecutor extends Register
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * The service keystore for OIDC tokens.

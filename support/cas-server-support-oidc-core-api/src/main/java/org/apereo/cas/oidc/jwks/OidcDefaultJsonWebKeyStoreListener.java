@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwk.JsonWebKeySet;
 
-import java.util.Optional;
-
 /**
  * This is {@link OidcDefaultJsonWebKeyStoreListener}.
  *
@@ -18,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcDefaultJsonWebKeyStoreListener implements OidcJsonWebKeyStoreListener {
-    private final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcJsonWebKeystoreCache;
+    private final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcJsonWebKeystoreCache;
 
     @Override
     public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {

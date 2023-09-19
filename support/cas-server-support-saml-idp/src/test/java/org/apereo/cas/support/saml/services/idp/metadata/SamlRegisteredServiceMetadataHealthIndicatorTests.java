@@ -7,6 +7,8 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2Web")
+@Execution(ExecutionMode.SAME_THREAD)
 class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceMetadataHealthIndicator")
@@ -55,9 +58,7 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);
-        
         servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
-
         val health = samlRegisteredServiceMetadataHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
     }

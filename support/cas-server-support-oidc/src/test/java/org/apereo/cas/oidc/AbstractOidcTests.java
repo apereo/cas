@@ -277,7 +277,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
-    protected LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache;
+    protected LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
