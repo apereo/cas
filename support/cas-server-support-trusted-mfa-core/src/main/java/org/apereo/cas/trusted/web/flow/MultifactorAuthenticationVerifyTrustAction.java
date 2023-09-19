@@ -6,11 +6,9 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDev
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,41 +38,39 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val authn = WebUtils.getAuthentication(requestContext);
-            if (authn == null) {
-                LOGGER.warn("Could not determine authentication from the request context");
-                return no();
-            }
-            val registeredService = WebUtils.getRegisteredService(requestContext);
-            val service = WebUtils.getService(requestContext);
-            if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
-                LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
-                return result(CasWebflowConstants.TRANSITION_ID_SKIP);
-            }
-            val principal = authn.getPrincipal().getId();
-            LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
-            val results = storage.get(principal);
-            if (results.isEmpty()) {
-                LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
-                return no();
-            }
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
-            LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-            if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
-                LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
-                return no();
-            }
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val authn = WebUtils.getAuthentication(requestContext);
+        if (authn == null) {
+            LOGGER.warn("Could not determine authentication from the request context");
+            return no();
+        }
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val service = WebUtils.getService(requestContext);
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+            LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
+            return result(CasWebflowConstants.TRANSITION_ID_SKIP);
+        }
+        val principal = authn.getPrincipal().getId();
+        LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
+        val results = storage.get(principal);
+        if (results.isEmpty()) {
+            LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
+            return no();
+        }
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
+        LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
+        if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+            LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
+            return no();
+        }
 
-            LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
-            MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
-            MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-                authn,
-                trustedProperties.getCore().getAuthenticationContextAttribute());
-            return yes();
-        });
+        LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
+        MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
+        MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
+            authn,
+            trustedProperties.getCore().getAuthenticationContextAttribute());
+        return yes();
     }
 }
