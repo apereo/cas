@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,10 +28,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -63,7 +66,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get collection of trusted devices")
     public Set<? extends MultifactorAuthenticationTrustRecord> devices() {
-        expireRecords();
+        cleanExpiredRecords();
         return mfaTrustEngine.getObject().getAll();
     }
 
@@ -76,7 +79,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@PathVariable(name = "username") final String username) {
-        expireRecords();
+        cleanExpiredRecords();
         return mfaTrustEngine.getObject().get(username);
     }
 
@@ -90,6 +93,33 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @DeleteMapping(value = "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer revoke(@PathVariable(name = "key") final String key) {
         mfaTrustEngine.getObject().remove(key);
+        return HttpStatus.OK.value();
+    }
+
+    /**
+     * Clean and remove expired records.
+     *
+     * @return the integer
+     */
+    @Operation(summary = "Remove all trusted devices that have expired")
+    @DeleteMapping(value = "/clean", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Integer clean() {
+        cleanExpiredRecords();
+        return HttpStatus.OK.value();
+    }
+
+    /**
+     * Expire records given an expiration date.
+     *
+     * @param date the date
+     * @return the integer
+     */
+    @SuppressWarnings("JavaUtilDate")
+    @Operation(summary = "Remove expired trusted devices given an expiration date as a threshold",
+        parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY))
+    @DeleteMapping(value = "/expire", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Integer removeSince(@RequestParam(name = "expiration") final Date date) {
+        mfaTrustEngine.getObject().remove(DateTimeUtils.zonedDateTimeOf(date));
         return HttpStatus.OK.value();
     }
 
@@ -160,7 +190,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-    private void expireRecords() {
+    private void cleanExpiredRecords() {
         this.mfaTrustEngine.getObject().remove();
     }
 }

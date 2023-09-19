@@ -17,9 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -49,9 +47,6 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Tag("WebflowMfaActions")
     class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
-
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
 
         @BeforeEach
         public void beforeEach() {
@@ -90,10 +85,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Tag("WebflowMfaActions")
     class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
-
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
-
+        
         @BeforeEach
         public void beforeEach() {
             this.context = new MockRequestContext();

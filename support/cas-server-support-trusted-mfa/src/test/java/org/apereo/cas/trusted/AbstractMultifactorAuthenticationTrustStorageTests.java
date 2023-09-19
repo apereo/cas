@@ -1,8 +1,10 @@
 package org.apereo.cas.trusted;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
@@ -34,6 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -79,7 +82,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-    
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
         record.setDeviceFingerprint(UUID.randomUUID().toString());
@@ -140,6 +146,14 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
             response.addAddress("MSIE");
             when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
             return service;
+        }
+    }
+
+    @TestConfiguration(value = "TestMultifactorProviderTestConfiguration", proxyBeanMethods = false)
+    public static class TestMultifactorProviderTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
         }
     }
 }

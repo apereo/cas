@@ -10,7 +10,6 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth",

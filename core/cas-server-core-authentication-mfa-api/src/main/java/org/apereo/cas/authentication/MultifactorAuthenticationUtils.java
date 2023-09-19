@@ -12,7 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -237,7 +236,7 @@ public class MultifactorAuthenticationUtils {
         final ApplicationContext applicationContext) {
         LOGGER.trace("Locating bean definition for [{}]", providerId);
         return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
-            .filter(p -> p.matches(providerId))
+            .filter(provider -> provider.matches(providerId))
             .findFirst();
     }
 
@@ -275,17 +274,8 @@ public class MultifactorAuthenticationUtils {
      * @param applicationContext the application context
      * @return the all multifactor authentication providers from application context
      */
-    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
-        final ApplicationContext applicationContext) {
-        try {
-            val beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
-            return BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, MultifactorAuthenticationProvider.class);
-        } catch (final Exception e) {
-            LOGGER.trace("No beans of type [{}] are available in the application context. "
-                    + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
-                MultifactorAuthenticationProvider.class);
-        }
-        return new HashMap<>(0);
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(final ApplicationContext applicationContext) {
+        return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, MultifactorAuthenticationProvider.class);
     }
 
     /**

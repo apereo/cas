@@ -33,7 +33,7 @@ const BROWSER_OPTIONS = {
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     timeout: 60000,
-    dumpio: true,
+    dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
@@ -62,7 +62,7 @@ exports.logg = async (text) => {
 };
 
 exports.logr = async (text) => {
-    LOGGER.error(`❌ ${colors.red(text)}`);
+    LOGGER.error(`🔴 ${colors.red(text)}`);
 };
 
 exports.removeDirectory = async (directory) => {
@@ -79,7 +79,7 @@ exports.removeDirectory = async (directory) => {
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         let buttonNode = document.querySelector(button);
-        this.log(`Clicking element ${button} with href ${buttonNode.href}`);
+        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 };
@@ -263,6 +263,8 @@ exports.newPage = async (browser) => {
         .on('console', message => {
             if (message.type() === "warning") {
                 this.logy(`Console ${message.type()}: ${message.text()}`)
+            } else if (message.type() === "error") {
+                this.logr(`Console ${message.type()}: ${message.text()}`)
             } else {
                 this.logg(`Console ${message.type()}: ${message.text()}`)
             }

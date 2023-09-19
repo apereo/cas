@@ -53,10 +53,20 @@ public class AuthenticationRiskScore {
         return score.compareTo(BigDecimal.valueOf(threshold)) > 0;
     }
 
+    /**
+     * Highest risk score authentication risk score.
+     *
+     * @return the authentication risk score
+     */
     public static AuthenticationRiskScore highestRiskScore() {
         return HIGHEST_RISK_SCORE;
     }
 
+    /**
+     * Lowest risk score authentication risk score.
+     *
+     * @return the authentication risk score
+     */
     public static AuthenticationRiskScore lowestRiskScore() {
         return LOWEST_RISK_SCORE;
     }
