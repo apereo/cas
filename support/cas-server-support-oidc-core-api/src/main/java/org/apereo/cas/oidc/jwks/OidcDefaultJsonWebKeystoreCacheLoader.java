@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService)
-    implements CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
+    implements CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> {
     /**
      * Gets json web key from jwks.
      *
@@ -48,20 +48,20 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
     }
 
     @Override
-    public Optional<JsonWebKeySet> load(final OidcJsonWebKeyCacheKey cacheKey) {
+    public JsonWebKeySet load(final OidcJsonWebKeyCacheKey cacheKey) {
         val jwks = buildJsonWebKeySet(cacheKey);
         if (jwks.isEmpty()) {
             LOGGER.warn("JSON web keystore retrieved is empty for issuer [{}]", cacheKey.getIssuer());
-            return Optional.empty();
+            return null;
         }
         val keySet = jwks.get();
         if (keySet.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("JSON web keystore retrieved [{}] contains no JSON web keys", keySet);
-            return Optional.empty();
+            return null;
         }
         val keys = getJsonWebKeysFromJwks(keySet, cacheKey);
         LOGGER.debug("Found JSON web key as [{}]", keys);
-        return keys.getJsonWebKeys().isEmpty() ? Optional.empty() : Optional.of(keys);
+        return keys.getJsonWebKeys().isEmpty() ? null : keys;
     }
 
     /**

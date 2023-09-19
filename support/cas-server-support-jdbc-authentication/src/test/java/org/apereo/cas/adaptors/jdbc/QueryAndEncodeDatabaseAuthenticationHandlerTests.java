@@ -93,26 +93,26 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
+        try (val connection = this.dataSource.getConnection()) {
+            try (val statement = connection.createStatement()) {
+                connection.setAutoCommit(true);
 
-                s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
+                statement.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
                 for (var i = 0; i < 10; i++) {
-                    s.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
+                    statement.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
                 }
-                s.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
-                s.execute(getSqlInsertStatementToCreateUserAccount(21, Boolean.FALSE.toString(), Boolean.TRUE.toString()));
+                statement.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
+                statement.execute(getSqlInsertStatementToCreateUserAccount(21, Boolean.FALSE.toString(), Boolean.TRUE.toString()));
             }
         }
     }
 
     @AfterEach
     public void afterEachTest() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
-                s.execute("delete from users;");
+        try (val connection = this.dataSource.getConnection()) {
+            try (val statement = connection.createStatement()) {
+                connection.setAutoCommit(true);
+                statement.execute("delete from users;");
             }
         }
     }

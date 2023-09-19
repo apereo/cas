@@ -429,7 +429,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) throws Exception {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) throws Exception {
             return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
@@ -447,7 +447,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) throws Exception {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) throws Exception {
             return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
@@ -465,7 +465,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) throws Exception {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) throws Exception {
             return new OidcTokenIntrospectionSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache,
                 oidcIssuerService,
@@ -486,7 +486,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
             return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache,
                 oidcServiceJsonWebKeystoreCache, oidcIssuerService);
         }
@@ -499,7 +499,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
 
             val crypto = casProperties.getAuthn().getOauth().getAccessToken().getCrypto();
             return FunctionUtils.doIf(crypto.isEnabled(),
@@ -982,7 +982,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
             val crypto = casProperties.getAuthn().getOidc().getResponse().getCrypto();
             return FunctionUtils.doIf(crypto.isEnabled(),
                 () -> {
@@ -1005,7 +1005,7 @@ public class OidcConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
             val crypto = casProperties.getAuthn().getOidc().getResponse().getCrypto();
             return FunctionUtils.doIf(crypto.isEnabled(),
                 () -> new OidcRegisteredServiceJwtResponseModeCipherExecutor(oidcDefaultJsonWebKeystoreCache,

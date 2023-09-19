@@ -28,7 +28,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcIdTokenSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
         final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings) {
