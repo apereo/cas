@@ -3,7 +3,7 @@ const cas = require('../../cas.js');
 const assert = require('assert');
 
 async function testService(page, clientId, oidc = true) {
-    console.log(`Testing application with client id ${clientId}`);
+    await cas.log(`Testing application with client id ${clientId}`);
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile&redirect_uri=https://apereo.github.io`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
@@ -16,21 +16,21 @@ async function testService(page, clientId, oidc = true) {
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`Current code is ${code}`);
+    await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code&client_id=${clientId}&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     await cas.goto(page, accessTokenUrl);
     await page.waitForTimeout(1000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     assert(payload.access_token != null);
 
-    console.log("Decoding access token...");
+    await cas.log("Decoding access token...");
     let decodedAccessToken = await cas.decodeJwt(payload.access_token);
 
     if (oidc) {
         assert(decodedAccessToken.iss === "https://sso.example.org/cas/oidc");
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         assert(payload.id_token != null);
         let decodedIdToken = await cas.decodeJwt(payload.id_token);
         assert(decodedIdToken.sub !== null);
@@ -44,7 +44,7 @@ async function testService(page, clientId, oidc = true) {
     
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await page.waitForTimeout(1000);
-    console.log("=========================================================")
+    await cas.log("=========================================================")
 }
 
 (async () => {

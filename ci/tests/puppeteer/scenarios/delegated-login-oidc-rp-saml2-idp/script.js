@@ -26,15 +26,15 @@ const path = require('path');
     await cas.loginWith(page, "user1", "password");
     await page.waitForTimeout(2000);
 
-    console.log("Checking for page URL...");
-    console.log(await page.url());
+    await cas.log("Checking for page URL...");
+    await cas.log(await page.url());
     await page.waitForTimeout(2000);
 
-    console.log("Allowing release of scopes and claims...");
-    console.log(await page.url());
+    await cas.log("Allowing release of scopes and claims...");
+    await cas.log(await page.url());
     
     let result = new URL(page.url());
-    console.log(result.searchParams.toString());
+    await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
     assert(result.searchParams.has("client_id"));
@@ -45,7 +45,7 @@ const path = require('path');
     await page.waitForTimeout(3000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    console.log(page.url());
+    await cas.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

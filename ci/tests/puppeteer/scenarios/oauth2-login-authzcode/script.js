@@ -10,13 +10,13 @@ const cas = require('../../cas.js');
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
     await cas.goto(page, url);
-    console.log(`Page URL: ${page.url()}`);
+    await cas.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -24,13 +24,13 @@ const cas = require('../../cas.js');
     accessTokenParams += `redirect_uri=${redirectUri}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
+        cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;

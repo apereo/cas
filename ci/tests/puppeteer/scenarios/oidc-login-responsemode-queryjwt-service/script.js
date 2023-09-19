@@ -15,11 +15,11 @@ const path = require("path");
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    console.log(`Page url: ${await page.url()}\n`);
+    await cas.log(`Page url: ${await page.url()}\n`);
     let response = await cas.assertParameter(page, "response");
 
     let configFilePath = path.join(__dirname, 'services/Sample-1.jwks');
-    console.log(`Reading keystore from ${configFilePath}`);
+    await cas.log(`Reading keystore from ${configFilePath}`);
     const keyContent = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
 
     cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {

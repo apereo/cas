@@ -8,7 +8,7 @@ const assert = require("assert");
         assert(res.status === 200);
         const entries = res.data[1];
         const length = entries.length;
-        console.log(`Services found: ${length}`);
+        cas.log(`Services found: ${length}`);
         assert(length === 2);
 
         assert(entries[0].id === 1);

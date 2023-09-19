@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     await cas.assertParameter(page, "ticket");
 
-    console.log("Trying delegated authentication to activate access strategy");
+    await cas.log("Trying delegated authentication to activate access strategy");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await page.waitForTimeout(1000);
@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     let response = await cas.loginWith(page, "casuser", "Mellon");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Unauthorized Access");

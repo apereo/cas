@@ -31,14 +31,14 @@ const assert = require('assert');
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`Current code is ${code}`);
+    await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client&client_secret=secret&redirect_uri=https://apereo.github.io&code=${code}`;
     await cas.goto(page, accessTokenUrl);
     await page.waitForTimeout(1000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     assert(payload.access_token != null);
     assert(payload.token_type != null);
     assert(payload.expires_in != null);
@@ -59,7 +59,7 @@ const assert = require('assert');
 
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
-    console.log(`Calling user profile ${profileUrl}`);
+    await cas.log(`Calling user profile ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"

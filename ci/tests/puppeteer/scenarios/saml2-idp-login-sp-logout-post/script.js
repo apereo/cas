@@ -30,12 +30,12 @@ async function getActuatorEndpoint(entityId) {
     const tempDir = os.tmpdir();
     let sloFile = `${tempDir}/saml2slo.html`;
     await fs.writeFileSync(sloFile, sloPage);
-    console.log(`Logout page is written to ${sloFile}`);
+    await cas.log(`Logout page is written to ${sloFile}`);
     
     await cas.goto(page, `file://${sloFile}`);
     await page.waitForTimeout(4000);
     let url = await page.url();
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

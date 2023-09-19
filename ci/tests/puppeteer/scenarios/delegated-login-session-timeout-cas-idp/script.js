@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
     let url = await page.url();
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     await cas.assertParameter(page, "ticket");
     await cas.assertParameter(page, "client_name");
     assert(url.includes("https://localhost:8443/cas/login"));

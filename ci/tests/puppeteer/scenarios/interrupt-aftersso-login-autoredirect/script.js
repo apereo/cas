@@ -16,7 +16,7 @@ const assert = require('assert');
     await cas.assertVisibility(page, '#interruptLinks');
     await page.waitForTimeout(3000);
     const url = `${page.url()}`;
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     assert(url.includes("https://www.google.com"));
     await browser.close();
 })();

@@ -11,14 +11,14 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Starting out with acceptable usage policy feature disabled...");
+    await cas.log("Starting out with acceptable usage policy feature disabled...");
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
 
-    console.log("Updating configuration and waiting for changes to reload...");
+    await cas.log("Updating configuration and waiting for changes to reload...");
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
@@ -27,7 +27,7 @@ const assert = require("assert");
 
     await cas.refreshContext();
 
-    console.log("Starting out with acceptable usage policy feature enabled...");
+    await cas.log("Starting out with acceptable usage policy feature enabled...");
     await cas.goto(page, `https://localhost:8443/cas/logout`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -55,7 +55,7 @@ async function updateConfig(configFile, configFilePath, data) {
         }
     };
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

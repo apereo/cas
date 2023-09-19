@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     let result = new URL(page.url());
-    console.log(result.searchParams.toString());
+    await cas.log(result.searchParams.toString());
 
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);

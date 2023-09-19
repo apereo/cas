@@ -11,15 +11,15 @@ const assert = require('assert');
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
     let url = await page.url();
-    console.log(url);
+    await cas.log(url);
     assert(url.startsWith("https://localhost:9859/anything/1"));
 
     let content = await cas.textContent(page, "body pre");
     let payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     // remove the last character encoded as a "?"
     let principal = payload.args.principal.slice(0, -1);
-    console.log(`Using principal ${principal}`);
+    await cas.log(`Using principal ${principal}`);
     let decoded = await cas.verifyJwt(principal, secret, {
         algorithms: ["HS512"],
         complete: false

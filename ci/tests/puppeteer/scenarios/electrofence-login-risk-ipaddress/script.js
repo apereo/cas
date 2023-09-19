@@ -17,7 +17,7 @@ const assert = require('assert');
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
     let body = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    console.log(`Email message body is: ${body}`);
+    await cas.log(`Email message body is: ${body}`);
     assert(body.includes("casuser with score 1.00"));
     await browser.close();
 })();

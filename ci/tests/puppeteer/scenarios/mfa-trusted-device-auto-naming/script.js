@@ -7,7 +7,7 @@ const os = require("os");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    console.log("Fetching Scratch codes from /cas/actuator...");
+    await cas.log("Fetching Scratch codes from /cas/actuator...");
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
 
     const page = await cas.newPage(browser);
@@ -15,7 +15,7 @@ const os = require("os");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     
-    console.log(`Using scratch code ${scratch} to login...`);
+    await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await cas.pressEnter(page);
     await page.waitForNavigation();
@@ -39,7 +39,7 @@ const os = require("os");
             const tempDir = os.tmpdir();
             let exported = path.join(tempDir, 'trusteddevices.zip');
             res.data.pipe(fs.createWriteStream(exported));
-            console.log(`Exported records are at ${exported}`);
+            cas.log(`Exported records are at ${exported}`);
         },
         error => {
             throw error;
@@ -47,7 +47,7 @@ const os = require("os");
 
     let template = path.join(__dirname, 'device-record.json');
     let body = fs.readFileSync(template, 'utf8');
-    console.log(`Import device record:\n${body}`);
+    await cas.log(`Import device record:\n${body}`);
     await cas.doRequest(`${baseUrl}/import`, "POST", {
         'Accept': 'application/json',
         'Content-Length': body.length,

@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 
 async function execLogin(page, uid) {
-    console.log(`Logging in with user ${uid}`);
+    await cas.log(`Logging in with user ${uid}`);
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, uid, "Mellon");

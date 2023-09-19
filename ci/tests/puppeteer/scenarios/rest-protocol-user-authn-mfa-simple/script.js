@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
             assert(res.data.service === service);
 
             let params = `username=casuser&password=Mellon&sotp=${res.data.id}`;
-            console.log(`Authenticating user via ${params}`);
+            await cas.log(`Authenticating user via ${params}`);
             const body = await cas.doRequest(`https://localhost:8443/cas/v1/users?${params}`, "POST",
                 {
                     'Accept': 'application/json',

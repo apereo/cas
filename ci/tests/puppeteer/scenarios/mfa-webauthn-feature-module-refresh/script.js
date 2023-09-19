@@ -13,7 +13,7 @@ const path = require("path");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
-    console.log("Updating configuration and waiting for changes to reload...");
+    await cas.log("Updating configuration and waiting for changes to reload...");
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
@@ -30,11 +30,11 @@ const path = require("path");
         await page.waitForTimeout(4000);
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
-        console.log("Checking for presence of errors...");
+        await cas.log("Checking for presence of errors...");
         let errorPanel = await page.$('#errorPanel');
         assert(await errorPanel == null);
 
-        console.log("Checking page elements for visibility");
+        await cas.log("Checking page elements for visibility");
         await cas.assertVisibility(page, '#messages');
         await cas.assertInvisibility(page, '#deviceTable');
         await cas.assertVisibility(page, '#authnButton');
@@ -43,9 +43,9 @@ const path = require("path");
         const baseUrl = "https://localhost:8443/cas/actuator/";
         for (let i = 0; i < endpoints.length; i++) {
             let url = baseUrl + endpoints[i];
-            console.log(`Checking response status from ${url}`);
+            await cas.log(`Checking response status from ${url}`);
             const response = await cas.goto(page, url);
-            console.log(`${response.status()} ${response.statusText()}`);
+            await cas.log(`${response.status()} ${response.statusText()}`);
             assert(response.ok())
         }
     } finally {
@@ -72,7 +72,7 @@ async function updateConfig(configFile, configFilePath, data) {
     };
 
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

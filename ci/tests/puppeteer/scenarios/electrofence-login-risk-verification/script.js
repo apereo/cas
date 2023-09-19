@@ -17,11 +17,11 @@ const assert = require("assert");
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
     let body = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    console.log(`Email message body is: ${body}`);
+    await cas.log(`Email message body is: ${body}`);
     const link = body.substring(body.indexOf("link=") + 5);
     await cas.logg(`Verification link is ${link}`);
     let response = await cas.goto(page, link);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.assertInnerText(page, "#content h2", "Risky Authentication attempt is confirmed.");
 

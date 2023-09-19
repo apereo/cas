@@ -9,13 +9,13 @@ const assert = require("assert");
     await cas.loginWith(page);
     await page.authenticate({'username':'javamelody', 'password': 'M3ll0n'});
     let response = await cas.goto(page, "https://localhost:8443/cas/monitoring");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     response = await cas.goto(page, "https://localhost:8443/cas/monitoring?part=counterSummaryPerClass&counter=spring");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     let entries = await cas.innerTexts(page, "td.wrappedText a");
-    console.log(entries);
+    await cas.log(entries);
 
     assert(entries.find(entry => entry === "ServicesManagerScheduledLoader") !== undefined);
     assert(entries.find(entry => entry === "TicketRegistryCleanerScheduler") !== undefined);

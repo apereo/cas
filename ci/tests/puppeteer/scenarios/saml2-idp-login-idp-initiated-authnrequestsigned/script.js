@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin%3Flocale%3Den";
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.screenshot(page);
     await page.waitForTimeout(4000);

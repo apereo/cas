@@ -5,13 +5,13 @@ const cas = require('../../cas.js');
 (async () => {
 
     for (const endpoint of ["validate", "serviceValidate", "p3/serviceValidate"]) {
-        console.log(`Checking validation endpoint: ${endpoint}`);
+        await cas.log(`Checking validation endpoint: ${endpoint}`);
 
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
         const service1 = "https://localhost:9859/get";
-        console.log(`Logging into ${service1} without renew to create SSO`);
+        await cas.log(`Logging into ${service1} without renew to create SSO`);
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service1}`);
         await cas.loginWith(page, "casuser", "Mellon");
 
@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
         }
 
         const service2 = "https://localhost:9859/get";
-        console.log(`Logging into ${service2} to validate with renew=true and existing SSO`);
+        await cas.log(`Logging into ${service2} to validate with renew=true and existing SSO`);
         await cas.goto(page, `https://localhost:8443/cas/login?service=${service2}`);
         ticket = await cas.assertTicketParameter(page);
         body = await validate(endpoint, service2, ticket, true);
@@ -44,8 +44,8 @@ async function validate(endpoint, service, ticket, renew = false) {
     if (renew) {
         path = `${path}&renew=true`;
     }
-    console.log(`Validating ${path}`);
+    await cas.log(`Validating ${path}`);
     let result = await cas.doRequest(`https://localhost:8443${path}`);
-    console.log(result);
+    await cas.log(result);
     return result;
 }

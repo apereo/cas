@@ -24,7 +24,7 @@ const assert = require('assert');
 
     await page.waitForTimeout(2000);
     let url = await page.url();
-    console.log(`Page URL: ${url}`);
+    await cas.log(`Page URL: ${url}`);
     await cas.assertParameter(page, "client_name");
     assert(url.includes("https://localhost:8443/cas/login"));
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");

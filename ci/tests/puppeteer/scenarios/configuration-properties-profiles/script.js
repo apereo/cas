@@ -20,7 +20,7 @@ async function sendRequest(key, value) {
             let found = false;
             for (let i = 0; !found && i < res.data.propertySources.length; i++) {
                 let casSource = res.data.propertySources[i];
-                console.log(`Property source: ${casSource.name}`);
+                cas.log(`Property source: ${casSource.name}`);
                 if (casSource.name === "bootstrapProperties-casCompositePropertySource") {
                     found = true;
                     cas.logg(`Comparing property source value ${casSource.property.value} with expected ${value}`);

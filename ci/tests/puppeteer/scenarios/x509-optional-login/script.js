@@ -16,8 +16,8 @@ const request = require("request");
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null);
 
-    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
-    console.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
+    await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);

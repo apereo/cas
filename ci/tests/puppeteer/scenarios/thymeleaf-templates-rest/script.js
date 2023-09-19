@@ -3,7 +3,7 @@ const cas = require('../../cas.js');
 const assert = require('assert');
 
 (async () => {
-    console.log("Starting HTTP server...");
+    await cas.log("Starting HTTP server...");
     await cas.httpServer(__dirname);
 
     const browser = await puppeteer.launch(cas.browserOptions());

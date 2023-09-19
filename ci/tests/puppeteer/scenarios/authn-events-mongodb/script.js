@@ -11,7 +11,7 @@ const fs = require('fs');
     await context.overridePermissions("https://localhost:8443/cas/login", ['geolocation']);
     await page.setGeolocation({latitude: 90, longitude: 20});
 
-    console.log("Deleting all startup events...");
+    await cas.log("Deleting all startup events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
 
     const totalAttempts = 10;
@@ -27,12 +27,12 @@ const fs = require('fs');
     await cas.loginWith(page);
     await cas.assertCookie(page);
 
-    console.log("Getting events...");
+    await cas.log("Getting events...");
 
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         res => {
             const count = Object.keys(res.data[1]).length;
-            console.log(`Total event records found ${count}`);
+            cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
 
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
@@ -48,17 +48,15 @@ const fs = require('fs');
             throw error;
         }, {'Content-Type': "application/json"});
 
-    console.log("Deleting all events...");
+    await cas.log("Deleting all events...");
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
-    console.log("Checking events...");
+    await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
-            assert(Object.keys(res.data[1]).length === 0)
-        }, error => {
+        res => assert(Object.keys(res.data[1]).length === 0), error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
-    console.log("Uploading events...");
+    await cas.log("Uploading events...");
     const zipFileContent = fs.readFileSync(`${__dirname}/events.zip`);
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "POST",
         {
@@ -71,7 +69,7 @@ const fs = require('fs');
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         res => {
             const count = Object.keys(res.data[1]).length;
-            console.log(`Total event records found ${count}`);
+            cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
         }, error => {
             throw error;

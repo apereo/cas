@@ -46,12 +46,12 @@ async function sendRequest(page, entityIds) {
             url += `?providerId=${entityId}`;
             url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
-            console.log(`Navigating to ${url}`);
+            await cas.log(`Navigating to ${url}`);
             let s = performance.now();
             await cas.goto(page, url);
             let e = performance.now();
             let duration = (e - s) / 1000;
-            console.log(`Request took ${duration} seconds.`);
+            await cas.log(`Request took ${duration} seconds.`);
 
             if (count > 1 && duration > 15) {
                 await cas.logr("Request took longer than expected");

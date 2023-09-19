@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000);
     let url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/account");
     await cas.assertTicketParameter(page, false);
 

@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     await cas.assertCookie(page);
 
     const title = await page.title();
-    console.log(title);
+    await cas.log(title);
     assert(title === "CAS Boostrap Theme Log In Successful");
 
     await browser.close();

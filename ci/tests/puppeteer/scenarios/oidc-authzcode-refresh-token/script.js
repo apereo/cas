@@ -5,7 +5,7 @@ const assert = require('assert');
 async function fetchRefreshToken(page, clientId, redirectUrl) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -17,7 +17,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = `client_id=${clientId}&`;
     accessTokenParams += "client_secret=secret&";
@@ -37,8 +37,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
             accessToken = res.data.access_token;
             refreshToken = res.data.refresh_token;
 
-            console.log(`Received access token ${accessToken}`);
-            console.log(`Received refresh token ${refreshToken}`);
+            cas.log(`Received access token ${accessToken}`);
+            cas.log(`Received refresh token ${refreshToken}`);
         },
         () => {
             throw `Operation failed to obtain access token: ${error}`;
@@ -54,12 +54,12 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
-    console.log(`Calling endpoint: ${accessTokenUrl}`);
+    cas.log(`Calling endpoint: ${accessTokenUrl}`);
 
     let value = `${clientId}:secret`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json",
@@ -75,7 +75,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     const redirectUrl1 = "https://github.com/apereo/cas";
     let refreshToken1 = await fetchRefreshToken(page, "client", redirectUrl1);
 
-    console.log("**********************************************");
+    await cas.log("**********************************************");
     
     await cas.logg("Fetching second refresh token");
     const redirectUrl2 = "https://apereo.github.io";
@@ -88,9 +88,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         res => {
             throw `Operation should fail but instead produced: ${res.data}`;
         }, error => {
-            console.log(`Status: ${error.response.status}`);
+            cas.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400);
-            console.log(error.response.data);
+            cas.log(error.response.data);
             assert(error.response.data.error === "invalid_grant");
         });
 
@@ -98,15 +98,15 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         res => {
             throw `Operation should fail but instead produced: ${res.data}`;
         }, error => {
-            console.log(`Status: ${error.response.status}`);
+            cas.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400);
-            console.log(error.response.data);
+            cas.log(error.response.data);
             assert(error.response.data.error === "invalid_grant");
         });
 
     await exchangeToken(refreshToken1, "client",
         res => {
-            console.log(res.data);
+            cas.log(res.data);
             assert(res.status === 200);
         }, error => {
             throw `Operation should not fail but instead produced: ${error}`;

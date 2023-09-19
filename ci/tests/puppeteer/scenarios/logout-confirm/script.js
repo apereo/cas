@@ -23,25 +23,25 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#fm1");
 
     let url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
-    console.log("Logout with redirect...");
+    await cas.log("Logout with redirect...");
     await cas.goto(page, "https://localhost:8443/cas/logout?url=https://github.com/apereo/cas");
     await cas.submitForm(page, "#fm1");
     url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url === "https://github.com/apereo/cas");
 
-    console.log("Logout with unauthorized redirect...");
+    await cas.log("Logout with unauthorized redirect...");
     await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
     await cas.submitForm(page, "#fm1");
     url = await page.url();
     await page.waitForTimeout(1000);
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
 
     await browser.close();

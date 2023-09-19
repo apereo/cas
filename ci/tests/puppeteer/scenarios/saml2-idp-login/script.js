@@ -16,10 +16,10 @@ async function normalAuthenticationFlow(context) {
     await cas.assertVisibility(page, "#table_with_attributes");
 
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-    console.log(authData);
+    await cas.log(authData);
     await page.waitForTimeout(1000);
 
-    console.log("Removing cached metadata for service providers");
+    await cas.log("Removing cached metadata for service providers");
     await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
     const entityId = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
     const endpoints = ["health", `samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=${entityId}`];
@@ -27,7 +27,7 @@ async function normalAuthenticationFlow(context) {
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`);
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok())
     }
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/error");
@@ -44,12 +44,12 @@ async function staleAuthenticationFlow(context) {
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
 
-    console.log("Checking for page URL...");
+    await cas.log("Checking for page URL...");
     let url = await page.url();
-    console.log(url);
+    await cas.log(url);
     await page.close();
 
-    console.log(`Restarting the flow with ${url}`);
+    await cas.log(`Restarting the flow with ${url}`);
     const page2 = await cas.newPage(context);
     await cas.goto(page2, url);
     await page2.waitForTimeout(2000);
@@ -59,29 +59,29 @@ async function staleAuthenticationFlow(context) {
     await cas.assertInnerTextContains(page2, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page2, "#table_with_attributes");
     let authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
-    console.log(authData);
+    await cas.log(authData);
     await page2.waitForTimeout(1000);
     await cas.goto(page2, "https://localhost:8443/cas/logout");
-    console.log("Done");
+    await cas.log("Done");
 }
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     for (let i = 1; i <= 2; i++) {
         const context = await browser.createIncognitoBrowserContext();
-        console.log(`Running test scenario ${i}`);
+        await cas.log(`Running test scenario ${i}`);
         switch (i) {
             case 1:
-                console.log("Running test for normal authentication flow");
+                await cas.log("Running test for normal authentication flow");
                 await normalAuthenticationFlow(context);
                 break;
             case 2:
-                console.log("Running test for stale authentication flow");
+                await cas.log("Running test for stale authentication flow");
                 await staleAuthenticationFlow(context);
                 break;
         }
         await context.close();
-        console.log(`=======================================`);
+        await cas.log(`=======================================`);
     }
 
 
@@ -92,7 +92,7 @@ async function staleAuthenticationFlow(context) {
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < samlMetrics.length; i++) {
         let url = `${baseUrl}metrics/org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver.${samlMetrics[i]}`;
-        console.log(`Trying ${url}`);
+        await cas.log(`Trying ${url}`);
         await cas.doRequest(url, "GET", {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

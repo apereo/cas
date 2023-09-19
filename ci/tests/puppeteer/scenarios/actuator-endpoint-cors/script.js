@@ -29,7 +29,7 @@ const assert = require('assert');
         assert(data.components !== null);
 
         server.close(() => {
-            console.log('Exiting server...');
+            cas.log('Exiting server...');
             browser.close();
         });
         await process.exit(0);

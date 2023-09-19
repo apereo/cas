@@ -9,7 +9,7 @@ const assert = require('assert');
         "grant_types": ["client_credentials"],
     };
     let body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             'Content-Length': body.length,
@@ -17,17 +17,17 @@ const assert = require('assert');
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity);
+    await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
-    console.log("Using registration entry to get a token...");
+    await cas.log("Using registration entry to get a token...");
     await executeRequest(entity.client_id, entity.client_secret, false);
     await cas.sleep(11000);
-    console.log("Re-using a now-expired registration entry to get a token, which must fail...");
+    await cas.log("Re-using a now-expired registration entry to get a token, which must fail...");
     await executeRequest(entity.client_id, entity.client_secret, true);
 
-    console.log("Updating registration entity to renew client secret");
-    console.log("==================================");
+    await cas.log("Updating registration entity to renew client secret");
+    await cas.log("==================================");
     service = {
         "redirect_uris": ["https://apereo.github.io"],
         "client_name": "Apereo Blog Updated Now",
@@ -35,7 +35,7 @@ const assert = require('assert');
         "grant_types": ["client_credentials"],
     };
     body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
 
     result = await cas.doRequest(entity.registration_client_uri, "PATCH", {
         "Authorization": `Bearer ${entity.registration_access_token}`,
@@ -43,7 +43,7 @@ const assert = require('assert');
         'Content-Type': 'application/json'
     }, 200, body);
     let updatedEntity = JSON.parse(result.toString());
-    console.log(updatedEntity);
+    await cas.log(updatedEntity);
     assert(entity.client_secret !== updatedEntity.client_secret);
     assert(updatedEntity.client_name === service.client_name);
     assert(updatedEntity.contacts.length === service.contacts.length);
@@ -55,13 +55,11 @@ async function executeRequest(clientId, clientSecret, expectFailure) {
     let params = `client_id=${clientId}&client_secret=${clientSecret}`;
     params += "&grant_type=client_credentials&scope=openid";
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
-    console.log(`Calling ${url}`);
+    await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, async res => {
-        console.log(res.data);
-    }, error => {
+    }, async res => await cas.log(res.data), error => {
         if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);
         } else {

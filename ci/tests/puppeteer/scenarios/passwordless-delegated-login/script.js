@@ -3,9 +3,9 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 async function startAuthFlow(page, username) {
-    console.log("Removing previous sessions and logging out");
+    await cas.log("Removing previous sessions and logging out");
     await cas.goto(page, "https://localhost:8443/cas/logout");
-    console.log(`Starting authentication flow for ${username}`);
+    await cas.log(`Starting authentication flow for ${username}`);
     await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     await page.waitForTimeout(1000);
     let pswd = await page.$('#password');
@@ -15,13 +15,13 @@ async function startAuthFlow(page, username) {
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url.startsWith("https://localhost:8444"));
     await page.waitForTimeout(1000);
 
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(5000);
-    console.log(`Page url: ${await page.url()}`);
+    await cas.log(`Page url: ${await page.url()}`);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 

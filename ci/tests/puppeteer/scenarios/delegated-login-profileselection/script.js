@@ -19,7 +19,7 @@ const cas = require('../../cas.js');
     await cas.assertPageTitleContains(page, "Delegated Authentication Profile Selection");
 
     let profileId = await cas.innerText(page, "#profilesTable tr td code");
-    console.log(profileId);
+    await cas.log(profileId);
     await cas.submitForm(page, `#profilesTable #form-${profileId}`);
     await page.waitForTimeout(2000);
 

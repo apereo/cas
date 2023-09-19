@@ -7,7 +7,7 @@ const puppeteer = require("puppeteer");
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
     }, res => {
-        // console.log(res.data);
+        // await cas.log(res.data);
         assert(res.data.device_code !== null);
         assert(res.data.user_code !== null);
         assert(res.data.verification_uri !== null);
@@ -48,7 +48,7 @@ async function verifyDeviceCode(data) {
     const page = await cas.newPage(browser);
     await page.goto(data.verification_uri);
     await page.waitForTimeout(1000);
-    console.log(`Page url: ${await page.url()}`);
+    await cas.log(`Page url: ${await page.url()}`);
     await cas.loginWith(page);
     await cas.type(page, "#usercode", data.user_code);
     await cas.pressEnter(page);

@@ -28,13 +28,13 @@ const jose = require('jose');
         "iat": dt.getTime() / 1000,
         "jti": "vqv2EAaJECl67LmE"
     };
-    console.log(`DPoP proof payload is`);
-    console.log(payload);
+    await cas.log(`DPoP proof payload is`);
+    await cas.log(payload);
 
     const {publicKey, privateKey} = await jose.generateKeyPair('ES256');
     const publicJwk = await jose.exportJWK(publicKey);
-    console.log(`DPoP public key is`);
-    console.log(publicJwk);
+    await cas.log(`DPoP public key is`);
+    await cas.log(publicJwk);
 
     const dpopProof = await cas.createJwt(payload, privateKey, "ES256",
         {
@@ -44,9 +44,9 @@ const jose = require('jose');
             }
         });
 
-    console.log(`DPoP JWT is ${dpopProof}`);
+    await cas.log(`DPoP JWT is ${dpopProof}`);
     let code = await cas.assertParameter(page, "code");
-    console.log(`Current code is ${code}`);
+    await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token`;
     const params = `grant_type=authorization_code&client_id=client&redirect_uri=https://apereo.github.io&code=${code}`;
 
@@ -62,7 +62,7 @@ const jose = require('jose');
         cas.decodeJwt(accessToken, true)
             .then(decoded => {
                 assert(decoded !== null);
-                console.log(decoded);
+                cas.log(decoded);
                 assert(decoded.payload["DPoP"] !== undefined);
                 assert(decoded.payload["DPoPConfirmation"] !== undefined);
                 assert(decoded.payload["cnf"]["jkt"] !== undefined)
@@ -82,8 +82,8 @@ const jose = require('jose');
         "ath": base64Token
     };
 
-    console.log(`DPoP proof profile payload is`);
-    console.log(profilePayload);
+    await cas.log(`DPoP proof profile payload is`);
+    await cas.log(profilePayload);
 
     const dpopProofProfile = await cas.createJwt(profilePayload, privateKey, "ES256",
         {
@@ -92,16 +92,16 @@ const jose = require('jose');
                 typ: "dpop+jwt"
             }
         });
-    console.log(`DPoP JWT is ${dpopProofProfile}`);
+    await cas.log(`DPoP JWT is ${dpopProofProfile}`);
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?token=${accessToken}`;
-    console.log(`Calling user profile ${profileUrl}`);
+    await cas.log(`Calling user profile ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json",
         "DPoP": dpopProofProfile
     }, res => {
-        console.log(res.data);
+        cas.log(res.data);
         assert(res.data.sub != null)
     }, error => {
         throw `Operation failed: ${error}`;
@@ -115,9 +115,9 @@ async function introspect(token) {
     let value = `client:secret`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
 
-    console.log(`Introspecting token ${token}`);
+    await cas.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
         res => {
             assert(res.data.active === true);

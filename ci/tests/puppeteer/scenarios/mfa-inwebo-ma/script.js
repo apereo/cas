@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "testcas", "password");
     await page.waitForTimeout(5000);
     await cas.screenshot(page);
-    console.log("Asking for the PIN code");
+    await cas.log("Asking for the PIN code");
     await cas.assertVisibility(page, "#code");
     await cas.assertVisibility(page, "#pin");
     await cas.assertVisibility(page, "#enrollButton");

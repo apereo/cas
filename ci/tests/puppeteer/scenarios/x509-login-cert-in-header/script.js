@@ -12,12 +12,12 @@ const fs = require('fs');
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null);
 
-    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
     const certBuffer = fs.readFileSync(config.trustStoreCertificateFile);
     const certHeader = certBuffer.toString().replace(/\n/g, " ").replace(/\r/g,"");
 
-    console.log(`ssl-client-cert-from-proxy: ${certHeader}`);
+    await cas.log(`ssl-client-cert-from-proxy: ${certHeader}`);
 
     page.on('request', request => {
         let data = {

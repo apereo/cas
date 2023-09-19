@@ -10,7 +10,7 @@ const assert = require('assert');
 
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
@@ -18,7 +18,7 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -26,7 +26,7 @@ const assert = require('assert');
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
@@ -35,9 +35,9 @@ const assert = require('assert');
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log(`Received access token ${accessToken}`);
+        await cas.log(`Received access token ${accessToken}`);
 
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(decoded.sub !== null);
@@ -49,7 +49,7 @@ const assert = require('assert');
     assert(accessToken != null, "Access Token cannot be null");
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
-    console.log(`Calling user profile ${profileUrl}`);
+    await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
     }, res => {
@@ -61,18 +61,18 @@ const assert = require('assert');
         throw `Operation failed: ${error}`;
     });
 
-    console.log(`Trying to re-use OAuth code ${accessTokenUrl}`);
+    await cas.log(`Trying to re-use OAuth code ${accessTokenUrl}`);
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, () => {
         throw `OAuth code ${code} cannot be used again`;
     }, error => {
-        console.log(error.response.data);
+        cas.log(error.response.data);
         assert(error.response.data.error === 'invalid_grant')
     });
 
-    console.log(`Reusing OAuth code ${code} should have revoked access token ${accessToken}`);
-    console.log(`Calling user profile again with revoked access token: ${profileUrl}`);
+    await cas.log(`Reusing OAuth code ${code} should have revoked access token ${accessToken}`);
+    await cas.log(`Calling user profile again with revoked access token: ${profileUrl}`);
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
@@ -80,7 +80,7 @@ const assert = require('assert');
         throw `Access token ${accessToken} should have been removed and rejected with code reused`;
     }, error => {
         assert(error.response.status === 401);
-        console.log(error.response.data);
+        cas.log(error.response.data);
         assert(error.response.data.error === "expired_accessToken");
     });
 

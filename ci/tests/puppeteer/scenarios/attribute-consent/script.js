@@ -50,14 +50,14 @@ const os = require("os");
     
     const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
     const url = `${baseUrl}/casuser`;
-    console.log(`Trying ${url}`);
+    await cas.log(`Trying ${url}`);
     let response = await cas.goto(page, url);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     let template = path.join(__dirname, 'consent-record.json');
     let body = fs.readFileSync(template, 'utf8');
-    console.log(`Import consent record:\n${body}`);
+    await cas.log(`Import consent record:\n${body}`);
     await cas.doRequest(`${baseUrl}/import`, "POST", {
         'Accept': 'application/json',
         'Content-Length': body.length,
@@ -69,7 +69,7 @@ const os = require("os");
         const tempDir = os.tmpdir();
         let exported = path.join(tempDir, 'consent.zip');
         res.data.pipe(fs.createWriteStream(exported));
-        console.log(`Exported consent records are at ${exported}`);
+        cas.log(`Exported consent records are at ${exported}`);
     },
     error => {
         throw error;

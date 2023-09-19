@@ -42,9 +42,7 @@ const StompJS = require('@stomp/stompjs');
 async function connectAndLogin(channelId, page) {
     const client = new StompJS.Client({
         brokerURL: 'ws://localhost:8443/cas/qr-websocket',
-        debug: str => {
-            console.log(str);
-        },
+        debug: str => cas.log(str),
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
@@ -60,7 +58,7 @@ async function connectAndLogin(channelId, page) {
         const parameters = `username=casuser&password=Mellon&token=true&QR_AUTHENTICATION_DEVICE_ID=${deviceId}`;
         executeRequest(`https://localhost:8443/cas/v1/tickets?${parameters}`, 201)
             .then(token => {
-                console.log(`Received token ${token}`);
+                cas.log(`Received token ${token}`);
                 let payload = JSON.stringify({'token': token});
                 client.publish({
                     destination: "/qr/accept",

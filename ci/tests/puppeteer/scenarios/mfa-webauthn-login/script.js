@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
 
     await page.on('response', response => {
         let url = response.url();
-        console.log(`URL: ${url}`);
+        cas.log(`URL: ${url}`);
         if (url.endsWith("webauthn/authenticate")) {
             assert(response.status() === 200);
         }
@@ -33,7 +33,7 @@ const cas = require('../../cas.js');
         "https://localhost:8443/cas/webauthn/register"];
 
     await urls.forEach(url => {
-        console.log(`Evaluating URL ${url}`);
+        cas.log(`Evaluating URL ${url}`);
         cas.doPost(url, {}, {
             'Content-Type': 'application/json'
         }, res => {
@@ -45,13 +45,13 @@ const cas = require('../../cas.js');
         });
     });
     
-    console.log("Checking actuator endpoints...");
+    await cas.log("Checking actuator endpoints...");
     const endpoints = ["health", "webAuthnDevices/casuser"];
     const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`);
+        await cas.log(`${response.status()} ${response.statusText()}`);
         assert(response.ok())
     }
 

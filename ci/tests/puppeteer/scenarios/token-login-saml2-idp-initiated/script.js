@@ -11,7 +11,7 @@ async function cleanUp() {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
@@ -22,7 +22,7 @@ async function cleanUp() {
         let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
         url += `?providerId=${entityId}&token=${token}`;
 
-        console.log(`Navigating to ${url}`);
+        await cas.log(`Navigating to ${url}`);
         await cas.goto(page, url);
         await page.waitForTimeout(5000);
 
@@ -40,7 +40,7 @@ async function cleanUp() {
         await cleanUp();
     }, async error => {
         await cleanUp();
-        console.log(error);
+        await cas.log(error);
         throw error;
     })
 })();

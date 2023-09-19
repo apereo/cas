@@ -28,13 +28,13 @@ const cas = require('../../cas.js');
     await cas.click(page, "#idBtn_Back");
     await page.waitForTimeout(7000);
 
-    console.log(`Page URL: ${page.url()}`);
+    await cas.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
-    console.log(result.searchParams.toString());
+    await cas.log(result.searchParams.toString());
     assert(result.searchParams.has("ticket") === true);
     let ticket = result.searchParams.get("ticket");
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body);
+    await cas.log(body);
     let json = JSON.parse(body);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.name[0] === "CAS Test");

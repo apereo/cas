@@ -15,7 +15,7 @@ async function login(page, redirectUrl, params) {
     if (params !== undefined) {
         authzUrl += `&${params}`;
     }
-    console.log(`Navigating to ${authzUrl}`);
+    await cas.log(`Navigating to ${authzUrl}`);
     await cas.goto(page, authzUrl);
 }
 
@@ -24,9 +24,9 @@ async function login(page, redirectUrl, params) {
     const page = await cas.newPage(browser);
     let redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post");
-    console.log(`Page URL: ${page.url()}`);
+    await cas.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(2000);
-    console.log("Waiting for page content body to render...");
+    await cas.log("Waiting for page content body to render...");
     await page.waitForSelector('body pre', { visible: true });
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);

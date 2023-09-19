@@ -11,7 +11,7 @@ const YAML = require("yaml");
     const configFile = YAML.parse(file);
 
     let leak = await cas.randomNumber() * 100;
-    console.log("Updating configuration and waiting for changes to reload...");
+    await cas.log("Updating configuration and waiting for changes to reload...");
     updateConfig(configFile, configFilePath, leak);
     await cas.sleep(2000);
 
@@ -22,7 +22,7 @@ const YAML = require("yaml");
     const page = await cas.newPage(browser);
     let response = await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     await cas.loginWith(page);
@@ -34,7 +34,7 @@ const YAML = require("yaml");
     await cas.goto(page, "https://localhost:8443/cas/logout");
 
     let url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);
@@ -58,7 +58,7 @@ function updateConfig(configFile, configFilePath, data) {
         }
     };
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    cas.log(`Updated configuration:\n${newConfig}`);
     fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    cas.log(`Wrote changes to ${configFilePath}`);
 }

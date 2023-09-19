@@ -9,16 +9,16 @@ const cas = require('../../cas.js');
     params += "scope=openid";
 
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
-    console.log(`Calling ${url}`);
+    await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
     }, async res => {
 
-        console.log(res.data);
+        await cas.log(res.data);
         assert(res.data.access_token !== null);
 
-        console.log("Decoding JWT access token...");
+        await cas.log("Decoding JWT access token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(res.data.id_token !== null);

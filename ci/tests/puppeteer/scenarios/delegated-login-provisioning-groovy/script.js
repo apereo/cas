@@ -17,7 +17,7 @@ const path = require('path');
     await cas.assertTicketParameter(page);
 
     let result = path.join(os.tmpdir(), "profile.txt");
-    console.log(`Target file should be at ${result}`);
+    await cas.log(`Target file should be at ${result}`);
     assert(fs.existsSync(result) === true);
     
     await browser.close();

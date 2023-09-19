@@ -5,7 +5,7 @@ const assert = require('assert');
     let value = `casuser:pa$$word`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
 
     const url = "https://localhost:8443/cas/actuator/health";
     let body = await cas.doRequest(url, "GET",

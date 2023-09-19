@@ -12,7 +12,7 @@ const assert = require('assert');
     let url = await page.url();
     await page.waitForTimeout(2000);
     await cas.assertTicketParameter(page);
-    console.log(`Page URL is: ${url}`);
+    await cas.log(`Page URL is: ${url}`);
     assert((url.match(/#/g) || []).length === 1);
     let result = new URL(page.url());
     await cas.logg(`URL hash is ${result.hash}`);

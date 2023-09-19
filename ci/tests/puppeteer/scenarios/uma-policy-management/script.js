@@ -1,4 +1,3 @@
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -28,7 +27,7 @@ const cas = require('../../cas.js');
         resource_scopes: ["create", "read"]
     };
     let resourceRequest = JSON.stringify(resourceObject);
-    console.log(`Creating resource ${resourceRequest}`);
+    await cas.log(`Creating resource ${resourceRequest}`);
     let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
@@ -36,7 +35,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource);
+    await cas.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
@@ -63,7 +62,7 @@ const cas = require('../../cas.js');
         ]
     };
     let policyRequest = JSON.stringify(policyObject);
-    console.log(`Creating policy ${policyRequest}`);
+    await cas.log(`Creating policy ${policyRequest}`);
     let result = JSON.parse(await cas.doRequest(policyUrl, "POST",
         {
             "Authorization": `Bearer ${at}`,
@@ -71,26 +70,26 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
-    console.log(JSON.stringify(result.entity.policies));
+    await cas.log(result);
+    await cas.log(JSON.stringify(result.entity.policies));
 
-    console.log(`Checking for created policy ${policyRequest}`);
+    await cas.log(`Checking for created policy ${policyRequest}`);
     result = JSON.parse(await cas.doRequest(`${policyUrl}/1234`, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
+    await cas.log(result);
 
-    console.log(`Checking for all created policies`);
+    await cas.log(`Checking for all created policies`);
     result = JSON.parse(await cas.doRequest(`${policyUrl}`, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
+    await cas.log(result);
 
 
     policyObject = {
@@ -108,7 +107,7 @@ const cas = require('../../cas.js');
         ]
     };
     policyRequest = JSON.stringify(policyObject);
-    console.log(`Updating policy ${policyRequest}`);
+    await cas.log(`Updating policy ${policyRequest}`);
     result = JSON.parse(await cas.doRequest(`${policyUrl}/1234`, "PUT",
         {
             "Authorization": `Bearer ${at}`,
@@ -116,25 +115,25 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
-    console.log(JSON.stringify(result.entity.policies));
+    await cas.log(result);
+    await cas.log(JSON.stringify(result.entity.policies));
 
 
-    console.log(`Deleting policy`);
+    await cas.log(`Deleting policy`);
     result = JSON.parse(await cas.doRequest(`${policyUrl}/1234`, "DELETE",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200));
-    console.log(result);
+    await cas.log(result);
 
-    console.log(`Checking for all created policies`);
+    await cas.log(`Checking for all created policies`);
     result = JSON.parse(await cas.doRequest(`${policyUrl}`, "GET",
         {
             "Authorization": `Bearer ${at}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
+    await cas.log(result);
 })();

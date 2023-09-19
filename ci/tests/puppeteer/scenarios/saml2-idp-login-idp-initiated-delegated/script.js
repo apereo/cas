@@ -8,22 +8,22 @@ async function startFlow(context, clientName) {
     const entityId = encodeURI("https://localhost:9859/shibboleth");
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}&CName=${clientName}`;
-    console.log(`Navigating to ${url} for client ${clientName}`);
+    await cas.log(`Navigating to ${url} for client ${clientName}`);
     await cas.goto(page, url);
     await page.waitForTimeout(3000);
     await cas.loginWith(page, "casuser", "Mellon");
-    console.log(await page.url());
+    await cas.log(await page.url());
     await cas.screenshot(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
-    console.log(content);
+    await cas.log(content);
     assert(content.form.SAMLResponse != null);
 
     const service = "https://apereo.github.io";
     url = `https://localhost:8443/cas/login?service=${service}`;
     await cas.goto(page, url);
     await page.waitForTimeout(6000);
-    console.log(await page.url());
+    await cas.log(await page.url());
     await cas.assertTicketParameter(page);
 }
 

@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.log(`Page url: ${url}`);
     assert(url === "https://github.com/");
     await browser.close();
 })();

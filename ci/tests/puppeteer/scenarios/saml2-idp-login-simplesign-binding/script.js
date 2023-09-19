@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
         await cas.assertVisibility(page, "#table_with_attributes");
 
         let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-        console.log(authData);
+        await cas.log(authData);
 
     } finally {
         await cas.screenshot(page);

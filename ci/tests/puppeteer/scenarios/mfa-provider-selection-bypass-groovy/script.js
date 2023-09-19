@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://google.com");
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000);
-    console.log("Selecting mfa-gauth");
+    await cas.log("Selecting mfa-gauth");
     await cas.assertInvisibility(page, '#mfa-gauth');
     await cas.assertInvisibility(page, '#mfa-yubikey');
     await cas.assertTicketParameter(page);

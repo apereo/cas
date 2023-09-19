@@ -9,7 +9,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
         url += `&max_age=${maxAge}`;
     }
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
@@ -21,7 +21,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -29,19 +29,19 @@ async function fetchIdToken(page, maxAge, successHandler) {
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
+        await cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log(`Received access token ${accessToken}`);
+        await cas.log(`Received access token ${accessToken}`);
 
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
         successHandler(decoded);
     }, error => {
@@ -64,8 +64,8 @@ async function fetchIdToken(page, maxAge, successHandler) {
         time2 = idToken.auth_time;
     });
 
-    console.log(`Initial attempt; ID token auth_time: ${time1}`);
-    console.log(`Second attempt with max_age=1; ID token auth_time: ${time2}`);
+    await cas.log(`Initial attempt; ID token auth_time: ${time1}`);
+    await cas.log(`Second attempt with max_age=1; ID token auth_time: ${time2}`);
     assert(time1 !== time2);
 
     await browser.close();

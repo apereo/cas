@@ -6,13 +6,13 @@ const assert = require('assert');
     let value = `casuser:Mellon`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
     let body = await cas.doRequest("https://localhost:8443/cas/oidc/initToken", "GET",
         {
             'Authorization': authzHeader,
             'Content-Type': 'application/json',
         }, 200);
-    console.log(body);
+    await cas.log(body);
     let tokenResponse = JSON.parse(body);
 
     let service = {
@@ -38,7 +38,7 @@ const assert = require('assert');
     };
 
     body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             'Authorization': `Bearer ${tokenResponse.access_token}`,
@@ -47,7 +47,7 @@ const assert = require('assert');
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity);
+    await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
     assert(entity.registration_access_token !== null);
@@ -55,7 +55,7 @@ const assert = require('assert');
     assert(entity.contacts.length === 2);
     
     body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
     result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             'Content-Length': body.length,

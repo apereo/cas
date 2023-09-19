@@ -5,14 +5,14 @@ const assert = require("assert");
 
 async function cleanUp() {
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-    console.log('Cleanup done');
+    await cas.log('Cleanup done');
 }
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
@@ -27,8 +27,8 @@ async function cleanUp() {
             await cas.loginWith(page, "duobypass", "Mellon");
             await page.waitForTimeout(3000);
 
-            console.log("Checking for page URL...");
-            console.log(await page.url());
+            await cas.log("Checking for page URL...");
+            await cas.log(await page.url());
             await page.waitForTimeout(3000);
             await cas.assertInnerText(page, "#principal", "casuser@example.org");
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa")
@@ -38,7 +38,7 @@ async function cleanUp() {
         }
     }, async error => {
         await cleanUp();
-        console.log(error);
+        await cas.log(error);
         throw error;
     })
 })();

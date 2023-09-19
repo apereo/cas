@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
     await cas.assertVisibility(page, '#token');
 
-    console.log("Attempting to resend ticket...");
+    await cas.log("Attempting to resend ticket...");
     await cas.click(page, "#resendButton");
     await page.waitForTimeout(1000);
     await cas.screenshot(page);

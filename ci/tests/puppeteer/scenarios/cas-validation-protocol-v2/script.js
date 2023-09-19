@@ -10,14 +10,14 @@ const assert = require('assert');
         casServerUrlPrefix: 'https://localhost:8443/cas',
         serverName: 'http://localhost:8080'
     });
-    console.log("Creating HTTP server for CAS client on port 8080");
+    await cas.log("Creating HTTP server for CAS client on port 8080");
     let server = await http.createServer(async (req, res) => {
         if (!await handler(req, res)) {
             return res.end();
         }
         const {principal} = req;
         if (principal !== undefined) {
-            console.log(`Principal: ${principal}`);
+            await cas.log(`Principal: ${principal}`);
             assert(principal.user === "casuser");
         }
         res.end();

@@ -5,9 +5,7 @@ const assert = require("assert");
 (async () => {
 
     await cas.doGet("http://casuser:Mellon@localhost:8888/casconfigserver/cas/dev",
-        res => {
-            assert(res.status === 200)
-        }, err => {
+        res => assert(res.status === 200), err => {
             throw err;
         });
     const browser = await puppeteer.launch(cas.browserOptions());
