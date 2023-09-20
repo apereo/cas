@@ -24,12 +24,21 @@ public class SchemaGenerator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    /**
+     * Generate object node.
+     *
+     * @param mainTargetType the main target type
+     * @param excludeTypes   the exclude types
+     * @return the object node
+     */
     public static ObjectNode generate(final Class mainTargetType, final List<String> excludeTypes) {
         val jacksonModule = new JacksonModule(
             JacksonOption.ALWAYS_REF_SUBTYPES,
             JacksonOption.INLINE_TRANSFORMED_SUBTYPES);
-        val configBuilder = new SchemaGeneratorConfigBuilder(MAPPER, SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON).with(jacksonModule);
-        configBuilder.with(
+        val configBuilder = new SchemaGeneratorConfigBuilder(MAPPER, SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON);
+        configBuilder
+            .with(jacksonModule)
+            .with(
                 Option.DEFINITIONS_FOR_ALL_OBJECTS,
                 Option.DEFINITIONS_FOR_MEMBER_SUPERTYPES,
                 Option.SCHEMA_VERSION_INDICATOR)
