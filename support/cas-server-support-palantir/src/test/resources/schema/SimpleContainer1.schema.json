@@ -1,0 +1,67 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$defs" : {
+    "DefaultRegisteredServiceProperty" : {
+      "type" : "object",
+      "properties" : {
+        "values" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "@class" : {
+          "const" : "org.apereo.cas.services.DefaultRegisteredServiceProperty"
+        }
+      },
+      "required" : [ "@class" ]
+    },
+    "DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy" : {
+      "type" : "object",
+      "properties" : {
+        "maxTimeToLiveInSeconds" : {
+          "type" : "integer"
+        },
+        "@class" : {
+          "const" : "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy"
+        }
+      },
+      "required" : [ "@class" ]
+    },
+    "Map(String,RegisteredServiceProperty)" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceProperty"
+    },
+    "RegisteredServiceProperty" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceProperty",
+      "type" : "object",
+      "properties" : {
+        "@class" : {
+          "const" : "org.apereo.cas.services.RegisteredServiceProperty"
+        }
+      },
+      "required" : [ "@class" ]
+    },
+    "RegisteredServiceTicketGrantingTicketExpirationPolicy" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+      "type" : "object",
+      "properties" : {
+        "@class" : {
+          "const" : "org.apereo.cas.services.RegisteredServiceTicketGrantingTicketExpirationPolicy"
+        }
+      },
+      "required" : [ "@class" ]
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "details" : {
+      "$ref" : "#/$defs/Map(String,RegisteredServiceProperty)"
+    },
+    "policy" : {
+      "$ref" : "#/$defs/RegisteredServiceTicketGrantingTicketExpirationPolicy"
+    },
+    "property" : {
+      "$ref" : "#/$defs/RegisteredServiceProperty"
+    }
+  }
+}
