@@ -67,7 +67,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -93,7 +93,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -148,7 +148,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -198,7 +198,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
