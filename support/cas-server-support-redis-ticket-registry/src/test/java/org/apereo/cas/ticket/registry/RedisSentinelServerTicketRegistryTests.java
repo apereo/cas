@@ -14,7 +14,6 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.ticket.registry.redis.host=localhost",
     "cas.ticket.registry.redis.port=6379",
-    "cas.ticket.registry.redis.password=password123",
     "cas.ticket.registry.redis.read-from=MASTER",
 
     "cas.ticket.registry.redis.pool.max-active=20",
