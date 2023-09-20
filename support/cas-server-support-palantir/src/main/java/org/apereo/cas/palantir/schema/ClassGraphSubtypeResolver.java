@@ -8,8 +8,10 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
  */
 class ClassGraphSubtypeResolver implements SubtypeResolver {
     private final ClassGraph classGraphConfig;
+
+    private final Set<Class> subTypesProcessed = new HashSet<>();
+
     private ScanResult scanResult;
 
     ClassGraphSubtypeResolver(final List<String> excludeTypes) {
@@ -47,12 +52,18 @@ class ClassGraphSubtypeResolver implements SubtypeResolver {
 
     @Override
     public List<ResolvedType> findSubtypes(final ResolvedType declaredType, final SchemaGenerationContext context) {
+        if (declaredType.isInterface()) {
+            val realType = declaredType.getErasedType();
+            if (subTypesProcessed.contains(realType)) {
+                return List.of();
+            }
+            subTypesProcessed.add(realType);
+        }
         if (declaredType.isInstanceOf(Map.class) && declaredType.getTypeBindings().size() == 2) {
             val mapKeyType = declaredType.getTypeBindings().getBoundType(1);
             return resolveSubtypes(mapKeyType, context);
         }
         return resolveSubtypes(declaredType, context);
-
     }
 
     private List<ResolvedType> resolveSubtypes(final ResolvedType declaredType, final SchemaGenerationContext context) {
