@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.data.annotation.Id;
 
@@ -37,7 +36,6 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Accessors(chain = true)
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord>, Serializable {
     private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 100;
     @Serial
