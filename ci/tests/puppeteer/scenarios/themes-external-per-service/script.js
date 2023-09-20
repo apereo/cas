@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
     await cas.log("Listing all stylesheet links for first app");
     await page.evaluate(() => {
         const links = document.querySelectorAll("link[rel=stylesheet]");
-        links.forEach(lnk => cas.log(lnk.getAttribute("href")));
+        links.forEach(lnk => console.log(lnk.getAttribute("href")));
     });
 
     await cas.assertInvisibility(page, "#username");
