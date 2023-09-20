@@ -269,6 +269,7 @@ tasks.withType(Test).configureEach {
     jvmArgs = list
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
+    def ansi = project.ansi
     testLogging {
         events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"

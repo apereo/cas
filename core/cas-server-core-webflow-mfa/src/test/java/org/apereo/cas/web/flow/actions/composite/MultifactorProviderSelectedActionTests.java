@@ -35,7 +35,7 @@ class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAu
     @Test
     void verifyOperationByRequestContext() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getFlashScope().put("mfaProvider", TestMultifactorAuthenticationProvider.ID);
+        context.getFlashScope().put("mfaProvider", new TestMultifactorAuthenticationProvider());
         val result = action.execute(context);
         assertEquals(TestMultifactorAuthenticationProvider.ID, result.getId());
     }

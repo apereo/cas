@@ -57,10 +57,10 @@ public class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extend
         val principal = UUID.randomUUID().toString();
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal,
             requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
-        var record = getMultifactorAuthenticationTrustRecord()
-            .setPrincipal(principal)
-            .setDeviceFingerprint(deviceFingerprint)
-            .setMultifactorAuthenticationProvider(dummyProvider.getId());
+        var record = getMultifactorAuthenticationTrustRecord();
+        record.setPrincipal(principal);
+        record.setDeviceFingerprint(deviceFingerprint);
+        record.setMultifactorAuthenticationProvider(dummyProvider.getId());
         record = getMfaTrustEngine().save(record);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(record.getPrincipal()), requestContext);
         requestContext.getHttpServletRequest().setCookies(requestContext.getHttpServletResponse().getCookies());
@@ -78,10 +78,10 @@ public class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extend
         val principal = UUID.randomUUID().toString();
         val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal,
             requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
-        var record = getMultifactorAuthenticationTrustRecord()
-            .setPrincipal(principal)
-            .setDeviceFingerprint(deviceFingerprint)
-            .setMultifactorAuthenticationProvider(UUID.randomUUID().toString());
+        var record = getMultifactorAuthenticationTrustRecord();
+        record.setPrincipal(principal);
+        record.setDeviceFingerprint(deviceFingerprint);
+        record.setMultifactorAuthenticationProvider(UUID.randomUUID().toString());
         record = getMfaTrustEngine().save(record);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(record.getPrincipal()), requestContext);
         requestContext.getHttpServletRequest().setCookies(requestContext.getHttpServletResponse().getCookies());
