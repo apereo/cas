@@ -4,7 +4,7 @@ import casServiceUiSchema from './schema/cas-service';
 export const serviceTypes = [
     {
         label: 'CAS Registered Service',
-        '@class': 'org.apereo.cas.services.RegexRegisteredService',
+        '@class': 'org.apereo.cas.services.CasRegisteredService',
         def: 'CasRegisteredService',
         default: true,
         uiSchema: casServiceUiSchema

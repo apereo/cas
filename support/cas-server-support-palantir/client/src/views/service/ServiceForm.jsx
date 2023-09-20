@@ -7,6 +7,7 @@ import MuiSidebarCategorizationRenderer, { muiSidebarCategorizationTester } from
 import { defaultServiceClass, updateService, useServiceData } from '../../store/ServiceSlice';
 import { useUiSchema } from '../../data/service-types';
 import { Button, Divider, Grid, Toolbar } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import { NavLink } from 'react-router-dom';
 import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
 
@@ -66,7 +67,7 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
                     disabled={ errors?.length > 0 }
                     onClick={ () => save(data) }
                 >
-                    Save
+                    <SaveIcon />&nbsp; Save
                 </Button>
             </Toolbar>
             <Divider light />

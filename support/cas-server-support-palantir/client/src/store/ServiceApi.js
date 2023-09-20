@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_PATH } from '../App.constant';
 
-import { enqueueSnackbar } from 'notistack';
-
 // Define a service using a base URL and expected endpoints
 export const serviceApi = createApi({
     reducerPath: 'serviceApi',

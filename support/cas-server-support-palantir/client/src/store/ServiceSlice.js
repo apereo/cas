@@ -3,7 +3,7 @@ import React from 'react';
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 
-export const defaultServiceClass = 'org.apereo.cas.services.RegexRegisteredService';
+export const defaultServiceClass = 'org.apereo.cas.services.CasRegisteredService';
 
 const initialState = {
     service: {
