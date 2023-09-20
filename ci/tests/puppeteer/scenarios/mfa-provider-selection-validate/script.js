@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     await cas.log("Select mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
 
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(1000);
 
     await cas.log(`Using scratch code ${scratch} to login...`);

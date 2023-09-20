@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, '#mfa-gauth');
     await cas.assertVisibility(page, '#mfa-yubikey');
 
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(500);
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
