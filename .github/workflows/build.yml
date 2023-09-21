@@ -142,7 +142,6 @@ jobs:
           echo "GRAALVM_HOME: $GRAALVM_HOME"
           echo "JAVA_HOME: $JAVA_HOME"
           java --version
-          gu --version
           native-image --version
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3

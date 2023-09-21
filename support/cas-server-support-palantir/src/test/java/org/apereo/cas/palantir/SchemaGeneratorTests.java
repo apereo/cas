@@ -2,6 +2,7 @@ package org.apereo.cas.palantir;
 
 import org.apereo.cas.palantir.schema.SchemaGenerator;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria;
+import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTicketGrantingTicketExpirationPolicy;
 import lombok.Getter;
@@ -43,7 +44,8 @@ public class SchemaGeneratorTests {
     public static Stream<Arguments> getTestParameters() {
         return Stream.of(
             arguments(SimpleContainer1.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer1")),
-            arguments(SimpleContainer2.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer2"))
+            arguments(SimpleContainer2.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer2")),
+            arguments(SimpleContainer3.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer3"))
         );
     }
 
@@ -64,5 +66,11 @@ public class SchemaGeneratorTests {
     @Setter
     static class SimpleContainer2 {
         private RegisteredServiceAccessStrategyActivationCriteria criteria;
+    }
+
+    @Getter
+    @Setter
+    static class SimpleContainer3 {
+        private RegisteredServiceAuthenticationPolicyCriteria criteria;
     }
 }

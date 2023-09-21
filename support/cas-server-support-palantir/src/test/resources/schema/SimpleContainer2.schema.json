@@ -83,15 +83,7 @@
           "$ref": "#/$defs/GroovyRegisteredServiceAccessStrategyActivationCriteria"
         }
       ],
-      "type": "object",
-      "properties": {
-        "@class": {
-          "const": "org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria"
-        }
-      },
-      "required": [
-        "@class"
-      ]
+      "type": "object"
     }
   },
   "type": "object",

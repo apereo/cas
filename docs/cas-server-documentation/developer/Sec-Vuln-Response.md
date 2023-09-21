@@ -155,6 +155,21 @@ to those that watch the Apereo CAS repository on GitHub can only be sent out whe
 grace period has not yet expired and whose tag remains private do not trigger a notification from GitHub. Once the grace period is passed and details
 are made public, the tagged commit will appear on GitHub and release notifications will be sent out.</p></div>
 
+As an example, let's imagine that a recent CAS security release `6.6.1.X` is now published. The following process and timeline is then generally observed:
+
+| Version   | Release Date | Grace Period Ends | Binary Release Availability | Source Code Availability | GitHub Notifications |
+|-----------|:------------:|------------------:|-----------------------------|:------------------------:|---------------------:|
+| `6.6.1.X` |  July 10th   |       August 10th | July 10th                   |       August 10th        |          August 10th |
+                         
+If you are building the CAS codebase from source rather than relying on published binary releases, you should of course note that the above policy
+has a direct effect on your build and release cycle and likely negative effects on your security posture. Given source-level changes only 
+show up in the repository once after the grace period has ended, this practically means that in the event of a security release you will 
+always be at least **four weeks** behind, which may or may not be ideal.
+
+Furthermore, security releases (and all other types of CAS releases) always roll forward. That is to say, the CAS security release `6.6.1.X+1`
+contains any and all changes that were presented in `6.6.1.X`, `6.6.1.X-1`, `6.6.1.X-2` and everything else prior to that release. Security releases
+are not produced in isolation. 
+
 ## Trusted Contacts
 
 Please note that the CAS project cannot disclose details about the security issue and its effects to private individuals without first verifying
@@ -172,4 +187,4 @@ Releases that are considered EOL will not receive further updates and/or attenti
 listed or affected in a security release announcement and is no longer part of an active maintenance cycle per the CAS maintenance policy, then a best course of action would
 be to upgrade to a community-maintained CAS version. The project makes no effort to evaluate, verify, patch or test EOL versions of the software, has no interest, 
 standing or budget to do so and produces no claims to ascertain the severity or effects of a security defect in an EOL CAS version. While this rule can be 
-amended in *rare and extreme circumstances*, the general policy dictates that one does not speak ill of the dead.
+amended in *rare and extreme circumstances* depending on the security of the issue and community standing, the general policy allows that one may not speak ill of the dead.
