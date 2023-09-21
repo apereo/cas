@@ -1398,15 +1398,7 @@
         },
         "PersistentIdGenerator": {
             "$ref": "#/$defs/ShibbolethCompatiblePersistentIdGenerator",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.authentication.principal.PersistentIdGenerator"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "PrincipalAttributeRegisteredServiceUsernameProvider": {
             "type": "object",
@@ -1467,15 +1459,7 @@
         },
         "RegisteredServiceAcceptableUsagePolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceAcceptableUsagePolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAcceptableUsagePolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAccessStrategy": {
             "anyOf": [
@@ -1507,15 +1491,7 @@
                     "$ref": "#/$defs/TimeBasedRegisteredServiceAccessStrategy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAccessStrategy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAccessStrategyActivationCriteria": {
             "anyOf": [
@@ -1529,15 +1505,7 @@
                     "$ref": "#/$defs/GroovyRegisteredServiceAccessStrategyActivationCriteria"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAttributeFilter": {
             "anyOf": [
@@ -1560,15 +1528,7 @@
                     "$ref": "#/$defs/RegisteredServiceScriptedAttributeFilter"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAttributeFilter"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAttributeReleasePolicy": {
             "anyOf": [
@@ -1615,27 +1575,11 @@
                     "$ref": "#/$defs/ReturnStaticAttributeReleasePolicy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAuthenticationPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceAuthenticationPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAuthenticationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceAuthenticationPolicyCriteria": {
             "anyOf": [
@@ -1661,15 +1605,7 @@
                     "$ref": "#/$defs/RestfulRegisteredServiceAuthenticationPolicyCriteria"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceAuthenticationPolicyCriteria"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceChainingAttributeFilter": {
             "type": "object",
@@ -1690,15 +1626,7 @@
         },
         "RegisteredServiceChainingAttributeReleasePolicy": {
             "$ref": "#/$defs/ChainingAttributeReleasePolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceConsentPolicy": {
             "anyOf": [
@@ -1709,27 +1637,11 @@
                     "$ref": "#/$defs/DefaultRegisteredServiceConsentPolicy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceConsentPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceContact": {
             "$ref": "#/$defs/DefaultRegisteredServiceContact",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceContact"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceDelegatedAuthenticationPolicy": {
             "anyOf": [
@@ -1740,27 +1652,11 @@
                     "$ref": "#/$defs/DefaultRegisteredServiceDelegatedAuthenticationPolicy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceExpirationPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceExpirationPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceExpirationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceLogoutType": {
             "type": "string",
@@ -1801,27 +1697,11 @@
                     "$ref": "#/$defs/PartialRegexRegisteredServiceMatchingStrategy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceMatchingStrategy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceMultifactorPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceMultifactorPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceMultifactorPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceMutantRegexAttributeFilter": {
             "type": "object",
@@ -1864,27 +1744,11 @@
                     "$ref": "#/$defs/CachingPrincipalAttributesRepository"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceProxyGrantingTicketExpirationPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceProxyPolicy": {
             "anyOf": [
@@ -1898,39 +1762,15 @@
                     "$ref": "#/$defs/RestfulRegisteredServiceProxyPolicy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceProxyPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceProxyTicketExpirationPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceProxyTicketExpirationPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceProxyTicketExpirationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServicePublicKey": {
             "$ref": "#/$defs/RegisteredServicePublicKeyImpl",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServicePublicKey"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServicePublicKeyImpl": {
             "type": "object",
@@ -2018,15 +1858,7 @@
                     "$ref": "#/$defs/"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceServiceTicketExpirationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceSingleSignOnParticipationPolicy": {
             "anyOf": [
@@ -2052,27 +1884,11 @@
                     "$ref": "#/$defs/NeverRegisteredServiceSingleSignOnParticipationPolicy"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceSingleSignOnParticipationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceTicketGrantingTicketExpirationPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceTicketGrantingTicketExpirationPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceUsernameAttributeProvider": {
             "anyOf": [
@@ -2095,27 +1911,11 @@
                     "$ref": "#/$defs/StaticRegisteredServiceUsernameProvider"
                 }
             ],
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RegisteredServiceWebflowInterruptPolicy": {
             "$ref": "#/$defs/DefaultRegisteredServiceWebflowInterruptPolicy",
-            "type": "object",
-            "properties": {
-                "@class": {
-                    "const": "org.apereo.cas.services.RegisteredServiceWebflowInterruptPolicy"
-                }
-            },
-            "required": [
-                "@class"
-            ]
+            "type": "object"
         },
         "RemoteEndpointServiceAccessStrategy": {
             "type": "object",

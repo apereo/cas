@@ -1,6 +1,6 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { JsonForms } from '@jsonforms/react';
-import { MaterialAnyOfRenderer, materialRenderers } from '@jsonforms/material-renderers';
+import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import { useGetSchemaQuery } from '../../store/SchemaApi';
 
 import MuiSidebarCategorizationRenderer, { muiSidebarCategorizationTester } from '../../components/renderers/MuiSidebarCategorizationRenderer';
@@ -11,6 +11,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { NavLink } from 'react-router-dom';
 import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
 import MuiConstRenderer, { muiConstControlTester } from '../../components/renderers/MuiConstRenderer';
+import HashSetRenderer, { hashSetControlTester } from '../../components/renderers/HashSetRenderer';
 
 
 const renderers = [
@@ -18,7 +19,6 @@ const renderers = [
     { tester: muiAnyOfControlTester, renderer: MuiAnyOfRenderer },
     { tester: muiConstControlTester, renderer: MuiConstRenderer },
     ...materialRenderers,
-    
 ];
 
 export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
@@ -77,6 +77,7 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
             { schema && uiSchema &&
                 <JsonForms
                     renderers={renderers}
+                    cells={materialCells}
                     uischema={uiSchema}
                     schema={schema}
                     data={service}

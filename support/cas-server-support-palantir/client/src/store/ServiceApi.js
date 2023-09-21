@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_PATH } from '../App.constant';
+import { formatToRead, formatToSave } from '../data/format';
 
 // Define a service using a base URL and expected endpoints
 export const serviceApi = createApi({
@@ -9,21 +10,20 @@ export const serviceApi = createApi({
     endpoints: (builder) => ({
         getServices: builder.query({
             query: () => `/services`,
-            transformResponse: (response) => {
-                const list = response[0] === 'java.util.ArrayList' ? response[1] : response;
-                return list.map(s => ({...s, id: BigInt(s.id).toString()}));
-            },
+            transformResponse: (response) => formatToRead({services: response}).services
+                .map(s => ({...s, id: BigInt(s.id).toString()})),
             providesTags: ['Service']
         }),
         getService: builder.query({
             query: (id) => `/services/${BigInt(id).toString()}`,
-            providesTags: ['Service']
+            providesTags: ['Service'],
+            transformResponse: (response) => formatToRead(response)
         }),
         createService: builder.mutation({
             query: (body) => ({
                 url: `services`,
                 method: 'POST',
-                body,
+                body: formatToSave(body),
             }),
             invalidatesTags: ['Service']
         }),
@@ -31,7 +31,7 @@ export const serviceApi = createApi({
             query: (body) => ({
                 url: `services`,
                 method: 'PUT',
-                body,
+                body: formatToSave(body),
             }),
             invalidatesTags: ['Service']
         }),
