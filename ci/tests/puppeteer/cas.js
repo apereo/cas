@@ -21,7 +21,7 @@ const jose = require('jose');
 const pino = require('pino');
 
 const LOGGER = pino({
-    level: "info",
+    level: "debug",
     transport: {
         target: 'pino-pretty'
     }
@@ -46,7 +46,7 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.log = async(text, ...args) => {
-    LOGGER.info(`👉 ${text}`, args);
+    LOGGER.debug(`👉 ${text}`, args);
 };
 
 exports.logy = async (text) => {
