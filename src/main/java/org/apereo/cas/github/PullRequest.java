@@ -137,7 +137,7 @@ public class PullRequest {
         return this.labels.stream().anyMatch(l -> l.getName().equalsIgnoreCase(labelName.getTitle()));
     }
 
-    public boolean isBot() {
+    public boolean isRenovateBot() {
         return user.getLogin().equalsIgnoreCase("renovate[bot]");
     }
 }

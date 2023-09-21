@@ -199,6 +199,12 @@ public class MonitoredRepository {
         return getPullRequestFiles(pr.getNumber());
     }
 
+    public void approveAndMergePullRequest(final PullRequest pr) {
+        if (approvePullRequest(pr)) {
+            mergePullRequestIntoBase(pr);
+        }
+    }
+
     public List<PullRequestFile> getPullRequestFiles(final String pr) {
         List<PullRequestFile> files = new ArrayList<>();
         var pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr);

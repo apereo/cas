@@ -42,12 +42,15 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_RENOVATE)) {
-            var files = repository.getPullRequestFiles(pr);
-            if (files.size() == 1 && files.get(0).getFilename().endsWith("locust/requirements.txt")) {
+        if (pr.isRenovateBot()) {
+            if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
                 log.info("Merging pull request {}", pr);
-                if (repository.approvePullRequest(pr)) {
-                    repository.mergePullRequestIntoBase(pr);
+                repository.approveAndMergePullRequest(pr);
+            } else {
+                var files = repository.getPullRequestFiles(pr);
+                if (files.size() == 1 && files.get(0).getFilename().endsWith("locust/requirements.txt")) {
+                    log.info("Merging pull request {}", pr);
+                    repository.approveAndMergePullRequest(pr);
                 }
             }
         }
@@ -132,7 +135,7 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
-        if (pr.isBot()) {
+        if (pr.isRenovateBot()) {
             log.info("Pull request {} is produced by a bot and will be ignored", pr);
             return;
         }
@@ -255,7 +258,7 @@ public class CasPullRequestListener implements PullRequestListener {
     private boolean processDependencyUpgradesPullRequests(final PullRequest pr) {
         var committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
         if (!committer && !pr.isLabeledAs(CasLabels.LABEL_SEE_SECURITY_POLICY)
-            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft() && !pr.isBot() && !pr.isTargetedAtMasterBranch()) {
+            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft() && !pr.isRenovateBot() && !pr.isTargetedAtMasterBranch()) {
             var files = repository.getPullRequestFiles(pr);
             if (files.size() == 1 && files.get(0).getFilename().endsWith("gradle.properties")) {
                 var template = IOUtils.toString(new ClassPathResource("template-security-policy.md").getInputStream(), StandardCharsets.UTF_8);
