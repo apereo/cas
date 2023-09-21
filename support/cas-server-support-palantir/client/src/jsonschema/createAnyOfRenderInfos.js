@@ -29,8 +29,8 @@ import { startCase, uniqBy } from 'lodash';
 
 const findAllSubSchemas = (list, rootSchema) => list.filter(item => {
     const resolvedSubSchema = item.$ref && resolveSchema(rootSchema, item.$ref, rootSchema);
-    const isAnyOf = resolvedSubSchema && Object.keys(resolvedSubSchema).length === 1 && resolvedSubSchema.hasOwnProperty('anyOf');
-
+    const isAnyOf = resolvedSubSchema && resolvedSubSchema.hasOwnProperty('anyOf');
+    console.log(resolvedSubSchema)
 
     return !isAnyOf;
   });

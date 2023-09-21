@@ -39,7 +39,6 @@ export const MuiAnyOfRenderer = ({
     uischemas
   );
 
-  useEffect(() => console.log(uischema), [uischema])
   return (
     <Hidden xsUp={!visible}>
       <CombinatorProperties
