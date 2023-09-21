@@ -18,6 +18,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import jakarta.persistence.PostLoad;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -66,6 +67,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private String principalIdAttribute;
 
     private int order;
+
+    private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
 
     /**
      * Post load, after having loaded the bean via JPA, etc.
@@ -244,6 +247,19 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease,
                                                                         final RegisteredService service) {
         LOGGER.debug("Final collection of attributes allowed are: [{}]", attributesToRelease);
+        val transform = CaseCanonicalizationMode.valueOf(this.canonicalizationMode);
+        if (transform != CaseCanonicalizationMode.NONE) {
+            val transformedAttributes = new HashMap<>(attributesToRelease);
+            transformedAttributes.forEach((key, value) -> {
+                val values = value
+                    .stream()
+                    .map(Object::toString)
+                    .map(transform::canonicalize)
+                    .toList();
+                transformedAttributes.put(key, (List) values);
+            });
+            return transformedAttributes;
+        }
         return attributesToRelease;
     }
 
