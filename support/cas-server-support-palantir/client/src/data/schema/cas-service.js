@@ -32,6 +32,14 @@ export const casServiceUiSchema = {
                                     "type": "Control",
                                     "scope": "#/properties/theme"
                                 },
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/templateName"
+                                },
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/locale"
+                                },
                             ]
                         },
                         {
@@ -49,6 +57,10 @@ export const casServiceUiSchema = {
                                 {
                                     "type": "Control",
                                     "scope": "#/properties/privacyUrl"
+                                },
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/redirectUrl"
                                 },
                             ]
                         }
@@ -141,6 +153,21 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
+            "label": "Acceptable Usage",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/acceptableUsagePolicy"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
             "label": "Access Strategy",
             "elements": [
                 {
@@ -154,21 +181,51 @@ export const casServiceUiSchema = {
                 }
             ]
         },
-        /*{
+        {
             "type": "Category",
-            "label": "Delegated Authentication",
+            "label": "Authentication Policy",
             "elements": [
                 {
                     "type": "VerticalLayout",
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/accessStrategy/properties/delegatedAuthenticationPolicy"
+                            "scope": "#/properties/authenticationPolicy"
                         }
                     ]
                 }
             ]
-        },*/
+        },
+        {
+            "type": "Category",
+            "label": "Matching Strategy",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/matchingStrategy"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
+            "label": "Multifactor",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/multifactorPolicy"
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "type": "Category",
             "label": "SSO Policy",
@@ -179,6 +236,21 @@ export const casServiceUiSchema = {
                         {
                             "type": "Control",
                             "scope": "#/properties/singleSignOnParticipationPolicy"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
+            "label": "Protocols",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/supportedProtocols"
                         }
                     ]
                 }
@@ -216,14 +288,14 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
-            "label": "Multifactor",
+            "label": "Webflow Interrupt",
             "elements": [
                 {
                     "type": "VerticalLayout",
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/multifactorAuthenticationPolicy"
+                            "scope": "#/properties/webflowInterruptPolicy"
                         }
                     ]
                 }
@@ -239,7 +311,30 @@ export const casServiceUiSchema = {
                         {
                             "type": "Control",
                             "scope": "#/properties/proxyPolicy"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/proxyTicketExpirationPolicy"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/proxyGrantingTicketExpirationPolicy"
                         }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
+            "label": "Service Ticket Expiration",
+            "elements": [
+                {
+                    "type": "VerticalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/serviceTicketExpirationPolicy"
+                        },
                     ]
                 }
             ]
