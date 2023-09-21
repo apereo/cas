@@ -11,6 +11,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -126,6 +127,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("attributeOne");
             val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
+            policyWritten.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
             policyWritten.setPrincipalIdAttribute("principalId");
             MAPPER.writeValue(JSON_FILE, policyWritten);
             val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
@@ -263,6 +265,27 @@ class ReturnAllowedAttributeReleasePolicyTests {
             assertTrue(attributes.containsKey("principalId"));
             assertTrue(attributes.containsKey("cn"));
             assertTrue(attributes.containsKey("mail"));
+        }
+
+        @Test
+        void verifyValueCaseTransformation() throws Throwable {
+            val policy = new ReturnAllowedAttributeReleasePolicy();
+            policy.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+            policy.setAllowedAttributes(List.of("uid"));
+            policy.postLoad();
+            val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("uid", List.of("cas1", "cas2")));
+            val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .registeredService(registeredService)
+                .service(CoreAuthenticationTestUtils.getService())
+                .principal(principal)
+                .build();
+            val attributes = policy.getAttributes(context);
+            assertEquals(1, attributes.size());
+            val values = attributes.get("uid");
+            assertTrue(values.contains("CAS1"));
+            assertTrue(values.contains("CAS2"));
         }
     }
 
