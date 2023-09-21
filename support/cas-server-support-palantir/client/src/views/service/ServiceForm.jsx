@@ -10,10 +10,13 @@ import { Button, Divider, Grid, Toolbar } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { NavLink } from 'react-router-dom';
 import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
+import MuiConstRenderer, { muiConstControlTester } from '../../components/renderers/MuiConstRenderer';
+
 
 const renderers = [
     { tester: muiSidebarCategorizationTester, renderer: MuiSidebarCategorizationRenderer },
     { tester: muiAnyOfControlTester, renderer: MuiAnyOfRenderer },
+    { tester: muiConstControlTester, renderer: MuiConstRenderer },
     ...materialRenderers,
     
 ];
@@ -78,6 +81,7 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
                     schema={schema}
                     data={service}
                     onChange={({ errors, data }) => update(data, errors)}
+                    // ajv={ ajv }
                 />
             }
         </Grid>
