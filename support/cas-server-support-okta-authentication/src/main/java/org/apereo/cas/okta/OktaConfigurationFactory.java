@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.okta;
 
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;

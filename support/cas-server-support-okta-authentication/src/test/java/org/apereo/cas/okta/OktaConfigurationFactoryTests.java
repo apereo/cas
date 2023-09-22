@@ -1,6 +1,5 @@
 package org.apereo.cas.okta;
 
-import org.apereo.cas.config.OktaConfigurationFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 
