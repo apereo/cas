@@ -18,7 +18,6 @@
     "--server.servlet.encoding.charset=UTF-8",
 
     "--cas.authn.mfa.duo[0].duo-secret-key=0K4VewoOPTar37vFwdUfg9SvAm8GF6yyyaBWCk70",
-    "--cas.authn.mfa.duo[0].duo-application-key=u1IHBaREMB7Cb9S4QMISAgHycpj8lPBkDGfWt55I",
     "--cas.authn.mfa.duo[0].duo-integration-key=DICLHRWL1KQK5EUAQP45",
     "--cas.authn.mfa.duo[0].duo-api-host=api-d2e616a0.duosecurity.com",
 

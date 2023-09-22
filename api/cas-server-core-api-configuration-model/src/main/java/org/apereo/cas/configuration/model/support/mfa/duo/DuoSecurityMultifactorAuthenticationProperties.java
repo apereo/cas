@@ -24,7 +24,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"}, callSuper = true)
+@EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey"}, callSuper = true)
 @JsonFilter("DuoSecurityMultifactorProperties")
 public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
@@ -49,25 +49,6 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
     @RequiredProperty
     @ExpressionLanguageCapable
     private String duoSecretKey;
-
-    /**
-     * The application key is a string, at least 40 characters long,
-     * that you generate and keep secret from Duo.
-     * This is a required setting for the WebSDK integration types.
-     * Leaving this setting as blank will activate the Universal Prompt option.
-     * <p>
-     * You can generate a random string in Python with:
-     * &lt;pre&gt;
-     * import os, hashlib
-     * print hashlib.sha1(os.urandom(32)).hexdigest()
-     * &lt;/pre&gt;
-     *
-     * @deprecated since 6.4.0
-     */
-    @RequiredProperty
-    @Deprecated(since = "6.4.0")
-    @ExpressionLanguageCapable
-    private String duoApplicationKey;
 
     /**
      * Duo API host and url.

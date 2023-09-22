@@ -18,6 +18,8 @@ import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,13 +43,13 @@ import static org.mockito.Mockito.*;
     BaseDuoSecurityTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.mfa.duo[0].id=mfa-default",
-    "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-    "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-    "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+    "cas.authn.mfa.duo[0].duo-secret-key=cGKL1OndjtknbmVOWaFmisaghiNFEKXHxgXCJEBr",
+    "cas.authn.mfa.duo[0].duo-integration-key=DIZXVRQD3OMZ6XXMNFQ9",
     "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
+@Execution(ExecutionMode.SAME_THREAD)
 class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
