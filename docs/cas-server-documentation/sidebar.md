@@ -329,6 +329,7 @@ layout: null
         *   [Overview](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication.html)
         *   [Bypass](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Bypass.html)
         *   [Device Fingerprint](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+        *   [Cleaning](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Cleaner.html)
         *   [Storage](#mfatrusteddevicesstorage)
             *   [DynamoDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html)
             *   [JDBC](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-JDBC.html)

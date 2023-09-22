@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationVerifiedEvent;
@@ -73,9 +74,12 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
 
     protected boolean isRiskyAuthenticationAcceptable(final Authentication authentication,
                                                       final AuthenticationRiskScore score) {
-        return casEventRepository.getEventsOfTypeForPrincipal(CasRiskyAuthenticationVerifiedEvent.class.getName(),
+        val historyWindow = Beans.newDuration(casProperties.getAuthn().getAdaptive()
+            .getRisk().getResponse().getGetRiskVerificationHistory());
+        return casEventRepository.getEventsOfTypeForPrincipal(
+                CasRiskyAuthenticationVerifiedEvent.class.getName(),
                 authentication.getPrincipal().getId(),
-                ZonedDateTime.now(Clock.systemUTC()).minusDays(7))
+                ZonedDateTime.now(Clock.systemUTC()).minus(historyWindow))
             .anyMatch(event ->
                 event.getClientIpAddress().equalsIgnoreCase(score.getClientInfo().getClientIpAddress())
                     && event.getAgent().equalsIgnoreCase(score.getClientInfo().getUserAgent()));

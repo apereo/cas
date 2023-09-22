@@ -53,6 +53,15 @@ public class RiskBasedAuthenticationResponseProperties implements Serializable {
     private String riskVerificationTokenExpiration = "PT5M";
 
     /**
+     * Risk confirmation attempts are only evaluated up to a point in history, controlled by this setting. That is to say,
+     * authentication attempts that are detected as risky are evaluated against previous confirmations in history using this time window.
+     * Once we move beyond this point in the history of authentication attempts, the confirmations no longer hold
+     * and the user will be asked to verify their attempt again.
+     */
+    @DurationCapable
+    private String getRiskVerificationHistory = "P7D";
+
+    /**
      * Email settings for notifications,
      * If an authentication attempt is deemed risky.
      */
