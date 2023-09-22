@@ -85,7 +85,8 @@ exports.click = async (page, button) => {
 };
 
 exports.asciiart = async (text) => {
-    await this.logb(figlet.textSync(text));
+    const art = figlet.textSync(text);
+    console.log(colors.blue(art));
 };
 
 exports.clickLast = async (page, button) => {
