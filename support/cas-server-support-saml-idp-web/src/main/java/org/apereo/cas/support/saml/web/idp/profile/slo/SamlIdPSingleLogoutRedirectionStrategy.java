@@ -33,7 +33,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This is {@link SamlIdPSingleLogoutRedirectionStrategy}.

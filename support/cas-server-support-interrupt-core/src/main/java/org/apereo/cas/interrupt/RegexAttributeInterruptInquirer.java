@@ -23,10 +23,12 @@ import java.util.HashMap;
 @Slf4j
 public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
     private final String interruptAttributeName;
+    
     private final String interruptAttributeValue;
 
     @Override
-    protected InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
+    protected InterruptResponse inquireInternal(final Authentication authentication,
+                                                final RegisteredService registeredService,
                                                 final Service service, final Credential credential,
                                                 final RequestContext requestContext) {
         val attributes = new HashMap<String, Object>(authentication.getAttributes());

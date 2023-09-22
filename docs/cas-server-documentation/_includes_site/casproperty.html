@@ -43,7 +43,7 @@
                     {%- endif -%}
                     {%- if include.regexPattern -%}
                     <p/>
-                    <p class="small text-left"><i class="fas fa-cogs"></i> This settings supports regular expression patterns. <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>
+                    <p class="small text-left"><i class="fas fa-cogs small"></i> This settings supports regular expression patterns. <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>
                     A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern in text. For example, the following pattern
                     <code>^ent:.+(admin|system).+:com$</code> should match <code>ent:sys-admin-anything:com</code>. Regular expressions in CAS are handled using the JDK's <code>java.util.regex.Pattern</code> class.
                 </p>">[?]</sup>.
@@ -53,7 +53,7 @@
                     <p/><p class="small text-left"><i class="fas fa-info-circle"></i> This setting supports the <a href="/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a>.</p>
                     {%- endif -%}
                     {%- if include.owner.size > 0 -%}
-                    <p/><p class="small text-left"><i class="fas fa-code"
+                    <p/><p class="small text-left"><i class="fas fa-code small"
                                                       data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>{{ include.owner }}.</code></p>
                     {%- endif -%}
                     <p/>
