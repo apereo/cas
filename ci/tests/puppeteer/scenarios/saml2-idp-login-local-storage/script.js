@@ -21,7 +21,7 @@ const assert = require("assert");
         await page.waitForTimeout(5000);
         await cas.screenshot(page);
 
-        await cas.loginDuoSecurityBypassCode(page, "universal", "duocode");
+        await cas.loginDuoSecurityBypassCode(page,"duocode");
         await page.waitForTimeout(5000);
         await cas.screenshot(page);
 

@@ -91,6 +91,7 @@ are now configured to run with parallelism enabled.
 - Following the recommendations of the [OAuth Security Workshop](https://oauth.secworkshop.events/osw2023), the validation rules of `redirect_uri` parameters are now tightened to ensure the parameter value does not have URL fragments, invalid schemes such as `javascript` or `data` or suspicious parameters such as `code`, `state`, etc.
 - [Risk-based authentication](../authentication/Configuring-RiskBased-Authentication.html) now supports a *Risk Confirmation* flow via a special link sent to the user via email, sms, etc.
 - Multifactor provider selection is now skipped when a valid [multifactor-enabled trusted device](../mfa/Multifactor-TrustedDevice-Authentication.html) is found for the user record.
+- The WebSDK variation of [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is now removed.
 
 ## Library Upgrades
    

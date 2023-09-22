@@ -97,30 +97,4 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
             assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
         }
     }
-
-    /**
-     * @deprecated Since 6.6.
-     */
-    @Nested
-    @Import({
-        DuoSecurityConfiguration.class,
-        DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
-        DuoSecurityMultifactorProviderBypassConfiguration.class,
-        DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
-    })
-    @TestPropertySource(properties = {
-        "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosiqinNFEKXHxgXCJEBr",
-        "cas.authn.mfa.duo[0].application-key=my134nfd46m89",
-        "cas.authn.mfa.duo[0].duo-integration-key=SIOXVQQD3UMZ8XXMNZQ8",
-        "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
-    })
-    @Deprecated(since = "6.5.0", forRemoval = true)
-    class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
-        @Test
-        void verifyOperation() throws Throwable {
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
-            var state = (TransitionableState) flow.getState("mfa-duo");
-            assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
-        }
-    }
 }

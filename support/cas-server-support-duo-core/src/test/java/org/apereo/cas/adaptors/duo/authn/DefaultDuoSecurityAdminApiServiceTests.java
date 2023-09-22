@@ -7,6 +7,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.duosecurity.Client;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,8 +54,8 @@ class DefaultDuoSecurityAdminApiServiceTests {
             .setDuoApiHost("localhost:8443")
             .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
             .setDuoAdminSecretKey(UUID.randomUUID().toString());
-        val duoService = new BasicDuoSecurityAuthenticationService(properties, httpClient,
-            List.of(), Caffeine.newBuilder().build());
+        val duoService = new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient,
+            mock(Client.class), List.of(), Caffeine.newBuilder().build());
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
