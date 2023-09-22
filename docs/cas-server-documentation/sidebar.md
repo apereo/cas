@@ -324,6 +324,7 @@ layout: null
         *   [Custom](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-Custom.html)
     *   [Bypass](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Bypass.html)
     *   [Failure Modes](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-FailureModes.html)
+    *   [Provider Selection](/cas/{{ version }}/mfa/Multifactor-Authentication-ProviderSelection.html)
     *   [Trusted Devices](#mfatrusteddevices)
         *   [Overview](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication.html)
         *   [Bypass](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Bypass.html)
@@ -667,7 +668,7 @@ layout: null
 
 * [Webflow Management](#webflowmgmt)
     *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html)
-    *   [AutoConfiguration](/cas/{{ version }}/webflow/Webflow-Customization-AutoConfiguration.html)
+    *   [Auto Configuration](/cas/{{ version }}/webflow/Webflow-Customization-AutoConfiguration.html)
     *   [Custom Properties](/cas/{{ version }}/webflow/Webflow-Customization-CustomProperties.html)
     *   [Error Handling](/cas/{{ version }}/webflow/Webflow-Customization-Exceptions.html)
     *   [Extending Webflow](/cas/{{ version }}/webflow/Webflow-Customization-Extensions.html)
