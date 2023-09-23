@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertInnerText(page, '#content div h2', "Delegated Authentication Profile Selection");
     await cas.assertPageTitleContains(page, "Delegated Authentication Profile Selection");

@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
 })();
 
 async function submitLogin(page) {
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 }
 
 async function assertFailure(page) {

@@ -99,7 +99,7 @@ async function exchangeCode(page, code, successHandler) {
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth for existing SSO");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, idToken => {

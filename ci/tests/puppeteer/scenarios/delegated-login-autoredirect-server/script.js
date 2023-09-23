@@ -13,7 +13,7 @@ const assert = require("assert");
     let url = await page.url();
     await cas.log(url);
     assert(url.startsWith("https://localhost:8444/cas/login"));
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
     url = await page.url();

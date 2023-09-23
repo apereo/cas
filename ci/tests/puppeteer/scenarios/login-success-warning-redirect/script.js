@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/anything/1");
     await page.waitForTimeout(1000);
     await cas.click(page, "#warn");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/anything/2");

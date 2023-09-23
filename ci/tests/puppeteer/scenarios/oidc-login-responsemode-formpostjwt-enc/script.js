@@ -10,7 +10,7 @@ const fs = require("fs");
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?state=1001&client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");

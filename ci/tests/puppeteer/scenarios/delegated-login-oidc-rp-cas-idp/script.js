@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     let result = new URL(page.url());

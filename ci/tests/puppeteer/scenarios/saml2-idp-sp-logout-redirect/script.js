@@ -7,7 +7,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.close();
 
     page = await cas.newPage(browser);

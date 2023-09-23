@@ -26,7 +26,7 @@ async function cleanUp() {
         await cas.log("Trying with an exising SSO session...");
         await cas.goto(page, "https://localhost:8443/cas/logout");
         await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);

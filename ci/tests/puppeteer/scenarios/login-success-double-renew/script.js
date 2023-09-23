@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#usernameValidationMessage");
     await cas.assertVisibility(page, "#passwordValidationMessage");
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

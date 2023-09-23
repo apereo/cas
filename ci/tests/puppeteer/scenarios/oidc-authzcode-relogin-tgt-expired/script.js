@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     await page.waitForTimeout(10000);
     // wait 10s before login again, the time for the TGT to be expired

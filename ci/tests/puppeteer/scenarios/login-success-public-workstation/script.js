@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
     await page.waitForTimeout(1000);
     await cas.click(page, "#publicWorkstation");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page, false);
