@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
         await cas.log("Resuming with first authentication attempt");
         await page.bringToFront();
         await cas.screenshot(page);
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForTimeout(3000);
         await page.waitForSelector('#table_with_attributes', {visible: true});
         await cas.assertVisibility(page, "#table_with_attributes");

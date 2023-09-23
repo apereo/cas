@@ -41,7 +41,7 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");

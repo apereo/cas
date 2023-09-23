@@ -19,7 +19,7 @@ async function startAuthFlow(page, username) {
     await cas.log(`Page url: ${await page.url()}`);
     await cas.screenshot(page);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(5000);
     await cas.log(`Page url: ${await page.url()}`);
     await cas.screenshot(page);

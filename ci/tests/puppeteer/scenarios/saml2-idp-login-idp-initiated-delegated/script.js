@@ -11,7 +11,7 @@ async function startFlow(context, clientName) {
     await cas.log(`Navigating to ${url} for client ${clientName}`);
     await cas.goto(page, url);
     await page.waitForTimeout(3000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.log(await page.url());
     await cas.screenshot(page);
     await cas.waitForElement(page, "body");

@@ -16,7 +16,7 @@ async function getActuatorEndpoint(entityId) {
     const service = "https://localhost:9859/anything/cas";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertTicketParameter(page);
     await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);

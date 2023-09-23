@@ -11,7 +11,7 @@ const express = require('express');
 
         await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(2000);
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForTimeout(2000);
         await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
         server.close(() => {

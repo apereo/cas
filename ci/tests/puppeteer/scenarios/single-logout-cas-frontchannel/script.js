@@ -8,7 +8,7 @@ const assert = require('assert');
     await cas.goto(page, "https://localhost:8444");
     await page.waitForTimeout(1000);
     await cas.goto(page, "https://localhost:8444/protected");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     let url = await page.url();
     await cas.log(`Page url: ${url}`);

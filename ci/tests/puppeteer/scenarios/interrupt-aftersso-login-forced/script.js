@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
 
     await cas.log("Service has disabled interrupt, but will establish single sign-on session");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/get?nointerrupt");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page);

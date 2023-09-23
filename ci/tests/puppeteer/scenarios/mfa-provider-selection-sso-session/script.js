@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://google.com");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 
     await cas.goto(page, "https://localhost:8443/cas/login");
@@ -48,7 +48,7 @@ const cas = require("../../cas.js");
     await cas.log("Starting with MFA selection menu");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     await page.waitForTimeout(500);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
     await page.waitForTimeout(500);
 

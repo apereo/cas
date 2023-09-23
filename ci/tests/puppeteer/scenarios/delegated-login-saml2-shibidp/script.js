@@ -18,7 +18,7 @@ const assert = require("assert");
         await page.waitForTimeout(8000);
         await cas.screenshot(page);
         await page.waitForSelector('#username', {visible: true});
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForTimeout(8000);
         await cas.screenshot(page);
         await cas.log("Checking for page URL...");

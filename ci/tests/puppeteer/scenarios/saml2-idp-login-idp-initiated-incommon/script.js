@@ -60,7 +60,7 @@ async function sendRequest(page, entityIds) {
             await page.waitForTimeout(1000);
             await cas.assertVisibility(page, '#username');
             await cas.assertVisibility(page, '#password');
-            await cas.loginWith(page, "casuser", "Mellon");
+            await cas.loginWith(page);
             await page.waitForTimeout(1000);
             count++;
         } catch (e) {

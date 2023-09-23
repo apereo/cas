@@ -5,7 +5,7 @@ async function verifyWithoutService() {
     const browser1 = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser1);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await browser1.close();
 
     const browser2 = await puppeteer.launch(cas.browserOptions());
@@ -21,7 +21,7 @@ async function verifyWithService() {
     const browser1 = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser1);
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await browser1.close();
 
     const browser2 = await puppeteer.launch(cas.browserOptions());

@@ -17,7 +17,7 @@ const assert = require("assert");
 
     await cas.log("Establishing SSO session...");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertCookie(page);
 
     await cas.log("Sending SP passive authentication request with single sign-on session...");

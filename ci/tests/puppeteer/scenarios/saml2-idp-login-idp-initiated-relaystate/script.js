@@ -27,7 +27,7 @@ async function unsolicited(page, target) {
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(5000);
     
     await unsolicited(page, "https://apereo.github.io");
