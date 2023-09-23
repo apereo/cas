@@ -18,8 +18,7 @@ const assert = require('assert');
 
     await cas.loginWith(page, "user1", "password");
     await page.waitForTimeout(7000);
-    let url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -42,7 +41,7 @@ const assert = require('assert');
     await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
     url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await page.waitForTimeout(3000);
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

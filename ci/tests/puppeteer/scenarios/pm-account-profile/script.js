@@ -11,8 +11,8 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/account");
 
     await cas.goto(page, "https://localhost:8443/cas/account");

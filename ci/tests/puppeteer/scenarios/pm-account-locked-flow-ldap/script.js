@@ -23,8 +23,7 @@ async function loginWith(page, user, password) {
     await page.waitForTimeout(1000);
     await cas.click(page, "#loginbtn");
     await page.waitForNavigation();
-    let url = await page.url();
-    await cas.log(url);
+    await cas.logPage(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await browser.close();

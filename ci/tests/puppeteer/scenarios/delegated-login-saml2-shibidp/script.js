@@ -22,7 +22,7 @@ const assert = require("assert");
         await page.waitForTimeout(8000);
         await cas.screenshot(page);
         await cas.log("Checking for page URL...");
-        await cas.log(await page.url());
+        await cas.logPage(page);
         let ticket = await cas.assertTicketParameter(page);
         await cas.log(`Received ticket ${ticket}`);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);

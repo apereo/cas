@@ -12,7 +12,7 @@ async function startFlow(context, clientName) {
     await cas.goto(page, url);
     await page.waitForTimeout(3000);
     await cas.loginWith(page);
-    await cas.log(await page.url());
+    await cas.logPage(page);
     await cas.screenshot(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
@@ -23,7 +23,7 @@ async function startFlow(context, clientName) {
     url = `https://localhost:8443/cas/login?service=${service}`;
     await cas.goto(page, url);
     await page.waitForTimeout(6000);
-    await cas.log(await page.url());
+    await cas.logPage(page);
     await cas.assertTicketParameter(page);
 }
 

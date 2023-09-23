@@ -29,7 +29,7 @@ const path = require('path');
     await page.waitForTimeout(2000);
 
     await cas.log("Checking for page URL...");
-    await cas.log(await page.url());
+    await cas.logPage(page);
 
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

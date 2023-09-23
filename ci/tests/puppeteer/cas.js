@@ -65,6 +65,11 @@ exports.logr = async (text) => {
     LOGGER.error(`🔴 ${colors.red(text)}`);
 };
 
+exports.logPage = async(page) => {
+    const url = await page.url();
+    await this.log(`Page URL: ${url}`);
+};
+
 exports.removeDirectory = async (directory) => {
     this.logg(`Removing directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {

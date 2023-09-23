@@ -22,8 +22,8 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#servicesTable');
     await cas.submitForm(page, "#fm1");
 
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);
@@ -33,7 +33,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/logout?url=https://github.com/apereo/cas");
     await cas.submitForm(page, "#fm1");
     url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url === "https://github.com/apereo/cas");
 
     await cas.log("Logout with unauthorized redirect...");
@@ -41,7 +41,7 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#fm1");
     url = await page.url();
     await page.waitForTimeout(1000);
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
 
     await browser.close();
