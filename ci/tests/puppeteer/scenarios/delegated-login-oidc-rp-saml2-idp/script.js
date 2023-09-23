@@ -27,11 +27,11 @@ const path = require('path');
     await page.waitForTimeout(2000);
 
     await cas.log("Checking for page URL...");
-    await cas.log(await page.url());
+    await cas.logPage(page);
     await page.waitForTimeout(2000);
 
     await cas.log("Allowing release of scopes and claims...");
-    await cas.log(await page.url());
+    await cas.logPage(page);
     
     let result = new URL(page.url());
     await cas.log(result.searchParams.toString());

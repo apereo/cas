@@ -28,7 +28,7 @@ const path = require('path');
         await page.waitForTimeout(2000);
 
         await cas.log("Checking for page URL...");
-        await cas.log(await page.url());
+        await cas.logPage(page);
         await cas.screenshot(page);
         await cas.assertTicketParameter(page);
 

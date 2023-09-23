@@ -21,8 +21,8 @@ async function gotoPage(page, instanceId, pageId) {
     await page.waitForTimeout(2000);
     await cas.click(page, "div#CAS li");
     await page.waitForTimeout(2000);
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(url);
     const pathArray = url.split('/');
     const instanceId = pathArray[pathArray.length - 2];
     await cas.log(`Instance ID ${instanceId}`);

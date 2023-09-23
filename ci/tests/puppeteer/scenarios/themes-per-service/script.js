@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000);
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
     await cas.assertCookie(page, false);
 

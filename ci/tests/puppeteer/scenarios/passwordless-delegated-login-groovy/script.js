@@ -31,7 +31,7 @@ async function submitUser(page, user) {
         await cas.gotoLogin(page);
         await submitUser(page, "single-delegation");
         const url = await page.url();
-        await cas.log(`Page url: ${url}`);
+        await cas.logPage(page);
         assert(url.startsWith("https://httpbin.org/anything/cas3"));
 
         await cas.log("Checking for all-options user account");

@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
     
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url.startsWith("https://github.com/"));
 
     await cas.gotoLogout(page);

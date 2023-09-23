@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
         await page.waitForTimeout(2000);
 
         const url = await page.url();
-        await cas.log(`Page url: ${url}`);
+        await cas.logPage(page);
         assert(url.startsWith("https://github.com/"));
 
         await cas.assertTicketParameter(page);

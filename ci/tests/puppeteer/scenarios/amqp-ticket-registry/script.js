@@ -19,8 +19,8 @@ const path = require("path");
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
         await cas.gotoLogout(page);
+        await cas.logPage(page);
         let url = await page.url();
-        await cas.log(`Page url: ${url}`);
         assert(url === "https://localhost:8443/cas/logout");
         await page.waitForTimeout(1000);
         await cas.assertCookie(page, false);

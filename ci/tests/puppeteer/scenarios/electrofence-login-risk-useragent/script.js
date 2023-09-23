@@ -38,7 +38,7 @@ const assert = require('assert');
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
     const url = `${await page.url()}`;
-    await cas.log(`Page URL: ${url}`);
+    await cas.logPage(page);
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 

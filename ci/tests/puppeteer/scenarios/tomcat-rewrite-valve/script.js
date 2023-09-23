@@ -8,8 +8,8 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, "https://localhost:8443/cas/auth");
     await page.waitForTimeout(2000);
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/auth");
     await cas.loginWith(page);
     await cas.assertCookie(page);

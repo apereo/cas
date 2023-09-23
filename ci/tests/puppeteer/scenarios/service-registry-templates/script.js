@@ -9,7 +9,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await cas.assertTicketParameter(page);
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";

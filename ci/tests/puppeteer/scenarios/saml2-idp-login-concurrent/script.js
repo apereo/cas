@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
         const page = await cas.newPage(browser);
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
         await page.waitForTimeout(4000);
-        await cas.log(await page.url());
+        await cas.logPage(page);
 
         await cas.log("Sending second authentication request");
         const page2 = await browser.newPage();
