@@ -41,7 +41,7 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
 
     private String redirectUrl;
 
-    private Set<String> supportedProtocols = new LinkedHashSet<>(0);
+    private Set<CasProtocolVersions> supportedProtocols = new LinkedHashSet<>(0);
 
     private String responseType;
 

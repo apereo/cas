@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -218,7 +219,7 @@ public class SamlConfiguration {
             final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
             validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
-            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolValidationSpecification.CasProtocolVersions.SAML1)));
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.SAML1)));
             return validationChain;
         }
 

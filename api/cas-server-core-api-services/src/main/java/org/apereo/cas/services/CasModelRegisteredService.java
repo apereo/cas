@@ -61,7 +61,7 @@ public interface CasModelRegisteredService extends WebBasedRegisteredService {
      *
      * @return collection of supported protocol versions.
      */
-    Set<String> getSupportedProtocols();
+    Set<CasProtocolVersions> getSupportedProtocols();
 
     /**
      * Response determines how CAS should contact the matching service

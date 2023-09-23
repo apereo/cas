@@ -41,23 +41,4 @@ public interface CasProtocolValidationSpecification extends Ordered {
      */
     default void setRenew(final boolean value) {
     }
-
-    enum CasProtocolVersions {
-        /**
-         * CAS v1 protocol.
-         */
-        CAS10,
-        /**
-         * CAS v2 protocol.
-         */
-        CAS20,
-        /**
-         * CAS v3 protocol.
-         */
-        CAS30,
-        /**
-         * SAML v1.1 protocol.
-         */
-        SAML1
-    }
 }
