@@ -733,6 +733,15 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
+exports.gotoLogin = async(page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+    await this.goto(page, url);
+};
+
+exports.gotoLogout = async(page, port = 8443) => {
+    await this.goto(page, `https://localhost:${port}/cas/logout`);
+};
+
 exports.refreshContext = async (url = "https://localhost:8443/cas") => {
     this.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");

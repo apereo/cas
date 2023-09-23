@@ -103,7 +103,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 
 
     await cas.logg("Logging out, removing all tokens...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     try {
         await exchangeCode(page, code, "client");
         throw `Request should not pass; ${code} is expired`

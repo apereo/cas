@@ -40,7 +40,7 @@ async function sendRequest(page, entityIds) {
     let count = 0;
     for (const entityId of entityIds) {
         try {
-            await cas.goto(page, "https://localhost:8443/cas/logout");
+            await cas.gotoLogout(page);
 
             let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
             url += `?providerId=${entityId}`;

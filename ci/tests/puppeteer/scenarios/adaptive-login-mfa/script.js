@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await context.overridePermissions("https://localhost:8443/cas/login", ['geolocation']);
     await page.setGeolocation({latitude: 90, longitude: 20});
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
     await cas.loginWith(page);

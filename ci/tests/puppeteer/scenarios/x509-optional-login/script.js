@@ -7,7 +7,7 @@ const request = require("request");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#x509Login");
     await page.waitForTimeout(2000);
 

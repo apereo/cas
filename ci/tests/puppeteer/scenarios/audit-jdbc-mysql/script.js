@@ -32,12 +32,12 @@ async function callAuditLog() {
 
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(6000);
     await page.close();
     await browser.close();
@@ -53,11 +53,11 @@ async function callAuditLog() {
     await cas.log("Testing authentication after refresh...");
     browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
 
     await callAuditLog();

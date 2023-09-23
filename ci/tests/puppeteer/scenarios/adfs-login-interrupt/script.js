@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#fm1");
 
     let ticket = await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await page.waitForTimeout(3000);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);

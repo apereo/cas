@@ -10,7 +10,7 @@ const path = require('path');
     const page = await cas.newPage(browser);
 
     await cas.log("Attempting to login with default credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "p@$$word");
     await cas.assertCookie(page);
 
@@ -27,8 +27,8 @@ const path = require('path');
     await cas.refreshContext();
 
     await cas.log("Attempting to login with new updated credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casrefresh", "p@$$word");
     await cas.assertCookie(page);
 

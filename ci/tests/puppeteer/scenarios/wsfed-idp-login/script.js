@@ -27,8 +27,8 @@ const cas = require('../../cas.js');
     await cas.assertInnerText(page, "#claim2", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress:CAS@example.org");
 
     await cas.log("Trying with an exising SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.goto(page, "https://localhost:9876/fediz");

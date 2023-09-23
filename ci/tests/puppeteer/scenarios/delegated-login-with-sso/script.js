@@ -19,7 +19,7 @@ const cas = require('../../cas.js');
     await cas.assertTicketParameter(page);
 
     await cas.log("Checking SSO for our CAS server");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Anmeldung erfolgreich");

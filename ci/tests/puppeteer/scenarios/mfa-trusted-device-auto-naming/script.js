@@ -12,7 +12,7 @@ const os = require("os");
 
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     
     await cas.log(`Using scratch code ${scratch} to login...`);

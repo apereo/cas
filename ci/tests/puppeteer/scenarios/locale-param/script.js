@@ -8,10 +8,10 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login?locale=de");
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
 
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, https://apereo.github.io);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
 
     await cas.goto(page, "https://localhost:8443/cas/login?locale=es&service=https://apereo.github.io");

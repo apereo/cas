@@ -9,7 +9,7 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.click(page, "li #CasClient");
     await page.waitForNavigation();
     await cas.loginWith(page);

@@ -7,7 +7,7 @@ const request = require('request');
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
@@ -57,7 +57,7 @@ const request = require('request');
 
     });
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

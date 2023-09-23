@@ -4,8 +4,8 @@ const assert = require("assert");
 
 async function loginAndVerify(browser) {
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page);
     await cas.click(page, "#rememberMe");
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
@@ -20,7 +20,7 @@ async function loginAndVerify(browser) {
     await page.close();
 
     page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     tgc = await cas.assertCookie(page);
     date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);

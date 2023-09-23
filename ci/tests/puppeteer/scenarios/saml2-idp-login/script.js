@@ -34,7 +34,7 @@ async function normalAuthenticationFlow(context) {
     assert(response.ok());
     await cas.assertInnerText(page, '#content h2', "SAML2 Identity Provider Error");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }
 
 async function staleAuthenticationFlow(context) {

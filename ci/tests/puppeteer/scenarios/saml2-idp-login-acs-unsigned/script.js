@@ -24,8 +24,8 @@ async function cleanUp() {
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
         await cas.log("Trying with an exising SSO session...");
-        await cas.goto(page, "https://localhost:8443/cas/logout");
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogout(page);
+        await cas.gotoLogin(page);
         await cas.loginWith(page);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");

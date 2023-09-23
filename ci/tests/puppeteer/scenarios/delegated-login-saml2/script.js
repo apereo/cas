@@ -37,9 +37,9 @@ const assert = require('assert');
     assert(authenticationSuccess.attributes.email[0] === "Hello-user1@example.com");
 
     await cas.log("Testing auto-redirection via configured cookie...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(3000);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
     url = await page.url();
     await cas.log(`Page url: ${url}`);

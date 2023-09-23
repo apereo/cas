@@ -16,7 +16,7 @@ const assert = require("assert");
     assert(response.ok());
 
     await cas.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
 

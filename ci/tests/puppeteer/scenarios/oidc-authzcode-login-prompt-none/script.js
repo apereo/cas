@@ -6,7 +6,7 @@ const state = "40W6nJCYWnnPplmAo13Icy";
 const nonce = "yYxIingpZy";
 
 async function login(page, redirectUrl, params) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     let authzUrl = "https://localhost:8443/cas/oidc/authorize?";
     authzUrl += "response_type=code&client_id=client&scope=openid";

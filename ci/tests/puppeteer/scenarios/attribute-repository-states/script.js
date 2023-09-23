@@ -4,7 +4,7 @@ const assert = require("assert");
 
 async function returnCasResponse(page, appId) {
     await cas.log(`Producing CAS response for appId ${appId}`);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     const service = `http://localhost:9889/anything/${appId}`;
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
