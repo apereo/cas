@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
 })();
 
 async function submitLoginFailure(page) {
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "BadPassword1");
 }
 

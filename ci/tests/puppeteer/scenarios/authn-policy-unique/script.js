@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 async function verifyWithoutService() {
     const browser1 = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser1);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await browser1.close();
 
@@ -20,7 +20,7 @@ async function verifyWithoutService() {
 async function verifyWithService() {
     const browser1 = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser1);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
     await browser1.close();
 

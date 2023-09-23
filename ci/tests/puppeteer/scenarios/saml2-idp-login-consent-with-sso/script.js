@@ -12,7 +12,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
     await cas.loginWith(page);
 

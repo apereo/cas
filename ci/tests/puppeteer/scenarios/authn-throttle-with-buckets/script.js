@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.logg("Log in attempt: #0 Successful Login");
     await submitLogin(page, "casuser", "Mellon");
     await cas.assertCookie(page);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
 
     await cas.log("Log in attempt: #1");
@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
 })();
 
 async function submitLogin(page, user = "casuser", password = "BadPassword1") {
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, user, password);
 }
 

@@ -24,7 +24,7 @@ const path = require("path");
         await cas.refreshContext();
         await page.waitForTimeout(2000);
 
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.gotoLogout(page);
         await cas.goto(page, url);
         await cas.loginWith(page);
         await page.waitForTimeout(4000);

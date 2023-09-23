@@ -8,7 +8,7 @@ const path = require('path');
     try {
         const page = await cas.newPage(browser);
 
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
 
         await cas.doGet('https://localhost:8443/cas/sp/metadata', res => assert(res.status === 200), () => {
@@ -33,7 +33,7 @@ const path = require('path');
         await cas.assertTicketParameter(page);
 
         await cas.screenshot(page);
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await cas.assertCookie(page);
 
         await cas.removeDirectory(path.join(__dirname, '/saml-md'));

@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
 
     await cas.log("Trying first app with a fancy theme");
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io&authn_method=mfa-duo");
+    await cas.gotoLogin(page, "https://apereo.github.io&authn_method=mfa-duo");
     await page.waitForTimeout(1000);
     await cas.click(page, "#publicWorkstation");
     await cas.loginWith(page, "duocode", "Mellon");
@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(4000);
     await cas.screenshot(page);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
     await cas.assertVisibility(page, '#username');
     await cas.assertVisibility(page, '#password');
