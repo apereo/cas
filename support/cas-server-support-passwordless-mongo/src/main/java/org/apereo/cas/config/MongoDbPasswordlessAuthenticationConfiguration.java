@@ -9,13 +9,13 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.impl.account.MongoDbPasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.MongoDbPasswordlessTokenRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -119,15 +119,15 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
 
     @RequiredArgsConstructor
     public static class MongoDbPasswordlessAuthenticationTokenRepositoryCleaner implements Cleanable {
+        private final CasReentrantLock lock = new CasReentrantLock();
 
         private final PasswordlessTokenRepository repository;
 
-        @Synchronized
         @Override
         @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
-            repository.clean();
+            lock.tryLock(__ -> repository.clean());
         }
     }
 }

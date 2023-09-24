@@ -1,6 +1,7 @@
 package org.apereo.cas.util.scripting;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import groovy.lang.GroovyObject;
@@ -20,6 +21,8 @@ import org.springframework.core.io.Resource;
 @Getter
 @ToString(of = "resource")
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final Resource resource;
 
     private FileWatcherService watcherService;
@@ -62,15 +65,17 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     }
 
     @Override
-    public synchronized <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
-        try {
-            LOGGER.trace("Beginning to execute script [{}]", this);
-            return groovyScript != null
-                ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
-                : null;
-        } finally {
-            LOGGER.trace("Completed script execution [{}]", this);
-        }
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
+        return lock.tryLock(() -> {
+            try {
+                LOGGER.trace("Beginning to execute script [{}]", this);
+                return groovyScript != null
+                    ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
+                    : null;
+            } finally {
+                LOGGER.trace("Completed script execution [{}]", this);
+            }
+        });
     }
 
 
@@ -84,16 +89,18 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @param args        the args
      * @return the t
      */
-    public synchronized <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
+    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                          final Object... args) throws Throwable {
-        try {
-            LOGGER.trace("Beginning to execute script [{}]", this);
-            return groovyScript != null
-                ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
-                : null;
-        } finally {
-            LOGGER.trace("Completed script execution [{}]", this);
-        }
+        return lock.tryLock(() -> {
+            try {
+                LOGGER.trace("Beginning to execute script [{}]", this);
+                return groovyScript != null
+                    ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+                    : null;
+            } finally {
+                LOGGER.trace("Completed script execution [{}]", this);
+            }
+        });
     }
     
     @Override

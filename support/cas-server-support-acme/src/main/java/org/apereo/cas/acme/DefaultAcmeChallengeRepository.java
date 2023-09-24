@@ -1,8 +1,8 @@
 package org.apereo.cas.acme;
 
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class DefaultAcmeChallengeRepository implements AcmeChallengeRepository {
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final Cache<String, String> cache = Caffeine.newBuilder()
         .initialCapacity(100)
         .maximumSize(1000)
@@ -22,17 +24,19 @@ public class DefaultAcmeChallengeRepository implements AcmeChallengeRepository {
         .build();
 
 
-    @Synchronized
     @Override
     public void add(final String token, final String challenge) {
-        LOGGER.debug("Adding ACME token [{}] linked to challenge [{}]", token, challenge);
-        cache.put(token, challenge);
+        lock.tryLock(__ -> {
+            LOGGER.debug("Adding ACME token [{}] linked to challenge [{}]", token, challenge);
+            cache.put(token, challenge);
+        });
     }
 
-    @Synchronized
     @Override
     public String get(final String token) {
-        LOGGER.debug("Fetching ACME token [{}]...", token);
-        return cache.getIfPresent(token);
+        return lock.tryLock(() -> {
+            LOGGER.debug("Fetching ACME token [{}]...", token);
+            return cache.getIfPresent(token);
+        });
     }
 }

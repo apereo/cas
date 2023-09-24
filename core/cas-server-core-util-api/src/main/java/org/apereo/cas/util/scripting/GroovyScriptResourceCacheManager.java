@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperti
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -19,6 +20,8 @@ import java.util.Set;
  */
 @Slf4j
 public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> {
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final Cache<String, ExecutableCompiledGroovyScript> cache;
 
     public GroovyScriptResourceCacheManager(final ExpiringSimpleCacheProperties properties) {
@@ -27,9 +30,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     public ExecutableCompiledGroovyScript get(final String key) {
-        synchronized (cache) {
-            return this.cache.getIfPresent(key);
-        }
+        return lock.tryLock(() -> cache.getIfPresent(key));
     }
 
     @Override
@@ -41,40 +42,34 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(
         final String key, final ExecutableCompiledGroovyScript value) {
-        synchronized (cache) {
+        return lock.tryLock(() -> {
             this.cache.put(key, value);
             return this;
-        }
+        });
     }
 
     @Override
     @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
-        synchronized (cache) {
+        return lock.tryLock(() -> {
             this.cache.invalidate(key);
             return this;
-        }
+        });
     }
 
     @Override
     public Set<String> getKeys() {
-        synchronized (cache) {
-            return this.cache.asMap().keySet();
-        }
+        return lock.tryLock(() -> cache.asMap().keySet());
     }
 
     @Override
     public void close() {
-        synchronized (cache) {
-            cache.invalidateAll();
-        }
+        lock.tryLock(__ -> cache.invalidateAll());
     }
 
     @Override
     public boolean isEmpty() {
-        synchronized (cache) {
-            return cache.asMap().isEmpty();
-        }
+        return lock.tryLock(() -> cache.asMap().isEmpty());
     }
 
     @Override

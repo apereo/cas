@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
@@ -67,22 +68,20 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     public static final File FALLBACK_REGISTERED_SERVICES_LOCATION =
         new File(CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES.get(0), "services");
-    
+
+
     /**
      * The Service registry directory.
      */
     @Getter
     protected Path serviceRegistryDirectory;
 
-    /**
-     * Map of service ID to registered service.
-     */
+
     @Getter
     protected Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    /**
-     * The Registered service json serializers.
-     */
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
 
     @Setter
@@ -163,7 +162,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     private Resource prepareRegisteredServicesDirectory(final Resource configDirectory) throws IOException {
         val externalForm = configDirectory.getURI().toASCIIString();
         if (CasRuntimeHintsRegistrar.inNativeImage() && ResourceUtils.isEmbeddedResource(externalForm)) {
-            val servicesDirecvory = CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES
+            val servicesDirectory = CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES
                 .stream()
                 .map(directory -> new File(directory, "services"))
                 .filter(File::exists)
@@ -172,8 +171,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.warn("""
                 GraalVM native image executable is unable to discover embedded resources at [{}]. The services directory location is changed to use [{}] instead. \
                 To adjust this behavior, update your CAS settings to use a directory location outside the CAS native executable."""
-                .stripIndent(), externalForm, servicesDirecvory);
-            return new FileSystemResource(servicesDirecvory);
+                .stripIndent(), externalForm, servicesDirectory);
+            return new FileSystemResource(servicesDirectory);
         }
         val pattern = String.join("|", getExtensions());
         return Objects.requireNonNull(ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern),
@@ -226,21 +225,21 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public synchronized boolean delete(final RegisteredService service) {
-        return FunctionUtils.doUnchecked(() -> {
-            val f = getRegisteredServiceFileName(service);
+    public boolean delete(final RegisteredService service) {
+        return lock.tryLock(() -> FunctionUtils.doUnchecked(() -> {
+            val filename = getRegisteredServiceFileName(service);
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
-            val result = !f.exists() || f.delete();
-            if (!result) {
-                LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
-            } else {
+            val result = !filename.exists() || filename.delete();
+            if (result) {
                 removeRegisteredService(service);
-                LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
+                LOGGER.debug("Successfully deleted service definition file [{}]", filename.getCanonicalPath());
+            } else {
+                LOGGER.warn("Failed to delete service definition file [{}]", filename.getCanonicalPath());
             }
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
             return result;
-        });
+        }));
     }
 
     @Override
@@ -250,27 +249,29 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public synchronized Collection<RegisteredService> load() {
-        LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
-        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
-        LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
-        val clientInfo = ClientInfoHolder.getClientInfo();
+    public Collection<RegisteredService> load() {
+        return lock.tryLock(() -> {
+            LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
+            val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
+            LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+            val clientInfo = ClientInfoHolder.getClientInfo();
 
-        this.services = files
-            .stream()
-            .map(this::load)
-            .filter(Objects::nonNull)
-            .flatMap(Collection::stream)
-            .sorted()
-            .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
-                (s1, s2) -> {
-                    BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
-                    return s1;
-                }, LinkedHashMap::new));
-        val listedServices = new ArrayList<>(this.services.values());
-        val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
-        results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
-        return results;
+            this.services = files
+                .stream()
+                .map(this::load)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .sorted()
+                .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+                    (s1, s2) -> {
+                        BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
+                        return s1;
+                    }, LinkedHashMap::new));
+            val listedServices = new ArrayList<>(this.services.values());
+            val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
+            results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
+            return results;
+        });
     }
 
     @Override
@@ -358,12 +359,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.services.remove(service.getId());
     }
 
-    /**
-     * Gets registered service from file.
-     *
-     * @param file the file
-     * @return the registered service from file
-     */
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
         val fileName = file.getName();
         if (fileName.startsWith(".")) {
