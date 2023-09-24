@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,16 +18,17 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import javax.xml.namespace.QName;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -99,21 +99,15 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
     }
 
     protected AuthnRequest buildAuthnRequest(final String providerId, final String shire, final String time) {
-        val builder = (SAMLObjectBuilder) getConfigurationContext()
-            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        val authnRequest = (AuthnRequest) builder.buildObject();
+        val authnRequest = buildSamlObject(AuthnRequest.DEFAULT_ELEMENT_NAME, AuthnRequest.class);
         authnRequest.setAssertionConsumerServiceURL(shire);
 
-        val isBuilder = (SAMLObjectBuilder) getConfigurationContext()
-            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
-        val issuer = (Issuer) isBuilder.buildObject();
+        val issuer = buildSamlObject(Issuer.DEFAULT_ELEMENT_NAME, Issuer.class);
         issuer.setValue(providerId);
         authnRequest.setIssuer(issuer);
-
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val pBuilder = (SAMLObjectBuilder) getConfigurationContext()
-            .getOpenSamlConfigBean().getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
-        val nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
+
+        val nameIDPolicy = buildSamlObject(NameIDPolicy.DEFAULT_ELEMENT_NAME, NameIDPolicy.class);
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
@@ -124,7 +118,19 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         }
         authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         authnRequest.setForceAuthn(Boolean.FALSE);
+
+        val extensions = buildSamlObject(Extensions.DEFAULT_ELEMENT_NAME, Extensions.class);
+        val requesterId = buildSamlObject(RequesterID.DEFAULT_ELEMENT_NAME, RequesterID.class);
+        requesterId.setURI(getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId());
+        extensions.getUnknownXMLObjects().add(requesterId);
+        authnRequest.setExtensions(extensions);
         return authnRequest;
+    }
+
+    protected <T> T buildSamlObject(final QName qname, final Class<T> clazz) {
+        val builderFactory = getConfigurationContext().getOpenSamlConfigBean().getBuilderFactory();
+        val builder = (SAMLObjectBuilder) builderFactory.getBuilder(qname);
+        return clazz.cast(Objects.requireNonNull(builder).buildObject());
     }
 
     protected String extractShire(final HttpServletRequest request, final String providerId,

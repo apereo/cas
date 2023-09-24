@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
@@ -325,6 +327,31 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertNotNull(samlResponse);
         assertFalse(samlResponse.getAssertions().isEmpty());
         assertTrue(samlResponse.getEncryptedAssertions().isEmpty());
+    }
+
+    @Test
+    void verifySamlResponseForUnsolicitedRequest() throws Throwable {
+        val request = buildHttpRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(false, false);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val extensions = samlProfileSamlResponseBuilder.newSamlObject(Extensions.class);
+        val requesterID = samlProfileSamlResponseBuilder.newSamlObject(RequesterID.class);
+        requesterID.setURI(casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
+        extensions.getUnknownXMLObjects().add(requesterID);
+        authnRequest.setExtensions(extensions);
+        val assertion = getAssertion();
+        val samlResponse = buildResponse(request, response, service,
+            adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(samlResponse);
+        assertNull(samlResponse.getInResponseTo());
+        val subject = samlResponse.getAssertions().get(0).getSubject();
+        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        assertNull(subjectConfirmation.getSubjectConfirmationData().getInResponseTo());
     }
 
     private MockHttpServletRequest buildHttpRequest() throws Exception {
