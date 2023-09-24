@@ -109,15 +109,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
         this(id, null, null, authentication, policy);
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>The state of the ticket is affected by this operation and the
-     * ticket will be considered used. The state update subsequently may
-     * impact the ticket expiration policy in that, depending on the policy
-     * configuration, the ticket may be considered expired.
-     */
     @Override
-    public synchronized ServiceTicket grantServiceTicket(
+    public ServiceTicket grantServiceTicket(
         final String id, final Service service,
         final ExpirationPolicy expirationPolicy,
         final boolean credentialProvided,

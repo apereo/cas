@@ -11,6 +11,7 @@ import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeCon
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -23,7 +24,6 @@ import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -95,6 +95,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
     protected final CasConfigurationProperties casProperties;
 
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
     private final CasSSLContext casSSLContext;
@@ -106,12 +108,13 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
     protected abstract Collection<IndirectClient> loadClients();
 
     @Override
-    @Synchronized
     public final Collection<IndirectClient> build() {
-        val core = casProperties.getAuthn().getPac4j().getCore();
-        val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadClients() : getCachedClients();
-        clientsCache.put(casProperties.getServer().getName(), currentClients);
-        return currentClients;
+        return lock.tryLock(() -> {
+            val core = casProperties.getAuthn().getPac4j().getCore();
+            val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadClients() : getCachedClients();
+            clientsCache.put(casProperties.getServer().getName(), currentClients);
+            return currentClients;
+        });
     }
 
     @Override

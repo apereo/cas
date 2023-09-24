@@ -66,7 +66,6 @@ import org.springframework.web.servlet.View;
 import java.util.List;
 import java.util.Set;
 
-import static org.apereo.cas.validation.CasProtocolValidationSpecification.*;
 import static org.springframework.http.MediaType.*;
 
 /**

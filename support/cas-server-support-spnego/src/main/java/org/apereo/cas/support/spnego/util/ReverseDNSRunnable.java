@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 
 /**
  * Utility class to perform DNS work in a threaded, timeout-able way
- * Adapted from: http://thushw.blogspot.com/2009/11/resolving-domain-names-quickly-with.html.
+ * Adapted from: <a href="http://thushw.blogspot.com/2009/11/resolving-domain-names-quickly-with.html">here</a>.
  *
  * @author Sean Baker sean.baker@usuhs.edu
  * @author Misagh Moayyed

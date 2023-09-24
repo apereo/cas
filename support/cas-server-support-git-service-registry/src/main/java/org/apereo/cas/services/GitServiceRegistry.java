@@ -5,10 +5,10 @@ import org.apereo.cas.git.PathRegexPatternTreeFilter;
 import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class GitServiceRegistry extends AbstractServiceRegistry {
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final GitRepository gitRepository;
 
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
@@ -117,66 +119,67 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         });
     }
 
-    @Synchronized
     @Override
     public Collection<RegisteredService> load() {
-        try {
-            if (gitRepository.pull()) {
-                LOGGER.debug("Successfully pulled changes from the remote repository");
-            } else {
-                LOGGER.info("Unable to pull changes from the remote repository. Service definition files may be stale.");
-            }
-            val objectPatternStr = StringUtils.isBlank(rootDirectory)
-                ? GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES
-                : rootDirectory + '/' + GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES;
-            val objectPattern = RegexUtils.createPattern(objectPatternStr, Pattern.CASE_INSENSITIVE);
-            val objects = gitRepository.getObjectsInRepository(
-                new PathRegexPatternTreeFilter(objectPattern));
-            registeredServices = objects
-                .stream()
-                .filter(Objects::nonNull)
-                .map(this::parseGitObjectContentIntoRegisteredService)
-                .flatMap(Collection::stream)
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-            return registeredServices;
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-            val parentDir = StringUtils.isBlank(rootDirectory)
-                ? gitRepository.getRepositoryDirectory()
-                : new File(gitRepository.getRepositoryDirectory(), rootDirectory);
-            val files = FileUtils.listFiles(parentDir,
-                GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.toArray(ArrayUtils.EMPTY_STRING_ARRAY), true);
-            LOGGER.debug("Located [{}] files(s)", files.size());
+        return lock.tryLock(() -> {
+            try {
+                if (gitRepository.pull()) {
+                    LOGGER.debug("Successfully pulled changes from the remote repository");
+                } else {
+                    LOGGER.info("Unable to pull changes from the remote repository. Service definition files may be stale.");
+                }
+                val objectPatternStr = StringUtils.isBlank(rootDirectory)
+                    ? GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES
+                    : rootDirectory + '/' + GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES;
+                val objectPattern = RegexUtils.createPattern(objectPatternStr, Pattern.CASE_INSENSITIVE);
+                val objects = gitRepository.getObjectsInRepository(
+                    new PathRegexPatternTreeFilter(objectPattern));
+                registeredServices = objects
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(this::parseGitObjectContentIntoRegisteredService)
+                    .flatMap(Collection::stream)
+                    .map(this::invokeServiceRegistryListenerPostLoad)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+                return registeredServices;
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, e);
+                val parentDir = StringUtils.isBlank(rootDirectory)
+                    ? gitRepository.getRepositoryDirectory()
+                    : new File(gitRepository.getRepositoryDirectory(), rootDirectory);
+                val files = FileUtils.listFiles(parentDir,
+                    GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.toArray(ArrayUtils.EMPTY_STRING_ARRAY), true);
+                LOGGER.debug("Located [{}] files(s)", files.size());
 
-            registeredServices = files
-                .stream()
-                .filter(file -> file.isFile() && file.canRead() && file.canWrite() && file.length() > 0)
-                .map(Unchecked.function(file -> {
-                    try (val in = Files.newBufferedReader(file.toPath())) {
-                        return registeredServiceSerializers
-                            .stream()
-                            .filter(s -> s.supports(file))
-                            .map(s -> s.load(in))
-                            .filter(Objects::nonNull)
-                            .flatMap(Collection::stream)
-                            .map(this::invokeServiceRegistryListenerPostLoad)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList());
-                    } catch (final Exception ex) {
-                        LOGGER.error("Error reading configuration file [{}]", file.toPath());
-                        LoggingUtils.error(LOGGER, ex);
-                    }
-                    return new ArrayList<RegisteredService>(0);
-                }))
-                .flatMap(List::stream)
-                .sorted()
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-            return registeredServices;
-        }
+                registeredServices = files
+                    .stream()
+                    .filter(file -> file.isFile() && file.canRead() && file.canWrite() && file.length() > 0)
+                    .map(Unchecked.function(file -> {
+                        try (val in = Files.newBufferedReader(file.toPath())) {
+                            return registeredServiceSerializers
+                                .stream()
+                                .filter(s -> s.supports(file))
+                                .map(s -> s.load(in))
+                                .filter(Objects::nonNull)
+                                .flatMap(Collection::stream)
+                                .map(this::invokeServiceRegistryListenerPostLoad)
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toList());
+                        } catch (final Exception ex) {
+                            LOGGER.error("Error reading configuration file [{}]", file.toPath());
+                            LoggingUtils.error(LOGGER, ex);
+                        }
+                        return new ArrayList<RegisteredService>(0);
+                    }))
+                    .flatMap(List::stream)
+                    .sorted()
+                    .map(this::invokeServiceRegistryListenerPostLoad)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+                return registeredServices;
+            }
+        });
     }
 
     @Override

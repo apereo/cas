@@ -30,7 +30,7 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
     }
 
     @Override
-    public synchronized Object convert(final Object attribute) {
+    public Object convert(final Object attribute) {
         if (script != null) {
             return FunctionUtils.doUnchecked(() -> {
                 val args = CollectionUtils.wrap("attribute", attribute, "logger", LOGGER);
@@ -42,7 +42,7 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
     }
 
     @Override
-    public synchronized Boolean accept(final String typeName) {
+    public Boolean accept(final String typeName) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(typeName);
         if (matcherInline.find()) {
             val inlineGroovy = matcherInline.group(1);
