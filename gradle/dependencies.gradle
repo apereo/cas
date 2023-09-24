@@ -996,6 +996,9 @@ ext.libraries = [
                 dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
                     transitive = false
                 },
+                dependencies.create("com.sun.xml.stream.buffer:streambuffer:2.1.0") {
+                    transitive = false
+                },
                 dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbRuntimeVersion") {
                     transitive = false
                 },

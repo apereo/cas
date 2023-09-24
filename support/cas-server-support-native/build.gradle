@@ -1,4 +1,5 @@
 description = "Apereo CAS Server GraalVM Native Image Support"
+
 ext {
     publishMetadata = true
     projectMetadata = [
@@ -11,6 +12,7 @@ ext {
 
 dependencies {
     compileOnly libraries.graalvmsdk
+
 
     testImplementation libraries.graalvmsdk
     

@@ -126,7 +126,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
-          components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
@@ -188,7 +187,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
-          components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
