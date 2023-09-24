@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
-const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
+const path = require("path");
 
 async function startFlow(context, clientName) {
     const page = await cas.newPage(context);
@@ -18,10 +18,13 @@ async function startFlow(context, clientName) {
     const content = JSON.parse(await cas.innerText(page, "body"));
     await cas.log(content);
     assert(content.form.SAMLResponse != null);
+    let samlResponse = await cas.base64Decode(content.form.SAMLResponse);
+    let parsedResult = await cas.parseXML(samlResponse);
+    assert(parsedResult["saml2p:Response"]["$"]["InResponseTo"] === undefined);
+    const subjectConfirmation = parsedResult["saml2p:Response"]["saml2:Assertion"][0]["saml2:Subject"][0]["saml2:SubjectConfirmation"][0];
+    assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["InResponseTo"] === undefined);
 
-    const service = "https://apereo.github.io";
-    url = `https://localhost:8443/cas/login?service=${service}`;
-    await cas.goto(page, url);
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await page.waitForTimeout(6000);
     await cas.logPage(page);
     await cas.assertTicketParameter(page);

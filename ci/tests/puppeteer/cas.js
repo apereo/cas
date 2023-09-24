@@ -19,6 +19,7 @@ const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
 const jose = require('jose');
 const pino = require('pino');
+const xml2js = require('xml2js');
 
 const LOGGER = pino({
     level: "debug",
@@ -747,6 +748,15 @@ exports.gotoLogout = async(page, port = 8443) => {
     await this.goto(page, `https://localhost:${port}/cas/logout`);
 };
 
+exports.parseXML = async(xml, options = {}) => {
+    let parsedXML = undefined;
+    const parser = new xml2js.Parser(options);
+    await parser.parseString(xml, (err, result) => {
+        parsedXML = result;
+    });
+    return parsedXML;
+};
+
 exports.refreshContext = async (url = "https://localhost:8443/cas") => {
     this.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
@@ -788,5 +798,4 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
     }
 };
 
-console.clear();
 this.asciiart("Apereo CAS - Puppeteer");

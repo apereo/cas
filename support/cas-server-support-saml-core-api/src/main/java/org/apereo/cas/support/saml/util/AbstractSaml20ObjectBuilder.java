@@ -6,10 +6,10 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -27,6 +27,8 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.core.Statement;
@@ -37,7 +39,6 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
-
 import java.io.Serial;
 import java.net.InetAddress;
 import java.time.Clock;
@@ -48,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -486,17 +488,25 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return attribute;
     }
 
-    /**
-     * Inflate authn request string.
-     *
-     * @param decodedBytes the decoded bytes
-     * @return the string
-     */
     protected String inflateAuthnRequest(final byte[] decodedBytes) {
         val inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
         return CompressionUtils.decodeByteArrayToString(decodedBytes);
+    }
+
+    protected String getInResponseTo(final RequestAbstractType request, final String entityId, final boolean skipInResponseTo) {
+        var generateInResponseTo = !skipInResponseTo && StringUtils.isNotBlank(request.getID());
+        if (generateInResponseTo && request.getExtensions() != null) {
+            val extensions = Optional.ofNullable(request.getExtensions())
+                .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
+            generateInResponseTo = extensions
+                .stream()
+                .filter(RequesterID.class::isInstance)
+                .map(RequesterID.class::cast)
+                .noneMatch(info -> entityId.equalsIgnoreCase(info.getURI()));
+        }
+        return generateInResponseTo ? request.getID() : null;
     }
 }

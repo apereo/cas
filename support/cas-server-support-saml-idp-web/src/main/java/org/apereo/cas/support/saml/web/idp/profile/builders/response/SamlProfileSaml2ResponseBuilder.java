@@ -60,7 +60,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                   final SamlProfileBuilderContext context) throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
-        val recipient = context.getRegisteredService().isSkipGeneratingResponseInResponseTo() ? null: context.getSamlRequest().getID();
+        val entityId = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId();
+        val recipient = getInResponseTo(context.getSamlRequest(), entityId, context.getRegisteredService().isSkipGeneratingResponseInResponseTo());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), recipient, null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
 

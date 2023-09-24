@@ -81,10 +81,11 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         val finalSubjectNameId = encryptNameIdIfNecessary(subjectNameId, context);
         val finalSubjectConfigNameId = encryptNameIdIfNecessary(subjectConfNameId, context);
 
+        val entityId = casProperties.getAuthn().getSamlIdp().getCore().getEntityId();
         val subjectConfirmation = newSubjectConfirmation(
             registeredService.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             notOnOrAfter,
-            registeredService.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : context.getSamlRequest().getID(),
+            getInResponseTo(context.getSamlRequest(), entityId, registeredService.isSkipGeneratingSubjectConfirmationInResponseTo()),
             registeredService.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC),
             registeredService.isSkipGeneratingSubjectConfirmationAddress() ? null : InetAddressUtils.getByName(location));
         
