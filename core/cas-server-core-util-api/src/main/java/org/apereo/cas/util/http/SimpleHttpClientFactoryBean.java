@@ -67,8 +67,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
 
     private static final int MAX_POOLED_CONNECTIONS = 100;
 
-    private static final int DEFAULT_THREADS_NUMBER = 200;
-
     private static final int DEFAULT_TIMEOUT = 5000;
 
     private static final int TERMINATION_TIMEOUT_SECONDS = 5;
@@ -80,11 +78,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
         HttpURLConnection.HTTP_NOT_MODIFIED, HttpURLConnection.HTTP_MOVED_TEMP,
         HttpURLConnection.HTTP_MOVED_PERM, HttpURLConnection.HTTP_ACCEPTED,
         HttpURLConnection.HTTP_NO_CONTENT};
-
-    /**
-     * 20% of the total of threads in the pool to handle overhead.
-     */
-    private static final int DEFAULT_QUEUE_SIZE = (int) (DEFAULT_THREADS_NUMBER * 0.2);
 
     /**
      * The Max pooled connections.

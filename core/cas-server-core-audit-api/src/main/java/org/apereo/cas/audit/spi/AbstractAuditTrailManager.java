@@ -30,7 +30,7 @@ public abstract class AbstractAuditTrailManager implements AuditTrailManager, Di
     @Override
     public void record(final AuditActionContext audit) {
         if (this.asynchronous) {
-            executorService.submit(() -> saveAuditRecord(audit));
+            executorService.execute(() -> saveAuditRecord(audit));
         } else {
             saveAuditRecord(audit);
         }
