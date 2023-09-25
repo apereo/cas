@@ -47,23 +47,23 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.log = async(text, ...args) => {
-    LOGGER.debug(`👉 ${text}`, args);
+    await LOGGER.debug(`👉 ${text}`, args);
 };
 
 exports.logy = async (text) => {
-    LOGGER.warn(`🔥 ${colors.yellow(text)}`);
+    await LOGGER.warn(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
+    await LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    LOGGER.info(`✅ ${colors.green(text)}`);
+    await LOGGER.info(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    LOGGER.error(`🔴 ${colors.red(text)}`);
+    await LOGGER.error(`🔴 ${colors.red(text)}`);
 };
 
 exports.logPage = async(page) => {
