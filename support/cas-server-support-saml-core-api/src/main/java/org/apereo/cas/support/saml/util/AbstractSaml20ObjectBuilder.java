@@ -363,7 +363,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         val data = newSamlObject(SubjectConfirmationData.class);
         FunctionUtils.doIfNotBlank(recipient, data::setRecipient);
         FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo);
-        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostName()));
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()));
         FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
         FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
