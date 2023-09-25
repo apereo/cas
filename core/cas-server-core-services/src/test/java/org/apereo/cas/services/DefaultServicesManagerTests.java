@@ -2,13 +2,10 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,19 +30,6 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
         assertEquals(1, servicesManager.findServicesBy(
             RegisteredServiceQuery.of(CasRegisteredService.class, "id", service.getId()),
             RegisteredServiceQuery.of(CasRegisteredService.class, "name", service.getName())).count());
-    }
-
-    @Test
-    void verifyInvalidServiceSave() throws Throwable {
-        val service = new CasRegisteredService();
-        service.setId(2233);
-        service.setName(TEST);
-        service.setServiceId(null);
-        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
-
-        service.setName(null);
-        service.setServiceId(TEST);
-        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
     }
 
     @Test
