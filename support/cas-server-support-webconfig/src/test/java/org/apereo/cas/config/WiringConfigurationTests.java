@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
@@ -13,7 +12,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -23,10 +21,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.Controller;
-
 import java.util.List;
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -98,11 +94,7 @@ class WiringConfigurationTests {
     @Autowired
     @Qualifier("localeResolver")
     private LocaleResolver localeResolver;
-
-    @Autowired
-    @Qualifier("currentCredentialsAndAuthenticationClearingFilter")
-    private FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter;
-
+    
     @Test
     void verifyConfigurationClasses() throws Throwable {
         assertNotNull(applicationContext);
