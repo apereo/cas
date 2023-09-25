@@ -38,6 +38,19 @@ maintenance and release planning, especially when it comes to addressing critica
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
+With JDK `21` as the baseline platform, frameworks such as Spring and Spring Boot start to support virtual threads. 
+To use virtual threads, CAS automatically sets the property `spring.threads.virtual.enabled` to `true`. When virtual threads are enabled, 
+Tomcat and Jetty will use virtual threads for request processing. This means that when CAS is handling a web request, 
+that request will run on a virtual thread.
+ 
+Furthermore, the CAS codebase has made modest and small efforts where possible to either use virtual threads, or to
+adjust parts of the codebase that would assist with request execution and handling inside virtual threads. These efforts
+mainly include the following:
+
+- Removing `synchronized` blocks and constructs and replacing with the locking that is more appropriate for virtual threads without thread pinning.
+- Replacing `@Synchronized` annotations with locking constructs, more appropriate for virtual threads.
+- Removing references to `ThreadLocal` as much as possible.
+
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
@@ -92,6 +105,7 @@ are now configured to run with parallelism enabled.
 - [Risk-based authentication](../authentication/Configuring-RiskBased-Authentication.html) now supports a *Risk Confirmation* flow via a special link sent to the user via email, sms, etc.
 - Multifactor provider selection is now skipped when a valid [multifactor-enabled trusted device](../mfa/Multifactor-TrustedDevice-Authentication.html) is found for the user record.
 - The WebSDK variation of [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is now removed.
+- Deployments that run on top of Jetty can now switch to Jetty `12` and the CAS-supplied Jetty container has also made the switch to Jetty `12`.
 
 ## Library Upgrades
    
@@ -113,3 +127,4 @@ are now configured to run with parallelism enabled.
 - Pac4j
 - OpenSAML
 - Hibernate
+- Jetty
