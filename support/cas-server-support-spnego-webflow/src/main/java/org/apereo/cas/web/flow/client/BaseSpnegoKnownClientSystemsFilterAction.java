@@ -119,8 +119,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      */
     protected String getRemoteHostName(final String remoteIp) {
         val revDNS = new ReverseDNSRunnable(remoteIp);
-        val thread = new Thread(revDNS);
-        thread.start();
+        val thread = Thread.ofVirtual().start(revDNS);
         try {
             thread.join(this.timeout);
         } catch (final InterruptedException e) {
