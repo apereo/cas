@@ -12,8 +12,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClearingFilter;
-import org.apereo.cas.web.support.filters.AbstractSecurityFilter;
 import org.apereo.cas.web.support.filters.AddResponseHeadersFilter;
 import org.apereo.cas.web.support.filters.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
@@ -65,18 +63,6 @@ public class CasFiltersConfiguration {
             bean.setAsyncSupported(true);
             return bean;
         }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FilterRegistrationBean<AuthenticationCredentialsThreadLocalBinderClearingFilter> currentCredentialsAndAuthenticationClearingFilter() {
-            val bean = new FilterRegistrationBean<AuthenticationCredentialsThreadLocalBinderClearingFilter>();
-            bean.setFilter(new AuthenticationCredentialsThreadLocalBinderClearingFilter());
-            bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-            bean.setName("currentCredentialsAndAuthenticationClearingFilter");
-            bean.setAsyncSupported(true);
-            return bean;
-        }
-
     }
 
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
@@ -145,7 +131,6 @@ public class CasFiltersConfiguration {
                 BooleanUtils.toStringTrueFalse(httpWebRequest.isAllowMultiValueParameters()));
             initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
                 httpWebRequest.getOnlyPostParams());
-            initParams.put(AbstractSecurityFilter.THROW_ON_ERROR, Boolean.TRUE.toString());
 
             if (StringUtils.isNotBlank(httpWebRequest.getPatternToBlock())) {
                 initParams.put(RequestParameterPolicyEnforcementFilter.PATTERN_TO_BLOCK,

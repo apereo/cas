@@ -6,7 +6,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.rest.services.attribute-name=mail",
     "--cas.rest.services.attribute-value=.*@example.org",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
   ]
 }

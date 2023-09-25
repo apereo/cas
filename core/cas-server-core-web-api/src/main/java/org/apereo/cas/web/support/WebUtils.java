@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -562,10 +561,10 @@ public class WebUtils {
      * Put authentication into conversation scope.
      *
      * @param authentication the authentication
-     * @param ctx            the ctx
+     * @param requestContext            the ctx
      */
-    public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
-        ctx.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
+        requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
     }
 
     /**
@@ -1058,11 +1057,7 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         val context = RequestContextHolder.getRequestContext();
-        val authentication = Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
-        if (authentication == null) {
-            return AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
-        }
-        return authentication;
+        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
     }
 
 

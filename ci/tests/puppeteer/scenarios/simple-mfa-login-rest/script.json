@@ -7,7 +7,7 @@
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

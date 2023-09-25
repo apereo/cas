@@ -4,7 +4,6 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -13,14 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.Mockito.*;
@@ -114,8 +111,8 @@ class CasRegisteredServiceTests {
     @ParameterizedTest
     @MethodSource("getParameters")
     void verifyMatches(final CasRegisteredService service,
-                              final String serviceToMatch,
-                              final boolean expectedResult) {
+                       final String serviceToMatch,
+                       final boolean expectedResult) {
         val testService = Optional.ofNullable(serviceToMatch).map(RegisteredServiceTestUtils::getService).orElse(null);
         assertEquals(expectedResult, service.matches(testService));
     }
@@ -123,8 +120,8 @@ class CasRegisteredServiceTests {
     @ParameterizedTest
     @MethodSource("getParameters")
     void verifySerialization(final CasRegisteredService service,
-                                    final String serviceToMatch,
-                                    final boolean expectedResult) throws IOException {
+                             final String serviceToMatch,
+                             final boolean expectedResult) throws IOException {
         MAPPER.writeValue(JSON_FILE, service);
         val serviceRead = MAPPER.readValue(JSON_FILE, CasRegisteredService.class);
         assertEquals(service, serviceRead);

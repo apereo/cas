@@ -140,7 +140,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         recognizedParameterNames.add(INIT_PARAM_ENABLE_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
-        recognizedParameterNames.add(THROW_ON_ERROR);
 
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
@@ -152,11 +151,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     @Override
     public void init(final FilterConfig filterConfig) {
-        val failSafeParam = filterConfig.getInitParameter(THROW_ON_ERROR);
-        if (null != failSafeParam) {
-            setThrowOnErrors(Boolean.parseBoolean(failSafeParam));
-        }
-
         val initParamNames = filterConfig.getInitParameterNames();
         throwIfUnrecognizedParamName(initParamNames);
 

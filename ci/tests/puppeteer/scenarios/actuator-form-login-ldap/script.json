@@ -11,7 +11,7 @@
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
     "--cas.monitor.endpoints.form-login-enabled=true",
