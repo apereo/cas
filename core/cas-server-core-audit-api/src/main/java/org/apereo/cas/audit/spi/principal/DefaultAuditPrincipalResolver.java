@@ -20,11 +20,12 @@ import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
 
-
 /**
- * Inspektr PrincipalResolver that gets the value for principal id from Authentication object bound to a current thread of execution.
+ * Inspektr {@link PrincipalResolver} that gets the value for principal id
+ * from {@link Authentication} object bound to a current thread of execution.
  *
  * @author Dmitriy Kopylenko
+ * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j

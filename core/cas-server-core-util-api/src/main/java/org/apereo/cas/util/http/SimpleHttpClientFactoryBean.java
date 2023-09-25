@@ -35,19 +35,16 @@ import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -88,16 +85,6 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      * 20% of the total of threads in the pool to handle overhead.
      */
     private static final int DEFAULT_QUEUE_SIZE = (int) (DEFAULT_THREADS_NUMBER * 0.2);
-
-    /**
-     * The number of threads used to build the pool of threads (if no executorService provided).
-     */
-    private int threadsNumber = DEFAULT_THREADS_NUMBER;
-
-    /**
-     * The queue size to absorb additional tasks when the threads pool is saturated (if no executorService provided).
-     */
-    private int queueSize = DEFAULT_QUEUE_SIZE;
 
     /**
      * The Max pooled connections.
@@ -296,16 +283,10 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
             .useSystemProperties();
         return builder.build();
     }
-
-    /**
-     * Build a {@link FutureRequestExecutionService} from the current properties and a HTTP client.
-     *
-     * @param httpClient the provided HTTP client
-     * @return the built request executor service
-     */
+    
     private FutureRequestExecutionService buildRequestExecutorService(final CloseableHttpClient httpClient) {
         if (this.executorService == null) {
-            this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(this.queueSize));
+            this.executorService = Executors.newVirtualThreadPerTaskExecutor();
         }
         return new FutureRequestExecutionService(httpClient, this.executorService);
     }
