@@ -7,7 +7,7 @@ import lombok.val;
 import org.aspectj.lang.JoinPoint;
 
 /**
- * Default implementation that gets it from the ThreadLocal.
+ * Default implementation that gets it from the {@link ThreadLocal}.
  *
  * @author Scott Battaglia
  * @since 1.0

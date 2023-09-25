@@ -13,11 +13,6 @@ import org.aspectj.lang.JoinPoint;
 public interface PrincipalResolver {
 
     /**
-     * Default String that can be used when the user is anonymous.
-     */
-    String ANONYMOUS_USER = "audit:anonymous";
-
-    /**
      * Default String that can be used when the user cannot be determined.
      */
     String UNKNOWN_USER = "audit:unknown";

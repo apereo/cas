@@ -4,7 +4,7 @@
   "properties": [
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.webflow.groovy.actions.singleSignOnSessionCreated=file://${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Action.groovy"
   ]

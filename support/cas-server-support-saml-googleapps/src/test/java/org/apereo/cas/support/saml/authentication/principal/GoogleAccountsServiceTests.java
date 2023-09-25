@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.DefaultResponse;
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -107,7 +107,7 @@ class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     void verifyResponse() throws Throwable {
         val resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
-        assertEquals(DefaultResponse.ResponseType.POST, resp.responseType());
+        assertEquals(Response.ResponseType.POST, resp.responseType());
         val response = resp.attributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);
         assertTrue(response.contains("NotOnOrAfter"));

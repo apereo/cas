@@ -5,7 +5,7 @@
   },
 
   "properties": [
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.authn.pm.core.enabled=true",
 
     "--spring.mail.host=localhost",

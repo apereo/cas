@@ -6,7 +6,7 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoints.web.exposure.include=*",

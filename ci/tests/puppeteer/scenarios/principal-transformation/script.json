@@ -5,7 +5,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.accept.users=CASUSER::p@ssw0rd",
     "--cas.authn.accept.principal-transformation.case-conversion=UPPERCASE",

@@ -11,7 +11,7 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.http-client.host-name-verifier=none",
     "--logging.level.org.apereo.cas=debug"

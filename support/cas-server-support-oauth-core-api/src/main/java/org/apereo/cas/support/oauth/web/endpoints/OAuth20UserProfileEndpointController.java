@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -100,7 +99,6 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
             return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_REQUEST);
         }
         return FunctionUtils.doAndHandle(() -> {
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
             updateAccessTokenUsage(accessTokenTicket);
             val context = new JEEContext(request, response);
             val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);

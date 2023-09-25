@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -41,29 +39,23 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy extends Ba
             return true;
         }
 
-        val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        try {
-            val authentication = getTicketState(ssoRequest)
-                .map(AuthenticationAwareTicket.class::cast)
-                .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-            val policy = accessStrategy.getDelegatedAuthenticationPolicy();
-            val attributes = authentication.getAttributes();
-            if (attributes.containsKey(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME)) {
-                val clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
-                val value = CollectionUtils.firstElement(clientNameAttr);
-                if (value.isPresent()) {
-                    val client = value.get().toString();
-                    LOGGER.debug("Evaluating delegated access strategy for client [{}] and service [{}]",
-                        client, registeredService);
-                    return policy.isProviderAllowed(client, registeredService);
-                }
-                return false;
+        val authentication = getTicketState(ssoRequest)
+            .map(AuthenticationAwareTicket.class::cast)
+            .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
+        val policy = accessStrategy.getDelegatedAuthenticationPolicy();
+        val attributes = authentication.getAttributes();
+        if (attributes.containsKey(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME)) {
+            val clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
+            val value = CollectionUtils.firstElement(clientNameAttr);
+            if (value.isPresent()) {
+                val client = value.get().toString();
+                LOGGER.debug("Evaluating delegated access strategy for client [{}] and service [{}]",
+                    client, registeredService);
+                return policy.isProviderAllowed(client, registeredService);
             }
-            return !policy.isProviderRequired();
-        } finally {
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
+            return false;
         }
+        return !policy.isProviderRequired();
     }
 
     @Override

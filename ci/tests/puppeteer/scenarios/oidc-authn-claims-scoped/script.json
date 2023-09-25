@@ -10,7 +10,7 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
