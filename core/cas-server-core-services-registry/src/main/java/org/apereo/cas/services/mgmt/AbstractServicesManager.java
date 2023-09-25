@@ -16,7 +16,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
-
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.AttributeIndex;
@@ -27,7 +26,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,13 +91,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         return lock.tryLock(() -> {
-            if (StringUtils.isBlank(registeredService.getName())
-                || StringUtils.isBlank(registeredService.getServiceId())
-                || StringUtils.isBlank(registeredService.getFriendlyName())) {
-                throw new IllegalArgumentException("Unable to save invalid registered service with id " + registeredService.getId()
-                    + ". Service name, service id or friendly name are undefined");
-            }
-
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
             val savedService = configurationContext.getServiceRegistry().save(registeredService);

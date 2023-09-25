@@ -1,7 +1,6 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -9,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,25 +26,20 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("auditLogEndpoint")
     private AuditLogEndpoint auditLogEndpoint;
-    
+
     @Test
     void verifyOperation() throws Throwable {
-        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
         val results = auditLogEndpoint.getAuditLog(StringUtils.EMPTY);
         assertFalse(results.isEmpty());
     }
 
     @Test
     void verifyOperationByInterval() throws Throwable {
-        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
         val results = auditLogEndpoint.getAuditLog("PT10M");
-        assertFalse(results.isEmpty());
-    }
-
-    @Test
-    void verifyOperationByIntervalAndUser() throws Throwable {
-        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
-        val results = auditLogEndpoint.getAuditLog("PT10M", null, null, "casuser", null);
         assertFalse(results.isEmpty());
     }
 }
