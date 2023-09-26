@@ -264,6 +264,38 @@ basis and depends on how much funding and energy is available to work out fixes 
 scenarios. If you are planning to go to production and cannot wait for the CAS release schedule, you
 can build the project from sources and publish artifacts to your own artifact repositories to take
 control of the release schedule yourself. For additional guarantees, please see the project license.
+     
+## How can I prepare for contributions to be accepted?
+
+<p align="center">
+<a href="https://github.com/apereo/cas/assets/1205228/e3cc2db3-2780-4b71-9e98-5c82580c7fca" data-lightbox="image-1">
+  <img src="https://github.com/apereo/cas/assets/1205228/e3cc2db3-2780-4b71-9e98-5c82580c7fca">
+</a>
+</p>
+
+If your pull request, idea or changeset is non-trivial, spans across multiple CAS modules, introduces new or 
+changes fundamental aspects of the CAS design and architecture or presents an integration with an external 
+system or product that might induce a heavy maintenance burden on others, there are a few things you can do in 
+advance to prepare and start the process before sprinting into a coding effort:
+
+- [Start a discussion](https://apereo.github.io/cas/Mailing-Lists.html) with the project developers to see if your changeset can be accepted and maintained by project developer community. You are essentially asking strangers on the internet to take on the maintenance and management effort of the feature, potentially long after your interest in the project, idea, enhancement or even your employer has disappeared. Are they OK with managing and maintaining this enhancement on your behalf? Do they have time and interest, and do they find the idea appealing and useful for the larger community?
+- Start a discussion with the CAS user community to find sponsors, other users and collaborators to see who else might be interested to work on and use the feature. Does anybody else, other than your employer or customer, find this enhancement or change useful? Is anybody else serious-enough to collaborate with you to build, refine, test and ultimately deploy this change into production? Is anyone else available to potentially help you and the project with future contributions and the maintenance effort in subsequent CAS releases?
+ 
+If you visit someone's residence with the intention of installing a ready-mady swimming pool in the middle of the living room out of nowhere, you may want to give them a call first. They might be perfectly OK with it, but it would be practical to confirm first.
+
+<div class="alert alert-info">:information_source: <strong>Stop Coding</strong><p>Do not start a coding effort right away with the intention of submitting a pull request, if you do not have enough support and buy-in from the project maintainers and the user community. If you show up out of the blue with a large changeset without prior notice or discussion, your pull request will most likely
+remain stale for a long time and/or will eventually be closed.</p></div>
+
+Once you have enough support from the CAS developer and user communities, start by reviewing the [release policy](Release-Policy.html) to determine the scope of your intended enhancement
+and the target CAS version that would ship with your changes in place. When in doubt, [ask questions](https://apereo.github.io/cas/Mailing-Lists.html).
+
+If the enhancement is rather substantial or provides an integration with an external system or product, a best course of action would be to:
+
+- Build the enhancement as *external* CAS module or plugin outside the codebase, in the public as open-source software with a CAS-compatible license.
+- Invite others to collaborate with you to define, refine, test, build and deploy the changeset into production.
+- Give yourself, your team and the collaborators time to verify the changes, show commitment and build support. Time allows you to demonstrate activity and community interest beyond words so the project can see your extension, changeset or idea is useful, in-demand and appealing to others. You may need a week, a month, three years, or more.
+
+With enough activity, demand, support and collaboration as demonstrated by you and others, you should be well on your way to work with the project maintainers to include the enhancement, likely via a series of pull requests and patches. It might of course turn out that you might be the only entity interested in the idea and you receive no support or encouragement from the community. This might indicate a red flag as you will be the single-parent of the change, carrying the maintenance burden solely on your own. If you are still convinced that the changeset is absolutely vital for your needs, we recommend that you start or continue with the development in the open anyway. Others might step up to adopt, collaborate and improve the functionality over time. You never know. With time it will either get better, or the [trainman](https://en.wikipedia.org/wiki/List_of_Matrix_series_characters#Trainman) will take it back to the machine world.
 
 ## Why isn't my proposal accepted and merged yet?
 
