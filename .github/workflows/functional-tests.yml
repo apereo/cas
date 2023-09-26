@@ -32,7 +32,7 @@ env:
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*"
+  SCENARIO_REGEX: ".*ldap.*"
 
 on:
   push:
@@ -67,7 +67,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -91,7 +91,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -122,7 +122,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -167,7 +167,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3

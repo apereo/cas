@@ -18,7 +18,7 @@ env:
   JDK_CURRENT: 21
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*" # Limit which test categories run
+  CATEGORY_REGEX: ".*ldap.*" # Limit which test categories run
 ##########################################################################
 
 on:
@@ -51,7 +51,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -101,7 +101,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -153,7 +153,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: "corretto"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:

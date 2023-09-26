@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountExpiredException;
 
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,6 +44,6 @@ class GroovyPasswordPolicyHandlingStrategyTests {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
         val strategy = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
-        assertThrows(AccountExpiredException.class, () -> strategy.handle(res, mock(PasswordPolicyContext.class)));
+        assertThrowsWithRootCause(RuntimeException.class, AccountExpiredException.class, () -> strategy.handle(res, mock(PasswordPolicyContext.class)));
     }
 }
