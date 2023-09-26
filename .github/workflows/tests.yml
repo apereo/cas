@@ -16,9 +16,10 @@ env:
   AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
   JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*ldap.*" # Limit which test categories run
+  CATEGORY_REGEX: ".*" # Limit which test categories run
 ##########################################################################
 
 on:
@@ -73,7 +74,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "corretto"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -101,7 +102,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "corretto"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -153,14 +154,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "corretto"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
       - name: "Download coverage files"
         uses: "actions/download-artifact@v3"
         with:
