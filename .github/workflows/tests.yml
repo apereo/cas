@@ -33,7 +33,7 @@ on:
 
 jobs:
   cancel-previous-runs:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 1
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
@@ -44,7 +44,7 @@ jobs:
 ##########################################################################
 
   initialize:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "corretto"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -65,7 +65,7 @@ jobs:
 
   testcategories:
     needs: [initialize]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
@@ -92,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.category }}
@@ -146,7 +146,7 @@ jobs:
 ##########################################################################
 
   upload_coverage:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [tests]
     steps:
       - uses: actions/checkout@v4
