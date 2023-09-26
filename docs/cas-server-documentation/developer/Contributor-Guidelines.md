@@ -281,7 +281,7 @@ advance to prepare and start the process before sprinting into a coding effort:
 - [Start a discussion](https://apereo.github.io/cas/Mailing-Lists.html) with the project developers to see if your changeset can be accepted and maintained by project developer community. You are essentially asking strangers on the internet to take on the maintenance and management effort of the feature, potentially long after your interest in the project, idea, enhancement or even your employer has disappeared. Are they OK with managing and maintaining this enhancement on your behalf? Do they have time and interest, and do they find the idea appealing and useful for the larger community?
 - Start a discussion with the CAS user community to find sponsors, other users and collaborators to see who else might be interested to work on and use the feature. Does anybody else, other than your employer or customer, find this enhancement or change useful? Is anybody else serious-enough to collaborate with you to build, refine, test and ultimately deploy this change into production? Is anyone else available to potentially help you and the project with future contributions and the maintenance effort in subsequent CAS releases?
  
-If you visit someone's residence with the intention of installing a ready-mady swimming pool in the middle of the living room out of nowhere, you may want to give them a call first. They might be perfectly OK with it, but it would be practical to confirm first.
+If you visit someone's residence with the intention of installing a ready-mady swimming pool in the middle of the living room, you may want to give them a call first. They might be perfectly OK with it, but it would be practical to confirm first.
 
 <div class="alert alert-info">:information_source: <strong>Stop Coding</strong><p>Do not start a coding effort right away with the intention of submitting a pull request, if you do not have enough support and buy-in from the project maintainers and the user community. If you show up out of the blue with a large changeset without prior notice or discussion, your pull request will most likely
 remain stale for a long time and/or will eventually be closed.</p></div>
@@ -291,11 +291,12 @@ and the target CAS version that would ship with your changes in place. When in d
 
 If the enhancement is rather substantial or provides an integration with an external system or product, a best course of action would be to:
 
-- Build the enhancement as *external* CAS module or plugin outside the codebase, in the public as open-source software with a CAS-compatible license.
+- Build the enhancement as **external CAS module** outside the codebase in  public as open-source software with a CAS-compatible license.
 - Invite others to collaborate with you to define, refine, test, build and deploy the changeset into production.
-- Give yourself, your team and the collaborators time to verify the changes, show commitment and build support. Time allows you to demonstrate activity and community interest beyond words so the project can see your extension, changeset or idea is useful, in-demand and appealing to others. You may need a week, a month, three years, or more.
+- Give yourself, your team and the collaborators time to verify the changes, show commitment and build support. Time allows you to demonstrate activity and community interest beyond words and on-paper intentions so the overall community can see your extension, changeset or idea is useful, in-demand and appealing to others. You may need a week, a month, three years, or more.
 
-With enough activity, demand, support and collaboration as demonstrated by you and others, you should be well on your way to work with the project maintainers to include the enhancement, likely via a series of pull requests and patches. It might of course turn out that you might be the only entity interested in the idea and you receive no support or encouragement from the community. This might indicate a red flag as you will be the single-parent of the change, carrying the maintenance burden solely on your own. If you are still convinced that the changeset is absolutely vital for your needs, we recommend that you start or continue with the development in the open anyway. Others might step up to adopt, collaborate and improve the functionality over time. You never know. With time it will either get better, or the [trainman](https://en.wikipedia.org/wiki/List_of_Matrix_series_characters#Trainman) will take it back to the machine world.
+With enough activity, demand, support and collaboration as demonstrated by you and others, you should be well on your way to work with the project maintainers to include the enhancement, likely via a series of pull requests and patches. It might of course turn out that you might be the only entity interested in the idea and you receive no support or encouragement from the community. This might indicate a red flag as you will be the single-parent of the change, carrying the maintenance burden solely on your own. If you are
+ convinced that the changeset is absolutely vital for your needs, we recommend that you start or continue with the development in the open anyway. Others might step up to adopt, collaborate and improve the functionality over time. You never know. With time it will either get better, or the [trainman](https://en.wikipedia.org/wiki/List_of_Matrix_series_characters#Trainman) will take it back to the machine world.
 
 ## Why isn't my proposal accepted and merged yet?
 
@@ -303,7 +304,7 @@ Patches submitted to the codebase in form of pull requests are generally reviewe
 and most are often accepted. If you find your contribution to take longer
 than *usual* to be merged, it's possible that the proposed changeset violates one or more of the following principles:
 
-- The patch intends to fix a supposed problem and yet provides no automated, reproducible, verifiable way for one to verify the issue other than anecdotal, descriptive, manual evidence.
+- **IMPORTANT**: The patch intends to fix a supposed problem and yet provides no automated, reproducible, verifiable way for one to **reproduce and verify** the issue other than anecdotal, descriptive, manual evidence.
 - The patch fails to pass automated unit or integration tests.
 - The patch fails to adhere to the project's styling guidelines.
 - The patch fails to provide adequate unit or integration tests for the proposed changes.
@@ -312,7 +313,7 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch modifies system behavior without consensus, collective feedback or internal validation as unit or integration tests.
 - The patch modifies a large number files, more than one could practically review in a timely manner.
 - The patch presents a feature or behavior that is deemed too specialized or custom with unwarranted assumptions.
-- The patch introduces (i.e. formatting) changes that are not related to the proposal's objective.
+- The patch introduces too many (i.e. formatting) changes that are not related to the proposal's objective.
 - The patch violates the general design principles of the codebase or introduces inconsistent/contradictory concepts that are difficult to maintain.
 
 <div class="alert alert-success">
