@@ -57,6 +57,7 @@ public class CasReentrantLock {
                 return supplier.get();
             } catch (final Throwable e) {
                 LoggingUtils.error(LOGGER, e);
+                throw new RuntimeException(e);
             } finally {
                 unlock();
             }
@@ -78,6 +79,7 @@ public class CasReentrantLock {
                 consumer.accept(null);
             } catch (final Throwable e) {
                 LoggingUtils.error(LOGGER, e);
+                throw new RuntimeException(e);
             } finally {
                 unlock();
             }
