@@ -43,7 +43,9 @@ public class OktaPrincipalProvisioner implements PrincipalProvisioner {
     protected boolean provision(final Credential credential, final Principal principal) {
         LOGGER.debug("Searching to find [{}]", principal.getId());
         val existingUser = oktaClient.getUser(principal.getId());
-        return existingUser == null || existingUser.getProfile().isEmpty() ? createUser(principal, credential) : updateUser(existingUser, principal);
+        return (existingUser == null || existingUser.getProfile().isEmpty())
+            ? createUser(principal, credential)
+            : updateUser(existingUser, principal);
     }
 
     protected boolean updateUser(final User user, final Principal principal) {
