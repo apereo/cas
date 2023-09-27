@@ -26,7 +26,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
+import org.apereo.cas.util.MockRequestContext;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,9 +60,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         @Test
         void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
@@ -79,9 +77,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         @Test
         void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
@@ -91,9 +87,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         @Test
         void verifyActionAccepted() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
@@ -104,9 +98,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         @Test
         void verifyActionWithService() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
@@ -129,9 +121,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         @Test
         void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
