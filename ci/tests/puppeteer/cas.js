@@ -19,6 +19,7 @@ const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
 const jose = require('jose');
 const pino = require('pino');
+const xml2js = require('xml2js');
 
 const LOGGER = pino({
     level: "debug",
@@ -46,23 +47,28 @@ exports.browserOptions = (opt) => ({
 });
 
 exports.log = async(text, ...args) => {
-    LOGGER.debug(`👉 ${text}`, args);
+    await LOGGER.debug(`👉 ${text}`, args);
 };
 
 exports.logy = async (text) => {
-    LOGGER.warn(`🔥 ${colors.yellow(text)}`);
+    await LOGGER.warn(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
+    await LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    LOGGER.info(`✅ ${colors.green(text)}`);
+    await LOGGER.info(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    LOGGER.error(`🔴 ${colors.red(text)}`);
+    await LOGGER.error(`🔴 ${colors.red(text)}`);
+};
+
+exports.logPage = async(page) => {
+    const url = await page.url();
+    await this.log(`Page URL: ${url}`);
 };
 
 exports.removeDirectory = async (directory) => {
@@ -85,7 +91,8 @@ exports.click = async (page, button) => {
 };
 
 exports.asciiart = async (text) => {
-    await this.logb(figlet.textSync(text));
+    const art = figlet.textSync(text);
+    console.log(colors.blue(art));
 };
 
 exports.clickLast = async (page, button) => {
@@ -732,6 +739,24 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
+exports.gotoLogin = async(page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+    await this.goto(page, url);
+};
+
+exports.gotoLogout = async(page, port = 8443) => {
+    await this.goto(page, `https://localhost:${port}/cas/logout`);
+};
+
+exports.parseXML = async(xml, options = {}) => {
+    let parsedXML = undefined;
+    const parser = new xml2js.Parser(options);
+    await parser.parseString(xml, (err, result) => {
+        parsedXML = result;
+    });
+    return parsedXML;
+};
+
 exports.refreshContext = async (url = "https://localhost:8443/cas") => {
     this.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
@@ -744,59 +769,33 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
     this.log(response);
 };
 
-exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
+exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
     await page.waitForTimeout(12000);
-    if (type === "websdk") {
-        const frame = await page.waitForSelector("iframe#duo_iframe");
-        await this.screenshot(page);
-        const rect = await page.evaluate(el => {
-            const {x, y, width, height} = el.getBoundingClientRect();
-            return {x, y, width, height};
-        }, frame);
-        let x1 = rect.x + rect.width - 120;
-        let y1 = rect.y + rect.height - 160;
-        await page.mouse.click(x1, y1);
-        await this.screenshot(page);
-    } else {
-        await this.click(page, "button#passcode");
-    }
+    await this.click(page, "button#passcode");
     let bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
-    this.log(`Duo Security ${type}: Retrieved bypass codes ${bypassCodes}`);
-    if (type === "websdk") {
-        let bypassCode = String(bypassCodes[0]);
+    this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
+    let i = 0;
+    let error = false;
+    while (!error && i < bypassCodes.length) {
+        let bypassCode = `${String(bypassCodes[i])}`;
         await page.keyboard.sendCharacter(bypassCode);
         await this.screenshot(page);
         this.log(`Submitting Duo Security bypass code ${bypassCode}`);
-        await page.keyboard.down('Enter');
-        await page.keyboard.up('Enter');
+        await this.type(page, "input[name='passcode']", bypassCode);
         await this.screenshot(page);
-        this.log(`Waiting for Duo Security to accept bypass code for ${type}...`);
-        await page.waitForTimeout(15000);
-    } else {
-        let i = 0;
-        let error = false;
-        while (!error && i < bypassCodes.length) {
-            let bypassCode = `${String(bypassCodes[i])}`;
-            await page.keyboard.sendCharacter(bypassCode);
+        await this.pressEnter(page);
+        this.log(`Waiting for Duo Security to accept bypass code...`);
+        await page.waitForTimeout(10000);
+        let error = await this.isVisible(page, "div.message.error");
+        if (error) {
+            this.log(`Duo Security is unable to accept bypass code`);
             await this.screenshot(page);
-            this.log(`Submitting Duo Security bypass code ${bypassCode}`);
-            await this.type(page, "input[name='passcode']", bypassCode);
-            await this.screenshot(page);
-            await this.pressEnter(page);
-            this.log(`Waiting for Duo Security to accept bypass code...`);
-            await page.waitForTimeout(10000);
-            let error = await this.isVisible(page, "div.message.error");
-            if (error) {
-                this.log(`Duo Security is unable to accept bypass code`);
-                await this.screenshot(page);
-                i++;
-            } else {
-                this.log(`Duo Security accepted the bypass code ${bypassCode}`);
-                return;
-            }
+            i++;
+        } else {
+            this.log(`Duo Security accepted the bypass code ${bypassCode}`);
+            return;
         }
     }
 };
 
-console.clear();
 this.asciiart("Apereo CAS - Puppeteer");

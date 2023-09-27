@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -101,7 +100,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val authentication = authenticationResult.getAuthentication();
         var service = authenticationResult.getService();
         val clientInfo = ClientInfoHolder.getClientInfo();
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
             service = resolveServiceFromAuthenticationRequest(service);
@@ -145,7 +143,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(selectedService, registeredService));
 
                     val latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
-                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(latestAuthentication);
                     val principal = latestAuthentication.getPrincipal();
                     val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                         .registeredService(registeredService)
@@ -199,8 +196,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             new ServiceContext(service, registeredService));
 
         val authentication = proxyGrantingTicketObject.getRoot().getAuthentication();
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-
         return configurationContext.getLockRepository().execute(proxyGrantingTicketObject.getId(),
                 Unchecked.supplier(new CheckedSupplier<ProxyTicket>() {
                     @Override
@@ -317,7 +312,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
             val assertion = DefaultAssertionBuilder.builder()
                 .primaryAuthentication(finalAuthentication)
                 .originalAuthentication(authentication)
@@ -350,7 +344,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId,
                                                          final AuthenticationResult authenticationResult) throws Throwable {
 
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authenticationResult.getAuthentication());
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {

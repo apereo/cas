@@ -21,7 +21,7 @@ async function cleanUp() {
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(2000);
         await page.waitForSelector('#username', {visible: true});
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForTimeout(3000);
         await cas.log(`Page URL: ${page.url()}`);
         await cas.log("Fetching Scratch codes from /cas/actuator...");

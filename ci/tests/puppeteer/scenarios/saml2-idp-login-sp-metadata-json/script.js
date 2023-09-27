@@ -12,7 +12,7 @@ const assert = require("assert");
     await cas.goto(page, url);
     await cas.screenshot(page);
     await page.waitForTimeout(4000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     await cas.log(content);

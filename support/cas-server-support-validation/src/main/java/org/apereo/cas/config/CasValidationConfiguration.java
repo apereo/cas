@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -65,7 +66,6 @@ import org.springframework.web.servlet.View;
 import java.util.List;
 import java.util.Set;
 
-import static org.apereo.cas.validation.CasProtocolValidationSpecification.*;
 import static org.springframework.http.MediaType.*;
 
 /**

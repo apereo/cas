@@ -8,7 +8,7 @@ const assert = require('assert');
     const page = await cas.newPage(browser);
 
     await cas.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");

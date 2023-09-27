@@ -74,7 +74,7 @@ async function exchangeCode(page, code, successHandler) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth");
@@ -84,7 +84,7 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     });
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth");
@@ -94,12 +94,12 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     });
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth for existing SSO");
-    await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.gotoLogin(page);
+    await cas.loginWith(page);
 
     code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, idToken => {

@@ -3,11 +3,11 @@ const cas = require('../../cas.js');
 const assert = require('assert');
 
 async function loginWithToken(page, service, token) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}&token=${token}`);
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 }
@@ -20,7 +20,7 @@ async function loginWithToken(page, service, token) {
     const page = await cas.newPage(browser);
     await loginWithToken(page, service, token);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);

@@ -14,9 +14,6 @@ env:
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_IKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_IKEY }}
-  DUO_SECURITY_WEBSDK_SKEY: ${{ secrets.DUO_SECURITY_WEBSDK_SKEY }}
-  DUO_SECURITY_WEBSDK_IKEY: ${{ secrets.DUO_SECURITY_WEBSDK_IKEY }}
-  DUO_SECURITY_WEBSDK_AKEY: ${{ secrets.DUO_SECURITY_WEBSDK_AKEY }}
   DUO_SECURITY_API_HOST: ${{ secrets.DUO_SECURITY_API_HOST }}
   ADFS_HOST: ${{ secrets.ADFS_HOST }}
   ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
@@ -32,6 +29,7 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
@@ -70,7 +68,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -94,7 +92,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -125,7 +123,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -170,7 +168,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3

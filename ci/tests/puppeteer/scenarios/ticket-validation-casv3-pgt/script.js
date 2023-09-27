@@ -14,7 +14,7 @@ async function validateTicket(service, ticket, format = "JSON") {
     const service = "https://apereo.github.io";
 
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertTicketParameter(page);
     let body = await validateTicket(service, ticket);

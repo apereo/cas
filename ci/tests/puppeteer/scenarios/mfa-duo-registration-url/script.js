@@ -10,8 +10,8 @@ const assert = require('assert');
     await cas.loginWith(page, "unknown", "Mellon");
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(url);
     assert(url.startsWith("https://localhost:9859/anything/1"));
 
     let content = await cas.textContent(page, "body pre");

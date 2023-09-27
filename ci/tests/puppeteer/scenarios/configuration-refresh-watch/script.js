@@ -10,10 +10,10 @@ const path = require('path');
     const page = await cas.newPage(browser);
 
     await cas.log("Attempting to login with default credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "p@$$word");
     await cas.assertCookie(page);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     let configFilePath = path.join(__dirname, 'config.yml');
     const file = fs.readFileSync(configFilePath, 'utf8');
@@ -26,7 +26,7 @@ const path = require('path');
     await page.waitForTimeout(8000);
 
     await cas.log("Attempting to login with new updated credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casrefresh", "p@$$word");
     await cas.assertCookie(page);
 

@@ -2,9 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +26,10 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
 
     /**
      * Grant a ServiceTicket for a specific service.
+     * <p>The state of the ticket is affected by this operation and the
+     * ticket will be considered used. The state update subsequently may
+     * impact the ticket expiration policy in that, depending on the policy
+     * configuration, the ticket may be considered expired.
      *
      * @param id                 The unique identifier for this ticket.
      * @param service            The service for which we are granting a ticket

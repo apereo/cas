@@ -101,6 +101,8 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
+    private boolean isSkipGeneratingResponseInResponseTo;
+
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
     private boolean skipGeneratingSubjectConfirmationRecipient;

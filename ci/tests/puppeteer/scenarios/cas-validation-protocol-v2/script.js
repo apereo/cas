@@ -28,7 +28,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "http://localhost:8080");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     await browser.close();
     await process.exit(0);

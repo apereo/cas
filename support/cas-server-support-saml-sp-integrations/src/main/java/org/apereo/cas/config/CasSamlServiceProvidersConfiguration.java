@@ -74,10 +74,10 @@ public class CasSamlServiceProvidersConfiguration {
         return () -> {
             val preloadMetadata = (Function<SamlRegisteredService, Void>) service -> {
                 LOGGER.info("Launching background thread to load the metadata. This might take a while...");
-                new Thread(() -> {
+                Thread.startVirtualThread(() -> {
                     LOGGER.debug("Loading metadata at [{}]...", service.getMetadataLocation());
                     samlRegisteredServiceCachingMetadataResolver.resolve(service, new CriteriaSet());
-                }, getClass().getSimpleName()).start();
+                });
                 return null;
             };
 

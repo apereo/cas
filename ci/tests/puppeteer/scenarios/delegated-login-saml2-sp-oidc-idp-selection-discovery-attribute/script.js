@@ -11,7 +11,7 @@ const assert = require("assert");
 
 async function startWithCasSp(page) {
     const service = "https://apereo.github.io";
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.assertVisibility(page, '#selectProviderButton');
@@ -21,7 +21,7 @@ async function startWithCasSp(page) {
     
     await cas.submitForm(page, "#discoverySelectionForm");
     await page.waitForTimeout(2000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);

@@ -25,7 +25,7 @@ async function impersonatePreSelected(page, browser) {
     await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await page.waitForTimeout(2000);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }
 
 async function impersonateWithMenu(page, browser) {
@@ -47,7 +47,7 @@ async function impersonateWithMenu(page, browser) {
     await page.waitForTimeout(1000);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged in");
     await page.waitForTimeout(2000);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }
 
 (async () => {

@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     const service = "https://google.com";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(500);
 
     await cas.log("Select mfa-gauth");

@@ -12,9 +12,9 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     await cas.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let entityId = "https://localhost:9859/shibboleth";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";

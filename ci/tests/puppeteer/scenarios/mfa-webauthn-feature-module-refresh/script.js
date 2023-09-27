@@ -10,7 +10,7 @@ const path = require("path");
     const page = await cas.newPage(browser);
     let url = "https://localhost:8443/cas/login?authn_method=mfa-webauthn";
     await cas.goto(page, url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
@@ -24,9 +24,9 @@ const path = require("path");
         await cas.refreshContext();
         await page.waitForTimeout(2000);
 
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.gotoLogout(page);
         await cas.goto(page, url);
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForTimeout(4000);
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 

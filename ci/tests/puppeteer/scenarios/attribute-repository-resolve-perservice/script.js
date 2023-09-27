@@ -19,9 +19,9 @@ const path = require("path");
     const service = "https://apereo.github.io";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     let ticket = await cas.assertTicketParameter(page);
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     await cas.log(body);

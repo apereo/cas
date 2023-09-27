@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -58,7 +57,6 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
             return success();
         }
 
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
         val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
         if (deviceBean.isEmpty()) {
             LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");

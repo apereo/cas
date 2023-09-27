@@ -63,7 +63,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             throw error;
         });
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }
 
 (async () => {

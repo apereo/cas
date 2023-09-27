@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import groovy.lang.Binding;
 import groovy.lang.Script;
 import lombok.Getter;
@@ -8,8 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This is {@link GroovyShellScript}.
@@ -21,9 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
-    private static final int LOCK_TIMEOUT_SECONDS = 3;
 
-    private final ReentrantLock lock = new ReentrantLock(true);
+    private final CasReentrantLock lock = new CasReentrantLock();
     private final Script groovyScript;
     private final String script;
 
@@ -44,7 +42,7 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
-        if (lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+        if (lock.tryLock()) {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
                 val binding = BINDING_THREAD_LOCAL.get();
@@ -66,8 +64,6 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
                 LOGGER.trace("Completed script execution [{}]", this);
                 lock.unlock();
             }
-        } else {
-            LOGGER.error("Unable to obtain lock after [{}] seconds to execute Groovy script [{}]", LOCK_TIMEOUT_SECONDS, this);
         }
         return null;
     }

@@ -15,7 +15,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
-
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.AttributeIndex;
@@ -26,7 +26,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +50,8 @@ import java.util.stream.Stream;
 @Getter
 public abstract class AbstractServicesManager implements ServicesManager {
     protected final ServicesManagerConfigurationContext configurationContext;
+
+    private final CasReentrantLock lock = new CasReentrantLock();
 
     private final IndexedCollection<RegisteredService> indexedRegisteredServices;
 
@@ -88,24 +89,19 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
-        if (StringUtils.isBlank(registeredService.getName())
-            || StringUtils.isBlank(registeredService.getServiceId())
-            || StringUtils.isBlank(registeredService.getFriendlyName())) {
-            throw new IllegalArgumentException("Unable to save invalid registered service with id " + registeredService.getId()
-                                               + ". Service name, service id or friendly name are undefined");
-        }
+    public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
+        return lock.tryLock(() -> {
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
+            val savedService = configurationContext.getServiceRegistry().save(registeredService);
+            cacheRegisteredService(savedService);
+            saveInternal(registeredService);
 
-        val clientInfo = ClientInfoHolder.getClientInfo();
-        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
-        val savedService = configurationContext.getServiceRegistry().save(registeredService);
-        cacheRegisteredService(savedService);
-        saveInternal(registeredService);
-
-        if (publishEvent) {
-            publishEvent(new CasRegisteredServiceSavedEvent(this, savedService, clientInfo));
-        }
-        return savedService;
+            if (publishEvent) {
+                publishEvent(new CasRegisteredServiceSavedEvent(this, savedService, clientInfo));
+            }
+            return savedService;
+        });
     }
 
     @Override
@@ -127,30 +123,36 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public synchronized void deleteAll() {
-        configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
-        configurationContext.getServicesCache().invalidateAll();
-        val clientInfo = ClientInfoHolder.getClientInfo();
-        publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));
-    }
-
-    @Override
-    public synchronized RegisteredService delete(final long id) {
-        val service = findServiceBy(id);
-        return delete(service);
-    }
-
-    @Override
-    public synchronized RegisteredService delete(final RegisteredService service) {
-        if (service != null) {
+    public void deleteAll() {
+        lock.tryLock(__ -> {
+            configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
+            configurationContext.getServicesCache().invalidateAll();
             val clientInfo = ClientInfoHolder.getClientInfo();
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
-            configurationContext.getServiceRegistry().delete(service);
-            configurationContext.getServicesCache().invalidate(service.getId());
-            deleteInternal(service);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
-        }
-        return service;
+            publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));
+        });
+    }
+
+    @Override
+    public RegisteredService delete(final long id) {
+        return lock.tryLock(() -> {
+            val service = findServiceBy(id);
+            return delete(service);
+        });
+    }
+
+    @Override
+    public RegisteredService delete(final RegisteredService service) {
+        return lock.tryLock(() -> {
+            if (service != null) {
+                val clientInfo = ClientInfoHolder.getClientInfo();
+                publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
+                configurationContext.getServiceRegistry().delete(service);
+                configurationContext.getServicesCache().invalidate(service.getId());
+                deleteInternal(service);
+                publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
+            }
+            return service;
+        });
     }
 
     @Override
@@ -220,7 +222,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public RegisteredService findServiceBy(final long id) {
         val result = configurationContext.getServicesCache().get(id,
-            k -> configurationContext.getServiceRegistry().findServiceById(id));
+            __ -> configurationContext.getServiceRegistry().findServiceById(id));
         return validateRegisteredService(result);
     }
 
@@ -320,32 +322,34 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * to minimize chances of failures.
      */
     @Override
-    public synchronized Collection<RegisteredService> load() {
-        LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
-        val servicesMap = configurationContext.getServiceRegistry()
-            .load()
-            .stream()
-            .filter(this::supports)
-            .filter(this::validateAndFilterServiceByEnvironment)
-            .peek(this::loadInternal)
-            .filter(Objects::nonNull)
-            .map(this::applyTemplate)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toMap(service -> {
-                LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
-                    service.getServiceId(), service.getName(), service.getId());
-                return service.getId();
-            }, Function.identity(), (__, service) -> service));
-        cacheRegisteredServices(servicesMap);
-        loadInternal();
-        val clientInfo = ClientInfoHolder.getClientInfo();
-        publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
-        evaluateExpiredServiceDefinitions();
+    public Collection<RegisteredService> load() {
+        return lock.tryLock(() -> {
+            LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
+            val servicesMap = configurationContext.getServiceRegistry()
+                .load()
+                .stream()
+                .filter(this::supports)
+                .filter(this::validateAndFilterServiceByEnvironment)
+                .peek(this::loadInternal)
+                .filter(Objects::nonNull)
+                .map(this::applyTemplate)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(service -> {
+                    LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
+                        service.getServiceId(), service.getName(), service.getId());
+                    return service.getId();
+                }, Function.identity(), (__, service) -> service));
+            cacheRegisteredServices(servicesMap);
+            loadInternal();
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
+            evaluateExpiredServiceDefinitions();
 
-        val results = configurationContext.getServicesCache().asMap();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", results.size(),
-            configurationContext.getServiceRegistry().getName());
-        return results.values();
+            val results = configurationContext.getServicesCache().asMap();
+            LOGGER.info("Loaded [{}] service(s) from [{}].", results.size(),
+                configurationContext.getServiceRegistry().getName());
+            return results.values();
+        });
     }
 
     private Map<Long, RegisteredService> cacheRegisteredServices(final Map<Long, RegisteredService> servicesMap) {

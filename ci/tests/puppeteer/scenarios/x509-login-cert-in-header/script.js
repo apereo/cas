@@ -30,13 +30,13 @@ const fs = require('fs');
         request.continue(data);
     });
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com");
+    await cas.gotoLogin(page, "https://github.com");
     await page.waitForTimeout(5000);
     await assertFailure(page);
     await browser.close();

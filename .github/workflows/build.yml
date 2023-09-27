@@ -1,8 +1,8 @@
 name: Build
 
 env:
-  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
-  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -12,6 +12,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   JDK_CURRENT: 21
   JDK_LATEST: 21
+  JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
 
@@ -45,7 +46,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -70,7 +71,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: "zulu"
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -104,7 +105,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_LATEST }}
-          distribution: 'zulu'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -133,7 +134,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
-          components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'

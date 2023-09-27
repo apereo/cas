@@ -36,6 +36,7 @@ import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
+import org.opensaml.xmlsec.AlgorithmPolicyConfiguration;
 import org.opensaml.xmlsec.DecryptionParameters;
 import org.opensaml.xmlsec.EncryptionParameters;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
@@ -48,7 +49,6 @@ import org.opensaml.xmlsec.encryption.support.EncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver;
-import org.opensaml.xmlsec.impl.BasicAlgorithmPolicyConfiguration;
 import org.opensaml.xmlsec.impl.BasicDecryptionConfiguration;
 import org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver;
 import org.opensaml.xmlsec.impl.BasicEncryptionConfiguration;
@@ -408,7 +408,7 @@ public class SamlIdPObjectEncrypter {
         LOGGER.trace("Finalized encryption allowed algorithms: [{}]", config.getIncludedAlgorithms());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
-            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
+            val precedence = AlgorithmPolicyConfiguration.Precedence.valueOf(
                 service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
@@ -526,7 +526,7 @@ public class SamlIdPObjectEncrypter {
         LOGGER.trace("Finalized decryption allowed algorithms: [{}]", config.getIncludedAlgorithms());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
-            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
+            val precedence = AlgorithmPolicyConfiguration.Precedence.valueOf(
                 service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }

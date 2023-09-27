@@ -2,7 +2,6 @@ package org.apereo.cas.logging;
 
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -26,7 +25,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
@@ -229,12 +227,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                                                     @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
                                                     @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
                                                     @PluginElement("Layout") final Layout<Serializable> layout,
-                                                    @PluginAttribute("createIfNeeded")
-                                                        final String createIfNeeded,
-                                                    @PluginAttribute("createLogGroupIfNeeded")
-                                                        final String createLogGroupIfNeeded,
-                                                    @PluginAttribute("createLogStreamIfNeeded")
-                                                        final String createLogStreamIfNeeded) {
+                                                    @PluginAttribute("createIfNeeded") final String createIfNeeded,
+                                                    @PluginAttribute("createLogGroupIfNeeded") final String createLogGroupIfNeeded,
+                                                    @PluginAttribute("createLogStreamIfNeeded") final String createLogStreamIfNeeded) {
         return new CloudWatchAppender(
             name,
             endpoint,
@@ -272,33 +267,34 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
     @Override
     public void start() {
         super.start();
-        this.deliveryThread = new Thread(() -> {
-            while (!shutdown) {
-                try {
-                    flush();
-                } catch (final Exception e) {
-                    org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
-                }
-                if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {
+        this.deliveryThread = Thread.ofVirtual()
+            .name("CloudWatchAppenderDeliveryThread")
+            .start(() -> {
+                while (!shutdown) {
                     try {
-                        synchronized (monitor) {
-                            monitor.wait(flushPeriodMillis);
-                        }
-                    } catch (final InterruptedException e) {
+                        flush();
+                    } catch (final Exception e) {
                         org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
-                        Thread.currentThread().interrupt();
+                    }
+                    if (!shutdown && queue.size() < AWS_DRAIN_LIMIT) {
+                        try {
+                            synchronized (monitor) {
+                                monitor.wait(flushPeriodMillis);
+                            }
+                        } catch (final InterruptedException e) {
+                            org.apereo.cas.util.LoggingUtils.error(LOGGER, e);
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
-            }
 
-            while (!queue.isEmpty()) {
-                flush();
-            }
-        }, "CloudWatchAppenderDeliveryThread");
+                while (!queue.isEmpty()) {
+                    flush();
+                }
+            });
         if (StringUtils.isBlank(this.sequenceTokenCache)) {
             this.sequenceTokenCache = createLogGroupAndLogStreamIfNeeded();
         }
-        deliveryThread.start();
     }
 
     @Override

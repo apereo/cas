@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
@@ -49,8 +48,6 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                 val target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
                 LOGGER.debug("Located surrogate target as [{}]", target);
                 if (StringUtils.isNotBlank(target)) {
-                    val currentAuth = WebUtils.getAuthentication(requestContext);
-                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(currentAuth);
                     resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, target);
                     val registeredService = WebUtils.getRegisteredService(requestContext);
                     val builder = WebUtils.getAuthenticationResultBuilder(requestContext);

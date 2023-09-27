@@ -86,7 +86,6 @@ class DuoSecurityPrepareWebLoginFormActionTests {
             val duoService = mock(DuoSecurityAuthenticationService.class);
             when(duoService.getProperties()).thenReturn(
                 new DuoSecurityMultifactorAuthenticationProperties()
-                    .setDuoApplicationKey(UUID.randomUUID().toString())
                     .setDuoApiHost("theapi.duosecurity.com")
                     .setDuoIntegrationKey(UUID.randomUUID().toString())
                     .setDuoSecretKey(UUID.randomUUID().toString()));

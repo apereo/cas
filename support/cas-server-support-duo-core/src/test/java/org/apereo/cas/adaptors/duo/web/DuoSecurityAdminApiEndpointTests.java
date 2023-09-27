@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.web;
 
-import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationService;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
@@ -10,7 +10,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
+import com.duosecurity.Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -28,12 +28,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -69,8 +67,8 @@ class DuoSecurityAdminApiEndpointTests {
             .setDuoApiHost("localhost:8443")
             .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
             .setDuoAdminSecretKey(UUID.randomUUID().toString());
-        val duoService = new BasicDuoSecurityAuthenticationService(props, httpClient,
-            List.of(), Caffeine.newBuilder().build());
+        val duoService = new UniversalPromptDuoSecurityAuthenticationService(props, httpClient,
+            mock(Client.class), List.of(), Caffeine.newBuilder().build());
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);

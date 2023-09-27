@@ -11,7 +11,7 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.attribute-repository.stub.attributes.cn=CasSSO",

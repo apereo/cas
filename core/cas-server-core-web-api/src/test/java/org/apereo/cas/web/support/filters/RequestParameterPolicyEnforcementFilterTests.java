@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
@@ -43,12 +42,7 @@ class RequestParameterPolicyEnforcementFilterTests {
 
         RequestParameterPolicyEnforcementFilter.checkOnlyPostParameters(method, parameterMap, onlyPostParameters);
     }
-
-    @BeforeEach
-    public void setup() {
-        AbstractSecurityFilter.setThrowOnErrors(true);
-    }
-
+    
     @Test
     void verifyParseFails() throws Throwable {
         RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(Set.of(), Set.of(), Map.of());
@@ -80,24 +74,7 @@ class RequestParameterPolicyEnforcementFilterTests {
         filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
-
-    @Test
-    void verifySettingFailSafeTrueFromInitParam() throws Throwable {
-        val filter = new RequestParameterPolicyEnforcementFilter();
-        val filterConfig = new MockFilterConfig();
-        filterConfig.addInitParameter(AbstractSecurityFilter.THROW_ON_ERROR, "true");
-        filter.init(filterConfig);
-        assertTrue(AbstractSecurityFilter.isThrowOnErrors());
-    }
-
-    @Test
-    void verifySettingFailSafeFalseFromInitParam() throws Throwable {
-        val filter = new RequestParameterPolicyEnforcementFilter();
-        val filterConfig = new MockFilterConfig();
-        filterConfig.addInitParameter(AbstractSecurityFilter.THROW_ON_ERROR, "false");
-        filter.init(filterConfig);
-        assertFalse(AbstractSecurityFilter.isThrowOnErrors());
-    }
+    
 
     @Test
     void verifyRejectsMultiValuedRequestParameter() throws Throwable {

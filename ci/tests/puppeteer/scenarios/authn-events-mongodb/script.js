@@ -16,14 +16,14 @@ const fs = require('fs');
 
     const totalAttempts = 10;
     for (let i = 1; i <= totalAttempts; i++) {
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         let user = (Math.random() + 1).toString(36).substring(4);
         let password = (Math.random() + 1).toString(36).substring(4);
         await cas.loginWith(page, user, password);
         await page.waitForTimeout(1000);
     }
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
 

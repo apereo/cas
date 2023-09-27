@@ -26,6 +26,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.BrowserSessionStorage;
@@ -35,7 +36,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -80,31 +80,20 @@ import java.util.Optional;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractSamlIdPProfileHandlerController {
+
     /**
      * SAML profile configuration context.
      */
     protected final SamlProfileHandlerConfigurationContext configurationContext;
 
-    /**
-     * Log cas validation assertion.
-     *
-     * @param assertion the assertion
-     */
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     protected static void logCasValidationAssertion(final TicketValidator.ValidationResult assertion) {
         LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal());
         LOGGER.debug("CAS Assertion Authentication Attributes: [{}]", assertion.getAttributes());
         LOGGER.debug("CAS Assertion Service: [{}]", assertion.getService());
     }
 
-    /**
-     * Bind relay state parameter.
-     *
-     * @param request      the request
-     * @param response     the response
-     * @param authnContext the authn context
-     * @param relayState   the relay state
-     * @return the message context
-     */
     protected static MessageContext bindRelayStateParameter(final HttpServletRequest request,
                                                             final HttpServletResponse response,
                                                             final Pair<? extends RequestAbstractType, MessageContext> authnContext,
@@ -127,13 +116,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
 
-    /**
-     * Gets saml metadata adaptor for service.
-     *
-     * @param registeredService the registered service
-     * @param authnRequest      the authn request
-     * @return the saml metadata adaptor for service
-     */
     protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService,
         final RequestAbstractType authnRequest) {
@@ -141,25 +123,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
     }
 
-    /**
-     * Gets saml metadata adaptor for service.
-     *
-     * @param registeredService the registered service
-     * @param entityId          the entity id
-     * @return the saml metadata adaptor for service
-     */
     protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService, final String entityId) {
         return SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId);
     }
 
-    /**
-     * Gets registered service and verify.
-     *
-     * @param serviceId the service id
-     * @return the registered service and verify
-     */
     protected SamlRegisteredService verifySamlRegisteredService(final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
@@ -210,14 +179,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .build();
     }
 
-    /**
-     * Build cas assertion.
-     *
-     * @param principal         the principal
-     * @param registeredService the registered service
-     * @param attributes        the attributes
-     * @return the assertion
-     */
     protected AuthenticatedAssertionContext buildCasAssertion(final String principal,
                                                               final RegisteredService registeredService,
                                                               final Map<String, Object> attributes) {
@@ -227,15 +188,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .build();
     }
 
-    /**
-     * Redirect request for authentication.
-     *
-     * @param pair     the pair
-     * @param request  the request
-     * @param response the response
-     * @return the model and view
-     * @throws Exception the exception
-     */
     protected ModelAndView issueAuthenticationRequestRedirect(
         final Pair<? extends SignableSAMLObject, MessageContext> pair,
         final HttpServletRequest request,
@@ -274,15 +226,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
-    /**
-     * Construct service url string.
-     *
-     * @param request  the request
-     * @param response the response
-     * @param pair     the pair
-     * @return the string
-     * @throws Exception the exception
-     */
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
                                          final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
@@ -295,15 +238,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return url;
     }
 
-    /**
-     * Initiate authentication request.
-     *
-     * @param pair     the pair
-     * @param response the response
-     * @param request  the request
-     * @return the model and view
-     * @throws Throwable the throwable
-     */
     protected ModelAndView initiateAuthenticationRequest(final Pair<? extends RequestAbstractType, MessageContext> pair,
                                                          final HttpServletResponse response,
                                                          final HttpServletRequest request) throws Throwable {
@@ -317,18 +251,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return null;
     }
 
-    /**
-     * Build response based single sign on session.
-     * The http response before encoding the SAML response is reset
-     * to ensure a clean slate from previous attempts, specially
-     * when requests/responses are produced rapidly.
-     *
-     * @param context              the pair
-     * @param ticketGrantingTicket the authentication
-     * @param request              the request
-     * @param response             the response
-     * @throws Exception the exception
-     */
     protected void buildResponseBasedSingleSignOnSession(
         final Pair<? extends RequestAbstractType, MessageContext> context,
         final TicketGrantingTicket ticketGrantingTicket,
@@ -365,7 +287,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         getConfigurationContext().getTicketRegistry().updateTicket(ticketGrantingTicket);
         buildSamlResponse(response, request, authenticationContext, Optional.of(assertion), binding);
     }
-
 
     protected XMLObject buildSamlResponse(final HttpServletResponse response,
                                           final HttpServletRequest request,
@@ -472,16 +393,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return Pair.of(registeredService, facade);
     }
 
-    /**
-     * Verify authentication context signature.
-     *
-     * @param authenticationContext the authentication context
-     * @param request               the request
-     * @param authnRequest          the authn request
-     * @param adaptor               the adaptor
-     * @param registeredService     the registered service
-     * @throws Exception the exception
-     */
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor,
@@ -490,16 +401,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
     }
 
-    /**
-     * Verify authentication context signature.
-     *
-     * @param ctx               the authentication context
-     * @param request           the request
-     * @param authnRequest      the authn request
-     * @param adaptor           the adaptor
-     * @param registeredService the registered service
-     * @throws Exception the exception
-     */
     protected void verifyAuthenticationContextSignature(final MessageContext ctx,
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
@@ -592,26 +493,28 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }, WebUtils::produceErrorView).get();
     }
 
-    @Synchronized
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
         final HttpServletResponse response, final HttpServletRequest request) {
-        LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        val webContext = new JEEContext(request, response);
-        return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
-            .fetch(webContext, AuthnRequest.class)
-            .orElseThrow(() -> new IllegalArgumentException("""
+        return lock.tryLock(() -> {
+            LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
+            val webContext = new JEEContext(request, response);
+            return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
+                .fetch(webContext, AuthnRequest.class)
+                .orElseThrow(() -> new IllegalArgumentException("""
                 SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
                 request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
                 running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
                 """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
+        });
     }
 
-    @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
-        val webContext = new JEEContext(request, response);
-        SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
-            configurationContext.getSessionStore()).store(webContext, context);
+        lock.tryLock(__ -> {
+            val webContext = new JEEContext(request, response);
+            SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
+                configurationContext.getSessionStore()).store(webContext, context);
+        });
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {

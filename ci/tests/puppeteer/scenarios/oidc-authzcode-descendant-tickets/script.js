@@ -10,7 +10,7 @@ async function fetchCode(page) {
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
@@ -103,7 +103,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
 
 
     await cas.logg("Logging out, removing all tokens...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     try {
         await exchangeCode(page, code, "client");
         throw `Request should not pass; ${code} is expired`

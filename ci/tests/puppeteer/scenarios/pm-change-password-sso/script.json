@@ -7,7 +7,7 @@
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
     "--cas.authn.pm.reset.security-questions-enabled=false",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

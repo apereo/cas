@@ -33,7 +33,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This is {@link SamlIdPSingleLogoutRedirectionStrategy}.
@@ -58,19 +57,18 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         if (registeredService instanceof final SamlRegisteredService samlRegisteredService) {
             val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
             val sloRequest = WebUtils.getSingleLogoutRequest(request);
-            val async = new AtomicBoolean(false);
-
+            var async = false;
             if (StringUtils.isNotBlank(sloRequest)) {
-                async.set(getLogoutRequest(request)
+                async = getLogoutRequest(request)
                     .map(RequestAbstractType::getExtensions)
                     .stream()
                     .filter(Objects::nonNull)
-                    .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()));
+                    .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty());
             }
             return logout.isSendLogoutResponse()
                    && samlRegisteredService.isLogoutResponseEnabled()
                    && sloRequest != null
-                   && !async.get();
+                   && !async;
         }
         return false;
     }
