@@ -49,7 +49,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
     await page.waitForTimeout(500);
     await cas.loginWith(page);
-    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]");
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm-mfa-gauth]");
     await page.waitForTimeout(500);
 
     scratch = await cas.fetchGoogleAuthenticatorScratchCode();

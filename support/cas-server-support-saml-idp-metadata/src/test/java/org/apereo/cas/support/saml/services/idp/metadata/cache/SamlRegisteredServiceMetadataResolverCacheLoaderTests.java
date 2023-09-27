@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -68,7 +69,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         service.setServiceId("https://example.org/saml");
         service.setMetadataLocation("${#systemProperties['EMPTY_SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
-        assertThrows(SamlException.class, () -> loader.load(key));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> loader.load(key));
     }
 
     private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader() throws Throwable {
