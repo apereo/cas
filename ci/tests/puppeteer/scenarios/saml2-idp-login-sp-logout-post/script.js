@@ -16,7 +16,7 @@ async function getActuatorEndpoint(entityId) {
     const service = "https://localhost:9859/anything/cas";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertTicketParameter(page);
     await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
@@ -34,8 +34,8 @@ async function getActuatorEndpoint(entityId) {
     
     await cas.goto(page, `file://${sloFile}`);
     await page.waitForTimeout(4000);
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(`Page URL: ${url}`);
     assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

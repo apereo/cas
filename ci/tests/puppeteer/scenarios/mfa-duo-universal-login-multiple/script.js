@@ -18,7 +18,7 @@ const assert = require("assert");
 })();
 
 async function login(page, providerId, service = undefined) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
@@ -33,7 +33,7 @@ async function login(page, providerId, service = undefined) {
     if (service !== undefined) {
         await page.waitForTimeout(4000);
         const url = await page.url();
-        await cas.log(`Page url: ${url}`);
+        await cas.logPage(page);
         let ticket = await cas.assertTicketParameter(page);
         let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.log(body);

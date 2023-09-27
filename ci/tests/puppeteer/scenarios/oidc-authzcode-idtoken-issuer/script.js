@@ -7,7 +7,7 @@ async function testService(page, clientId, oidc = true) {
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile&redirect_uri=https://apereo.github.io`;
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {

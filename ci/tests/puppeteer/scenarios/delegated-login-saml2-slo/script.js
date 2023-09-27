@@ -6,7 +6,7 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
 
     await cas.click(page, "li #SAML2Client");
@@ -23,10 +23,9 @@ const path = require('path');
     await cas.goto(page, "https://localhost:8443/cas/logout?service=https://apereo.github.io");
     await page.waitForTimeout(6000);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
-    let url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await cas.assertCookie(page, false);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

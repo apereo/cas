@@ -26,7 +26,7 @@ async function cleanUp() {
             await cas.loginWith(page, "user1", "password");
             await page.waitForTimeout(5000);
             await cas.log("Checking for page URL...");
-            await cas.log(await page.url());
+            await cas.logPage(page);
             await page.waitForTimeout(4000);
             await cas.assertInnerText(page, "#principal", "user1@example.com");
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa")

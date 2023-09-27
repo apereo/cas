@@ -13,7 +13,7 @@ const assert = require("assert");
 
     await cas.log(`Browsing to ${url}`);
     await cas.goto(page, url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");

@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'de'
     });
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     await browser.close();

@@ -7,7 +7,7 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
@@ -27,11 +27,11 @@ const path = require('path');
     await page.waitForTimeout(2000);
 
     await cas.log("Checking for page URL...");
-    await cas.log(await page.url());
+    await cas.logPage(page);
     await page.waitForTimeout(2000);
 
     await cas.log("Allowing release of scopes and claims...");
-    await cas.log(await page.url());
+    await cas.logPage(page);
     
     let result = new URL(page.url());
     await cas.log(result.searchParams.toString());

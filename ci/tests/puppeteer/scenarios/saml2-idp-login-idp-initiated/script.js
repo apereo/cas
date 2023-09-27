@@ -23,7 +23,7 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.goto(page, url);
     await cas.screenshot(page);
     await page.waitForTimeout(4000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(4000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

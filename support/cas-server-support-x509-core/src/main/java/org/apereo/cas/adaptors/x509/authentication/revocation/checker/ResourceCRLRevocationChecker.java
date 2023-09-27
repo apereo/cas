@@ -45,7 +45,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     /**
      * Executor responsible for refreshing CRL data.
      */
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
     /**
      * CRL refresh interval in seconds.

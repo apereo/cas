@@ -31,3 +31,10 @@ ideas, feature requests and bug fixes. See [mailing lists](https://apereo.github
 
 Do not submit pull requests without tests that verify or reproduce your intended use case. The pull request will
 most likely be automatically closed immediately, unless the change is extremely trivial. 
+
+If your change-set introduces a new CAS feature or improvement, please consider starting discussion with the 
+project to see if your patch can be accepted and maintained by project owners and maintainers. Unless your change is 
+extremely trivial and has been through proper review and is sponsored by a project maintainer, please do not spend 
+time modifying code and configuration in a proposed pull request.
+
+For more information, please see [this page](https://apereo.github.io/cas/developer/Contributor-Guidelines.html).

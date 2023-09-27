@@ -55,9 +55,8 @@ import static org.mockito.Mockito.*;
 })
 @TestPropertySource(properties = {
     "CasFeatureModule.AccountManagement.enabled=true",
-    "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-    "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-    "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+    "cas.authn.mfa.duo[0].duo-secret-key=cGKL1OndjtknbmVOWaFmisaghiNFEKXHxgXCJEBr",
+    "cas.authn.mfa.duo[0].duo-integration-key=DIZXVRQD3OMZ6XXMNFQ9",
     "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
 })
 class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {

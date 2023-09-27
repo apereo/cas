@@ -6,7 +6,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
-import lombok.Synchronized;
 import lombok.val;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -99,7 +98,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @param beanId             the bean id
      * @return the t
      */
-    @Synchronized
     public static <T> T registerBeanIntoApplicationContext(final ConfigurableApplicationContext applicationContext,
                                                            final T beanInstance, final String beanId) {
         val beanFactory = applicationContext.getBeanFactory();

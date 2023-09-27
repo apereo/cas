@@ -63,4 +63,10 @@ public class OktaAuthenticationProperties extends BaseOktaProperties {
      * and the lifecycle in which it can be invoked or activated.
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
+
+    /**
+     * Provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private OktaPrincipalProvisioningProperties provisioning = new OktaPrincipalProvisioningProperties();
 }

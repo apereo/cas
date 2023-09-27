@@ -1,7 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.rest.BadRestRequestException;
@@ -88,7 +87,6 @@ public class ServiceTicketResource {
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             val service = Objects.requireNonNull(argumentExtractor.extractService(httpServletRequest),
                 "Target service/application is unspecified or unrecognized in the request");
             if (BooleanUtils.toBoolean(httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_RENEW))) {
@@ -114,8 +112,6 @@ public class ServiceTicketResource {
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            AuthenticationCredentialsThreadLocalBinder.clear();
         }
     }
 }

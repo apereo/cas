@@ -4,7 +4,7 @@
   "properties": [
     "--logging.level.org.apereo.cas=info",
     
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.ticket.crypto.enabled=true",
 
     "--cas.server.name=https://localhost:8443",

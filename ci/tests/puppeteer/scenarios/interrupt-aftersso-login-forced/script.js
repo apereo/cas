@@ -6,15 +6,15 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
 
     await cas.log("Service has disabled interrupt, but will establish single sign-on session");
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/get?nointerrupt");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.gotoLogin(page, "https://localhost:9859/get?nointerrupt");
+    await cas.loginWith(page);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
 
     await cas.log("Service has force-execution for interrupt; every attempt must force interrupt");
     for (let i = 1; i <= 3; i++) {
-        await cas.goto(page, "https://localhost:8443/cas/login?service=https://localhost:9859/get?interrupt-forced");
+        await cas.gotoLogin(page, "https://localhost:9859/get?interrupt-forced");
         await page.waitForTimeout(3000);
         await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
         await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
         await cas.submitForm(page, "#fm1");
         await page.waitForTimeout(3000);
         await cas.assertTicketParameter(page);
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await cas.assertCookie(page);
     }
     await browser.close();

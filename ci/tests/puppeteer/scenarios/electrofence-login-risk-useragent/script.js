@@ -8,7 +8,7 @@ const assert = require('assert');
     let service = "https://localhost:9859/anything/adaptive";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
 
     await cas.screenshot(page);
@@ -38,7 +38,7 @@ const assert = require('assert');
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
     const url = `${await page.url()}`;
-    await cas.log(`Page URL: ${url}`);
+    await cas.logPage(page);
     assert(url.includes(service));
     await cas.assertTicketParameter(page);
 

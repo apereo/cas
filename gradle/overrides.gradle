@@ -194,4 +194,8 @@ configurations.configureEach {
     exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+
+    exclude(group: "io.netty", module: "netty-transport-native-epoll")
+    exclude(group: "io.netty", module: "netty-transport-native-kqueue")
+    exclude(group: "io.netty", module: "netty-transport-native-unix-common")
 }

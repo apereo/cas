@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 async function startAuthFlow(page, username) {
     await cas.log("Removing previous sessions and logging out");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     await page.waitForTimeout(1000);
@@ -15,11 +15,11 @@ async function startAuthFlow(page, username) {
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url.startsWith("https://localhost:8444"));
     await page.waitForTimeout(1000);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(5000);
     await cas.log(`Page url: ${await page.url()}`);
     await cas.assertCookie(page);

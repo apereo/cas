@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
+    await cas.gotoLogin(page, "https://github.com/apereo/cas");
     await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, '#twitter-link');
@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000);
     const url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
     await cas.assertCookie(page, false);
 

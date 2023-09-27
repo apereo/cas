@@ -23,13 +23,14 @@
     "pino-pretty": "^10.0.0",
     "properties-reader": "^2.2.0",
     "ps-node": "^0.1.6",
-    "puppeteer": "^21.3.1",
+    "puppeteer": "^21.3.5",
     "puppeteer-loadtest": "^2.2.1",
     "puppeteer-screen-recorder": "^2.1.2",
     "qrcode-reader": "^1.0.4",
     "request": "^2.88.2",
     "sockjs-client": "^1.6.1",
     "wait-on": "^7.0.1",
+    "xml2js": "^0.6.2",
     "yaml": "^2.3.2"
   }
 }

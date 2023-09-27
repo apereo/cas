@@ -61,12 +61,7 @@ import java.util.Objects;
 @Slf4j
 @UtilityClass
 public class SamlUtils {
-    private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = new ThreadLocal<>() {
-        @Override
-        protected synchronized TransformerFactory initialValue() {
-            return TransformerFactory.newInstance();
-        }
-    };
+    private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = ThreadLocal.withInitial(TransformerFactory::newInstance);
 
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.

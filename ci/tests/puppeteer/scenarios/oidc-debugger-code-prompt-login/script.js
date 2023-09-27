@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
     await cas.log(`First attempt: navigating to ${url}`);
     await cas.goto(page, url);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");
@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
     
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 

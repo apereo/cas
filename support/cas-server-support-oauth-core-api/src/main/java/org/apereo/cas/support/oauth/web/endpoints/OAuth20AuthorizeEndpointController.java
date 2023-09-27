@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -166,7 +165,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         LOGGER.trace("Created OAuth authentication [{}] for service [{}]", authentication, service);
 
         try {
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)

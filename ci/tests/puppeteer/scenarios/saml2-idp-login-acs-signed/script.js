@@ -24,7 +24,7 @@ async function cleanUp() {
         await page.waitForTimeout(2000);
 
         await page.waitForSelector('#username', {visible: true});
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await page.waitForResponse(response => response.status() === 200);
         await page.waitForTimeout(3000);
         await cas.log(`Page URL: ${page.url()}`);
@@ -34,9 +34,9 @@ async function cleanUp() {
         await cas.log(payload);
         assert(payload.form.SAMLResponse !== null);
         await cas.log("Trying with an exising SSO session...");
-        await cas.goto(page, "https://localhost:8443/cas/logout");
-        await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.gotoLogout(page);
+        await cas.gotoLogin(page);
+        await cas.loginWith(page);
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);

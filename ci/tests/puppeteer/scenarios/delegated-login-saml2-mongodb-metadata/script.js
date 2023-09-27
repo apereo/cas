@@ -25,13 +25,13 @@ const assert = require('assert');
     await cas.assertCookie(page, true, "Pac4jCookie");
 
     await cas.log("Testing auto-redirection via configured cookie...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(3000);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
-    let url = await page.url();
-    await cas.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await page.waitForTimeout(3000);
+    let url = await page.url();
     assert(url.startsWith("http://localhost:9443/simplesaml/"));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
 
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -10,12 +9,10 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,30 +56,24 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             return true;
         }
 
-        val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        try {
-            val authentication = getTicketState(ssoRequest)
-                .map(AuthenticationAwareTicket.class::cast)
-                .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-            val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
-                .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-            val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-                .stream()
-                .filter(handler -> successfulHandlerNames.contains(handler.getName()))
-                .collect(Collectors.toSet());
-            LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
-            val criteria = authenticationPolicy.getCriteria();
-            return Optional.ofNullable(criteria)
-                .map(Unchecked.function(cri -> {
-                    val policy = criteria.toAuthenticationPolicy(registeredService);
-                    val result = policy.isSatisfiedBy(authentication, assertedHandlers,
-                        applicationContext, Optional.empty());
-                    return result.isSuccess();
-                })).orElse(true);
-        } finally {
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
-        }
+        val authentication = getTicketState(ssoRequest)
+            .map(AuthenticationAwareTicket.class::cast)
+            .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
+        val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
+            .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+            .stream()
+            .filter(handler -> successfulHandlerNames.contains(handler.getName()))
+            .collect(Collectors.toSet());
+        LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
+        val criteria = authenticationPolicy.getCriteria();
+        return Optional.ofNullable(criteria)
+            .map(Unchecked.function(cri -> {
+                val policy = criteria.toAuthenticationPolicy(registeredService);
+                val result = policy.isSatisfiedBy(authentication, assertedHandlers,
+                    applicationContext, Optional.empty());
+                return result.isSuccess();
+            })).orElse(true);
     }
 
     @Override

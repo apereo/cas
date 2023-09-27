@@ -9,10 +9,10 @@ const os = require("os");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://example.org");
+    await cas.gotoLogin(page, "https://example.org");
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:");
     await cas.assertTextContent(page, "#first-name", "first-name");

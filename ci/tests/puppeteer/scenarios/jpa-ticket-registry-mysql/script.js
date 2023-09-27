@@ -20,7 +20,7 @@ const YAML = require("yaml");
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    let response = await cas.goto(page, "https://localhost:8443/cas/login");
+    let response = await cas.gotoLogin(page);
     await page.waitForTimeout(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
@@ -31,10 +31,10 @@ const YAML = require("yaml");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
+    await cas.logPage(page);
     let url = await page.url();
-    await cas.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/logout");
 
     await page.waitForTimeout(1000);

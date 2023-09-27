@@ -4,11 +4,11 @@ const assert = require('assert');
 
 async function loginWithToken(page, service, token) {
     await cas.log(`Logging in with SSO token to service ${service}`);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}&token=${token}`);
     await page.waitForTimeout(1000);
     await cas.assertTicketParameter(page);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.logg("Login is successful");
@@ -18,7 +18,7 @@ async function loginWithToken(page, service, token) {
     const service = `https://apereo.github.io`;
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     await cas.log("Generating SSO token");
     const response = await cas.doRequest(`https://localhost:8443/cas/actuator/tokenAuth/casuser?service=${service}`,
@@ -32,7 +32,7 @@ async function loginWithToken(page, service, token) {
     await loginWithToken(page, service, body.token);
 
     await cas.log("Checking for SSO token in service validation response");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);

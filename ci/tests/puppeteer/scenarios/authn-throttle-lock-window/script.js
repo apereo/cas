@@ -15,20 +15,20 @@ const cas = require('../../cas.js');
 
     for (let i = 1; i <= 2; i++) {
         await cas.log(`Log in attempt should remain throttled: ${i}`);
-        await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.gotoLogin(page);
+        await cas.loginWith(page);
         await page.waitForTimeout(1000);
     }
     await page.waitForTimeout(3000);
-    await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.gotoLogin(page);
+    await cas.loginWith(page);
     await cas.assertCookie(page);
 
     await browser.close();
 })();
 
 async function submitLoginFailure(page) {
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "BadPassword1");
 }
 

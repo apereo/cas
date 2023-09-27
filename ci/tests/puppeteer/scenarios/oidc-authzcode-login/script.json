@@ -7,7 +7,7 @@
 
     "--logging.level.org.apereo.cas=info",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.stub.attributes.common-name=casuser",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",

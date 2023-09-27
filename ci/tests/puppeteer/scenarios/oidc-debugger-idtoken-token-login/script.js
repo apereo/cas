@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await cas.assertTextContent(page, "h1.green-text", "Success!");

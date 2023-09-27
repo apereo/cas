@@ -12,7 +12,7 @@ const assert = require('assert');
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.click(page, "#allow");
     await page.waitForNavigation();

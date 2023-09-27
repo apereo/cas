@@ -17,12 +17,12 @@ const path = require("path");
         await cas.goto(page, url);
         await cas.screenshot(page);
         await page.waitForTimeout(2000);
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await cas.waitForElement(page, "body");
         const content = JSON.parse(await cas.innerText(page, "body"));
         await cas.log(content);
         assert(content.form.SAMLResponse != null);
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.gotoLogout(page);
     }
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
