@@ -24,7 +24,7 @@ const path = require("path");
         request.continue(data);
     });
     await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    assert(page.url().startsWith('https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
+    assert(await page.url().startsWith('https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

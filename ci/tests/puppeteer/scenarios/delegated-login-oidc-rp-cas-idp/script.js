@@ -38,8 +38,8 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    await cas.log(page.url());
-    assert(page.url().startsWith("https://oidcdebugger.com/debug"));
+    await cas.log(await page.url());
+    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
 
     await browser.close();
 })();
