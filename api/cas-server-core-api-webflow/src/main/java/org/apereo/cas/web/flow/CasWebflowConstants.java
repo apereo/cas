@@ -2068,4 +2068,9 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION = "syncopePrincipalProvisionerAction";
 
+    /**
+     * The action id 'oktaPrincipalProvisionerAction'.
+     */
+    String ACTION_ID_OKTA_PRINCIPAL_PROVISIONER_ACTION = "oktaPrincipalProvisionerAction";
+
 }
