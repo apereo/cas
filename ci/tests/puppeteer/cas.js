@@ -104,25 +104,25 @@ exports.clickLast = async (page, button) => {
 
 exports.innerHTML = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerHTML.trim());
-    this.log(`HTML for selector [${selector}] is: [${text}]`);
+    await this.log(`HTML for selector [${selector}] is: [${text}]`);
     return text;
 };
 
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
-    this.log(`Text for selector [${selector}] is: [${text}]`);
+    await this.log(`Text for selector [${selector}] is: [${text}]`);
     return text;
 };
 
 exports.elementValue = async (page, selector, valueToSet = undefined) => {
     let text = await page.$eval(selector, el => el.value.trim());
     if (valueToSet !== undefined && valueToSet !== null) {
-        this.log(`Setting value for selector [${selector}] to: [${valueToSet}]`);
+        await this.log(`Setting value for selector [${selector}] to: [${valueToSet}]`);
         await page.$eval(selector, (el, toSet) => {
             el.value = toSet;
         }, valueToSet);
     } else {
-        this.log(`Value for selector [${selector}] is: [${text}]`);
+        await this.log(`Value for selector [${selector}] is: [${text}]`);
     }
     return text;
 };
@@ -138,14 +138,14 @@ exports.innerTexts = async (page, selector) =>
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
-    this.log(`Text content for selector [${selector}] is: [${text}]`);
+    await this.log(`Text content for selector [${selector}] is: [${text}]`);
     return text;
 };
 
 exports.inputValue = async (page, selector) => {
     const element = await page.$(selector);
     const text = await page.evaluate(element => element.value, element);
-    this.log(`Input value for selector [${selector}] is: [${text}]`);
+    await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
 };
 
@@ -153,13 +153,13 @@ exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
         const client = new ImgurClient({clientId: clientId});
-        this.logg(`Uploading image ${colors.green(imagePath)}`);
+        await this.logg(`Uploading image ${colors.green(imagePath)}`);
         client.on('uploadProgress', (progress) => this.log(progress));
         const response = await client.upload({
             image: fs.createReadStream(imagePath),
             type: 'stream',
         });
-        this.logg(`Uploaded image is at ${colors.green(response.data.link)}`);
+        await this.logg(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
 };
 
@@ -170,7 +170,7 @@ exports.loginWith = async (page,
                            password = "Mellon",
                            usernameField = "#username",
                            passwordField = "#password") => {
-    this.log(`Logging in with ${user} and ${password}`);
+    await this.log(`Logging in with ${user} and ${password}`);
     await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
 
@@ -182,7 +182,7 @@ exports.loginWith = async (page,
 };
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
-    this.log(`Fetching Scratch codes for ${user}...`);
+    await this.log(`Fetching Scratch codes for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
         "GET", {
             'Accept': 'application/json'
@@ -192,7 +192,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
-    this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
+    await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
     return result;
 };
 
@@ -203,7 +203,7 @@ exports.assertVisibility = async (page, selector) => {
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
-    this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
+    await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
 
@@ -213,14 +213,14 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName
     });
-    this.log(`Found cookies ${cookies.length}`);
+    await this.log(`Found cookies ${cookies.length}`);
     if (cookieMustBePresent) {
-        this.log(`Checking for cookie ${cookieName}, which MUST be present`);
+        await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
-        this.logg(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
+        await this.logg(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
         return cookies[0];
     }
-    this.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
+    await this.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
@@ -233,9 +233,9 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
 };
 
 exports.submitForm = async (page, selector, predicate = undefined) => {
-    this.log(`Submitting form ${selector}`);
+    await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
-        this.log("Waiting for page to produce a valid response status code");
+        await this.log("Waiting for page to produce a valid response status code");
         predicate = async response => response.status() > 0;
     }
     return await Promise.all([
@@ -252,7 +252,7 @@ exports.pressEnter = async (page) => {
 
 exports.type = async (page, selector, value, obfuscate = false) => {
     let logValue = obfuscate ? `******` : value;
-    this.log(`Typing ${logValue} in field ${selector}`);
+    await this.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 };
@@ -260,7 +260,7 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
     if (page === undefined) {
-        this.log("Opening a new page...");
+        await this.log("Opening a new page...");
         page = await browser.newPage();
     }
     // await page.setDefaultNavigationTimeout(0);
@@ -281,10 +281,10 @@ exports.newPage = async (browser) => {
 };
 
 exports.assertParameter = async (page, param) => {
-    this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
+    await this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
-    this.logg(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
+    await this.logg(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
     assert(value != null);
     return value;
 };
@@ -301,12 +301,12 @@ exports.sleep = async (ms) =>
     });
 
 exports.assertTicketParameter = async (page, found = true) => {
-    this.log(`Page URL: ${page.url()}`);
+    await this.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
     if (found) {
         assert(result.searchParams.has("ticket"));
         let ticket = result.searchParams.get("ticket");
-        this.log(`Ticket: ${ticket}`);
+        await this.log(`Ticket: ${ticket}`);
         assert(ticket != null);
         return ticket;
     }
@@ -363,7 +363,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
     if (responseType !== undefined) {
         config["responseType"] = responseType
     }
-    this.log(`Sending GET request to ${url}`);
+    await this.log(`Sending GET request to ${url}`);
     return await instance
         .get(url, config)
         .then(res => {
@@ -386,7 +386,7 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
         })
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    this.logg(`Posting to URL ${colors.green(url)}`);
+    await this.logg(`Posting to URL ${colors.green(url)}`);
     return await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
@@ -438,9 +438,7 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
     args = args.concat(opts);
     await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    return this.runGradle(spDir, args, (code) => {
-        this.log(`WSFED SP Child process exited with code ${code}`);
-    });
+    return this.runGradle(spDir, args, (code) => this.log(`WSFED SP Child process exited with code ${code}`));
 };
 
 exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
@@ -467,19 +465,19 @@ exports.shutdownCas = async (baseUrl) => {
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    this.log(`Checking ${header} to start with ${value}`);
+    await this.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    this.log(`Checking [${header}] to contain [${value}]`);
+    await this.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    this.log(`Checking ${header} to contain ${value}`);
+    await this.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
 };
 
@@ -490,13 +488,13 @@ exports.assertInnerText = async (page, selector, value) => {
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
-    this.log(`Page Title: ${title}`);
+    await this.log(`Page Title: ${title}`);
     assert(title === value)
 };
 
 exports.assertPageTitleContains = async (page, value) => {
     const title = await page.title();
-    this.log(`Page Title: ${title}`);
+    await this.log(`Page Title: ${title}`);
     assert(title.includes(value))
 };
 
@@ -513,7 +511,7 @@ exports.recordScreen = async (page) => {
         aspectRatio: '4:3',
     };
     const recorder = new PuppeteerScreenRecorder(page, config);
-    this.log(`Recording screen to ${filePath}`);
+    await this.log(`Recording screen to ${filePath}`);
     await recorder.start(filePath);
     return recorder;
 };
@@ -521,19 +519,19 @@ exports.recordScreen = async (page) => {
 exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     let allOptions = {...{algorithm: alg}, ...options};
     const token = JwtOps.sign(payload, key, allOptions, undefined);
-    this.logg(`Created JWT:\n${colors.green(token)}\n`);
+    await this.logg(`Created JWT:\n${colors.green(token)}\n`);
     return token;
 };
 
 exports.verifyJwt = async (token, secret, options) => {
-    this.log(`Decoding token ${token}`);
+    await this.log(`Decoding token ${token}`);
     let decoded = JwtOps.verify(token, secret, options, undefined);
     if (options.complete) {
-        this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
-        this.log("Decoded token payload:");
+        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
-        this.log("Decoded token payload:");
+        await this.log("Decoded token payload:");
         await this.logg(decoded);
     }
     return decoded;
@@ -541,23 +539,23 @@ exports.verifyJwt = async (token, secret, options) => {
 
 exports.verifyJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     await this.logg("Using key to verify JWT:");
-    this.log(keyContent);
+    await this.log(keyContent);
     const secretKey = await jose.importJWK(keyContent, alg);
     const decoded = await jose.jwtVerify(ticket, secretKey);
-    this.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded.payload);
     return decoded;
 };
 
 exports.decryptJwt = async (ticket, keyPath, alg = "RS256") => {
-    this.log(`Using private key path ${keyPath}`);
+    await this.log(`Using private key path ${keyPath}`);
     if (fs.existsSync(keyPath)) {
         const keyContent = fs.readFileSync(keyPath, 'utf8');
         await this.logg("Using private key to verify JWT:");
-        this.log(keyContent);
+        await this.log(keyContent);
         const secretKey = await jose.importPKCS8(keyContent, alg);
         const decoded = await jose.jwtDecrypt(ticket, secretKey, {});
-        this.log("Verified JWT:\n");
+        await this.log("Verified JWT:\n");
         await this.logg(decoded.payload);
         return decoded;
     }
@@ -566,39 +564,39 @@ exports.decryptJwt = async (ticket, keyPath, alg = "RS256") => {
 
 exports.decryptJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
-    this.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
+    await this.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
-    this.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;
 };
 
 exports.decryptJwtWithSecret = async (jwt, secret, options = {}) => {
-    this.log(`Decrypting JWT with key ${secret}`);
+    await this.log(`Decrypting JWT with key ${secret}`);
     const buff = jose.base64url.decode(secret);
     const decoded = await jose.jwtDecrypt(jwt, buff, options);
-    this.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;
 };
 
 exports.decodeJwt = async (token, complete = false) => {
-    this.log(`Decoding token ${token}`);
+    await this.log(`Decoding token ${token}`);
 
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
-        this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
-        this.log("Decoded token payload:");
+        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
-        this.log("Decoded token payload:");
+        await this.log("Decoded token payload:");
         await this.logg(decoded);
     }
     return decoded;
 };
 
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
-    this.log(`Fetching Bypass codes from Duo Security for ${user}...`);
+    await this.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
         "POST", {
             'Accept': 'application/json',
@@ -618,8 +616,8 @@ exports.screenshot = async (page) => {
         let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
             let url = await page.url();
-            this.log(`Page URL when capturing screenshot: ${url}`);
-            this.log(`Attempting to take a screenshot and save at ${filePath}`);
+            await this.log(`Page URL when capturing screenshot: ${url}`);
+            await this.log(`Attempting to take a screenshot and save at ${filePath}`);
             await page.setViewport({width: 1920, height: 1080});
             await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
             this.logg(`Screenshot saved at ${colors.green(filePath)}`);
@@ -628,7 +626,7 @@ exports.screenshot = async (page) => {
             this.logr(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
         }
     } else {
-        this.log("Capturing screenshots is disabled in non-CI environments");
+        await this.log("Capturing screenshots is disabled in non-CI environments");
     }
 };
 
@@ -724,7 +722,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            this.logg(`Navigating to: ${colors.green(url)}`);
+            await this.logg(`Navigating to: ${colors.green(url)}`);
             response = await page.goto(url);
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
@@ -741,12 +739,10 @@ exports.goto = async (page, url, retryCount = 5) => {
 
 exports.gotoLogin = async(page, service = undefined, port = 8443) => {
     const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
-    await this.goto(page, url);
+    return await this.goto(page, url);
 };
 
-exports.gotoLogout = async(page, port = 8443) => {
-    await this.goto(page, `https://localhost:${port}/cas/logout`);
-};
+exports.gotoLogout = async(page, port = 8443) => await this.goto(page, `https://localhost:${port}/cas/logout`);
 
 exports.parseXML = async(xml, options = {}) => {
     let parsedXML = undefined;
@@ -758,41 +754,41 @@ exports.parseXML = async(xml, options = {}) => {
 };
 
 exports.refreshContext = async (url = "https://localhost:8443/cas") => {
-    this.log("Refreshing CAS application context...");
+    await this.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
-    this.log(response);
+    await this.log(response);
 };
 
 exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
-    this.log(`Refreshing CAS application context in ${url}`);
+    await this.log(`Refreshing CAS application context in ${url}`);
     const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
-    this.log(response);
+    await this.log(response);
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
     await page.waitForTimeout(12000);
     await this.click(page, "button#passcode");
     let bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
-    this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
+    await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
     let i = 0;
     let error = false;
     while (!error && i < bypassCodes.length) {
         let bypassCode = `${String(bypassCodes[i])}`;
         await page.keyboard.sendCharacter(bypassCode);
         await this.screenshot(page);
-        this.log(`Submitting Duo Security bypass code ${bypassCode}`);
+        await this.log(`Submitting Duo Security bypass code ${bypassCode}`);
         await this.type(page, "input[name='passcode']", bypassCode);
         await this.screenshot(page);
         await this.pressEnter(page);
-        this.log(`Waiting for Duo Security to accept bypass code...`);
+        await this.log(`Waiting for Duo Security to accept bypass code...`);
         await page.waitForTimeout(10000);
         let error = await this.isVisible(page, "div.message.error");
         if (error) {
-            this.log(`Duo Security is unable to accept bypass code`);
+            await this.log(`Duo Security is unable to accept bypass code`);
             await this.screenshot(page);
             i++;
         } else {
-            this.log(`Duo Security accepted the bypass code ${bypassCode}`);
+            await this.log(`Duo Security accepted the bypass code ${bypassCode}`);
             return;
         }
     }

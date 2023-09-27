@@ -14,6 +14,8 @@ import com.okta.sdk.client.ClientBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.okta.provisioning.organization-url=http://localhost:9125"
 })
 @Tag("WebflowActions")
+@Execution(ExecutionMode.SAME_THREAD)
 public class OktaPrincipalProvisionerActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_OKTA_PRINCIPAL_PROVISIONER_ACTION)

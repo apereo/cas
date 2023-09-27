@@ -35,6 +35,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -64,7 +65,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     void verifyNoRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
+        assertThrowsWithRootCause(RuntimeException.class, IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test

@@ -197,5 +197,4 @@ configurations.configureEach {
 
     exclude(group: "io.netty", module: "netty-transport-native-epoll")
     exclude(group: "io.netty", module: "netty-transport-native-kqueue")
-    exclude(group: "io.netty", module: "netty-transport-native-unix-common")
 }

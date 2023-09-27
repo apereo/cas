@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
     await cas.log("Closing page and trying again with bad credentials...");
     await page.close();
     page = await cas.newPage(browser);
-    await cas.log("Log in attempt: #2");
+    await cas.log("Log in attempt: #3");
     await submitLoginFailure(page);
     await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
     await browser.close();
