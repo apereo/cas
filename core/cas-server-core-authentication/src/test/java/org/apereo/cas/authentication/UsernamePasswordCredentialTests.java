@@ -2,8 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -14,16 +14,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.validation.DefaultValidationContext;
-
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,10 +40,7 @@ class UsernamePasswordCredentialTests {
         assertTrue(input.isValid());
         assertSame(UsernamePasswordCredential.class, input.getClass());
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         val validationContext = new DefaultValidationContext(context, "submit", mock(MappingResults.class));
         input.validate(validationContext);
@@ -63,10 +53,7 @@ class UsernamePasswordCredentialTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential(null, "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         val validationContext = new DefaultValidationContext(context, "whatever", mock(MappingResults.class));
         input.validate(validationContext);

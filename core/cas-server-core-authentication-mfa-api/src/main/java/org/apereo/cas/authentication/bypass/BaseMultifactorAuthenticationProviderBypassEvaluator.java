@@ -47,15 +47,6 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
 
     private final String id = this.getClass().getSimpleName();
 
-    /**
-     * Evaluate attribute rules for bypass.
-     *
-     * @param attrName               the attr name
-     * @param attrValue              the attr value
-     * @param attributes             the attributes
-     * @param matchIfNoValueProvided the force match on value
-     * @return true a matching attribute name/value is found
-     */
     protected static boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
                                                           final Map<String, List<Object>> attributes,
                                                           final boolean matchIfNoValueProvided) {
@@ -152,26 +143,11 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         return Optional.empty();
     }
 
-    /**
-     * Should multifactor authentication provider execute internal.
-     *
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param provider          the provider
-     * @param request           the request
-     * @return true/false
-     */
     protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
                                                                                       RegisteredService registeredService,
                                                                                       MultifactorAuthenticationProvider provider,
                                                                                       HttpServletRequest request);
 
-    /**
-     * Resolve principal.
-     *
-     * @param principal the principal
-     * @return the principal
-     */
     protected Principal resolvePrincipal(final Principal principal) {
         val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return resolvers

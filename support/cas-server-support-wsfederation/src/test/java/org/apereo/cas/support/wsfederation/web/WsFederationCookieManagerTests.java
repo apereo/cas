@@ -3,17 +3,13 @@ package org.apereo.cas.support.wsfederation.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,27 +22,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
+        context.getHttpServletRequest().setLocalAddr("185.88.151.11");
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
 
-        request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
-        request.setAttribute("locale", "en");
-        request.setAttribute("theme", "custom");
+        context.setParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
+        context.getHttpServletRequest().setAttribute("locale", "en");
+        context.getHttpServletRequest().setAttribute("theme", "custom");
 
         val config = wsFederationConfigurations.toList().get(0);
         val wctx = config.getId();
         val original = RegisteredServiceTestUtils.getService();
-        wsFederationCookieManager.store(request, response, wctx, original, config);
+        wsFederationCookieManager.store(context.getHttpServletRequest(), context.getHttpServletResponse(), wctx, original, config);
 
-        request.addParameter(WsFederationCookieManager.WCTX, wctx);
-        request.setCookies(response.getCookies());
+        context.setParameter(WsFederationCookieManager.WCTX, wctx);
+        context.getHttpServletRequest().setCookies(context.getHttpServletResponse().getCookies());
         val service = wsFederationCookieManager.retrieve(context);
         assertNotNull(service);
         assertEquals(original.getId(), service.getId());
@@ -54,22 +47,16 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
 
     @Test
     void verifyNoContext() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
         assertThrows(IllegalArgumentException.class, () -> wsFederationCookieManager.retrieve(context));
     }
 
     @Test
     void verifyNoCookieValue() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
         val config = wsFederationConfigurations.toList().get(0);
         val wctx = config.getId();
-        request.addParameter(WsFederationCookieManager.WCTX, wctx);
+        context.setParameter(WsFederationCookieManager.WCTX, wctx);
         assertThrows(IllegalArgumentException.class, () -> wsFederationCookieManager.retrieve(context));
     }
 }
