@@ -723,6 +723,7 @@ layout: null
     *   [Provisioning](#principalprovisioning)
         *   [SCIM](/cas/{{ version }}/integration/SCIM-Provisioning.html) 
         *   [Apache Syncope](/cas/{{ version }}/integration/Syncope-Provisioning.html) 
+        *   [Okta](/cas/{{ version }}/integration/Okta-Provisioning.html) 
     *   [ACME](/cas/{{ version }}/integration/ACME-Integration.html)
     *   [Amazon Web Services](/cas/{{ version }}/integration/AWS-Integration.html)
     *   [CAS Clients](/cas/{{ version }}/integration/CAS-Clients.html)

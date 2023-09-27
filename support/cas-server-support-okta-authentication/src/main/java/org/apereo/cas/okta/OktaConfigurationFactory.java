@@ -1,10 +1,9 @@
 package org.apereo.cas.okta;
 
+import org.apereo.cas.configuration.model.support.okta.BaseOktaApiProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.okta.authn.sdk.client.AuthenticationClient;
 import com.okta.authn.sdk.client.AuthenticationClients;
 import com.okta.commons.http.config.Proxy;
@@ -15,7 +14,6 @@ import com.okta.sdk.client.Clients;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -32,7 +30,7 @@ public class OktaConfigurationFactory {
      * @param properties the properties
      * @return the client
      */
-    public static Client buildClient(final OktaPrincipalAttributesProperties properties) {
+    public static Client buildClient(final BaseOktaApiProperties properties) {
         val clientBuilder = Clients.builder()
             .setOrgUrl(properties.getOrganizationUrl())
             .setConnectionTimeout(properties.getConnectionTimeout());
@@ -68,7 +66,7 @@ public class OktaConfigurationFactory {
         val clientBuilder = AuthenticationClients.builder()
             .setOrgUrl(properties.getOrganizationUrl())
             .setConnectionTimeout(properties.getConnectionTimeout());
-
+        
         if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {
             if (StringUtils.isNotBlank(properties.getProxyUsername()) && StringUtils.isNotBlank(properties.getProxyPassword())) {
                 clientBuilder.setProxy(new Proxy(properties.getProxyHost(), properties.getProxyPort(),
