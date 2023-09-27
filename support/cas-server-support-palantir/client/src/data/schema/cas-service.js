@@ -138,6 +138,21 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
+            "label": "Protocols",
+            "elements": [
+                {
+                    "type": "Group",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/supportedProtocols"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
             "label": "Attribute Release",
             "elements": [
                 {
@@ -241,21 +256,7 @@ export const casServiceUiSchema = {
                 }
             ]
         },
-        {
-            "type": "Category",
-            "label": "Protocols",
-            "elements": [
-                {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "Control",
-                            "scope": "#/properties/supportedProtocols"
-                        }
-                    ]
-                }
-            ]
-        },
+        
         {
             "type": "Category",
             "label": "Tickets",
