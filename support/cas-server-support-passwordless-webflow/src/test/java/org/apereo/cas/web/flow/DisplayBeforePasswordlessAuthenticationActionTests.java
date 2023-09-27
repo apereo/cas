@@ -5,8 +5,8 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,16 +15,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -61,41 +55,33 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
 
     @Test
     void verifyAction() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new Event(this, "processing"));
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "casuser");
+        context.setParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "casuser");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
 
     @Test
     void verifyNoUser() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new Event(this, "processing"));
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertThrows(UnauthorizedServiceException.class, () -> displayBeforePasswordlessAuthenticationAction.execute(context));
     }
 
     @Test
     void verifyUnknownUser() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new Event(this, "processing"));
-        val request = new MockHttpServletRequest();
-        request.addParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "unknown");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        context.setParameter(PasswordlessRequestParser.PARAMETER_USERNAME, "unknown");
         assertThrows(UnauthorizedServiceException.class, () -> displayBeforePasswordlessAuthenticationAction.execute(context));
     }
 
     @Test
     void verifyError() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             displayBeforePasswordlessAuthenticationAction.execute(context).getId());
