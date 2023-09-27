@@ -23,43 +23,38 @@
   THE SOFTWARE.
 */
 
-import { findUISchema } from '@jsonforms/core';
+import { composePaths, findUISchema } from '@jsonforms/core';
 import { resolveSchema } from '@jsonforms/core';
-import { startCase, uniqBy } from 'lodash';
 
-const findAllSubSchemas = (list, rootSchema) => list.filter(item => {
-    const resolvedSubSchema = item.$ref && resolveSchema(rootSchema, item.$ref, rootSchema);
-    const isAnyOf = resolvedSubSchema && resolvedSubSchema.hasOwnProperty('anyOf');
-
-    return !isAnyOf;
-  });
-
-export const createAnyOfRenderInfos = (
-  combinatorSubSchemas,
-  rootSchema,
-  keyword,
-  control,
-  path,
-  uischemas
+export const createTupleRenderInfos = (
+    combinatorSubSchemas,
+    rootSchema,
+    control,
+    path,
+    uischemas
 ) =>
-  findAllSubSchemas(combinatorSubSchemas, rootSchema).map((subSchema, subSchemaIndex) => {
-    const resolvedSubSchema = subSchema.$ref && resolveSchema(rootSchema, subSchema.$ref, rootSchema);
-    const schema = resolvedSubSchema ?? subSchema;
-
-    return {
-      schema,
-      uischema: findUISchema(
-        uischemas,
+    combinatorSubSchemas.map((subSchema, subSchemaIndex) => {
+      const resolvedSubSchema =
+        subSchema.$ref && resolveSchema(rootSchema, subSchema.$ref, rootSchema);
+  
+      const schema = resolvedSubSchema ?? subSchema;
+      const childPath = composePaths(path, `${subSchemaIndex}`);
+  
+      return {
         schema,
-        control.scope,
-        path,
-        undefined,
-        control,
-        rootSchema
-      ),
-      label:
-        subSchema.title ??
-        resolvedSubSchema.title ??
-        `${startCase(subSchema.$ref.replace('#/$defs/', ''))}`,
-    };
-  });
+        path: childPath,
+        uischema: findUISchema(
+          uischemas,
+          schema,
+          control.scope,
+          childPath,
+          undefined,
+          control,
+          rootSchema
+        ),
+        label:
+          subSchema.title ??
+          resolvedSubSchema?.title ??
+          subSchemaIndex,
+      };
+    });

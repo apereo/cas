@@ -11,13 +11,15 @@ import SaveIcon from '@mui/icons-material/Save';
 import { NavLink } from 'react-router-dom';
 import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
 import MuiConstRenderer, { muiConstControlTester } from '../../components/renderers/MuiConstRenderer';
-import HashSetRenderer, { hashSetControlTester } from '../../components/renderers/HashSetRenderer';
-
+import TupleRenderer, { tupleControlTester } from '../../components/renderers/TupleRenderer';
+import ArrayControlRenderer, { arrayControlTester } from '../../components/renderers/ArrayControlRenderer';
 
 const renderers = [
     { tester: muiSidebarCategorizationTester, renderer: MuiSidebarCategorizationRenderer },
     { tester: muiAnyOfControlTester, renderer: MuiAnyOfRenderer },
     { tester: muiConstControlTester, renderer: MuiConstRenderer },
+    { tester: tupleControlTester, renderer: TupleRenderer },
+    { tester: arrayControlTester, renderer: ArrayControlRenderer },
     ...materialRenderers,
 ];
 
@@ -82,7 +84,6 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
                     schema={schema}
                     data={service}
                     onChange={({ errors, data }) => update(data, errors)}
-                    // ajv={ ajv }
                 />
             }
         </Grid>

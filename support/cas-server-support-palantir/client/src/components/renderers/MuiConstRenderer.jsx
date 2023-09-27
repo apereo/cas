@@ -15,7 +15,7 @@ export const MuiConstRenderer = ({
   }, [schema, path, handleChange])
 
   useEffect(() => {
-    // console.log(props, schema, path);
+    console.log(props, schema, path);
   }, [props, schema, path])
 
   return (

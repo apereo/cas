@@ -1,13 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_PATH } from '../App.constant';
 
-import { dereference } from '../jsonschema/dereference';
-
 // Define a schema using a base URL and expected endpoints
 export const schemaApi = createApi({
     reducerPath: 'schemaApi',
     baseQuery: fetchBaseQuery({
         baseUrl: `${API_PATH}`,
+        // baseUrl: `/data`,
         prepareHeaders: (headers, { getState }) => {
             headers.set('Content-Type', 'application/json');
             return headers;
@@ -16,6 +15,7 @@ export const schemaApi = createApi({
     endpoints: (builder) => ({
         getSchema: builder.query({
             query: (type) => `/schema/${type}`,
+            // query: (type) => `service-schema.json`,
             transformResponse: response => {
                 // response.type = 'object';
                 delete response.$schema;
