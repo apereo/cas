@@ -13,9 +13,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.DirectObjectProvider;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,10 +62,6 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsToFindToken() throws Throwable {
-        val context = MockRequestContext.create();
-
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-
         val id = UUID.randomUUID().toString();
         val credential = new CasSimpleMultifactorTokenCredential(id);
         assertThrows(FailedLoginException.class,
@@ -76,10 +70,6 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsPrincipal() throws Throwable {
-        val context = MockRequestContext.create();
-
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
         ticketRegistry.addTicket(ticket);
@@ -91,10 +81,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifyFailsExpiredToken() throws Throwable {
-        val context = MockRequestContext.create();
-
         val principal = RegisteredServiceTestUtils.getPrincipal();
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
 
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),
@@ -112,10 +99,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Test
     void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Throwable {
-        val context = MockRequestContext.create();
-
         val principal = RegisteredServiceTestUtils.getPrincipal();
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
 
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),
