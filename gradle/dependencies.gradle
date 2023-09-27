@@ -1514,18 +1514,6 @@ ext.libraries = [
                 },
                 dependencies.create("io.netty:netty-resolver:$nettyVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("io.netty:netty-transport-native-epoll:$nettyVersion:linux-x86_64") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("io.netty:netty-transport-native-epoll:$nettyVersion:linux-aarch_64") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("io.netty:netty-transport-native-kqueue:$nettyVersion:osx-x86_64") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("io.netty:netty-transport-native-kqueue:$nettyVersion:osx-aarch_64") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         fluentd                    : [
