@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -97,12 +98,12 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     void verifyCreatePgt() throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         newTicketRegistry.addTicket(tgt);
-        val service = RegisteredServiceTestUtils.getService();
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val st = new MockServiceTicket(serviceTicketId, service, tgt);
         newTicketRegistry.addTicket(st);
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(new HashMap());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), new HashMap());
         servicesManager.save(registeredService);
 
         centralAuthenticationService.createProxyGrantingTicket(st.getId(), CoreAuthenticationTestUtils.getAuthenticationResult(service));
@@ -115,15 +116,16 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyOAuthCodeIsAddedToMemcached() throws Throwable {
         val factory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString());
-        val code = factory.create(RegisteredServiceTestUtils.getService(),
-            CoreAuthenticationTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"),
+        val username = UUID.randomUUID().toString();
+        val code = factory.create(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()),
+            CoreAuthenticationTestUtils.getAuthentication(username),
+            new MockTicketGrantingTicket(username),
             CollectionUtils.wrapList("openid"),
             "code-challenge", "plain", "clientId123456",
             new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.newTicketRegistry.addTicket(code);
-        val ticket = this.newTicketRegistry.getTicket(code.getId(), OAuth20Code.class);
+        newTicketRegistry.addTicket(code);
+        val ticket = newTicketRegistry.getTicket(code.getId(), OAuth20Code.class);
         assertNotNull(ticket);
     }
 
@@ -131,14 +133,14 @@ class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyFailures() throws Throwable {
         val pool = mock(ObjectPool.class);
         val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
-        assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
-        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser")) > 0);
+        assertNotNull(registry.updateTicket(new MockTicketGrantingTicket(UUID.randomUUID().toString())));
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket(UUID.randomUUID().toString())) > 0);
         assertDoesNotThrow(() -> {
             val client = mock(MemcachedClientIF.class);
             when(pool.borrowObject()).thenReturn(client);
             when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
             doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
-            registry.addTicket(new MockTicketGrantingTicket("casuser"));
+            registry.addTicket(new MockTicketGrantingTicket(UUID.randomUUID().toString()));
         });
     }
 

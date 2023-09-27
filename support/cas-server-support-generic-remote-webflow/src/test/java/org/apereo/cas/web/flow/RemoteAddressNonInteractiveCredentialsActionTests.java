@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.BaseRemoteAddressTests;
-
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -9,15 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,21 +28,19 @@ class RemoteAddressNonInteractiveCredentialsActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
     private Action remoteAddressCheck;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyOperation() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
         assertNotNull(remoteAddressCheck.execute(context));
     }
 
     @Test
     void verifyFails() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr(StringUtils.EMPTY);
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().setRemoteAddr(StringUtils.EMPTY);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, remoteAddressCheck.execute(context).getId());
     }
 }
