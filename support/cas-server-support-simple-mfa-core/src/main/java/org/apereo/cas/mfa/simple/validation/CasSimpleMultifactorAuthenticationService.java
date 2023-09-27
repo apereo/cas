@@ -45,4 +45,14 @@ public interface CasSimpleMultifactorAuthenticationService {
      * @throws Exception the exception
      */
     Principal validate(Principal resolvedPrincipal, CasSimpleMultifactorTokenCredential credential) throws Throwable;
+
+    /**
+     * Fetch principal.
+     *
+     * @param tokenCredential the token credential
+     * @return the principal
+     * @throws Exception the exception
+     */
+    Principal fetch(CasSimpleMultifactorTokenCredential tokenCredential) throws Exception;
+
 }

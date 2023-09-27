@@ -132,4 +132,28 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
             HttpUtils.close(response);
         }
     }
+
+    @Override
+    public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) throws Exception {
+        HttpResponse response = null;
+        try {
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .headers(properties.getHeaders())
+                .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .build();
+            response = HttpUtils.execute(exec);
+            val statusCode = response.getCode();
+            if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), Principal.class);
+            }
+            throw new FailedLoginException("Unable to validate multifactor credential with status " + statusCode);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
 }
