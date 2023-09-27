@@ -3063,7 +3063,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudCommonsVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
