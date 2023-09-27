@@ -40,7 +40,7 @@ const cas = require('../../cas.js');
 
     await cas.log(`Page URL: ${page.url()}`);
     await cas.screenshot(page);
-    assert(page.url().startsWith("https://oidcdebugger.com/debug"));
+    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         res => {

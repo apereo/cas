@@ -26,8 +26,8 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
-    await cas.log(page.url());
-    assert(page.url().startsWith("https://localhost:9859/post"));
+    await cas.log(await page.url());
+    assert(await page.url().startsWith("https://localhost:9859/post"));
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(1000);

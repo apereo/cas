@@ -15,7 +15,8 @@ const path = require("path");
     let ticket = await cas.assertTicketParameter(page);
     await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     await page.close();
-    
+    await page.waitForTimeout(1000);
+
     page = await cas.newPage(browser);
     await page.setRequestInterception(true);
     await cas.screenshot(page);
