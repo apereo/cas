@@ -144,13 +144,11 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
-            buildArgs.add('--initialize-at-build-time=org.apache.xerces.impl')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
-            buildArgs.add('--initialize-at-run-time=org.codehaus.groovy.control')
-            buildArgs.add('--initialize-at-run-time=org.codehaus.groovy.vmplugin')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
-            buildArgs.add('--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg')
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
 
             buildArgs.add('--features=org.apereo.cas.nativex.features.BouncyCastleProviderFeature')
 
