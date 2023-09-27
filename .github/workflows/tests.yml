@@ -33,7 +33,7 @@ on:
 
 jobs:
   cancel-previous-runs:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 1
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
@@ -44,7 +44,7 @@ jobs:
 ##########################################################################
 
   initialize:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
 
   testcategories:
     needs: [initialize]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
@@ -92,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.category }}
@@ -146,7 +146,7 @@ jobs:
 ##########################################################################
 
   upload_coverage:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [tests]
     steps:
       - uses: actions/checkout@v4
