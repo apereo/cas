@@ -1,4 +1,5 @@
 FROM node:20.7.0
+RUN apt-get update > /dev/null && apt-get install iproute2 iputils-ping -y > /dev/null
 RUN yarn global add @strapi/strapi@4.13.7
 RUN mkdir /srv/app && chown 1000:1000 -R /srv/app
 WORKDIR /srv/app

@@ -52,7 +52,7 @@ on:
 jobs:
   cancel-previous-runs:
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 1
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
@@ -61,7 +61,7 @@ jobs:
   ##########################################################################
   initialize:
     needs: [cancel-previous-runs]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -81,7 +81,7 @@ jobs:
             
   puppeteer-scenarios:
     needs: [initialize]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 15
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
@@ -108,7 +108,7 @@ jobs:
 
   ##########################################################################
   puppeteer-tests-255:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -129,6 +129,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
@@ -153,7 +155,7 @@ jobs:
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -175,6 +177,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI

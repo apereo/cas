@@ -22,5 +22,4 @@ echo "Running Strapi $(strapi --version)"
 echo "==========================="
 
 NODE_TLS_REJECT_UNAUTHORIZED=0
-export STRAPI_LOG_LEVEL="debug"
 strapi start
