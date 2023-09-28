@@ -444,9 +444,20 @@
                 },
                 "supportedProtocols": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.HashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "$ref": "#/$defs/CasProtocolVersions"
+                            }
+                        }
+                    ],
+                    "items": false
                 },
                 "templateName": {
                     "type": "string"
@@ -2364,6 +2375,10 @@
                 "FALSE",
                 "UNDEFINED"
             ]
+        },
+        "CasProtocolVersions" : {
+            "type" : "string",
+            "enum" : [ "CAS10", "CAS20", "CAS30", "SAML1" ]
         }
     },
     "anyOf": [

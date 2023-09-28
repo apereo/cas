@@ -10,20 +10,22 @@ export const serviceApi = createApi({
     endpoints: (builder) => ({
         getServices: builder.query({
             query: () => `/services`,
-            transformResponse: (response) => formatToRead({services: response}).services
-                .map(s => ({...s, id: BigInt(s.id).toString()})),
+            transformResponse: (response) => {
+                const list = response[0] === 'java.util.ArrayList' ? response[1] : response;
+                return list.map(s => ({...s, id: BigInt(s.id).toString()}));
+            },
             providesTags: ['Service']
         }),
         getService: builder.query({
             query: (id) => `/services/${BigInt(id).toString()}`,
             providesTags: ['Service'],
-            transformResponse: (response) => formatToRead(response)
+            //transformResponse: (response) => formatToRead(response)
         }),
         createService: builder.mutation({
             query: (body) => ({
                 url: `services`,
                 method: 'POST',
-                body: formatToSave(body),
+                body,
             }),
             invalidatesTags: ['Service']
         }),
@@ -31,7 +33,7 @@ export const serviceApi = createApi({
             query: (body) => ({
                 url: `services`,
                 method: 'PUT',
-                body: formatToSave(body),
+                body,
             }),
             invalidatesTags: ['Service']
         }),
