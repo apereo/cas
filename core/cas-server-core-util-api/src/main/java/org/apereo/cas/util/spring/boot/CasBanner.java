@@ -43,6 +43,6 @@ public interface CasBanner extends Banner {
             .stream()
             .map(ServiceLoader.Provider::get)
             .toList();
-        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
+        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.getFirst();
     }
 }

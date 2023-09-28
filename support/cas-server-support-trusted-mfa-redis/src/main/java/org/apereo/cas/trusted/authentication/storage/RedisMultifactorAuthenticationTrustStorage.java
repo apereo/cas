@@ -120,7 +120,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
                 .map(redisKey -> {
                     val results = this.redisTemplate.boundValueOps(redisKey).get();
                     if (results != null && !results.isEmpty()) {
-                        return results.get(0);
+                        return results.getFirst();
                     }
                     return null;
                 })

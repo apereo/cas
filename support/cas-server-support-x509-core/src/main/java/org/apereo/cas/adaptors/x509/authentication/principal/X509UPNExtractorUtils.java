@@ -89,7 +89,7 @@ public class X509UPNExtractorUtils {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
             return null;
         }
-        val itemType = (Integer) sanItem.get(0);
+        val itemType = (Integer) sanItem.getFirst();
         if (itemType == SAN_TYPE_OTHER) {
             val altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
@@ -127,7 +127,7 @@ public class X509UPNExtractorUtils {
                 if (sanItem.size() == 2) {
                     val name = sanItem.get(1);
                     val value = name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name;
-                    LOGGER.trace("Found subject alt name of type [{}] with value [{}]", sanItem.get(0), value);
+                    LOGGER.trace("Found subject alt name of type [{}] with value [{}]", sanItem.getFirst(), value);
                 } else {
                     LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
                 }

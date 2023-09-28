@@ -654,7 +654,7 @@ public class CollectionUtils {
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
+                return Pair.of(bits.getFirst(), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;

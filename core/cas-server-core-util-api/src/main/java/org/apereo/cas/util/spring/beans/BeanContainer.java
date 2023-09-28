@@ -163,7 +163,7 @@ public interface BeanContainer<T> extends DisposableBean {
 
         @Override
         public T first() {
-            return items.get(0);
+            return items.getFirst();
         }
 
         @Override

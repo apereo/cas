@@ -44,7 +44,7 @@ public class CasGeoLocationConfiguration {
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
         return BeanSupplier.of(GeoLocationService.class)
             .when(!services.isEmpty())
-            .supply(() -> services.get(0))
+            .supply(() -> services.getFirst())
             .otherwiseProxy()
             .get();
     }

@@ -129,6 +129,6 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
         val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
         return result.map(defn -> defn.toAttributeValue(values))
-            .orElseGet(() -> values.size() == 1 ? values.get(0) : values);
+            .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
     }
 }

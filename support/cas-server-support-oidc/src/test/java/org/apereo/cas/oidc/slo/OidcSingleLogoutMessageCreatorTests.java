@@ -58,7 +58,7 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         val claims = JWTParser.parse(token).getJWTClaimsSet();
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
         assertEquals("casuser", claims.getSubject());
-        assertEquals(service.getClientId(), claims.getAudience().get(0));
+        assertEquals(service.getClientId(), claims.getAudience().getFirst());
         assertNotNull(claims.getClaim("iat"));
         assertNotNull(claims.getClaim("jti"));
         val events = (Map<String, Object>) claims.getClaim("events");

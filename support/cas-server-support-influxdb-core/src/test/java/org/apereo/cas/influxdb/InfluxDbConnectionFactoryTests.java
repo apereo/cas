@@ -57,8 +57,8 @@ class InfluxDbConnectionFactoryTests {
         val result = factory.query(InfluxEvent.class);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertEquals("cas.example.org", result.get(0).getHostname());
-        assertEquals(1234.5678, result.get(0).getValue());
+        assertEquals("cas.example.org", result.getFirst().getHostname());
+        assertEquals(1234.5678, result.getFirst().getValue());
     }
 
     @Measurement(name = "events")

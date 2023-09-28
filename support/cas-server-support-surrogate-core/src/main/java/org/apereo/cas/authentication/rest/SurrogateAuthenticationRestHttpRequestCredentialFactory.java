@@ -69,7 +69,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
 
     protected Credential extractCredential(final HttpServletRequest request,
                                            final List<Credential> credentials) throws Exception {
-        val credential = (MutableCredential) credentials.get(0);
+        val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
             var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
             if (StringUtils.isNotBlank(surrogateUsername)) {

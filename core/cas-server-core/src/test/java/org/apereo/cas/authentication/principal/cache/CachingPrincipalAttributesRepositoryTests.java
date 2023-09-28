@@ -110,7 +110,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
                 val repositoryAttributes = repository.getAttributes(context);
                 assertTrue(repositoryAttributes.containsKey(MAIL));
-                val emailValue = repositoryAttributes.get(MAIL).get(0).toString();
+                val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
                 assertEquals("final@school.com", emailValue);
             }
         }
@@ -128,7 +128,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
                 val repositoryAttributes = repository.getAttributes(context);
                 assertTrue(repositoryAttributes.containsKey(MAIL));
-                val emailValue = repositoryAttributes.get(MAIL).get(0).toString();
+                val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
                 assertEquals("final@example.com", emailValue, () -> "Attributes found are %s".formatted(repositoryAttributes));
             }
         }

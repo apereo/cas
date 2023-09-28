@@ -27,13 +27,13 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
             val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class)
                 .or(() -> attributeDefinitionStore.locateAttributeDefinitionByName(name, OidcAttributeDefinition.class));
             val finalValue = result.map(definition -> definition.toAttributeValue(values))
-                .orElseGet(() -> values.size() == 1 ? values.get(0) : values);
+                .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
 
             if (result.isPresent() && result.get().isStructured() && result.get().getName().contains(".")) {
                 val claimNames = Splitter.on('.').splitToList(result.get().getName().trim());
                 val structuredClaims = new HashMap<>();
 
-                var lastClaimName = claimNames.get(claimNames.size() -1);
+                var lastClaimName = claimNames.getLast();
                 structuredClaims.put(lastClaimName, finalValue);
 
                 for (var i = claimNames.size() - 2; i >= 1; i--) {
@@ -42,8 +42,8 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
                     structuredClaims.put(currentClaimName, CollectionUtils.wrap(lastClaimName, lastClaimValue));
                     lastClaimName = currentClaimName;
                 }
-                LOGGER.debug("Collecting structured ID token claim [{}] with nested entries [{}]", claimNames.get(0), structuredClaims);
-                claims.setClaim(claimNames.get(0), structuredClaims);
+                LOGGER.debug("Collecting structured ID token claim [{}] with nested entries [{}]", claimNames.getFirst(), structuredClaims);
+                claims.setClaim(claimNames.getFirst(), structuredClaims);
             } else {
                 LOGGER.debug("Collecting ID token claim [{}] with value(s) [{}]", name, finalValue);
                 claims.setClaim(name, finalValue);

@@ -96,7 +96,7 @@ public class GenerateFullJwtCommand {
                 .stream()
                 .filter(key -> StringUtils.equalsIgnoreCase(key.getUse(), "signing"))
                 .findFirst()
-                .orElseGet(() -> keystore.getJsonWebKeys().get(0));
+                .orElseGet(() -> keystore.getJsonWebKeys().getFirst());
             val jwt = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
                 jwtClaims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
             val token = new String(jwt, StandardCharsets.UTF_8);

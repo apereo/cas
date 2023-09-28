@@ -62,7 +62,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()
-            .map(e -> Set.of(getPerson(e.getValue().get(0).toString(), resolvedPeople, filter)))
+            .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(), resolvedPeople, filter)))
             .orElseGet(() -> new LinkedHashSet<>(0));
     }
 

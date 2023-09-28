@@ -19,6 +19,6 @@ class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests 
 
     @Override
     protected String getServiceProviderId() {
-        return casProperties.getSamlSp().getNeoGov().getEntityIds().get(0);
+        return casProperties.getSamlSp().getNeoGov().getEntityIds().getFirst();
     }
 }

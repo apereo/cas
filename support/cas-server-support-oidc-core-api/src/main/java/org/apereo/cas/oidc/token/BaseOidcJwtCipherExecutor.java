@@ -56,13 +56,13 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     private void prepareKeysForSigningAndEncryption() {
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
             .findAny()
             .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey())));
 
         getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .findAny()
             .ifPresent(key -> {
                 setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey()));
@@ -83,7 +83,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     private void prepareKeysForDecryptionAndVerification() {
         getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
             .findAny()
             .ifPresent(key -> {
@@ -91,7 +91,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
                 configureEncryptionSettingsFor(key);
             });
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
             .findAny()
             .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey())));

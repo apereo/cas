@@ -91,7 +91,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
         assertTrue(ldapDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));
         val results = ldapDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
-        val profile = results.get(0);
+        val profile = results.getFirst();
         assertEquals("caspac4j", profile.getLinkedId());
         assertEquals(USER, profile.getId());
         assertTrue(profile.getAttributes().containsKey("mail"));

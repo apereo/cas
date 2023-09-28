@@ -46,7 +46,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
         final RegisteredService service,
         final List<MultifactorAuthenticationProvider> providers) {
-        val provider = providers.get(providers.size() - 1);
+        val provider = providers.getLast();
         LOGGER.debug("Selected the provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());
         return provider;
     }

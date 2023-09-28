@@ -31,6 +31,6 @@ class InweboAuthenticationDeviceMetadataPopulatorTests {
         assertEquals(
             credentials.getDeviceName(),
             auth.getAttributes()
-                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).get(0));
+                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).getFirst());
     }
 }

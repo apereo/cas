@@ -43,7 +43,7 @@ class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
-        request.addParameter(casProperties.getLogout().getRedirectParameter().get(0), "https://github.com");
+        request.addParameter(casProperties.getLogout().getRedirectParameter().getFirst(), "https://github.com");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

@@ -1,7 +1,6 @@
 package org.apereo.cas.shell.commands.jwt;
 
 import org.apereo.cas.util.RandomUtils;
-
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -20,7 +19,6 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -87,9 +85,11 @@ public class GenerateJwtCommand {
 
         val repeat = "=".repeat(SEP_LENGTH);
         LOGGER.debug(repeat);
-        LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
-                + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n",
-            subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
+        LOGGER.info("""
+                Generating JWT for subject [{}] with signing key size [{}], signing algorithm [{}],
+                encryption key size [{}], encryption method [{}] and encryption algorithm [{}]
+                """, subject, signingSecretSize, signingAlgorithm,
+            encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(repeat);
 
         val token = g.generate(profile);

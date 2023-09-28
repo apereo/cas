@@ -321,7 +321,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     @Test
@@ -370,7 +370,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
         val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
         assertEquals(getDefaultAccessTokenExpiration(), Long.parseLong(expiresIn));
     }
@@ -472,7 +472,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     @Test
@@ -520,7 +520,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     @Test
@@ -564,7 +564,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     @Test
@@ -610,7 +610,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     @Test
@@ -701,7 +701,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
         assertEquals(profile.getAttributes().size(), principalAttributes.size());
-        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+        assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).getFirst());
     }
 
     protected CasProfile buildCasProfile() throws Throwable {

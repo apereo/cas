@@ -226,7 +226,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
     }
 
     public SingleLogoutService getSingleLogoutService() {
-        return getSingleLogoutServices().get(0);
+        return getSingleLogoutServices().getFirst();
     }
 
     /**

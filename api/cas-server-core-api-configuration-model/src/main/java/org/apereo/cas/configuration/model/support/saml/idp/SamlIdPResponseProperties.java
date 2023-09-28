@@ -85,7 +85,7 @@ public class SamlIdPResponseProperties implements Serializable {
                     val values = Splitter.on("->").splitToList(format);
 
                     if (values.size() == 2) {
-                        nameFormats.put(values.get(0), values.get(1));
+                        nameFormats.put(values.getFirst(), values.get(1));
                     }
                 }));
         return nameFormats;

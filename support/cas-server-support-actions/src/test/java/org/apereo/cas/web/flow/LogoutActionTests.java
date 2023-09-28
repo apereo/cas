@@ -143,7 +143,7 @@ class LogoutActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_FRONT, event.getId());
             val logoutRequests = WebUtils.getLogoutRequests(requestContext);
             assertEquals(1, logoutRequests.size());
-            assertEquals(logoutRequest, logoutRequests.get(0));
+            assertEquals(logoutRequest, logoutRequests.getFirst());
         }
     }
 

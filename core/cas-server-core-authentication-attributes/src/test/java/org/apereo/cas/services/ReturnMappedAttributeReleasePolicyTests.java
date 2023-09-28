@@ -416,8 +416,8 @@ class ReturnMappedAttributeReleasePolicyTests {
                     assertNotNull(result);
                     assertTrue(result.containsKey("uid"));
                     assertTrue(result.containsKey("taxId"));
-                    assertEquals(uid, result.get("uid").get(0));
-                    assertTrue(result.get("taxId").get(0).toString().contains(uid));
+                    assertEquals(uid, result.get("uid").getFirst());
+                    assertTrue(result.get("taxId").getFirst().toString().contains(uid));
                 }));
                 future.get();
             }));
@@ -446,8 +446,8 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         val attributes = chain.getAttributes(releasePolicyContext);
         assertEquals(2, attributes.size());
-        assertEquals("test", attributes.get("my-userid").get(0));
-        assertEquals("test-new", attributes.get("new-uid").get(0));
+        assertEquals("test", attributes.get("my-userid").getFirst());
+        assertEquals("test-new", attributes.get("new-uid").getFirst());
     }
 
 }

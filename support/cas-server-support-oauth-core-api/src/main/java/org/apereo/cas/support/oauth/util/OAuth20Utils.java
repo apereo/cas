@@ -294,7 +294,7 @@ public class OAuth20Utils {
         val attrs = new HashMap<>(profile.getAttributes());
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
-            return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
+            return CollectionUtils.toCollection(attribute, ArrayList.class).getFirst().toString();
         }
         return null;
     }

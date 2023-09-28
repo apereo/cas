@@ -47,7 +47,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     }
 
     public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
-        return this.serviceFactories.get(0);
+        return this.serviceFactories.getFirst();
     }
 
     /**
