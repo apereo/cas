@@ -34,6 +34,7 @@ const BROWSER_OPTIONS = {
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     timeout: 60000,
+    protocolTimeout: 60000,
     dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]

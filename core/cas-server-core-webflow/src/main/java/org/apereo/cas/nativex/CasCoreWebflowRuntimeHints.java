@@ -11,7 +11,8 @@ import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import org.springframework.binding.message.DefaultMessageContext;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.validation.ValidationContext;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
@@ -40,10 +41,14 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)
             .registerType(LocalAttributeMap.class);
 
+        registerReflectionHints(hints,
+            findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
+
         registerReflectionHints(hints, List.of(
             TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
             TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
-            DefaultMessageContext.class,
             FlowExecutionImpl.class,
             FlowExecutionExceptionHandlerSet.class,
             WebflowConversationStateCipherExecutor.class

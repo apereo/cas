@@ -1,6 +1,7 @@
 package org.apereo.cas.palantir;
 
 import org.apereo.cas.palantir.schema.SchemaGenerator;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -19,8 +20,10 @@ import org.springframework.core.io.Resource;
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.*;
@@ -45,7 +48,8 @@ public class SchemaGeneratorTests {
         return Stream.of(
             arguments(SimpleContainer1.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer1")),
             arguments(SimpleContainer2.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer2")),
-            arguments(SimpleContainer3.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer3"))
+            arguments(SimpleContainer3.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer3")),
+            arguments(SimpleContainer4.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4"))
         );
     }
 
@@ -72,5 +76,11 @@ public class SchemaGeneratorTests {
     @Setter
     static class SimpleContainer3 {
         private RegisteredServiceAuthenticationPolicyCriteria criteria;
+    }
+
+    @Getter
+    @Setter
+    static class SimpleContainer4 {
+        private Set<CasProtocolVersions> supportedProtocols = EnumSet.allOf(CasProtocolVersions.class);
     }
 }

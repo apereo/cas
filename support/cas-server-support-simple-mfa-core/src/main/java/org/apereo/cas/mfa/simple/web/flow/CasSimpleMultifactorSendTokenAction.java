@@ -62,7 +62,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getAuthentication(requestContext);
         val result = bucketConsumer.consume(getThrottledRequestKeyFor(authentication, requestContext));
         result.getHeaders().forEach(response::addHeader);
         return result.isConsumed() ? super.doPreExecute(requestContext) : error();
@@ -70,7 +70,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val token = getOrCreateToken(requestContext, principal);
         LOGGER.debug("Using token [{}] created at [{}]", token.getId(), token.getCreationTime());

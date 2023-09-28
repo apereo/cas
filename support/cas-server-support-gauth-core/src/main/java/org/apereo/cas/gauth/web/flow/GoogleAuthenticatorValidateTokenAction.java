@@ -34,7 +34,7 @@ public class GoogleAuthenticatorValidateTokenAction extends AbstractMultifactorA
         val token = requestContext.getRequestParameters().getRequired(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.class);
         val accountId = requestContext.getRequestParameters().getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
 
-        val authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getAuthentication(requestContext);
         val tokenCredential = new GoogleAuthenticatorTokenCredential(token, accountId);
         val validatedToken = validator.validate(authentication, tokenCredential);
         if (validatedToken != null) {

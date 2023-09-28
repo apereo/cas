@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -29,9 +30,7 @@ import static org.mockito.Mockito.*;
  */
 public class MockRequestContext extends MockRequestControlContext {
     public MockRequestContext(final MessageContext messageContext) throws Exception {
-        val field = ReflectionUtils.findField(getClass(), "messageContext");
-        Objects.requireNonNull(field).trySetAccessible();
-        field.set(this, messageContext);
+        setMessageContext(messageContext);
     }
 
     public MockRequestContext() throws Exception {
@@ -97,5 +96,17 @@ public class MockRequestContext extends MockRequestControlContext {
             flow.setApplicationContext(applicationContext);
         }
         return requestContext;
+    }
+
+    public MockRequestContext setMessageContext(final MessageContext messageContext) throws Exception {
+        val field = ReflectionUtils.findField(getClass(), "messageContext");
+        Objects.requireNonNull(field).trySetAccessible();
+        field.set(this, messageContext);
+        return this;
+    }
+
+    public MockRequestContext withDefaultMessageContext() throws Exception {
+        setMessageContext(new DefaultMessageContext());
+        return this;
     }
 }

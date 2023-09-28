@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.authentication.MutableCredential;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -15,6 +15,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.validation.DefaultValidationContext;
 
 import jakarta.validation.constraints.Size;
 
@@ -22,6 +25,7 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Credential for authenticating with a username and password.
@@ -78,21 +82,24 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
 
     @Override
     public void validate(final ValidationContext context) {
-        val messages = context.getMessageContext();
-        if (!"submit".equalsIgnoreCase(context.getUserEvent()) || messages.hasErrorMessages()) {
+        val messageContext = context.getMessageContext();
+        if (!"submit".equalsIgnoreCase(context.getUserEvent()) || messageContext.hasErrorMessages()) {
             return;
         }
 
-        ApplicationContextProvider.getCasConfigurationProperties().ifPresent(props -> {
-            if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
-                messages.addMessage(new MessageBuilder()
-                    .error()
-                    .source("source")
-                    .defaultText("Required Source")
-                    .code("source.required")
-                    .build());
-            }
-        });
+        val field = ReflectionUtils.findField(DefaultValidationContext.class, "requestContext");
+        Objects.requireNonNull(field).trySetAccessible();
+        val requestContext = (RequestContext) ReflectionUtils.getField(field, context);
+        val props = requestContext.getActiveFlow().getApplicationContext().getBean(CasConfigurationProperties.class);
+        
+        if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+            messageContext.addMessage(new MessageBuilder()
+                .error()
+                .source("source")
+                .defaultText("Required Source")
+                .code("source.required")
+                .build());
+        }
         super.validate(context);
     }
 
