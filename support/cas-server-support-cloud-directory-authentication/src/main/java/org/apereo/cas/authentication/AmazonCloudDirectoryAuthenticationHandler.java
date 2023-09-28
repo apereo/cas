@@ -52,7 +52,7 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
-        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).get(0).toString();
+        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).getFirst().toString();
         if (!matches(originalPassword, userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();

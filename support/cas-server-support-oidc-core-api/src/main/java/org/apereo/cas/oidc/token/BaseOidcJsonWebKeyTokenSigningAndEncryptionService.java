@@ -117,7 +117,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             .findFirst();
 
         LOGGER.debug("Located key [{}] for service [{}]", finalKey, serviceResult);
-        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.get(0));
+        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.getFirst());
     }
 
     /**

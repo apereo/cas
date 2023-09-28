@@ -54,7 +54,7 @@ public class WsFederationMetadataCertificateProvider implements WsFederationCert
             LOGGER.debug("Locating entity descriptor in the metadata for [{}]", configuration.getIdentityProviderIdentifier());
             val entityDescriptor = resolver.resolveSingle(criteria);
             val roleDescriptors = entityDescriptor.getRoleDescriptors(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-            val signingDescriptors = roleDescriptors.get(0).getKeyDescriptors()
+            val signingDescriptors = roleDescriptors.getFirst().getKeyDescriptors()
                 .stream()
                 .filter(key -> key.getUse() == UsageType.SIGNING)
                 .collect(Collectors.toList());

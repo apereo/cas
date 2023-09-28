@@ -47,7 +47,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @BeforeEach
     public void setupDatabase() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
+        this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().getFirst());
         @Cleanup
         val connection = dataSource.getConnection();
         @Cleanup

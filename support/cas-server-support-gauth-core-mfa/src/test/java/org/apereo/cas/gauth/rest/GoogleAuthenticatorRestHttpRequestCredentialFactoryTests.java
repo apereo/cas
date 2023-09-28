@@ -35,7 +35,7 @@ class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_ACCT, "132456");
         val results = f.fromRequest(new MockHttpServletRequest(), body);
         assertFalse(results.isEmpty());
-        val credential = (GoogleAuthenticatorTokenCredential) results.get(0);
+        val credential = (GoogleAuthenticatorTokenCredential) results.getFirst();
         assertEquals("132456", credential.getId());
         assertEquals(132456, credential.getAccountId());
     }

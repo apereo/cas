@@ -47,7 +47,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
                 val query = buildQuery(registeredService);
                 val results = query.getResultList();
                 if (!results.isEmpty()) {
-                    return results.get(0);
+                    return results.getFirst();
                 }
             }
             return buildQuery(Optional.empty()).getSingleResult();

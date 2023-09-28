@@ -338,7 +338,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                     .collect(Collectors.toCollection(ArrayList::new));
             }
 
-            lastReportedTimestamp = logEvents.get(logEvents.size() - 1).timestamp();
+            lastReportedTimestamp = logEvents.getLast().timestamp();
             val putLogEventsRequest = PutLogEventsRequest.builder().logGroupName(logGroupName).logStreamName(logStreamName).logEvents(logEvents);
             if (StringUtils.isNotBlank(this.sequenceTokenCache)) {
                 putLogEventsRequest.sequenceToken(this.sequenceTokenCache);

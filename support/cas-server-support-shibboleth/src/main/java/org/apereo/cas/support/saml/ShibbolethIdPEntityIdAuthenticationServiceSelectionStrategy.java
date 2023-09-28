@@ -101,7 +101,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
                 val paramRequest = Arrays.stream(query)
                     .map(p -> {
                         var params = Splitter.on("=").splitToList(p);
-                        return Pair.of(params.get(0), params.get(1));
+                        return Pair.of(params.getFirst(), params.get(1));
                     })
                     .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                     .map(Pair::getValue)

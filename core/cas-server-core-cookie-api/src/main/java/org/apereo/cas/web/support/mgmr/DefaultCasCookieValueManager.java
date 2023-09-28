@@ -96,7 +96,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     protected String obtainValueFromCompoundCookie(final String value, final HttpServletRequest request) {
         val cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(value);
 
-        val cookieValue = cookieParts.get(0);
+        val cookieValue = cookieParts.getFirst();
         if (!cookieProperties.isPinToSession()) {
             LOGGER.trace("Cookie session-pinning is disabled. Returning cookie value as it was provided");
             return cookieValue;

@@ -114,7 +114,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
         val sessions = (List) results.get("activeSsoSessions");
         assertEquals(1, sessions.size());
 
-        val tgt = ((Map) sessions.get(0))
+        val tgt = ((Map) sessions.getFirst())
             .get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString();
         results = singleSignOnSessionsEndpoint.destroySsoSession(tgt, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());

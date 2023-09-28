@@ -147,8 +147,8 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertNotNull(samlResponse);
         val assertions = samlResponse.getAssertions();
         assertFalse(assertions.isEmpty());
-        assertNull(assertions.get(0).getSubject().getNameID());
-        assertNotNull(assertions.get(0).getSubject().getEncryptedID());
+        assertNull(assertions.getFirst().getSubject().getNameID());
+        assertNotNull(assertions.getFirst().getSubject().getEncryptedID());
     }
 
     @Test
@@ -212,7 +212,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         val samlResponse = buildResponse(request, response, service,
             adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(samlResponse);
-        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getAssertions().get(0).getSignature().getSignatureAlgorithm());
+        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getAssertions().getFirst().getSignature().getSignatureAlgorithm());
         assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getSignature().getSignatureAlgorithm());
     }
 
@@ -248,7 +248,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         val samlResponse = buildResponse(request, response, service,
             adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(samlResponse);
-        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getAssertions().get(0).getSignature().getSignatureAlgorithm());
+        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getAssertions().getFirst().getSignature().getSignatureAlgorithm());
         assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getSignature().getSignatureAlgorithm());
     }
 
@@ -276,7 +276,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertTrue(samlResponse.getAssertions().isEmpty());
         assertFalse(samlResponse.getEncryptedAssertions().isEmpty());
         assertEquals(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128,
-            samlResponse.getEncryptedAssertions().get(0).getEncryptedData().getEncryptionMethod().getAlgorithm());
+            samlResponse.getEncryptedAssertions().getFirst().getEncryptedData().getEncryptionMethod().getAlgorithm());
     }
 
     @Test
@@ -303,7 +303,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertTrue(samlResponse.getAssertions().isEmpty());
         assertFalse(samlResponse.getEncryptedAssertions().isEmpty());
         assertEquals(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
-            samlResponse.getEncryptedAssertions().get(0).getEncryptedData().getEncryptionMethod().getAlgorithm());
+            samlResponse.getEncryptedAssertions().getFirst().getEncryptedData().getEncryptionMethod().getAlgorithm());
     }
 
     @Test
@@ -349,8 +349,8 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
             adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(samlResponse);
         assertNull(samlResponse.getInResponseTo());
-        val subject = samlResponse.getAssertions().get(0).getSubject();
-        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        val subject = samlResponse.getAssertions().getFirst().getSubject();
+        val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
         assertNull(subjectConfirmation.getSubjectConfirmationData().getInResponseTo());
     }
 

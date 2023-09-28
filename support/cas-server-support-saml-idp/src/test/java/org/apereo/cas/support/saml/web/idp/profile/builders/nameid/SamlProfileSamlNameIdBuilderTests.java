@@ -275,7 +275,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         assertNull(subject.getNameID());
         assertNotNull(subject.getEncryptedID());
         assertFalse(subject.getSubjectConfirmations().isEmpty());
-        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
         assertNotNull(subjectConfirmation.getEncryptedID());
         assertNull(subjectConfirmation.getNameID());
         assertNotNull(request.getAttribute(NameID.class.getName()));

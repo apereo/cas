@@ -63,7 +63,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         assertTrue(factory.getOrder() > 0);
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        val credential = results.get(0);
+        val credential = results.getFirst();
         assertNotNull(credential);
         assertEquals("surrogate", credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
         assertEquals("test", credential.getId());
@@ -89,7 +89,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        val credential = results.get(0);
+        val credential = results.getFirst();
         assertNotNull(credential);
         assertEquals("surrogate", credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
         assertEquals("test", credential.getId());
@@ -106,7 +106,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
         val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
-        val credential = results.get(0);
+        val credential = results.getFirst();
         assertNotNull(credential);
         assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isEmpty());
         assertEquals("test", credential.getId());

@@ -87,7 +87,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
             registeredService.getClientId(), registeredService.getClientId());
         val webKeys = oidcServiceJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING)).get();
-        val key = (PublicJsonWebKey) webKeys.getJsonWebKeys().get(0);
+        val key = (PublicJsonWebKey) webKeys.getJsonWebKeys().getFirst();
         val jwt = EncodingUtils.signJwsRSASha512(key.getPrivateKey(),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,

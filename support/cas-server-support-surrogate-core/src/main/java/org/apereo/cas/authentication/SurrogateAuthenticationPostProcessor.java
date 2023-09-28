@@ -44,7 +44,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         val authentication = builder.build();
         val principal = authentication.getPrincipal();
 
-        if (!(principal instanceof SurrogatePrincipal)) {
+        if (!(principal instanceof final SurrogatePrincipal primaryPrincipal)) {
             LOGGER.trace("Provided principal is one intended for surrogate authentication");
             return;
         }
@@ -52,7 +52,6 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         if (primaryCredential.isEmpty()) {
             throw new AuthenticationException("Unable to determine primary credentials");
         }
-        val primaryPrincipal = (SurrogatePrincipal) principal;
         val surrogateUsername = primaryCredential.get().getCredentialMetadata()
             .getTrait(SurrogateCredentialTrait.class)
             .map(SurrogateCredentialTrait::getSurrogateUsername)

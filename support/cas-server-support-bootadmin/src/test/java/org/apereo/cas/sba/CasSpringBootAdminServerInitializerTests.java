@@ -19,7 +19,7 @@ public class CasSpringBootAdminServerInitializerTests {
     void verifyOperation() throws Throwable {
         val initializers = ApplicationUtils.getApplicationEntrypointInitializers();
         assertFalse(initializers.isEmpty());
-        val initializer = (CasSpringBootAdminServerInitializer) initializers.get(0);
+        val initializer = (CasSpringBootAdminServerInitializer) initializers.getFirst();
         assertNotNull(initializer);
         assertFalse(initializer.getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY).isEmpty());
     }

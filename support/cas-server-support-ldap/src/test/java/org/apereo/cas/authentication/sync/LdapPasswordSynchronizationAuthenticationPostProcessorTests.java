@@ -40,7 +40,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         @Test
         void verifyBadCredential() throws Throwable {
             assertThrows(AuthenticationException.class, () -> {
-                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0));
+                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().getFirst());
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),

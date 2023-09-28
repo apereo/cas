@@ -79,7 +79,7 @@ class OktaPersonAttributeDaoTests {
             assertEquals(1, oktaPersonAttributeDaos.size());
             assertNull(attributeRepository.getPerson("casuser"));
 
-            val dao = (OktaPersonAttributeDao) oktaPersonAttributeDaos.toList().get(0);
+            val dao = (OktaPersonAttributeDao) oktaPersonAttributeDaos.toList().getFirst();
             assertTrue(dao.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
             assertTrue(dao.getAvailableQueryAttributes(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
             assertNotNull(dao.getOktaClient());

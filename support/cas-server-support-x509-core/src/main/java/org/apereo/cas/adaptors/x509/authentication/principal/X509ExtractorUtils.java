@@ -100,7 +100,7 @@ public class X509ExtractorUtils {
         }
         return subjectAltNames
                 .stream()
-                .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
+                .filter(s -> s.size() == 2 && (Integer) s.getFirst() == SAN_RFC822_EMAIL_TYPE)
                 .findFirst()
                 .map(objects -> (String) objects.get(1));
     }

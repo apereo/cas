@@ -96,7 +96,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     }
 
     protected String getLdif(final String user) {
-        val baseDn = casProperties.getAuthn().getAttributeRepository().getLdap().get(0).getBaseDn();
+        val baseDn = casProperties.getAuthn().getAttributeRepository().getLdap().getFirst().getBaseDn();
         return String.format("dn: cn=%s,%s%n"
             + "objectClass: top%n"
             + "objectClass: person%n"

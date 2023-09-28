@@ -116,7 +116,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         if (StringUtils.isNotBlank(ipAddressRange)) {
             val splitAddress = Splitter.on("/").splitToList(ipAddressRange);
             if (splitAddress.size() == 2) {
-                val network = splitAddress.get(0).trim();
+                val network = splitAddress.getFirst().trim();
                 val netmask = splitAddress.get(1).trim();
 
                 try {

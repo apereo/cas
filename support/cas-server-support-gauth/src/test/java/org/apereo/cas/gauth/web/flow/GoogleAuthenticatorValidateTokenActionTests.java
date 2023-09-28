@@ -74,7 +74,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
         context.setParameter(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, String.valueOf(acct.getId()));
         assertThrows(FailedLoginException.class, () -> action.execute(context));
 
-        context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, acct.getScratchCodes().get(0).toString());
+        context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, acct.getScratchCodes().getFirst().toString());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 

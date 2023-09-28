@@ -96,7 +96,7 @@ class RedisPersonAttributeDaoTests {
 
     @BeforeEach
     public void initialize() {
-        val redis = casProperties.getAuthn().getAttributeRepository().getRedis().get(0);
+        val redis = casProperties.getAuthn().getAttributeRepository().getRedis().getFirst();
         val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true, CasSSLContext.disabled());
         val template = RedisObjectFactory.newRedisTemplate(conn);
         template.initialize();

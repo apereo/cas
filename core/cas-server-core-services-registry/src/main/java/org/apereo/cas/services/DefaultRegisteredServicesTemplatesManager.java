@@ -88,7 +88,7 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
                     .stream()
                     .map(entry -> {
                         val listOfValues = new ArrayList<>(entry.getValue().getValues());
-                        val values = listOfValues.size() == 1 ? listOfValues.get(0) : listOfValues;
+                        val values = listOfValues.size() == 1 ? listOfValues.getFirst() : listOfValues;
                         return Pair.of(entry.getKey(), values);
                     })
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

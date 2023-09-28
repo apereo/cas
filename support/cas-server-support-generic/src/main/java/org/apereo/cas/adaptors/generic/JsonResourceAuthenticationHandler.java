@@ -100,7 +100,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
         if (StringUtils.isNotBlank(account.getAvailability())) {
             val range = Splitter.on("~").splitToList(account.getAvailability());
-            val startDate = DateTimeUtils.convertToZonedDateTime(range.get(0));
+            val startDate = DateTimeUtils.convertToZonedDateTime(range.getFirst());
             val endDate = DateTimeUtils.convertToZonedDateTime(range.get(1));
             val now = ZonedDateTime.now(Clock.systemUTC());
             if (now.isBefore(startDate) || now.isAfter(endDate)) {

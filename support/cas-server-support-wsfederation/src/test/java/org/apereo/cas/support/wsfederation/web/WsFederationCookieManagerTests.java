@@ -33,7 +33,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         context.getHttpServletRequest().setAttribute("locale", "en");
         context.getHttpServletRequest().setAttribute("theme", "custom");
 
-        val config = wsFederationConfigurations.toList().get(0);
+        val config = wsFederationConfigurations.toList().getFirst();
         val wctx = config.getId();
         val original = RegisteredServiceTestUtils.getService();
         wsFederationCookieManager.store(context.getHttpServletRequest(), context.getHttpServletResponse(), wctx, original, config);
@@ -54,7 +54,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
     void verifyNoCookieValue() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        val config = wsFederationConfigurations.toList().get(0);
+        val config = wsFederationConfigurations.toList().getFirst();
         val wctx = config.getId();
         context.setParameter(WsFederationCookieManager.WCTX, wctx);
         assertThrows(IllegalArgumentException.class, () -> wsFederationCookieManager.retrieve(context));

@@ -163,7 +163,7 @@ class JsonResourceAuthenticationHandlerTests {
         assertEquals("casuser", result.getPrincipal().getId());
         assertFalse(result.getPrincipal().getAttributes().isEmpty());
         assertTrue(result.getPrincipal().getAttributes().containsKey("firstName"));
-        assertEquals("Apereo", result.getPrincipal().getAttributes().get("firstName").get(0));
+        assertEquals("Apereo", result.getPrincipal().getAttributes().get("firstName").getFirst());
     }
 
     @Test

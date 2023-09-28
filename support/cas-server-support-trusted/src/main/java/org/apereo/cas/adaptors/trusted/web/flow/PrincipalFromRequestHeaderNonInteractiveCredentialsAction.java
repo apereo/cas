@@ -55,7 +55,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
             val headers = getAllRequestHeaderValues(request);
             LOGGER.debug("Available request headers are [{}]. Locating first header value for [{}]", headers, this.remotePrincipalHeader);
             if (headers.containsKey(this.remotePrincipalHeader)) {
-                val header = headers.get(this.remotePrincipalHeader).get(0);
+                val header = headers.get(this.remotePrincipalHeader).getFirst();
                 LOGGER.debug("Remote user [{}] found in [{}] header", header, this.remotePrincipalHeader);
                 return header;
             }

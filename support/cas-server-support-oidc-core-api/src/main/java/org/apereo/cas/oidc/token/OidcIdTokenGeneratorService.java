@@ -126,10 +126,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
-            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).getFirst());
         }
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
-            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
         generateAccessTokenHash(accessToken, registeredService, claims);
 
@@ -199,7 +199,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         if (!mappedAcrValues.isEmpty()) {
             FunctionUtils.doIf(mappedAcrValues.size() == 1,
-                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.get(0)),
+                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.getFirst()),
                     __ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
                 .accept(mappedAcrValues);
         }

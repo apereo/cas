@@ -66,7 +66,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                 context.getRegisteredService().getServiceId(), usernameAttribute);
             val value = releasePolicyAttributes.get(usernameAttribute);
-            principalId = CollectionUtils.wrap(value).get(0).toString();
+            principalId = CollectionUtils.wrap(value).getFirst().toString();
         } else if (originalPrincipalAttributes.containsKey(usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
                          + "principal attribute and not through the attribute release policy for service [{}]. "
@@ -74,7 +74,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                          + "is explicitly authorized for release via the service attribute release policy.",
                 usernameAttribute, context.getRegisteredService(), usernameAttribute);
             val value = originalPrincipalAttributes.get(usernameAttribute);
-            principalId = CollectionUtils.wrap(value).get(0).toString();
+            principalId = CollectionUtils.wrap(value).getFirst().toString();
         } else {
             LOGGER.info("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                         + "provide the user attribute the service expects. "
