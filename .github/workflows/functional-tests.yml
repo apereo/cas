@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: "oidc-login-s.*"
+  SCENARIO_REGEX: "oidc-login-stra.*"
 
 on:
   push:
