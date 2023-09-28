@@ -48,6 +48,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.val;
@@ -148,20 +149,20 @@ public abstract class BaseOAuth20AuthenticatorTests {
     public void initialize() {
         service = new OAuthRegisteredService();
         service.setName("OAuth");
-        service.setId(1);
+        service.setId(RandomUtils.nextLong());
         service.setServiceId("https://www.example.org");
         service.setClientSecret("secret");
         service.setClientId("client");
 
         serviceWithoutSecret = new OAuthRegisteredService();
         serviceWithoutSecret.setName("OAuth2");
-        serviceWithoutSecret.setId(2);
+        serviceWithoutSecret.setId(RandomUtils.nextLong());
         serviceWithoutSecret.setServiceId("https://www.example2.org");
         serviceWithoutSecret.setClientId("clientWithoutSecret");
 
         serviceWithoutSecret2 = new OAuthRegisteredService();
         serviceWithoutSecret2.setName("OAuth3");
-        serviceWithoutSecret2.setId(3);
+        serviceWithoutSecret2.setId(RandomUtils.nextLong());
         serviceWithoutSecret2.setServiceId("https://www.example3org");
         serviceWithoutSecret2.setClientId("clientWithoutSecret2");
 
@@ -169,13 +170,14 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setName("The registered service name");
         serviceJwtAccessToken.setServiceId("https://oauth.jwt.service");
         serviceJwtAccessToken.setClientId("clientid");
+        serviceJwtAccessToken.setId(RandomUtils.nextLong());
         serviceJwtAccessToken.setClientSecret("clientsecret");
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
 
         serviceWithAttributesMapping = new OAuthRegisteredService();
         serviceWithAttributesMapping.setName("OAuth5");
-        serviceWithAttributesMapping.setId(5);
+        serviceWithAttributesMapping.setId(RandomUtils.nextLong());
         serviceWithAttributesMapping.setServiceId("https://www.example5.org");
         serviceWithAttributesMapping.setClientSecret("secret");
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");

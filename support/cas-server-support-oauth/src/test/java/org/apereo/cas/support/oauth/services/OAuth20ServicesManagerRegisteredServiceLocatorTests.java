@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +37,6 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     @Autowired
     @Qualifier("oauthServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
-
-    @Override
-    @BeforeEach
-    public void setup() {
-        super.setup();
-        servicesManager.deleteAll();
-    }
     
     @Test
     void verifyOperation() throws Throwable {

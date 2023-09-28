@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20In
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.HttpConstants;
@@ -38,12 +37,7 @@ class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("introspectionEndpointController")
     private OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpoint;
-
-    @BeforeEach
-    public void initialize() {
-        servicesManager.deleteAll();
-    }
-
+    
     @Test
     void verifyBadCredentialsOperation() throws Throwable {
         val registeredService = addRegisteredService();

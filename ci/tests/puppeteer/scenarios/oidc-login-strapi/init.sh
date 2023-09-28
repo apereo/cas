@@ -12,6 +12,7 @@ echo "Host URL address: ${HOST_URL}"
 
 docker run -d -p 1337:1337 \
   --network host \
+  -e STRAPI_LOG_LEVEL="debug" \
   --name="strapi-server" cas/strapi:latest
 docker logs -f strapi-server &
 sleep 10
