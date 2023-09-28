@@ -6,7 +6,6 @@ echo "Building Strapi docker image"
 docker build ci/tests/puppeteer/scenarios/oidc-login-strapi/strapi -t cas/strapi:latest
 
 docker run -d -p 1337:1337 \
-  --network host \
   --name="strapi-server" cas/strapi:latest
 docker logs -f strapi-server &
 sleep 10
