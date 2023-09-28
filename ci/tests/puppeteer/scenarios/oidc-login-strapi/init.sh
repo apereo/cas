@@ -5,14 +5,8 @@ docker stop strapi-server || true && docker rm strapi-server || true
 echo "Building Strapi docker image"
 docker build ci/tests/puppeteer/scenarios/oidc-login-strapi/strapi -t cas/strapi:latest
 
-HOST_IP=$(ipconfig getifaddr en0)
-echo "Host IP address: ${HOST_IP}"
-HOST_URL="http://${HOST_IP}:1337"
-echo "Host URL address: ${HOST_URL}"
-
 docker run -d -p 1337:1337 \
   --network host \
-  -e STRAPI_LOG_LEVEL="debug" \
   --name="strapi-server" cas/strapi:latest
 docker logs -f strapi-server &
 sleep 10
