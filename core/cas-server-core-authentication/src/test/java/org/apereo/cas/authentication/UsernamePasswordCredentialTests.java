@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -35,12 +34,11 @@ class UsernamePasswordCredentialTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential("casuser", "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
         assertSame(UsernamePasswordCredential.class, input.getClass());
 
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).withDefaultMessageContext();
 
         val validationContext = new DefaultValidationContext(context, "submit", mock(MappingResults.class));
         input.validate(validationContext);
@@ -50,7 +48,6 @@ class UsernamePasswordCredentialTests {
 
     @Test
     void verifyInvalidEvent() throws Throwable {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential(null, "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
 
         val context = MockRequestContext.create(applicationContext);

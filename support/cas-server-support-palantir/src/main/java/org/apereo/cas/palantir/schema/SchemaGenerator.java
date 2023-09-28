@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.victools.jsonschema.generator.Option;
 import com.github.victools.jsonschema.generator.OptionPreset;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaKeyword;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import com.github.victools.jsonschema.module.jackson.JacksonOption;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SchemaGenerator}.
@@ -55,6 +58,25 @@ public class SchemaGenerator {
                     removeExtraProperties(definition, "allOf");
                     removeExtraProperties(definition, "anyOf");
                 }
+
+                if (typeScope.getType().isInstanceOf(Set.class)) {
+                    definition.put(SchemaKeyword.TAG_ITEMS.forVersion(SchemaVersion.DRAFT_2020_12), false);
+                    var genericType = typeScope.getType().getTypeBindings().getBoundType(0);
+                    var genericTypeDefinitions = context.createDefinition(genericType);
+
+                    var prefixItems = definition.putArray(SchemaKeyword.TAG_PREFIX_ITEMS.forVersion(SchemaVersion.DRAFT_2020_12));
+                    var itemType = prefixItems.addObject();
+                    itemType.put(SchemaKeyword.TAG_TYPE.forVersion(SchemaVersion.DRAFT_2020_12),
+                        genericTypeDefinitions.get(SchemaKeyword.TAG_TYPE.forVersion(SchemaVersion.DRAFT_2020_12)));
+                    itemType.put(SchemaKeyword.TAG_CONST.forVersion(SchemaVersion.DRAFT_2020_12), LinkedHashSet.class.getName());
+
+                    var itemElements = prefixItems.addObject();
+                    itemElements.put(SchemaKeyword.TAG_TYPE.forVersion(SchemaVersion.DRAFT_2020_12), "array");
+                    itemElements.put(SchemaKeyword.TAG_ITEMS_UNIQUE.forVersion(SchemaVersion.DRAFT_2020_12), true);
+
+                    val typeReference = context.createDefinitionReference(genericType);
+                    itemElements.put(SchemaKeyword.TAG_ITEMS.forVersion(SchemaVersion.DRAFT_2020_12), typeReference);
+                }
             })
             .withSubtypeResolver(new ClassGraphSubtypeResolver(excludeTypes));
 
@@ -72,5 +94,4 @@ public class SchemaGenerator {
             }
         }
     }
-
 }

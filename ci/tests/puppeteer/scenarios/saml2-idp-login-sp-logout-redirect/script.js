@@ -11,11 +11,11 @@ const path = require("path");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
-
     let ticket = await cas.assertTicketParameter(page);
-    await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
-    await page.close();
     await page.waitForTimeout(1000);
+    await page.close();
+    
+    await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
 
     page = await cas.newPage(browser);
     await page.setRequestInterception(true);

@@ -31,7 +31,7 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         val otp = requestContext.getRequestParameters().get(WebflowConstants.OTP);
         val flowScope = requestContext.getFlowScope();

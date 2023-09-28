@@ -1,59 +1,63 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$defs": {
-    "DefaultRegisteredServiceProperty": {
-      "type": "object",
-      "properties": {
-        "values": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$defs" : {
+    "DefaultRegisteredServiceProperty" : {
+      "type" : "object",
+      "properties" : {
+        "values" : {
+          "type" : "array",
+          "items" : false,
+          "prefixItems" : [ {
+            "type" : "string",
+            "const" : "java.util.LinkedHashSet"
+          }, {
+            "type" : "array",
+            "uniqueItems" : true,
+            "items" : {
+              "type" : "string"
+            }
+          } ]
         },
-        "@class": {
-          "const": "org.apereo.cas.services.DefaultRegisteredServiceProperty"
+        "@class" : {
+          "const" : "org.apereo.cas.services.DefaultRegisteredServiceProperty"
         }
       },
-      "required": [
-        "@class"
-      ]
+      "required" : [ "@class" ]
     },
-    "DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy": {
-      "type": "object",
-      "properties": {
-        "maxTimeToLiveInSeconds": {
-          "type": "integer"
+    "DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy" : {
+      "type" : "object",
+      "properties" : {
+        "maxTimeToLiveInSeconds" : {
+          "type" : "integer"
         },
-        "@class": {
-          "const": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy"
+        "@class" : {
+          "const" : "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy"
         }
       },
-      "required": [
-        "@class"
-      ]
+      "required" : [ "@class" ]
     },
-    "Map(String,RegisteredServiceProperty)": {
-      "$ref": "#/$defs/DefaultRegisteredServiceProperty"
+    "Map(String,RegisteredServiceProperty)" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceProperty"
     },
-    "RegisteredServiceProperty": {
-      "$ref": "#/$defs/DefaultRegisteredServiceProperty",
-      "type": "object"
+    "RegisteredServiceProperty" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceProperty",
+      "type" : "object"
     },
-    "RegisteredServiceTicketGrantingTicketExpirationPolicy": {
-      "$ref": "#/$defs/DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
-      "type": "object"
+    "RegisteredServiceTicketGrantingTicketExpirationPolicy" : {
+      "$ref" : "#/$defs/DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+      "type" : "object"
     }
   },
-  "type": "object",
-  "properties": {
-    "details": {
-      "$ref": "#/$defs/Map(String,RegisteredServiceProperty)"
+  "type" : "object",
+  "properties" : {
+    "details" : {
+      "$ref" : "#/$defs/Map(String,RegisteredServiceProperty)"
     },
-    "policy": {
-      "$ref": "#/$defs/RegisteredServiceTicketGrantingTicketExpirationPolicy"
+    "policy" : {
+      "$ref" : "#/$defs/RegisteredServiceTicketGrantingTicketExpirationPolicy"
     },
-    "property": {
-      "$ref": "#/$defs/RegisteredServiceProperty"
+    "property" : {
+      "$ref" : "#/$defs/RegisteredServiceProperty"
     }
   }
 }

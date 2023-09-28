@@ -111,11 +111,11 @@ class CasSimpleMultifactorSendTokenActionTests {
         @Test
         void verifyOperation() throws Throwable {
             val theToken = createToken("casuser").getKey();
-            assertNotNull(this.ticketRegistry.getTicket(theToken));
+            assertNotNull(ticketRegistry.getTicket(theToken));
             val token = new CasSimpleMultifactorTokenCredential(theToken);
             val result = authenticationHandler.authenticate(token, mock(Service.class));
             assertNotNull(result);
-            assertNull(this.ticketRegistry.getTicket(theToken));
+            assertNull(ticketRegistry.getTicket(theToken));
         }
 
         @Test
@@ -123,7 +123,7 @@ class CasSimpleMultifactorSendTokenActionTests {
             val pair = createToken("casuser");
 
             val theToken = pair.getKey();
-            assertNotNull(this.ticketRegistry.getTicket(theToken));
+            assertNotNull(ticketRegistry.getTicket(theToken));
 
             val event = mfaSimpleMultifactorSendTokenAction.execute(pair.getValue());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
@@ -131,7 +131,7 @@ class CasSimpleMultifactorSendTokenActionTests {
             val token = new CasSimpleMultifactorTokenCredential(theToken);
             val result = authenticationHandler.authenticate(token, mock(Service.class));
             assertNotNull(result);
-            assertNull(this.ticketRegistry.getTicket(theToken));
+            assertNull(ticketRegistry.getTicket(theToken));
         }
 
         @Test
@@ -141,7 +141,10 @@ class CasSimpleMultifactorSendTokenActionTests {
 
             val theToken2 = createToken("casuser2");
             assertNotNull(theToken2);
+            
             val token = new CasSimpleMultifactorTokenCredential(theToken1.getKey());
+            ticketRegistry.deleteTicket(theToken1.getKey());
+
             assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(token, mock(Service.class)));
         }
     }
