@@ -80,7 +80,7 @@ public class ConfigurationMetadataPropertyCreator {
      * @return the configuration metadata property
      */
     public ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl, final String propName) {
-        val variable = fieldDecl.getVariables().getFirst();
+        val variable = fieldDecl.getVariables().getFirst().get();
         val name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
             .map(Object::toString)
             .findFirst()
