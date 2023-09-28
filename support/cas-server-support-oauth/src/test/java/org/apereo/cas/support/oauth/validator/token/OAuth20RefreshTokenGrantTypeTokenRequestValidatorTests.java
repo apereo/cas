@@ -77,7 +77,6 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
             PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.SHARED_SECRET);
 
-        servicesManager.deleteAll();
         servicesManager.save(supportingService, nonSupportingService, promiscuousService);
 
         registerTicket(SUPPORTING_TICKET, SUPPORTING_CLIENT_ID);

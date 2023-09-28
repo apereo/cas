@@ -57,11 +57,11 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
             () -> authenticator.validate(new CallContext(badRefreshTokenCtx, JEESessionStore.INSTANCE), badRefreshTokenCredentials));
 
 
-        val badClientIdCredentials = new UsernamePasswordCredentials("clientWithoutSecret2", refreshToken.getId());
+        val badClientIdCredentials = new UsernamePasswordCredentials(serviceWithoutSecret2.getClientId(), refreshToken.getId());
         val badClientIdRequest = new MockHttpServletRequest();
         badClientIdRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
         badClientIdRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret2");
+        badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret2.getClientId());
 
         val badClientIdCtx = new JEEContext(badClientIdRequest, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
