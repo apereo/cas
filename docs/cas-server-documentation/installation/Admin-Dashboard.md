@@ -15,6 +15,12 @@ of the CAS configuration and build that might include application registrations,
 {% tabs casadminoptions %}
 
 {% tab casadminoptions Palantir %}
+   
+Palantir is the next generation of the [CAS Management](https://github.com/apereo/cas-management) tool. It is now part of the 
+CAS codebase in an attempt to both streamline the development and release processes and to ensure the tool
+remains consistent and up to date. Its intention is to act as the overall admin management tool and console for the CAS server,
+and presents a user interface to allow one to add and modify application registrations, observe CAS server status, 
+state of single sign-on sessions and more.
 
 Support is enabled by adding the following module into the overlay:
 
@@ -25,6 +31,11 @@ This capability is a work in progress. We encourage you to start to experiment a
 with this feature and contribute fixes.</p></div>
 
 {% endtab %}
+
+Palantir access will by default require a form-based user authentication. The credentials
+used to access this feature are those presented by Spring Security configuration:
+
+{% include_cached casproperties.html thirdPartyStartsWith="spring.security.user" %}
 
 {% tab casadminoptions Spring Boot Admin %}
 

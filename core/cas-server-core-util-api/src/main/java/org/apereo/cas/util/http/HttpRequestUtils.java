@@ -37,8 +37,6 @@ public class HttpRequestUtils {
      */
     public static final String USER_AGENT_HEADER = "user-agent";
 
-    private static final int GEO_LOC_LAT_INDEX = 0;
-
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
