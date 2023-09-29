@@ -90,7 +90,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
 
             val revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).toList();
             if (revokedCrls.size() == crls.size()) {
-                val entry = revokedCrls.get(0);
+                val entry = revokedCrls.getFirst();
                 LOGGER.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);
                 throw new RevokedCertificateException(entry);
             }

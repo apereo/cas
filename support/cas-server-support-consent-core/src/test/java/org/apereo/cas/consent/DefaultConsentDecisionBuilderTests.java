@@ -78,7 +78,7 @@ class DefaultConsentDecisionBuilderTests {
         val consentDecision = getConsentDecision();
         val attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
-        assertEquals("value1", attrs.get("attr1").get(0));
+        assertEquals("value1", attrs.get("attr1").getFirst());
     }
 
     private ConsentDecision getConsentDecision() {

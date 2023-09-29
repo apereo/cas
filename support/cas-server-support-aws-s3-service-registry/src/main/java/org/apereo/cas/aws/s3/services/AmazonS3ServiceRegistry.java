@@ -167,7 +167,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
         val objects = result.contents();
         LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucket.name());
-        val objectKey = objects.get(0).key();
+        val objectKey = objects.getFirst().key();
         LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucket.name());
         val object = s3Client.getObject(GetObjectRequest.builder().bucket(bucket.name()).key(objectKey).build());
         return registeredServiceSerializer.from(object);

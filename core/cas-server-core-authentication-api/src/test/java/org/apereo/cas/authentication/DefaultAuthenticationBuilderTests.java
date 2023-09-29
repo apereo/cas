@@ -52,7 +52,7 @@ class DefaultAuthenticationBuilderTests {
         val authentication = builder.build();
         assertNotNull(authentication);
         assertEquals(1, authentication.getCredentials().size());
-        val credentialMetaData = authentication.getCredentials().get(0).getCredentialMetadata();
+        val credentialMetaData = authentication.getCredentials().getFirst().getCredentialMetadata();
         assertEquals(2, credentialMetaData.getProperties().size());
         assertTrue(credentialMetaData.getProperties().containsKey("P1"));
         assertTrue(credentialMetaData.getProperties().containsKey("P2"));

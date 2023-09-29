@@ -101,7 +101,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
                 .sorted()
                 .filter(r -> r.matches(id))
                 .peek(this::invokeServiceRegistryListenerPostLoad).toList()));
-        return services.isEmpty() ? null : services.get(0);
+        return services.isEmpty() ? null : services.getFirst();
     }
 
     @Override

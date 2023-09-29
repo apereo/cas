@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDevice
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -24,13 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthToken")
 class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
-    @Override
-    @BeforeEach
-    public void setup() {
-        super.setup();
-        this.servicesManager.deleteAll();
-    }
-
     @Test
     void verifyDefault() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());

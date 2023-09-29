@@ -63,7 +63,6 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             RequestValidatorTestUtils.SHARED_SECRET);
-        servicesManager.deleteAll();
         servicesManager.save(supportingService, nonSupportingService, promiscuousService);
     }
 

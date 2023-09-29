@@ -19,6 +19,6 @@ class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationT
 
     @Override
     protected String getServiceProviderId() {
-        return casProperties.getSamlSp().getCraniumCafe().getEntityIds().get(0);
+        return casProperties.getSamlSp().getCraniumCafe().getEntityIds().getFirst();
     }
 }

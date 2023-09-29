@@ -40,7 +40,7 @@ class DelegatedClientAuthenticationCredentialResolverTests {
         assertTrue(resolver.supports(clientCredential));
         val results = resolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
-        val profile = results.get(0);
+        val profile = results.getFirst();
         assertEquals("casuser-linked", profile.getLinkedId());
         assertEquals("casuser", profile.getId());
         assertTrue(profile.getAttributes().containsKey("memberOf"));

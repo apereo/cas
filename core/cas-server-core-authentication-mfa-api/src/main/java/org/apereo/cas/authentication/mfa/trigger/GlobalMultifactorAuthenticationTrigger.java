@@ -85,7 +85,7 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
         }
 
         if (resolvedProviders.size() == 1) {
-            return resolveSingleMultifactorProvider(resolvedProviders.get(0));
+            return resolveSingleMultifactorProvider(resolvedProviders.getFirst());
         }
 
         return resolveMultifactorProvider(authentication, registeredService, resolvedProviders);

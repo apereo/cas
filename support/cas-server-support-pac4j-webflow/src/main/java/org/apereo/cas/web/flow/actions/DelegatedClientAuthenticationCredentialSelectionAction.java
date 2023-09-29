@@ -28,7 +28,7 @@ public class DelegatedClientAuthenticationCredentialSelectionAction extends Base
         val profiles = DelegationWebflowUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext,
             DelegatedAuthenticationCandidateProfile.class);
         if (profiles.size() == 1) {
-            val profile = profiles.get(0);
+            val profile = profiles.getFirst();
             DelegationWebflowUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, profile);
             return new Event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE,
                 new LocalAttributeMap<>("profile", profile));

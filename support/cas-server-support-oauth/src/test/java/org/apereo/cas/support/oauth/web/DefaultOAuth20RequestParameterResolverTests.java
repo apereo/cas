@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
@@ -39,11 +38,6 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
         request.removeAllParameters();
         request.addParameter(OAuth20Constants.REQUEST, jwtString);
         return request;
-    }
-
-    @BeforeEach
-    public void onSetUp() {
-        servicesManager.deleteAll();
     }
 
     @Test

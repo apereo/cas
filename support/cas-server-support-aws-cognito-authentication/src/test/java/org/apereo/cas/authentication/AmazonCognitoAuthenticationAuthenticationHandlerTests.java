@@ -197,7 +197,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
                 PrincipalFactoryUtils.newPrincipalFactory(), provider,
                 casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
-        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").get(0));
+        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").getFirst());
     }
 
     private static ConfigurableJWTProcessor getConfigurableJWTProcessor(final String sub) throws Exception {

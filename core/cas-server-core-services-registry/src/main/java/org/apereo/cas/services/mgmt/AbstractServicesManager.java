@@ -377,12 +377,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return Stream.empty();
         }
         if (serviceQueries.size() == 1) {
-            try (val results = indexedRegisteredServices.retrieve(serviceQueries.get(0))) {
+            try (val results = indexedRegisteredServices.retrieve(serviceQueries.getFirst())) {
                 return results.stream();
             }
         }
         val subQueries = serviceQueries.subList(2, serviceQueries.size());
-        val query = QueryFactory.and(serviceQueries.get(0), serviceQueries.get(1), (List) subQueries);
+        val query = QueryFactory.and(serviceQueries.getFirst(), serviceQueries.get(1), (List) subQueries);
         try (val results = indexedRegisteredServices.retrieve(query)) {
             return results.stream();
         }

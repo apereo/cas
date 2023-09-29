@@ -88,7 +88,7 @@ public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasActuatorE
 
     protected Credential extractCredential(final String base64Credentials) {
         val basicAuthCredentials = Splitter.on(':').splitToList(EncodingUtils.decodeBase64ToString(base64Credentials));
-        return new UsernamePasswordCredential(basicAuthCredentials.get(0), basicAuthCredentials.get(1));
+        return new UsernamePasswordCredential(basicAuthCredentials.getFirst(), basicAuthCredentials.get(1));
     }
 
     protected CasSimpleMultifactorAuthenticationTicket createAndStoreToken(final Service givenService,

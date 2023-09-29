@@ -102,7 +102,7 @@ class WsFederationResponseValidatorTests {
 
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        val wsConfig = wsFederationConfigurations.toList().get(0);
+        val wsConfig = wsFederationConfigurations.toList().getFirst();
         val id = wsConfig.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
         wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());

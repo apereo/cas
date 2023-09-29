@@ -53,7 +53,7 @@ class CompositeAttestationTrustSourceTests {
     void verifyOperation() throws Throwable {
         val map = MAPPER.readValue(casProperties.getAuthn().getMfa().getWebAuthn().getCore()
             .getTrustSource().getTrustedDeviceMetadata().getLocation().getInputStream(), Map.class);
-        val cert = CertUtils.readCertificate(new ByteArrayInputStream(((List) map.get("trustedCertificates")).get(0)
+        val cert = CertUtils.readCertificate(new ByteArrayInputStream(((List) map.get("trustedCertificates")).getFirst()
             .toString().getBytes(StandardCharsets.UTF_8)));
 
         val result = webAuthnMetadataService.findTrustRoots(List.of(cert), Optional.empty());

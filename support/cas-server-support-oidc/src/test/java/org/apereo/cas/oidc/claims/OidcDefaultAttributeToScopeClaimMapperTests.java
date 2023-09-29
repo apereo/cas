@@ -69,11 +69,11 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("status1", "true",
                     "status2", false, "status3", 1));
-            var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).get(0);
+            var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Boolean);
-            value = mapper.mapClaim("active2", oidcRegisteredService, principal, null).get(0);
+            value = mapper.mapClaim("active2", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Boolean);
-            value = mapper.mapClaim("active3", oidcRegisteredService, principal, null).get(0);
+            value = mapper.mapClaim("active3", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Number);
         }
 

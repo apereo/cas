@@ -74,6 +74,12 @@ public class MockRequestContext extends MockRequestControlContext {
         return Objects.requireNonNull((ConfigurableApplicationContext) getActiveFlow().getApplicationContext());
     }
 
+    public MockRequestContext setContextPath(final String constContextPath) {
+        getHttpServletRequest().setContextPath(constContextPath);
+        getMockExternalContext().setContextPath(constContextPath);
+        return this;
+    }
+
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();
         staticContext.refresh();

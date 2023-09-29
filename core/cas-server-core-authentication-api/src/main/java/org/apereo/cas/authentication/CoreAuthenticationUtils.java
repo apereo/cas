@@ -227,7 +227,7 @@ public class CoreAuthenticationUtils {
                 val attributeName = a.trim();
                 if (attributeName.contains(":")) {
                     val attrCombo = Splitter.on(":").splitToList(attributeName);
-                    val name = attrCombo.get(0).trim();
+                    val name = attrCombo.getFirst().trim();
                     val value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
                     attributes.put(name, value);

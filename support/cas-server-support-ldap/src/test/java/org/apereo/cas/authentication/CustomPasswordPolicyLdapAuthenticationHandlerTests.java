@@ -29,7 +29,7 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         @Test
         void verifyOperation() throws Throwable {
             assertNotNull(ldapAuthenticationHandlers);
-            val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
+            val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().getFirst();
             assertTrue(Arrays.stream(handler.getAuthenticator()
                 .getResponseHandlers()).anyMatch(r -> r.getClass().equals(TestAuthenticationResponseHandler.class)));
         }
@@ -45,7 +45,7 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         @Test
         void verifyOperation() throws Throwable {
             assertNotNull(ldapAuthenticationHandlers);
-            val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
+            val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().getFirst();
             assertTrue(Arrays.stream(handler.getAuthenticator()
                 .getResponseHandlers()).noneMatch(r -> r.getClass().equals(TestAuthenticationResponseHandler.class)));
         }

@@ -149,7 +149,7 @@ public class DynamoDbYubiKeyFacilitator {
     public void delete(final String username, final long deviceId) {
         val accounts = getAccounts(username);
         if (!accounts.isEmpty()) {
-            val account = accounts.get(0);
+            val account = accounts.getFirst();
             if (account != null && account.getDevices().removeIf(device -> device.getId() == deviceId)) {
                 update(account);
             }

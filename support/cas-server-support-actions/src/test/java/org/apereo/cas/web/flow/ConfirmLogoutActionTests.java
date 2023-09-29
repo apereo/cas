@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -10,13 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,9 +27,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyDoesNothing() throws Throwable {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNull(WebUtils.getAuthentication(context));
@@ -44,10 +36,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyLocateByContext() throws Throwable {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
-
+        val context = MockRequestContext.create(applicationContext);
         val ticket = new MockTicketGrantingTicket("casuser");
         getTicketRegistry().addTicket(ticket);
         WebUtils.putTicketGrantingTicketInScopes(context, ticket);
@@ -60,20 +49,19 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
     @Test
     void verifyByCookie() throws Throwable {
-        val context = new MockRequestContext();
-        val response = new MockHttpServletResponse();
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.addHeader("User-Agent", "agent");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
+
+        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
+        context.getHttpServletRequest().setLocalAddr("185.88.151.11");
+        context.getHttpServletRequest().addHeader("User-Agent", "agent");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
 
         val ticket = new MockTicketGrantingTicket("casuser");
         getTicketRegistry().addTicket(ticket);
 
-        val c = getTicketGrantingTicketCookieGenerator().addCookie(request, response, ticket.getId());
-        request.setCookies(c);
+        val cookie = getTicketGrantingTicketCookieGenerator()
+            .addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(), ticket.getId());
+        context.getHttpServletRequest().setCookies(cookie);
         
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

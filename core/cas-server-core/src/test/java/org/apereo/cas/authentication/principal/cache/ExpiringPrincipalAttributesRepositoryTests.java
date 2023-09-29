@@ -95,7 +95,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
                 repoAttrs = repository.getAttributes(context);
                 assertEquals(1, repoAttrs.size());
                 assertFalse(repoAttrs.containsKey("uid"));
-                assertEquals("final@school.com", repoAttrs.get(MAIL).get(0));
+                assertEquals("final@school.com", repoAttrs.get(MAIL).getFirst());
             }
         }
 

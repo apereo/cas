@@ -76,7 +76,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         val logoutUrls = SingleLogoutUrl.from(registeredService);
         if (!logoutUrls.isEmpty()) {
-            val destination = logoutUrls.iterator().next().getUrl();
+            val destination = logoutUrls.getFirst().getUrl();
             WebUtils.putLogoutRedirectUrl(request, destination);
         }
 

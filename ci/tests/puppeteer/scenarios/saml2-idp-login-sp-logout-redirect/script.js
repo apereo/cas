@@ -14,9 +14,8 @@ const path = require("path");
     let ticket = await cas.assertTicketParameter(page);
     await page.waitForTimeout(1000);
     await page.close();
-    
+    await page.waitForTimeout(1000);
     await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
-
     page = await cas.newPage(browser);
     await page.setRequestInterception(true);
     await cas.screenshot(page);
@@ -29,13 +28,14 @@ const path = require("path");
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
         };
-
         request.continue(data);
     });
 
     await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    const content = await page.content();
-    assert(content.includes('value="Go to https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
+    await page.waitForTimeout(1000);
+    await cas.logPage(page);
+    let url = await page.url();
+    assert(url.startsWith("https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse="));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

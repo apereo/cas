@@ -123,7 +123,7 @@ while (( "$#" )); do
     REBUILD="true"
     shift 1
     ;;
-  --dry-run|--y)
+  --dry-run|--y|--dry)
     DRYRUN="true"
     shift 1
     ;;

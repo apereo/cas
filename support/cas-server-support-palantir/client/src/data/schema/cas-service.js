@@ -131,7 +131,7 @@ export const casServiceUiSchema = {
                                 }
                             ]
                         },
-                        
+
                     ]
                 }
             ]
@@ -153,7 +153,7 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
-            "label": "Acceptable Usage",
+            "label": "Acceptable Usage Policy",
             "elements": [
                 {
                     "type": "VerticalLayout",
@@ -250,7 +250,7 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
-            "label": "Multifactor",
+            "label": "Multifactor Authentication",
             "elements": [
                 {
                     "type": "VerticalLayout",
@@ -340,7 +340,7 @@ export const casServiceUiSchema = {
                 }
             ]
         },
-        
+
         {
             "type": "Category",
             "label": "Tickets",

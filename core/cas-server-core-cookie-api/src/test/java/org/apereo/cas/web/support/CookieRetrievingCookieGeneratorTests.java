@@ -99,13 +99,13 @@ class CookieRetrievingCookieGeneratorTests {
         assertNotNull(cookie);
         var headers = response.getHeaders("Set-Cookie");
         assertEquals(1, headers.size());
-        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+        assertTrue(headers.getFirst().contains(context.getName() + '=' + cookie.getValue()));
 
         cookie = gen.addCookie(request, response, "updated-value");
         assertNotNull(cookie);
         headers = response.getHeaders("Set-Cookie");
         assertEquals(1, headers.size());
-        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+        assertTrue(headers.getFirst().contains(context.getName() + '=' + cookie.getValue()));
     }
 
     @Test

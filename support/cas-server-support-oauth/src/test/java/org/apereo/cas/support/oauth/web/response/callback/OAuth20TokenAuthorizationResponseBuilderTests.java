@@ -50,7 +50,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
         assertEquals(expectedParamValue,
             params
                 .get(paramName)
-                .get(0),
+                .getFirst(),
             () -> "Expected unchanged " + paramName + "  param");
     }
 

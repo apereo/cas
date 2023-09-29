@@ -20,8 +20,7 @@
     <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
-    <link rel="shortcut icon"
-        th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
+    <link rel="shortcut icon" th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
 </head>
 
 <body>

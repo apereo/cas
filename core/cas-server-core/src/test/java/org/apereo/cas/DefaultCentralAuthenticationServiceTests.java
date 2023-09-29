@@ -423,7 +423,7 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val auth = assertion.getPrimaryAuthentication();
         val attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
-        assertEquals("adopters", attributes.get("groupMembership").get(0));
+        assertEquals("adopters", attributes.get("groupMembership").getFirst());
     }
 
     @Test

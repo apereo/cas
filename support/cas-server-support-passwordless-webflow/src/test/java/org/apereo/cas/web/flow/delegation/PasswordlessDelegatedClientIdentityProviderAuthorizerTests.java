@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.delegation;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +40,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
 
     @Test
     void verifyNoneDefined() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of())
@@ -51,7 +51,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
 
     @Test
     void verifyDefined() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of("CasClient"))
@@ -62,7 +62,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
 
     @Test
     void verifyUnknown() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of("AnotherClient"))
@@ -73,7 +73,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
 
     @Test
     void verifyNoAccount() throws Throwable {
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
         assertFalse(isAuthorized(context));
     }
 

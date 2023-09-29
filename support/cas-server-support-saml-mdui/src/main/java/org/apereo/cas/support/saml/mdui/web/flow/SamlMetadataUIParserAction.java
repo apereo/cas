@@ -144,7 +144,7 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
         if (StringUtils.isBlank(entityId)) {
             val service = argumentExtractor.extractService(request);
             if (service != null && service.getAttributes().containsKey(this.entityIdParameterName)) {
-                entityId = service.getAttributes().get(this.entityIdParameterName).get(0).toString();
+                entityId = service.getAttributes().get(this.entityIdParameterName).getFirst().toString();
             }
         }
         return entityId;

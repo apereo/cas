@@ -55,7 +55,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.get(0);
+        val processed = (ProcessedClaim) values.getFirst();
         assertEquals("givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }
@@ -78,7 +78,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.get(0);
+        val processed = (ProcessedClaim) values.getFirst();
         assertEquals("https://apereo.org/cas/givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }

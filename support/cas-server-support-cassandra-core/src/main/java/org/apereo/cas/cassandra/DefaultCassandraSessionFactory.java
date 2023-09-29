@@ -101,7 +101,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             .stream()
             .map(contactPoint -> {
                 val hostAndPort = Splitter.on(":").splitToList(contactPoint);
-                val host = hostAndPort.get(0).trim();
+                val host = hostAndPort.getFirst().trim();
                 val port = Integer.parseInt(hostAndPort.get(1).trim());
                 return new InetSocketAddress(host, port);
             })

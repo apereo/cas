@@ -65,7 +65,7 @@ public record DefaultResponse(ResponseType responseType, String url, Map<String,
         val sanitizedUrl = sanitizeUrl(url);
         LOGGER.trace("Sanitized URL for redirect response is [{}]", sanitizedUrl);
         val fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
-        builder.append(fragmentSplit.get(0));
+        builder.append(fragmentSplit.getFirst());
         val params = parameters.entrySet()
             .stream()
             .filter(entry -> entry.getValue() != null)
@@ -73,7 +73,7 @@ public record DefaultResponse(ResponseType responseType, String url, Map<String,
             .collect(Collectors.joining("&"));
 
         if (!params.isEmpty()) {
-            builder.append(fragmentSplit.get(0).contains("?") ? "&" : "?");
+            builder.append(fragmentSplit.getFirst().contains("?") ? "&" : "?");
             builder.append(params);
         }
         if (fragmentSplit.size() > 1) {

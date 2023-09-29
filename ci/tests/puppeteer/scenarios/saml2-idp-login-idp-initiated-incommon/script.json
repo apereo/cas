@@ -10,7 +10,7 @@
     "--cas.server.scope=example.net",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.slo.disabled=true",
 

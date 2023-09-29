@@ -190,7 +190,7 @@ class CasAuthenticationEventListenerTests {
         assertNotNull(casEventRepository.load());
         val list = casEventRepository.load().toList();
         assertFalse(list.isEmpty());
-        val result = list.get(0).getClientIpAddress();
+        val result = list.getFirst().getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP, result);
     }
 

@@ -43,6 +43,6 @@ public class OidcAttributeDefinition extends DefaultAttributeDefinition {
      */
     @JsonIgnore
     public Object toAttributeValue(final List values) {
-        return singleValue && values.size() == 1 ? values.get(0) : values;
+        return singleValue && values.size() == 1 ? values.getFirst() : values;
     }
 }

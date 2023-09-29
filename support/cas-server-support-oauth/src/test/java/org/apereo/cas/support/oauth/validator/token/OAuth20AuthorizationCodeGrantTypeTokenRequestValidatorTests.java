@@ -132,7 +132,6 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
             this.nonSupportingServiceTicket = registerTicket(nonSupportingService);
             this.promiscuousServiceTicket = registerTicket(promiscuousService);
 
-            this.servicesManager.deleteAll();
             this.servicesManager.save(supportingService, nonSupportingService, promiscuousService);
         }
 

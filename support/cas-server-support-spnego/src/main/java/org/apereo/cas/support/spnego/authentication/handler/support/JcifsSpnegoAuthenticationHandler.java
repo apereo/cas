@@ -156,6 +156,6 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             return this.principalFactory.createPrincipal(name);
         }
         val splitList = Splitter.on("@").splitToList(name);
-        return this.principalFactory.createPrincipal(splitList.get(0));
+        return this.principalFactory.createPrincipal(splitList.getFirst());
     }
 }

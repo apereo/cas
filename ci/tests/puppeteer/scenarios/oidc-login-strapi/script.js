@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -9,17 +8,9 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-
     await cas.goto(page, "http://localhost:1337/api/connect/cas");
     await page.waitForTimeout(2000);
-    let element = await page.$('body pre');
-    if (element == null) {
-        let errorpage = await cas.textContent(page, 'body div main');
-        await cas.log(errorpage);
-        throw `failed`;
-    }
-    let jwt = await page.evaluate(element => element.textContent.trim(), element);
-    await cas.log(jwt);
-    assert(jwt.includes("jwt"));
+    let id_token = await cas.assertParameter(page, "id_token");
+    await cas.log(id_token);
     await browser.close();
 })();

@@ -106,7 +106,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                     svc.getServiceId(), svc.getClientId());
                 return null;
             }
-            val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().get(0);
+            val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().getFirst();
             LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
             if (jsonWebKey.getPrivateKey() == null) {
                 LOGGER.info("JSON web key used to encrypt the token has no associated private key, "
@@ -125,7 +125,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     private static PublicJsonWebKey toJsonWebKey(final String key) throws Exception {
         val details = EncodingUtils.parseJsonWebKey(key);
         if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
-            return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().get(0);
+            return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().getFirst();
         }
         return (PublicJsonWebKey) EncodingUtils.newJsonWebKey(key);
     }
