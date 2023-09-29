@@ -12,6 +12,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
@@ -35,7 +36,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
@@ -90,10 +90,10 @@ class InitialFlowSetupActionTests {
                 .httpOnly(false)
                 .build();
 
-            this.warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(warn);
-            this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-            this.tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(tgt);
-            this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
+            warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(warn);
+            warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
+            tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(tgt);
+            tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
             val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
             val servicesManager = mock(ServicesManager.class);
@@ -109,36 +109,33 @@ class InitialFlowSetupActionTests {
 
         @Test
         void verifySettingContextPath() throws Throwable {
-            val request = new MockHttpServletRequest();
-            request.setContextPath(CONST_CONTEXT_PATH);
-            val context = new MockRequestContext();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
+            val context = MockRequestContext.create(applicationContext);
+            context.setContextPath(CONST_CONTEXT_PATH);
 
             action.execute(context);
 
-            assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-            assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
+            assertEquals(CONST_CONTEXT_PATH + '/', warnCookieGenerator.getCookiePath());
+            assertEquals(CONST_CONTEXT_PATH + '/', tgtCookieGenerator.getCookiePath());
         }
 
         @Test
         void verifyResettingContextPath() throws Throwable {
-            val request = new MockHttpServletRequest();
-            request.setContextPath(CONST_CONTEXT_PATH);
-            val context = new MockRequestContext();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
+            context.setContextPath(CONST_CONTEXT_PATH);
+            
+            action.execute(context);
 
-            this.action.execute(context);
+            assertEquals(CONST_CONTEXT_PATH + '/', warnCookieGenerator.getCookiePath());
+            assertEquals(CONST_CONTEXT_PATH + '/', tgtCookieGenerator.getCookiePath());
 
-            assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-            assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
+            context.setContextPath(CONST_CONTEXT_PATH_2);
+            action.execute(context);
 
-            request.setContextPath(CONST_CONTEXT_PATH_2);
-            this.action.execute(context);
-
-            assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.warnCookieGenerator.getCookiePath());
-            assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.tgtCookieGenerator.getCookiePath());
-            assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-            assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
+            assertNotSame(CONST_CONTEXT_PATH_2 + '/', warnCookieGenerator.getCookiePath());
+            assertNotSame(CONST_CONTEXT_PATH_2 + '/', tgtCookieGenerator.getCookiePath());
+            assertEquals(CONST_CONTEXT_PATH + '/', warnCookieGenerator.getCookiePath());
+            assertEquals(CONST_CONTEXT_PATH + '/', tgtCookieGenerator.getCookiePath());
         }
     }
 
@@ -155,32 +152,25 @@ class InitialFlowSetupActionTests {
 
         @Test
         void verifyResponseStatusAsError() throws Throwable {
-            val context = new MockRequestContext();
-            var response = new MockHttpServletResponse();
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-                new MockHttpServletRequest(), response));
+            val context = MockRequestContext.create(applicationContext);
+            context.getHttpServletResponse().setStatus(HttpStatus.UNAUTHORIZED.value());
             assertThrows(UnauthorizedServiceException.class, () -> action.execute(context));
         }
 
         @Test
         void verifyNoServiceFound() throws Throwable {
-            val context = new MockRequestContext();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-                new MockHttpServletRequest(), new MockHttpServletResponse()));
-            val event = this.action.execute(context);
+            val context = MockRequestContext.create(applicationContext);
+            val event = action.execute(context);
             assertNull(WebUtils.getService(context));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         }
 
         @Test
         void verifyServiceFound() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
 
-            val event = this.action.execute(context);
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
+            val event = action.execute(context);
 
             assertEquals("test", WebUtils.getService(context).getId());
             assertNotNull(WebUtils.getRegisteredService(context));
@@ -201,10 +191,10 @@ class InitialFlowSetupActionTests {
             request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
             getServicesManager().save(registeredService);
 
-            val context = new MockRequestContext();
+            val context = MockRequestContext.create(applicationContext);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-            val event = this.action.execute(context);
+            val event = action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         }
 
@@ -218,10 +208,10 @@ class InitialFlowSetupActionTests {
             getTicketGrantingTicketCookieGenerator().addCookie(response, tgt.getId());
             request.setCookies(response.getCookies());
 
-            val context = new MockRequestContext();
+            val context = MockRequestContext.create(applicationContext);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-            val event = this.action.execute(context);
+            val event = action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
             assertTrue(WebUtils.isExistingSingleSignOnSessionAvailable(context));
             assertNotNull(getTicketRegistry().getTicket(tgt.getId()));

@@ -42,6 +42,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -109,4 +110,8 @@ public abstract class BaseCertificateCredentialActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_X509_CHECK)
     protected Action action;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
 }
