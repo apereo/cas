@@ -47,8 +47,8 @@ Furthermore, the CAS codebase has made modest and small efforts where possible t
 adjust parts of the codebase that would assist with request execution and handling inside virtual threads. These efforts
 mainly include the following:
 
-- Removing `synchronized` blocks and constructs and replacing with the locking that is more appropriate for virtual threads without thread pinning.
-- Replacing `@Synchronized` annotations with locking constructs, more appropriate for virtual threads.
+- Removing `synchronized` blocks and constructs and replacing them with locking that is more appropriate for virtual threads without thread pinning.
+- Replacing `@Synchronized` annotations with locking constructs that are more appropriate for virtual threads.
 - Removing references to `ThreadLocal` as much as possible.
 
 ## New & Noteworthy
@@ -72,7 +72,7 @@ runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace 
 Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
 
 As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline 
-in the next few release candidates.
+in the next few release candidates. As a result, the required Gradle version has also changed to `8.4.0`.
 
 ### Graal VM Native Images
 
