@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import { useGetSchemaQuery } from '../../store/SchemaApi';
@@ -6,8 +6,9 @@ import { useGetSchemaQuery } from '../../store/SchemaApi';
 import MuiSidebarCategorizationRenderer, { muiSidebarCategorizationTester } from '../../components/renderers/MuiSidebarCategorizationRenderer';
 import { defaultServiceClass, updateService, useServiceData } from '../../store/ServiceSlice';
 import { useUiSchema } from '../../data/service-types';
-import { Button, Divider, Grid, Toolbar } from '@mui/material';
+import { Box, Button, Divider, Grid, IconButton, Toolbar } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import MenuIcon from '@mui/icons-material/Menu';
 import { NavLink } from 'react-router-dom';
 import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/renderers/MuiAnyOfRenderer';
 import MuiConstRenderer, { muiConstControlTester } from '../../components/renderers/MuiConstRenderer';
@@ -51,29 +52,49 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
         updateService(data);   
     }, [data]);
 
+    const [open, setOpen] = React.useState(true);
+
+    const config = useMemo(() => ({
+        context: {
+            open,
+            setOpen
+        }
+    }), [open]);
+
     return (
         <Grid>
-            <Toolbar sx={{ justifyContent: 'end' }}>
-                <Button
-                    variant='outlined'
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={() => setOpen(!open)}
                     edge="start"
-                    aria-label="menu"
-                    sx={{mr: 2}}
-                    component={NavLink}
-                    to="/services"
+                    sx={{ mr: 2 }}
                 >
-                    Cancel
-                </Button>
-                <Button
-                    variant='contained'
-                    edge="start"
-                    color="primary"
-                    aria-label="menu"
-                    disabled={ errors?.length > 0 }
-                    onClick={ () => save(data) }
-                >
-                    <SaveIcon />&nbsp; Save
-                </Button>
+                    <MenuIcon />
+                </IconButton>
+                <Box>
+                    <Button
+                        variant='outlined'
+                        edge="start"
+                        aria-label="menu"
+                        sx={{mr: 2}}
+                        component={NavLink}
+                        to="/services"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant='contained'
+                        edge="start"
+                        color="primary"
+                        aria-label="menu"
+                        disabled={ errors?.length > 0 }
+                        onClick={ () => save(data) }
+                    >
+                        <SaveIcon />&nbsp; Save
+                    </Button>
+                </Box>
             </Toolbar>
             <Divider light />
             { schema && uiSchema &&
@@ -83,6 +104,7 @@ export function ServiceForm ({ service, onSave, type = defaultServiceClass }) {
                     uischema={uiSchema}
                     schema={schema}
                     data={service}
+                    config={config}
                     onChange={({ errors, data }) => update(data, errors)}
                 />
             }
