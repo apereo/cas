@@ -2,7 +2,7 @@
   "dependencies": "yubikey,gauth",
 
   "properties": [
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",

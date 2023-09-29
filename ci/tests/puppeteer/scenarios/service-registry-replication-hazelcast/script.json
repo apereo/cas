@@ -9,7 +9,7 @@
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.service-registry.stream.core.enabled=true",
     "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.watcher-enabled=true"

@@ -18,7 +18,7 @@
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
 
     "--logging.level.org.apereo.cas=info",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

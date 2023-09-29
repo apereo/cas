@@ -8,7 +8,7 @@
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--logging.level.org.apereo.cas=info",
     
     "--cas.service-registry.core.init-from-json=true",

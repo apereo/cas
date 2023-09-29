@@ -2,7 +2,7 @@
   "dependencies": "pac4j-webflow",
 
   "properties": [
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
