@@ -36,6 +36,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -90,4 +91,8 @@ public abstract class AbstractSpnegoTests {
     @Autowired
     @Qualifier("spnego")
     protected Action spnegoAction;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
 }

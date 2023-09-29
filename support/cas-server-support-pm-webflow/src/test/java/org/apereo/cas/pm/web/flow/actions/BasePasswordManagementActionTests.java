@@ -49,6 +49,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
@@ -117,6 +118,9 @@ public abstract class BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,

@@ -261,7 +261,14 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 };
 
 exports.newPage = async (browser) => {
-    let page = (await browser.pages())[0];
+    let page = undefined;
+    try {
+        page = (await browser.pages())[0];
+    } catch (e) {
+        this.logr(e);
+        await this.sleep(1000);
+    }
+    
     if (page === undefined) {
         let counter = 0;
         while (page === undefined && counter < 5) {
@@ -279,7 +286,9 @@ exports.newPage = async (browser) => {
     // await page.setRequestInterception(true);
 
     if (page === null || page === undefined) {
-        throw "Unable to open a new browser page";
+        const err = "Unable to open a new browser page";
+        await this.logr(err);
+        throw err;
     }
     
     await page.bringToFront();
