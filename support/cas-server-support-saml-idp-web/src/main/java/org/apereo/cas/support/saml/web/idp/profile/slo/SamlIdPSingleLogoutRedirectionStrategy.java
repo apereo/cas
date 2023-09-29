@@ -12,7 +12,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,9 +27,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -66,9 +63,9 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                     .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty());
             }
             return logout.isSendLogoutResponse()
-                   && samlRegisteredService.isLogoutResponseEnabled()
-                   && sloRequest != null
-                   && !async;
+                && samlRegisteredService.isLogoutResponseEnabled()
+                && sloRequest != null
+                && !async;
         }
         return false;
     }
@@ -88,7 +85,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             LOGGER.warn("Cannot find service provider metadata entity linked to [{}]", logoutRequestIssuer);
         } else {
             val adaptor = adaptorRes.get();
-            val binding = determineLogoutResponseBindingType(samlRegisteredService);
+            val binding = determineLogoutResponseBindingType(adaptor, samlRegisteredService);
             LOGGER.debug("Logout response binding type is determined as [{}]", binding);
 
             if (SAMLConstants.SAML2_POST_BINDING_URI.equals(binding)) {
@@ -99,26 +96,19 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         }
     }
 
-    /**
-     * Determine logout response binding type string.
-     *
-     * @param samlRegisteredService the saml registered service
-     * @return the string
-     */
-    protected String determineLogoutResponseBindingType(final SamlRegisteredService samlRegisteredService) {
+    protected String determineLogoutResponseBindingType(final SamlRegisteredServiceMetadataAdaptor adaptor,
+                                                        final SamlRegisteredService samlRegisteredService) {
+
         val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
-        val binding = StringUtils.defaultIfBlank(samlRegisteredService.getLogoutResponseBinding(), logout.getLogoutResponseBinding());
+        var binding = logout.getLogoutResponseBinding();
+        if (StringUtils.isNotBlank(samlRegisteredService.getLogoutResponseBinding())) {
+            binding = samlRegisteredService.getLogoutResponseBinding();
+        } else if (!adaptor.getSingleLogoutServices().isEmpty()) {
+            binding = adaptor.getSingleLogoutService().getBinding();
+        }
         return StringUtils.defaultIfBlank(binding, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
-    /**
-     * Handle single logout for redirect binding.
-     *
-     * @param context               the context
-     * @param samlLogoutRequest     the saml logout request
-     * @param samlRegisteredService the saml registered service
-     * @param adaptor               the adaptor
-     */
     protected void handleSingleLogoutForRedirectBinding(final RequestContext context, final LogoutRequest samlLogoutRequest,
                                                         final SamlRegisteredService samlRegisteredService,
                                                         final SamlRegisteredServiceMetadataAdaptor adaptor) {
@@ -128,14 +118,6 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
                 sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 
-    /**
-     * Handle single logout for post binding.
-     *
-     * @param context               the context
-     * @param samlLogoutRequest     the saml logout request
-     * @param samlRegisteredService the saml registered service
-     * @param adaptor               the adaptor
-     */
     protected void handleSingleLogoutForPostBinding(final RequestContext context, final LogoutRequest samlLogoutRequest,
                                                     final SamlRegisteredService samlRegisteredService,
                                                     final SamlRegisteredServiceMetadataAdaptor adaptor) {
@@ -144,16 +126,6 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             sloService, context, samlRegisteredService, samlLogoutRequest)));
     }
 
-    /**
-     * Produce saml logout response redirect.
-     *
-     * @param adaptor           the adaptor
-     * @param sloService        the slo service
-     * @param context           the context
-     * @param registeredService the registered service
-     * @param logoutRequest     the logout request
-     * @throws Exception the exception
-     */
     protected void produceSamlLogoutResponseRedirect(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                      final SingleLogoutService sloService,
                                                      final RequestContext context,
@@ -175,16 +147,6 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         WebUtils.putLogoutRedirectUrl(request, redirectUrl);
     }
 
-    /**
-     * Produce saml logout response post.
-     *
-     * @param adaptor           the adaptor
-     * @param sloService        the slo service
-     * @param context           the context
-     * @param registeredService the registered service
-     * @param logoutRequest     the logout request
-     * @throws Exception the exception
-     */
     protected void produceSamlLogoutResponsePost(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                  final SingleLogoutService sloService,
                                                  final RequestContext context,
@@ -211,17 +173,6 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         WebUtils.putLogoutPostData(context, data);
     }
 
-    /**
-     * Build saml logout response.
-     *
-     * @param adaptor           the adaptor
-     * @param sloService        the slo service
-     * @param requestContext    the context
-     * @param registeredService the registered service
-     * @param logoutRequest     the logout request
-     * @return the logout response
-     * @throws Exception the exception
-     */
     protected LogoutResponse buildSamlLogoutResponse(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                      final SingleLogoutService sloService,
                                                      final RequestContext requestContext,
@@ -242,7 +193,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             sloService.getBinding(), issuer, location, adaptor.getEntityId());
         val logoutResponse = builder.newLogoutResponse(id, location, issuer, status, logoutRequest.getID());
 
-        if (configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout().isSignLogoutResponse()) {
+        if (signSamlLogoutResponseFor(registeredService)) {
             LOGGER.trace("Signing logout request for service provider [{}]", adaptor.getEntityId());
             val logoutResponseSigned = configurationContext.getSamlObjectSigner()
                 .encode(logoutResponse, registeredService, adaptor, response,
@@ -253,12 +204,19 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         return logoutResponse;
     }
 
-    private Optional<LogoutRequest> getLogoutRequest(final HttpServletRequest request) {
+    protected Optional<LogoutRequest> getLogoutRequest(final HttpServletRequest request) {
         val logoutRequest = WebUtils.getSingleLogoutRequest(request);
         return Optional.ofNullable(logoutRequest).map(req -> {
             val decodedRequest = EncodingUtils.decodeBase64(logoutRequest);
             return SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(),
                 decodedRequest, LogoutRequest.class);
         });
+    }
+
+    protected boolean signSamlLogoutResponseFor(final SamlRegisteredService registeredService) {
+        if (registeredService.getSignLogoutResponse().isUndefined()) {
+            return configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout().isSignLogoutResponse();
+        }
+        return registeredService.getSignLogoutResponse().isTrue();
     }
 }
