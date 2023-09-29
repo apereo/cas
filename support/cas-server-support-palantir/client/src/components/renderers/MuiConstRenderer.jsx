@@ -12,11 +12,7 @@ export const MuiConstRenderer = ({
   
   useEffect(() => {
     handleChange(path, schema.const);
-  }, [schema, path, handleChange])
-
-  useEffect(() => {
-    console.log(props, schema, path);
-  }, [props, schema, path])
+  }, [schema, path, handleChange]);
 
   return (
    <Fragment></Fragment>

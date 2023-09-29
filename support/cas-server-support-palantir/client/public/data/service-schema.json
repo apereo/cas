@@ -322,9 +322,20 @@
             "properties": {
                 "attributeRepositoryIds": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "expiration": {
                     "type": "integer"
@@ -344,6 +355,15 @@
             },
             "required": [
                 "@class"
+            ]
+        },
+        "CasProtocolVersions": {
+            "type": "string",
+            "enum": [
+                "CAS10",
+                "CAS20",
+                "CAS30",
+                "SAML1"
             ]
         },
         "CasRegisteredService": {
@@ -372,9 +392,20 @@
                 },
                 "environments": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "evaluationOrder": {
                     "type": "integer"
@@ -444,10 +475,11 @@
                 },
                 "supportedProtocols": {
                     "type": "array",
+                    "items": false,
                     "prefixItems": [
                         {
                             "type": "string",
-                            "const": "java.util.HashSet"
+                            "const": "java.util.LinkedHashSet"
                         },
                         {
                             "type": "array",
@@ -456,8 +488,7 @@
                                 "$ref": "#/$defs/CasProtocolVersions"
                             }
                         }
-                    ],
-                    "items": false
+                    ]
                 },
                 "templateName": {
                     "type": "string"
@@ -612,9 +643,20 @@
             "properties": {
                 "attributeRepositoryIds": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "ignoreResolvedAttributes": {
                     "type": "boolean"
@@ -699,15 +741,37 @@
                 },
                 "excludedAuthenticationHandlers": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "requiredAuthenticationHandlers": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "@class": {
                     "const": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy"
@@ -722,21 +786,54 @@
             "properties": {
                 "excludedAttributes": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "excludedServices": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "includeOnlyAttributes": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "order": {
                     "type": "integer"
@@ -853,9 +950,20 @@
                 },
                 "multifactorAuthenticationProviders": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "principalAttributeNameTrigger": {
                     "type": "string"
@@ -1019,6 +1127,9 @@
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
                 },
+                "canonicalizationMode": {
+                    "type": "string"
+                },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
                 },
@@ -1152,6 +1263,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -1383,6 +1497,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -2003,6 +2120,9 @@
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
                 },
+                "canonicalizationMode": {
+                    "type": "string"
+                },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
                 },
@@ -2011,9 +2131,20 @@
                 },
                 "excludedAttributes": {
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "items": false,
+                    "prefixItems": [
+                        {
+                            "type": "string",
+                            "const": "java.util.LinkedHashSet"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 },
                 "order": {
                     "type": "integer"
@@ -2052,6 +2183,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -2097,6 +2231,9 @@
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
                 },
+                "canonicalizationMode": {
+                    "type": "string"
+                },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
                 },
@@ -2137,6 +2274,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -2179,6 +2319,9 @@
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
                 },
+                "canonicalizationMode": {
+                    "type": "string"
+                },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
                 },
@@ -2219,6 +2362,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -2269,6 +2415,9 @@
                 },
                 "authorizedToReleaseProxyGrantingTicket": {
                     "type": "boolean"
+                },
+                "canonicalizationMode": {
+                    "type": "string"
                 },
                 "consentPolicy": {
                     "$ref": "#/$defs/RegisteredServiceConsentPolicy"
@@ -2375,10 +2524,6 @@
                 "FALSE",
                 "UNDEFINED"
             ]
-        },
-        "CasProtocolVersions" : {
-            "type" : "string",
-            "enum" : [ "CAS10", "CAS20", "CAS30", "SAML1" ]
         }
     },
     "anyOf": [

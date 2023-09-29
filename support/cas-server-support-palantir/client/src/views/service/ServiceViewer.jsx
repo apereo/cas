@@ -20,7 +20,6 @@ export function ServiceViewer () {
     const navigate = useNavigate();
 
     const update = useCallback((s) => {
-        console.log(s);
         updateService(s);
     }, [updateService]);
 

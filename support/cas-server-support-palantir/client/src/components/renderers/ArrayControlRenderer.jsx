@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 const { MaterialArrayControlRenderer } = Unwrapped;
 
 export const ArrayControlRenderer = (props) => {
-    useEffect(() => { console.log('ArrayControlRenderer', props) }, [props]);
     return (
         <MaterialArrayControlRenderer {...props} />
     );
