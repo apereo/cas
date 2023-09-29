@@ -21,5 +21,6 @@ echo "==========================="
 echo "Running Strapi $(strapi --version)"
 echo "==========================="
 
-NODE_TLS_REJECT_UNAUTHORIZED=0
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+export DATABASE_SSL_REJECT_UNAUTHORIZED=false
 strapi start
