@@ -21,7 +21,7 @@ export default function Layout ({ children }) {
                 color: theme.palette.text.primary,
             }}
         >
-            <AppBar position="sticky">
+            <AppBar position="sticky" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <Toolbar>
                     <img src={CASLogo} alt="CAS - Central Authentication Service" className="m-2" style={{maxHeight: '40px', marginRight: '40px'}} />
                     <Button
