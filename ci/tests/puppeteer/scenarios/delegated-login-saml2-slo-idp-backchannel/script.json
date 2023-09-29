@@ -8,7 +8,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--management.endpoints.web.cors.allowed-headers=*",
     "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
