@@ -27,7 +27,7 @@ class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
         var modules = endpoint.reportModules();
         assertFalse(modules.isEmpty());
 
-        val module = modules.get(0);
+        val module = modules.getFirst();
         assertNotNull(module.getName());
         assertNotNull(module.getDescription());
         assertNotNull(module.getVersion());

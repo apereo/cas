@@ -7,7 +7,7 @@
   "properties": [
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--logging.level.org.apereo.cas=warn",
 
     "--cas.service-registry.schedule.enabled=false",

@@ -96,7 +96,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
         val context = verifyOperation(enrollProvider, CasWebflowConstants.TRANSITION_ID_ENROLL);
         val url = context.getFlowScope().get("duoRegistrationUrl", String.class);
         assertNotNull(url);
-        assertTrue("principal".equalsIgnoreCase(new URIBuilder(url).getQueryParams().get(0).getName()));
+        assertTrue("principal".equalsIgnoreCase(new URIBuilder(url).getQueryParams().getFirst().getName()));
     }
 
     @Test

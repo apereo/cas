@@ -39,7 +39,7 @@ class X509RestHttpRequestHeaderCredentialFactoryTests {
             val certStr = scan.useDelimiter("\\Z").next();
             request.addHeader(HEADER, certStr);
 
-            val cred = factory.fromRequest(request, null).iterator().next();
+            val cred = factory.fromRequest(request, null).getFirst();
             assertTrue(cred instanceof X509CertificateCredential);
         }
     }

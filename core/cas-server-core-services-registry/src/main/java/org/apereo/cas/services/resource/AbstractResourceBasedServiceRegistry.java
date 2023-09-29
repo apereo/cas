@@ -67,7 +67,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * Fallback location to use if the given location is determined as invalid.
      */
     public static final File FALLBACK_REGISTERED_SERVICES_LOCATION =
-        new File(CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES.get(0), "services");
+        new File(CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES.getFirst(), "services");
 
 
     /**

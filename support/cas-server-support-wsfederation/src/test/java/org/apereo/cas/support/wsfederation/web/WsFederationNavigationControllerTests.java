@@ -42,7 +42,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
 
-        val config = wsFederationConfigurations.toList().get(0);
+        val config = wsFederationConfigurations.toList().getFirst();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice");
         registeredService.setProperties(Map.of(RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyName(),
             new DefaultRegisteredServiceProperty(config.getRelyingPartyIdentifier())));

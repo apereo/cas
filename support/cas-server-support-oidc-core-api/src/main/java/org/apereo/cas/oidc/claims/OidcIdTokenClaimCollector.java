@@ -25,7 +25,7 @@ public interface OidcIdTokenClaimCollector {
     static OidcIdTokenClaimCollector defaultCollector() {
         return (claims, name, values) -> {
             if (values.size() == 1) {
-                claims.setClaim(name, values.get(0));
+                claims.setClaim(name, values.getFirst());
             } else if (values.size() > 1) {
                 claims.setClaim(name, values);
             }

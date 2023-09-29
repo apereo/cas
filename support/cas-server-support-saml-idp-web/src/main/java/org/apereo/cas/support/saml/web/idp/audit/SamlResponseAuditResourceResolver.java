@@ -36,7 +36,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
         if (objects.isEmpty()) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
-        val object = objects.get(0);
+        val object = objects.getFirst();
         if (object instanceof final Response response) {
             return getPrincipalIdFromSamlResponse(response);
         }

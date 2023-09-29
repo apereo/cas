@@ -59,7 +59,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
                 LOGGER.error("Token issuer does not match CAS");
                 return null;
             }
-            if (claims.getAudience().isEmpty() || !claims.getAudience().get(0).equals(issuer)) {
+            if (claims.getAudience().isEmpty() || !claims.getAudience().getFirst().equals(issuer)) {
                 LOGGER.error("Token audience does not match CAS");
                 return null;
             }

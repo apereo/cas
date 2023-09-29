@@ -136,7 +136,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
-        credential.setToken(Integer.toString(account.getScratchCodes().get(0)));
+        credential.setToken(Integer.toString(account.getScratchCodes().getFirst()));
         val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         val otp = Integer.valueOf(credential.getToken());

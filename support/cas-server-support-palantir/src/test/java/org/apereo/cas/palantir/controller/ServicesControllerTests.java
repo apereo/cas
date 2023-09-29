@@ -81,7 +81,7 @@ public class ServicesControllerTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound());
 
-        mvcResult = mvc.perform(get("/palantir/services/" + services.get(0).getId())
+        mvcResult = mvc.perform(get("/palantir/services/" + services.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -89,7 +89,7 @@ public class ServicesControllerTests {
         var registeredService = registeredServiceSerializer.from(mvcResult.getResponse().getContentAsString());
         assertNotNull(registeredService);
 
-        mvcResult = mvc.perform(delete("/palantir/services/" + services.get(0).getId())
+        mvcResult = mvc.perform(delete("/palantir/services/" + services.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

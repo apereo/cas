@@ -10,6 +10,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -28,10 +29,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -83,14 +80,14 @@ class SendPasswordResetInstructionsActionTests {
         @Autowired
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
         private MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider;
-
+        
         @Test
         void verifyActionRequiresMfa() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(casSimpleMultifactorAuthenticationProvider.getId(), sendPasswordResetInstructionsAction.execute(context).getId());
             assertNotNull(WebUtils.getPasswordManagementQuery(context, PasswordManagementQuery.class));
             assertEquals(CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD, WebUtils.getTargetTransition(context));
@@ -100,13 +97,13 @@ class SendPasswordResetInstructionsActionTests {
 
         @Test
         void verifyActionAfterMfa() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
 
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
@@ -126,11 +123,11 @@ class SendPasswordResetInstructionsActionTests {
 
         @Test
         void verifyAction() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
             assertEquals(1, tickets.size());
@@ -139,20 +136,20 @@ class SendPasswordResetInstructionsActionTests {
 
         @Test
         void verifyNoPhoneOrEmail() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "none");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "none");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
 
         @Test
         void verifyNoUsername() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
@@ -176,11 +173,11 @@ class SendPasswordResetInstructionsActionTests {
 
         @Test
         void verifyActionMultiUse() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
             assertEquals(1, tickets.size());
@@ -194,11 +191,11 @@ class SendPasswordResetInstructionsActionTests {
 
         @Test
         void verifyNoLinkAction() throws Throwable {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "unknown");
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "unknown");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }

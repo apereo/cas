@@ -61,7 +61,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
         val jwks = jsonWebKeySet.getJsonWebKeys();
         FunctionUtils.throwIf(jwks.isEmpty(),
             () -> new IllegalArgumentException("Json web keystore is empty and contains no keys"));
-        return (PublicJsonWebKey) jwks.get(0);
+        return (PublicJsonWebKey) jwks.getFirst();
     }
 
     @Override

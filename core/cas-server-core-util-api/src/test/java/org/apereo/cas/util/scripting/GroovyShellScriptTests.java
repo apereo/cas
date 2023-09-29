@@ -89,7 +89,7 @@ class GroovyShellScriptTests {
                     shellScript.setBinding(CollectionUtils.wrap("attributes", attributes));
                     val returnValue = shellScript.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, List.class);
                     assertEquals(1, returnValue.size());
-                    assertEquals(expectedAttribute, returnValue.get(0));
+                    assertEquals(expectedAttribute, returnValue.getFirst());
                 } catch (final Throwable e) {
                     throw new RuntimeException(e);
                 }

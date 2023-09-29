@@ -119,7 +119,7 @@ class AzureActiveDirectoryAuthenticationTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val repository = microsoftAzureActiveDirectoryAttributeRepositories.get(0);
+            val repository = microsoftAzureActiveDirectoryAttributeRepositories.getFirst();
             val person = repository.getPerson("castest@" + AZURE_AD_DOMAIN);
             assertNotNull(person);
         }

@@ -136,7 +136,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             if (context.getSamlRequest() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
                 val message = """
                     SAML2 authentication request from %s indicated a passive authentication request, \
-                    but CAS is unable to satify and support this requirement, likely because \
+                    but CAS is unable to satisfy and support this requirement, likely because \
                     no existing single sign-on session is available yet to build the SAML2 response.
                     """.formatted(context.getAdaptor().getEntityId()).stripIndent().trim();
                 return newStatus(StatusCode.NO_PASSIVE, message);

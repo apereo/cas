@@ -77,7 +77,7 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
         context.setParameter("phone", "3477465432");
 
         val results = submitAccountRegistrationAction.execute(context);
-        val token = new URIBuilder(results.getAttributes().get("result", String.class)).getQueryParams().get(0).getValue();
+        val token = new URIBuilder(results.getAttributes().get("result", String.class)).getQueryParams().getFirst().getValue();
         context.setParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, validateAction.execute(context).getId());
     }

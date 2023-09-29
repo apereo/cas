@@ -19,7 +19,7 @@
 
     "--cas.authn.mfa.core.provider-selection-enabled=true",
 
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.mfa.trusted.core.device-registration-enabled=true",
     "--cas.authn.mfa.trusted.core.auto-assign-device-name=true",

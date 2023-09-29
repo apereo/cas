@@ -39,7 +39,7 @@ class GroovyDelegatedClientAuthenticationCredentialResolverTests {
         assertTrue(groovyDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));
         val results = groovyDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
-        val profile = results.get(0);
+        val profile = results.getFirst();
         assertEquals("casuser", profile.getLinkedId());
         assertEquals("resolved-casuser", profile.getId());
         assertTrue(profile.getAttributes().containsKey("memberOf"));

@@ -54,7 +54,7 @@ class ElasticApmAgentInitializerTests {
         val agent = ServiceLoader.load(ApplicationEntrypointInitializer.class).stream()
             .map(ServiceLoader.Provider::get)
             .toList()
-            .get(0);
+            .getFirst();
         assertDoesNotThrow(() -> agent.initialize(ArrayUtils.EMPTY_STRING_ARRAY));
         assertNotNull(greeter.greet(false));
         assertThrows(IllegalArgumentException.class, () -> greeter.greet(true));

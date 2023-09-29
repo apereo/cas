@@ -189,7 +189,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .findFirst()
             .orElseThrow();
         val query = new SqlFieldsQuery("SELECT COUNT(id) FROM " + queryEntity.getTableName());
-        return (Long) cacheInstance.query(query).getAll().get(0).get(0);
+        return (Long) cacheInstance.query(query).getAll().getFirst().getFirst();
     }
 
     @Override
@@ -206,7 +206,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .setArgs(digestIdentifier(principalId));
         return StreamSupport.stream(cacheInstance.query(query).spliterator(), false)
             .filter(entries -> !entries.isEmpty())
-            .map(entries -> (IgniteTicketDocument) entries.get(0))
+            .map(entries -> (IgniteTicketDocument) entries.getFirst())
             .map(object -> decodeTicket(object.getTicket()))
             .filter(Objects::nonNull);
     }
@@ -236,7 +236,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         val query = new SqlFieldsQuery(sql.toString());
         return StreamSupport.stream(cacheInstance.query(query).spliterator(), false)
             .filter(entries -> !entries.isEmpty())
-            .map(entries -> (IgniteTicketDocument) entries.get(0))
+            .map(entries -> (IgniteTicketDocument) entries.getFirst())
             .map(object -> decodeTicket(object.getTicket()))
             .filter(Objects::nonNull);
     }

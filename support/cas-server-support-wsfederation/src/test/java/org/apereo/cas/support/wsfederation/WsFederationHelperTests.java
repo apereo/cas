@@ -75,7 +75,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
     void verifyGetSigningCredential() throws Throwable {
-        val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().get(0), configBean);
+        val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().getFirst(), configBean);
         assertFalse(provider.getSigningCredentials().isEmpty());
         assertNotNull(provider);
     }
@@ -94,7 +94,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     void verifyValidateSignatureBadInput() throws Throwable {
         assertFalse(wsFederationHelper.validateSignature(null));
         assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
-        val config = wsFederationConfigurations.toList().get(0);
+        val config = wsFederationConfigurations.toList().getFirst();
         val assertion = mock(Assertion.class);
         assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
         when(assertion.getSignature()).thenReturn(mock(Signature.class));

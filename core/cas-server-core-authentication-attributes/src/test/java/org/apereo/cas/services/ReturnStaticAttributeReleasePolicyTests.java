@@ -68,7 +68,7 @@ class ReturnStaticAttributeReleasePolicyTests {
         val results = policy.getAttributes(releasePolicyContext);
         assertEquals(1, results.size());
         assertTrue(results.containsKey("Hello"));
-        assertEquals("World", results.get("Hello").get(0));
+        assertEquals("World", results.get("Hello").getFirst());
     }
 
     @Test
@@ -90,6 +90,6 @@ class ReturnStaticAttributeReleasePolicyTests {
         val results = policy.getAttributes(releasePolicyContext);
         assertEquals(1, results.size());
         assertTrue(results.containsKey("Hello"));
-        assertEquals("World", results.get("Hello").get(0));
+        assertEquals("World", results.get("Hello").getFirst());
     }
 }

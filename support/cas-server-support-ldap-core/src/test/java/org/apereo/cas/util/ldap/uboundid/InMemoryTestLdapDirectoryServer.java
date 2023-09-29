@@ -142,7 +142,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
     }
 
     public String getBaseDn() {
-        return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
+        return this.directoryServer.getBaseDNs().getFirst().toNormalizedString();
     }
 
     public LDAPConnection getConnection() throws LDAPException {

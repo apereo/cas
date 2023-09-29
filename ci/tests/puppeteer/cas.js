@@ -20,6 +20,8 @@ const CryptoJS = require("crypto-js");
 const jose = require('jose');
 const pino = require('pino');
 const xml2js = require('xml2js');
+const {Docker} = require('node-docker-api');
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 const LOGGER = pino({
     level: "debug",
@@ -259,13 +261,36 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 };
 
 exports.newPage = async (browser) => {
-    let page = (await browser.pages())[0];
+    let page = undefined;
+    try {
+        page = (await browser.pages())[0];
+    } catch (e) {
+        this.logr(e);
+        await this.sleep(1000);
+    }
+    
     if (page === undefined) {
-        await this.log("Opening a new page...");
-        page = await browser.newPage();
+        let counter = 0;
+        while (page === undefined && counter < 5) {
+            try {
+                counter++;
+                await this.log(`Opening a new browser page...`);
+                page = await browser.newPage();
+            } catch (e) {
+                this.logr(e);
+                await this.sleep(1000);
+            }
+        }
     }
     // await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
+
+    if (page === null || page === undefined) {
+        const err = "Unable to open a new browser page";
+        await this.logr(err);
+        throw err;
+    }
+    
     await page.bringToFront();
     page
         .on('console', message => {
@@ -329,7 +354,7 @@ exports.doRequest = async (url, method = "GET",
         options.agent = new https.Agent(options);
 
         this.logg(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
-        const handler = (res) => {
+        const handler = async (res) => {
             this.logg(`Response status code: ${colors.green(res.statusCode)}`);
             // this.logg(`Response headers: ${colors.green(res.headers)}`)
             if (statusCode > 0) {
@@ -340,7 +365,7 @@ exports.doRequest = async (url, method = "GET",
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
             if (callback !== undefined) {
-                callback(res);
+                await callback(res);
             }
         };
 
@@ -354,6 +379,7 @@ exports.doRequest = async (url, method = "GET",
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
+        timeout: 3000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -375,13 +401,12 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
             }
             return successHandler(res);
         })
-        .catch(error => {
-            return failureHandler(error);
-        })
+        .catch(error => failureHandler(error))
 };
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
+        timeout: 3000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -793,6 +818,17 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
             return;
         }
     }
+};
+
+exports.dockerContainer = async(name) => {
+    let containers = await docker.container.list();
+    let results = containers.filter(c => c.data.Names[0].slice(1) === name);
+    await this.log(`Docker containers found for ${name} are\n: ${results}`);
+    if (results.length > 0) {
+        return results[0];
+    }
+    await this.logr(`Unable to find Docker container with name ${name}`);
+    return undefined;
 };
 
 this.asciiart("Apereo CAS - Puppeteer");

@@ -37,8 +37,6 @@ public class HttpRequestUtils {
      */
     public static final String USER_AGENT_HEADER = "user-agent";
 
-    private static final int GEO_LOC_LAT_INDEX = 0;
-
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
@@ -92,7 +90,7 @@ public class HttpRequestUtils {
         val loc = new GeoLocationRequest();
         if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
             val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-            loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
+            loc.setLatitude(geoLocation.getFirst());
             loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
             loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
             loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));

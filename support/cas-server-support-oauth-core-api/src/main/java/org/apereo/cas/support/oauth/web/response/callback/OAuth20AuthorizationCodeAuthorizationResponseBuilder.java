@@ -77,8 +77,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
                                                            final OAuth20Code code) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
+        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
 
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
 

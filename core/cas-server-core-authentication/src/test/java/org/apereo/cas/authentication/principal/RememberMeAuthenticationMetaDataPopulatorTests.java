@@ -48,7 +48,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
         val auth = builder.build();
 
-        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).get(0));
+        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).getFirst());
     }
 
     @Test
@@ -81,7 +81,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
             .setSupportedUserAgents("Chrome"));
         val auth = builder.build();
 
-        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).get(0));
+        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).getFirst());
     }
 
     @Test

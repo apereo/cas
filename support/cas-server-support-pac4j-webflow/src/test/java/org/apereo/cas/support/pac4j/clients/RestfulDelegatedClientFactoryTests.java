@@ -124,7 +124,7 @@ class RestfulDelegatedClientFactoryTests {
                 var clientsFound = List.copyOf(delegatedClientFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
-                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.get(0).getCallbackUrl());
+                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.getFirst().getCallbackUrl());
 
                 /*
                  * Try the cache once the list is retrieved...

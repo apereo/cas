@@ -78,8 +78,8 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             val result = locateExistingRegisteredServiceFile(registeredService);
             result.ifPresentOrElse(file -> writeRegisteredServiceToFile(registeredService, file),
                 () -> {
-                    val file = registeredServiceLocators.get(0).determine(registeredService,
-                        GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.get(0));
+                    val file = registeredServiceLocators.getFirst().determine(registeredService,
+                        GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.getFirst());
                     writeRegisteredServiceToFile(registeredService, file);
                 });
 
