@@ -365,7 +365,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
         }
-        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostName()));
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()));
         FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
         FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
