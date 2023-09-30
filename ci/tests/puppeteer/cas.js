@@ -379,7 +379,7 @@ exports.doRequest = async (url, method = "GET",
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
-        timeout: 3000,
+        timeout: 10000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -406,7 +406,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
-        timeout: 3000,
+        timeout: 10000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
