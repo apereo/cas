@@ -17,8 +17,8 @@ Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo`
 
 ```xml
 <Logger name="org.apereo.cas" level="trace" additivity="false" includeLocation="true">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```
 

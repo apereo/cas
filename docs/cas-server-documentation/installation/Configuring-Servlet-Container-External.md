@@ -74,7 +74,7 @@ To disable CAS' own logging, define a `log4j2.xml` under `src/main/resources` an
     </Appenders>
     <Loggers>
         <AsyncRoot level="off">
-            <AppenderRef ref="console"/>
+            <AppenderRef ref="casConsole"/>
         </AsyncRoot>
     </Loggers>
 </Configuration>

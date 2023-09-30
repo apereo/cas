@@ -53,7 +53,7 @@ This is an example of the logging configuration:
         <!-- Update the projectId, or remove and let CAS determine the project id automatically -->
         <GoogleCloudAppender name="GoogleCloudAppender" 
                              projectId="...">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="casConsole"/>
         </GoogleCloudAppender>
     </Appenders>
 
