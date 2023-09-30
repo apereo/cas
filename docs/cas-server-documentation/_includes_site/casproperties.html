@@ -179,7 +179,7 @@
 
 
 <div class='tab-pane properties-tab fade in active show' id='requiredProperties{{ casPropertiesRandomNumber }}'>
-    <i style="vertical-align: sub;" class="fas fa-info-circle"></i>
+    <i style="vertical-align: sub;" class="fas fa-info-circle small"></i>
     <sub>
         The configuration settings listed below are tagged as <u><i>Required</i></u> in the CAS configuration metadata. This flag indicates that the presence of the setting may be needed to activate or affect the behavior of the CAS feature and generally should be reviewed, possibly owned and adjusted. If the setting is assigned a default value, you do not need to strictly put the setting in your copy of the configuration, but should review it nonetheless to make sure it matches your deployment expectations.
     </sub>
@@ -302,7 +302,7 @@
 
 <div class='tab-pane properties-tab fade in' id='optionalProperties{{ casPropertiesRandomNumber }}'>
 
-    <i style="vertical-align: sub;" class="fas fa-info-circle"></i>
+    <i style="vertical-align: sub;" class="fas fa-info-circle small"></i>
     <sub>
         The configuration settings listed below are tagged as <u><i>Optional</i></u> in the CAS configuration metadata. This
         flag indicates that the presence of the setting
@@ -428,7 +428,7 @@
 
 {%- if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 -%}
 <div class='tab-pane properties-tab fade in' id='thirdPartyProperties{{ casPropertiesRandomNumber }}'>
-    <i style="vertical-align: sub;" class="fas fa-info-circle"></i>
+    <i style="vertical-align: sub;" class="fas fa-info-circle small"></i>
     <sub>
         The configuration settings listed below are tagged as <i>Third Party</i> in the CAS configuration metadata. This flag indicates that the configuration setting is not controlled, owned or managed by the CAS ecosystem, and affects functionality that is offered by a third-party library, such as Spring Boot or Spring Cloud to CAS. For additional info, you might have to visit the third-party source to find more details.
     </sub>

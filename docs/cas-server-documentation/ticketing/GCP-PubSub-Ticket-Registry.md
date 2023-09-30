@@ -50,8 +50,8 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="com.google.cloud" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```

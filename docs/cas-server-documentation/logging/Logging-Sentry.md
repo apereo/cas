@@ -39,7 +39,7 @@ The [Logging](../logging/Logging.html) configuration file must be adjusted to ma
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Sentry"/>
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="casConsole"/>
         </Root>
     </Loggers>
 </Configuration>

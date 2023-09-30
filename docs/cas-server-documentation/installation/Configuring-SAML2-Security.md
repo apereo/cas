@@ -195,12 +195,12 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <Logger name="org.opensaml" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 
 <Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```

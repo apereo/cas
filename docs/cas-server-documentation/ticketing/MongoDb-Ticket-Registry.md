@@ -29,8 +29,8 @@ levels:
 ```xml
 ...
 <Logger name="com.mongo" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```
