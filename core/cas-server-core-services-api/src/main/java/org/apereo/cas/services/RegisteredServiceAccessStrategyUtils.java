@@ -109,14 +109,13 @@ public class RegisteredServiceAccessStrategyUtils {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
             if (ticketGrantingTicket.getProxiedBy() != null) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO for proxying.", service.getId());
-                throw new UnauthorizedSsoServiceException();
             }
             if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn(
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
                     + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
-                throw new UnauthorizedSsoServiceException();
             }
+            throw new UnauthorizedSsoServiceException();
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
