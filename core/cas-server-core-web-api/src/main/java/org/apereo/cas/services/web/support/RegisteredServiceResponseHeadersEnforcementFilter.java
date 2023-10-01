@@ -84,8 +84,8 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            throw e;
         }
-        return Optional.empty();
     }
 
     @Override
