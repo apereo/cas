@@ -27,16 +27,16 @@ CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 function printcyan() {
-  printf "${CYAN}$1${ENDCOLOR}\n"
+  printf "ℹ️ ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "${YELLOW}$1${ENDCOLOR}\n"
+  printf "🔥 ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
+  printf "🔴 ${RED}$1${ENDCOLOR}\n"
 }
 
 function progressbar() {
@@ -261,6 +261,33 @@ if [[ ! -z ${requiredEnvVars} ]]; then
   done
 fi
 
+docker info > /dev/null 2>&1
+dockerInstalled=$?
+
+dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
+if [[ "${dockerRequired}" == "true" ]]; then
+  echo "Checking if Docker is available..."
+  if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
+    printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
+    exit 0
+  fi
+
+  if [[ $dockerInstalled -ne 0 ]] ; then
+    printred "Docker engine is not running. Skipping running test since the test requires Docker."
+    exit 1
+  fi
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Docker engine is available"
+    docker --version
+  fi
+fi
+
+buildDockerImage=$(jq -j '.requirements.docker.build // empty' "${config}")
+if [[ "${buildDockerImage}" == "true" && $dockerInstalled -ne 0 ]]; then
+    printred "Docker engine is not running. The test is unable to build a Docker image."
+    exit 1
+fi
+
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
@@ -329,12 +356,12 @@ if [[ "${RERUN}" != "true" && "${INITONLY}" != "true" ]]; then
   else
     dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
     subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
-    printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
+    printgreen "Generating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
     [ -f "${public_cert}" ] && rm "${public_cert}"
     keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
       -keystore "${keystore}" -dname "${dname}" -ext "SAN=$subjectAltName"
     [ -f "${keystore}" ] && echo "Created ${keystore}"
-    printgreen "\nExporting cert for adding to trust bundles if needed by test"
+    printgreen "Exporting cert for adding to trust bundles if needed by test"
     keytool -export -noprompt -alias cas -keypass changeit -storepass changeit \
       -keystore "${keystore}" -file "${public_cert}" -rfc
   fi
@@ -460,34 +487,56 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   fi
 fi
 
-docker info > /dev/null 2>&1
-dockerInstalled=$?
-
-dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
-if [[ "${dockerRequired}" == "true" ]]; then
-  echo "Checking if Docker is available..."
-  if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
-    printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
-    exit 0
-  fi
-  
-  if [[ $dockerInstalled -ne 0 ]] ; then
-    printred "Docker engine is not running. Skipping running test since the test requires Docker."
-    exit 0
-  fi
-  if [[ "$CI" == "true" ]]; then
-    printgreen "Docker engine is available"
-    docker --version
-  fi
-fi
-
-
 if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
   cp "${casWebApplicationFile}" "$PWD"/cas.${projectType}
   if [ $? -eq 1 ]; then
     printred "Unable to build or locate the CAS web application file. Aborting test..."
     exit 1
   fi
+fi
+
+if [[ "${buildDockerImage}" == "true" ]]; then
+  docker rmi "cas-${scenarioName}":latest --force >/dev/null 2>&1
+
+  if [[ -f "$SCENARIO_FOLDER/docker/Dockerfile" ]]; then
+    dockerContextDirectory="$SCENARIO_FOLDER/docker"
+  else
+    dockerContextDirectory="$PWD/ci/tests/puppeteer/docker"
+  fi
+  printcyan "Building Docker image for scenario ${scenarioName} via $dockerContextDirectory"
+
+  cp "$PWD/cas.${projectType}" "$dockerContextDirectory"
+  cp $keystore "$dockerContextDirectory"
+
+  javaVersion=(`cat $PWD/gradle.properties | grep "sourceCompatibility" | cut -d= -f2`)
+  buildArguments="--build-arg JAVA_VERSION=${javaVersion} "
+  buildArguments+="--build-arg SCENARIO_FOLDER=${SCENARIO_FOLDER} "
+  buildArguments+="--build-arg SCENARIO_PATH=${SCENARIO_PATH} "
+  buildArguments+="--build-arg SCENARIO=${SCENARIO} "
+  
+  environmentVariables=$(jq -j '.environmentVariables // empty | join(";")' "$config");
+  IFS=';' read -r -a variables <<< "$environmentVariables"
+  for env in "${variables[@]}"
+  do
+      buildArguments+="--build-arg \"$env\" "
+  done
+#  ls -al $dockerContextDirectory
+#  echo $buildArguments
+  
+  docker build \
+    $buildArguments \
+    --file "$dockerContextDirectory/Dockerfile" \
+    -t cas-${scenarioName}:latest \
+    $dockerContextDirectory
+  RC=$?
+  rm "$dockerContextDirectory/cas.${projectType}"
+  rm "$dockerContextDirectory/thekeystore"
+  if [ $RC -ne 0 ]; then
+    printred "Unable to build CAS Docker image."
+    exit 2
+  fi
+  docker images --filter "reference=cas-${scenarioName}"
+  printgreen "Built Docker image cas-${scenarioName}"
 fi
 
 if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
@@ -564,7 +613,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
         runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
       fi
       runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
-      printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
+      printcyan "Launching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 
       springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
       [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
@@ -573,14 +622,27 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
       rm -rf "$TMPDIR/keystore.jwks"
       rm -rf "$TMPDIR/cas"
 
-      printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
-      
       if [[ "${NATIVE_RUN}" == "true" ]]; then
+        printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
           -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
           --server.port=${serverPort} --spring.profiles.active=none --server.ssl.key-store="$keystore" \
           ${properties} &
-      else 
+      elif [[ "${buildDockerImage}" == "true" ]]; then
+        printcyan "Launching Docker image cas-${scenarioName}:latest"
+        docker run -d --rm \
+            --name="cas-${scenarioName}" \
+            -e SPRING_APPLICATION_JSON=${springAppJson} \
+            -e SERVER_PORT=${serverPort} \
+            -e RUN_ARGS="${runArgs}" \
+            -e CAS_PROPERTIES="${properties}" \
+            -p ${serverPort}:${serverPort} \
+            -p 5005:5005 \
+            -p 8080:8080 \
+            cas-${scenarioName}:latest
+        docker logs -f cas-${scenarioName} 2>/dev/null &
+      else
+        printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
            -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
            --spring.profiles.active=none --server.ssl.key-store="$keystore" \
@@ -701,8 +763,14 @@ if [[ "${RERUN}" != "true" ]]; then
   rm -Rf "${PUPPETEER_DIR}/overlay" >/dev/null 2>&1
 
   if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then
+    printgreen "Stopping Docker containers..."
     docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
     docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
+  fi
+  if [[ "${buildDockerImage}" == "true" ]]; then
+    printgreen "Stopping CAS Docker container.."
+    docker stop cas-${scenarioName} >/dev/null 2>&1
+    docker rm cas-${scenarioName} >/dev/null 2>&1
   fi
 fi
 printgreen "Bye!\n"
