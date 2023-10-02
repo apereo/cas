@@ -1,13 +1,16 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -124,4 +127,15 @@ class WebUtilsTests {
         WebUtils.putLogoutPostData(context, data);
         assertEquals(data, WebUtils.getLogoutPostData(context));
     }
+
+    @Test
+    void verifyFindService() throws Throwable {
+        val casArgumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+        val request = new MockHttpServletRequest();
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
+        val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);
+        assertNotNull(service);
+        assertEquals("test", service.getId());
+    }
+    
 }
