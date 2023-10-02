@@ -38,14 +38,14 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        new ProfileManager(ctx, JEESessionStore.INSTANCE).removeProfiles();
+        new ProfileManager(ctx, new JEESessionStore()).removeProfiles();
 
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -62,12 +62,12 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     void verifyFailsOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        new ProfileManager(ctx, JEESessionStore.INSTANCE).removeProfiles();
+        new ProfileManager(ctx, new JEESessionStore()).removeProfiles();
 
         val at = getAccessToken("helloworld", "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNull(credentials.getUserProfile());
     }
 
@@ -79,7 +79,7 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        oidcDynamicRegistrationAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        oidcDynamicRegistrationAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNull(credentials.getUserProfile());
     }
 }

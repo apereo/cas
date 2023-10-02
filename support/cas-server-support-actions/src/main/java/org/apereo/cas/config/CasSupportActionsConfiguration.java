@@ -60,6 +60,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -547,13 +548,15 @@ public class CasSupportActionsConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
-            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
+            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
+            @Qualifier("delegatedClientDistributedSessionStore")
+            final SessionStore delegatedClientDistributedSessionStore) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                     warnCookieGenerator, casProperties.getLogout(), logoutManager,
-                    applicationContext, defaultSingleLogoutRequestExecutor))
+                    applicationContext, defaultSingleLogoutRequestExecutor, delegatedClientDistributedSessionStore))
                 .withId(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
                 .build()
                 .get();

@@ -44,7 +44,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
@@ -62,7 +62,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(InvalidTicketException.class,
-            () -> oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
+            () -> oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));
     }
 
     @Test
@@ -81,7 +81,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 }

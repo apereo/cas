@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -631,6 +632,9 @@ public class CasOAuth20Configuration {
             @Qualifier("oauthDistributedSessionCookieCipherExecutor") final CipherExecutor oauthDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + TicketRegistrySessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, geoLocationService,
                     DefaultCookieSameSitePolicy.INSTANCE, cookie));
@@ -649,7 +653,9 @@ public class CasOAuth20Configuration {
                 return new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
-            return JEESessionStore.INSTANCE;
+            val sessionStore = new JEESessionStore();
+            sessionStore.setPrefix(TicketRegistrySessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+            return sessionStore;
         }
     }
 

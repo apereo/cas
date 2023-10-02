@@ -30,6 +30,21 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class TicketRegistrySessionStore implements SessionStore {
+    /**
+     * SAML server support prefix.
+     */
+    public static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";
+
+    /**
+     * OAuth/OIDC server support prefix.
+     */
+    public static final String OAUTH_OIDC_SERVER_SUPPORT_PREFIX = "OauthOidcServerSupport";
+
+    /**
+     * Authentication delegation prefix.
+     */
+    public static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";
+
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final TicketRegistry ticketRegistry;

@@ -56,7 +56,7 @@ class LdapUserAttributesToRolesAuthorizationGeneratorTests {
             val profile = new CommonProfile();
             profile.setId("casTest");
 
-            val callContext = new CallContext(mock(WebContext.class), JEESessionStore.INSTANCE);
+            val callContext = new CallContext(mock(WebContext.class), new JEESessionStore());
             val result = generator.generate(callContext, profile);
             assertFalse(result.isEmpty());
             assertTrue(profile.getAttributes().isEmpty());

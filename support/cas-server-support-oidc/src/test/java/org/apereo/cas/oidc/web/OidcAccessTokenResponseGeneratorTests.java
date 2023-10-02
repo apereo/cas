@@ -40,7 +40,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val manager = new ProfileManager(context, new JEESessionStore());
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -79,7 +79,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val manager = new ProfileManager(context, new JEESessionStore());
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);

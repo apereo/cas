@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -504,6 +505,9 @@ public class SamlIdPEndpointsConfiguration {
             final CipherExecutor samlIdPDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + TicketRegistrySessionStore.SAML_SERVER_SUPPORT_PREFIX);
+            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, geoLocationService,
                     DefaultCookieSameSitePolicy.INSTANCE, cookie));
@@ -522,12 +526,14 @@ public class SamlIdPEndpointsConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
+            val jeeSessionStore = new JEESessionStore();
+            jeeSessionStore.setPrefix(TicketRegistrySessionStore.SAML_SERVER_SUPPORT_PREFIX);
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return switch (type) {
                 case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, samlIdPDistributedSessionCookieGenerator);
                 case BROWSER_SESSION_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor);
-                default -> JEESessionStore.INSTANCE;
+                default -> jeeSessionStore;
             };
         }
     }
