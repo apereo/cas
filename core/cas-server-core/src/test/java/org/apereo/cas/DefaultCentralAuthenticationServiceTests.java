@@ -361,8 +361,8 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val svc = getService("TestSsoFalse");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
-        assertNotNull(serviceTicket);
+        assertThrows(UnauthorizedSsoServiceException.class,
+            () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
     }
 
     @Test
@@ -370,7 +370,8 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val svc = getService("TestSsoFalse");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
+        assertThrows(UnauthorizedSsoServiceException.class,
+            () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
     }
 
     @Test
@@ -445,9 +446,7 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val cred = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
         val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
-
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
         val auth = assertion.getPrimaryAuthentication();
 

@@ -13,6 +13,7 @@ import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -52,10 +53,10 @@ import java.util.Optional;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 5000;
-
-    private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
-
+    private static final Timeout CONNECT_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
+    private static final Timeout SOCKET_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
+    private static final Timeout CONNECT_TTL_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
+    private static final Timeout CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
 
     /**
      * Execute http request and produce a response.
@@ -109,7 +110,7 @@ public class HttpUtils {
     }
 
     /**
-     * Create headers.
+     * Create basic auth headers.
      *
      * @param basicAuthUser     the basic auth user
      * @param basicAuthPassword the basic auth password
@@ -121,7 +122,7 @@ public class HttpUtils {
     }
 
     /**
-     * Create headers org . springframework . http . http headers.
+     * Create basic auth headers.
      *
      * @param basicAuthUser     the basic auth user
      * @param basicAuthPassword the basic auth password
@@ -186,8 +187,8 @@ public class HttpUtils {
 
     private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution) {
         val requestConfig = RequestConfig.custom();
-        requestConfig.setConnectTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS));
-        requestConfig.setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS));
+        requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
 
         val builder = HttpClientBuilder
             .create()
@@ -203,10 +204,15 @@ public class HttpUtils {
         val connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
             .setSSLSocketFactory(socketFactory)
             .setDefaultSocketConfig(SocketConfig.custom()
-                .setSoTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS)).build())
+                .setSoTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
+                .build())
             .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
             .setConnPoolPolicy(PoolReusePolicy.LIFO)
-            .setConnectionTimeToLive(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS))
+            .setDefaultConnectionConfig(ConnectionConfig.custom()
+                .setTimeToLive(CONNECT_TTL_TIMEOUT_IN_MILLISECONDS)
+                .setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS)
+                .setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS)
+                .build())
             .build();
         builder.setConnectionManager(connectionManager);
         return builder;

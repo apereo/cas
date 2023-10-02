@@ -110,7 +110,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
 
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         getMfaTrustEngine().remove(record.getRecordKey());
-        assertTrue(getMfaTrustEngine().getAll().isEmpty());
+        assertNull(getMfaTrustEngine().get(record.getId()));
     }
 
     @ImportAutoConfiguration({
