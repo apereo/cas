@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
@@ -303,8 +304,8 @@ public class ClientInfo implements Serializable {
             .setClientIpAddress(clientIp)
             .setServerIpAddress(serverIp)
             .setLocale(locale)
-            .setGeoLocation(geoLocation)
-            .setUserAgent(userAgent)
+            .setGeoLocation(StringEscapeUtils.escapeHtml4(geoLocation))
+            .setUserAgent(StringEscapeUtils.escapeHtml4(userAgent))
             .setHeaders(headers);
     }
 }
