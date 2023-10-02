@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
@@ -467,10 +468,13 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX);
+            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 
-        @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+        @ConditionalOnMissingBean(name = DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore samlIdPDistributedSessionStore(
@@ -491,7 +495,9 @@ public class SamlIdPEndpointsConfiguration {
             if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);
             }
-            return JEESessionStore.INSTANCE;
+            val sessionStore = new JEESessionStore();
+            sessionStore.setPrefix(DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX);
+            return sessionStore;
         }
     }
 

@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
@@ -102,7 +103,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                 return new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
-            return JEESessionStore.INSTANCE;
+            val sessionStore = new JEESessionStore();
+            sessionStore.setPrefix(DistributedJEESessionStore.AUTHENTICATION_DELEGATION_PREFIX);
+            return sessionStore;
         }
     }
 
@@ -116,6 +119,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.AUTHENTICATION_DELEGATION_PREFIX);
+            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 

@@ -15,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -84,6 +84,11 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
 
     /**
+     * Session store for the authn delegation.
+     */
+    protected final SessionStore delegatedClientDistributedSessionStore;
+
+    /**
      * Check if the logout must be confirmed.
      *
      * @param requestContext the request context
@@ -102,10 +107,10 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
      * @param response the response
      */
     @SuppressWarnings("java:S2441")
-    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+    protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val manager = new ProfileManager(context, delegatedClientDistributedSessionStore);
         manager.removeProfiles();
 
         val session = request.getSession(false);

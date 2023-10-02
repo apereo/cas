@@ -53,7 +53,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    @Qualifier(DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX)
     protected SessionStore samlIdPDistributedSessionStore;
     
     protected static AuthnRequest getAuthnRequestFor(final String service) {

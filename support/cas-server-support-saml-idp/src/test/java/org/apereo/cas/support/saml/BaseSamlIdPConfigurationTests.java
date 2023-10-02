@@ -170,7 +170,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
     @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    @Qualifier(DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX)
     protected SessionStore samlIdPDistributedSessionStore;
 
     @Autowired
