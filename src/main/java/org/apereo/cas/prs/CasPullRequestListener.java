@@ -140,6 +140,11 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
+        if (pr.isUnderReview()) {
+            log.info("Pull request {} is is being reviewed", pr);
+            return;
+        }
+        
         val files = repository.getPullRequestFiles(pr);
         
         val modifiesJava = files.stream().anyMatch(file ->
