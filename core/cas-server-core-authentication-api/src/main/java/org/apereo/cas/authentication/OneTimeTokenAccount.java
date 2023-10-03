@@ -1,8 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,6 +56,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @Serial
     private static final long serialVersionUID = -8289105320642735252L;
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Id
     @Transient
@@ -106,5 +113,15 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Override
     public OneTimeTokenAccount clone() {
         return Unchecked.supplier(() -> (OneTimeTokenAccount) super.clone()).get();
+    }
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
     }
 }

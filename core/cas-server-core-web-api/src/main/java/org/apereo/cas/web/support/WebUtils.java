@@ -561,7 +561,7 @@ public class WebUtils {
      * Put authentication into conversation scope.
      *
      * @param authentication the authentication
-     * @param requestContext            the ctx
+     * @param requestContext the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
         requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
@@ -1876,5 +1876,29 @@ public class WebUtils {
      */
     public static <T> T getPasswordManagementQuery(final RequestContext requestContext, final Class<T> clazz) {
         return requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY, clazz);
+    }
+
+    /**
+     * Put active flow id.
+     *
+     * @param requestContext the request context
+     */
+    public static void putActiveFlow(final RequestContext requestContext) {
+        val id = requestContext.getActiveFlow().getId();
+        requestContext.getFlashScope().put("activeFlowId", id);
+        requestContext.getFlowScope().put("activeFlowId", id);
+        requestContext.getConversationScope().put("activeFlowId", id);
+    }
+
+    /**
+     * Gets active flow.
+     *
+     * @param requestContext the request context
+     * @return the active flow
+     */
+    public static String getActiveFlow(final RequestContext requestContext) {
+        return (String) requestContext.getFlashScope().get("activeFlowId",
+            requestContext.getFlowScope().get("activeFlowId",
+                requestContext.getConversationScope().get("activeFlowId")));
     }
 }

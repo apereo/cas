@@ -114,6 +114,7 @@ public class CasWebflowAccountProfileConfiguration {
         handler.setOrder(0);
         handler.setFlowRegistry(accountProfileFlowRegistry);
         handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
+        handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
         return handler;
     }
 

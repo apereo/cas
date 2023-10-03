@@ -233,7 +233,7 @@ button.close {
 .banner-success {
     border-color: var(--cas-theme-success);
     color: var(--cas-theme-primary, #153e50);
-    background-color: #b3e7f8;
+    background-color: #adf096;
 }
 
 .banner-dismissible {
@@ -244,7 +244,7 @@ button.close {
     position: absolute;
     top: 0;
     right: 0;
-    padding: .75rem 1.25rem;
+    padding: 0.05rem 0.05rem;
     color: inherit;
 }
 

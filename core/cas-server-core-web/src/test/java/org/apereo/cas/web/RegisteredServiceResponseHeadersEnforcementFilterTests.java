@@ -13,29 +13,28 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-
+import java.util.Map;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,12 +67,12 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val servicesManager = new DefaultServicesManager(context);
         val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
-        val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
+        val service = RegisteredServiceTestUtils.getRegisteredService("service-0", Map.of());
         val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
-        for (val p : properties) {
+        for (val property : properties) {
             val prop1 = new DefaultRegisteredServiceProperty();
-            prop1.addValue(p.getValue());
-            props1.put(p.getKey().getPropertyName(), prop1);
+            prop1.addValue(property.getValue());
+            props1.put(property.getKey().getPropertyName(), prop1);
         }
         service.setProperties(props1);
         servicesManager.save(service);
@@ -187,8 +186,8 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "unknown-123456");
-        filter.doFilter(request, response, new MockFilterChain());
-        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+            () -> filter.doFilter(request, response, new MockFilterChain()));
     }
 
     @Test
@@ -204,11 +203,9 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
         filter.doFilter(request, response, new MockFilterChain());
         assertEquals("sameorigin", response.getHeader("X-Frame-Options"));
-
-        response = new MockHttpServletResponse();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        filter.doFilter(request, response, new MockFilterChain());
-        assertEquals("some-other-value", response.getHeader("X-Frame-Options"));
+        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
     }
 
     @Test
@@ -224,10 +221,9 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         filter.doFilter(request, response, new MockFilterChain());
         assertNull(response.getHeader("X-Frame-Options"));
 
-        response = new MockHttpServletResponse();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        filter.doFilter(request, response, new MockFilterChain());
-        assertEquals("some-other-value", response.getHeader("X-Frame-Options"));
+        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
     }
 
     @Test

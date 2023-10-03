@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -66,5 +67,14 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
         return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
+    }
+
+    @Override
+    public String getFlowId(final HttpServletRequest request) {
+        var flowId = super.getFlowId(request);
+        if (flowId.contains("#")) {
+            flowId = RegExUtils.removePattern(flowId, "#.*");
+        }
+        return flowId.trim();
     }
 }

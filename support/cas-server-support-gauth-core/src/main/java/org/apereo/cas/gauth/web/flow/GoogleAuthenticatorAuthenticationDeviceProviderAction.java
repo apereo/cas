@@ -24,9 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GoogleAuthenticatorAuthenticationDeviceProviderAction extends BaseCasWebflowAction
     implements MultifactorAuthenticationDeviceProviderAction {
-
     private final OneTimeTokenCredentialRepository repository;
-
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -43,11 +41,13 @@ public class GoogleAuthenticatorAuthenticationDeviceProviderAction extends BaseC
     }
 
     protected MultifactorAuthenticationRegisteredDevice mapGoogleAuthenticatorAccount(final GoogleAuthenticatorAccount acct) {
-        return MultifactorAuthenticationRegisteredDevice.builder()
+        return MultifactorAuthenticationRegisteredDevice
+            .builder()
             .id(String.valueOf(acct.getId()))
             .name(acct.getName())
             .lastUsedDateTime(acct.getLastUsedDateTime())
             .source("Google Authenticator")
+            .payload(acct.toJson())
             .build();
     }
 }

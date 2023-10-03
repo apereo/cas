@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,6 +29,15 @@ class CasDefaultFlowUrlHandlerTests {
         request.addParameter(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, "12345");
         assertNotNull(urlHandler.getFlowExecutionKey(request));
         assertNotNull(urlHandler.createFlowDefinitionUrl("cas", new LocalAttributeMap<>(), request));
+    }
+
+    @Test
+    void verifyFlowIdWithAnchorTag() throws Throwable {
+        setupRequest("/cas", "/app", "/foo#this-exists-here");
+        request.setParameter("bar", "baz");
+        request.setParameter("qux", "quux");
+        val flowId = urlHandler.getFlowId(request);
+        assertEquals("foo", flowId);
     }
 
     @Test

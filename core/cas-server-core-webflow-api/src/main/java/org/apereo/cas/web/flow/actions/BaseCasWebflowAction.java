@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -31,14 +32,16 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
 
     @Override
     protected final Event doExecute(final RequestContext requestContext) throws Exception {
+        val activeFlow = requestContext.getActiveFlow();
         try {
+            WebUtils.putActiveFlow(requestContext);
             return doExecuteInternal(requestContext);
         } catch (final Exception e) {
             throw e;
         } catch (final Throwable e) {
             val currentState = Optional.ofNullable(requestContext.getCurrentState())
                 .map(StateDefinition::getId).orElse("unknown");
-            throw new ActionExecutionException(requestContext.getActiveFlow().getId(),
+            throw new ActionExecutionException(activeFlow.getId(),
                 currentState, this, requestContext.getAttributes(), e);
         }
     }
