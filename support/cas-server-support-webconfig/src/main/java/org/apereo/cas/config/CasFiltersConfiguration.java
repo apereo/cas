@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.filters.AddResponseHeadersFilter;
 import org.apereo.cas.web.support.filters.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
-
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +33,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
-
 import java.util.HashMap;
 
 /**
@@ -104,9 +102,10 @@ public class CasFiltersConfiguration {
                 initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, header.getContentSecurityPolicy());
             }
             val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
-            bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
+            val filter = new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
                 argumentExtractor, authenticationRequestServiceSelectionStrategies,
-                registeredServiceAccessStrategyEnforcer));
+                registeredServiceAccessStrategyEnforcer);
+            bean.setFilter(filter);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setInitParameters(initParams);
             bean.setName("responseHeadersSecurityFilter");

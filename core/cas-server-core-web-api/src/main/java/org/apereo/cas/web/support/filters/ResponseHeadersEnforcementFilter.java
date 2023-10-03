@@ -1,10 +1,10 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -13,7 +13,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -86,10 +85,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES = "cacheControlStaticResources";
 
-
-    private final Object lock = new Object();
-
-
     private Pattern cacheControlStaticResourcesPattern;
 
     private boolean enableCacheControl;
@@ -117,17 +112,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     private String contentSecurityPolicy;
 
-    /**
-     * Examines the Filter init parameter names and throws ServletException if they contain an unrecognized
-     * init parameter name.
-     * <p>
-     * This is a stateless static method.
-     * <p>
-     * This method is an implementation detail and is not exposed API.
-     * This method is only non-private to allow JUnit testing.
-     *
-     * @param initParamNames init param names, in practice as read from the FilterConfig.
-     */
     private static void throwIfUnrecognizedParamName(final Enumeration initParamNames) {
         val recognizedParameterNames = new HashSet<String>();
         recognizedParameterNames.add(INIT_PARAM_ENABLE_CACHE_CONTROL);
@@ -143,7 +127,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
             if (!recognizedParameterNames.contains(initParamName)) {
-                logException(new ServletException("Unrecognized init parameter [" + initParamName + ']'));
+                throwException(new ServletException("Unrecognized init parameter [" + initParamName + ']'));
             }
         }
     }
@@ -180,31 +164,30 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
-        try {
-            if (servletResponse instanceof final HttpServletResponse httpServletResponse) {
-                val httpServletRequest = (HttpServletRequest) servletRequest;
-                val result = prepareFilterBeforeExecution(httpServletResponse, httpServletRequest);
-                decideInsertCacheControlHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest, result);
+        if (servletResponse instanceof final HttpServletResponse response
+            && servletRequest instanceof final HttpServletRequest request) {
+            try {
+                val result = prepareFilterBeforeExecution(response, request);
+                decideInsertCacheControlHeader(response, request, result);
+                decideInsertStrictTransportSecurityHeader(response, request, result);
+                decideInsertXContentTypeOptionsHeader(response, request, result);
+                decideInsertXFrameOptionsHeader(response, request, result);
+                decideInsertXSSProtectionHeader(response, request, result);
+                decideInsertContentSecurityPolicyHeader(response, request, result);
+                filterChain.doFilter(servletRequest, servletResponse);
+            } catch (final Throwable e) {
+                throwException(e);
             }
-            filterChain.doFilter(servletRequest, servletResponse);
-        } catch (final Throwable e) {
-            val message = "HTTP request is blocked this request: %s".formatted(e.getMessage());
-            logException(new ServletException(message, e));
         }
     }
 
-    protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                            final HttpServletRequest httpServletRequest) throws Throwable {
+    protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
+                                                                       final HttpServletRequest httpServletRequest) throws Throwable {
         return Optional.empty();
     }
 
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse,
-                                                           final HttpServletRequest httpServletRequest, final Optional<Object> result) {
+                                                           final HttpServletRequest httpServletRequest, final Optional<RegisteredService> result) {
         if (this.contentSecurityPolicy == null) {
             return;
         }
@@ -231,7 +214,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     }
 
     protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse,
-                                                   final HttpServletRequest httpServletRequest, final Optional<Object> result) {
+                                                   final HttpServletRequest httpServletRequest,
+                                                   final Optional<RegisteredService> result) {
         if (!this.enableXSSProtection) {
             return;
         }
@@ -251,7 +235,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest,
-                                                   final Optional<Object> result) {
+                                                   final Optional<RegisteredService> result) {
         if (!this.enableXFrameOptions) {
             return;
         }
@@ -273,7 +257,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
                                                          final HttpServletRequest httpServletRequest,
-                                                         final Optional<Object> result) {
+                                                         final Optional<RegisteredService> result) {
         if (!this.enableXContentTypeOptions) {
             return;
         }
@@ -295,7 +279,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse,
                                                   final HttpServletRequest httpServletRequest,
-                                                  final Optional<Object> result) {
+                                                  final Optional<RegisteredService> result) {
         if (!this.enableCacheControl) {
             return;
         }
@@ -321,7 +305,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
                                                              final HttpServletRequest httpServletRequest,
-                                                             final Optional<Object> result) {
+                                                             final Optional<RegisteredService> result) {
         if (!this.enableStrictTransportSecurity) {
             return;
         }

@@ -16,7 +16,6 @@ import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.support.events.ticket.CasProxyGrantingTicketCreatedEvent;
@@ -140,7 +139,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService,
                         selectedService, ticketGrantingTicket, credentialProvided);
                     evaluateProxiedServiceIfNeeded(selectedService, ticketGrantingTicket, registeredService);
-                    getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(selectedService, registeredService));
+                    getAuthenticationSatisfiedByPolicy(currentAuthentication, selectedService, registeredService);
 
                     val latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
                     val principal = latestAuthentication.getPrincipal();
@@ -193,7 +192,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         evaluateProxiedServiceIfNeeded(service, proxyGrantingTicketObject, registeredService);
 
         getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(),
-            new ServiceContext(service, registeredService));
+            service, registeredService);
 
         val authentication = proxyGrantingTicketObject.getRoot().getAuthentication();
         return configurationContext.getLockRepository().execute(proxyGrantingTicketObject.getId(),
@@ -262,8 +261,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             val root = serviceTicket.getTicketGrantingTicket().getRoot();
-            val authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(),
-                new ServiceContext(selectedService, registeredService));
+            val authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(), selectedService, registeredService);
             val principal = authentication.getPrincipal();
 
             val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());

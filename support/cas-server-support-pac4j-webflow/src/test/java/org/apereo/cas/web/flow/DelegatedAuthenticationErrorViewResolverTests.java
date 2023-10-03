@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class DelegatedAuthenticationErrorViewResolverTests {
     @Autowired
-    @Qualifier("pac4jErrorViewResolver")
+    @Qualifier("delegatedAuthenticationErrorViewResolver")
     private ErrorViewResolver resolver;
 
     @Autowired

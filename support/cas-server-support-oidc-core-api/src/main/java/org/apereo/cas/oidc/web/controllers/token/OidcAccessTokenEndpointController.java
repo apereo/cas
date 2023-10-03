@@ -59,7 +59,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     }
 
     /**
-     * Handle invalid dpop proof exception.
+     * Handle invalid DPoP proof exception.
      *
      * @param req the req
      * @param ex  the ex

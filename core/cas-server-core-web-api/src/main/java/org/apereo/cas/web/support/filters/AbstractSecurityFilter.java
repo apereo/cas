@@ -15,14 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 public abstract class AbstractSecurityFilter {
-    /**
-     * Log exception.
-     *
-     * @param e the exception
-     */
-    protected static void logException(final Exception e) {
-        LoggingUtils.error(LOGGER, e);
-        throw new RuntimeException(e);
+    protected static void throwException(final Throwable exception) {
+        LoggingUtils.error(LOGGER, exception);
+        throw exception instanceof final RuntimeException re ? re : new RuntimeException(exception);
     }
-
 }

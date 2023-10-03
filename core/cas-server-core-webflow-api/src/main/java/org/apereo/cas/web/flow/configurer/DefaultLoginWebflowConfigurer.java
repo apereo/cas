@@ -338,14 +338,14 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     protected void createDefaultGlobalExceptionHandlers(final Flow flow) {
-        val h = new TransitionExecutingFlowExecutionExceptionHandler();
-        h.add(UnauthorizedSsoServiceException.class, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-        h.add(NoSuchFlowExecutionException.class, CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
-        h.add(UnauthorizedServiceException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-        h.add(UnauthorizedServiceForPrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-        h.add(PrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-        h.add(NoMatchingTransitionException.class, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
-        flow.getExceptionHandlerSet().add(h);
+        val handler = new TransitionExecutingFlowExecutionExceptionHandler();
+        handler.add(UnauthorizedSsoServiceException.class, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+        handler.add(NoSuchFlowExecutionException.class, CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
+        handler.add(UnauthorizedServiceException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        handler.add(UnauthorizedServiceForPrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        handler.add(PrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        handler.add(NoMatchingTransitionException.class, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
+        flow.getExceptionHandlerSet().add(handler);
     }
 
     protected void createDefaultDecisionStates(final Flow flow) {
