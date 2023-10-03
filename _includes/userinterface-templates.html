@@ -1,0 +1,32 @@
+<!-- fragment:keep -->
+
+<p>The following user interface templates are available and recognized by CAS for various modules and features:</p>
+<table class="cas-datatable paginated-table" id="table-ui-templates">
+    <thead>
+        <tr>
+          <th>Category</th>
+          <th>Name</th>
+          <th>Full Path</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cfg in site.data[siteDataVersion]["userinterface-templates"] %}
+                {% assign configBlock = cfg[1] %}
+                {% for config in configBlock %}
+
+                    {% assign words = config.name | remove: "/src/main/resources/templates/" | split: '/' %}
+                    <tr>
+                        <td>
+                            <code>{{ words | first | remove: ".html" }}</code>
+                        </td>
+                        <td>
+                            <code>{{ words | last }}</code>
+                        </td>
+                        <td>
+                            <code class="text-wrap text-break">{{ config.name }}</code>
+                        </td>
+                    </tr>
+                {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
