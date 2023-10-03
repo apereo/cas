@@ -1,7 +1,6 @@
-import { isObjectArrayControl, isPrimitiveArrayControl, or, rankWith } from '@jsonforms/core';
+import { isObjectArrayControl, isPrimitiveArrayControl, not, or, rankWith } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
-import { useEffect } from 'react';
 
 const { MaterialArrayControlRenderer } = Unwrapped;
 
@@ -12,8 +11,8 @@ export const ArrayControlRenderer = (props) => {
 };
 
 export const arrayControlTester = rankWith(
-    1000,
+    3,
     or(isObjectArrayControl, isPrimitiveArrayControl)
-  );
+);
 
 export default withJsonFormsArrayLayoutProps(ArrayControlRenderer);
