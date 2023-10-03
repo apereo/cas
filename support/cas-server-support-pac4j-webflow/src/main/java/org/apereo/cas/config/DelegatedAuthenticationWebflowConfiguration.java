@@ -21,6 +21,8 @@ import org.apereo.cas.pac4j.client.GroovyDelegatedClientAuthenticationRequestCus
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.authz.DefaultDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpoint;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -74,7 +76,6 @@ import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationIdentityPro
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.flow.error.DefaultDelegatedClientAuthenticationFailureEvaluator;
-import org.apereo.cas.web.flow.error.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -99,8 +100,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -111,6 +115,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -128,14 +133,22 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})
     public static class DelegatedAuthenticationWebflowErrorConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
+        @ConditionalOnMissingBean(name = "delegatedAuthenticationErrorViewResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ErrorViewResolver pac4jErrorViewResolver(
-            @Qualifier(DelegatedClientAuthenticationFailureEvaluator.BEAN_NAME) final DelegatedClientAuthenticationFailureEvaluator delegatedClientAuthenticationFailureEvaluator,
+        public ErrorViewResolver delegatedAuthenticationErrorViewResolver(
+            @Qualifier(DelegatedClientAuthenticationFailureEvaluator.BEAN_NAME)
+            final DelegatedClientAuthenticationFailureEvaluator delegatedClientAuthenticationFailureEvaluator,
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new DelegatedAuthenticationErrorViewResolver(applicationContext,
-                webProperties.getResources(), delegatedClientAuthenticationFailureEvaluator);
+            val mv = new ModelAndView();
+            mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
+            mv.setViewName(CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
+            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
+            val resolver = new MappedExceptionErrorViewResolver(applicationContext,
+                webProperties.getResources(), mappings,
+                errorContext -> delegatedClientAuthenticationFailureEvaluator.evaluate(errorContext.request(), errorContext.status().value()));
+            resolver.setOrder(0);
+            return resolver;
         }
     }
 

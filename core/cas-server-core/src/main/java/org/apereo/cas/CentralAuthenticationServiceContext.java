@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
-import org.apereo.cas.services.ServiceContext;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,7 +41,7 @@ public class CentralAuthenticationServiceContext {
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    private final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory;
+    private final ContextualAuthenticationPolicyFactory<RegisteredService> authenticationPolicyFactory;
 
     private final ServiceMatchingStrategy serviceMatchingStrategy;
 

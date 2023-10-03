@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.services.ServiceContext;
+import org.apereo.cas.services.RegisteredService;
 
 
 /**
@@ -12,15 +12,13 @@ import org.apereo.cas.services.ServiceContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
-
+public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<RegisteredService> {
     @Override
-    public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
+    public ContextualAuthenticationPolicy<RegisteredService> createPolicy(final RegisteredService registeredService) {
         return new ContextualAuthenticationPolicy<>() {
-
             @Override
-            public ServiceContext getContext() {
-                return context;
+            public RegisteredService getContext() {
+                return registeredService;
             }
 
             @Override

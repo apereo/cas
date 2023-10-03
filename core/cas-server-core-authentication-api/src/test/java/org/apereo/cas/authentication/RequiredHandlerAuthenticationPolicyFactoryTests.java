@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
-import org.apereo.cas.services.ServiceContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,8 +20,7 @@ class RequiredHandlerAuthenticationPolicyFactoryTests {
     @Test
     void verifyOperation() throws Throwable {
         val input = new RequiredHandlerAuthenticationPolicyFactory();
-        val policy = input.createPolicy(new ServiceContext(CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService()));
+        val policy = input.createPolicy(CoreAuthenticationTestUtils.getRegisteredService());
         assertNotNull(policy.getContext());
     }
 

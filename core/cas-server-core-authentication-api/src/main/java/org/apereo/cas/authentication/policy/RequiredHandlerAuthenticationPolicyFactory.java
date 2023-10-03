@@ -3,9 +3,8 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
-import org.apereo.cas.services.ServiceContext;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -18,20 +17,19 @@ import lombok.val;
  * @since 4.0.0
  */
 @Slf4j
-public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
+public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<RegisteredService> {
 
     @Override
-    public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
+    public ContextualAuthenticationPolicy<RegisteredService> createPolicy(final RegisteredService registeredService) {
         return new ContextualAuthenticationPolicy<>() {
 
             @Override
-            public ServiceContext getContext() {
-                return context;
+            public RegisteredService getContext() {
+                return registeredService;
             }
 
             @Override
             public boolean isSatisfiedBy(final Authentication authentication) {
-                val registeredService = context.registeredService();
                 val requiredHandlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
                 LOGGER.debug("Required authentication handlers for this service [{}] are [{}]",
                     registeredService.getName(), requiredHandlers);

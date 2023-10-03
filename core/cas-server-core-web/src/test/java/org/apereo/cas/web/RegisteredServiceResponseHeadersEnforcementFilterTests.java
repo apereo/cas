@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -186,7 +185,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "unknown-123456");
-        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+        assertThrows(UnauthorizedServiceException.class,
             () -> filter.doFilter(request, response, new MockFilterChain()));
     }
 
@@ -204,7 +203,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         filter.doFilter(request, response, new MockFilterChain());
         assertEquals("sameorigin", response.getHeader("X-Frame-Options"));
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+        assertThrows(UnauthorizedServiceException.class,
             () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
     }
 
@@ -222,7 +221,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         assertNull(response.getHeader("X-Frame-Options"));
 
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        assertThrowsWithRootCause(RuntimeException.class, UnauthorizedServiceException.class,
+        assertThrows(UnauthorizedServiceException.class,
             () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
     }
 

@@ -15,7 +15,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.services.ServiceContext;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -59,7 +59,7 @@ public class CasCoreConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory(
+        public ContextualAuthenticationPolicyFactory<RegisteredService> authenticationPolicyFactory(
             final CasConfigurationProperties casProperties) {
             if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
                 LOGGER.trace("Applying configuration for Required Handler Authentication Policy");
@@ -100,7 +100,7 @@ public class CasCoreConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("authenticationPolicyFactory") final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+            @Qualifier("authenticationPolicyFactory") final ContextualAuthenticationPolicyFactory<RegisteredService> authenticationPolicyFactory,
             @Qualifier("serviceMatchingStrategy") final ServiceMatchingStrategy serviceMatchingStrategy,
             @Qualifier(LockRepository.BEAN_NAME) final LockRepository casTicketRegistryLockRepository,
             final ConfigurableApplicationContext applicationContext) {

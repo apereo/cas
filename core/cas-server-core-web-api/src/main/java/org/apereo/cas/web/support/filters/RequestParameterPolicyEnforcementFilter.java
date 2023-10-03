@@ -174,7 +174,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
             if (!recognizedParameterNames.contains(initParamName)) {
-                logException(new ServletException("Unrecognized init parameter [" + initParamName + "]."));
+                throwException(new ServletException("Unrecognized init parameter [" + initParamName + "]."));
             }
         }
     }
@@ -204,7 +204,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             return new HashSet<>(0);
         }
         if (initParamValue.trim().isEmpty()) {
-            logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
+            throwException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
         val tokens = Splitter.onPattern("\\s+").splitToList(initParamValue.trim());
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.getFirst())) {
@@ -213,7 +213,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {
             if ("*".equals(parameterName)) {
-                logException(new IllegalArgumentException("Star token encountered among other tokens in parsing [" + initParamValue + ']'));
+                throwException(new IllegalArgumentException("Star token encountered among other tokens in parsing [" + initParamValue + ']'));
             }
             parameterNames.add(parameterName);
         }
@@ -236,7 +236,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         if (paramValue == null) {
             paramValue = DEFAULT_CHARACTERS_BLOCKED;
         } else if (paramValue.trim().isEmpty()) {
-            logException(new IllegalArgumentException("Expected tokens when parsing [" + paramValue + "] but found no tokens."));
+            throwException(new IllegalArgumentException("Expected tokens when parsing [" + paramValue + "] but found no tokens."));
         }
 
         if ("none".equals(paramValue)) {
@@ -246,7 +246,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         val tokens = Splitter.onPattern("\\s+").splitToList(paramValue);
         for (val token : tokens) {
             if (token.length() > 1) {
-                logException(new IllegalArgumentException("Expected tokens of length 1 but found [" + token + "] when parsing [" + paramValue + ']'));
+                throwException(new IllegalArgumentException("Expected tokens of length 1 but found [" + token + "] when parsing [" + paramValue + ']'));
             }
             val character = token.charAt(0);
             charactersToForbid.add(character);
@@ -273,7 +273,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             if (parameterMap.containsKey(parameterName)) {
                 val values = (String[]) parameterMap.get(parameterName);
                 if (values.length > 1) {
-                    logException(new IllegalStateException("Parameter [" + parameterName + "] had multiple values ["
+                    throwException(new IllegalStateException("Parameter [" + parameterName + "] had multiple values ["
                                                            + Arrays.toString(values) + "] but at most one value is allowable."));
                 }
             }
@@ -305,7 +305,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 for (val parameterValue : parameterValues) {
                     for (val forbiddenCharacter : charactersToForbid) {
                         if (parameterValue.contains(forbiddenCharacter.toString())) {
-                            logException(new IllegalArgumentException("Disallowed character [" + forbiddenCharacter
+                            throwException(new IllegalArgumentException("Disallowed character [" + forbiddenCharacter
                                                                       + "] found in value [" + parameterValue + "] of parameter named ["
                                                                       + parameterToCheck + ']'));
                         }
@@ -327,7 +327,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             val names = parameterMap.keySet();
             for (val onlyPostParameter : onlyPostParameters) {
                 if (names.contains(onlyPostParameter)) {
-                    logException(new IllegalArgumentException(onlyPostParameter + " parameter should only be used in POST requests"));
+                    throwException(new IllegalArgumentException(onlyPostParameter + " parameter should only be used in POST requests"));
                 }
             }
         }
@@ -354,7 +354,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         this.charactersToForbid = parseCharactersToForbid(initParamCharactersToForbid);
 
         if (this.allowMultiValueParameters && this.charactersToForbid.isEmpty()) {
-            logException(new ServletException("Configuration to allow multi-value parameters and forbid no characters makes "
+            throwException(new ServletException("Configuration to allow multi-value parameters and forbid no characters makes "
                                               + getClass().getSimpleName() + " a no-op"));
         }
     }
@@ -385,7 +385,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 checkOnlyPostParameters(httpServletRequest.getMethod(), parameterMap, this.onlyPostParameters);
             }
         } catch (final Exception e) {
-            logException(new ServletException(getClass().getSimpleName() + " is blocking this request.", e));
+            throwException(new ServletException(getClass().getSimpleName() + " is blocking this request.", e));
         }
 
         chain.doFilter(request, response);
@@ -399,7 +399,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 .toUriString();
             if (!this.patternToBlock.equals(RegexUtils.MATCH_NOTHING_PATTERN)
                 && this.patternToBlock.matcher(uri).find()) {
-                logException(new ServletException("The request is blocked as it matches a prohibited pattern"));
+                throwException(new ServletException("The request is blocked as it matches a prohibited pattern"));
             }
         }
     }
