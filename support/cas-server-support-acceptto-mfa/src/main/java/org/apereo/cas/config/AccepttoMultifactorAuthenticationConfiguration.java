@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusAction;
@@ -39,6 +40,7 @@ import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -170,6 +172,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val cookie = casProperties.getAuthn().getMfa().getAcceptto().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + "Accepto");
+            }
             val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
             return new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         }

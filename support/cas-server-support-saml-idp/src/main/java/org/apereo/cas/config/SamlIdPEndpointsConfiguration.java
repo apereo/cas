@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
@@ -17,6 +18,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.PrefixedSessionStore;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -75,7 +77,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -467,6 +468,9 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
+            if (StringUtils.isBlank(cookie.getName())) {
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.DEFAULT_BEAN_NAME);
+            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 
@@ -491,7 +495,9 @@ public class SamlIdPEndpointsConfiguration {
             if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);
             }
-            return JEESessionStore.INSTANCE;
+            val sessionStore = new PrefixedSessionStore();
+            sessionStore.setPrefix(DistributedJEESessionStore.DEFAULT_BEAN_NAME);
+            return sessionStore;
         }
     }
 
