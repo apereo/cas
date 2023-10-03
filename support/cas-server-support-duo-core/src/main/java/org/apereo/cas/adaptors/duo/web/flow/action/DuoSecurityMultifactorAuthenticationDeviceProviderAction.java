@@ -7,15 +7,14 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,14 +30,14 @@ import java.util.stream.Collectors;
 public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends BaseCasWebflowAction
     implements MultifactorAuthenticationDeviceProviderAction {
 
-    private final ApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
 
-        val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
+        val providers = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext.getBeanFactory(), DuoSecurityMultifactorAuthenticationProvider.class).values();
         val accounts = providers
             .stream()
             .filter(Objects::nonNull)

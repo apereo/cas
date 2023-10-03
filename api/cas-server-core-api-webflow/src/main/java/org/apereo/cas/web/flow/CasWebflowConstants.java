@@ -560,6 +560,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MY_ACCOUNT_PROFILE_VIEW = "myAccountProfile";
 
     /**
+     * The state 'googleAccountProfileRegistrationFinalized'.
+     */
+    String STATE_ID_MY_ACCOUNT_PROFILE_GOOGLE_REGISTRATION_FINALIZED = "googleAccountProfileRegistrationFinalized";
+
+    /**
      * The state 'duoUniversalPromptPrepareValidate'.
      */
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
