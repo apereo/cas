@@ -25,10 +25,11 @@
 
 import { findUISchema } from '@jsonforms/core';
 import { resolveSchema } from '@jsonforms/core';
+import { Resolve } from '@jsonforms/core';
 import { startCase, uniqBy } from 'lodash';
 
 const findAllSubSchemas = (list, rootSchema) => list.filter(item => {
-    const resolvedSubSchema = item.$ref && resolveSchema(rootSchema, item.$ref, rootSchema);
+    const resolvedSubSchema = item.$ref && Resolve.schema(rootSchema, item.$ref, rootSchema);
     const isAnyOf = resolvedSubSchema && resolvedSubSchema.hasOwnProperty('anyOf');
 
     return !isAnyOf;

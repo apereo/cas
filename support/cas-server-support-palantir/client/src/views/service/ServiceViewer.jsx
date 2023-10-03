@@ -1,34 +1,51 @@
-import React, { Fragment, useCallback, useEffect } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
-
-import { ServiceLoader } from './ServiceLoader';
-import { Button } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { DialogContent, Dialog, DialogTitle, Box, DialogActions, Button, IconButton, LinearProgress } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
-import { useUpdateServiceMutation } from '../../store/ServiceApi';
+import { useGetServiceQuery, useUpdateServiceMutation } from '../../store/ServiceApi';
 
 import { CodeEditor } from '../../components/CodeEditor';
+import { useDispatch } from 'react-redux';
 
 export function ServiceViewer () {
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { id } = useParams();
+    const onClose = useCallback(() => {
+        navigate("/services");
+    });
     const { enqueueSnackbar } = useSnackbar();
 
-    const params = useParams();
-    const { id } = params;
-
     const [updateService, updateResult] = useUpdateServiceMutation();
-    const navigate = useNavigate();
+    const { data, isFetching, isError } = useGetServiceQuery(id);
+    const [ error, setError ] = useState(false);
+    
+    const [ service, setService ] = useState(data);
+    const [ changes, setChanges ] = useState(data);
 
-    const update = useCallback((s) => {
-        updateService(s);
+    const save = useCallback((s) => {
+        updateService(s)
     }, [updateService]);
+
+    const update = useCallback((changes, invalid, raw) => {
+        setError(invalid);
+        if (!invalid) {
+            setChanges(changes);
+        }
+    }, []);
+
+    useEffect(() => {
+        setService(data);
+        setChanges(data);
+    }, [data]);
 
     useEffect(() => {
         const { isSuccess, isUninitialized, isError } = updateResult;
         if (!isUninitialized) {
             if (isSuccess) {
                 enqueueSnackbar('Service Updated', { variant: 'success' });
-                navigate('/services');
+                onClose();
             } else if (isError) {
                 const { error } = updateResult;
                 enqueueSnackbar(`Updated failed: ${error.data}`, { variant: 'error' });
@@ -37,19 +54,44 @@ export function ServiceViewer () {
         
     }, [updateResult]);
 
+    if (isError) {
+        return <div>An error has occurred!</div>
+    };
+
+    if (isFetching) {
+        return <LinearProgress />
+    };
+
     return (
-        <ServiceLoader id={ id }>
-            {service => 
-                <CodeEditor code={JSON.stringify(service, null, 2)} onSave={ update }>
-                    <Button
-                        component={NavLink}
-                        to={`/services`}
-                        color="primary"
-                        sx={{ my: 2 }}>
-                            <ArrowBackIcon />&nbsp; Back
-                    </Button>
-                </CodeEditor>
-            }
-        </ServiceLoader>
+        <Dialog
+            fullWidth={true}
+            maxWidth={'lg'}
+            open={true}
+            onClose={onClose}
+        >
+            <DialogTitle>Service History</DialogTitle>
+            <IconButton
+                aria-label="close"
+                onClick={onClose}
+                sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: (theme) => theme.palette.grey[500],
+                }}
+                >
+                <CloseIcon />
+                </IconButton>
+            <DialogContent sx={{p: 0}}>
+                <Box sx={{height: '80svh'}}>
+                    <CodeEditor data={ service } onChange={ update } />
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => onClose()}>Cancel</Button>
+                <Button variant="contained" disabled={error} onClick={() => save(changes)}>Save</Button>
+            </DialogActions>
+        </Dialog>
+        
     );
 }
