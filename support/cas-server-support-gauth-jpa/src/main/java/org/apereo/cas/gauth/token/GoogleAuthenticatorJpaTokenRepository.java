@@ -100,13 +100,13 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void removeAll() {
         this.entityManager.createQuery("DELETE FROM "
-                                       + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
+            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
     }
 
     @Override
     public long count(final String uid) {
-        val count = (Number) entityManager.createQuery("SELECT COUNT(r.userId) FROM "
-                                                       + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
+        val count = (Number) entityManager.createQuery(
+            "SELECT COUNT(r.userId) FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
             .setParameter("userId", uid.trim().toLowerCase(Locale.ENGLISH))
             .getSingleResult();
         LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);
