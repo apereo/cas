@@ -18,6 +18,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.PrefixedSessionStore;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -76,7 +77,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -495,7 +495,7 @@ public class SamlIdPEndpointsConfiguration {
             if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);
             }
-            val sessionStore = new JEESessionStore();
+            val sessionStore = new PrefixedSessionStore();
             sessionStore.setPrefix(DistributedJEESessionStore.DEFAULT_BEAN_NAME);
             return sessionStore;
         }
