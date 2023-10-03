@@ -71,10 +71,10 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
 
                 if (location.getFile().length() <= 0) {
-                    LOGGER.warn("JSON account repository file location [{}] is empty.", location.getFile());
+                    LOGGER.debug("JSON account repository file location [{}] is empty.", location.getFile());
                     return new ArrayList<>(0);
                 }
-                val map = this.serializer.from(location.getFile());
+                val map = serializer.from(location.getFile());
                 if (map == null) {
                     LOGGER.debug("JSON account repository file [{}] is empty.", location.getFile());
                     return new ArrayList<>(0);

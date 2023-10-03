@@ -170,7 +170,7 @@ function resourceLoadedSuccessfully() {
     });
 }
 
-function autoHideElement(id, timeout = 2000) {
+function autoHideElement(id, timeout = 1500) {
     var elementToFadeOut = document.getElementById(id);
     function hideElement() {
         $(elementToFadeOut).fadeOut(500);

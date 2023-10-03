@@ -515,6 +515,10 @@ button.close {
     max-width: 50%;
 }
 
+.mw-25 {
+    max-width: 25%;
+}
+
 .border-rounded {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);
