@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, Container, Divider, Typography } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -134,6 +134,7 @@ export function ServiceList () {
                 <Typography>There are no services defined.</Typography>
                 }
             </Container>
+            <Outlet />
         </Fragment>
     );
 }
