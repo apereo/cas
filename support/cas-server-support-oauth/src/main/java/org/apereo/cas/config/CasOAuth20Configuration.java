@@ -181,7 +181,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This this {@link CasOAuth20Configuration}.
+ * This is {@link CasOAuth20Configuration}.
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
@@ -192,6 +192,9 @@ import java.util.Optional;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20Configuration {
+
+    private static final String OAUTH_OIDC_SERVER_SUPPORT_PREFIX = "OauthOidcServerSupport";
+
     @Configuration(value = "CasOAuth20JwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20JwtConfiguration {
@@ -633,7 +636,7 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + TicketRegistrySessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, geoLocationService,
@@ -654,7 +657,7 @@ public class CasOAuth20Configuration {
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(TicketRegistrySessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+            sessionStore.setPrefix(OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
             return sessionStore;
         }
     }

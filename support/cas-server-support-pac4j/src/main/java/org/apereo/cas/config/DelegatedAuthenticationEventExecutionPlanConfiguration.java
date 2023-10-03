@@ -88,6 +88,8 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
+    private static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";
+
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanSessionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DelegatedAuthenticationEventExecutionPlanSessionConfiguration {
@@ -105,7 +107,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(TicketRegistrySessionStore.AUTHENTICATION_DELEGATION_PREFIX);
+            sessionStore.setPrefix(AUTHENTICATION_DELEGATION_PREFIX);
             return sessionStore;
         }
     }
@@ -146,7 +148,7 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + TicketRegistrySessionStore.AUTHENTICATION_DELEGATION_PREFIX);
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + AUTHENTICATION_DELEGATION_PREFIX);
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,

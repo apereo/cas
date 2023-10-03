@@ -112,6 +112,8 @@ import java.util.List;
 @AutoConfiguration
 public class SamlIdPEndpointsConfiguration {
 
+    private static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";
+
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPEndpointCryptoConfiguration {
@@ -506,7 +508,7 @@ public class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + TicketRegistrySessionStore.SAML_SERVER_SUPPORT_PREFIX);
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + SAML_SERVER_SUPPORT_PREFIX);
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, geoLocationService,
@@ -527,7 +529,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val jeeSessionStore = new JEESessionStore();
-            jeeSessionStore.setPrefix(TicketRegistrySessionStore.SAML_SERVER_SUPPORT_PREFIX);
+            jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return switch (type) {
                 case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry,

@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasAuthenticationDelegationTestConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -125,8 +124,7 @@ public abstract class BaseCasCoreTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         CasCoreValidationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasAuthenticationDelegationTestConfiguration.class
+        CasCoreConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
