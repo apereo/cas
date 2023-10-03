@@ -31,19 +31,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DistributedJEESessionStore implements SessionStore {
     /**
-     * SAML server support prefix.
+     * Default session store implementation bean.
      */
-    public static final String SAML_SERVER_SUPPORT_PREFIX = "samlIdPDistributedSessionStore";
-
-    /**
-     * OAuth/OIDC server support prefix.
-     */
-    public static final String OAUTH_OIDC_SERVER_SUPPORT_PREFIX = "OauthOidcServerSupport";
-
-    /**
-     * Authentication delegation prefix.
-     */
-    public static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";
+    public static final String DEFAULT_BEAN_NAME = "samlIdPDistributedSessionStore";
 
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 

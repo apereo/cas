@@ -469,12 +469,12 @@ public class SamlIdPEndpointsConfiguration {
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX);
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.DEFAULT_BEAN_NAME);
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
 
-        @ConditionalOnMissingBean(name = DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX)
+        @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore samlIdPDistributedSessionStore(
@@ -496,7 +496,7 @@ public class SamlIdPEndpointsConfiguration {
                 return new BrowserWebStorageSessionStore(webflowCipherExecutor);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX);
+            sessionStore.setPrefix(DistributedJEESessionStore.DEFAULT_BEAN_NAME);
             return sessionStore;
         }
     }

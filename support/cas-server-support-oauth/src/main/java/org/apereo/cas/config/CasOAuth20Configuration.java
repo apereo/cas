@@ -180,6 +180,9 @@ import java.util.Optional;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20Configuration {
+
+    private static final String OAUTH_OIDC_SERVER_SUPPORT_PREFIX = "OauthOidcServerSupport";
+
     @Configuration(value = "CasOAuth20JwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20JwtConfiguration {
@@ -653,7 +656,7 @@ public class CasOAuth20Configuration {
         public CasCookieBuilder oauthDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + DistributedJEESessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+                cookie.setName(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME + OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
         }
@@ -675,7 +678,7 @@ public class CasOAuth20Configuration {
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(DistributedJEESessionStore.OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+            sessionStore.setPrefix(OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
             return sessionStore;
         }
     }

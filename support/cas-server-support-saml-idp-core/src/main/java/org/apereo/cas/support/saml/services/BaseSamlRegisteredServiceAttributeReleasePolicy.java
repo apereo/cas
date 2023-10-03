@@ -112,7 +112,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      */
     protected static Optional<AuthnRequest> getSamlAuthnRequest(final ApplicationContext applicationContext) {
         val openSamlConfigBean = applicationContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.class);
-        val sessionStore = applicationContext.getBean(DistributedJEESessionStore.SAML_SERVER_SUPPORT_PREFIX, SessionStore.class);
+        val sessionStore = applicationContext.getBean(DistributedJEESessionStore.DEFAULT_BEAN_NAME, SessionStore.class);
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val context = new JEEContext(request, response);
