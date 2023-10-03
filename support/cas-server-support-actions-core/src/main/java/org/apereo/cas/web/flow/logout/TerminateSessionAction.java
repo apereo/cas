@@ -105,7 +105,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
         manager.removeProfiles();
 
         val session = request.getSession(false);
