@@ -98,7 +98,7 @@ If you have already diagnosed a problem or have found a use case for an attracti
 we strongly recommend you simply [walk down the path](https://github.com/apereo/cas/graphs/contributors) of
 making that all a reality and *contribute* back. If you find yourself unable to do so, you will need to find
 and procure resources that can [teach you the how-to](https://www.coursera.org/)
-or [do it for you](https://apereo.github.io/cas/Support.html). Talk to your institution, company,
+[curso de c#](https://www.curso-de-java.mx/curso-de-c-sharp.html) or [do it for you](https://apereo.github.io/cas/Support.html). Talk to your institution, company,
 organization, supervisor, boss, mentor, architect, manager, director, CIO, CTO, CISO, etc and have them procure the right resources for the job.
 
 Reporting an issue and hoping/waiting for someone else to magically come along and spend time, money and energy
