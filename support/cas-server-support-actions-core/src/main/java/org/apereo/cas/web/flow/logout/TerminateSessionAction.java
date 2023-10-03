@@ -102,7 +102,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
      * @param response the response
      */
     @SuppressWarnings("java:S2441")
-    protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
         val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, new JEESessionStore());
