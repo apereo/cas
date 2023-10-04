@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -77,6 +78,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
     @SpringBootTest(classes = {
         CommonTestConfiguration.class,
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public class DefaultTests {
@@ -347,6 +349,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         CommonTestConfiguration.class,
         AttributeRepositoryTests.AttributeRepositoryTestConfiguration.class,
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public class AttributeRepositoryTests {

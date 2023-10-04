@@ -37,7 +37,6 @@ import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlRestConfiguration;
 import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
-
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -56,7 +55,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -129,6 +127,7 @@ public abstract class AbstractOpenSamlTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,

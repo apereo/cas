@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -61,6 +62,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledTests {
@@ -77,6 +79,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=false")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1DisabledTests {
@@ -92,6 +95,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @Nested
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledUndefinedTests {
@@ -107,6 +111,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @Nested
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasFeatureModuleDisabledByDefaultTestConfiguration.class
     })
     class Feature3DisabledByDefaultTests {
@@ -122,6 +127,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @Nested
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasFeatureModuleMultipleConditionsTestConfiguration.class
     })
     @TestPropertySource(properties = {

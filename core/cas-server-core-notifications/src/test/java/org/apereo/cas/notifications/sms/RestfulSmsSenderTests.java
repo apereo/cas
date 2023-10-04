@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -37,6 +38,7 @@ class RestfulSmsSenderTests {
     @Nested
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class
@@ -83,6 +85,7 @@ class RestfulSmsSenderTests {
     @Nested
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class

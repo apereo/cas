@@ -9,6 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -24,7 +25,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
+},
     properties = {
         "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
         "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",

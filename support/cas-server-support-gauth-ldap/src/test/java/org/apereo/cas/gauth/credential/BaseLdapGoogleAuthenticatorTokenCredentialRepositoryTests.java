@@ -33,7 +33,6 @@ import org.apereo.cas.config.GoogleAuthenticatorLdapConfiguration;
 import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
