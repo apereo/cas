@@ -30,8 +30,6 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/idp/profile/SAML2/Redirect/SSO`
 - `/idp/profile/SAML2/POST/SSO`
 - `/idp/profile/SAML2/POST-SimpleSign/SSO`
-- `/idp/profile/SAML2/POST/SLO`
-- `/idp/profile/SAML2/Redirect/SLO`
 - `/idp/profile/SAML2/Unsolicited/SSO`
 - `/idp/profile/SAML2/SOAP/ECP`
 - `/idp/profile/SAML2/SOAP/AttributeQuery`
@@ -77,6 +75,11 @@ about how to configure SAML2 service providers.
 
 Please [see this guide](../installation/Configuring-SAML2-Security.html) to learn more
 about how to configure SAML2 security configuration.
+ 
+### Logout & SLO
+
+Please [see this guide](../installation/Configuring-SAML2-Logout.html) to learn more
+about how to configure SAML2 logout operations and settings.
 
 ### Attribute Release
 
@@ -101,7 +104,6 @@ SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 ## Attribute Queries
 
 Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) for more details.
-
 
 ## Client Libraries
 
