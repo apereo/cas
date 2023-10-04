@@ -1009,7 +1009,9 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView(final Exception ex) {
-        val error = new UnauthorizedServiceException(ex, UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val error = ex instanceof UnauthorizedServiceException
+            ? ex
+            : new UnauthorizedServiceException(ex, UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, ex.getMessage());
         return produceErrorView(error);
     }
 

@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.io.Serial;
 
 /**
@@ -30,17 +29,11 @@ public class UnauthorizedServiceException extends RuntimeException {
      * Exception object that indicates the service is expired.
      **/
     public static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
-
     @Serial
     private static final long serialVersionUID = 3905807495715960369L;
 
     private final String code;
 
-    /**
-     * Construct the exception object with the associated error code.
-     *
-     * @param message the error message
-     */
     public UnauthorizedServiceException(final String message) {
         this(null, message);
     }
@@ -55,13 +48,6 @@ public class UnauthorizedServiceException extends RuntimeException {
         this.code = code;
     }
 
-    /**
-     * Constructs an UnauthorizedServiceException with a custom message and the
-     * root cause of this exception.
-     *
-     * @param message an explanatory message.
-     * @param cause   the root cause of the exception.
-     */
     public UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
         this.code = null;
