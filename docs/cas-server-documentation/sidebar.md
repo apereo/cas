@@ -553,6 +553,7 @@ layout: null
             *   [Authentication Context](/cas/{{ version }}/installation/Configuring-SAML2-AuthnContextClass.html)
             *   [Attribute Query](/cas/{{ version }}/installation/Configuring-SAML2-AttributeQuery.html)
             *   [Security Configuration](/cas/{{ version }}/installation/Configuring-SAML2-Security.html)
+            *   [Logout & SLO](/cas/{{ version }}/installation/Configuring-SAML2-Logout.html)
     *   [REST](#casrestprotocol)
         *   [Overview](/cas/{{ version }}/protocol/REST-Protocol.html)
         *   [Create Service](/cas/{{ version }}/protocol/REST-Protocol-Create-Service.html)

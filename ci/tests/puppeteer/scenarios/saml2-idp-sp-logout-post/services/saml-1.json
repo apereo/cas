@@ -5,6 +5,7 @@
   "id" : 1,
   "evaluationOrder" : 1,
   "metadataLocation" : "https://samltest.id/saml/sp",
+  "logoutResponseBinding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
