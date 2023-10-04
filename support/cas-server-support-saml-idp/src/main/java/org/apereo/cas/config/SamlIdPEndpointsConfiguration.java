@@ -528,15 +528,17 @@ public class SamlIdPEndpointsConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
-            val jeeSessionStore = new JEESessionStore();
-            jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            return switch (type) {
-                case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry,
-                    ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_SESSION_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor);
-                default -> jeeSessionStore;
-            };
+            switch (type) {
+                case TICKET_REGISTRY:
+                    return new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
+                case BROWSER_SESSION_STORAGE:
+                    return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+                default:
+                    val jeeSessionStore = new JEESessionStore();
+                    jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
+                    return jeeSessionStore;
+            }
         }
     }
 

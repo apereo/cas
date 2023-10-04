@@ -31,5 +31,5 @@
     "--cas.authn.pac4j.core.session-replication.replicate-sessions=false",
     "--cas.authn.oauth.session-replication.replicate-sessions=false"
   ],
-  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

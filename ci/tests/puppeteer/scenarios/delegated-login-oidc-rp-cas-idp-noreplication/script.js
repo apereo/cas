@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
+        "redirect_uri=https%3A%2F%2Flocalhost%3A9859%2Fanything%2F1&" +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=code&" +
         "response_mode=form_post&" +
@@ -36,11 +36,11 @@ const cas = require('../../cas.js');
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(2000);
-    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await cas.log(await page.url());
-    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
+    assert(await page.url().startsWith("https://localhost:9859/anything/1"));
     await page.waitForTimeout(2000);
+    await cas.assertInnerTextContains(page, "pre", "OC-1-");
 
     await cas.goto(page, 'https://localhost:8443/cas/logout');
     assert(page.url().startsWith("https://localhost:8444/cas/logout"));
