@@ -104,6 +104,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             return context.getRegisteredService().getAttributeReleasePolicy().getAttributes(releasePolicyContext);
         }
         LOGGER.debug("Could not locate service [{}] in the registry.", context.getService().getId());
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        throw UnauthorizedServiceException.denied("Rejected: %s".formatted(context.getService().getId()));
     }
 }

@@ -86,36 +86,24 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
 
-    /**
-     * Verify registered service.
-     *
-     * @param requestContext    the request context
-     * @param registeredService the registered service
-     */
+
     protected void verifyRegisteredService(final RequestContext requestContext, final RegisteredService registeredService) {
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Service [{}] is not recognized/allowed by the CAS service registry", registeredService);
             if (registeredService != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Rejected");
         }
     }
 
-    /**
-     * Gets registered service from request.
-     *
-     * @param requestContext the request context
-     * @param entityId       the entity id
-     * @return the registered service from request
-     */
     protected WebBasedRegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
         val service = this.serviceFactory.createService(entityId);
         var registeredService = (WebBasedRegisteredService) servicesManager.findServiceBy(service);
         if (registeredService == null) {
             val currentService = WebUtils.getService(requestContext);
             LOGGER.debug("Entity id [{}] not found in the registry. Fallback onto [{}]", entityId, currentService);
-            registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(currentService);
+            registeredService = (WebBasedRegisteredService) servicesManager.findServiceBy(currentService);
         }
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;

@@ -52,8 +52,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
             val registeredService = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(registeredService, artifactMsg);
             if (adaptor.isEmpty()) {
-                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Cannot find metadata linked to " + issuer);
+                throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
             }
             val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade, registeredService);

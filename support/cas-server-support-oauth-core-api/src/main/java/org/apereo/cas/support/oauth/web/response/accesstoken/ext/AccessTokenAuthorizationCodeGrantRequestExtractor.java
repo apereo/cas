@@ -44,7 +44,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = getOAuthRegisteredServiceBy(context);
         FunctionUtils.throwIf(registeredService == null,
-            () -> new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri));
+            () -> UnauthorizedServiceException.denied("Unable to locate service in registry for redirect URI %s ".formatted(redirectUri)));
         val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);

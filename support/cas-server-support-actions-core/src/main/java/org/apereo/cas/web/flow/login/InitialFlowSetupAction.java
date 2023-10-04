@@ -120,7 +120,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     protected void configureWebflowForServices(final RequestContext context) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         if (HttpStatus.valueOf(response.getStatus()).isError()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
 
         val service = WebUtils.getService(argumentExtractors, context);
@@ -167,11 +167,6 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
     }
 
-    /**
-     * Configure the webflow.
-     *
-     * @param context the webflow context
-     */
     protected void configureWebflowContext(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(warnCookieGenerator.retrieveCookieValue(request)));
