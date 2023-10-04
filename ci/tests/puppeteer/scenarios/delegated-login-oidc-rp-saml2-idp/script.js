@@ -45,7 +45,7 @@ const path = require('path');
     await page.waitForTimeout(3000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    await cas.log(await page.url());
+    await cas.logPage(page);
     assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

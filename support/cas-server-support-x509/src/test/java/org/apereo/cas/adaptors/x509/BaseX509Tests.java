@@ -27,7 +27,6 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.X509AuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.X509AuthenticationConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorConfiguration;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -44,6 +43,7 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseX509Tests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

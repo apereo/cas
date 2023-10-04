@@ -11,6 +11,7 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     @Nested
@@ -46,6 +48,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     @Nested

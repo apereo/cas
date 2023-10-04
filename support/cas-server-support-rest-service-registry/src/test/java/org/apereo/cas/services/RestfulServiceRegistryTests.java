@@ -27,7 +27,6 @@ import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
@@ -63,9 +62,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ServletWebServerFactoryAutoConfiguration.class,
     DispatcherServletAutoConfiguration.class,
 

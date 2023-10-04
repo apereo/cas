@@ -22,7 +22,7 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(6000);
-    await cas.log(await page.url());
+    await cas.logPage(page);
     await cas.screenshot(page);
     assert(await page.url().startsWith("https://localhost:9859/post"));
     let content = await cas.textContent(page, "body");

@@ -36,7 +36,6 @@ import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationRestConfiguration;
 import org.apereo.cas.config.SurrogateComponentSerializationConfiguration;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -48,9 +47,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -107,6 +104,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,

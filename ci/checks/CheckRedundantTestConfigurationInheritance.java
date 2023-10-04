@@ -17,8 +17,44 @@ import java.util.regex.Pattern;
  */
 public class CheckRedundantTestConfigurationInheritance {
     public static void main(final String[] args) throws Exception {
-        checkPattern(args[0],
-            Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL));
+        var patternBootTestClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL);
+        var importedTestClasses = Pattern.compile("@Import\\(\\{(.*?)\\}\\)", Pattern.DOTALL);
+
+        checkPattern(args[0], patternBootTestClasses);
+        checkDuplicateTestConfiguration(args[0], patternBootTestClasses, importedTestClasses);
+    }
+
+    protected static void checkDuplicateTestConfiguration(final String arg, final Pattern... patterns) throws Exception {
+        var failBuild = new AtomicBoolean(false);
+        Files.walk(Paths.get(arg))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
+            .forEach(file -> {
+                var text = readFile(file);
+                
+                for (var patternClasses : patterns) {
+                    var matcher = patternClasses.matcher(text);
+
+                    while (matcher.find()) {
+                        var testClasses = matcher.group(1)
+                            .replaceAll("\n", "")
+                            .trim()
+                            .replaceAll("\\s", "")
+                            .split(",");
+                        var setOfClasses = new HashSet<>();
+                        for (var testClass : testClasses) {
+                            if (!setOfClasses.add(testClass)) {
+                                print("Class %s is duplicated in %s", testClass, file.toFile().getName());
+                                failBuild.set(true);
+                            }
+                        }
+                        setOfClasses.clear();
+                    }
+                }
+            });
+
+        if (failBuild.get()) {
+            System.exit(1);
+        }
     }
 
     private static void print(final String message, final Object... args) {
@@ -40,8 +76,7 @@ public class CheckRedundantTestConfigurationInheritance {
         return file.getName().replace(".java", "");
     }
 
-    protected static void checkPattern(final String arg,
-                                       final Pattern... patterns) throws IOException {
+    protected static void checkPattern(final String arg, final Pattern... patterns) throws Exception {
         var failBuild = new AtomicBoolean(false);
         var parentClasses = new TreeMap<String, File>();
 
