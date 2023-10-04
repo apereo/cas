@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-
 import java.io.Serial;
 
 /**
@@ -24,8 +23,7 @@ public class UnauthorizedSsoServiceException extends UnauthorizedServiceExceptio
         this(CODE);
     }
 
-    public UnauthorizedSsoServiceException(final String message,
-                                           final Throwable cause) {
+    public UnauthorizedSsoServiceException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
