@@ -131,8 +131,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
     protected SamlRegisteredService verifySamlRegisteredService(final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                "Could not verify/locate SAML registered service since no serviceId is provided");
+            throw UnauthorizedServiceException.denied("Could not verify/locate SAML registered service since no serviceId is provided");
         }
         val service = configurationContext.getWebApplicationServiceFactory().createService(serviceId);
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(serviceId));
@@ -140,7 +139,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("[{}] is not found in the registry or service access is denied.", serviceId);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(serviceId));
         }
         LOGGER.debug("Located SAML service in the registry as [{}] with the metadata location of [{}]",
             registeredService.getServiceId(), registeredService.getMetadataLocation());
@@ -379,7 +378,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         if (adaptor.isEmpty()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
+            throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
         }
 
         val facade = adaptor.get();
@@ -430,8 +429,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val adaptor = getSamlMetadataFacadeFor(registeredService, request);
 
         if (adaptor.isEmpty()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                "Cannot find metadata linked to " + issuer);
+            throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
         }
         val facade = adaptor.get();
         return Pair.of(registeredService, facade);
@@ -501,10 +499,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
                 .fetch(webContext, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("""
-                SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
-                request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
-                running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
-                """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
+                    SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
+                    request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
+                    running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
+                    """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
         });
     }
 

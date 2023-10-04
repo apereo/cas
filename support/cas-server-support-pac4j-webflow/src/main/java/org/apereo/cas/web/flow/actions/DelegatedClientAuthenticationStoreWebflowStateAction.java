@@ -77,11 +77,11 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                         CasWebflowConstants.TRANSITION_ID_REDIRECT, ticket.getClass().getName(), ticket))
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new UnauthorizedServiceException("Unable to locate client identity provider " + clientName)),
+                    .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate client identity provider %s".formatted(clientName))),
                 throwable -> {
                     val message = String.format("Authentication request was denied from the provider %s", clientName);
                     LoggingUtils.warn(LOGGER, message, throwable);
-                    throw new UnauthorizedServiceException(throwable.getMessage(), throwable);
+                    throw UnauthorizedServiceException.wrap(throwable);
                 })
             .get();
     }

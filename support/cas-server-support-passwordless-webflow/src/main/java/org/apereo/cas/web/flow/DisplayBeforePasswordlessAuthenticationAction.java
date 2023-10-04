@@ -64,13 +64,13 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         }
         val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
         if (StringUtils.isBlank(username)) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         val passwordlessRequest = passwordlessRequestParser.parse(username);
         val account = FunctionUtils.doUnchecked(() -> passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername()));
         if (account.isEmpty()) {
             LOGGER.error("Unable to locate passwordless user account for [{}]", username);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(username));
         }
         val user = account.get();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);

@@ -181,7 +181,7 @@ public class JwtBuilder {
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new UnauthorizedServiceException("Unable to locate registered service via any of " + serviceAudience)));
+                .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate registered service via any of %s".formatted(serviceAudience))));
         return build(registeredService, claimsSet);
     }
 

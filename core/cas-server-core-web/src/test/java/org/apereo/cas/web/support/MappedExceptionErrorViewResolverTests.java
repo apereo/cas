@@ -40,7 +40,7 @@ public class MappedExceptionErrorViewResolverTests {
         var result = defaultMappedExceptionErrorViewResolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertNull(result);
 
-        request.setAttribute("jakarta.servlet.error.exception", new UnauthorizedServiceException("Forbidden"));
+        request.setAttribute("jakarta.servlet.error.exception", UnauthorizedServiceException.denied("Forbidden"));
         result = defaultMappedExceptionErrorViewResolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getViewName());
         assertTrue(result.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));

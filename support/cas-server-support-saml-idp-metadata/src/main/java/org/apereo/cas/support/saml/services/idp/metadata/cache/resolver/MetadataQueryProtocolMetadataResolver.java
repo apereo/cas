@@ -115,7 +115,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         val response = HttpUtils.execute(exec);
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(metadataLocation));
         }
         return response;
     }

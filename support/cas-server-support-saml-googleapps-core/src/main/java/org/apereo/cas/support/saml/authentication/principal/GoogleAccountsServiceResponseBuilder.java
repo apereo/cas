@@ -112,25 +112,16 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         return service instanceof GoogleAccountsService;
     }
 
-    /**
-     * Construct SAML response.
-     * <a href="http://bit.ly/1uI8Ggu">See this reference for more info.</a>
-     *
-     * @param service        the service
-     * @param authentication the authentication
-     * @return the SAML response
-     */
     protected String constructSamlResponse(final GoogleAccountsService service,
                                            final Authentication authentication) {
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         val notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
         val registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Unauthorized: %s".formatted(service.getId()));
         }
 
         val principal = authentication.getPrincipal();
-
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(registeredService)
             .service(service)
@@ -166,11 +157,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         return result;
     }
 
-    /**
-     * Create the private key.
-     *
-     * @throws Exception if key creation ran into an error
-     */
     protected void createGoogleAppsPrivateKey() throws Exception {
         if (!isValidConfiguration()) {
             LOGGER.debug("Google Apps private key bean will not be created, because it's not configured");

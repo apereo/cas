@@ -39,8 +39,7 @@ public class InitializeLoginAction extends BaseCasWebflowAction {
         if (service == null && !casProperties.getSso().getServices().isAllowMissingServiceParameter()) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.", request.getRequestURL());
-            throw new NoSuchFlowExecutionException(requestContext.getFlowExecutionContext().getKey(),
-                new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
+            throw new NoSuchFlowExecutionException(requestContext.getFlowExecutionContext().getKey(), UnauthorizedServiceException.required());
         }
         return success();
     }

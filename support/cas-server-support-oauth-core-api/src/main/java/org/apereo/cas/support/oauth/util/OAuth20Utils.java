@@ -153,7 +153,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView(final HttpStatus status) {
-        val ex = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val ex = UnauthorizedServiceException.denied("Rejected: %s".formatted(status));
         return produceErrorView(ex, status);
     }
 

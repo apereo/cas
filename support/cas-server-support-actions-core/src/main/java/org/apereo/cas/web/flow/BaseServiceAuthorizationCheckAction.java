@@ -39,14 +39,14 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
             val msg = String.format("No service definitions are found in the service manager. "
                 + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
             val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             val msg = String.format("Service Management: Unauthorized Service Access. "
@@ -54,7 +54,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
             LOGGER.warn(msg);
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
                 registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
         WebUtils.putCasLoginFormViewable(context, delegatedPolicy == null || !delegatedPolicy.isExclusive());

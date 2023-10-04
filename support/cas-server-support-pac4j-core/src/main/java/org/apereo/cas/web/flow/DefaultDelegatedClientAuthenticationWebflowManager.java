@@ -189,12 +189,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             .collect(Collectors.toList());
     }
 
-    /**
-     * Remember selected client if necessary.
-     *
-     * @param webContext the web context
-     * @param client     the client
-     */
     protected void rememberSelectedClientIfNecessary(final JEEContext webContext, final Client client) {
         val cookieProps = configContext.getCasProperties().getAuthn().getPac4j().getCookie();
         if (cookieProps.isEnabled()) {
@@ -238,7 +232,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             return Optional.of(ticket);
         }, e -> {
             LoggingUtils.error(LOGGER, e);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(clientId));
         }).get();
     }
 
@@ -262,16 +256,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         return clientId;
     }
 
-    /**
-     * Gets the delegated client id for a specific client type.
-     *
-     * @param webContext  the web context
-     * @param client      the client
-     * @param clientId    the client id
-     * @param clientClass the client class
-     * @param key         the key for the session store
-     * @return the retrieved or existing client id
-     */
     protected String getDelegatedClientIdFromSessionStore(final WebContext webContext, final Client client, final String clientId,
                                                           final Class clientClass, final String key) {
         if (StringUtils.isBlank(clientId) && client != null && clientClass.isAssignableFrom(client.getClass())) {
