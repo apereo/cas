@@ -506,7 +506,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountDeviceProviderAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_DEVICE_PROVIDER)
         public MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction(
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
@@ -515,7 +515,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountProfilePrepareAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE)
         public Action googleAccountProfilePrepareAction(
             @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider,
@@ -528,7 +528,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountProfileRegistrationAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
         public Action googleAccountProfileRegistrationAction(@Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
                                                              final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
             return new GoogleMultifactorAuthenticationAccountProfileRegistrationAction(googleAuthenticatorMultifactorAuthenticationProvider);

@@ -75,7 +75,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val samlRegisteredService = (SamlRegisteredService) WebUtils.getRegisteredService(request);
         val samlLogoutRequest = getLogoutRequest(request).get();
-
+        
         val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
         val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(),
@@ -106,6 +106,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         } else if (!adaptor.getSingleLogoutServices().isEmpty()) {
             binding = adaptor.getSingleLogoutService().getBinding();
         }
+
         return StringUtils.defaultIfBlank(binding, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
@@ -192,7 +193,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         LOGGER.trace("Creating logout response for binding [{}] with issuer [{}], location [{}] and service provider [{}]",
             sloService.getBinding(), issuer, location, adaptor.getEntityId());
         val logoutResponse = builder.newLogoutResponse(id, location, issuer, status, logoutRequest.getID());
-
+        
         if (signSamlLogoutResponseFor(registeredService)) {
             LOGGER.trace("Signing logout request for service provider [{}]", adaptor.getEntityId());
             val logoutResponseSigned = configurationContext.getSamlObjectSigner()

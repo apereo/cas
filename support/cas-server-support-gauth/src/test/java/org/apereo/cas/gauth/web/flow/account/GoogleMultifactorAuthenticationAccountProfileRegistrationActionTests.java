@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.web.flow.account;
 import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 public class GoogleMultifactorAuthenticationAccountProfileRegistrationActionTests {
     @Autowired
-    @Qualifier("googleAccountProfileRegistrationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
     private Action googleAccountProfileRegistrationAction;
 
     @Autowired

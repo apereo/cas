@@ -138,7 +138,7 @@
         <table>
             <tr>
                 <td>
-                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"/>
+                    <img id="imageQRCode" th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"/>
                 </td>
 
                 <td>
@@ -166,12 +166,12 @@
                         value="Confirm">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
-                <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="print" accesskey="p" type="button"
+                <button class="mdc-button mdc-button--raised btn btn-primary me-2" id="print" name="print" accesskey="p" type="button"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>
                 <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button"
-                        value="Cancel"
+                        value="Cancel" id="cancel"
                         onclick="location.href = document.getElementById('fm1').action;"
                         th:value="#{screen.pm.button.cancel}">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
