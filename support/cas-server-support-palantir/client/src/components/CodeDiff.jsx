@@ -7,8 +7,11 @@ import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 import { Box, Button } from "@mui/material";
 
-import service1 from '../../public/data/service-1.json';
-import service2 from '../../public/data/service-2.json';
+// import service1 from '../../public/data/service-1.json';
+// import service2 from '../../public/data/service-2.json';
+
+const service1 = {};
+const service2 = {};
 
 export function CodeDiff ({ code, format = 'json', onSave, children }) {
 
