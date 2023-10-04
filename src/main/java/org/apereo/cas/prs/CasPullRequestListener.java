@@ -42,7 +42,7 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isRenovateBot()) {
+        if (pr.isRenovateBot() || pr.isDependaBot()) {
             if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
                 log.info("Merging pull request {}", pr);
                 repository.approveAndMergePullRequest(pr);
@@ -144,6 +144,7 @@ public class CasPullRequestListener implements PullRequestListener {
             log.info("Pull request {} is is being reviewed", pr);
             return;
         }
+
         
         val files = repository.getPullRequestFiles(pr);
         

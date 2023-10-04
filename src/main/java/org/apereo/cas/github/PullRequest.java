@@ -140,4 +140,8 @@ public class PullRequest {
     public boolean isRenovateBot() {
         return user.getLogin().equalsIgnoreCase("renovate[bot]");
     }
+
+    public boolean isDependaBot() {
+        return user.getLogin().equalsIgnoreCase("dependabot[bot]");
+    }
 }
