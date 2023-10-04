@@ -1,7 +1,7 @@
 import React, { Fragment, useMemo } from 'react';
 
-import { JsonFormsDispatch, withJsonFormsArrayLayoutProps, withJsonFormsControlProps, withJsonFormsLayoutProps } from '@jsonforms/react';
-import { and, rankWith, resolveSchema, schemaMatches, schemaTypeIs, uiTypeIs } from '@jsonforms/core';
+import { JsonFormsDispatch, withJsonFormsControlProps } from '@jsonforms/react';
+import { and, rankWith, schemaMatches, schemaTypeIs, uiTypeIs } from '@jsonforms/core';
 import { createTupleRenderInfos } from '../../jsonschema/createTupleRenderInfos';
 import { Typography } from '@mui/material';
 

@@ -106,12 +106,12 @@ export function ServiceList () {
                                         sx={{mx: 1}}>
                                             <CodeIcon />&nbsp; View
                                     </Button>
-                                    <Button component={NavLink} to={`/services/${row.id}/diff`}
+                                    {/*<Button component={NavLink} to={`/services/${row.id}/diff`}
                                         variant='contained'
                                         color="info"
                                         sx={{mx: 1}}>
                                             <HistoryIcon />&nbsp; History
-                                    </Button>
+                                    </Button>*/}
                                     <Button component={NavLink} to={`/services/${row.id}`}
                                         variant='contained'
                                         color="primary"

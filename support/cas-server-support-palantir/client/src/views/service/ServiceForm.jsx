@@ -4,7 +4,7 @@ import { materialRenderers, materialCells } from '@jsonforms/material-renderers'
 import { useGetSchemaQuery } from '../../store/SchemaApi';
 
 import MuiSidebarCategorizationRenderer, { muiSidebarCategorizationTester } from '../../components/renderers/MuiSidebarCategorizationRenderer';
-import { defaultServiceClass, updateService, useServiceData } from '../../store/ServiceSlice';
+import { defaultServiceClass, updateService } from '../../store/ServiceSlice';
 import { useUiSchema } from '../../data/service-types';
 import { Box, Button, Divider, Grid, IconButton, Toolbar } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
@@ -14,6 +14,7 @@ import MuiAnyOfRenderer, { muiAnyOfControlTester } from '../../components/render
 import MuiConstRenderer, { muiConstControlTester } from '../../components/renderers/MuiConstRenderer';
 import TupleRenderer, { tupleControlTester } from '../../components/renderers/TupleRenderer';
 import ArrayControlRenderer, { arrayControlTester } from '../../components/renderers/ArrayControlRenderer';
+import ArrayLayoutRenderer, { arrayLayoutTester } from '../../components/renderers/ArrayLayoutRenderer';
 
 const renderers = [
     { tester: muiSidebarCategorizationTester, renderer: MuiSidebarCategorizationRenderer },
@@ -21,6 +22,7 @@ const renderers = [
     { tester: muiConstControlTester, renderer: MuiConstRenderer },
     { tester: tupleControlTester, renderer: TupleRenderer },
     { tester: arrayControlTester, renderer: ArrayControlRenderer },
+    { tester: arrayLayoutTester, renderer: ArrayLayoutRenderer },
     ...materialRenderers,
 ];
 

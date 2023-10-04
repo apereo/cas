@@ -5,13 +5,14 @@ import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
 const { MaterialArrayControlRenderer } = Unwrapped;
 
 export const ArrayControlRenderer = (props) => {
+    console.log(props)
     return (
         <MaterialArrayControlRenderer {...props} />
     );
 };
 
 export const arrayControlTester = rankWith(
-    3,
+    4,
     or(isObjectArrayControl, isPrimitiveArrayControl)
 );
 
