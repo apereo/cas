@@ -6,6 +6,7 @@ import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     @Autowired
-    @Qualifier("googleAccountDeviceProviderAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_DEVICE_PROVIDER)
     private MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction;
 
     @Autowired

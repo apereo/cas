@@ -120,7 +120,8 @@
                                         <span th:text="#{cas.mfa.providerselection.mfa-gauth.notes}"/>
                                         <p></p>
                                         <i class="mdi mdi-arrow-right"></i>
-                                        <a href="#" th:utext="#{screen.welcome.button.register}"
+                                        <a id="gauthRegistrationLink"
+                                           href="#" th:utext="#{screen.welcome.button.register}"
                                            onclick="submitRegistrationRequest('gauth');"/>
                                     </div>
                                 </li>
@@ -133,7 +134,8 @@
                                         <span th:text="#{cas.mfa.providerselection.mfa-webauthn.notes}"/>
                                             <p></p>
                                             <i class="mdi mdi-arrow-right"></i>
-                                            <a href="#" th:utext="#{screen.welcome.button.register}"
+                                            <a id="webauthnRegistrationLink"
+                                               href="#" th:utext="#{screen.welcome.button.register}"
                                                onclick="submitRegistrationRequest('webauthn');"/>
                                     </div>
                                 </li>

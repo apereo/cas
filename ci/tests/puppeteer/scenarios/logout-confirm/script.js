@@ -37,12 +37,13 @@ const cas = require('../../cas.js');
     assert(url === "https://github.com/apereo/cas");
 
     await cas.log("Logout with unauthorized redirect...");
-    await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
-    await cas.submitForm(page, "#fm1");
-    url = await page.url();
+    let response = await cas.goto(page, "https://localhost:8443/cas/logout?url=https://google.com");
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    assert(response.status() === 403);
+    
     await page.waitForTimeout(1000);
+    await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.logPage(page);
-    assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
 
     await browser.close();
 })();

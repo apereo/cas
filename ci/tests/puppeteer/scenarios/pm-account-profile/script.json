@@ -1,10 +1,10 @@
 {
-  "dependencies": "audit-jdbc,pm-webflow",
-
+  "dependencies": "audit-jdbc,pm-webflow,gauth",
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
     
     "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -14,6 +14,11 @@
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
-    "--cas.authn.pm.core.enabled=true"
+    "--cas.authn.pm.core.enabled=true",
+
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/gauth.json",
+    "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true"
+    
   ]
 }

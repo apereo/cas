@@ -41,7 +41,7 @@ echo -e "SP passive authentication enabled: ${SP_PASSIVE_AUTHN}"
 echo -e "Using SP SLO service: ${SP_SLO_SERVICE}"
 echo -e "Using SP entity id: ${SP_ENTITY_ID}"
 
-docker run --name=simplesamlphp-idp -p 9443:8080 \
+docker run -d --rm --name=simplesamlphp-idp -p 9443:8080 \
   -e SIMPLESAMLPHP_SP_ENTITY_ID="${SP_ENTITY_ID}" \
   -e SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE="${SP_ACS_SERVICE}" \
   -e SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE="${SP_SLO_SERVICE}" \
@@ -56,7 +56,8 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -v $PWD/ci/tests/saml2/authsources.php:/var/www/simplesamlphp/config/authsources.php \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \
   -v $PWD/ci/tests/saml2/php.ini-production:/usr/local/etc/php/php.ini \
-  -d kenchan0130/simplesamlphp
+  kenchan0130/simplesamlphp
+#docker logs -f simplesamlphp-idp &
 
 chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 ${PWD}/ci/tests/httpbin/run-httpbin-server.sh

@@ -88,7 +88,6 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT).forward(request, response);
     }
-
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Throwable {

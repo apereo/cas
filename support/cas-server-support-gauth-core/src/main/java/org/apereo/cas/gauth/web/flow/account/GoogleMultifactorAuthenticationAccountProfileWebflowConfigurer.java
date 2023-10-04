@@ -31,10 +31,10 @@ public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer exte
         val accountFlow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
 
         val myAccountView = getState(accountFlow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
-        myAccountView.getRenderActionList().add(createEvaluateAction("googleAccountProfilePrepareAction"));
+        myAccountView.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE));
 
         val regViewState = createViewState(accountFlow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "gauth/casGoogleAuthenticatorRegistrationView");
-        regViewState.getEntryActionList().add(createEvaluateAction("googleAccountProfileRegistrationAction"));
+        regViewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION));
         regViewState.getEntryActionList().addAll(createEvaluateAction(CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION));
         createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 

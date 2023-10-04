@@ -1286,7 +1286,21 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_ACCOUNT_UNLOCK_PREPARE = "accountUnlockStatusPrepareAction";
 
+    /**
+     * Action id 'googleAccountProfileRegistrationAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION = "googleAccountProfileRegistrationAction";
 
+    /**
+     * Action id 'googleAccountProfileRegistrationAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_DEVICE_PROVIDER = "googleAccountDeviceProviderAction";
+
+    /**
+     * Action id 'googleAccountProfileRegistrationAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE = "googleAccountProfilePrepareAction";
+    
     /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
      */
