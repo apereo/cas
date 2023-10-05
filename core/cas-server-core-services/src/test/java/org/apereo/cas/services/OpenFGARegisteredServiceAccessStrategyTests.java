@@ -57,13 +57,13 @@ class OpenFGARegisteredServiceAccessStrategyTests {
             .service(RegisteredServiceTestUtils.getService())
             .principalId("casuser")
             .build();
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(request));
+        assertFalse(strategy.authorizeRequest(request));
 
         val data = mapper.writeValueAsString(CollectionUtils.wrap("allowed", true));
         try (val webServer = new MockWebServer(8755,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(request));
+            assertTrue(strategy.authorizeRequest(request));
         }
     }
 

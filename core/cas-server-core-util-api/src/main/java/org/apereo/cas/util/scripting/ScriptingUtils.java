@@ -8,6 +8,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import groovy.lang.MissingMethodException;
 import groovy.lang.Script;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -269,12 +270,16 @@ public class ScriptingUtils {
             if (!clazz.equals(Void.class)) {
                 return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }
-        } catch (final Throwable e) {
-            val cause = e instanceof InvokerInvocationException ? e.getCause() : e;
+        } catch (final Throwable throwable) {
+            val cause = throwable instanceof InvokerInvocationException ? throwable.getCause() : throwable;
             if (failOnError) {
                 throw cause;
             }
-            LOGGER.error(cause.getMessage(), cause);
+            if (cause instanceof MissingMethodException) {
+                LOGGER.debug(cause.getMessage(), cause);
+            } else {
+                LoggingUtils.error(LOGGER, cause);
+            }
         }
         return null;
     }

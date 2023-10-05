@@ -154,7 +154,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         val proceed = activationCriteria == null || activationCriteria.shouldActivate(request);
         if (proceed) {
             return RegisteredServiceAccessStrategyEvaluator.builder()

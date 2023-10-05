@@ -24,7 +24,7 @@ def run(Object[] args) {
     def logger = args[1]
     logger.debug("Checking access for ${context.registeredService}")
     def result = AuditableExecutionResult.builder().build()
-    result.setException(new UnauthorizedServiceException("Service unauthorized"))
+    result.setException(UnauthorizedServiceException.denied("Service unauthorized"))
     return result
 }
 ```
@@ -52,15 +52,26 @@ This strategy delegates to a Groovy script to dynamically decide the access rule
 }
 ```
 
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
+syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
+
 The script itself may be designed as such by overriding the needed operations where necessary:
 
 ```groovy
 import org.apereo.cas.services.*
-import java.util.*
 
-class GroovyRegisteredAccessStrategy implements RegisteredServiceAccessStrategy {
+def isServiceAccessAllowed() {
+    true
+}
+
+def isServiceAccessAllowedForSso() {
+    true
+}
+
+def doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest request) {
+    request.service != null
 }
 ```
-
-The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
-syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
+     
+All operations are seen as optional, and when undefined in the script, 
+the end result of the operation is seen as `false`.

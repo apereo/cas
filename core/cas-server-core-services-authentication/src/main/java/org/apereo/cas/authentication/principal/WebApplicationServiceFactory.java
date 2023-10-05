@@ -9,9 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +21,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * The {@link WebApplicationServiceFactory} is responsible for
@@ -98,8 +103,29 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         attributes.putAll(extractQueryParameters(service));
+
+        FunctionUtils.doIfNotBlank(request.getPathInfo(), value -> collectHttpRequestProperty("pathInfo", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getMethod(), value -> collectHttpRequestProperty("httpMethod", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getRequestURL(), value -> collectHttpRequestProperty("requestURL", value.toString(), attributes));
+        FunctionUtils.doIfNotBlank(request.getRequestURI(), value -> collectHttpRequestProperty("requestURI", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getRequestId(), value -> collectHttpRequestProperty("requestId", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getContentType(), value -> collectHttpRequestProperty("contentType", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getContextPath(), value -> collectHttpRequestProperty("contextPath", value, attributes));
+        FunctionUtils.doIfNotBlank(request.getLocalName(), value -> collectHttpRequestProperty("localeName", value, attributes));
+        FunctionUtils.doIfNotNull(request.getCookies(), __ -> Arrays.stream(request.getCookies())
+            .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), attributes)));
+        FunctionUtils.doIfNotNull(request.getHeaderNames(), __ -> StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(request.getHeaderNames().asIterator(), Spliterator.ORDERED), false)
+            .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), attributes)));
+
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
         service.setAttributes(new HashMap(attributes));
+    }
+
+    private static void collectHttpRequestProperty(final String name, final String value, final Map attributes) {
+        if (StringUtils.isNotBlank(value)) {
+            attributes.put(HttpServletRequest.class.getName() + '.' + name, StringEscapeUtils.escapeHtml4(value));
+        }
     }
 
     protected Map<String, List> extractQueryParameters(final WebApplicationService service) {

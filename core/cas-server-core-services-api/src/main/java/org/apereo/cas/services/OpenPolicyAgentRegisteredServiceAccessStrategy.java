@@ -66,7 +66,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
     private Map<String, Object> context = new HashMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();

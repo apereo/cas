@@ -67,7 +67,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
     private String token;
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();

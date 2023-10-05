@@ -16,6 +16,9 @@ import java.util.List;
  * @since 6.3.0
  */
 public interface ServicesManagerRegisteredServiceLocator extends Ordered {
+    /**
+     * Default order, used to determine the execution sequence.
+     */
     int DEFAULT_ORDER = -1000;
 
     /**

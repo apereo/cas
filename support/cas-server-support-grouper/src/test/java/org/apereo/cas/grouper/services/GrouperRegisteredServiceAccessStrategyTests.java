@@ -120,6 +120,6 @@ class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     private static boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
-        return strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("banderson").build());
+        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("banderson").build());
     }
 }

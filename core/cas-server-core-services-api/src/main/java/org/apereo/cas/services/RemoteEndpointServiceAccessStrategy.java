@@ -53,7 +53,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
     private Map<String, String> headers = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         return Unchecked.supplier(() -> {
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.valueOf(this.method))

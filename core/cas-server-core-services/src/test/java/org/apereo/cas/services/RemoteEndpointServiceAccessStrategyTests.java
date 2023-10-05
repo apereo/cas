@@ -45,7 +45,7 @@ class RemoteEndpointServiceAccessStrategyTests {
         try (val webServer = new MockWebServer(8755,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertTrue(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 
@@ -57,7 +57,7 @@ class RemoteEndpointServiceAccessStrategyTests {
         try (val webServer = new MockWebServer(8756,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertFalse(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 }

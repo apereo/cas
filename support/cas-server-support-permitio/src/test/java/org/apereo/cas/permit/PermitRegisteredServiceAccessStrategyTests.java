@@ -62,6 +62,6 @@ public class PermitRegisteredServiceAccessStrategyTests {
             .attributes(attributes)
             .registeredService(service)
             .build();
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(accessRequest));
+        assertFalse(strategy.authorizeRequest(accessRequest));
     }
 }
