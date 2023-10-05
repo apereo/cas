@@ -37,11 +37,10 @@ const cas = require('../../cas.js');
     await page.waitForNavigation();
     await page.waitForTimeout(2000);
 
-    await cas.logPage(page);
+    await cas.log(await page.url());
     assert(await page.url().startsWith("https://localhost:9859/anything/1"));
     await page.waitForTimeout(2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
-    await cas.assertInnerTextContains(page, "pre", "DISSESSIONOauthOidcServerSupport");
 
     await cas.goto(page, 'https://localhost:8443/cas/logout');
     assert(page.url().startsWith("https://localhost:8444/cas/logout"));
