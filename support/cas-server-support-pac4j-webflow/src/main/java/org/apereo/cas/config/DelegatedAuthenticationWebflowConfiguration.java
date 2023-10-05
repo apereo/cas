@@ -142,7 +142,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             val mv = new ModelAndView();
             mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
-            mv.setViewName(CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
+            mv.setViewName(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW);
             val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
             val resolver = new MappedExceptionErrorViewResolver(applicationContext,
                 webProperties.getResources(), mappings,

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.Ordered;
 
 import java.io.Serial;
 import java.util.List;
@@ -55,7 +54,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
         when(input.getOrder()).thenCallRealMethod();
         when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
         when(input.getName()).thenCallRealMethod();
-        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertEquals(ServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, input.getOrder());
         assertNotNull(input.getName());
         assertTrue(input.getRegisteredServiceIndexes().isEmpty());
     }
@@ -63,7 +62,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(defaultServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
+        assertEquals(ServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
             webApplicationServiceFactory.createService("https://example.org/test"));

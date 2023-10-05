@@ -740,7 +740,6 @@ layout: null
     *   [JDBC Drivers](/cas/{{ version }}/installation/JDBC-Drivers.html)
 
 * [Developer](#developer)
-    *   [Javadocs](https://www.javadoc.io/doc/org.apereo.cas)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)

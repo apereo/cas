@@ -49,7 +49,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends BaseRegisteredServ
     private String zoneId = ZoneOffset.UTC.getId();
 
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
         return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess();
     }
 

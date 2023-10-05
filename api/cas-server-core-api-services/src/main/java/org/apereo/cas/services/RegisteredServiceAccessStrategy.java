@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
@@ -24,20 +23,20 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     /**
      * Verify is the service is enabled and recognized by CAS.
      *
+     * @param registeredService the registered service
      * @return true /false if service is enabled
      */
-    @JsonIgnore
-    default boolean isServiceAccessAllowed() {
+    default boolean isServiceAccessAllowed(final RegisteredService registeredService) {
         return true;
     }
 
     /**
      * Assert that the service can participate in sso.
      *
+     * @param registeredService the registered service
      * @return true /false if service can participate in sso
      */
-    @JsonIgnore
-    default boolean isServiceAccessAllowedForSso() {
+    default boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         return true;
     }
 
@@ -64,7 +63,6 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return true /false if service access can be granted to principal
      * @throws Throwable the throwable
      */
-    @JsonIgnore
     default boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         return true;
     }

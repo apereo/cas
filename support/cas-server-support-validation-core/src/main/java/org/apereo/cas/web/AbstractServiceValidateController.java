@@ -73,7 +73,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             LOGGER.warn(msg);
             throw UnauthorizedServiceException.denied(msg);
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             val msg = String.format("ServiceManagement: Unauthorized Service Access. "
                 + "Service [%s] is not enabled in the CAS service registry.", service.getId());
             LOGGER.warn(msg);

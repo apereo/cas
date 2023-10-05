@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -98,8 +99,8 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertFalse(chain.isServiceAccessAllowed());
-        assertFalse(chain.isServiceAccessAllowedForSso());
+        assertFalse(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService()));
+        assertFalse(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -137,8 +138,8 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertTrue(chain.isServiceAccessAllowed());
-        assertTrue(chain.isServiceAccessAllowedForSso());
+        assertTrue(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
         assertNotNull(chain.getUnauthorizedRedirectUrl());
     }
 

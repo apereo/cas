@@ -134,7 +134,10 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         try {
             if (StringUtils.isNotBlank(originalUrl) && originalUrl.startsWith("http") && originalUrl.contains("?")) {
                 val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
-                queryParams.forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+                queryParams.forEach(pair -> {
+                    val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));
+                    attributes.put(pair.getName(), values);
+                });
             }
         } catch (final Exception e) {
             LOGGER.error("Unable to extract query parameters from [{}]: [{}]", originalUrl, e.getMessage());

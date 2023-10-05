@@ -36,11 +36,11 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
 
     @Override
     public Optional<SecurityToken> fetch(final Service service, final String principalId) throws Throwable {
-        val resolvedService = this.selectionStrategy.resolveServiceFrom(service);
+        val resolvedService = selectionStrategy.resolveServiceFrom(service);
         LOGGER.debug("Resolved service as [{}]", resolvedService);
         if (resolvedService != null) {
-            val rp = this.servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
-            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
+            val rp = servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
+            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed(rp)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }

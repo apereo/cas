@@ -48,7 +48,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
             LOGGER.warn(msg);
             throw UnauthorizedServiceException.denied(msg);
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             val msg = String.format("Service Management: Unauthorized Service Access. "
                 + "Service [%s] is not allowed access via the service registry.", service.getId());
             LOGGER.warn(msg);

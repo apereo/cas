@@ -95,6 +95,15 @@ and scenarios. At the moment, total number of jobs stands at approximately `436`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
+### Groovy Access Strategy
+
+The [Groovy Access Strategy](../services/Service-Access-Strategy-Groovy.html) assigned to service definitions 
+is now revamped to allow for optional operations. The structure
+of the script is also changed to allow the script to remain lean and lightweight. 
+
+<div class="alert alert-info">:information_source: <strong>Breaking Change</strong><p>This is potentially a breaking change.
+Please consult the documentation to review the new requirements and adjust your scripts accordingly.</p></div>
+
 ## Other Stuff
                           
 - U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.

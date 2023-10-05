@@ -48,7 +48,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             return properties.isSsoEnabled();
         }
 
-        val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
+        val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService);
         LOGGER.trace("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
             registeredService.getServiceId(), isAllowedForSso);
 
