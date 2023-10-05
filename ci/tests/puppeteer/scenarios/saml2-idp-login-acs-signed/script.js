@@ -27,7 +27,7 @@ async function cleanUp() {
         await cas.loginWith(page);
         await page.waitForResponse(response => response.status() === 200);
         await page.waitForTimeout(3000);
-        await cas.log(`Page URL: ${page.url()}`);
+        await cas.logPage(page);
         await page.waitForSelector('body pre', { visible: true });
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
@@ -43,7 +43,7 @@ async function cleanUp() {
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(3000);
-        await cas.log(`Page URL: ${page.url()}`);
+        await cas.logPage(page);
         await page.waitForSelector('body pre', { visible: true });
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);

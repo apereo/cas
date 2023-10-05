@@ -24,7 +24,7 @@ async function login(page, redirectUrl, params) {
     const page = await cas.newPage(browser);
     let redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post");
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(2000);
     await cas.log("Waiting for page content body to render...");
     await page.waitForSelector('body pre', { visible: true });

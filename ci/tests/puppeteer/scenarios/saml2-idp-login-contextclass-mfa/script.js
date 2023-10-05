@@ -23,7 +23,7 @@ async function cleanUp() {
         await page.waitForSelector('#username', {visible: true});
         await cas.loginWith(page);
         await page.waitForTimeout(3000);
-        await cas.log(`Page URL: ${page.url()}`);
+        await cas.logPage(page);
         await cas.log("Fetching Scratch codes from /cas/actuator...");
         let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
         await cas.log(`Using scratch code ${scratch} to login...`);
@@ -31,7 +31,7 @@ async function cleanUp() {
         await cas.type(page,'#token', scratch);
         await cas.pressEnter(page);
         await page.waitForNavigation();
-        await cas.log(`Page URL: ${page.url()}`);
+        await cas.logPage(page);
         await page.waitForTimeout(3000);
         await cas.screenshot(page);
         await cas.assertInnerText(page, "#principal", "casuser");

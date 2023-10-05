@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
     await cas.goto(page, url);
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);

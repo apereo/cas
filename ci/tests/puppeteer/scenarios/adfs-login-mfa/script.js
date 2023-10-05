@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(2000);
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     
     let ticket = await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
