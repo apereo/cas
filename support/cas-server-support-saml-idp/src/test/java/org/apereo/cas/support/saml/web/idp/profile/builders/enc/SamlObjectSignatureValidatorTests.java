@@ -73,7 +73,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         samlContext = new MessageContext();
 
         val ctx = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, new JEESessionStore()));
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
         assertNotNull(peer);

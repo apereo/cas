@@ -35,7 +35,7 @@ class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcT
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        getAuthenticator().validate(new CallContext(ctx, new JEESessionStore()), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -55,7 +55,7 @@ class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcT
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        getAuthenticator().validate(new CallContext(ctx, new JEESessionStore()), credentials);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

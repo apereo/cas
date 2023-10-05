@@ -52,7 +52,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
             assertEquals("client", credentials.getUserProfile().getId());
         }
@@ -63,7 +63,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
         }
 
@@ -79,7 +79,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
 
             assertThrows(CredentialsException.class,
-                () -> oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
+                () -> oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));
         }
 
         @Test
@@ -98,7 +98,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             request.addParameter(OAuth20Constants.CODE, code.getId());
 
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
         }
 
@@ -121,13 +121,13 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
 
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
 
             request.removeAllParameters();
             request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
 
             request.removeAllParameters();
@@ -135,7 +135,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             request.addParameter(OAuth20Constants.CLIENT_SECRET, "serviceWithoutSecret");
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
         }
 
@@ -144,7 +144,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
 
             assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
@@ -168,7 +168,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
 
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
             assertEquals(credentials.getUsername(), credentials.getUserProfile().getId());
         }

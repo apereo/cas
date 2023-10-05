@@ -40,7 +40,7 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val extractor = new BasicAuthExtractor();
             val webContext = new JEEContext(request, response);
-            val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+            val callContext = new CallContext(webContext, new JEESessionStore());
             val credentialsResult = extractor.extract(callContext);
             if (credentialsResult.isPresent()) {
                 val credentials = (UsernamePasswordCredentials) credentialsResult.get();

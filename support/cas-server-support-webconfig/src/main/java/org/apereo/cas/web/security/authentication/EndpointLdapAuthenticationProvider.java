@@ -109,7 +109,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                     HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
                 val authZGen = buildAuthorizationGenerator();
 
-                val callContext = new CallContext(context, JEESessionStore.INSTANCE);
+                val callContext = new CallContext(context, new JEESessionStore());
                 authZGen.generate(callContext, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
@@ -121,7 +121,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 val authorizer = new RequireAnyRoleAuthorizer(roles);
                 LOGGER.debug("Executing authorization for expected roles [{}]", authorizer.getElements());
 
-                if (authorizer.isAllAuthorized(context, JEESessionStore.INSTANCE, CollectionUtils.wrap(profile))) {
+                if (authorizer.isAllAuthorized(context, new JEESessionStore(), CollectionUtils.wrap(profile))) {
                     return generateAuthenticationToken(authentication, authorities);
                 }
                 LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",
