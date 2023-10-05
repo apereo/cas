@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

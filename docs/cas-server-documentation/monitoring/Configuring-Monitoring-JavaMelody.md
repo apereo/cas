@@ -8,7 +8,7 @@ category: Monitoring & Statistics
 
 # JavaMelody Monitoring
 
-Use [JavaMelody](https://github.com/javamelody/javamelody) is to monitor CAS in QA and production environments.
+Use [JavaMelody](https://github.com/javamelody/javamelody) to monitor CAS in QA and production environments.
 
 Support is added by including the following dependency in the WAR overlay:
 
