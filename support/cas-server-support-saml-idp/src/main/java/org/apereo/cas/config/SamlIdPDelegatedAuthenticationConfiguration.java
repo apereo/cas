@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -37,11 +38,14 @@ public class SamlIdPDelegatedAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "saml2DelegatedClientAuthenticationRequestCustomizer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("samlIdPDistributedSessionStore")
         final SessionStore sessionStore,
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
-        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(sessionStore, openSamlConfigBean, casProperties);
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(
+            sessionStore, openSamlConfigBean, servicesManager, casProperties);
     }
 }
