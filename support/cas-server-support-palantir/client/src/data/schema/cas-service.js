@@ -138,21 +138,6 @@ export const casServiceUiSchema = {
         },
         {
             "type": "Category",
-            "label": "Protocols",
-            "elements": [
-                {
-                    "type": "Group",
-                    "elements": [
-                        {
-                            "type": "Control",
-                            "scope": "#/properties/supportedProtocols"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Category",
             "label": "Attribute Release",
             "elements": [
                 {
@@ -205,7 +190,44 @@ export const casServiceUiSchema = {
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/authenticationPolicy"
+                            "scope": "#/properties/authenticationPolicy",
+                            "options": {
+                                "elementLabelProp": "name",
+                                "detail": {
+                                    "type": "VerticalLayout",
+                                    "elements": [
+                                        {
+                                            "type": "Control",
+                                            "label": "Criteria",
+                                            "scope": "#/properties/criteria"
+                                        },
+                                        {
+                                            "type": "Group",
+                                            "label": "Required Authentication Handlers",
+                                            "elements": [
+                                                {
+                                                    "type": "Control",
+                                                    "scope": "#/properties/requiredAuthenticationHandlers"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Group",
+                                            "label": "Excluded Authentication Handlers",
+                                            "elements": [
+                                                {
+                                                    "type": "Control",
+                                                    "scope": "#/properties/excludedAuthenticationHandlers"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/@class"
+                                        },
+                                    ]
+                                }
+                            }
                         }
                     ]
                 }
@@ -235,7 +257,69 @@ export const casServiceUiSchema = {
                     "elements": [
                         {
                             "type": "Control",
-                            "scope": "#/properties/multifactorPolicy"
+                            "scope": "#/properties/multifactorPolicy",
+                            "options": {
+                                "elementLabelProp": "name",
+                                "detail": {
+                                    "type": "VerticalLayout",
+                                    "elements": [
+                                        {
+                                            "type": "Group",
+                                            "label": "Multifactor Authentication Providers",
+                                            "elements": [
+                                                {
+                                                    "type": "Control",
+                                                    "scope": "#/properties/multifactorAuthenticationProviders"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/bypassEnabled"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/bypassIfMissingPrincipalAttribute"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/bypassPrincipalAttributeName"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/bypassPrincipalAttributeValue"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/bypassTrustedDeviceEnabled"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/failureMode"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/forceExecution"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/principalAttributeNameTrigger"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/principalAttributeValueToMatch"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/script"
+                                        },
+                                        {
+                                            "type": "Control",
+                                            "scope": "#/properties/@class"
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     ]
                 }
@@ -382,6 +466,16 @@ export const casServiceUiSchema = {
                                 {
                                     "type": "Control",
                                     "scope": "#/properties/environments"
+                                },
+                            ]
+                        },
+                        {
+                            "type": "Group",
+                            "label": "Supported Protocols",
+                            "elements": [
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/supportedProtocols"
                                 },
                             ]
                         },

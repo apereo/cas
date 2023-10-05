@@ -7,8 +7,11 @@ import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 import { Box, Button } from "@mui/material";
 
-import service1 from '../../public/data/service-1.json';
-import service2 from '../../public/data/service-2.json';
+// import service1 from '../../public/data/service-1.json';
+// import service2 from '../../public/data/service-2.json';
+
+const service1 = {};
+const service2 = {};
 
 export function CodeDiff ({ code, format = 'json', onSave, children }) {
 
@@ -27,22 +30,17 @@ export function CodeDiff ({ code, format = 'json', onSave, children }) {
     }, [code])
 
     return (
-        <Box sx={ { px: 1, height: '100%', display: 'flex', flexDirection: 'column' } }>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                
-            </Box>
-            <Box sx={ { flexGrow: 1, border: '1px solid rgba(0, 0, 0, 0.2)' } }>
-                <DiffEditor
-                    mode={ format }
-                    theme="github"
-                    value={ [ JSON.stringify(service1, null, 2), JSON.stringify(service2, null, 2) ] }
-                    name="ace-editor"
-                    width="100%"
-                    height="100%"
-                    onChange={ update }
-                    showPrintMargin={false}
-                />
-            </Box>
+        <Box sx={ { flexGrow: 1, border: '1px solid rgba(0, 0, 0, 0.2)', height: '100%' } }>
+            <DiffEditor
+                mode={ format }
+                theme="github"
+                value={ [ JSON.stringify(service1, null, 2), JSON.stringify(service2, null, 2) ] }
+                name="ace-editor"
+                width="100%"
+                height="100%"
+                onChange={ update }
+                showPrintMargin={false}
+            />
         </Box>
     );
 }

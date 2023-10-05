@@ -1,8 +1,9 @@
 import React, { Fragment, useMemo } from 'react';
 
-import { JsonFormsDispatch, withJsonFormsArrayLayoutProps, withJsonFormsControlProps, withJsonFormsLayoutProps } from '@jsonforms/react';
-import { and, rankWith, resolveSchema, schemaMatches, schemaTypeIs, uiTypeIs } from '@jsonforms/core';
+import { JsonFormsDispatch, withJsonFormsControlProps } from '@jsonforms/react';
+import { and, rankWith, schemaMatches, schemaTypeIs, uiTypeIs } from '@jsonforms/core';
 import { createTupleRenderInfos } from '../../jsonschema/createTupleRenderInfos';
+import { Typography } from '@mui/material';
 
 export const TupleRenderer = (props) => {
   const {
@@ -27,21 +28,23 @@ export const TupleRenderer = (props) => {
     uischemas
   ), [schema, rootSchema, uischema, path, uischemas]);
 
+
   return (
     <Fragment>
-    {renderInfo.map(
-      (ri, idx) =>
-        (
-          <JsonFormsDispatch
-            key={idx}
-            schema={ri.schema}
-            uischema={ri.uischema}
-            path={ri.path}
-            renderers={renderers}
-            cells={cells}
-          />
-        )
-    )}
+      {uischema.label && <Typography variant={'h6'}>{ uischema.label }</Typography>}
+      {renderInfo.map(
+        (ri, idx) =>
+          (
+            <JsonFormsDispatch
+              key={idx}
+              schema={ri.schema}
+              uischema={ri.uischema}
+              path={ri.path}
+              renderers={renderers}
+              cells={cells}
+            />
+          )
+      )}
     </Fragment>
   );
 };

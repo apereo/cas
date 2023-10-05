@@ -1,51 +1,44 @@
-import React, { useCallback, useState, useEffect, Fragment } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
-import { Box, Button } from "@mui/material";
-import SaveIcon from '@mui/icons-material/Save';
+import { Box } from "@mui/material";
 
-export function CodeEditor ({ code, format = 'json', onSave, children }) {
+export function CodeEditor ({ data, format = 'json', onChange, onError }) {
 
-    const [data, setData] = useState(code);
+    const code = useMemo(() => JSON.stringify(data, null, 2));
 
-    const save = useCallback((d) => {
-        onSave(d);
-    }, [data]);
-
-    const update = useCallback((value) => {
-        setData(value);
-    }, [setData]);
+    const [current, setCurrent] = useState(code);
 
     useEffect(() => {
-        setData(code);
-    }, [code])
+        setCurrent(code);
+    }, [code]);
+
+    const change = useCallback((d) => {
+        let updates, error;
+        try {
+            updates = JSON.parse(d);
+        } catch (e) {
+            error = e;
+        }
+        onChange(updates, !!error, d);
+        setCurrent(d);
+    }, [onChange])
 
     return (
-        <Box sx={ { px: 1, height: '100%', display: 'flex', flexDirection: 'column' } }>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Fragment>{children}</Fragment>
-                <Button
-                    variant='contained'
-                    color="primary"
-                    aria-label="menu"
-                    onClick={ () => onSave(data) }
-                >
-                    <SaveIcon />&nbsp; Save
-                </Button>
-            </Box>
+        <Box sx={ { height: '100%', display: 'flex', flexDirection: 'column' } }>
             <Box sx={ { flexGrow: 1, border: '1px solid rgba(0, 0, 0, 0.2)' } }>
                 <AceEditor
                     mode={ format }
                     theme="github"
-                    value={ data }
+                    value={ current }
                     name="ace-editor"
                     width="100%"
                     height="100%"
-                    onChange={ update }
+                    onChange={ (d) => change(d) }
                     showPrintMargin={false}
                 />
             </Box>

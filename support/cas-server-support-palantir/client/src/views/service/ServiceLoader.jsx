@@ -1,7 +1,6 @@
 import React, { Fragment, useMemo, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { useGetServiceQuery } from '../../store/ServiceApi';
-import { newService, updateService, useServiceData } from '../../store/ServiceSlice';
+import { updateService, useServiceData } from '../../store/ServiceSlice';
 import { useDispatch } from 'react-redux';
 import { LinearProgress } from '@mui/material';
 
