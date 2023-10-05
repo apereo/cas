@@ -179,8 +179,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                     .filter(locator -> locator.supports(registeredService, service))
                     .findFirst()
                     .map(locator -> {
-                        LOGGER.debug("Service [{}] is found in service registry and can be supported by [{}]",
-                            registeredService, locator.getName());
+                        LOGGER.debug("Service [{}] is found in service registry and can be supported by [{}]", registeredService, locator.getName());
                         cacheRegisteredService(registeredService);
                         LOGGER.trace("Service [{}] is now cached from [{}]", service, serviceRegistry.getName());
                         return Optional.of(registeredService);
@@ -235,7 +234,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
             id, clazz, configurationContext.getServiceRegistry().getName());
         service = configurationContext.getServicesCache().get(id,
-            k -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
+            __ -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
         return (T) validateRegisteredService(service);
     }
 

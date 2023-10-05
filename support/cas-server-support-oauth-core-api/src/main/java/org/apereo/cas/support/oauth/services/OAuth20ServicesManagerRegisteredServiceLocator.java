@@ -11,12 +11,10 @@ import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
-
 import java.util.List;
 
 /**
@@ -27,26 +25,20 @@ import java.util.List;
  */
 @Slf4j
 public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
-    /**
-     * CAS configuration properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
     public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
         this.casProperties = casProperties;
         setOrder(Ordered.HIGHEST_PRECEDENCE);
-        setRegisteredServiceFilter((registeredService, service) -> {
-            var match = supports(registeredService, service);
-            if (match) {
-                val oauthService = (OAuthRegisteredService) registeredService;
-                LOGGER.trace("Attempting to locate service [{}] via [{}]", service, oauthService);
-                match = CollectionUtils.firstElement(service.getAttributes().get(OAuth20Constants.CLIENT_ID))
-                    .map(Object::toString)
-                    .stream()
-                    .anyMatch(clientId -> oauthService.getClientId().equals(clientId));
-            }
-            return match;
-        });
+        setRegisteredServiceFilter((registeredService, service) -> supports(registeredService, service)
+            && doesClientIdBelongToRegisteredService((OAuthRegisteredService) registeredService, service));
+    }
+
+    protected boolean doesClientIdBelongToRegisteredService(final OAuthRegisteredService registeredService, final Service service) {
+        LOGGER.trace("Attempting to locate service [{}] via [{}]", service, registeredService);
+        val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
+        val clientId = CollectionUtils.firstElement(clientIdAttribute).map(Object::toString).orElse(StringUtils.EMPTY);
+        return StringUtils.isNotBlank(clientId) && StringUtils.equals(registeredService.getClientId(), clientId);
     }
 
     @Override
@@ -77,7 +69,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
                 .orElse(StringUtils.EMPTY);
             val callbackService = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             return StringUtils.isBlank(source) || StringUtils.startsWith(source, callbackService)
-                   || OAuth20Utils.checkCallbackValid(registeredService, source);
+                || OAuth20Utils.checkCallbackValid(registeredService, source);
         }
         return false;
     }

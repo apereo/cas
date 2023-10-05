@@ -56,7 +56,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     private static Optional<Boolean> shouldHttpHeaderBeInjectedIntoResponse(final Optional<RegisteredService> registeredService,
                                                                             final RegisteredServiceProperties property) {
-
         val propValue = getStringProperty(registeredService, property);
         if (propValue != null) {
             return Optional.of(BooleanUtils.toBoolean(propValue));
@@ -86,7 +85,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         }
         return Optional.empty();
     }
-
     @Override
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse,
                                                            final HttpServletRequest httpServletRequest,
@@ -127,7 +125,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest,
                                                    final Optional<RegisteredService> result) {
-
         val shouldInject = shouldHttpHeaderBeInjectedIntoResponse(result,
             RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
 

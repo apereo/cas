@@ -16,6 +16,8 @@ import java.util.List;
  * @since 6.3.0
  */
 public interface ServicesManagerRegisteredServiceLocator extends Ordered {
+    int DEFAULT_ORDER = -1000;
+
     /**
      * Locate registered service.
      *
@@ -37,7 +39,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
 
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return DEFAULT_ORDER;
     }
 
     /**

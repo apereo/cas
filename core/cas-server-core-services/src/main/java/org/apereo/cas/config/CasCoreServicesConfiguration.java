@@ -317,8 +317,7 @@ public class CasCoreServicesConfiguration {
                 .supply(() -> {
                     val managementType = casProperties.getServiceRegistry().getCore().getManagementType();
                     if (managementType == ServiceRegistryCoreProperties.ServiceManagementTypes.DOMAIN) {
-                        return () -> new DefaultDomainAwareServicesManager(configurationContext,
-                            new DefaultRegisteredServiceDomainExtractor());
+                        return () -> new DefaultDomainAwareServicesManager(configurationContext, new DefaultRegisteredServiceDomainExtractor());
                     }
                     return () -> new DefaultServicesManager(configurationContext);
                 })

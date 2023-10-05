@@ -53,7 +53,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
 
             assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
@@ -155,7 +155,6 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
         }
-            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
     }
 
     @Import(NullPrincipalTestConfiguration.class)

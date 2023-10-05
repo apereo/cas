@@ -28,8 +28,8 @@ import java.util.function.BiPredicate;
 @Setter
 @Getter
 public class DefaultServicesManagerRegisteredServiceLocator implements ServicesManagerRegisteredServiceLocator {
-
-    private int order = Ordered.LOWEST_PRECEDENCE;
+    
+    private int order = DEFAULT_ORDER;
 
     private BiPredicate<RegisteredService, Service> registeredServiceFilter = (registeredService, service) -> {
         val supportedType = supports(registeredService, service);
