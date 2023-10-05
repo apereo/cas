@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -89,7 +90,7 @@ class RegisteredServiceTests {
     void verifySettersAndGetters() throws Throwable {
         prepareService();
         assertEquals(DESCRIPTION, baseService.getDescription());
-        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed(baseService));
+        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed(baseService, CoreAuthenticationTestUtils.getService()));
         assertEquals(ID, baseService.getId());
         assertEquals(NAME, baseService.getName());
         assertEquals(SERVICEID, baseService.getServiceId());

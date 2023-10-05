@@ -78,7 +78,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         }
 
         val registeredService = (WebBasedRegisteredService) servicesManager.getObject().findServiceBy(service);
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return rememberThemeName(request);
         }

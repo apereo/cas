@@ -116,7 +116,7 @@ public class TokenAuthenticationSecurity {
 
     private static String getRegisteredServiceJwtProperty(final RegisteredService service,
                                                           final RegisteredServiceProperties propName) {
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed(service)) {
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed(service, null)) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw UnauthorizedServiceException.denied("Denied");
         }

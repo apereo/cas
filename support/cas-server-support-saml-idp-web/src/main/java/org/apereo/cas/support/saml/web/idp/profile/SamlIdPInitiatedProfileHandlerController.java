@@ -52,7 +52,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
     protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Throwable {
         val providerId = extractProviderId(request);
-        val registeredService = verifySamlRegisteredService(providerId);
+        val registeredService = verifySamlRegisteredService(providerId, request);
         val adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
         if (adaptor.isEmpty()) {
             throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(providerId));

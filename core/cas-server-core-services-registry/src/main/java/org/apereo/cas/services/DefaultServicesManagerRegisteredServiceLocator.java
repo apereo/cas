@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.springframework.core.Ordered;
 
 import java.util.Collection;
 import java.util.List;

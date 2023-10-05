@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -43,11 +44,11 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     private transient GroovyObject groovyStrategyInstance;
 
     @Override
-    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "isServiceAccessAllowed", new Object[]{registeredService}, Boolean.class, false));
+                "isServiceAccessAllowed", new Object[]{registeredService, service}, Boolean.class, false));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }

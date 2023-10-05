@@ -129,7 +129,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             val selectedService = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(service));
             val registeredService = servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
-            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, selectedService)) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                     registeredService.getServiceId(),
                     registeredService.getId());

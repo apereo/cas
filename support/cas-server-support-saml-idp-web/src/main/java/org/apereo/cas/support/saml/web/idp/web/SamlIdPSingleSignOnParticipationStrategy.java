@@ -56,7 +56,7 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             .orElseGet(() -> WebUtils.getHttpServletResponseFromExternalWebflowContext(ssoRequest.getRequestContext().get()));
 
         val authnRequest = ssoRequest.getAttributeValue(AuthnRequest.class.getName(), AuthnRequest.class);
-        val initialResult = supports(ssoRequest) && !authnRequest.isForceAuthn();
+        val initialResult = supports(ssoRequest) && Boolean.FALSE.equals(authnRequest.isForceAuthn());
 
         return FunctionUtils.doAndHandle(
             () -> resolveMultifactorAuthenticationTrigger(service, registeredService, authentication, request, response)

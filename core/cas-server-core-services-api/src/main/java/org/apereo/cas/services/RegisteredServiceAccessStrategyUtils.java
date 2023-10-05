@@ -48,7 +48,7 @@ public class RegisteredServiceAccessStrategyUtils {
             LOGGER.warn("Unauthorized Service Access. Service [{}] is not registered in the service registry.", service);
             throw UnauthorizedServiceException.denied("Service " + StringUtils.defaultIfBlank(service, "unknown") + " is not found in the service registry.");
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, null)) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry. You should "
                                     + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
             throw UnauthorizedServiceException.denied(msg);

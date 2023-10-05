@@ -40,7 +40,7 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
         LOGGER.debug("Resolved service as [{}]", resolvedService);
         if (resolvedService != null) {
             val rp = servicesManager.findServiceBy(resolvedService, WSFederationRegisteredService.class);
-            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed(rp)) {
+            if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed(rp, service)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }

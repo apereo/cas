@@ -68,7 +68,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
         val query = (AttributeQuery) ctx.getMessage();
         try {
             val issuer = Objects.requireNonNull(query).getIssuer().getValue();
-            val registeredService = verifySamlRegisteredService(issuer);
+            val registeredService = verifySamlRegisteredService(issuer, request);
             val adaptor = getSamlMetadataFacadeFor(registeredService, query);
             val facade = adaptor.orElseThrow(() -> UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer)));
             verifyAuthenticationContextSignature(ctx, request, query, facade, registeredService);

@@ -117,7 +117,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         if (service != null) {
             val registeredService = servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
                 throw new UnauthorizedSsoServiceException("Denied: %s".formatted(service));
             }

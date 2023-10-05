@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -71,11 +72,12 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
-    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService,
+                                          final Service service) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowed(registeredService));
+            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowed(registeredService, service));
         }
-        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowed(registeredService));
+        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowed(registeredService, service));
     }
 
     @Override

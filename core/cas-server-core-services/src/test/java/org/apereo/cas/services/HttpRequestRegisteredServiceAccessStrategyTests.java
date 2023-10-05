@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -55,7 +56,7 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     void verifyAccessByIp() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
-        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -63,27 +64,27 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         policy.setHeaders(Map.of("CustomHeader", "^abcd-\\d\\d-.+#"));
-        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
     void verifyUserAgentAccess() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
-        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
     void verifyMatchFailsByIp() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("123.456.789.111");
-        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertFalse(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
     void verifyUndefinedValues() throws Throwable {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
-        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -91,6 +92,6 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         policy.setIpAddress(".*861.*");
-        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(policy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 }

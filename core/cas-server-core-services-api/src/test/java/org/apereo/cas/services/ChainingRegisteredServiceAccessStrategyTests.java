@@ -99,7 +99,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertFalse(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService()));
+        assertFalse(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
         assertFalse(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
     }
 
@@ -138,7 +138,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertTrue(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
         assertTrue(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
         assertNotNull(chain.getUnauthorizedRedirectUrl());
     }

@@ -54,10 +54,10 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         result.ifPresent(authnRequest -> {
             LOGGER.debug("Retrieved the SAML2 authentication request from [{}]",
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
-            if (authnRequest.isForceAuthn()) {
+            if (Boolean.TRUE.equals(authnRequest.isForceAuthn())) {
                 customizeForceAuthnRequest(client, webContext, authnRequest);
             }
-            if (authnRequest.isPassive()) {
+            if (Boolean.TRUE.equals(authnRequest.isPassive())) {
                 customizePassiveAuthnRequest(client, webContext);
             }
             customizeAuthnContextClass(client, webContext, authnRequest);

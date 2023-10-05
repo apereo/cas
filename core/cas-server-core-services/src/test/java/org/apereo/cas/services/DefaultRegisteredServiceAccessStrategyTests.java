@@ -87,7 +87,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
             private static final long serialVersionUID = -6993120869616143038L;
         };
         assertEquals(Integer.MAX_VALUE, authz.getOrder());
-        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getService2()));
         assertTrue(authz.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
         assertTrue(authz.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().build()));
         assertNull(authz.getUnauthorizedRedirectUrl());
@@ -96,21 +96,21 @@ class DefaultRegisteredServiceAccessStrategyTests {
     @Test
     void checkDefaultAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
-        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getService2()));
         assertTrue(authz.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
     void checkDisabledAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy(false, true);
-        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getService2()));
         assertTrue(authz.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
     void checkDisabledSsoAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy(true, false);
-        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getService2()));
         assertFalse(authz.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
@@ -119,7 +119,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
         val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
         authz.setEnabled(true);
         authz.setSsoEnabled(true);
-        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getService2()));
         assertTrue(authz.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
         assertTrue(authz.isRequireAllAttributes());
     }
