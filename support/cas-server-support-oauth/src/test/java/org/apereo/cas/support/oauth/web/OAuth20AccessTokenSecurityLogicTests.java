@@ -60,7 +60,7 @@ class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         when(mockClient.getUserProfile(any(), any())).thenReturn(Optional.of(profile));
 
         val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);
 
         val config = new Config(mockClient);

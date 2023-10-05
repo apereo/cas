@@ -93,7 +93,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
 
-        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
+        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
@@ -108,7 +108,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredential(request, "unknown", "unknown", registeredService.getClientId());
 
-        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
+        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
         assertNull(credentials.getUserProfile());
     }
 
@@ -121,7 +121,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, null);
-        auth.validate(new CallContext(context, JEESessionStore.INSTANCE), credentials);
+        auth.validate(new CallContext(context, new JEESessionStore()), credentials);
         assertNull(credentials.getUserProfile());
     }
 

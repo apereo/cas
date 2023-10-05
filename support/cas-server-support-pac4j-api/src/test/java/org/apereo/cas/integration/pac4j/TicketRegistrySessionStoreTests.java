@@ -66,6 +66,7 @@ class TicketRegistrySessionStoreTests {
         ticketRegistry.deleteAll();
 
         val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
+        cookie.setName("DISSESSIONxxx");
         this.cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
 
         this.request = new MockHttpServletRequest();

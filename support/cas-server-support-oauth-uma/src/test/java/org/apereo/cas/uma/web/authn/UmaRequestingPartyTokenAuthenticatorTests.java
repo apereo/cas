@@ -32,7 +32,7 @@ class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControlle
         ticketRegistry.addTicket(token);
         assertThrows(CredentialsException.class, () -> {
             val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-            input.validate(new CallContext(webContext, JEESessionStore.INSTANCE), credentials);
+            input.validate(new CallContext(webContext, new JEESessionStore()), credentials);
         });
     }
 

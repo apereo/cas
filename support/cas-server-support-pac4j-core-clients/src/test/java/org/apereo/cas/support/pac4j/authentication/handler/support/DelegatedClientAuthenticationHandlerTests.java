@@ -68,7 +68,7 @@ class DelegatedClientAuthenticationHandlerTests {
         val clients = new Clients(CALLBACK_URL, fbClient);
         handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp(), JEESessionStore.INSTANCE, ctx);
+            DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore(), ctx);
         handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);

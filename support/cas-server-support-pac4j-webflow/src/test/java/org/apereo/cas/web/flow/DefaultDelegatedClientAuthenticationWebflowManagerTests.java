@@ -272,7 +272,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.init();
 
         val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
-        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val callContext = new CallContext(webContext, new JEESessionStore());
         val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);

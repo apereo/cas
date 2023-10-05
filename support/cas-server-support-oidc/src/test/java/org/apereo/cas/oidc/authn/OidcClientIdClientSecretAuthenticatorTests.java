@@ -47,7 +47,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals(1, credentials.getUserProfile().getAttributes().size());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
@@ -64,7 +64,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid MyScope");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals(2, credentials.getUserProfile().getAttributes().size());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
