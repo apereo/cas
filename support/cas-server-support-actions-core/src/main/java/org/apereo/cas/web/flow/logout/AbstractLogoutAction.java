@@ -71,7 +71,7 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
         Optional.ofNullable(argumentExtractor.extractService(request))
             .filter(service -> {
                 val registeredService = servicesManager.findServiceBy(service);
-                return registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService);
+                return registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service);
             })
             .ifPresent(service -> WebUtils.putServiceIntoFlowScope(context, service));
 

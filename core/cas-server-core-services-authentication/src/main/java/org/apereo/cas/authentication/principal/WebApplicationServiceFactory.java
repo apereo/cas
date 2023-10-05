@@ -2,29 +2,15 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.hc.core5.net.URIBuilder;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * The {@link WebApplicationServiceFactory} is responsible for
@@ -35,12 +21,7 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
-    private static final List<String> IGNORED_ATTRIBUTES_PARAMS = List.of(
-        CasProtocolConstants.PARAMETER_PASSWORD,
-        CasProtocolConstants.PARAMETER_SERVICE,
-        CasProtocolConstants.PARAMETER_TARGET_SERVICE,
-        CasProtocolConstants.PARAMETER_TICKET,
-        CasProtocolConstants.PARAMETER_FORMAT);
+
 
     private static AbstractWebApplicationService determineWebApplicationFormat(
         final HttpServletRequest request,
@@ -75,7 +56,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newWebApplicationService(request, id);
     }
 
-    protected AbstractWebApplicationService newWebApplicationService(
+    protected WebApplicationService newWebApplicationService(
         final HttpServletRequest request, final String serviceToUse) {
         val artifactId = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_TICKET))
@@ -83,8 +64,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         val id = cleanupUrl(serviceToUse);
         val newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
-        val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE,
-            CasProtocolConstants.PARAMETER_SERVICE);
+        val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
         newService.setSource(source);
         if (request != null) {
             populateAttributes(newService, request);
@@ -93,56 +73,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             }
         }
         return newService;
-    }
-
-    protected void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
-        val attributes = (Map) request.getParameterMap()
-            .entrySet()
-            .stream()
-            .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-        attributes.putAll(extractQueryParameters(service));
-
-        FunctionUtils.doIfNotBlank(request.getPathInfo(), value -> collectHttpRequestProperty("pathInfo", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getMethod(), value -> collectHttpRequestProperty("httpMethod", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getRequestURL(), value -> collectHttpRequestProperty("requestURL", value.toString(), attributes));
-        FunctionUtils.doIfNotBlank(request.getRequestURI(), value -> collectHttpRequestProperty("requestURI", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getRequestId(), value -> collectHttpRequestProperty("requestId", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getContentType(), value -> collectHttpRequestProperty("contentType", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getContextPath(), value -> collectHttpRequestProperty("contextPath", value, attributes));
-        FunctionUtils.doIfNotBlank(request.getLocalName(), value -> collectHttpRequestProperty("localeName", value, attributes));
-        FunctionUtils.doIfNotNull(request.getCookies(), __ -> Arrays.stream(request.getCookies())
-            .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), attributes)));
-        FunctionUtils.doIfNotNull(request.getHeaderNames(), __ -> StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(request.getHeaderNames().asIterator(), Spliterator.ORDERED), false)
-            .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), attributes)));
-
-        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
-        service.setAttributes(new HashMap(attributes));
-    }
-
-    private static void collectHttpRequestProperty(final String name, final String value, final Map attributes) {
-        if (StringUtils.isNotBlank(value)) {
-            attributes.put(HttpServletRequest.class.getName() + '.' + name, StringEscapeUtils.escapeHtml4(value));
-        }
-    }
-
-    protected Map<String, List> extractQueryParameters(final WebApplicationService service) {
-        val attributes = new LinkedHashMap<String, List>();
-        val originalUrl = service.getOriginalUrl();
-        try {
-            if (StringUtils.isNotBlank(originalUrl) && originalUrl.startsWith("http") && originalUrl.contains("?")) {
-                val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
-                queryParams.forEach(pair -> {
-                    val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));
-                    attributes.put(pair.getName(), values);
-                });
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Unable to extract query parameters from [{}]: [{}]", originalUrl, e.getMessage());
-        }
-        return attributes;
     }
 
     protected String getRequestedService(final HttpServletRequest request) {

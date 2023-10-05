@@ -88,7 +88,8 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
 
 
     protected void verifyRegisteredService(final RequestContext requestContext, final RegisteredService registeredService) {
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+        val service = WebUtils.getService(requestContext);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             LOGGER.debug("Service [{}] is not recognized/allowed by the CAS service registry", registeredService);
             if (registeredService != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());

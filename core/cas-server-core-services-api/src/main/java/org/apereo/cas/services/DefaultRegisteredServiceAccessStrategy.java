@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -133,7 +134,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     }
 
     @Override
-    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         if (!this.enabled) {
             LOGGER.trace("Service is not enabled in service registry.");
             return false;

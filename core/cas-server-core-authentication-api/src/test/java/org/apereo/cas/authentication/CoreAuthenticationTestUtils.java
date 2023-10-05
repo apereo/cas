@@ -183,7 +183,7 @@ public class CoreAuthenticationTestUtils {
         when(service.getDescription()).thenReturn("service description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed(service)).thenReturn(true);
+        when(access.isServiceAccessAllowed(service, mock(Service.class))).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
 
         val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);

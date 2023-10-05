@@ -60,7 +60,7 @@ The script itself may be designed as such by overriding the needed operations wh
 ```groovy
 import org.apereo.cas.services.*
 
-def isServiceAccessAllowed(RegisteredService registeredService) {
+def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
     registeredService != null
 }
 

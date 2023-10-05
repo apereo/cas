@@ -1,19 +1,22 @@
 import org.apereo.cas.services.*
 
-def isServiceAccessAllowed(RegisteredService registeredService) {
-    if (registeredService == null)
-        throw new RuntimeException("Failed");
+def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
+    if (registeredService == null) {
+        throw new RuntimeException("Failed")
+    }
     registeredService != null
 }
 
 def isServiceAccessAllowedForSso(RegisteredService registeredService) {
-    if (registeredService == null)
-        throw new RuntimeException("Failed");
+    if (registeredService == null) {
+        throw new RuntimeException("Failed")
+    }
     registeredService != null
 }
 
 def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {
-    if (request == null)
-        throw new RuntimeException("Failed");
+    if (request == null) {
+        throw new RuntimeException("Failed")
+    }
     request.service != null
 }

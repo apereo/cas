@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -29,7 +30,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     void checkDefaultAuthzStrategyConfig() throws Throwable {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
-        assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
         assertTrue(accessStrategy.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .service(RegisteredServiceTestUtils.getService2())
@@ -45,7 +46,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     void verifyFailingOps() throws Throwable {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:Unknown.groovy");
-        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null));
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null, null));
         assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowedForSso(null));
         assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.authorizeRequest(null));
     }

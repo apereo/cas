@@ -22,6 +22,15 @@ public interface ServiceFactory<T extends Service> extends Ordered {
     T createService(HttpServletRequest request);
 
     /**
+     * Create service t.
+     *
+     * @param id      the id
+     * @param request the request
+     * @return the t
+     */
+    T createService(String id, HttpServletRequest request);
+
+    /**
      * Create service based on an identifier.
      *
      * @param id the id

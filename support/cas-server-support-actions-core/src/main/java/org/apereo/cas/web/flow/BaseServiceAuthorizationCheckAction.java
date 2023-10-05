@@ -35,7 +35,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
             return success();
         }
 
-        if (this.servicesManager.getAllServices().isEmpty()) {
+        if (servicesManager.getAllServices().isEmpty()) {
             val msg = String.format("No service definitions are found in the service manager. "
                 + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             LOGGER.warn(msg);
@@ -48,7 +48,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
             LOGGER.warn(msg);
             throw UnauthorizedServiceException.denied(msg);
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             val msg = String.format("Service Management: Unauthorized Service Access. "
                 + "Service [%s] is not allowed access via the service registry.", service.getId());
             LOGGER.warn(msg);

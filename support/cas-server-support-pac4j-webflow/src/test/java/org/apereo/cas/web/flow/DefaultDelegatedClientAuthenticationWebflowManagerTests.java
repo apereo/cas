@@ -200,7 +200,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
-        assertTrue(result.isForceAuthn());
+        assertEquals(Boolean.TRUE, result.isForceAuthn());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());
@@ -224,7 +224,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
-        assertTrue(result.isPassive());
+        assertEquals(Boolean.TRUE, result.isPassive());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());

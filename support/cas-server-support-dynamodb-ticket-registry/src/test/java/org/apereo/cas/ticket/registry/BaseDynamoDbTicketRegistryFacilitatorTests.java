@@ -28,6 +28,7 @@ import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -64,6 +65,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
     },
     properties = {

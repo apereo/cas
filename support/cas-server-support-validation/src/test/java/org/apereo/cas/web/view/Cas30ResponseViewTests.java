@@ -49,6 +49,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -87,7 +88,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
         factory.setSingleton(false);
         val privateKey = factory.getObject();
 
-        LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+        LOGGER.debug("Initializing cipher based on [{}]", Objects.requireNonNull(privateKey).getAlgorithm());
         val cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
         LOGGER.debug("Decoding value [{}]", cred);

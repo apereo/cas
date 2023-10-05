@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
@@ -24,9 +25,11 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * Verify is the service is enabled and recognized by CAS.
      *
      * @param registeredService the registered service
+     * @param service           the service
      * @return true /false if service is enabled
      */
-    default boolean isServiceAccessAllowed(final RegisteredService registeredService) {
+    default boolean isServiceAccessAllowed(final RegisteredService registeredService,
+                                           final Service service) {
         return true;
     }
 

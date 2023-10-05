@@ -83,6 +83,6 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
         assertTrue(results.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
 
         assertThrows(UnauthorizedServiceException.class,
-            () -> controller.verifySamlRegisteredService(StringUtils.EMPTY));
+            () -> controller.verifySamlRegisteredService(StringUtils.EMPTY, request));
     }
 }
