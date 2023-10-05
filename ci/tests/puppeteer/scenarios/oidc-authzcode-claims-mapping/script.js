@@ -10,7 +10,7 @@ const assert = require('assert');
         + "&redirect_uri=https://apereo.github.io";
 
     await cas.goto(page, url);
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);

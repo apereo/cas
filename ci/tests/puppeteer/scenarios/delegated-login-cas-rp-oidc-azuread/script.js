@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "#idBtn_Back");
     await page.waitForTimeout(7000);
 
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     let result = new URL(page.url());
     await cas.log(result.searchParams.toString());
     assert(result.searchParams.has("ticket") === true);

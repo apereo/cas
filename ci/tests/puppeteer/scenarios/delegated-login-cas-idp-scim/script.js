@@ -38,7 +38,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await cas.screenshot(page);
     assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
 

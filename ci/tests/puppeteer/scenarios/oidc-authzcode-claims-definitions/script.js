@@ -9,7 +9,7 @@ const assert = require('assert');
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20profile%20email&redirect_uri=${redirectUri}`;
 
     await cas.goto(page, url);
-    await cas.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
