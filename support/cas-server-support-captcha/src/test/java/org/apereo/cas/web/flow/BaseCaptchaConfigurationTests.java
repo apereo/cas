@@ -45,7 +45,6 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseCaptchaConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -53,9 +52,6 @@ public abstract class BaseCaptchaConfigurationTests {
     @SpringBootConfiguration
     @Import({
         CasCaptchaConfiguration.class,
-        RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,

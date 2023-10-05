@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreRestConfiguration.class,
     CasRestConfiguration.class
 })
-@EnableWebMvc
 @Tag("CasConfiguration")
 class CasRestConfigurationTests {
 
