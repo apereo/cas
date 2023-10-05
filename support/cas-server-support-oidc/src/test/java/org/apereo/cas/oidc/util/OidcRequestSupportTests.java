@@ -131,7 +131,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(OidcRequestSupport.isAuthenticationProfileAvailable(context, JEESessionStore.INSTANCE).isPresent());
+        assertTrue(OidcRequestSupport.isAuthenticationProfileAvailable(context, new JEESessionStore()).isPresent());
     }
 
     @Test

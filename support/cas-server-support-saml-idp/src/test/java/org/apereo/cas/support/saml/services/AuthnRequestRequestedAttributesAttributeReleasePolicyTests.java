@@ -92,7 +92,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val response = new MockHttpServletResponse();
         val ctx = new JEEContext(httpRequest, response);
 
-        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, new JEESessionStore()));
         saml2MessageContext.setSaml2Configuration(saml2Configuration);
 
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);

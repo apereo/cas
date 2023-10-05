@@ -102,7 +102,7 @@ public class RegisteredServiceResource {
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val callContext = new CallContext(webContext, new JEESessionStore());
         val credentialsResult = extractor.extract(callContext);
         val credentials = (UsernamePasswordCredentials) credentialsResult.get();
         LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
