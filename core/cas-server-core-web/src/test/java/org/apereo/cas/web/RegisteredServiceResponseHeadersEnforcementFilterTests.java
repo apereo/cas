@@ -22,6 +22,7 @@ import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -34,6 +35,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -80,6 +82,19 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
             new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx)));
+    }
+
+    @Test
+    void verifyServiceUnauthorized() throws Throwable {
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, UUID.randomUUID().toString());
+        val servletContext = new MockServletContext();
+        val filterConfig = new MockFilterConfig(servletContext);
+        filter.init(filterConfig);
+        assertThrows(UnauthorizedServiceException.class, () -> filter.doFilter(request, response, new MockFilterChain()));
+        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
