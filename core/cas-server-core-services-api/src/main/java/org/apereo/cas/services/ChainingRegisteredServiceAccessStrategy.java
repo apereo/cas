@@ -71,21 +71,19 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
+            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowed(registeredService));
         }
-        return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
+        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowed(registeredService));
     }
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowedForSso() {
+    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
+            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowedForSso(registeredService));
         }
-        return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
+        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowedForSso(registeredService));
     }
 
     @Override

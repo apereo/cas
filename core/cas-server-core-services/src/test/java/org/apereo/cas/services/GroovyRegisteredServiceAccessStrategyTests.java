@@ -1,17 +1,14 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,8 +29,8 @@ class GroovyRegisteredServiceAccessStrategyTests {
     void checkDefaultAuthzStrategyConfig() throws Throwable {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
-        assertTrue(accessStrategy.isServiceAccessAllowed());
-        assertTrue(accessStrategy.isServiceAccessAllowedForSso());
+        assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
+        assertTrue(accessStrategy.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .service(RegisteredServiceTestUtils.getService2())
             .principalId(UUID.randomUUID().toString())
@@ -42,6 +39,15 @@ class GroovyRegisteredServiceAccessStrategyTests {
         assertNull(accessStrategy.getUnauthorizedRedirectUrl());
         assertNull(accessStrategy.getDelegatedAuthenticationPolicy());
         assertNotNull(accessStrategy.getRequiredAttributes());
+    }
+
+    @Test
+    void verifyFailingOps() throws Throwable {
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:Unknown.groovy");
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null));
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowedForSso(null));
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.authorizeRequest(null));
     }
 
     @Test

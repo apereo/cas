@@ -60,18 +60,18 @@ The script itself may be designed as such by overriding the needed operations wh
 ```groovy
 import org.apereo.cas.services.*
 
-def isServiceAccessAllowed() {
-    true
+def isServiceAccessAllowed(RegisteredService registeredService) {
+    registeredService != null
 }
 
-def isServiceAccessAllowedForSso() {
-    true
+def isServiceAccessAllowedForSso(RegisteredService registeredService) {
+    registeredService != null
 }
 
-def doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest request) {
+def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {
     request.service != null
 }
 ```
      
 All operations are seen as optional, and when undefined in the script, 
-the end result of the operation is seen as `false`.
+the end result of the operation is seen as `false` and access is denied.

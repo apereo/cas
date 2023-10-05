@@ -48,7 +48,7 @@ public class RegisteredServiceAccessStrategyUtils {
             LOGGER.warn("Unauthorized Service Access. Service [{}] is not registered in the service registry.", service);
             throw UnauthorizedServiceException.denied("Service " + StringUtils.defaultIfBlank(service, "unknown") + " is not found in the service registry.");
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry. You should "
                                     + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
             throw UnauthorizedServiceException.denied(msg);
@@ -104,7 +104,7 @@ public class RegisteredServiceAccessStrategyUtils {
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
 
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)) {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
             if (ticketGrantingTicket.getProxiedBy() != null) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO for proxying.", service.getId());

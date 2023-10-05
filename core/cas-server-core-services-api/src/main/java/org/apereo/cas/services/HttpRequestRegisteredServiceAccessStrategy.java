@@ -50,7 +50,7 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
     private Map<String, String> headers = new TreeMap<>();
 
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo())
             .stream()
             .anyMatch(info -> {

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import jakarta.persistence.Transient;
 import java.io.Serial;
 
@@ -44,22 +43,22 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     private transient GroovyObject groovyStrategyInstance;
 
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "isServiceAccessAllowed", ArrayUtils.EMPTY_OBJECT_ARRAY, Boolean.class, false));
+                "isServiceAccessAllowed", new Object[]{registeredService}, Boolean.class, false));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }
     }
 
     @Override
-    public boolean isServiceAccessAllowedForSso() {
+    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "isServiceAccessAllowedForSso", ArrayUtils.EMPTY_OBJECT_ARRAY, Boolean.class, false));
+                "isServiceAccessAllowedForSso", new Object[]{registeredService}, Boolean.class, false));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }

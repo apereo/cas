@@ -53,7 +53,7 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
             return true;
         }
         val registeredService = servicesManager.findServiceBy(service);
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             LOGGER.warn("Service access for [{}] is denied", registeredService);
             return false;
         }

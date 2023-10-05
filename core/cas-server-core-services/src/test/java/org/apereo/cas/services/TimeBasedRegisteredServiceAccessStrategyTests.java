@@ -36,7 +36,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
 
     }
 
@@ -45,7 +45,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
 
     }
 
@@ -54,7 +54,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         var authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -62,7 +62,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -70,7 +70,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(15).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -79,7 +79,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         authz.setStartingDateTime("${#localStartDay}");
         authz.setEndingDateTime("${#localEndDay}");
         authz.setZoneId("${#zoneId}");
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -87,7 +87,7 @@ class TimeBasedRegisteredServiceAccessStrategyTests {
         val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService()));
     }
 
     @Test

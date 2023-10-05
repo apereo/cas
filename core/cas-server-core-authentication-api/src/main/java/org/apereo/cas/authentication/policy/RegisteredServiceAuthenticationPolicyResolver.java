@@ -59,11 +59,11 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     public boolean supports(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
-            val registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
-                throw new UnauthorizedSsoServiceException();
+                throw new UnauthorizedSsoServiceException("Denied: %s".formatted(service));
             }
             val authenticationPolicy = registeredService.getAuthenticationPolicy();
             if (authenticationPolicy != null) {

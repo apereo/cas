@@ -117,7 +117,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         val notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
         val registeredService = servicesManager.findServiceBy(service);
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             throw UnauthorizedServiceException.denied("Unauthorized: %s".formatted(service.getId()));
         }
 

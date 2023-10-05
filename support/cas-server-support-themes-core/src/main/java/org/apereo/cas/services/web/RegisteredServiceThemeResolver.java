@@ -77,17 +77,17 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             return rememberThemeName(request);
         }
 
-        val rService = (WebBasedRegisteredService) servicesManager.getObject().findServiceBy(service);
-        if (rService == null || !rService.getAccessStrategy().isServiceAccessAllowed()) {
+        val registeredService = (WebBasedRegisteredService) servicesManager.getObject().findServiceBy(service);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return rememberThemeName(request);
         }
-        if (StringUtils.isBlank(rService.getTheme())) {
-            LOGGER.trace("No theme name is specified for service [{}]. Using default theme [{}]", rService, getDefaultThemeName());
+        if (StringUtils.isBlank(registeredService.getTheme())) {
+            LOGGER.trace("No theme name is specified for service [{}]. Using default theme [{}]", registeredService, getDefaultThemeName());
             return rememberThemeName(request);
         }
 
-        val themeName = determineThemeNameToChoose(request, service, rService);
+        val themeName = determineThemeNameToChoose(request, service, registeredService);
         return rememberThemeName(request, themeName);
     }
 

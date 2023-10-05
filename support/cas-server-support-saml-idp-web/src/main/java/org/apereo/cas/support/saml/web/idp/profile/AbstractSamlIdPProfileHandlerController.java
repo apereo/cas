@@ -137,7 +137,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(serviceId));
         LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService)) {
             LOGGER.warn("[{}] is not found in the registry or service access is denied.", serviceId);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(serviceId));
         }

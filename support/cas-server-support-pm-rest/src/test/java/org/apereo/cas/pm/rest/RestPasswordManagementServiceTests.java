@@ -30,6 +30,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -48,10 +49,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 class RestPasswordManagementServiceTests {
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class
     })
     @SpringBootConfiguration

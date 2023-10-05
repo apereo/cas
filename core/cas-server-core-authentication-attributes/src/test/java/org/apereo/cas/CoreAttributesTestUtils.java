@@ -50,7 +50,7 @@ public class CoreAttributesTestUtils {
         when(service.getDescription()).thenReturn("description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed()).thenReturn(true);
+        when(access.isServiceAccessAllowed(service)).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;
     }

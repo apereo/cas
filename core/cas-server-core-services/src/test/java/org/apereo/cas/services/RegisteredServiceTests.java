@@ -89,11 +89,11 @@ class RegisteredServiceTests {
     void verifySettersAndGetters() throws Throwable {
         prepareService();
         assertEquals(DESCRIPTION, baseService.getDescription());
-        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed());
+        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed(baseService));
         assertEquals(ID, baseService.getId());
         assertEquals(NAME, baseService.getName());
         assertEquals(SERVICEID, baseService.getServiceId());
-        assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso());
+        assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso(baseService));
         assertEquals(THEME, baseService.getTheme());
         assertNotNull(baseService);
         assertEquals(baseService, baseService);
