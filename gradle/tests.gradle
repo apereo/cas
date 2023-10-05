@@ -14,7 +14,7 @@ enum TestCategories {
     AuthenticationThrottling,
     Azure,
     CAS(true),
-    CasConfiguration,
+    CasConfiguration(true),
     Cassandra,
     Cipher(true),
     Consent(true),
@@ -106,7 +106,7 @@ enum TestCategories {
     WebflowMfaActions(true),
     WSFederation,
     X509(true),
-    ZooKeeper
+    ZooKeeper(true)
 
     boolean parallelEnabled;
 

@@ -768,7 +768,10 @@ exports.gotoLogin = async(page, service = undefined, port = 8443) => {
     return await this.goto(page, url);
 };
 
-exports.gotoLogout = async(page, port = 8443) => await this.goto(page, `https://localhost:${port}/cas/logout`);
+exports.gotoLogout = async(page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/logout` + (service === undefined ? "" : `?service=${service}`);
+    return await this.goto(page, url);
+}
 
 exports.parseXML = async(xml, options = {}) => {
     let parsedXML = undefined;

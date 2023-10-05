@@ -69,6 +69,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -194,6 +195,9 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier(ArgumentExtractor.BEAN_NAME)
+    protected ArgumentExtractor argumentExtractor;
     @Autowired
     @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
