@@ -65,7 +65,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @throws Throwable the throwable
      */
     @JsonIgnore
-    default boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+    default boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         return true;
     }
 

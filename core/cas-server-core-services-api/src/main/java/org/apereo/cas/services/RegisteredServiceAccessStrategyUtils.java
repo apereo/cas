@@ -144,7 +144,7 @@ public class RegisteredServiceAccessStrategyUtils {
             .attributes(attributes)
             .registeredService(registeredService)
             .build();
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(accessRequest)) {
+        if (!registeredService.getAccessStrategy().authorizeRequest(accessRequest)) {
             LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].", serviceId, principalId);
             val handlerErrors = new HashMap<String, Throwable>();
             val message = String.format("Cannot grant service access %s to %s", serviceId, principalId);

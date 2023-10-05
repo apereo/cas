@@ -59,7 +59,7 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
     private Map<String, String> configProperties = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         val allAttributes = new HashMap<>(request.getAttributes());
         val results = fetchWsGetGroupsResults(request.getPrincipalId());
         if (results.isEmpty()) {

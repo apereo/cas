@@ -71,7 +71,7 @@ public class AmazonVerifiedPermissionsRegisteredServiceAccessStrategy extends Ba
     private Map<String, Object> context = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         try (val client = buildAmazonVerifiedPermissionsClient()) {

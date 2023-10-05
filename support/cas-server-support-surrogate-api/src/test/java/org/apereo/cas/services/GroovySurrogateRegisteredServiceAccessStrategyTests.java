@@ -31,7 +31,7 @@ class GroovySurrogateRegisteredServiceAccessStrategyTests {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId(principal)
             .attributes(surrogate ? CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true) : Map.of())
             .build();
-        return strategy.doPrincipalAttributesAllowServiceAccess(request);
+        return strategy.authorizeRequest(request);
     }
 
     @Test

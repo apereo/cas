@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,23 +30,26 @@ class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     void checkDefaultAuthzStrategyConfig() throws Throwable {
-        val authz = new GroovyRegisteredServiceAccessStrategy();
-        authz.setGroovyScript("classpath:accessstrategy.groovy");
-        assertTrue(authz.isServiceAccessAllowed());
-        assertTrue(authz.isServiceAccessAllowedForSso());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("test").build()));
-        assertNull(authz.getUnauthorizedRedirectUrl());
-        assertNull(authz.getDelegatedAuthenticationPolicy());
-        assertNotNull(authz.getRequiredAttributes());
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
+        assertTrue(accessStrategy.isServiceAccessAllowed());
+        assertTrue(accessStrategy.isServiceAccessAllowedForSso());
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .service(RegisteredServiceTestUtils.getService2())
+            .principalId(UUID.randomUUID().toString())
+            .build();
+        assertTrue(accessStrategy.authorizeRequest(request));
+        assertNull(accessStrategy.getUnauthorizedRedirectUrl());
+        assertNull(accessStrategy.getDelegatedAuthenticationPolicy());
+        assertNotNull(accessStrategy.getRequiredAttributes());
     }
 
     @Test
     void verifySerializationToJson() throws IOException {
-        val authz = new GroovyRegisteredServiceAccessStrategy();
-        authz.setGroovyScript("classpath:accessstrategy.groovy");
-        MAPPER.writeValue(JSON_FILE, authz);
-
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
+        MAPPER.writeValue(JSON_FILE, accessStrategy);
         val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
-        assertEquals(authz, strategyRead);
+        assertEquals(accessStrategy, strategyRead);
     }
 }

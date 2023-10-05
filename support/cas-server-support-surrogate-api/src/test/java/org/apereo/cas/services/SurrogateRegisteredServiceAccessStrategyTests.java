@@ -28,7 +28,7 @@ class SurrogateRegisteredServiceAccessStrategyTests {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true))
             .build();
-        return a.doPrincipalAttributesAllowServiceAccess(request);
+        return a.authorizeRequest(request);
     }
 
     @Test

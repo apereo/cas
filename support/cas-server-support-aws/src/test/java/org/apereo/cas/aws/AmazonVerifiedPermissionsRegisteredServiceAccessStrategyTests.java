@@ -61,7 +61,7 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
             .service(RegisteredServiceTestUtils.getService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1")))
             .build();
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(accessRequest));
+        assertFalse(strategy.authorizeRequest(accessRequest));
     }
 
 }

@@ -63,7 +63,7 @@ public class PermitRegisteredServiceAccessStrategy extends BaseRegisteredService
     private String pdpAddress = "https://cloudpdp.api.permit.io";
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         val permit = buildPermitInstance();
         val user = syncUserWithPermit(permit, request);
         return checkPermitForUserAccess(permit, user);
