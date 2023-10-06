@@ -11,6 +11,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -28,6 +29,8 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.core.Statement;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -361,7 +365,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
         }
-        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostName()));
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()));
         FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
         FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
@@ -519,5 +523,19 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return inflated;
         }
         return CompressionUtils.decodeByteArrayToString(decodedBytes);
+    }
+
+    protected String getInResponseTo(final RequestAbstractType request, final String entityId, final boolean skipInResponseTo) {
+        var generateInResponseTo = !skipInResponseTo && StringUtils.isNotBlank(request.getID());
+        if (generateInResponseTo && request.getExtensions() != null) {
+            val extensions = Optional.ofNullable(request.getExtensions())
+                .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
+            generateInResponseTo = extensions
+                .stream()
+                .filter(RequesterID.class::isInstance)
+                .map(RequesterID.class::cast)
+                .noneMatch(info -> entityId.equalsIgnoreCase(info.getURI()));
+        }
+        return generateInResponseTo ? request.getID() : null;
     }
 }

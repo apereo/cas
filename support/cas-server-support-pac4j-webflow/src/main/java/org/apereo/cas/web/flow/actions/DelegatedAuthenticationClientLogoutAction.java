@@ -35,9 +35,9 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAction {
-    private final Clients clients;
+    protected final Clients clients;
 
-    private final SessionStore sessionStore;
+    protected final SessionStore sessionStore;
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
@@ -46,9 +46,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         val context = new JEEContext(request, response);
 
         val currentProfile = findCurrentProfile(context);
-        val clientResult = currentProfile == null
-            ? Optional.<Client>empty()
-            : clients.findClient(currentProfile.getClientName());
+        val clientResult = findCurrentClient(currentProfile);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             requestContext.getFlowScope().put("delegatedAuthenticationLogoutRequest", true);
@@ -67,9 +65,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         val context = new JEEContext(request, response);
 
         val currentProfile = findCurrentProfile(context);
-        val clientResult = currentProfile == null
-            ? Optional.<Client>empty()
-            : clients.findClient(currentProfile.getClientName());
+        val clientResult = findCurrentClient(currentProfile);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             LOGGER.trace("Located client [{}]", client);
@@ -96,9 +92,21 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
      * @param webContext A web context (request + response).
      * @return The common profile active.
      */
-    private UserProfile findCurrentProfile(final JEEContext webContext) {
+    protected UserProfile findCurrentProfile(final JEEContext webContext) {
         val pm = new ProfileManager(webContext, this.sessionStore);
         val profile = pm.getProfile();
         return profile.orElse(null);
+    }
+
+    /**
+     * Find the current client from the current profile.
+     *
+     * @param currentProfile the current profile
+     * @return the current client
+     */
+    protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
+        return currentProfile == null
+                ? Optional.<Client>empty()
+                : clients.findClient(currentProfile.getClientName());
     }
 }

@@ -20,6 +20,11 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-support-pac4j-api")
 @JsonFilter("CookieSessionReplicationProperties")
 public class CookieSessionReplicationProperties extends PinnableCookieProperties {
+    /**
+     * Default cookie name.
+     */
+    public static final String DEFAULT_COOKIE_NAME = "DISSESSION";
+
     private static final long serialVersionUID = 6165162204295764362L;
 
     /**
@@ -28,8 +33,4 @@ public class CookieSessionReplicationProperties extends PinnableCookieProperties
      * path is not configured.
      */
     private boolean autoConfigureCookiePath = true;
-
-    public CookieSessionReplicationProperties() {
-        setName("DISSESSION");
-    }
 }
