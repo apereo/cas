@@ -50,6 +50,7 @@
             </div>
             <div class="mdc-dialog__scrim"></div>
         </div>
+
         <div id="divMfaRegisteredAccounts"
              th:if="${multifactorRegisteredAccounts}"
              class="profile-content w-100"
@@ -141,10 +142,10 @@
                                 </li>
                             </ul>
                         </div>
-                </div>
-                <input type="hidden" name="type" value=""/>
-                <input type="hidden" name="_eventId_register" value="Register"/>
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        </div>
+                    <input type="hidden" name="type" value=""/>
+                    <input type="hidden" name="_eventId_register" value="Register"/>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 </form>
 
                 <script type="text/javascript" th:inline="javascript">
@@ -161,7 +162,6 @@
             </div>
         </div>
 
-    </div>
-        </span>
+</span>
 </body>
 </html>

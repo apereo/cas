@@ -993,7 +993,7 @@ ext.libraries = [
                 dependencies.create("com.sun.xml.bind:jaxb-impl:$jaxbImplVersion") {
                     transitive = false
                 },
-                dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
+                dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$wsApiVersion") {
                     transitive = false
                 },
                 dependencies.create("com.sun.xml.stream.buffer:streambuffer:2.1.0") {

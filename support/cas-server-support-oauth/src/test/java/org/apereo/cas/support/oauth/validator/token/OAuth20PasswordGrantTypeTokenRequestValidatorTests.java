@@ -79,11 +79,7 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(supportingService.getClientId());
         
-        val session = request.getSession(true);
-        assertNotNull(session);
-
-        session.setAttribute("OauthOidcServerSupport" + Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        val session = storeProfileIntoSession(request, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());

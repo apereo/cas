@@ -59,6 +59,7 @@ The script itself may be designed as such by overriding the needed operations wh
 
 ```groovy
 import org.apereo.cas.services.*
+import org.apereo.cas.authentication.principal.*
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {
     registeredService != null
