@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JasyptEncryptionParametersTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.ALGORITHM.getDefaultValue());
 
         assertNull(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PROVIDER.getDefaultValue());

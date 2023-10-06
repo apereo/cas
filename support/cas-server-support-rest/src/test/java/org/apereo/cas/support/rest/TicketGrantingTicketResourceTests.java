@@ -96,7 +96,7 @@ class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         val httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
             @Override
             public List<Credential> fromAuthentication(final HttpServletRequest request,
@@ -142,7 +142,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void verifyNormalCreationOfTGT() throws Exception {
+    void verifyNormalCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -214,7 +214,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void verifyCreateTgtWithMfa() throws Exception {
+    void verifyCreateTgtWithMfa() throws Throwable {
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
@@ -233,7 +233,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void creationOfTGTWithAuthenticationException() throws Exception {
+    void creationOfTGTWithAuthenticationException() throws Throwable {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -245,7 +245,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void creationOfTGTWithUnexpectedRuntimeException() throws Exception {
+    void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -256,7 +256,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void creationOfTGTWithBadPayload() throws Exception {
+    void creationOfTGTWithBadPayload() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -266,26 +266,26 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    void deletionOfTGT() throws Exception {
+    void deletionOfTGT() throws Throwable {
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any()))
             .thenReturn(new MockTicketGrantingTicket("casuser"));
         this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1")).andExpect(status().isOk());
     }
 
-    private void configureCasMockToCreateValidTGT() {
+    private void configureCasMockToCreateValidTGT() throws Throwable {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
     }
 
-    private void configureCasMockTGTCreationToThrowAuthenticationException() {
+    private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
         val handlerErrors = new HashMap<String, Throwable>(1);
         handlerErrors.put("TestCaseAuthenticationHandler", new LoginException("Login failed"));
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
             .thenThrow(new AuthenticationException(handlerErrors));
     }
 
-    private void configureCasMockTGTCreationToThrow(final Exception e) {
+    private void configureCasMockTGTCreationToThrow(final Exception e) throws Throwable {
         lenient().when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
     }
 }

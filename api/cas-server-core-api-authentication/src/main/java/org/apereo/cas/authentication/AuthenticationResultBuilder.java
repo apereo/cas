@@ -68,8 +68,9 @@ public interface AuthenticationResultBuilder extends Serializable {
      *
      * @param principalElectionStrategy a principalElectionStrategy to use
      * @return the authentication result
+     * @throws Throwable the throwable
      */
-    AuthenticationResult build(PrincipalElectionStrategy principalElectionStrategy);
+    AuthenticationResult build(PrincipalElectionStrategy principalElectionStrategy) throws Throwable;
 
     /**
      * Build authentication result.
@@ -77,6 +78,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      * @param principalElectionStrategy a principalElectionStrategy to use
      * @param service                   the service
      * @return the authentication result
+     * @throws Throwable the throwable
      */
-    AuthenticationResult build(PrincipalElectionStrategy principalElectionStrategy, Service service);
+    AuthenticationResult build(PrincipalElectionStrategy principalElectionStrategy, Service service) throws Throwable;
 }

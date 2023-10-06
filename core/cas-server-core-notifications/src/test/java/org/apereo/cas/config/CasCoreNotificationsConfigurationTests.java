@@ -4,16 +4,15 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
@@ -48,7 +48,7 @@ class CasCoreNotificationsConfigurationTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(notificationSender);
         assertNotNull(smsSender);
         assertNotNull(communicationsManager);

@@ -10,11 +10,13 @@ import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryLdapConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryRestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -28,7 +30,8 @@ public abstract class BasePrincipalAttributeRepositoryTests {
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({
@@ -38,6 +41,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasPersonDirectoryGroovyConfiguration.class,
         CasPersonDirectoryRestConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreWebConfiguration.class,

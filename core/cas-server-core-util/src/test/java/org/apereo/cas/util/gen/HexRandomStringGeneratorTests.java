@@ -19,13 +19,13 @@ class HexRandomStringGeneratorTests {
     private final RandomStringGenerator randomStringGenerator = new HexRandomStringGenerator(LENGTH);
 
     @Test
-    void verifyDefaultLength() {
+    void verifyDefaultLength() throws Throwable {
         assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
         assertEquals(LENGTH, new HexRandomStringGenerator().getDefaultLength());
     }
 
     @Test
-    void verifyRandomString() {
+    void verifyRandomString() throws Throwable {
         assertNotSame(this.randomStringGenerator.getNewString(), this.randomStringGenerator.getNewString());
     }
 }

@@ -69,7 +69,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
-                                     final OAuth20GrantTypes grantType) {
+                                     final OAuth20GrantTypes grantType) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = generateAccessTokenId(service, authentication);
@@ -83,7 +83,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         return at;
     }
 
-    protected String generateAccessTokenId(final Service service, final Authentication authentication) {
+    protected String generateAccessTokenId(final Service service, final Authentication authentication) throws Throwable {
         return this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
     }
 

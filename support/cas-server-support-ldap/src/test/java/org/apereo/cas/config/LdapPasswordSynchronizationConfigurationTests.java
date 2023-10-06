@@ -4,16 +4,15 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -62,7 +63,7 @@ class LdapPasswordSynchronizationConfigurationTests {
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction).isEmpty());

@@ -82,7 +82,7 @@ public class LdapConnectionFactory implements Closeable {
 
 
     /**
-     * Execute modify operation boolean.
+     * Execute modify operation.
      *
      * @param currentDn  the current dn
      * @param attributes the attributes

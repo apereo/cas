@@ -64,10 +64,11 @@ public class RegisteredServiceResource {
      * @param request  the request
      * @param response the response
      * @return {@link ResponseEntity} representing RESTful response
+     * @throws Throwable the throwable
      */
     @PostMapping(value = "/v1/services", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
-                                                final HttpServletRequest request, final HttpServletResponse response) {
+                                                final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
             val auth = authenticateRequest(request, response);
             if (isAuthenticatedPrincipalAuthorized(auth)) {
@@ -98,10 +99,10 @@ public class RegisteredServiceResource {
         return false;
     }
 
-    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val callContext = new CallContext(webContext, new JEESessionStore());
         val credentialsResult = extractor.extract(callContext);
         val credentials = (UsernamePasswordCredentials) credentialsResult.get();
         LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);

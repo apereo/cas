@@ -4,24 +4,22 @@ import org.apereo.cas.config.HazelcastZooKeeperConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.lock.LockRepository;
-
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 2181)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     HazelcastZooKeeperConfiguration.class
 }, properties = {
     "cas.ticket.registry.hazelcast.cluster.discovery.zookeeper.url=localhost:2181",
@@ -47,7 +46,7 @@ class ZookeeperLockRegistryTests {
     private LockRepository casTicketRegistryLockRepository;
 
     @Test
-    void verifyRepository() throws Exception {
+    void verifyRepository() throws Throwable {
         val lockKey = UUID.randomUUID().toString();
 
         val container = new Container();

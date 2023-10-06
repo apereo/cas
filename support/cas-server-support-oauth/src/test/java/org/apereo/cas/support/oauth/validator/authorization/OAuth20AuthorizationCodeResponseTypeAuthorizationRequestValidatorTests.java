@@ -70,7 +70,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
-    void verifyUnsignedRequestParameter() throws Exception {
+    void verifyUnsignedRequestParameter() throws Throwable {
         val ctx = new StaticApplicationContext();
         ctx.refresh();
         val serviceManager = getServicesManager(ctx);
@@ -96,7 +96,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     }
 
     @Test
-    void verifyValidator() throws Exception {
+    void verifyValidator() throws Throwable {
         val ctx = new StaticApplicationContext();
         ctx.refresh();
         val serviceManager = getServicesManager(ctx);
@@ -123,7 +123,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         request.removeAttribute(OAuth20Constants.ERROR);
-        request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());

@@ -61,15 +61,15 @@ class OktaAuthenticationStateHandlerTests {
     private PrincipalFactory oktaPrincipalFactory;
 
     @Test
-    void verifyOperation() {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
+    void verifyOperation() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
-        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c, mock(Service.class)));
+        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifySuccess() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
+    void verifySuccess() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         val response = mock(AuthenticationResponse.class);
 
@@ -87,7 +87,7 @@ class OktaAuthenticationStateHandlerTests {
             });
         val handler = new OktaAuthenticationHandler(null, servicesManager,
             oktaPrincipalFactory, casProperties.getAuthn().getOkta(), client);
-        assertNotNull(handler.authenticate(c, mock(Service.class)));
+        assertNotNull(handler.authenticate(credential, mock(Service.class)));
         assertNotNull(handler.getOktaAuthenticationClient());
         assertNotNull(handler.getProperties());
     }

@@ -3,8 +3,6 @@ package org.apereo.cas.support.saml;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,29 +15,26 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Test
-    void verifySigValidationFilterByRes() throws Exception {
+    void verifySigValidationFilterByRes() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("metadata/idp-signing.crt"));
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilterPublicKey() throws Exception {
+    void verifySigValidationFilterPublicKey() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(new ClassPathResource("public-key.pem"));
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilter() {
+    void verifySigValidationFilter() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter(applicationContext, "classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }
 
     @Test
-    void verifySigValidationFilterByPath() throws Exception {
+    void verifySigValidationFilterByPath() throws Throwable {
         val filter = SamlUtils.buildSignatureValidationFilter("classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }

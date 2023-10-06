@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreAuthenticationRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new CasCoreAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies()

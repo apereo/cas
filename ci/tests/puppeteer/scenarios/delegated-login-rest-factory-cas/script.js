@@ -33,14 +33,14 @@ async function fetchIdentityProviders() {
     };
     let mockServer = await cas.mockJsonServer(payload, 5432);
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(3000);
     await cas.assertVisibility(page, '#loginProviders');
     await cas.assertVisibility(page, 'li #CasClient');
     await cas.assertVisibility(page, 'li #OidcClient');
-    console.log("Wait for the cache to expire and reload providers again...");
+    await cas.log("Wait for the cache to expire and reload providers again...");
     await page.waitForTimeout(3000);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await fetchIdentityProviders();
     await cas.doRequest("https://localhost:8443/cas/actuator/delegatedClients", "DELETE");
     await fetchIdentityProviders();

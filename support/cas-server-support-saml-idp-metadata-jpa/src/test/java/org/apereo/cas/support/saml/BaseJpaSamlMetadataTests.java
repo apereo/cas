@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",
     "cas.authn.saml-idp.metadata.jpa.ddl-auto=create-drop",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml11"
 })
 public abstract class BaseJpaSamlMetadataTests {
     @Autowired

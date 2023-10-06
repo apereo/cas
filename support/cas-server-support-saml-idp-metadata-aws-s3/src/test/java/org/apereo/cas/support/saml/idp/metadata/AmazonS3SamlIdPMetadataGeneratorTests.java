@@ -52,7 +52,7 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     private SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -62,7 +62,7 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     }
 
     @Test
-    void verifyService() throws Exception {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

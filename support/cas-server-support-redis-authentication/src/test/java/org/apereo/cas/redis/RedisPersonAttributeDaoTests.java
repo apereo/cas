@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.RedisAuthenticationConfiguration;
@@ -27,7 +28,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,14 +35,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RedisAuthenticationConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -68,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
@@ -94,7 +95,7 @@ class RedisPersonAttributeDaoTests {
 
     @BeforeEach
     public void initialize() {
-        val redis = casProperties.getAuthn().getAttributeRepository().getRedis().get(0);
+        val redis = casProperties.getAuthn().getAttributeRepository().getRedis().getFirst();
         val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true, CasSSLContext.disabled());
         val template = RedisObjectFactory.newRedisTemplate(conn);
         template.initialize();
@@ -105,7 +106,7 @@ class RedisPersonAttributeDaoTests {
     }
 
     @Test
-    void verifyAttributes() {
+    void verifyAttributes() throws Throwable {
         val person = attributeRepository.getPerson(USER_ID);
         assertNotNull(person);
         val attributes = person.getAttributes();

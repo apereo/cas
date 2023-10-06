@@ -37,7 +37,7 @@ class SurrogateAuthenticationPostProcessorTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         assertFalse(surrogateAuthenticationPostProcessor.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         val credential = new UsernamePasswordCredential();
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("something"));
@@ -45,7 +45,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifySurrogateCredentialNotFound() {
+    void verifySurrogateCredentialNotFound() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -58,7 +58,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyProcessorWorks() {
+    void verifyProcessorWorks() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -70,9 +70,9 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyNoPrimaryCredential() {
+    void verifyNoPrimaryCredential() throws Throwable {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
-            RegisteredServiceTestUtils.getService("service"), new Credential[0]);
+            RegisteredServiceTestUtils.getService("service"));
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));
@@ -81,7 +81,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyAuthN() {
+    void verifyAuthN() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -98,7 +98,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyFailAuthN() {
+    void verifyFailAuthN() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");

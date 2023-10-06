@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -133,9 +133,8 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>(0));
     }
 
-    @JsonIgnore
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         if (!this.enabled) {
             LOGGER.trace("Service is not enabled in service registry.");
             return false;
@@ -143,9 +142,8 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
         return true;
     }
 
-    @JsonIgnore
     @Override
-    public boolean isServiceAccessAllowedForSso() {
+    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         if (!this.ssoEnabled) {
             LOGGER.trace("Service is not authorized to participate in SSO.");
             return false;
@@ -154,7 +152,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         val proceed = activationCriteria == null || activationCriteria.shouldActivate(request);
         if (proceed) {
             return RegisteredServiceAccessStrategyEvaluator.builder()

@@ -21,19 +21,17 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CassandraAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,6 +43,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
@@ -83,19 +82,19 @@ class CassandraAuthenticationHandlerTests {
     private AuthenticationHandler cassandraAuthenticationHandler;
 
     @Test
-    void verifyUserNotFound() {
+    void verifyUserNotFound() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
         assertThrows(AccountNotFoundException.class, () -> cassandraAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    void verifyUserBadPassword() {
+    void verifyUserBadPassword() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
         assertThrows(FailedLoginException.class, () -> cassandraAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    void verifyUser() throws Exception {
+    void verifyUser() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = cassandraAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);

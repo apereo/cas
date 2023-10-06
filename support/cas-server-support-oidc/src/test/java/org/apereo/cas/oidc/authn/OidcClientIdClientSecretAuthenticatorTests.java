@@ -38,7 +38,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
     private Authenticator authenticator;
 
     @Test
-    void verifyWithoutRequestingScopes() {
+    void verifyWithoutRequestingScopes() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
@@ -47,14 +47,14 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals(1, credentials.getUserProfile().getAttributes().size());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
     }
 
     @Test
-    void verifyWithRequestingScopes() {
+    void verifyWithRequestingScopes() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setScopes(Set.of("openid", "MyScope"));
         servicesManager.save(registeredService);
@@ -64,7 +64,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid MyScope");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals(2, credentials.getUserProfile().getAttributes().size());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey(OAuth20Constants.CLIENT_ID));

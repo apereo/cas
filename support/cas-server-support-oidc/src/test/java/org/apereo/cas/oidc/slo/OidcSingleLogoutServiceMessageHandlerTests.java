@@ -34,17 +34,17 @@ class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
     private SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler;
 
     @Test
-    void verifyCreateLogoutRequestsFrontChannel() {
+    void verifyCreateLogoutRequestsFrontChannel() throws Throwable {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
-    void verifyCreateLogoutRequestsBackChannel() {
+    void verifyCreateLogoutRequestsBackChannel() throws Throwable {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
-    void verifyUnknownRequestsBackChannel() {
+    void verifyUnknownRequestsBackChannel() throws Throwable {
         verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
     }
 

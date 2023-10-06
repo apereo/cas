@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 @Monitorable
 public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
-    private final transient S3Client s3Client;
+    private final S3Client s3Client;
 
     private final String bucketName;
 
@@ -60,7 +60,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         if (objects.isEmpty()) {
             throw new IllegalArgumentException("No objects found in bucket " + bucketToUse);
         }
-        val obj = objects.get(0);
+        val obj = objects.getFirst();
         val objectKey = obj.key();
         LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketToUse);
         val object = s3Client.getObject(GetObjectRequest.builder().bucket(bucketToUse).key(objectKey).build());

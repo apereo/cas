@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -67,7 +66,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
     private Map<String, Object> context = new HashMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
@@ -86,7 +85,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
                 .context(this.context)
                 .build()
                 .toJson();
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(opaUrl)
                 .headers(headers)

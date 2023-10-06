@@ -34,7 +34,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     @Test
     @Order(0)
     @Tag("DisableProviderRegistration")
-    public void verifyNoProviders() {
+    void verifyNoProviders() throws Throwable {
         val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
         try (val webServer = new MockWebServer(9313,
             new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
@@ -51,7 +51,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
     @Test
     @Order(1)
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
         try (val webServer = new MockWebServer(9313,
             new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
@@ -68,7 +68,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
     @Test
     @Order(2)
-    public void verifyFailProvider() {
+    void verifyFailProvider() throws Throwable {
         val response = TestMultifactorAuthenticationProvider.ID.getBytes(StandardCharsets.UTF_8);
         try (val webServer = new MockWebServer(9313,
             new ByteArrayResource(response, "Output"), HttpStatus.UNAUTHORIZED)) {
@@ -85,7 +85,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
     @Test
     @Order(3)
-    public void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),

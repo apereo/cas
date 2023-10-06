@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +20,7 @@ class CasDefaultFlowUrlHandlerTests {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
-    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
+    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -34,7 +32,16 @@ class CasDefaultFlowUrlHandlerTests {
     }
 
     @Test
-    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
+    void verifyFlowIdWithAnchorTag() throws Throwable {
+        setupRequest("/cas", "/app", "/foo#this-exists-here");
+        request.setParameter("bar", "baz");
+        request.setParameter("qux", "quux");
+        val flowId = urlHandler.getFlowId(request);
+        assertEquals("foo", flowId);
+    }
+
+    @Test
+    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");

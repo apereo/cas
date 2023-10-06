@@ -48,10 +48,11 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
 
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-                                                final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+                                                final RegisteredService registeredService,
+                                                final WebApplicationService webApplicationService) {
         LOGGER.trace("Starting to encode attributes for release to service [{}]", registeredService);
         val newEncodedAttributes = new HashMap<>(attributes);
-        if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, webApplicationService)) {
             val cachedAttributesToEncode = initialize(newEncodedAttributes);
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
                 this.cipherExecutor, registeredService, webApplicationService);

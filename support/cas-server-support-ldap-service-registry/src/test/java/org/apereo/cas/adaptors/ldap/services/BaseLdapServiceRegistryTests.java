@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
-import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -17,15 +16,12 @@ import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.service-registry.ldap.ldap-url=ldap://localhost:10389",
@@ -60,25 +57,23 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceRegistryMapper;
 
-    public static Stream<Class<? extends RegisteredService>> getParameters() {
-        return AbstractServiceRegistryTests.getParameters();
-    }
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    public void verifySavingServiceChangesDn(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
-        val services = getServiceRegistry().load();
-        assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
-        val originalId = rs.getId();
-        assertNotNull(rs);
-        rs.setId(666);
-        assertNotNull(getServiceRegistry().save(rs));
-        assertNotEquals(rs.getId(), originalId);
+    @Test
+    void verifySavingServiceChangesDn() {
+        getRegisteredServiceTypes().forEach(registeredServiceClass -> {
+            getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
+            val services = getServiceRegistry().load();
+            assertFalse(services.isEmpty());
+            val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
+            val originalId = rs.getId();
+            assertNotNull(rs);
+            rs.setId(666);
+            assertNotNull(getServiceRegistry().save(rs));
+            assertNotEquals(rs.getId(), originalId);
 
-        assertNotNull(ldapServiceRegistryMapper.getIdAttribute());
-        assertNotNull(ldapServiceRegistryMapper.getObjectClass());
+            assertNotNull(ldapServiceRegistryMapper.getIdAttribute());
+            assertNotNull(ldapServiceRegistryMapper.getObjectClass());
+        });
     }
 
     @Test

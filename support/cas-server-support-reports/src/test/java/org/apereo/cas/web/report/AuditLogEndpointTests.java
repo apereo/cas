@@ -1,19 +1,14 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,29 +27,19 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
     @Qualifier("auditLogEndpoint")
     private AuditLogEndpoint auditLogEndpoint;
 
-    @BeforeAll
-    public static void setup() {
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(RegisteredServiceTestUtils.getAuthentication("casuser"));
-    }
-
     @Test
-    void verifyOperation() {
-        this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+    void verifyOperation() throws Throwable {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
         val results = auditLogEndpoint.getAuditLog(StringUtils.EMPTY);
         assertFalse(results.isEmpty());
     }
 
     @Test
-    void verifyOperationByInterval() {
-        this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+    void verifyOperationByInterval() throws Throwable {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
         val results = auditLogEndpoint.getAuditLog("PT10M");
-        assertFalse(results.isEmpty());
-    }
-
-    @Test
-    void verifyOperationByIntervalAndUser() {
-        this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
-        val results = auditLogEndpoint.getAuditLog("PT10M", null, null, "casuser", null);
         assertFalse(results.isEmpty());
     }
 }

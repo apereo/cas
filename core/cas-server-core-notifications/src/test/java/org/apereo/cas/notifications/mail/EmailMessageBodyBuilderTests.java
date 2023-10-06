@@ -1,19 +1,18 @@
 package org.apereo.cas.notifications.mail;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.Locale;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,9 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Mail")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class EmailMessageBodyBuilderTests {
+
     @Test
-    void verifyNoBody() {
+    void verifyNoBody() throws Throwable {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -37,7 +43,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileFound() {
+    void verifyLocalizedFileFound() throws Throwable {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -50,7 +56,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileNotFound() {
+    void verifyLocalizedFileNotFound() throws Throwable {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -63,7 +69,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -76,7 +82,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyTemplateOperation() {
+    void verifyTemplateOperation() throws Throwable {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -92,12 +98,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyInlineGroovyOperation() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        val cacheMgr = new GroovyScriptResourceCacheManager();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
-        ApplicationContextProvider.holdApplicationContext(appCtx);
+    void verifyInlineGroovyOperation() throws Throwable {
         val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -110,14 +111,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyGroovyOperation() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val cacheMgr = new GroovyScriptResourceCacheManager();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
-
-        ApplicationContextProvider.holdApplicationContext(appCtx);
+    void verifyGroovyOperation() throws Throwable {
         val props = new EmailProperties().setText("classpath:/GroovyMessageBody.groovy");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)

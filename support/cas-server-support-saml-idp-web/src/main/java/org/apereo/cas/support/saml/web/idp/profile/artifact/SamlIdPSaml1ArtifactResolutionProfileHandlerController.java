@@ -40,20 +40,19 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) throws Exception {
+                                     final HttpServletRequest request) throws Throwable {
         val ctx = decodeSoapRequest(request);
         val artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {
             val issuer = Objects.requireNonNull(artifactMsg).getIssuer().getValue();
-            val registeredService = verifySamlRegisteredService(issuer);
+            val registeredService = verifySamlRegisteredService(issuer, request);
             val adaptor = getSamlMetadataFacadeFor(registeredService, artifactMsg);
             if (adaptor.isEmpty()) {
-                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Cannot find metadata linked to " + issuer);
+                throw UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer));
             }
             val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade, registeredService);

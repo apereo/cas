@@ -53,7 +53,7 @@ class Cas10ResponseViewTests {
     }
 
     @Test
-    void verifySuccessView() throws Exception {
+    void verifySuccessView() throws Throwable {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
@@ -63,7 +63,7 @@ class Cas10ResponseViewTests {
     }
 
     @Test
-    void verifyFailureView() throws Exception {
+    void verifyFailureView() throws Throwable {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(false, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),

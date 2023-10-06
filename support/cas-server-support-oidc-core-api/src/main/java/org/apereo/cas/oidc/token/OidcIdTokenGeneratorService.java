@@ -2,11 +2,13 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
@@ -24,6 +26,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -67,7 +70,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
@@ -80,7 +83,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final OidcRegisteredService registeredService,
                                        final OAuth20ResponseTypes responseType,
-                                       final OAuth20GrantTypes grantType) {
+                                       final OAuth20GrantTypes grantType) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
@@ -123,10 +126,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
-            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).getFirst());
         }
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
-            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
         generateAccessTokenHash(accessToken, registeredService, claims);
 
@@ -196,14 +199,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         if (!mappedAcrValues.isEmpty()) {
             FunctionUtils.doIf(mappedAcrValues.size() == 1,
-                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.get(0)),
+                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.getFirst()),
                     __ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
                 .accept(mappedAcrValues);
         }
     }
 
     private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
-                                                       final RegisteredService registeredService) {
+                                                       final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
@@ -242,18 +245,23 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val mappedClaim = mapper.toMappedClaimName(claimName, registeredService);
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
-        return oidc.getDiscovery().getClaims().contains(claimName) || oidc.getDiscovery().getClaims().contains(mappedClaim);
+        val claims = oidc.getDiscovery().getClaims();
+        LOGGER.trace("Checking if any of [{}] are specified in the list of discovery claims [{}]", ImmutableSet.of(claimName, mappedClaim), claims);
+        return claims.contains(claimName) || claims.contains(mappedClaim) || isClaimDefinitionSupportedForRelease(mappedClaim);
     }
 
-    /**
-     * Handle mapped claim or default.
-     *
-     * @param claimName         the claim name
-     * @param registeredService the registered service
-     * @param principal         the principal
-     * @param claims            the claims
-     * @param defaultValue      the default value
-     */
+    private boolean isClaimDefinitionSupportedForRelease(final String claimName) {
+        val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        val claims = oidc.getDiscovery().getClaims();
+        val definitionName = getConfigurationContext().getAttributeDefinitionStore()
+            .locateAttributeDefinitionByName(claimName)
+            .filter(OidcAttributeDefinition.class::isInstance)
+            .map(AttributeDefinition::getKey)
+            .orElse(claimName);
+        LOGGER.trace("Checking if attribute definition [{}] is specified in the list of discovery claims [{}]", definitionName, claims);
+        return claims.contains(definitionName);
+    }
+
     protected void handleMappedClaimOrDefault(final String claimName,
                                               final RegisteredService registeredService,
                                               final Principal principal,
@@ -264,12 +272,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
     }
 
-    /**
-     * Gets oauth service ticket.
-     *
-     * @param tgt the tgt
-     * @return the o auth service ticket
-     */
     protected String getJwtId(final TicketGrantingTicket tgt) {
         val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
                                + OAuth20Constants.BASE_OAUTH20_URL + '/'
@@ -296,16 +298,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return oAuthServiceTicket.get().getKey();
     }
 
-    /**
-     * Generate access token hash string.
-     *
-     * @param accessToken       the access token
-     * @param registeredService the service
-     * @param claims            the claims
-     */
     protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
-                                           final JwtClaims claims) {
+                                           final JwtClaims claims) throws Throwable {
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(registeredService)

@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
@@ -44,7 +46,7 @@ import static org.mockito.Mockito.*;
 class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifySamlResponseAllSigned() throws Exception {
+    void verifySamlResponseAllSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -64,7 +66,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseWithIssuerEntityId() throws Exception {
+    void verifySamlResponseWithIssuerEntityId() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -83,7 +85,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseWithAttributeQuery() throws Exception {
+    void verifySamlResponseWithAttributeQuery() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -108,7 +110,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAllSignedEncrypted() throws Exception {
+    void verifySamlResponseAllSignedEncrypted() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -128,7 +130,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseAssertionSigned() throws Exception {
+    void verifySamlResponseAssertionSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -145,12 +147,12 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertNotNull(samlResponse);
         val assertions = samlResponse.getAssertions();
         assertFalse(assertions.isEmpty());
-        assertNull(assertions.get(0).getSubject().getNameID());
-        assertNotNull(assertions.get(0).getSubject().getEncryptedID());
+        assertNull(assertions.getFirst().getSubject().getNameID());
+        assertNotNull(assertions.getFirst().getSubject().getEncryptedID());
     }
 
     @Test
-    void verifySamlResponseResponseSigned() throws Exception {
+    void verifySamlResponseResponseSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -167,7 +169,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseNothingSigned() throws Exception {
+    void verifySamlResponseNothingSigned() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -185,7 +187,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifySamlResponseSha1SigningAndDigest() throws Exception {
+    void verifySamlResponseSha1SigningAndDigest() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -210,12 +212,12 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         val samlResponse = buildResponse(request, response, service,
             adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(samlResponse);
-        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getAssertions().get(0).getSignature().getSignatureAlgorithm());
+        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getAssertions().getFirst().getSignature().getSignatureAlgorithm());
         assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1, samlResponse.getSignature().getSignatureAlgorithm());
     }
 
     @Test
-    void verifySamlResponseSha256SigningAndDigest() throws Exception {
+    void verifySamlResponseSha256SigningAndDigest() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -246,12 +248,12 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         val samlResponse = buildResponse(request, response, service,
             adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(samlResponse);
-        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getAssertions().get(0).getSignature().getSignatureAlgorithm());
+        assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getAssertions().getFirst().getSignature().getSignatureAlgorithm());
         assertEquals(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, samlResponse.getSignature().getSignatureAlgorithm());
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithCBC() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithCBC() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -274,11 +276,11 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertTrue(samlResponse.getAssertions().isEmpty());
         assertFalse(samlResponse.getEncryptedAssertions().isEmpty());
         assertEquals(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128,
-            samlResponse.getEncryptedAssertions().get(0).getEncryptedData().getEncryptionMethod().getAlgorithm());
+            samlResponse.getEncryptedAssertions().getFirst().getEncryptedData().getEncryptionMethod().getAlgorithm());
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithGCM() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithGCM() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -301,11 +303,11 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertTrue(samlResponse.getAssertions().isEmpty());
         assertFalse(samlResponse.getEncryptedAssertions().isEmpty());
         assertEquals(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM,
-            samlResponse.getEncryptedAssertions().get(0).getEncryptedData().getEncryptionMethod().getAlgorithm());
+            samlResponse.getEncryptedAssertions().getFirst().getEncryptedData().getEncryptionMethod().getAlgorithm());
     }
 
     @Test
-    void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Exception {
+    void verifySamlResponseAllSignedEncryptedWithEncryptionOptional() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
 
@@ -325,6 +327,31 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         assertNotNull(samlResponse);
         assertFalse(samlResponse.getAssertions().isEmpty());
         assertTrue(samlResponse.getEncryptedAssertions().isEmpty());
+    }
+
+    @Test
+    void verifySamlResponseForUnsolicitedRequest() throws Throwable {
+        val request = buildHttpRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(false, false);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val extensions = samlProfileSamlResponseBuilder.newSamlObject(Extensions.class);
+        val requesterID = samlProfileSamlResponseBuilder.newSamlObject(RequesterID.class);
+        requesterID.setURI(casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
+        extensions.getUnknownXMLObjects().add(requesterID);
+        authnRequest.setExtensions(extensions);
+        val assertion = getAssertion();
+        val samlResponse = buildResponse(request, response, service,
+            adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(samlResponse);
+        assertNull(samlResponse.getInResponseTo());
+        val subject = samlResponse.getAssertions().getFirst().getSubject();
+        val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
+        assertNull(subjectConfirmation.getSubjectConfirmationData().getInResponseTo());
     }
 
     private MockHttpServletRequest buildHttpRequest() throws Exception {

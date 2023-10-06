@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -26,11 +25,10 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
@@ -46,17 +44,15 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -94,7 +90,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @Test
-    void verifyThrottle() throws Exception {
+    void verifyThrottle() throws Throwable {
         /* Ensure that repeated logins BELOW threshold rate are allowed */
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
@@ -109,8 +105,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
 
-    @SneakyThrows
-    protected void failLoop(final int trials, final int period, final int expected) {
+    protected void failLoop(final int trials, final int period, final int expected) throws Exception {
         /* Seed with something to compare against */
 
         login("mog", "badpassword", IP_ADDRESS);
@@ -123,11 +118,9 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
             }
         }));
     }
-
-    @SneakyThrows
     protected MockHttpServletResponse login(final String username,
                                             final String password,
-                                            final String fromAddress) {
+                                            final String fromAddress) throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setMethod("POST");
@@ -147,7 +140,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
                     credentials(username, password));
             response.setStatus(HttpServletResponse.SC_OK);
             authenticationManager.authenticate(transaction);
-        } catch (final AuthenticationException e) {
+        } catch (final Throwable e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             getThrottle().postHandle(request, response, getThrottle(), null);
         } finally {
@@ -158,6 +151,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -174,6 +168,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,

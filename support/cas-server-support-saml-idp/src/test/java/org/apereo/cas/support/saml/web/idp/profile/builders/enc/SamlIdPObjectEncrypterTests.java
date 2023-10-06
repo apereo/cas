@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
 class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
-    void verifyEncOptional() {
+    void verifyEncOptional() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         registeredService.setEncryptionOptional(true);
         registeredService.setEncryptionBlackListedAlgorithms(CollectionUtils.wrapArrayList("excludeAlg1"));
@@ -45,7 +45,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyEncBadService() {
+    void verifyEncBadService() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         registeredService.setServiceId("https://noenc.example.org");
         registeredService.setEncryptionOptional(true);
@@ -59,7 +59,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyEncNotOptional() {
+    void verifyEncNotOptional() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         registeredService.setServiceId("https://noenc.example.org");
         registeredService.setEncryptionOptional(false);
@@ -72,7 +72,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyEncNameId() throws Exception {
+    void verifyEncNameId() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         registeredService.setEncryptionBlackListedAlgorithms(CollectionUtils.wrapArrayList("excludeAlg1"));
         registeredService.setEncryptionWhiteListedAlgorithms(CollectionUtils.wrapArrayList("includeAlg1"));
@@ -94,7 +94,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyDecodeEncNameIdFails() throws Exception {
+    void verifyDecodeEncNameIdFails() throws Throwable {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,

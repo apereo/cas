@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService)
-    implements CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
+    implements CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> {
     /**
      * Gets json web key from jwks.
      *
@@ -41,27 +41,27 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
             .orElseGet(ArrayList::new);
         return new JsonWebKeySet(keys
             .stream()
-            .filter(k -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(k).isCurrent())
+            .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent())
             .map(PublicJsonWebKey.class::cast)
-            .filter(k -> k.getPrivateKey() != null)
+            .filter(key -> key.getPrivateKey() != null)
             .collect(Collectors.toList()));
     }
 
     @Override
-    public Optional<JsonWebKeySet> load(final OidcJsonWebKeyCacheKey cacheKey) {
+    public JsonWebKeySet load(final OidcJsonWebKeyCacheKey cacheKey) {
         val jwks = buildJsonWebKeySet(cacheKey);
         if (jwks.isEmpty()) {
             LOGGER.warn("JSON web keystore retrieved is empty for issuer [{}]", cacheKey.getIssuer());
-            return Optional.empty();
+            return null;
         }
         val keySet = jwks.get();
         if (keySet.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("JSON web keystore retrieved [{}] contains no JSON web keys", keySet);
-            return Optional.empty();
+            return null;
         }
         val keys = getJsonWebKeysFromJwks(keySet, cacheKey);
         LOGGER.debug("Found JSON web key as [{}]", keys);
-        return keys.getJsonWebKeys().isEmpty() ? Optional.empty() : Optional.of(keys);
+        return keys.getJsonWebKeys().isEmpty() ? null : keys;
     }
 
     /**
@@ -70,9 +70,9 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
      * @param resource the resource
      * @param cacheKey the cache key
      * @return the json web key set
-     * @throws Exception the exception
+     * @throws Throwable the exception
      */
-    JsonWebKeySet buildJsonWebKeySet(final Resource resource, final OidcJsonWebKeyCacheKey cacheKey) throws Exception {
+    JsonWebKeySet buildJsonWebKeySet(final Resource resource, final OidcJsonWebKeyCacheKey cacheKey) throws Throwable {
         val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
         return getJsonWebKeysFromJwks(jsonWebKeySet, cacheKey);
     }
@@ -99,10 +99,10 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
             }
             val badKeysCount = jsonWebKeySet.getJsonWebKeys()
                 .stream()
-                .filter(k ->
-                    StringUtils.isBlank(k.getAlgorithm())
-                    && StringUtils.isBlank(k.getKeyId())
-                    && StringUtils.isBlank(k.getKeyType())).count();
+                .filter(key ->
+                    StringUtils.isBlank(key.getAlgorithm())
+                    && StringUtils.isBlank(key.getKeyId())
+                    && StringUtils.isBlank(key.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                 LOGGER.warn("No valid JSON web keys could be found. The keys that are found in the keystore "
@@ -110,7 +110,7 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
                 return Optional.empty();
             }
             return Optional.of(jsonWebKeySet);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
         }
         return Optional.empty();
@@ -120,9 +120,9 @@ public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGenerator
      * Generate jwks resource.
      *
      * @return the resource
-     * @throws Exception the exception
+     * @throws Throwable the exception
      */
-    Resource generateJwksResource() throws Exception {
+    Resource generateJwksResource() throws Throwable {
         val resource = oidcJsonWebKeystoreGeneratorService().generate();
         LOGGER.debug("Loading default JSON web key from [{}]", resource);
         return resource;

@@ -20,15 +20,14 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -65,7 +65,7 @@ class TicketSerializersTests {
     private TicketSerializationManager ticketSerializationManager;
 
     @Test
-    void verifyTicketGrantingTicketSerialization() {
+    void verifyTicketGrantingTicketSerialization() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,14 +73,14 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyTransientSessionTicketSerialization() {
+    void verifyTransientSessionTicketSerialization() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.defaultTicketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value"));
         verifySerialization(ticket);
     }
 
     @Test
-    void verifyServiceTicketSerialization() {
+    void verifyServiceTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -91,7 +91,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyProxyGrantingTicketSerialization() {
+    void verifyProxyGrantingTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -106,7 +106,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    void verifyProxyTicketSerialization() {
+    void verifyProxyTicketSerialization() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);

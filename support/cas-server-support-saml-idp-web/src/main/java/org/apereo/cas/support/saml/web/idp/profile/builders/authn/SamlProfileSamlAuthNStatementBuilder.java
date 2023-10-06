@@ -61,7 +61,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val clientRemoteIpAddr = Optional.ofNullable(ClientInfoHolder.getClientInfo())
             .map(ClientInfo::getClientIpAddress)
             .orElse(StringUtils.EMPTY);
-        val hostAddress = StringUtils.defaultString(context.getRegisteredService().getSubjectLocality(), clientRemoteIpAddr);
+        val hostAddress = StringUtils.defaultIfBlank(context.getRegisteredService().getSubjectLocality(), clientRemoteIpAddr);
         LOGGER.debug("Built SAML2 subject locality address [{}] for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;

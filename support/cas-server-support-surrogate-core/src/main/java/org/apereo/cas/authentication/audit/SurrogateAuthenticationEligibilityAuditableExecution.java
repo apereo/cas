@@ -21,7 +21,7 @@ public class SurrogateAuthenticationEligibilityAuditableExecution extends BaseAu
     @Audit(action = AuditableActions.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION,
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER)
-    public AuditableExecutionResult execute(final AuditableContext context) {
+    public AuditableExecutionResult execute(final AuditableContext context) throws Throwable {
         return super.execute(context);
     }
 }

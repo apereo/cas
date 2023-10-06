@@ -63,41 +63,39 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             RequestValidatorTestUtils.SHARED_SECRET);
-        servicesManager.deleteAll();
         servicesManager.save(supportingService, nonSupportingService, promiscuousService);
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        val context = new JEEContext(request, response);
+        assertFalse(validator.validate(context));
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(supportingService.getClientId());
-        val session = request.getSession(true);
-        assertNotNull(session);
-        session.setAttribute(Pac4jConstants.USER_PROFILES,
-            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        
+        val session = storeProfileIntoSession(request, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(context));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
         profile.setId(nonSupportingService.getClientId());
         session.setAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertFalse(validator.validate(new JEEContext(request, response)));
+        assertFalse(validator.validate(context));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
         profile.setId(promiscuousService.getClientId());
         session.setAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(validator.validate(new JEEContext(request, response)));
+        assertTrue(validator.validate(context));
     }
 
     protected OAuth20GrantTypes getGrantType() {

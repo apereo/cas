@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class DelegatedAuthenticationErrorViewResolverTests {
     @Autowired
-    @Qualifier("pac4jErrorViewResolver")
+    @Qualifier("delegatedAuthenticationErrorViewResolver")
     private ErrorViewResolver resolver;
 
     @Autowired
@@ -38,19 +38,19 @@ class DelegatedAuthenticationErrorViewResolverTests {
     private Action delegatedAuthenticationAction;
 
     @Test
-    void verifyOperationWithEx() {
+    void verifyOperationWithEx() throws Throwable {
         assertNotNull(delegatedAuthenticationAction);
         
         val request = new MockHttpServletRequest();
         request.addParameter("templates/error", "failure");
-        request.setAttribute("jakarta.servlet.error.exception", new RuntimeException(new UnauthorizedServiceException("templates/error")));
+        request.setAttribute("jakarta.servlet.error.exception", UnauthorizedServiceException.denied("templates/error"));
         val mv = resolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertEquals(HttpStatus.FORBIDDEN, mv.getStatus());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW, mv.getViewName());
     }
 
     @Test
-    void verifyOperationWithoutEx() {
+    void verifyOperationWithoutEx() throws Throwable {
         val request = new MockHttpServletRequest();
         val mv = resolver.resolveErrorView(request, HttpStatus.INTERNAL_SERVER_ERROR, Map.of());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, mv.getViewName());

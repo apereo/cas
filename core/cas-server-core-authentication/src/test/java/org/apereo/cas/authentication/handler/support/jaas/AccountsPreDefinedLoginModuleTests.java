@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class AccountsPreDefinedLoginModuleTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val module = new AccountsPreDefinedLoginModule();
         assertThrowsWithRootCause(IllegalArgumentException.class, FailedLoginException.class, module::login);
         assertFalse(module.abort());

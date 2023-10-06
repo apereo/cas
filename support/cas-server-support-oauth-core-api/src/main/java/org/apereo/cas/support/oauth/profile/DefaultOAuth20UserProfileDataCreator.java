@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -11,7 +12,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,
         actionResolverName = AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER)
-    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) {
+    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) throws Throwable {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getObject().getServicesManager(), accessToken.getClientId());
 
@@ -52,17 +51,20 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID, accessToken.getClientId());
         modelAttributes.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, collectAttributes(principal, registeredService));
         finalizeProfileResponse(accessToken, modelAttributes, principal, registeredService);
+        LOGGER.debug("Final user profile attributes are [{}]", modelAttributes);
         return modelAttributes;
     }
 
     protected Map<String, List<Object>> collectAttributes(final Principal principal,
                                                           final RegisteredService registeredService) {
-        return principal.getAttributes();
+        val attributes = new HashMap<>(principal.getAttributes());
+        attributes.entrySet().removeIf(entry -> entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE));
+        return attributes;
     }
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
                                                               final WebContext context,
-                                                              final RegisteredService registeredService) {
+                                                              final RegisteredService registeredService) throws Throwable {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
         val authnAttributes = getConfigurationContext().getObject().getAuthenticationAttributeReleasePolicy()
@@ -70,14 +72,14 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
         attributes.putAll(authnAttributes);
         val operatingPrincipal = getConfigurationContext().getObject().getPrincipalFactory()
             .createPrincipal(authentication.getPrincipal().getId(), attributes);
-        
+
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", operatingPrincipal);
         val principal = configurationContext.getObject().getProfileScopeToAttributesFilter().filter(
             accessToken.getService(), operatingPrincipal, registeredService, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
         return principal;
     }
-    
+
     protected void finalizeProfileResponse(final OAuth20AccessToken accessTokenTicket,
                                            final Map<String, Object> modelAttributes,
                                            final Principal principal,

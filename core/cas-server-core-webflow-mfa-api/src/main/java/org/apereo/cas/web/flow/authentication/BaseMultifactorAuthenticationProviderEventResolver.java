@@ -23,13 +23,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
         super(webflowEventResolutionConfigurationContext);
     }
 
-    /**
-     * Resolve registered service in request context.
-     *
-     * @param requestContext the request context
-     * @return the registered service
-     */
-    protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) {
+    protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) throws Throwable {
         val resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
         if (resolvedService != null) {
             val service = getConfigurationContext().getServicesManager().findServiceBy(resolvedService);

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.net.URL;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,25 +44,25 @@ class Cas20ProxyHandlerTests {
     }
 
     @Test
-    void verifyValidProxyTicketWithoutQueryString() throws Exception {
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/"),
+    void verifyValidProxyTicketWithoutQueryString() throws Throwable {
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URI("https://www.google.com/").toURL(),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    void verifyValidProxyTicketWithQueryString() throws Exception {
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/?test=test"),
+    void verifyValidProxyTicketWithQueryString() throws Throwable {
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URI("https://www.google.com/?test=test").toURL(),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    void verifyNonValidProxyTicket() throws Exception {
+    void verifyNonValidProxyTicket() throws Throwable {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
 
         this.handler = new Cas20ProxyHandler(clientFactory.getObject(), new DefaultUniqueTicketIdGenerator());
 
-        assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL("http://www.rutgers.edu"),
+        assertNull(this.handler.handle(new HttpBasedServiceCredential(new URI("http://www.rutgers.edu").toURL(),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 }

@@ -50,7 +50,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
             .setMaxResults(1)
             .getResultList();
         if (!results.isEmpty()) {
-            val token = results.get(0);
+            val token = results.getFirst();
             val authnToken = decodePasswordlessAuthenticationToken(token.getToken());
             if (authnToken.isExpired()) {
                 LOGGER.warn("Token [{}] has expired", token);

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 class RedisObjectFactoryTests {
     @Test
-    void verifyRedisSearchCommandSupported() {
+    void verifyRedisSearchCommandSupported() throws Throwable {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
@@ -44,7 +44,7 @@ class RedisObjectFactoryTests {
 
 
     @Test
-    void verifyConnection() {
+    void verifyConnection() throws Throwable {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
@@ -57,7 +57,7 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    public void verifyConnectionURI() {
+    void verifyConnectionURI() throws Throwable {
         val props = new BaseRedisProperties();
         props.setUri("redis://localhost:6379");
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
@@ -65,7 +65,7 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    void verifyClusterConnection() {
+    void verifyClusterConnection() throws Throwable {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")
@@ -97,7 +97,7 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    void verifyNonDefaultClientConnectionOptions() {
+    void verifyNonDefaultClientConnectionOptions() throws Throwable {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")

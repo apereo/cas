@@ -1,5 +1,11 @@
 configurations.configureEach {
     resolutionStrategy {
+        capabilitiesResolution {
+            withCapability("com.google.collections:google-collections") {
+                selectHighestVersion()
+            }
+        }
+        
         if (!providers.systemProperty("skipVersionConflict").present) {
             failOnVersionConflict()
         }
@@ -19,8 +25,14 @@ configurations.configureEach {
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
+                if (requested.group == "com.google.guava" && requested.name == "guava")  {
+                    details.useVersion("$guavaVersion")
+                }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
+                }
+                if (requested.group == "org.springframework.amqp")  {
+                    details.useVersion("${springRabbitVersion}")
                 }
                 if (requested.group == "jakarta.activation")  {
                     details.useVersion("${jakartaActivationVersion}")
@@ -30,6 +42,9 @@ configurations.configureEach {
                 }
                 if (requested.name == "hibernate-validator") {
                     details.useVersion("${hibernateValidatorVersion}")
+                }
+                if (requested.name == "commons-lang3") {
+                    details.useVersion("${commonsLangVersion}")
                 }
                 if (requested.group == "org.hibernate.orm")  {
                     details.useVersion("${hibernateVersion}")
@@ -179,4 +194,7 @@ configurations.configureEach {
     exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+
+    exclude(group: "io.netty", module: "netty-transport-native-epoll")
+    exclude(group: "io.netty", module: "netty-transport-native-kqueue")
 }

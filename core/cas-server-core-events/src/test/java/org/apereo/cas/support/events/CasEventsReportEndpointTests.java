@@ -10,9 +10,8 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -32,9 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -45,7 +42,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -86,7 +82,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         publishEvent();
         assertFalse(casEventRepository.load().findAny().isEmpty());
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
@@ -107,7 +103,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    void verifyImportOperationAsJson() throws Exception {
+    void verifyImportOperationAsJson() throws Throwable {
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         val request = new MockHttpServletRequest();
         val event = new CasEvent()
@@ -124,7 +120,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    void verifyBulkImportAsZip() throws Exception {
+    void verifyBulkImportAsZip() throws Throwable {
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         endpoint.deleteAllEvents();
 

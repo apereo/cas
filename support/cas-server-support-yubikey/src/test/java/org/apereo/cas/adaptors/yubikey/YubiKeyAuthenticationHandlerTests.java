@@ -6,10 +6,10 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
-
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
@@ -19,23 +19,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
  * Test cases for {@link YubiKeyAuthenticationHandler}.
@@ -53,22 +42,14 @@ class YubiKeyAuthenticationHandlerTests {
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
     @BeforeEach
-    public void before() {
-        val ctx = mock(RequestContext.class);
-        when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
-        setRequestContext(ctx);
+    public void before() throws Exception {
+        val context = MockRequestContext.create();
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
     }
 
     @Test
-    void checkNoAuthN() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+    void checkNoAuthN() throws Exception {
+        MockRequestContext.create();
         val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(NullPointerException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }
@@ -85,7 +66,7 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    void checkSuccessAuthn() throws Exception {
+    void checkSuccessAuthn() throws Throwable {
         val client = mock(YubicoClient.class);
         val response = mock(VerificationResponse.class);
         when(response.getStatus()).thenReturn(ResponseStatus.OK);
@@ -96,13 +77,12 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    void checkFailsVerificationAuthn() throws Exception {
+    void checkFailsVerificationAuthn() throws Throwable {
         val client = mock(YubicoClient.class);
         when(client.verify(anyString())).thenThrow(new YubicoVerificationException("fails"));
         val handler = getHandler(client);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }
-
 
     @Test
     void checkReplayedAuthn() {

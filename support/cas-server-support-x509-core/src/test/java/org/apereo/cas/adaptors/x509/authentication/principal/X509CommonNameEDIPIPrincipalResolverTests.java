@@ -121,7 +121,7 @@ class X509CommonNameEDIPIPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyResolvePrincipalInternal(final X509Certificate certificate,
+    void verifyResolvePrincipalInternal(final X509Certificate certificate,
                                                final String expectedResult,
                                                final String alternatePrincipalAttribute,
                                                final X509AttributeExtractor x509AttributeExtractor,

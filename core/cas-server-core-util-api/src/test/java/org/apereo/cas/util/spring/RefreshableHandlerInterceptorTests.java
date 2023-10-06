@@ -1,13 +1,13 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,13 +17,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -44,7 +42,7 @@ class RefreshableHandlerInterceptorTests {
     private ObjectProvider<HandlerInterceptor> localeChangeHandlerInterceptor;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 
@@ -60,7 +58,7 @@ class RefreshableHandlerInterceptorTests {
     }
 
     @Test
-    void verifySupplierOperation() throws Exception {
+    void verifySupplierOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 

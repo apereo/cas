@@ -91,7 +91,7 @@ public class CasWebAppConfiguration {
         val mapping = new SimpleUrlHandlerMapping();
 
         mapping.setOrder(1);
-        mapping.setAlwaysUseFullPath(true);
+        mapping.getUrlPathHelper().setAlwaysUseFullPath(true);
         mapping.setRootHandler(rootController);
         val urls = new HashMap<String, Object>();
         urls.put("/", rootController);

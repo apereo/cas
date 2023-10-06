@@ -20,12 +20,12 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -36,14 +36,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -61,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -71,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -106,7 +107,7 @@ class MongoDbHealthIndicatorTests {
     }
 
     @Test
-    void verifyMonitor() {
+    void verifyMonitor() throws Throwable {
         val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
         val details = (Map) health.getDetails().get(MongoDbHealthIndicator.class.getSimpleName() + "-monitor");

@@ -145,7 +145,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @SuppressWarnings("JavaUtilDate")
     protected boolean calculateFailureThresholdRateAndCompare(final List<? extends ThrottledSubmission> failures) {
         if (failures.size() >= 2) {
-            val lastTime = DateTimeUtils.dateOf(failures.get(0).getValue()).getTime();
+            val lastTime = DateTimeUtils.dateOf(failures.getFirst().getValue()).getTime();
             val secondToLastTime = DateTimeUtils.dateOf(failures.get(1).getValue()).getTime();
             val difference = lastTime - secondToLastTime;
             val rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
@@ -167,7 +167,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      */
     protected String getUsernameParameterFromRequest(final HttpServletRequest request) {
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
-        return request.getParameter(StringUtils.defaultString(throttle.getUsernameParameter(), "username"));
+        return request.getParameter(StringUtils.defaultIfBlank(throttle.getUsernameParameter(), "username"));
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         val userToUse = getUsernameParameterFromRequest(request);
         val clientInfo = ClientInfoHolder.getClientInfo();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
-        val resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
+        val resource = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
         val context = new AuditActionContext(
             userToUse,
             resource,

@@ -3,10 +3,9 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.util.Locale;
 import java.util.Map;

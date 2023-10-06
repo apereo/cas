@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -60,7 +60,7 @@ class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         when(mockClient.getUserProfile(any(), any())).thenReturn(Optional.of(profile));
 
         val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);
 
         val config = new Config(mockClient);

@@ -26,7 +26,8 @@ public class DefaultCasSimpleMultifactorAuthenticationTicketFactory implements C
     private final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Override
-    public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) {
+    public CasSimpleMultifactorAuthenticationTicket create(final Service service,
+                                                           final Map<String, Serializable> properties) throws Throwable {
         val id = ticketIdGenerator.getNewTicketId(CasSimpleMultifactorAuthenticationTicket.PREFIX);
         return create(id, service, properties);
     }

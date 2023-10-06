@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,7 +16,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +60,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(url)
                 .build();

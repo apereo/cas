@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WatchableGroovyScriptResourceTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val file = File.createTempFile("file", ".groovy");
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
         try (val resource = new WatchableGroovyScriptResource(new FileSystemResource(file))) {

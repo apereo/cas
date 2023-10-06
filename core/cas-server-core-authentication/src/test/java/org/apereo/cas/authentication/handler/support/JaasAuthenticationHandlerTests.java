@@ -43,7 +43,7 @@ class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyWithValidCredentials() throws Exception {
+    void verifyWithValidCredentials() throws Throwable {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
@@ -53,7 +53,7 @@ class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsCredentials() throws Exception {
+    void verifyFailsCredentials() throws Throwable {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
@@ -65,7 +65,7 @@ class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyWithValidCredentialsPreDefined() throws Exception {
+    void verifyWithValidCredentialsPreDefined() throws Throwable {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");

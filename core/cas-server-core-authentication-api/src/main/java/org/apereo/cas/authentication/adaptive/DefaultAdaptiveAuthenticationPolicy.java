@@ -31,7 +31,8 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     @Override
-    public boolean apply(final RequestContext requestContext, final String userAgent, final GeoLocationRequest location) {
+    public boolean isAuthenticationRequestAllowed(final RequestContext requestContext, final String userAgent,
+                                                  final GeoLocationRequest location) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null || StringUtils.isBlank(userAgent)) {
             LOGGER.warn("No client IP or user-agent was provided. Skipping adaptive authentication policy...");
@@ -77,7 +78,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
                && RegexUtils.find(rejectBrowsers, userAgent);
     }
 
-    private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) {
+    private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) throws Throwable {
         LOGGER.trace("Located client IP address as [{}]", clientIp);
         val ipResult = ipAddressIntelligenceService.examine(requestContext, clientIp);
         if (ipResult == null || ipResult.isBanned()) {

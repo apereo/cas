@@ -5,14 +5,13 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Hazelcast")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasServicesStreamingHazelcastConfiguration.class,
     CasServicesStreamingConfiguration.class
 }, properties = {
@@ -40,7 +40,7 @@ class CasServicesStreamingHazelcastConfigurationTests {
     private CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }

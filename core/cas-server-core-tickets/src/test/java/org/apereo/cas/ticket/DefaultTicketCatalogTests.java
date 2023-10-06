@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -42,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketsSerializationConfiguration.class,
@@ -56,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
@@ -73,14 +77,14 @@ class DefaultTicketCatalogTests {
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Test
-    void verifyFindAll() {
+    void verifyFindAll() throws Throwable {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
     }
 
     @Test
-    void verifyByTicketType() {
+    void verifyByTicketType() throws Throwable {
         assertTrue(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyTicket.class).isPresent());
@@ -89,14 +93,14 @@ class DefaultTicketCatalogTests {
     }
 
     @Test
-    void verifyUpdateAndFind() {
+    void verifyUpdateAndFind() throws Throwable {
         val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).get();
         ticketCatalog.update(defn);
         assertTrue(ticketCatalog.contains(defn.getPrefix()));
     }
 
     @Test
-    void verifyContains() {
+    void verifyContains() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         assertTrue(ticketCatalog.contains(tgt.getPrefix()));
         assertNotNull(ticketCatalog.find(tgt));

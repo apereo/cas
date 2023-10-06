@@ -17,7 +17,7 @@
         <!-- Confirmation Dialog -->
         <div class="mdc-dialog" id="confirm-reg-dialog" role="alertdialog"
              aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
-            <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
+            <form method="post" id="fm1" class="fm-v clearfix" th:action="@{${'/' + activeFlowId} }">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
                         <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
@@ -26,8 +26,8 @@
                         </h1>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
-                                <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                     style="display: none" id="errorPanel">
+                                <div class="banner banner-danger alert alert-danger banner-dismissible" style="display: none" id="errorPanel">
+                                    <a href="#" class="close" onclick="$(this).parent().hide();" aria-label="close"><span class="mdi mdi-close-box"></span></a>
                                     <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
@@ -57,6 +57,7 @@
                                                        name="token"
                                                        id="token"
                                                        size="25"
+                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                        required
                                                        autocomplete="off"/>
                                             </label>
@@ -137,7 +138,7 @@
         <table>
             <tr>
                 <td>
-                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"/>
+                    <img id="imageQRCode" th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"/>
                 </td>
 
                 <td>
@@ -165,13 +166,13 @@
                         value="Confirm">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
-                <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="print" accesskey="p" type="button"
+                <button class="mdc-button mdc-button--raised btn btn-primary me-2" id="print" name="print" accesskey="p" type="button"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>
                 <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button"
-                        value="Cancel"
-                        onclick="location.href = location.href;"
+                        value="Cancel" id="cancel"
+                        onclick="location.href = document.getElementById('fm1').action;"
                         th:value="#{screen.pm.button.cancel}">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
                 </button>

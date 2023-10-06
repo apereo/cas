@@ -25,13 +25,13 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -49,13 +49,11 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -93,13 +91,13 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCreate() {
+    void verifyCreate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
 
-        var toSave = OneTimeTokenAccount.builder()
+        val toSave = OneTimeTokenAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
@@ -118,7 +116,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
@@ -148,7 +146,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() {
+    void verifyGet() throws Throwable {
         val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
@@ -173,7 +171,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCaseSensitivity() {
+    void verifyCaseSensitivity() throws Throwable {
         val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
@@ -199,7 +197,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetWithDecodedSecret() {
+    void verifyGetWithDecodedSecret() throws Throwable {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
@@ -225,12 +223,13 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         return UUID.randomUUID().toString();
     }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -259,12 +258,14 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         CasCoreWebConfiguration.class
     })
     static class SharedTestConfiguration {

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationPostProcessorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertEquals(Ordered.HIGHEST_PRECEDENCE, AuthenticationPostProcessor.none().getOrder());
         assertTrue(AuthenticationPostProcessor.none().supports(mock(Credential.class)));
         assertDoesNotThrow(AuthenticationPostProcessor.none()::destroy);

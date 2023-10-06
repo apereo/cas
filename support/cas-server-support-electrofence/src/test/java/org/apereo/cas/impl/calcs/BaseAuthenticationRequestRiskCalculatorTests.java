@@ -31,6 +31,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
@@ -40,7 +41,6 @@ import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.CasEventRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +56,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 import javax.net.ssl.HttpsURLConnection;
 
 /**
@@ -91,7 +90,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
     @BeforeEach
-    public void prepTest() throws Exception {
+    public void prepTest() throws Throwable {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
@@ -101,12 +100,13 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     static class ElectronicFenceTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -128,6 +128,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreServicesConfiguration.class,
         GoogleMapsGeoCodingConfiguration.class,
         CasCoreWebConfiguration.class,

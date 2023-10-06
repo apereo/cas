@@ -55,13 +55,13 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler(props, null,
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
 
-        try (val c = this.dataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
+        try (val connection = this.dataSource.getConnection()) {
+            try (val statement = connection.createStatement()) {
+                connection.setAutoCommit(true);
 
-                s.execute(getSqlInsertStatementToCreateUserAccount(0));
+                statement.execute(getSqlInsertStatementToCreateUserAccount(0));
                 for (var i = 0; i < 10; i++) {
-                    s.execute(getSqlInsertStatementToCreateUserAccount(i));
+                    statement.execute(getSqlInsertStatementToCreateUserAccount(i));
                 }
             }
         }
@@ -69,31 +69,30 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
 
     @AfterEach
     public void afterEachTest() throws Exception {
-        try (val c = this.dataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
-                s.execute("delete from cassearchusers;");
+        try (val connection = this.dataSource.getConnection()) {
+            try (val statement = connection.createStatement()) {
+                connection.setAutoCommit(true);
+                statement.execute("delete from cassearchusers;");
             }
         }
     }
 
     @Test
     void verifyNotFoundUser() {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
-
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyFoundUser() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
-        assertNotNull(handler.authenticate(c, mock(Service.class)));
+    void verifyFoundUser() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
+        assertNotNull(handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyMultipleUsersFound() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
-        assertNotNull(this.handler.authenticate(c, mock(Service.class)));
+    void verifyMultipleUsersFound() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
+        assertNotNull(this.handler.authenticate(credential, mock(Service.class)));
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

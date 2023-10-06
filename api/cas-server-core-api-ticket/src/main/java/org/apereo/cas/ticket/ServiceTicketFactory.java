@@ -27,8 +27,8 @@ public interface ServiceTicketFactory extends TicketFactory {
      * @param credentialProvided   current credential if provided as part of primary authn, may be false.
      * @param clazz                the clazz
      * @return the t
+     * @throws Throwable the throwable
      */
-    <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket,
-                                Service service,
-                                boolean credentialProvided, Class<T> clazz);
+    <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket, Service service,
+                                boolean credentialProvided, Class<T> clazz) throws Throwable;
 }

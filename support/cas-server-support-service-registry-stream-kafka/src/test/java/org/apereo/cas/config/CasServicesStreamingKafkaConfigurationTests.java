@@ -11,7 +11,6 @@ import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -19,13 +18,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Kafka")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasServicesStreamingKafkaConfiguration.class,
     CasServicesStreamingConfiguration.class
 }, properties = {
@@ -58,13 +57,13 @@ class CasServicesStreamingKafkaConfigurationTests {
     private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val o = DistributedCacheObject.<RegisteredService>builder()
             .value(RegisteredServiceTestUtils.getRegisteredService())
             .publisherIdentifier(new PublisherIdentifier())
@@ -79,7 +78,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyListener() throws Exception {
+    void verifyListener() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val publisherId = new PublisherIdentifier();
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -97,7 +96,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = registeredServiceDistributedCacheManager.get(registeredService);
         assertNull(obj);
@@ -128,7 +127,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyPublisher() {
+    void verifyPublisher() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,

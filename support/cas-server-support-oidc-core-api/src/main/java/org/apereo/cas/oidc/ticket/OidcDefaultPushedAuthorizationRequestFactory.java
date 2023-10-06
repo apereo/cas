@@ -38,7 +38,7 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     }
 
     @Override
-    public OidcPushedAuthorizationRequest create(final AccessTokenRequestContext holder) throws Exception {
+    public OidcPushedAuthorizationRequest create(final AccessTokenRequestContext holder) throws Throwable {
         val request = SerializationUtils.serialize(holder);
         val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
@@ -48,7 +48,7 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     }
 
     @Override
-    public AccessTokenRequestContext toAccessTokenRequest(final OidcPushedAuthorizationRequest authzRequest) throws Exception {
+    public AccessTokenRequestContext toAccessTokenRequest(final OidcPushedAuthorizationRequest authzRequest) {
         val decodedRequest = EncodingUtils.decodeBase64(authzRequest.getAuthorizationRequest());
         return SerializationUtils.decodeAndDeserializeObject(decodedRequest,
             CipherExecutor.noOp(), AccessTokenRequestContext.class);

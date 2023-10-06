@@ -3,6 +3,7 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,8 +30,8 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         val otp = requestContext.getRequestParameters().get(WebflowConstants.OTP);
         val flowScope = requestContext.getFlowScope();
@@ -40,7 +41,7 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
             credential.setOtp(otp);
             LOGGER.debug("Received OTP: [{}] for login: [{}]", otp, login);
             WebUtils.putCredential(requestContext, credential);
-            return this.casWebflowEventResolver.resolveSingle(requestContext);
+            return resolveEvent(requestContext);
         }
         if (StringUtils.isNotBlank(sessionId)) {
             val response = service.checkPushResult(login, sessionId);
@@ -52,7 +53,7 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
                 credential.setAlreadyAuthenticated(true);
                 LOGGER.debug("User: [{}] validated push for sessionId: [{}] and device: [{}]", login, sessionId, deviceName);
                 WebUtils.putCredential(requestContext, credential);
-                return this.casWebflowEventResolver.resolveSingle(requestContext);
+                return resolveEvent(requestContext);
             }
             if (result == InweboResult.WAITING) {
                 LOGGER.trace("Waiting for user to validate on mobile/desktop");
@@ -64,6 +65,10 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
             }
         }
         return error();
+    }
+
+    private Event resolveEvent(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> casWebflowEventResolver.resolveSingle(requestContext));
     }
 
 }

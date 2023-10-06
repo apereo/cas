@@ -95,14 +95,13 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -129,7 +128,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
-
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -139,7 +137,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -280,7 +277,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
-    protected LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache;
+    protected LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
@@ -421,7 +418,7 @@ public abstract class AbstractOidcTests {
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         this.applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
@@ -459,19 +456,19 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
-    protected OAuth20AccessToken getAccessToken(final Principal principal) throws Exception {
+    protected OAuth20AccessToken getAccessToken(final Principal principal) throws Throwable {
         return getAccessToken(principal, StringUtils.EMPTY, "clientid");
     }
 
-    protected OAuth20AccessToken getAccessToken() throws Exception {
+    protected OAuth20AccessToken getAccessToken() throws Throwable {
         return getAccessToken(StringUtils.EMPTY, "clientid");
     }
 
-    protected OAuth20AccessToken getAccessToken(final String clientId) throws Exception {
+    protected OAuth20AccessToken getAccessToken(final String clientId) throws Throwable {
         return getAccessToken(StringUtils.EMPTY, clientId);
     }
 
-    protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Exception {
+    protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         return getAccessToken(principal, idToken, clientId);
     }
@@ -479,7 +476,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20AccessToken getAccessToken(
         final Principal principal,
         final String idToken,
-        final String clientId) throws Exception {
+        final String clientId) throws Throwable {
         val code = addCode(principal, getOidcRegisteredService());
 
         val accessToken = mock(OAuth20AccessToken.class);
@@ -500,7 +497,7 @@ public abstract class AbstractOidcTests {
 
 
     protected OAuth20Code addCode(final Principal principal,
-                                  final OAuthRegisteredService registeredService) throws Exception {
+                                  final OAuthRegisteredService registeredService) throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
@@ -515,6 +512,7 @@ public abstract class AbstractOidcTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class
     })

@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.Ordered;
 
 import java.io.Serial;
 import java.util.List;
@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -48,20 +49,20 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test
-    void verifyDefaultOperation() {
+    void verifyDefaultOperation() throws Throwable {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
         when(input.getName()).thenCallRealMethod();
-        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertEquals(ServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, input.getOrder());
         assertNotNull(input.getName());
         assertTrue(input.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(defaultServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
+        assertEquals(ServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
             webApplicationServiceFactory.createService("https://example.org/test"));
@@ -70,7 +71,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    void verifyExtendedServices() {
+    void verifyExtendedServices() throws Throwable {
         val service = new ExtendedRegisteredService();
         service.setServiceId("https://\\w+.org.+");
         service.setId(100);
@@ -80,7 +81,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    void verifyUnmatchedExtendedServices() {
+    void verifyUnmatchedExtendedServices() throws Throwable {
         val service = new ExtendedRegisteredService() {
             @Serial
             private static final long serialVersionUID = 3435937253967470900L;

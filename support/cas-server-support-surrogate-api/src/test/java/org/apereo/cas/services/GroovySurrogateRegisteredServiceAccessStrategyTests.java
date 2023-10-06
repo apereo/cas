@@ -20,35 +20,36 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyServices")
 class GroovySurrogateRegisteredServiceAccessStrategyTests {
     @Test
-    void verifySurrogateDisabled() {
+    void verifySurrogateDisabled() throws Throwable {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertFalse(executeStrategy("casuser-disabled", true, strategy));
     }
 
-    private static boolean executeStrategy(final String principal, final boolean surrogate, final GroovySurrogateRegisteredServiceAccessStrategy strategy) {
+    private static boolean executeStrategy(final String principal, final boolean surrogate,
+                                           final GroovySurrogateRegisteredServiceAccessStrategy strategy) throws Throwable {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId(principal)
             .attributes(surrogate ? CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true) : Map.of())
             .build();
-        return strategy.doPrincipalAttributesAllowServiceAccess(request);
+        return strategy.authorizeRequest(request);
     }
 
     @Test
-    void verifySurrogateFails() {
+    void verifySurrogateFails() throws Throwable {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertFalse(executeStrategy("casuser-fail", true, strategy));
     }
 
     @Test
-    void verifySurrogateAllowed() {
+    void verifySurrogateAllowed() throws Throwable {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertTrue(executeStrategy("casuser-enabled", true, strategy));
     }
 
     @Test
-    void verifyNoSurrogateSession() {
+    void verifyNoSurrogateSession() throws Throwable {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertTrue(executeStrategy("casuser", false, strategy));

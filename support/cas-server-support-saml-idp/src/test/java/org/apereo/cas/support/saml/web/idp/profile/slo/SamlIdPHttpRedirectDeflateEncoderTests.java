@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
     @Order(1)
-    public void verify() throws Exception {
+    void verify() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

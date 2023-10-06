@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Hazelcast")
 class HazelcastBannerContributorTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val c = new HazelcastBannerContributor();
         val builder = new StringBuilder();
         c.contribute(new Formatter(builder), new MockEnvironment());

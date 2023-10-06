@@ -7,8 +7,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -21,16 +21,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,7 +38,7 @@ class AcceptableUsagePolicyVerifyActionTests {
     @TestConfiguration(value = "AcceptableUsagePolicyTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class AcceptableUsagePolicyTestConfiguration {
-        
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
@@ -54,7 +47,6 @@ class AcceptableUsagePolicyVerifyActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(AcceptableUsagePolicyTestConfiguration.class)
     class VerificationSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
@@ -62,61 +54,51 @@ class AcceptableUsagePolicyVerifyActionTests {
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, acceptableUsagePolicyVerifyAction.execute(context).getId());
         }
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT, acceptableUsagePolicyVerifyAction.execute(context).getId());
         }
 
         @Test
-        void verifyActionAccepted() throws Exception {
+        void verifyActionAccepted() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
             acceptableUsagePolicyRepository.submit(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, acceptableUsagePolicyVerifyAction.execute(context).getId());
         }
 
-
         @Test
-        void verifyActionWithService() throws Exception {
+        void verifyActionWithService() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
             policy.setEnabled(false);
             registeredService.setAcceptableUsagePolicy(policy);
@@ -126,7 +108,6 @@ class AcceptableUsagePolicyVerifyActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.acceptable-usage-policy.core.enabled=false")
     class NoOpSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
@@ -134,21 +115,19 @@ class AcceptableUsagePolicyVerifyActionTests {
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        void verifyAction() throws Exception {
+        void verifyAction() throws Throwable {
             val user = UUID.randomUUID().toString();
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket(user));
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
             assertNull(acceptableUsagePolicyVerifyAction.execute(context));
         }
 
         @Test
-        void verifyNoOpRepository() {
+        void verifyNoOpRepository() throws Throwable {
             val context = new MockRequestContext();
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
             assertTrue(acceptableUsagePolicyRepository.fetchPolicy(context).isEmpty());
             assertFalse(acceptableUsagePolicyRepository.submit(context));
             assertTrue(acceptableUsagePolicyRepository.verify(context).getStatus().isUndefined());

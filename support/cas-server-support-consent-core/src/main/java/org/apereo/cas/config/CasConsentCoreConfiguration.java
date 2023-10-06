@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -61,6 +62,7 @@ public class CasConsentCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentEngine consentEngine(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
             final ConsentDecisionBuilder consentDecisionBuilder,
@@ -68,7 +70,8 @@ public class CasConsentCoreConfiguration {
             @Qualifier(ConsentRepository.BEAN_NAME)
             final ConsentRepository consentRepository) {
             AnnotationAwareOrderComparator.sortIfNecessary(builders);
-            return new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties, builders);
+            return new DefaultConsentEngine(consentRepository, consentDecisionBuilder,
+                casProperties, builders, applicationContext);
         }
     }
 
@@ -130,7 +133,7 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Exception {
+        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Throwable {
             val location = casProperties.getConsent().getJson().getLocation();
             if (location != null) {
                 LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "

@@ -75,7 +75,7 @@ public class SamlMetadataUIConfiguration {
         val splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(resourceArray);
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
             val arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
-            val metadataFile = arr.get(0);
+            val metadataFile = arr.getFirst();
             val signingKey = arr.size() > 1 ? arr.get(1) : null;
             val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {

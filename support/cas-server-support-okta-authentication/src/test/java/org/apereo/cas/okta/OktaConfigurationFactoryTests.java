@@ -1,6 +1,5 @@
 package org.apereo.cas.okta;
 
-import org.apereo.cas.config.OktaConfigurationFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 
@@ -41,7 +40,7 @@ class OktaConfigurationFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(8923, HttpStatus.OK)) {
             webServer.start();
             assertNotNull(OktaConfigurationFactory.buildAuthenticationClient(casProperties.getAuthn().getOkta()));

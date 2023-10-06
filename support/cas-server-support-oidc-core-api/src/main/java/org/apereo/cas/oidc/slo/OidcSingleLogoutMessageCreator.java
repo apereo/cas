@@ -33,7 +33,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
     private final ObjectProvider<OidcConfigurationContext> configurationProvider;
 
     @Override
-    public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
+    public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
         val configurationContext = configurationProvider.getObject();
 
         val builder = SingleLogoutMessage.builder();

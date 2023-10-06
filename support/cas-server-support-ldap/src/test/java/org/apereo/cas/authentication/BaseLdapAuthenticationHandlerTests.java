@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -33,6 +34,7 @@ import org.jooq.lambda.UncheckedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -54,6 +56,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -67,6 +70,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -88,7 +92,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateFailure() {
+    void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList()
@@ -96,7 +100,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateSuccess() {
+    void verifyAuthenticateSuccess() throws Throwable {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
@@ -112,7 +116,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         return new String[]{"cn", "description"};
     }
 
-    String getUsername() {
+    String getUsername() throws Exception {
         return "admin";
     }
 

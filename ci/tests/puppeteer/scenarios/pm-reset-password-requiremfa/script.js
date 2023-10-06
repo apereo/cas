@@ -4,14 +4,14 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(2000);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
     await page.waitForTimeout(2000);
 
     await cas.type(page,'#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
     await cas.screenshot(page);
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(4000);
     await cas.screenshot(page);
 
     await page.waitForTimeout(1000);

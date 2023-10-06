@@ -3,18 +3,16 @@ package org.apereo.cas.web.security.authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @EnabledIfListeningOnPort(port = 10389)
-@SpringBootTest(classes = RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
+},
     properties = {
         "cas.monitor.endpoints.ldap.ldap-authz.group-filter=businessCategory={user}",
         "cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=ou=people,dc=example,dc=org",
@@ -43,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
-    void verifyAuthorizedByGroup() {
+    void verifyAuthorizedByGroup() throws Throwable {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();

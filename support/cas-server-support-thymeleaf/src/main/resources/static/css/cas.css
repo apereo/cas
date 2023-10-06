@@ -4,7 +4,7 @@
 :root {
     --mdc-text-button-label-text-color: #f7f7f7;
     --mdc-theme-error: #d9534f;
-    --cas-theme-primary: #153e50;
+    --cas-theme-primary: #044561;
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
     --cas-theme-button-bg: #26418f;
     --cas-theme-primary-light: #006d85;
@@ -233,7 +233,7 @@ button.close {
 .banner-success {
     border-color: var(--cas-theme-success);
     color: var(--cas-theme-primary, #153e50);
-    background-color: #b3e7f8;
+    background-color: #adf096;
 }
 
 .banner-dismissible {
@@ -244,7 +244,7 @@ button.close {
     position: absolute;
     top: 0;
     right: 0;
-    padding: .75rem 1.25rem;
+    padding: 0.05rem 0.05rem;
     color: inherit;
 }
 
@@ -414,12 +414,12 @@ button.close {
     color: var(--cas-theme-primary, #153e50);
 }
 
-.mdc-button--outline:not(:disabled) {
+.mdc-button--outline:not(:disabled, .reveal-password) {
     background-color: #428bca;
     border-radius: 12px 4px;
 }
 
-.mdc-button--raised:not(:disabled) {
+.mdc-button--raised:not(:disabled, .reveal-password) {
     margin-right: 4px;
     border-radius: 12px 4px;
     background-color: var(--cas-theme-primary, #153E50);
@@ -513,6 +513,10 @@ button.close {
 
 .mw-50 {
     max-width: 50%;
+}
+
+.mw-25 {
+    max-width: 25%;
 }
 
 .border-rounded {

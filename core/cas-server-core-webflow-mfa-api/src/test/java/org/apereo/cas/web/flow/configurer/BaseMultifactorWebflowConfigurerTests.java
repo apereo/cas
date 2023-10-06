@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -39,6 +40,9 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     /**
      * Ensures that, for every transition within this MFA flow, the target
      * state is present within the flow.
@@ -60,7 +64,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -72,7 +76,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    void verifyTrustedDevice() {
+    void verifyTrustedDevice() throws Throwable {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());

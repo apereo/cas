@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasReloadableMessageBundleTests {
 
     @Test
-    void verifyDefaultMessage() {
+    void verifyDefaultMessage() throws Throwable {
         val bundle = new CasReloadableMessageBundle();
         assertNull(bundle.getMessage("cas.message",
             ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
     }
 
     @Test
-    void verifyMessage() {
+    void verifyMessage() throws Throwable {
         val bundle = new CasReloadableMessageBundle();
         bundle.setBasenames("messages");
         assertNull(bundle.getMessage("cas.message",

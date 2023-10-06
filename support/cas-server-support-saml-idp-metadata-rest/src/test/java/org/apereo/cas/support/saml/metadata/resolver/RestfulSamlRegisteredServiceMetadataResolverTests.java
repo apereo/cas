@@ -31,7 +31,7 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyRestEndpointProducesMetadata() throws Exception {
+    void verifyRestEndpointProducesMetadata() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("SAML Wiki Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @Tag("Hibernate")
 class JpaBeansTests {
     @Test
-    void verifyConnectionValidity() throws Exception {
+    void verifyConnectionValidity() throws Throwable {
         val ds = mock(CloseableDataSource.class);
         when(ds.getConnection()).thenThrow(new RuntimeException());
         assertFalse(JpaBeans.isValidDataSourceConnection(ds, 1));

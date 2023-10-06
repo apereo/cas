@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

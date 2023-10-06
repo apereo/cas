@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,9 +10,9 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledOnOs(OS.LINUX)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreHttpConfiguration.class
 }, properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
 class BlockingRadiusServerRadSecTransportTests {
@@ -35,7 +35,7 @@ class BlockingRadiusServerRadSecTransportTests {
     private CasSSLContext casSslContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)

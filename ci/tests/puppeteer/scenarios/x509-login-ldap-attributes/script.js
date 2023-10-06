@@ -7,7 +7,7 @@ const request = require('request');
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
@@ -25,8 +25,8 @@ const request = require('request');
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null);
 
-    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
-    console.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
+    await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    await cas.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
@@ -57,7 +57,7 @@ const request = require('request');
 
     });
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

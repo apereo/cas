@@ -1,16 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,24 +27,36 @@ class GroovyRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void checkDefaultAuthzStrategyConfig() {
-        val authz = new GroovyRegisteredServiceAccessStrategy();
-        authz.setGroovyScript("classpath:accessstrategy.groovy");
-        assertTrue(authz.isServiceAccessAllowed());
-        assertTrue(authz.isServiceAccessAllowedForSso());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("test").build()));
-        assertNull(authz.getUnauthorizedRedirectUrl());
-        assertNull(authz.getDelegatedAuthenticationPolicy());
-        assertNotNull(authz.getRequiredAttributes());
+    void checkDefaultAuthzStrategyConfig() throws Throwable {
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
+        assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        assertTrue(accessStrategy.isServiceAccessAllowedForSso(RegisteredServiceTestUtils.getRegisteredService()));
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .service(RegisteredServiceTestUtils.getService2())
+            .principalId(UUID.randomUUID().toString())
+            .build();
+        assertTrue(accessStrategy.authorizeRequest(request));
+        assertNull(accessStrategy.getUnauthorizedRedirectUrl());
+        assertNull(accessStrategy.getDelegatedAuthenticationPolicy());
+        assertNotNull(accessStrategy.getRequiredAttributes());
+    }
+
+    @Test
+    void verifyFailingOps() throws Throwable {
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:Unknown.groovy");
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null, null));
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowedForSso(null));
+        assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.authorizeRequest(null));
     }
 
     @Test
     void verifySerializationToJson() throws IOException {
-        val authz = new GroovyRegisteredServiceAccessStrategy();
-        authz.setGroovyScript("classpath:accessstrategy.groovy");
-        MAPPER.writeValue(JSON_FILE, authz);
-
+        val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
+        accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
+        MAPPER.writeValue(JSON_FILE, accessStrategy);
         val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
-        assertEquals(authz, strategyRead);
+        assertEquals(accessStrategy, strategyRead);
     }
 }

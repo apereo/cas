@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML1")
 class SamlAttributeEncoderTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val original = CoreAuthenticationTestUtils.getAttributes();
         original.put("address", EncodingUtils.hexEncode("123 Main Street"));
         val attributes = ProtocolAttributeEncoder.decodeAttributes(original, CoreAuthenticationTestUtils.getRegisteredService(),

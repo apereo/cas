@@ -7,11 +7,11 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
-    console.log(`${response.status()} ${response.statusText()}`);
+    await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     
     try {
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
 
         await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
@@ -21,7 +21,7 @@ const assert = require("assert");
         await page.waitForTimeout(5000);
         await cas.screenshot(page);
 
-        await cas.loginDuoSecurityBypassCode(page, "universal", "duocode");
+        await cas.loginDuoSecurityBypassCode(page,"duocode");
         await page.waitForTimeout(5000);
         await cas.screenshot(page);
 

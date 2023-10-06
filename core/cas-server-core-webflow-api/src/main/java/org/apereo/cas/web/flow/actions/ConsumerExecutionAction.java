@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  */
 @RequiredArgsConstructor
 @Accessors(chain = true)
-public class ConsumerExecutionAction implements Action {
+public class ConsumerExecutionAction extends BaseCasWebflowAction {
     /**
      * Consumer action that does nothing and returns null, effectively being a no-op.
      */
@@ -39,14 +39,11 @@ public class ConsumerExecutionAction implements Action {
         response.setStatus(HttpStatus.NO_CONTENT.value());
         ctx.getExternalContext().recordResponseComplete();
     });
-    
     private final Consumer<RequestContext> task;
-
     @Setter
     private String eventId;
-
     @Override
-    public Event execute(final RequestContext requestContext) {
+    public Event doExecuteInternal(final RequestContext requestContext) {
         this.task.accept(requestContext);
         return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
     }

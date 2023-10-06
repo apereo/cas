@@ -26,13 +26,13 @@ class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         servicesManager.deleteAll();
         super.initialize();
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         servicesManager.save(getOidcRegisteredService(id));
 

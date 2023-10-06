@@ -2,7 +2,6 @@ package org.apereo.cas.util.io;
 
 import org.apereo.cas.util.function.FunctionUtils;
 
-import com.sun.nio.file.SensitivityWatchEventModifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -59,7 +58,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        FunctionUtils.doUnchecked(__ -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
+        FunctionUtils.doUnchecked(__ -> watchablePath.register(this.watcher, KINDS));
     }
 
     @Override
@@ -92,9 +91,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     @Override
     public void start(final String name) {
         LOGGER.trace("Starting watcher thread");
-        thread = new Thread(this);
-        thread.setName(name);
-        thread.start();
+        thread = Thread.ofVirtual().name(name).start(this);
     }
 
     @Override

@@ -7,18 +7,14 @@ import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,7 +33,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeCredentialMetadata() {
+    void verifyMergeCredentialMetadata() throws Throwable {
         val credential1 = getCredential();
         credential1.setCredentialMetadata(new BasicCredentialMetadata(credential1, Map.of("P1", "V1")));
         val credential2 = getCredential();
@@ -56,14 +52,14 @@ class DefaultAuthenticationBuilderTests {
         val authentication = builder.build();
         assertNotNull(authentication);
         assertEquals(1, authentication.getCredentials().size());
-        val credentialMetaData = authentication.getCredentials().get(0).getCredentialMetadata();
+        val credentialMetaData = authentication.getCredentials().getFirst().getCredentialMetadata();
         assertEquals(2, credentialMetaData.getProperties().size());
         assertTrue(credentialMetaData.getProperties().containsKey("P1"));
         assertTrue(credentialMetaData.getProperties().containsKey("P2"));
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
 
@@ -81,7 +77,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeOperation() {
+    void verifyMergeOperation() throws Throwable {
         val builder1 = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         builder1.mergeAttribute("key", 12345);
         builder1.mergeAttribute("key", CollectionUtils.wrapList(54321, 998877));
@@ -101,7 +97,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyUpdateOperation() {
+    void verifyUpdateOperation() throws Throwable {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
@@ -116,13 +112,13 @@ class DefaultAuthenticationBuilderTests {
         builder2.addWarning(new DefaultMessageDescriptor("code"));
         val authn2 = builder2.build();
 
-        authn.updateAll(authn2);
+        authn.replaceAttributes(authn2);
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
     }
 
     @Test
-    void verifyMergeAttributes() {
+    void verifyMergeAttributes() throws Throwable {
         val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
             .mergeAttributes(Map.of("cn", List.of("cn2")))
             .build();

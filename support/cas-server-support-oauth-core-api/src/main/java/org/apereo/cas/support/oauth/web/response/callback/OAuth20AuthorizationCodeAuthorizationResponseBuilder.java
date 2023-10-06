@@ -42,7 +42,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
         val authentication = holder.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(holder.getService(), authentication,
@@ -77,8 +77,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
                                                            final OAuth20Code code) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
+        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
 
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
 

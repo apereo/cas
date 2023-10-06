@@ -6,13 +6,27 @@ package org.apereo.cas.pm;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
 public interface PasswordValidationService {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "passwordValidationService";
+
     /**
      * Validate password.
      *
-     * @param bean       the bean
-     * @return true/false
+     * @param bean the bean
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean isValid(PasswordChangeRequest bean);
+    boolean isValid(PasswordChangeRequest bean) throws Throwable;
+
+    /**
+     * Does password comply with password policy.
+     *
+     * @param password the password
+     * @return the boolean
+     * @throws Throwable the throwable
+     */
+    boolean isAcceptedByPasswordPolicy(String password) throws Throwable;
 }

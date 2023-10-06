@@ -71,6 +71,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
+    @JsonProperty("multifactorAuthenticationProvider")
+    @Column(name = "multifactorAuthenticationProvider", nullable = true)
+    private String multifactorAuthenticationProvider;
+    
     public MultifactorAuthenticationTrustRecord() {
         this.id = System.currentTimeMillis();
     }
@@ -86,14 +90,14 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal,
                                                                    final String geography,
                                                                    final String fingerprint) {
-        val r = new MultifactorAuthenticationTrustRecord();
+        val record = new MultifactorAuthenticationTrustRecord();
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        r.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
-        r.setPrincipal(principal);
-        r.setDeviceFingerprint(fingerprint);
-        r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
-        r.neverExpire();
-        return r;
+        record.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
+        record.setPrincipal(principal);
+        record.setDeviceFingerprint(fingerprint);
+        record.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
+        record.neverExpire();
+        return record;
     }
 
     /**

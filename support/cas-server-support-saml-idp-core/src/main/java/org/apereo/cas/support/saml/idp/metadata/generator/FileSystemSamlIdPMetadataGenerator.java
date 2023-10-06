@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,7 +39,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val encCert = getConfigurationContext().getSamlIdPMetadataLocator()
             .getEncryptionCertificate(registeredService).getFile();
         val encKey = getConfigurationContext().getSamlIdPMetadataLocator()
@@ -49,7 +50,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val signingCert = getConfigurationContext().getSamlIdPMetadataLocator()
             .resolveSigningCertificate(registeredService).getFile();
         val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
@@ -60,7 +61,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
+    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
         LOGGER.info("Writing SAML2 metadata to [{}]", metadataFile);
         
@@ -138,8 +139,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        generate(Optional.empty());
+    public void afterPropertiesSet() {
+        FunctionUtils.doUnchecked(u -> generate(Optional.empty()));
     }
 
     /**
@@ -147,7 +148,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
      *
      * @throws Exception the exception
      */
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         getConfigurationContext().getSamlIdPMetadataLocator().initialize();
         generate(Optional.empty());
     }

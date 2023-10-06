@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ThrottledSubmissionHandlerInterceptorTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val input = new ThrottledSubmissionHandlerInterceptor() {
         };
         assertNotNull(input.getName());

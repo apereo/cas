@@ -2,9 +2,9 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.support.InvalidCookieException;
 import com.google.common.base.Splitter;
@@ -96,7 +96,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     protected String obtainValueFromCompoundCookie(final String value, final HttpServletRequest request) {
         val cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(value);
 
-        val cookieValue = cookieParts.get(0);
+        val cookieValue = cookieParts.getFirst();
         if (!cookieProperties.isPinToSession()) {
             LOGGER.trace("Cookie session-pinning is disabled. Returning cookie value as it was provided");
             return cookieValue;

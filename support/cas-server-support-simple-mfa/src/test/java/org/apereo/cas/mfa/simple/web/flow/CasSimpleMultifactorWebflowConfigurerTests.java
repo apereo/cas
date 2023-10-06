@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-
 import static org.apereo.cas.web.flow.CasWebflowConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +39,6 @@ class CasSimpleMultifactorWebflowConfigurerTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Getter
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
@@ -62,7 +59,6 @@ class CasSimpleMultifactorWebflowConfigurerTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Getter
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SurrogateTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
@@ -74,7 +70,7 @@ class CasSimpleMultifactorWebflowConfigurerTests {
         }
 
         @Test
-        void verifySurrogateOperation() {
+        void verifySurrogateOperation() throws Throwable {
             val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState(getMultifactorEventId());
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

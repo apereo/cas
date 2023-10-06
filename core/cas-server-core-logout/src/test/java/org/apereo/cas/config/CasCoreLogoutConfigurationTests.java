@@ -6,13 +6,14 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -67,10 +69,10 @@ class CasCoreLogoutConfigurationTests {
 
     @Autowired
     @Qualifier("casProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> casProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> casProtocolEndpointConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);

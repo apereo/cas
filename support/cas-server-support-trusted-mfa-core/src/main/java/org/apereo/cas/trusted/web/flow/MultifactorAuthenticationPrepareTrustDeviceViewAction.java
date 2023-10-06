@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDev
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -44,26 +45,28 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewAction extends BaseC
     private final MultifactorAuthenticationTrustedDeviceNamingStrategy namingStrategy;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authn = WebUtils.getAuthentication(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
-            LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
-            return result(CasWebflowConstants.TRANSITION_ID_SKIP);
-        }
-        if (trustedProperties.getCore().isAutoAssignDeviceName()) {
-            WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class)
-                .ifPresent(device -> {
-                    val deviceName = namingStrategy.determineDeviceName(registeredService, service, request, authn);
-                    LOGGER.debug("Auto-generated device name is [{}]", deviceName);
-                    device.setDeviceName(deviceName);
-                });
-            return result(CasWebflowConstants.TRANSITION_ID_STORE);
-        }
-        
-        return result(CasWebflowConstants.TRANSITION_ID_REGISTER);
+
+        return FunctionUtils.doUnchecked(() -> {
+            if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+                LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
+                return result(CasWebflowConstants.TRANSITION_ID_SKIP);
+            }
+            if (trustedProperties.getCore().isAutoAssignDeviceName()) {
+                WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class)
+                    .ifPresent(device -> {
+                        val deviceName = namingStrategy.determineDeviceName(registeredService, service, request, authn);
+                        LOGGER.debug("Auto-generated device name is [{}]", deviceName);
+                        device.setDeviceName(deviceName);
+                    });
+                return result(CasWebflowConstants.TRANSITION_ID_STORE);
+            }
+
+            return result(CasWebflowConstants.TRANSITION_ID_REGISTER);
+        });
     }
 }

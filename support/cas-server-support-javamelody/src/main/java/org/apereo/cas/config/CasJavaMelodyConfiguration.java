@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import net.bull.javamelody.JavaMelodyAutoConfiguration;
@@ -41,12 +41,12 @@ public class CasJavaMelodyConfiguration {
     }
 
     @Bean
-    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> javaMelodyMonitoringEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+    public CasWebSecurityConfigurer<HttpSecurity> javaMelodyMonitoringEndpointConfigurer() {
+        return new CasWebSecurityConfigurer<>() {
 
             @Override
             @CanIgnoreReturnValue
-            public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                 http.authorizeHttpRequests(customizer -> customizer.requestMatchers(new AntPathRequestMatcher("/monitoring")).authenticated())
                     .httpBasic(customizer -> customizer.init(http));
                 return this;

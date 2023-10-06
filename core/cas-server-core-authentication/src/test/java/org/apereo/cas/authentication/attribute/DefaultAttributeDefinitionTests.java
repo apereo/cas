@@ -1,18 +1,20 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,9 +24,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
+@ResourceLock(value = "attributeDefinitionStore", mode = ResourceAccessMode.READ_WRITE)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultAttributeDefinitionTests {
 
-    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
+    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() throws Throwable {
         return AttributeDefinitionResolutionContext.builder()
             .attributeValues(List.of("v1", "v2"))
             .scope("example.org")
@@ -35,14 +44,10 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyCaseCanonicalizationMode() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyCaseCanonicalizationMode() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .canonicalizationMode(CaseCanonicalizationMode.UPPER.name())
             .script("groovy { return ['value1', 'value2'] }")
             .build();
@@ -55,28 +60,22 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyNoCacheEmbeddedScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyNoCacheEmbeddedScriptOperation() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("groovy { return ['hello world'] }")
             .build();
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
-        assertTrue(values.isEmpty());
+        assertFalse(values.isEmpty());
     }
 
     @Test
-    void verifyBadScript() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyBadScript() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("badformat ()")
             .build();
         val context = getAttributeDefinitionResolutionContext();
@@ -85,14 +84,10 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyCachedEmbeddedScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyCachedEmbeddedScriptOperation() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("groovy { return ['hello world'] }")
             .build();
         val context = getAttributeDefinitionResolutionContext();
@@ -103,29 +98,10 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyNoCachedExternalScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyCachedExternalScriptOperation() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
-            .script("classpath:ComputedAttributeDefinition.groovy")
-            .build();
-        val context = getAttributeDefinitionResolutionContext();
-        val values = defn.resolveAttributeValues(context);
-        assertTrue(values.isEmpty());
-    }
-
-    @Test
-    void verifyCachedExternalScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
-        val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("classpath:ComputedAttributeDefinition.groovy")
             .build();
         val context = getAttributeDefinitionResolutionContext();
@@ -136,14 +112,10 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyBadExternalScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyBadExternalScriptOperation() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("classpath:BadScript.groovy")
             .build();
         val context = getAttributeDefinitionResolutionContext();
@@ -152,14 +124,10 @@ class DefaultAttributeDefinitionTests {
     }
 
     @Test
-    void verifyBadEmbeddedScriptOperation() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+    void verifyBadEmbeddedScriptOperation() throws Throwable {
+        val key = "computedAttribute-%s".formatted(RandomUtils.randomAlphabetic(6));
         val defn = DefaultAttributeDefinition.builder()
-            .key("computedAttribute")
+            .key(key)
             .script("groovy {xyz}")
             .build();
         val context = getAttributeDefinitionResolutionContext();

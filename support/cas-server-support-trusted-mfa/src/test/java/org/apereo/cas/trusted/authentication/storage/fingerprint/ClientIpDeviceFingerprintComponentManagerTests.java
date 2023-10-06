@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
-    void verifyClientIpFingerprintNotFound() {
+    void verifyClientIpFingerprintNotFound() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
@@ -33,7 +33,7 @@ class ClientIpDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    void verifyClientIpFingerprintFound() {
+    void verifyClientIpFingerprintFound() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");

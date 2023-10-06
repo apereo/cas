@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Optional;
 
@@ -69,7 +70,7 @@ public abstract class BaseSingleSignOnParticipationStrategy implements SingleSig
      */
     protected RegisteredService getRegisteredService(final SingleSignOnParticipationRequest ssoRequest) {
         return ssoRequest.getRequestContext()
-            .map(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy))
+            .map(Unchecked.function(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy)))
             .orElseGet(() -> ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class));
     }
 

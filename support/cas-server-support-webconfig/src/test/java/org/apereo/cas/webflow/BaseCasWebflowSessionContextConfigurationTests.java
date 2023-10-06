@@ -1,7 +1,6 @@
 package org.apereo.cas.webflow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -34,6 +33,7 @@ import org.apereo.cas.config.CasFiltersConfiguration;
 import org.apereo.cas.config.CasLoggingConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSupportActionsConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
@@ -42,12 +42,10 @@ import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
-import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +63,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
@@ -73,17 +70,12 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -95,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
@@ -102,7 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
     CasWebAppConfiguration.class,
-    CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
+    BaseCasWebflowSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -131,20 +124,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    WebMvcAutoConfiguration.class
-})
+    CasPersonDirectoryStubConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class
+}, properties = "spring.main.allow-bean-definition-overriding=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    @SneakyThrows(IOException.class)
-    protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
-        val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
-        try (val reader = new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)) {
-            assertEquals(IOUtils.toString(reader), nativeResponse.getContentAsString());
-        }
-    }
-
     private static MockRequestContext getMockRequestContext() {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -155,12 +140,12 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     }
 
     @Test
-    void verifyExecutorsAreBeans() {
+    void verifyExecutorsAreBeans() throws Throwable {
         assertNotNull(getFlowExecutor());
     }
 
     @Test
-    void verifyFlowExecutorByClient() {
+    void verifyFlowExecutorByClient() throws Throwable {
         val ctx = getMockRequestContext();
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
@@ -183,9 +168,9 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
-            return new AbstractAction() {
+            return new BaseCasWebflowAction() {
                 @Override
-                protected Event doExecute(final RequestContext requestContext) {
+                protected Event doExecuteInternal(final RequestContext requestContext) {
                     val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
@@ -206,18 +191,20 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     service.setOriginalUrl(CoreAuthenticationTestUtils.CONST_TEST_URL);
                     service.setArtifactId(null);
 
-                    val authentication = CoreAuthenticationTestUtils.getAuthentication();
-                    val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
-                    val principal = CoreAuthenticationTestUtils.getPrincipal();
-                    authenticationResultBuilder.collect(authentication);
-                    authenticationResultBuilder.collect((Credential) CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
+                    return FunctionUtils.doUnchecked(() -> {
+                        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                        val principal = CoreAuthenticationTestUtils.getPrincipal();
+                        authenticationResultBuilder.collect(authentication);
+                        authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
-                    WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-                    WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-                    WebUtils.putPrincipal(requestContext, principal);
+                        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                        WebUtils.putPrincipal(requestContext, principal);
 
-                    return success();
+                        return success();
+                    });
                 }
             };
             //CHECKSTYLE:ON

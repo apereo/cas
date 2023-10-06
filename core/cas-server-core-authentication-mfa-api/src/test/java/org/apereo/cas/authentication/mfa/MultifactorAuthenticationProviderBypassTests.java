@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 class MultifactorAuthenticationProviderBypassTests {
 
     @Test
-    void verifyMultifactorAuthenticationBypassByPrincipalAttributes() {
+    void verifyMultifactorAuthenticationBypassByPrincipalAttributes() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -55,7 +55,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByAuthenticationAttributes() {
+    void verifyMultifactorAuthenticationBypassByAuthenticationAttributes() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -77,7 +77,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByAuthenticationMethod() {
+    void verifyMultifactorAuthenticationBypassByAuthenticationMethod() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -99,7 +99,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByAuthenticationHandler() {
+    void verifyMultifactorAuthenticationBypassByAuthenticationHandler() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -121,7 +121,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByAuthenticationCredentialClass() {
+    void verifyMultifactorAuthenticationBypassByAuthenticationCredentialClass() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -142,7 +142,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByHttpRequestHeader() {
+    void verifyMultifactorAuthenticationBypassByHttpRequestHeader() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -164,7 +164,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByHttpRequestRemoteAddress() {
+    void verifyMultifactorAuthenticationBypassByHttpRequestRemoteAddress() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -186,7 +186,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByHttpRequestRemoteHost() {
+    void verifyMultifactorAuthenticationBypassByHttpRequestRemoteHost() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -208,7 +208,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassByService() {
+    void verifyMultifactorAuthenticationBypassByService() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -232,7 +232,7 @@ class MultifactorAuthenticationProviderBypassTests {
     }
 
     @Test
-    void verifyMultifactorAuthenticationBypassIgnored() {
+    void verifyMultifactorAuthenticationBypassIgnored() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

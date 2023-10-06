@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
         val token = mock(OAuth20Token.class);
         when(token.getId()).thenReturn("CODE");

@@ -32,7 +32,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     @Qualifier("samlProfileSamlAttributeStatementBuilder")
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
     @Test
-    void verifyNoEncryption() throws Exception {
+    void verifyNoEncryption() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
@@ -62,7 +62,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    void verifyEncryptionDisabledIfAssertionEncrypted() throws Exception {
+    void verifyEncryptionDisabledIfAssertionEncrypted() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.setEncryptAssertions(true);
@@ -87,7 +87,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    void verifyEncryptionForAllUndefined() throws Exception {
+    void verifyEncryptionForAllUndefined() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
@@ -110,7 +110,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    void verifyEncryptionForAll() throws Exception {
+    void verifyEncryptionForAll() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("*");
@@ -133,7 +133,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    void verifyEncryptionForSome() throws Exception {
+    void verifyEncryptionForSome() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("uid");

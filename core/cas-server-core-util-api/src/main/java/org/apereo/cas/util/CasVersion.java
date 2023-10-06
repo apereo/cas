@@ -29,7 +29,7 @@ public class CasVersion {
      * The full CAS version string.
      *
      * @return Return the full CAS version string.
-     * @see java.lang.Package#getImplementationVersion
+     * @see Package#getImplementationVersion
      */
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();

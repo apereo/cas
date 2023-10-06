@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -32,7 +33,6 @@ import org.apereo.cas.config.GoogleAuthenticatorLdapConfiguration;
 import org.apereo.cas.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +66,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -90,6 +91,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class,

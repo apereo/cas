@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         assertEquals(OidcConstants.CUSTOM_SCOPE_TYPE, policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -40,6 +39,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
@@ -50,6 +50,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal2)
+            .applicationContext(applicationContext)
             .build();
         val releaseAttrs = policy.getAttributes(releasePolicyContext2);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
@@ -58,7 +59,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyGroovyMappingInline() {
+    void verifyGroovyMappingInline() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(oidcConfigurationContext.getApplicationContext());
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         policy.setClaimMappings(Map.of("groups", "groovy { return attributes['groups'] }"));
@@ -69,6 +70,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(oidcRegisteredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
@@ -76,15 +78,13 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+    void verifySerialization() throws Throwable {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         var json = serializer.toString(service);
         assertNotNull(json);
         assertNotNull(serializer.from(json));

@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.Serial;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -54,7 +55,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(acmeCertificateManager);
         acmeCertificateManager.fetchCertificate(casProperties.getAcme().getDomains());
     }
@@ -66,7 +67,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
         public AcmeAuthorizationExecutor acmeAuthorizationExecutor() throws Exception {
             val locator = mock(AcmeAuthorizationExecutor.class);
             val challenge = new MockHttp01Challenge();
-            when(locator.find(any())).thenReturn(challenge);
+            when(locator.find(any())).thenReturn(Optional.of(challenge));
 
             val order = mock(Order.class);
             val certificate = mock(Certificate.class);

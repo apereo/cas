@@ -9,7 +9,6 @@ import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -18,14 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,6 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
@@ -53,7 +52,7 @@ class DefaultCommunicationsManagerTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyMailSender() {
+    void verifyMailSender() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         var props = new EmailProperties();
@@ -76,7 +75,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyEmailWithLocalizedSubject() {
+    void verifyEmailWithLocalizedSubject() throws Throwable {
         val props = new EmailProperties();
         props.setText("Hello World");
         props.setSubject("#{my.subject}");
@@ -89,7 +88,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailSenderWithTemplateBody() throws Exception {
+    void verifyMailSenderWithTemplateBody() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         val tempFile = Files.createTempFile("prefix", "postfix").toFile();
@@ -108,7 +107,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailNoAtr() {
+    void verifyMailNoAtr() throws Throwable {
         assertTrue(communicationsManager.isMailSenderDefined());
         val emailRequest = EmailMessageRequest.builder()
             .principal(mock(Principal.class))
@@ -119,7 +118,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifySmsNoAtr() {
+    void verifySmsNoAtr() throws Throwable {
         assertFalse(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder()
             .principal(mock(Principal.class))
@@ -130,13 +129,13 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyNoSmsSender() {
+    void verifyNoSmsSender() throws Throwable {
         assertFalse(communicationsManager.isSmsSenderDefined());
         assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test
-    void verifyValidate() {
+    void verifyValidate() throws Throwable {
         assertTrue(communicationsManager.validate());
     }
 }

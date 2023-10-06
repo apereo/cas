@@ -10,7 +10,7 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.springframework.boot" level="error" />
         <Logger name="org.springframework.webflow" level="error" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

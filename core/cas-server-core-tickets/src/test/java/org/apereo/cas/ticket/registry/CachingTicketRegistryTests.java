@@ -36,7 +36,7 @@ class CachingTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyOtherConstructor() {
+    void verifyOtherConstructor() throws Throwable {
         assertDoesNotThrow(CachingTicketRegistryTests::getTicketRegistryInstance);
     }
 
@@ -48,7 +48,7 @@ class CachingTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyExpirationByTimeout() throws Exception {
+    void verifyExpirationByTimeout() throws Throwable {
         val registry = getTicketRegistryInstance();
         val ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "-12346", RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(1));
@@ -58,7 +58,7 @@ class CachingTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyExpirationExplicit() throws Exception {
+    void verifyExpirationExplicit() throws Throwable {
         val registry = getTicketRegistryInstance();
         val ticket = new MockTicketGrantingTicket("casuser");
         registry.addTicket(ticket);

@@ -63,7 +63,7 @@ public class CasWebApplication {
         ApplicationUtils.getApplicationEntrypointInitializers()
             .forEach(init -> {
                 init.initialize(args);
-                applicationClasses.addAll(init.getApplicationSources());
+                applicationClasses.addAll(init.getApplicationSources(args));
             });
         return applicationClasses;
     }

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
@@ -72,7 +74,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Test
     @Order(Integer.MAX_VALUE)
-    public void verifyFailOps() {
+    void verifyFailOps() throws Throwable {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
     }
@@ -81,7 +83,7 @@ class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
         @Override
         public void afterTestClass(final TestContext testContext) throws Exception {
             var registry = testContext.getApplicationContext().getBean("cassandraServiceRegistry", ServiceRegistry.class);
-            DisposableBean.class.cast(registry).destroy();
+            ((DisposableBean) registry).destroy();
         }
     }
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.tokens;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
@@ -26,15 +26,15 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
 
     @Autowired
     @Qualifier("restProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() {
+    void verifyEndpoints() throws Throwable {
         assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
-    void verifyServiceTicketAsDefault() {
+    void verifyServiceTicketAsDefault() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val service = RegisteredServiceTestUtils.getService("test");
@@ -44,7 +44,7 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
     }
 
     @Test
-    void verifyServiceTicketAsJwt() throws Exception {
+    void verifyServiceTicketAsJwt() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);

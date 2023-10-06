@@ -28,7 +28,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyNoCanonAndEncrypt() {
+    void verifyNoCanonAndEncrypt() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         val beanFactory = applicationContext.getBeanFactory();
         val cipher = RegisteredServiceCipherExecutor.noOp();
@@ -47,6 +47,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(service)
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
 
@@ -56,14 +57,18 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyRegServiceUsernameUpper() {
+    void verifyRegServiceUsernameUpper() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -71,15 +76,19 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyPatternRemoval() {
+    void verifyPatternRemoval() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setRemovePattern("@.+");
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -87,15 +96,19 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyScopedUsername() {
+    void verifyScopedUsername() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setScope("example.org");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -103,13 +116,17 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyRegServiceUsername() {
+    void verifyRegServiceUsername() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
+
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
 
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -117,14 +134,14 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyEquality() {
+    void verifyEquality() throws Throwable {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         val provider2 = new DefaultRegisteredServiceUsernameProvider();
         assertEquals(provider, provider2);
     }
 
     @Test
-    void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws Exception {
+    void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws Throwable {
         val providerWritten = new DefaultRegisteredServiceUsernameProvider();
         MAPPER.writeValue(JSON_FILE, providerWritten);
         val providerRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);

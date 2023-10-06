@@ -6,7 +6,7 @@ const state = "40W6nJCYWnnPplmAo13Icy";
 const nonce = "yYxIingpZy";
 
 async function login(page, redirectUrl, params) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
     let authzUrl = "https://localhost:8443/cas/oidc/authorize?";
     authzUrl += "response_type=code&client_id=client&scope=openid";
@@ -15,7 +15,7 @@ async function login(page, redirectUrl, params) {
     if (params !== undefined) {
         authzUrl += `&${params}`;
     }
-    console.log(`Navigating to ${authzUrl}`);
+    await cas.log(`Navigating to ${authzUrl}`);
     await cas.goto(page, authzUrl);
 }
 
@@ -24,9 +24,9 @@ async function login(page, redirectUrl, params) {
     const page = await cas.newPage(browser);
     let redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post");
-    console.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(2000);
-    console.log("Waiting for page content body to render...");
+    await cas.log("Waiting for page content body to render...");
     await page.waitForSelector('body pre', { visible: true });
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);

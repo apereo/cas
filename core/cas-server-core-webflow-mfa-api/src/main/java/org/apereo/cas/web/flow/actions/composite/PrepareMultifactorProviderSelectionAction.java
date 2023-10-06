@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAction {
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
 
         val registeredService = (RegisteredService) attributes.get(RegisteredService.class.getName());

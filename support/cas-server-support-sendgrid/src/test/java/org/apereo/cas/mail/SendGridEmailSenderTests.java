@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Tag;
@@ -16,14 +15,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     SendGridAutoConfiguration.class,
     CasCoreWebConfiguration.class,
     CasSendGridConfiguration.class
@@ -53,7 +52,7 @@ class SendGridEmailSenderTests {
 
     @ParameterizedTest
     @MethodSource("emailContentTypes")
-    public void verifyOperation(final boolean html) throws Exception {
+    void verifyOperation(final boolean html) throws Exception {
         assertNotNull(emailSender);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
             Map.of("email", List.of("casuser@apereo.org")));

@@ -3,17 +3,16 @@ package org.apereo.cas.impl.token;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ import java.util.Optional;
 @Slf4j
 public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private final PasswordlessAuthenticationRestTokensProperties restProperties;
-    
+
     public RestfulPasswordlessTokenRepository(final long tokenExpirationInSeconds,
                                               final PasswordlessAuthenticationRestTokensProperties restProperties,
                                               final CipherExecutor<Serializable, String> cipherExecutor) {
@@ -42,7 +41,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
         try {
             val parameters = new HashMap<String, String>();
             parameters.put("username", username);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
@@ -70,7 +69,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
         try {
             val parameters = new HashMap<String, String>();
             parameters.put("username", username);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -90,7 +89,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             val parameters = new HashMap<String, String>();
             parameters.put("username", token.getUsername());
             parameters.put("token", encodeToken(token));
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -112,7 +111,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             val parameters = new HashMap<String, String>();
             parameters.put("username", passwordlessAccount.getUsername());
             parameters.put("token", encodeToken(authnToken));
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -130,7 +129,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public void clean() {
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)

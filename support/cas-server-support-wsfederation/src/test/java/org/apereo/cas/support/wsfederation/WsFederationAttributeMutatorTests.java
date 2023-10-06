@@ -26,7 +26,7 @@ class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
     private static final String UPN_PARAM = "upn";
 
     @Test
-    void verifyModifyAttributes() {
+    void verifyModifyAttributes() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
 
         val values = new ArrayList<>();
@@ -37,9 +37,9 @@ class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
         instance.modifyAttributes(attributes);
 
         assertTrue(attributes.containsKey("test"));
-        assertTrue("newtest".equalsIgnoreCase(attributes.get("test").get(0).toString()));
+        assertTrue("newtest".equalsIgnoreCase(attributes.get("test").getFirst().toString()));
         assertTrue(attributes.containsKey(UPN_PARAM));
-        assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).get(0).toString()));
+        assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).getFirst().toString()));
     }
 
     private static final class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {

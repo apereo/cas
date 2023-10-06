@@ -2,61 +2,17 @@ version: "3"
 
 services:
   redis-master:
-    build:
-      context: .
-      args:
-        redisVersion: ${REDIS_VERSION}
+    image: redis/redis-stack:${REDIS_VERSION}
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_REPLICATION_MODE=master
-      - REDIS_REPLICA_IP=127.0.0.1
-      - REDIS_REPLICA_PORT=6379
       - REDIS_MASTER_HOST=localhost
       - REDIS_MASTER_PORT_NUMBER=6379
     ports:
       - "6379:6379"
 
-  replica_1:
-    build:
-      context: .
-      args:
-        redisVersion: ${REDIS_VERSION}
-    container_name: redis_server_replica_1
-    command: redis-server --slaveof redis-master 6379
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_REPLICATION_MODE=slave
-      - REDIS_REPLICA_IP=127.0.0.1
-      - REDIS_REPLICA_PORT=6380
-      - REDIS_MASTER_HOST=localhost
-      - REDIS_MASTER_PORT_NUMBER=6379
-    ports:
-      - "6380:6379"
-    depends_on:
-      - redis-master
-
-  replica_2:
-    build:
-      context: .
-      args:
-        redisVersion: ${REDIS_VERSION}
-    container_name: redis_server_replica_2
-    command: redis-server --slaveof redis-master 6379
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_REPLICATION_MODE=slave
-      - REDIS_REPLICA_IP=127.0.0.1
-      - REDIS_REPLICA_PORT=6381
-      - REDIS_MASTER_HOST=localhost
-      - REDIS_MASTER_PORT_NUMBER=6379
-    ports:
-      - "6381:6379"
-    depends_on:
-      - redis-master
-
   sentinel_1:
-    image: bitnami/redis-sentinel:${REDIS_VERSION}
+    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
     container_name: redis_sentinel_1
     ports:
       - "26379:26379"
@@ -64,11 +20,13 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master
 
   sentinel_2:
-    image: bitnami/redis-sentinel:${REDIS_VERSION}
+    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
     container_name: redis_sentinel_2
     ports:
       - "26380:26379"
@@ -76,11 +34,13 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master
 
   sentinel_3:
-    image: bitnami/redis-sentinel:${REDIS_VERSION}
+    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
     container_name: redis_sentinel_3
     ports:
       - "26381:26379"
@@ -88,5 +48,7 @@ services:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
+      - REDIS_PASSWORD=password123
+      - REDIS_SENTINEL_PASSWORD=password456
     depends_on:
       - redis-master

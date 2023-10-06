@@ -52,7 +52,7 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   final Service service) throws Throwable {
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -85,18 +85,12 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
         }
 
         if (resolvedProviders.size() == 1) {
-            return resolveSingleMultifactorProvider(resolvedProviders.get(0));
+            return resolveSingleMultifactorProvider(resolvedProviders.getFirst());
         }
 
         return resolveMultifactorProvider(authentication, registeredService, resolvedProviders);
     }
 
-    /**
-     * Handle absent multifactor provider.
-     *
-     * @param globalProviderId  the global provider id
-     * @param resolvedProviders the resolved providers
-     */
     protected void handleAbsentMultifactorProvider(final String globalProviderId,
                                                    final List<MultifactorAuthenticationProvider> resolvedProviders) {
         val providerIds = resolvedProviders
@@ -109,30 +103,16 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
         throw new MultifactorAuthenticationProviderAbsentException(message);
     }
 
-    /**
-     * Resolve single multifactor provider.
-     *
-     * @param resolvedProvider the resolved provider
-     * @return the optional
-     */
     protected Optional<MultifactorAuthenticationProvider> resolveSingleMultifactorProvider(
         final MultifactorAuthenticationProvider resolvedProvider) {
         LOGGER.debug("Resolved single multifactor provider [{}]", resolvedProvider);
         return Optional.of(resolvedProvider);
     }
 
-    /**
-     * Resolve multifactor provider.
-     *
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param resolvedProviders the resolved providers
-     * @return the optional
-     */
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorProvider(
         final Authentication authentication,
         final RegisteredService registeredService,
-        final List<MultifactorAuthenticationProvider> resolvedProviders) {
+        final List<MultifactorAuthenticationProvider> resolvedProviders) throws Throwable {
         val principal = authentication.getPrincipal();
         val provider = multifactorAuthenticationProviderSelector.resolve(resolvedProviders, registeredService, principal);
         LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);

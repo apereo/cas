@@ -30,9 +30,9 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractMultifactorAu
     private final SessionManager sessionManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val principal = resolvePrincipal(authentication.getPrincipal());
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val sessionToken = requestContext.getRequestParameters().getRequired("sessionToken");
         LOGGER.trace("Checking registration record for [{}] by session id [{}]", principal.getId(), sessionToken);
         val token = ByteArray.fromBase64Url(sessionToken);

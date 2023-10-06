@@ -16,6 +16,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,11 +40,13 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final CasConfigurationProperties casProperties;
 
     private final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
-    
+
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Principal filter(final Service service, final Principal profile,
                             final RegisteredService registeredService,
-                            final OAuth20AccessToken accessToken) {
+                            final OAuth20AccessToken accessToken) throws Throwable {
         val principal = super.filter(service, profile, registeredService, accessToken);
         if (registeredService instanceof final OidcRegisteredService oidcService) {
             return filterClaimsForOidcService(service, profile, accessToken, principal, oidcService);
@@ -53,7 +57,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     protected Principal filterClaimsForOidcService(final Service service, final Principal profile,
                                                    final OAuth20AccessToken accessToken,
                                                    final Principal principal,
-                                                   final OidcRegisteredService oidcService) {
+                                                   final OidcRegisteredService oidcService) throws Throwable {
         val scopes = new LinkedHashSet<>(accessToken.getScopes());
         if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Access token scopes [{}] cannot identify an OpenID Connect request with a [{}] scope. "
@@ -110,39 +114,28 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .stream()
             .distinct()
             .filter(effectiveAttributeReleasePolicies::containsKey)
-            .map(scope -> {
+            .map(Unchecked.function(scope -> {
                 val policy = effectiveAttributeReleasePolicies.get(scope);
                 val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                     .registeredService(registeredService)
                     .service(service)
                     .principal(principal)
+                    .applicationContext(applicationContext)
                     .build();
                 val policyAttr = policy.getAttributes(releasePolicyContext);
                 LOGGER.debug("Calculated attributes [{}] via attribute release policy [{}]", policyAttr, policy.getName());
                 return policyAttr;
-            })
+            }))
             .forEach(attributes::putAll);
         return attributes;
     }
 
-    /**
-     * Get all attributes allowed by the service.
-     * If a service is registered with {@code scopes}, get attributes allowed as per defined release policies for scopes.
-     * If a service registered with no {@code scopes}, then service {@code attributeReleasePolicy} will be used to get allowed attributes.
-     *
-     * @param scopes      the scopes
-     * @param principal   the principal
-     * @param service     the service
-     * @param oidcService the registered service
-     * @param accessToken the access token
-     * @return Attributes allowed by the service
-     */
     private Map<String, List<Object>> getAttributesAllowedForService(
         final Collection<String> scopes,
         final Principal principal,
         final Service service,
         final OidcRegisteredService oidcService,
-        final OAuth20AccessToken accessToken) {
+        final OAuth20AccessToken accessToken) throws Throwable {
         val serviceScopes = oidcService.getScopes();
         LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", oidcService.getName(), serviceScopes);
         val scopeFree = serviceScopes.isEmpty() || (serviceScopes.size() == 1
@@ -157,6 +150,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .registeredService(oidcService)
             .service(service)
             .principal(principal)
+            .applicationContext(applicationContext)
             .attributeReleasePolicyPredicate(policy -> !(policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
                 || scopes.contains(((OidcRegisteredServiceAttributeReleasePolicy) policy).getScopeType()))
             .build();

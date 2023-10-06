@@ -37,7 +37,6 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -49,6 +48,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
@@ -118,9 +118,13 @@ public abstract class BasePasswordManagementActionTests {
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,

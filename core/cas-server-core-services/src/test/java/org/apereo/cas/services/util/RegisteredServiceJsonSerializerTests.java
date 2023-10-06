@@ -5,17 +5,15 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy;
-
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisteredServiceJsonSerializerTests {
 
     @Test
-    void verifyPrinter() {
+    void verifyPrinter() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -37,13 +35,24 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    void verifyWriter() {
+    void verifyWriter() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
         val writer = new StringWriter();
         zer.to(writer, new CasRegisteredService());
         assertNotNull(zer.from(writer));
+    }
+
+    @Test
+    void verifyList() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
+        val registeredService = new CasRegisteredService();
+        registeredService.setName("CasService");
+        val results = zer.fromList(CollectionUtils.wrapList(registeredService));
+        assertNotNull(zer.fromList(results));
     }
 
     @Test
@@ -59,16 +68,16 @@ class RegisteredServiceJsonSerializerTests {
                     "id" : "20161214"
             }""".indent(4);
 
-        val s = (CasRegisteredService) zer.from(json);
-        assertNotNull(s);
-        assertNotNull(s.getAccessStrategy());
-        assertNotNull(s.getAttributeReleasePolicy());
-        assertNotNull(s.getProxyPolicy());
-        assertNotNull(s.getUsernameAttributeProvider());
+        val registeredService = (CasRegisteredService) zer.from(json);
+        assertNotNull(registeredService);
+        assertNotNull(registeredService.getAccessStrategy());
+        assertNotNull(registeredService.getAttributeReleasePolicy());
+        assertNotNull(registeredService.getProxyPolicy());
+        assertNotNull(registeredService.getUsernameAttributeProvider());
     }
 
     @Test
-    void verifySsoPolicySerialization() {
+    void verifySsoPolicySerialization() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
@@ -76,22 +85,22 @@ class RegisteredServiceJsonSerializerTests {
         policyWritten.setMessageCode("example.code");
         policyWritten.setText("example text");
 
-        val s = new CasRegisteredService();
-        s.setAcceptableUsagePolicy(policyWritten);
+        val registeredService = new CasRegisteredService();
+        registeredService.setAcceptableUsagePolicy(policyWritten);
 
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(
             new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
             new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
-        s.setSingleSignOnParticipationPolicy(policy);
+        registeredService.setSingleSignOnParticipationPolicy(policy);
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
-        val results = zer.toString(s);
+        val results = zer.toString(registeredService);
         val read = zer.from(results);
-        assertEquals(s, read);
+        assertEquals(registeredService, read);
     }
 
     @Test
-    void verifyEmptyStringAsNull() {
+    void verifyEmptyStringAsNull() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);

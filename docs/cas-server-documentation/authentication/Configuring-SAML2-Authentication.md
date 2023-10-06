@@ -30,8 +30,6 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/idp/profile/SAML2/Redirect/SSO`
 - `/idp/profile/SAML2/POST/SSO`
 - `/idp/profile/SAML2/POST-SimpleSign/SSO`
-- `/idp/profile/SAML2/POST/SLO`
-- `/idp/profile/SAML2/Redirect/SLO`
 - `/idp/profile/SAML2/Unsolicited/SSO`
 - `/idp/profile/SAML2/SOAP/ECP`
 - `/idp/profile/SAML2/SOAP/AttributeQuery`
@@ -77,6 +75,11 @@ about how to configure SAML2 service providers.
 
 Please [see this guide](../installation/Configuring-SAML2-Security.html) to learn more
 about how to configure SAML2 security configuration.
+ 
+### Logout & SLO
+
+Please [see this guide](../installation/Configuring-SAML2-Logout.html) to learn more
+about how to configure SAML2 logout operations and settings.
 
 ### Attribute Release
 
@@ -102,7 +105,6 @@ SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
 Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) for more details.
 
-
 ## Client Libraries
 
 For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
@@ -113,7 +115,7 @@ For Java-based applications, the following frameworks may be used to integrate y
 ## Sample Client Applications
 
 - [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
-- [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
+- [SAMLTEST.ID](https://samltest.id/)
 
 ## Troubleshooting
 
@@ -121,11 +123,11 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <Logger name="org.opensaml" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 <Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```

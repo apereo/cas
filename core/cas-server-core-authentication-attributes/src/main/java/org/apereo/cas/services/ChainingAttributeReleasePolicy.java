@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesReposi
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,8 +12,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +71,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     }
 
     @Override
-    public synchronized Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+    public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         try {
             val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
             val attributes = new HashMap<String, List<Object>>();
@@ -80,7 +79,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
                 .stream()
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .filter(context.getAttributeReleasePolicyPredicate())
-                .forEach(policy -> {
+                .forEach(Unchecked.consumer(policy -> {
                     LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]",
                         policy.getName(), context.getPrincipal().getId());
                     val policyAttributes = policy.getAttributes(context);
@@ -88,10 +87,9 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
                     LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", results);
                     attributes.clear();
                     attributes.putAll(results);
-
                     context.getReleasingAttributes().clear();
                     context.getReleasingAttributes().putAll(attributes);
-                });
+                }));
             return attributes;
         } finally {
             context.getReleasingAttributes().clear();
@@ -102,13 +100,16 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     public Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
-        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
-            LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]",
-                policy.getName(), context.getPrincipal().getId());
-            val policyAttributes = policy.getConsentableAttributes(context);
-            merger.mergeAttributes(attributes, policyAttributes);
-            LOGGER.trace("Attributes that remain, after the merge with consentable attribute policy results, are [{}]", attributes);
-        });
+        policies
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(Unchecked.consumer(policy -> {
+                LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]",
+                    policy.getName(), context.getPrincipal().getId());
+                val policyAttributes = policy.getConsentableAttributes(context);
+                merger.mergeAttributes(attributes, policyAttributes);
+                LOGGER.trace("Attributes that remain, after the merge with consentable attribute policy results, are [{}]", attributes);
+            }));
         return attributes;
     }
 

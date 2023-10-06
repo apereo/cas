@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
         val failureMode = provider.getFailureModeEvaluator().evaluate(service, provider);
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);

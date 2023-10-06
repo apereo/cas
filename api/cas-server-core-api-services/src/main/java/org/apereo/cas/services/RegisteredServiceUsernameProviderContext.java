@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.ApplicationContext;
 
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +31,7 @@ public class RegisteredServiceUsernameProviderContext {
     private final RegisteredService registeredService;
 
     private final Map<String, List<Object>> releasingAttributes;
+
+    @Nonnull
+    private final ApplicationContext applicationContext;
 }

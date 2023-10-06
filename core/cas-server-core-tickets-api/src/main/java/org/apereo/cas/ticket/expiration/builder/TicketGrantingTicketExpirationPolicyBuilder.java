@@ -53,20 +53,15 @@ public record TicketGrantingTicketExpirationPolicyBuilder(CasConfigurationProper
      */
     public ExpirationPolicy toRememberMeTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
-        LOGGER.debug("Remember me expiration policy is being configured based on hard timeout of [{}] seconds",
-            tgt.getRememberMe().getTimeToKillInSeconds());
-        val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
-        val p = new RememberMeDelegatingExpirationPolicy();
-        p.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
-        p.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
-        return p;
+        val timeToKillInSeconds = Beans.newDuration(tgt.getRememberMe().getTimeToKillInSeconds()).toSeconds();
+        LOGGER.debug("Remember me expiration policy is being configured based on hard timeout of [{}] seconds", timeToKillInSeconds);
+        val rememberMePolicy = new HardTimeoutExpirationPolicy(timeToKillInSeconds);
+        val policy = new RememberMeDelegatingExpirationPolicy();
+        policy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMePolicy);
+        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, toTicketGrantingTicketExpirationPolicy());
+        return policy;
     }
 
-    /**
-     * To ticket-granting ticket expiration policy.
-     *
-     * @return the expiration policy
-     */
     private ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
 

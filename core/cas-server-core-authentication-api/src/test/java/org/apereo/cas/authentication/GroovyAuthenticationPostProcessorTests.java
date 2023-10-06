@@ -19,17 +19,17 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class GroovyAuthenticationPostProcessorTests {
     @Test
-    void verifyAction() {
-        val g = new GroovyAuthenticationPostProcessor(new ClassPathResource("GroovyPostProcessor.groovy"));
+    void verifyAction() throws Throwable {
+        val processor = new GroovyAuthenticationPostProcessor(new ClassPathResource("GroovyPostProcessor.groovy"));
         val transaction = mock(AuthenticationTransaction.class);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         when(transaction.getPrimaryCredential()).thenReturn(Optional.of(creds));
-        assertTrue(g.supports(creds));
+        assertTrue(processor.supports(creds));
         val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        g.process(authenticationBuilder, transaction);
+        processor.process(authenticationBuilder, transaction);
         val successes = authenticationBuilder.getSuccesses();
         assertFalse(successes.isEmpty());
         assertFalse(successes.get("SimpleTestUsernamePasswordAuthenticationHandler").getWarnings().isEmpty());
-        g.destroy();
+        processor.destroy();
     }
 }

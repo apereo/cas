@@ -31,7 +31,7 @@ class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOidcTests 
     private OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val parameters = new LinkedHashMap<String, String>();
         parameters.put(OidcConstants.EXPIRES_IN, "100");
         parameters.put(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());

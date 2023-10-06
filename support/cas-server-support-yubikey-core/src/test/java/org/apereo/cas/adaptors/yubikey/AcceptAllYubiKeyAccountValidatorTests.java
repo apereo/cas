@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFAProvider")
 class AcceptAllYubiKeyAccountValidatorTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val v = new AcceptAllYubiKeyAccountValidator();
         assertTrue(v.isValid("anything", "anything"));
     }

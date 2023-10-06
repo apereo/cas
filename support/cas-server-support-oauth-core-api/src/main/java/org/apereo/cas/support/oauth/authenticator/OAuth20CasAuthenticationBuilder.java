@@ -36,9 +36,10 @@ public interface OAuth20CasAuthenticationBuilder {
      * @param context           the context
      * @param service           the service
      * @return the built authentication
+     * @throws Throwable the throwable
      */
     Authentication build(UserProfile profile,
                          OAuthRegisteredService registeredService,
                          WebContext context,
-                         Service service);
+                         Service service) throws Throwable;
 }

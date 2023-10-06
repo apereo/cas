@@ -47,7 +47,7 @@ class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -57,7 +57,7 @@ class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTests {
     }
 
     @Test
-    void verifyService() throws Exception {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

@@ -40,28 +40,28 @@ import static org.mockito.Mockito.*;
 class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     
     @Test
-    void verifyTestWhenNoAuthnEventsFoundForUser() {
+    void verifyTestWhenNoAuthnEventsFoundForUser() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
     @Test
-    void verifyTestWithGeoLoc() throws Exception {
+    void verifyTestWithGeoLoc() throws Throwable {
         val id = UUID.randomUUID().toString();
         MockTicketGrantingTicketCreatedEventProducer.createEvent(id, casEventRepository);
         val authentication = CoreAuthenticationTestUtils.getAuthentication(id);
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
         request.setParameter("geolocation", "40,70,1000,100");
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
     @Test
-    void verifyTestWhenAuthnEventsFoundForUser() {
+    void verifyTestWhenAuthnEventsFoundForUser() throws Throwable {
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
 
@@ -71,14 +71,14 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
         request.setRemoteAddr("172.217.11.174");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));
         assertTrue(score.isHighestRisk());
     }
 
     @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     static class GeoLocationServiceTestConfiguration {
         @Bean
-        public GeoLocationService geoLocationService() {
+        public GeoLocationService geoLocationService() throws Throwable {
             val service = mock(GeoLocationService.class);
             val response = new GeoLocationResponse();
             response.addAddress("MSIE");

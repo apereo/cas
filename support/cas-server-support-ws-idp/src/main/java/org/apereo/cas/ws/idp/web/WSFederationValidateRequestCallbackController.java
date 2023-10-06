@@ -18,6 +18,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -64,11 +65,11 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      * @param response the response
      * @param request  the request
      * @return the model and view
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
     protected ModelAndView handleFederationRequest(final HttpServletResponse response,
-                                                   final HttpServletRequest request) throws Exception {
+                                                   final HttpServletRequest request) throws Throwable {
         val fedRequest = WSFederationRequest.of(request);
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
 
@@ -90,10 +91,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         val securityTokenReq = getSecurityTokenFromRequest(request);
         val securityToken = FunctionUtils.doIfNull(securityTokenReq,
-                () -> {
+                Unchecked.supplier(() -> {
                     LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
                     return fetchSecurityTokenFromAssertion(assertion, targetService);
-                },
+                }),
                 () -> securityTokenReq)
             .get();
         addSecurityTokenTicketToRegistry(request, securityToken);
@@ -101,18 +102,18 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         return postResponseBackToRelyingParty(rpToken, fedRequest);
     }
 
-    private SecurityToken fetchSecurityTokenFromAssertion(final TicketValidator.ValidationResult assertion, final Service targetService) {
+    private SecurityToken fetchSecurityTokenFromAssertion(final TicketValidator.ValidationResult assertion, final Service targetService) throws Throwable {
         val principal = assertion.getPrincipal().getId();
         val token = getConfigContext().getSecurityTokenServiceTokenFetcher().fetch(targetService, principal);
         if (token.isEmpty()) {
             LOGGER.warn("No security token could be retrieved for service [{}] and principal [{}]", targetService, principal);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(targetService.getId()));
         }
         return token.get();
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request,
-                                                  final SecurityToken securityToken) throws Exception {
+                                                  final SecurityToken securityToken) throws Throwable {
         LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
         val ticketRegistry = getConfigContext().getTicketRegistry();
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getConfigContext().getTicketGrantingTicketCookieGenerator(),
@@ -137,7 +138,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private TicketValidator.ValidationResult validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                                                  final HttpServletRequest request,
-                                                                                 final WSFederationRequest fedRequest) throws Exception {
+                                                                                 final WSFederationRequest fedRequest) throws Throwable {
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);

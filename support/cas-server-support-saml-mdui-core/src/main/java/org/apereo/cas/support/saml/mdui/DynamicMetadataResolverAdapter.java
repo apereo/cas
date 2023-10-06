@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +17,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +59,7 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
                 val encodedId = EncodingUtils.urlEncode(entityId);
                 val url = resource.getURL().toExternalForm().concat(encodedId);
                 LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-                val exec = HttpUtils.HttpExecutionRequest.builder()
+                val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(url)
                     .headers(Map.of("Accept", "*/*"))

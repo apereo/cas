@@ -34,7 +34,7 @@ class OidcPushedAuthorizationRequestValidatorTests extends AbstractOidcTests {
     private OAuth20AuthorizationRequestValidator oidcPushedAuthorizationRequestValidator;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = getOidcRegisteredService();
         val profile = new CommonProfile();
         profile.setId("casTest");

@@ -1,0 +1,27 @@
+{
+  "dependencies": "reports,jpa-service-registry",
+  "properties": [
+    "--cas.audit.engine.enabled=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--spring.main.lazy-initialization=false",
+
+    "--cas.service-registry.jpa.ddl-auto=create",
+    "--cas.service-registry.jpa.user=root",
+    "--cas.service-registry.jpa.password=password",
+    "--cas.service-registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
+    "--cas.service-registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
+  ],
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
+}

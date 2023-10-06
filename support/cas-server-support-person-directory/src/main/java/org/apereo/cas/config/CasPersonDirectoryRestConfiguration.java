@@ -112,7 +112,7 @@ public class CasPersonDirectoryRestConfiguration {
                 .supply(() -> plan -> {
                     val results = restfulAttributeRepositories.toList()
                         .stream()
-                        .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                        .filter(IPersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

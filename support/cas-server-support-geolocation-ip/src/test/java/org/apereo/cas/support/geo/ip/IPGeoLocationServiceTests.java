@@ -3,14 +3,13 @@ package org.apereo.cas.support.geo.ip;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
 import org.apereo.cas.config.IPGeoLocationConfiguration;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasGeoLocationConfiguration.class,
     IPGeoLocationConfiguration.class
 },
@@ -32,7 +32,7 @@ class IPGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(geoLocationService.locate("8.8.8.8"));
         assertNull(geoLocationService.locate("127.0.x.1"));
         assertNull(geoLocationService.locate(34.56, 12.123));

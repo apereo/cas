@@ -18,18 +18,15 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.apache.commons.lang3.RandomUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,8 +59,8 @@ public class RegisteredServiceTestUtils {
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
             val service = (CasModelRegisteredService) RegisteredServiceTestUtils.getRegisteredService(url);
-            return new HttpBasedServiceCredential(new URL(url), service);
-        } catch (final MalformedURLException e) {
+            return new HttpBasedServiceCredential(new URI(url).toURL(), service);
+        } catch (final Exception e) {
             throw new IllegalArgumentException();
         }
     }
@@ -131,46 +128,42 @@ public class RegisteredServiceTestUtils {
         return getRegisteredService(CONST_TEST_URL, requiredAttributes);
     }
 
-    @SneakyThrows
-    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id,
-                                                                                   final Class<T> clazz,
+    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id, final Class<T> clazz,
                                                                                    final boolean uniq) {
-        return getRegisteredService(id, clazz, uniq, getTestAttributes());
+        return Unchecked.supplier(() -> getRegisteredService(id, clazz, uniq, getTestAttributes())).get();
     }
 
-    @SneakyThrows
-    public static <T extends BaseRegisteredService> T getRegisteredService(final String id,
-                                                                           final Class<T> clazz,
-                                                                           final boolean uniq,
-                                                                           final Map requiredAttributes) {
-        val s = (BaseRegisteredService) clazz.getDeclaredConstructor().newInstance();
-        s.setServiceId(id);
-        s.setEvaluationOrder(1);
+    public static <T extends BaseRegisteredService> T getRegisteredService(
+        final String id, final Class<T> clazz,
+        final boolean uniq, final Map requiredAttributes) throws Exception {
+        val baseRegisteredService = (BaseRegisteredService) clazz.getDeclaredConstructor().newInstance();
+        baseRegisteredService.setServiceId(id);
+        baseRegisteredService.setEvaluationOrder(1);
         if (uniq) {
             val uuid = Iterables.get(Splitter.on('-').split(UUID.randomUUID().toString()), 0);
-            s.setName("TestService" + uuid);
+            baseRegisteredService.setName("TestService" + uuid);
         } else {
-            s.setName(id);
+            baseRegisteredService.setName(id);
         }
-        s.setDescription("Registered service description");
-        s.setId(RandomUtils.nextInt());
-        s.setTheme("exampleTheme");
-        s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
+        baseRegisteredService.setDescription("Registered service description");
+        baseRegisteredService.setId(RandomUtils.nextInt());
+        baseRegisteredService.setTheme("exampleTheme");
+        baseRegisteredService.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(requiredAttributes);
         accessStrategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
-        s.setAccessStrategy(accessStrategy);
-        s.setLogo("https://logo.example.org/logo.png");
-        s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
-        s.setLogoutUrl("https://sys.example.org/logout.png");
+        baseRegisteredService.setAccessStrategy(accessStrategy);
+        baseRegisteredService.setLogo("https://logo.example.org/logo.png");
+        baseRegisteredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
+        baseRegisteredService.setLogoutUrl("https://sys.example.org/logout.png");
 
-        if (s instanceof CasRegisteredService) {
+        if (baseRegisteredService instanceof CasRegisteredService) {
             val policy = new RegexMatchingRegisteredServiceProxyPolicy();
             policy.setPattern("^http.+");
-            ((CasRegisteredService) s).setProxyPolicy(policy);
+            ((CasRegisteredService) baseRegisteredService).setProxyPolicy(policy);
         }
-        s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
+        baseRegisteredService.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
@@ -181,9 +174,9 @@ public class RegisteredServiceTestUtils {
         policy.setPrincipalAttributesRepository(repo);
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
         policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
-        s.setAttributeReleasePolicy(policy);
+        baseRegisteredService.setAttributeReleasePolicy(policy);
 
-        return (T) s;
+        return (T) baseRegisteredService;
     }
 
     public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
@@ -199,10 +192,10 @@ public class RegisteredServiceTestUtils {
     }
 
     public static CasRegisteredService getRegisteredService(final String id, final Map requiredAttributes) {
-        return getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes);
+        return Unchecked.supplier(() -> getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes)).get();
     }
 
-    public static Principal getPrincipal() {
+    public static Principal getPrincipal() throws Throwable {
         return getPrincipal(CONST_USERNAME);
     }
 
@@ -211,7 +204,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
-        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
+        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes));
     }
 
     public static Authentication getAuthentication() {
@@ -240,8 +233,7 @@ public class RegisteredServiceTestUtils {
             .build();
     }
 
-    @SneakyThrows
-    public static List<RegisteredService> getRegisteredServicesForTests() {
+    public static List<RegisteredService> getRegisteredServicesForTests() throws Exception {
         val list = new ArrayList<RegisteredService>();
         val svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
         val policy = new ReturnAllowedAttributeReleasePolicy();

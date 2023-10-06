@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import javax.security.auth.login.LoginException;
-
 import java.util.List;
 
 /**
@@ -20,8 +18,8 @@ public interface AuthenticationAccountStateHandler<AuthnResponse, Configuration>
      * @param response      the response
      * @param configuration the configuration
      * @return the list
-     * @throws LoginException the login exception
+     * @throws Throwable the throwable
      */
-    List<MessageDescriptor> handle(AuthnResponse response, Configuration configuration) throws LoginException;
+    List<MessageDescriptor> handle(AuthnResponse response, Configuration configuration) throws Throwable;
 }
 

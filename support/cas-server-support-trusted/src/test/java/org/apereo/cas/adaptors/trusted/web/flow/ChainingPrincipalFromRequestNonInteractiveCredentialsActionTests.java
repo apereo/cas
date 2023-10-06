@@ -25,7 +25,7 @@ class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests extends B
     private PrincipalFromRequestExtractorAction remoteUserAuthenticationAction;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val principal = mock(Principal.class);
         when(principal.getName()).thenReturn("casuser");

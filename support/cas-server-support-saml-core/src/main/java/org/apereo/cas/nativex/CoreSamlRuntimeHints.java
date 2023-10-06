@@ -38,6 +38,7 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("entitydescriptor-criterion-predicate-registry.properties")
             .registerPattern("roledescriptor-criterion-predicate-registry.properties")
             .registerPattern("credential-criteria-registry.properties")
+            .registerPattern("org/apache/velocity/runtime/defaults/*.properties")
             .registerPattern("schema/*.xsd")
             .registerPattern("xacml*-config.xml")
             .registerPattern("ws*-config.xml")

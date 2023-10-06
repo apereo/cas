@@ -43,17 +43,17 @@
                     {%- endif -%}
                     {%- if include.regexPattern -%}
                     <p/>
-                    <p class="small text-left"><i class="fas fa-cogs"></i> This settings supports regular expression patterns. <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>
+                    <p class="small text-left"><i class="fas fa-cogs small"></i> This settings supports regular expression patterns. <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>
                     A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern in text. For example, the following pattern
                     <code>^ent:.+(admin|system).+:com$</code> should match <code>ent:sys-admin-anything:com</code>. Regular expressions in CAS are handled using the JDK's <code>java.util.regex.Pattern</code> class.
                 </p>">[?]</sup>.
                     </p>
                     {%- endif -%}
                     {%- if include.expressionLanguage -%}
-                    <p/><p class="small text-left"><i class="fas fa-info-circle"></i> This setting supports the <a href="/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a>.</p>
+                    <p/><p class="small text-left"><i class="fas fa-info-circle small"></i> This setting supports the <a href="/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a>.</p>
                     {%- endif -%}
                     {%- if include.owner.size > 0 -%}
-                    <p/><p class="small text-left"><i class="fas fa-code"
+                    <p/><p class="small text-left"><i class="fas fa-code small"
                                                       data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>{{ include.owner }}.</code></p>
                     {%- endif -%}
                     <p/>
@@ -71,6 +71,7 @@
                                 </div>
                                 <div class="modal-body">
                                     Configuration properties can be included and activated using the following strategies.
+                                    <p/>
                                     <div class="alert alert-info">:information_source: <strong>Note</strong> <p>
                                         When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
                                         The only possible exception to this rule is when naming actuator endpoints; The name of the
@@ -171,7 +172,7 @@ java -D{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }} -ja
                                             {{ markdownprop || markdownify }}
                                             <p/>
                                             The above example assumes that the CAS web application is packaged as <code>cas.war</code>
-                                            and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
                                             specified before the CAS web application is launched.
                                         </div>
                                         <div class="tab-pane fade" id="envvar{{singlePropertyKey}}">
@@ -187,7 +188,7 @@ java -jar build/libs/cas.war
 {{ markdownprop || markdownify }}
                                             <p/>
                                             The above example assumes that the CAS web application is packaged as <code>cas.war</code>
-                                            and can be found in the <code>build/libs</code> directory.
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
                                         </div>
                                         <div class="tab-pane fade" id="cmdarg{{singlePropertyKey}}">
                                             CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
@@ -202,7 +203,7 @@ java -jar build/libs/cas.war --{{ include.name | replace: "[]", "[0]"}}={{ prope
 
                                             <p/>
                                             The above example assumes that the CAS web application is packaged as <code>cas.war</code>
-                                            and can be found in the <code>build/libs</code> directory.
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
                                         </div>
                                     </div>
                                 </div>

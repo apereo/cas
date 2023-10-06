@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
+import java.util.Optional;
 
 /**
  * This is {@link DefaultCasSimpleMultifactorAuthenticationService}.
@@ -33,7 +34,7 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     protected final TicketFactory ticketFactory;
 
     @Override
-    public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Exception {
+    public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
@@ -56,19 +57,26 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     }
 
     @Override
+    public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) {
+        return Optional.ofNullable(getMultifactorAuthenticationTicketFor(tokenCredential))
+            .map(acct -> acct.getProperties().get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL))
+            .map(Principal.class::cast)
+            .orElse(null);
+    }
+
+    @Override
     public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
-        val acct = getMultitfactorAuthenticationTicketFor(resolvedPrincipal, credential);
+        val acct = getMultifactorAuthenticationTicketFor(credential);
+        LOGGER.debug("Received token [{}] and principal id [{}]", acct, resolvedPrincipal.getId());
         val principal = validateTokenForPrincipal(resolvedPrincipal, acct);
         deleteToken(acct);
         LOGGER.debug("Validated token [{}] successfully for [{}].", credential.getId(), resolvedPrincipal.getId());
         return principal;
     }
 
-    protected CasSimpleMultifactorAuthenticationTicket getMultitfactorAuthenticationTicketFor(final Principal resolvedPrincipal,
-                                                                                              final CasSimpleMultifactorTokenCredential credential) {
+    protected CasSimpleMultifactorAuthenticationTicket getMultifactorAuthenticationTicketFor(final CasSimpleMultifactorTokenCredential credential) {
         val tokenId = normalize(credential.getId());
-        LOGGER.debug("Received token [{}] and pricipal id [{}]", tokenId, resolvedPrincipal.getId());
         return ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
     }
 

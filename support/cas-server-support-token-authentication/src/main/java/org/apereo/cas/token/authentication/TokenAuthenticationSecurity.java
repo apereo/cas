@@ -116,9 +116,9 @@ public class TokenAuthenticationSecurity {
 
     private static String getRegisteredServiceJwtProperty(final RegisteredService service,
                                                           final RegisteredServiceProperties propName) {
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed(service, null)) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         if (propName.isAssignedTo(service)) {
             val propertyValue = propName.getPropertyValue(service).value();
@@ -198,7 +198,7 @@ public class TokenAuthenticationSecurity {
     
     private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService service) {
         val serviceSigningAlg = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
-        val signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
+        val signingSecretAlg = StringUtils.defaultIfBlank(serviceSigningAlg, JWSAlgorithm.HS256.getName());
         val sets = new HashSet<Algorithm>(0);
         sets.addAll(JWSAlgorithm.Family.EC);
         sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
@@ -212,7 +212,7 @@ public class TokenAuthenticationSecurity {
         encryptionMethods.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
         encryptionMethods.addAll(EncryptionMethod.Family.AES_GCM);
         val encryptionMethod = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
-        val encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
+        val encryptionSecretMethod = StringUtils.defaultIfBlank(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
         return findAlgorithmFamily(encryptionMethods, encryptionSecretMethod, EncryptionMethod.class);
     }
 
@@ -226,7 +226,7 @@ public class TokenAuthenticationSecurity {
         sets.addAll(JWEAlgorithm.Family.RSA);
         sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
         val encryptionAlg = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
-        val encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
+        val encryptionSecretAlg = StringUtils.defaultIfBlank(encryptionAlg, JWEAlgorithm.DIR.getName());
         return findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
     }
 

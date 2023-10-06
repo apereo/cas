@@ -32,7 +32,7 @@ public class CreateGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authn = WebUtils.getAuthentication(requestContext);
         val attributes = new LinkedHashMap<>(authn.getAttributes());
         attributes.putAll(authn.getPrincipal().getAttributes());

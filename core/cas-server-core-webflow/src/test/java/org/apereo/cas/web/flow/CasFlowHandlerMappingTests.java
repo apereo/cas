@@ -24,7 +24,7 @@ class CasFlowHandlerMappingTests extends BaseWebflowConfigurerTests {
     protected HandlerMapping casFlowHandlerMapping;
 
     @Test
-    void verifyCasFlowHandlerMappingInitialization() throws Exception {
+    void verifyCasFlowHandlerMappingInitialization() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());

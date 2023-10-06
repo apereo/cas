@@ -20,7 +20,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -98,9 +98,9 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
     @Override
     public boolean isValidEndPoint(final String url) {
         try {
-            val u = new URL(url);
+            val u = new URI(url).toURL();
             return isValidEndPoint(u);
-        } catch (final MalformedURLException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return false;
         }

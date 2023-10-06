@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20DefaultCasClientRedirectActionBuilderTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val client = new CasClient(new CasConfiguration("https://example.org/cas/login"));
         client.setCallbackUrl("https://example.org/cas/callback");
         client.init();

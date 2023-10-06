@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 class SimpleUrlValidatorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val validator = SimpleUrlValidator.getInstance();
         assertTrue(validator.isValid("https://github.com"));
         assertTrue(validator.isValidDomain("www.github.com"));

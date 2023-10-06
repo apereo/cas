@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class GroovyAuthenticationHandlerResolverTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val resolver = new GroovyAuthenticationHandlerResolver(
             new ClassPathResource("GroovyAuthenticationHandlerResolver.groovy"),
             mock(ServicesManager.class));

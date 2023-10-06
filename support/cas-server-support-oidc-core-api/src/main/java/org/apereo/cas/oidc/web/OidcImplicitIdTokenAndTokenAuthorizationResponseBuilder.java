@@ -44,7 +44,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
         final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
         final List<NameValuePair> params,
-        final OAuth20RefreshToken refreshToken) throws Exception {
+        final OAuth20RefreshToken refreshToken) throws Throwable {
         val idToken = configurationContext.getIdTokenGeneratorService().generate(accessToken,
             holder.getUserProfile(), OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getGrantType(),
             holder.getRegisteredService());

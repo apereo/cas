@@ -11,7 +11,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
-import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
+import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalResolver;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.LogoutRequestResourceResolver;
 import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolver;
@@ -41,7 +41,6 @@ import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
 import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
-import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
@@ -62,6 +61,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +90,7 @@ public class CasCoreAuditConfiguration {
         public PrincipalResolver auditablePrincipalResolver(
             @Qualifier("auditPrincipalIdProvider")
             final AuditPrincipalIdProvider auditPrincipalIdProvider) {
-            return new ThreadLocalAuditPrincipalResolver(auditPrincipalIdProvider);
+            return new DefaultAuditPrincipalResolver(auditPrincipalIdProvider);
         }
 
         @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
@@ -293,7 +293,7 @@ public class CasCoreAuditConfiguration {
             final CasConfigurationProperties casProperties) {
 
             val audit = casProperties.getAudit().getEngine();
-            val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
+            val auditFormat = AuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
             val aspect = new AuditTrailManagementAspect(
                 audit.getAppCode(),
                 auditablePrincipalResolver,
@@ -495,7 +495,7 @@ public class CasCoreAuditConfiguration {
                     manager.setUseSingleLine(slf4j.isUseSingleLine());
                     manager.setEntrySeparator(slf4j.getSinglelineSeparator());
                     if (!slf4j.getAuditableFields().isEmpty()) {
-                        val fields = org.springframework.util.StringUtils.commaDelimitedListToSet(slf4j.getAuditableFields())
+                        val fields = StringUtils.commaDelimitedListToSet(slf4j.getAuditableFields())
                             .stream()
                             .map(field -> AuditTrailManager.AuditableFields.valueOf(field.toUpperCase(Locale.ENGLISH)))
                             .toList();

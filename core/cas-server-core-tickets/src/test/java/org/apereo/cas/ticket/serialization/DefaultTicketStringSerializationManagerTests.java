@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -60,7 +62,7 @@ class DefaultTicketStringSerializationManagerTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,7 +75,7 @@ class DefaultTicketStringSerializationManagerTests {
     }
 
     @Test
-    void verifyBadClass() {
+    void verifyBadClass() throws Throwable {
         assertThrows(NullPointerException.class, () -> ticketSerializationManager.serializeTicket(mock(Ticket.class)));
         assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, StringUtils.EMPTY));
         assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, "something"));

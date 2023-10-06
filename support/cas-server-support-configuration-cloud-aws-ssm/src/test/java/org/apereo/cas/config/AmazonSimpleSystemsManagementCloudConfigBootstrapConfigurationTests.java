@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -18,7 +18,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.ParameterType;
 import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.class
 }, properties = {
     "cas.spring.cloud.aws.ssm.endpoint=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.ENDPOINT,
@@ -81,7 +81,7 @@ class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
         assertEquals("Example", casProperties.getAuthn().getAccept().getName());
     }

@@ -2,29 +2,21 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,18 +32,14 @@ class DelegatedClientAuthenticationCredentialSelectionActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION)
     private Action action;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    void verifyOperation() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+    void verifyOperation() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, action.execute(context).getId());
-
         val profile = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(CoreAuthenticationTestUtils.getAttributes())
             .id(UUID.randomUUID().toString())

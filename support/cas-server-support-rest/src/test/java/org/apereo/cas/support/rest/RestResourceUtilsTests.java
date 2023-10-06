@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 class RestResourceUtilsTests {
     @Test
-    void verifyCreateResponseEntityForAuthnFailure() {
+    void verifyCreateResponseEntityForAuthnFailure() throws Throwable {
         val request = new MockHttpServletRequest();
         val map = CollectionUtils.<String, Throwable>wrap(
             UnauthorizedAuthenticationException.class.getSimpleName(),

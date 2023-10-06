@@ -9,7 +9,8 @@ env:
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   TERM: xterm-256color
-  JDK_CURRENT: 17
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
 
@@ -28,7 +29,7 @@ jobs:
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
+      - uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ github.token }}
           
@@ -36,12 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -65,12 +66,12 @@ jobs:
           - checkstyleTest
     name: ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -118,19 +119,17 @@ jobs:
           - CheckNativeRuntimeHints
     name: ${{ matrix.check }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/cache@v3

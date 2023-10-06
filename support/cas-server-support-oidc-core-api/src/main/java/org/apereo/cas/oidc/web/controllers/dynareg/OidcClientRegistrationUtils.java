@@ -56,14 +56,14 @@ public class OidcClientRegistrationUtils {
         clientResponse.setTokenEndpointAuthMethod(registeredService.getTokenEndpointAuthenticationMethod());
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
-        clientResponse.setUserInfoSignedReponseAlg(registeredService.getUserInfoSigningAlg());
-        clientResponse.setUserInfoEncryptedReponseAlg(registeredService.getUserInfoEncryptedResponseAlg());
-        clientResponse.setUserInfoEncryptedReponseEncoding(registeredService.getUserInfoEncryptedResponseEncoding());
+        clientResponse.setUserInfoSignedResponseAlg(registeredService.getUserInfoSigningAlg());
+        clientResponse.setUserInfoEncryptedResponseAlg(registeredService.getUserInfoEncryptedResponseAlg());
+        clientResponse.setUserInfoEncryptedResponseEncoding(registeredService.getUserInfoEncryptedResponseEncoding());
 
         clientResponse.setContacts(
             registeredService.getContacts()
                 .stream()
-                .map(contact -> StringUtils.defaultString(contact.getEmail(), contact.getName()))
+                .map(contact -> StringUtils.defaultIfBlank(contact.getEmail(), contact.getName()))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList())
         );

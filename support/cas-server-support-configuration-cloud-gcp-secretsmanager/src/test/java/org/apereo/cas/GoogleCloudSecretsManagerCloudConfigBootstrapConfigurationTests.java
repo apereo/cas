@@ -15,9 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,10 +29,9 @@ import static org.mockito.Mockito.*;
 @Slf4j
 class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val source = propertySourceLocator.locate(environment);
             val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
             assertNull(propertyValue);
@@ -42,11 +39,10 @@ class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(MockTests.GoogleCloudSecretsManagerTestConfiguration.class)
     class MockTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             val source = propertySourceLocator.locate(environment);
             val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
             assertEquals("casuser::Mellon", propertyValue);

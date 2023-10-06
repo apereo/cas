@@ -41,7 +41,8 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
     public static final String PARAMETER_NAME_PROVIDER = "provider";
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request,
+                                        final MultiValueMap<String, String> requestBody) throws Throwable {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the request body is null or empty", getClass().getSimpleName());
             return new ArrayList<>(0);
@@ -53,7 +54,7 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
         val username = FunctionUtils.throwIfBlank(requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
         val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_PASSCODE));
 
-        val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
+        val providerId = StringUtils.defaultIfBlank(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         val source = new DuoSecurityPasscodeCredential(username, token, providerId);
         source.setCredentialMetadata(new BasicCredentialMetadata(source));

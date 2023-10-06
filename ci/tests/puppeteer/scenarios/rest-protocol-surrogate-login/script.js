@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         res => {
-            console.log(res.data.authentication.attributes);
+            cas.log(res.data.authentication.attributes);
             assert(res.data.authentication.attributes.surrogateUser != null);
             assert(res.data.authentication.attributes.surrogateEnabled != null);
             assert(res.data.authentication.attributes.surrogatePrincipal != null);
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         res => {
-            console.log(res.data.authentication.attributes);
+            cas.log(res.data.authentication.attributes);
             assert(res.data.authentication.attributes.surrogateUser != null);
             assert(res.data.authentication.attributes.surrogateEnabled != null);
             assert(res.data.authentication.attributes.surrogatePrincipal != null);
@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
             throw error;
         });
 
-    console.log("Getting ticket with surrogate principal");
+    await cas.log("Getting ticket with surrogate principal");
     const tgt = await cas.doPost("https://localhost:8443/cas/v1/tickets",
         "username=casuser&password=Mellon", {
             'Accept': 'application/json',
@@ -47,7 +47,7 @@ const cas = require('../../cas.js');
         error => {
             throw error;
         });
-    console.log(`Received ticket-granting ticket ${tgt}`);
+    await cas.log(`Received ticket-granting ticket ${tgt}`);
 
     const service = "https://example.org";
     const st = await cas.doPost(`https://localhost:8443/cas/v1/tickets/${tgt}`,
@@ -60,7 +60,7 @@ const cas = require('../../cas.js');
         error => {
             throw error;
         });
-    console.log(`Received service ticket ${st}`);
+    await cas.log(`Received service ticket ${st}`);
 
     let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${st}&format=JSON`);
     await cas.logg(body);

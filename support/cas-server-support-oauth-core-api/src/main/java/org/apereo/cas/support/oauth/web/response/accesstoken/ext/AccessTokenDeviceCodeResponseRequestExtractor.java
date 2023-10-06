@@ -26,7 +26,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    public AccessTokenRequestContext extractRequest(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);

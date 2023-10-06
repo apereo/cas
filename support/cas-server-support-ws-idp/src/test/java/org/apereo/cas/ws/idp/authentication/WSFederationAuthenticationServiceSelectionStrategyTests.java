@@ -27,7 +27,7 @@ class WSFederationAuthenticationServiceSelectionStrategyTests extends BaseCoreWs
     private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         assertFalse(wsFederationAuthenticationServiceSelectionStrategy.supports(null));
 
         val service = RegisteredServiceTestUtils.getService("https://cas.com");

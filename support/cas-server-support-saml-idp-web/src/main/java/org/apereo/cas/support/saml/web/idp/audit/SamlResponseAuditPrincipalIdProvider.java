@@ -24,7 +24,7 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
                                      final Object returnValue, final Exception exception) {
         val response = (Response) returnValue;
         if (!response.getAssertions().isEmpty()) {
-            val assertion = response.getAssertions().get(0);
+            val assertion = response.getAssertions().getFirst();
             val subject = assertion.getSubject();
             if (subject != null && subject.getNameID() != null) {
                 return subject.getNameID().getValue();

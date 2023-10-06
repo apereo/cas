@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringCipherExecutorTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val publicKey = """
             {
                 "kty": "RSA",

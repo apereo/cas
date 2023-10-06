@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class MessageBundleAwareResourceResolverTests {
     @Test
-    void verifyOperationByExceptionMessage() {
+    void verifyOperationByExceptionMessage() throws Throwable {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
         val context = mock(ApplicationContext.class);

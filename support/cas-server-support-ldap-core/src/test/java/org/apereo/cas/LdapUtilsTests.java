@@ -1,15 +1,16 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
+import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -18,21 +19,26 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.io.Serial;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,10 +50,18 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class LdapUtilsTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyGetBoolean() {
+    void verifyGetBoolean() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         entry.addAttributes(new LdapAttribute("attr2", StringUtils.EMPTY));
@@ -59,7 +73,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetLong() {
+    void verifyGetLong() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "100"));
         val input = LdapUtils.getLong(entry, "attr1", 0L);
@@ -67,7 +81,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetBinary() {
+    void verifyGetBinary() throws Throwable {
         val entry = new LdapEntry();
         val attr = new LdapAttribute("attr1", "100".getBytes(StandardCharsets.UTF_8));
         attr.setBinary(true);
@@ -78,13 +92,13 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyEntry() throws Exception {
-        assertFalse(LdapUtils.isLdapConnectionUrl(new URL("https://github.com")));
+    void verifyEntry() throws Throwable {
+        assertFalse(LdapUtils.isLdapConnectionUrl(new URI("https://github.com").toURL()));
         assertFalse(LdapUtils.containsResultEntry(null));
     }
 
     @Test
-    void verifyFailsOp() throws Exception {
+    void verifyFailsOp() throws Throwable {
         val factory = mock(ConnectionFactory.class);
         val wrapper = new LdapConnectionFactory(factory);
         when(factory.getConnectionConfig()).thenThrow(new IllegalArgumentException("fails"));
@@ -97,7 +111,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyScriptedFilter() {
+    void verifyScriptedFilter() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         ApplicationContextProvider.holdApplicationContext(appCtx);
@@ -105,30 +119,22 @@ class LdapUtilsTests {
             () -> LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
                 List.of("p1", "p2"), List.of("v1", "v2")));
 
-        val cacheMgr = new GroovyScriptResourceCacheManager();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         var filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
             List.of("p1", "p2"), List.of("v1", "v2"));
         assertNotNull(filter);
         assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
-        assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:UnknownLdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
     }
 
     @Test
-    void verifyFilterByIndex() {
+    void verifyFilterByIndex() throws Throwable {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));
         assertTrue(filter.getParameters().containsKey("0"));
         assertTrue(filter.getParameters().containsValue("casuser"));
     }
 
     @Test
-    void verifyLdapAuthnAnon() {
+    void verifyLdapAuthnAnon() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -146,7 +152,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyLdapAuthnDirect() {
+    void verifyLdapAuthnDirect() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -162,7 +168,32 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyLdapAuthnActiveDirectory() {
+    void verifyActiveDirectoryPasswordPolicy() throws Throwable {
+        val ldap = new Ldap();
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setSearchFilter("cn=user");
+        ldap.setType(AbstractLdapAuthenticationProperties.AuthenticationTypes.AD);
+        ldap.setDnFormat("cn=%s,dc=example,dc=org");
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+        assertNotNull(authenticator);
+        val passwordPolicy = new LdapPasswordPolicyProperties()
+            .setType(AbstractLdapProperties.LdapType.AD);
+        val configuration = LdapUtils.createLdapPasswordPolicyConfiguration(
+            passwordPolicy, authenticator, ArrayListMultimap.create());
+        assertNotNull(configuration);
+        val responseHandler = Arrays.stream(authenticator.getResponseHandlers()).findFirst()
+            .map(ActiveDirectoryAuthenticationResponseHandler.class::cast)
+            .orElseThrow();
+        assertNotNull(responseHandler.getExpirationPeriod());
+        assertNotNull(responseHandler.getWarningPeriod());
+    }
+
+
+    @Test
+    void verifyLdapAuthnActiveDirectory() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -179,7 +210,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyPagedSearch() throws Exception {
+    void verifyPagedSearch() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -204,7 +235,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyComparePooling() throws Exception {
+    void verifyComparePooling() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -236,7 +267,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyConnectionConfig() throws Exception {
+    void verifyConnectionConfig() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");

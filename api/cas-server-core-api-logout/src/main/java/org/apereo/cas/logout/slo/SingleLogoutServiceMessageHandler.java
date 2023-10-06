@@ -60,8 +60,9 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      *
      * @param logoutRequest the logout request.
      * @return the single logout message payload
+     * @throws Throwable the throwable
      */
-    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest);
+    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest) throws Throwable;
 
     @Override
     default int getOrder() {

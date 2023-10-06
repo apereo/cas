@@ -22,6 +22,21 @@ buildCache {
 
 dependencyResolutionManagement {
     repositories {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+        ivy {
+            name = "Node.js"
+            setUrl("https://nodejs.org/dist/")
+            patternLayout {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+            content {
+                includeModule("org.nodejs", "node")
+            }
+        }
+
         mavenLocal()
         mavenCentral()
         maven {
@@ -47,6 +62,10 @@ dependencyResolutionManagement {
         maven {
             url "https://repository.apache.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://repository.apache.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/releases"
@@ -80,6 +99,13 @@ dependencyResolutionManagement {
                 includeGroupByRegex ".*wss4j.*"
             }
             mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://projectlombok.org/edge-releases"
+            content {
+                includeGroupByRegex ".*projectlombok.*"
+            }
+            mavenContent { snapshotsOnly() }
         }
 //        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
 //            maven {
@@ -182,8 +208,6 @@ include "support:cas-server-support-aup-mongo"
 include "support:cas-server-support-aup-redis"
 include "support:cas-server-support-aup-rest"
 include "support:cas-server-support-aup-webflow"
-include "support:cas-server-support-authy"
-include "support:cas-server-support-authy-core"
 include "support:cas-server-support-aws"
 include "support:cas-server-support-aws-cognito-authentication"
 include "support:cas-server-support-aws-s3-service-registry"
@@ -350,6 +374,7 @@ include "support:cas-server-support-passwordless-jpa"
 include "support:cas-server-support-passwordless-ldap"
 include "support:cas-server-support-passwordless-mongo"
 include "support:cas-server-support-passwordless-webflow"
+include "support:cas-server-support-permitio"
 include "support:cas-server-support-person-directory-core"
 include "support:cas-server-support-person-directory"
 include "support:cas-server-support-pm"
@@ -417,7 +442,6 @@ include "support:cas-server-support-sms-clickatell"
 include "support:cas-server-support-sms-smsmode"
 include "support:cas-server-support-sms-nexmo"
 include "support:cas-server-support-sms-textmagic"
-include "support:cas-server-support-sms-twilio"
 include "support:cas-server-support-soap-authentication"
 include "support:cas-server-support-spnego"
 include "support:cas-server-support-spnego-webflow"
@@ -457,12 +481,7 @@ include "support:cas-server-support-trusted-mfa-redis"
 include "support:cas-server-support-trusted-mfa-rest"
 include "support:cas-server-support-trusted-mfa-dynamodb"
 include "support:cas-server-support-trusted-webflow"
-include "support:cas-server-support-u2f"
-include "support:cas-server-support-u2f-core"
-include "support:cas-server-support-u2f-dynamodb"
-include "support:cas-server-support-u2f-jpa"
-include "support:cas-server-support-u2f-mongo"
-include "support:cas-server-support-u2f-redis"
+include "support:cas-server-support-twilio"
 include "support:cas-server-support-validation"
 include "support:cas-server-support-validation-core"
 include "support:cas-server-support-webauthn"
@@ -497,15 +516,12 @@ include "support:cas-server-support-yubikey-redis"
 include "webapp:cas-server-webapp"
 include "webapp:cas-server-webapp-resources"
 include "webapp:cas-server-webapp-config-server"
-include "webapp:cas-server-webapp-eureka-server"
 
 include "webapp:cas-server-webapp-init"
 include "webapp:cas-server-webapp-init-config-server"
-include "webapp:cas-server-webapp-init-eureka-server"
 include "webapp:cas-server-webapp-init-tomcat"
 include "webapp:cas-server-webapp-starter-tomcat"
 include "webapp:cas-server-webapp-native"
-
 include "webapp:cas-server-webapp-jetty"
 include "webapp:cas-server-webapp-tomcat"
 include "webapp:cas-server-webapp-undertow"

@@ -37,6 +37,7 @@ class LegacyValidateControllerTests extends AbstractServiceValidateControllerTes
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .applicationContext(applicationContext)
             .casProperties(casProperties)
             .principalFactory(getPrincipalFactory())
             .principalResolver(getDefaultPrincipalResolver())

@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.Getter;
 import lombok.val;
@@ -11,12 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,13 +33,8 @@ class DefaultConsentActivationStrategyDisabledTests {
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
-    void verifyNoConsent() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyNoConsent() throws Throwable {
+        MockRequestContext.create();
 
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(mock(RegisteredServiceAttributeReleasePolicy.class));
@@ -53,7 +43,5 @@ class DefaultConsentActivationStrategyDisabledTests {
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockHttpServletRequest()));
-
     }
-
 }

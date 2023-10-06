@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -48,7 +49,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     public HttpBasedServiceCredential(
         @JsonProperty("callbackUrl") final String callbackUrl,
         @JsonProperty("service") final CasModelRegisteredService service) {
-        this.callbackUrl = FunctionUtils.doUnchecked(() -> new URL(callbackUrl));
+        this.callbackUrl = FunctionUtils.doUnchecked(() -> new URI(callbackUrl).toURL());
         this.service = service;
     }
 

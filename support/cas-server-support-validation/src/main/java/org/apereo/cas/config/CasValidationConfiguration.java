@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -65,7 +66,6 @@ import org.springframework.web.servlet.View;
 import java.util.List;
 import java.util.Set;
 
-import static org.apereo.cas.validation.CasProtocolValidationSpecification.*;
 import static org.springframework.http.MediaType.*;
 
 /**
@@ -106,11 +106,13 @@ public class CasValidationConfiguration {
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return ServiceValidateConfigurationContext.builder()
+                .applicationContext(applicationContext)
                 .ticketRegistry(ticketRegistry)
                 .principalFactory(principalFactory)
                 .principalResolver(defaultPrincipalResolver)

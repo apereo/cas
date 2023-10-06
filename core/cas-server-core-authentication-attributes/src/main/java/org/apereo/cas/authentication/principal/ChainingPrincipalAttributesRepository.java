@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,10 +27,9 @@ public class ChainingPrincipalAttributesRepository implements RegisteredServiceP
     private final List<RegisteredServicePrincipalAttributesRepository> repositories;
 
     @Override
-    public Map<String, List<Object>> getAttributes(final Principal principal,
-                                                   final RegisteredService registeredService) {
+    public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val results = new LinkedHashMap<String, List<Object>>();
-        repositories.forEach(repo -> results.putAll(repo.getAttributes(principal, registeredService)));
+        repositories.forEach(repo -> results.putAll(repo.getAttributes(context)));
         return results;
     }
 
@@ -45,7 +44,7 @@ public class ChainingPrincipalAttributesRepository implements RegisteredServiceP
 
     @Override
     public void update(final String id, final Map<String, List<Object>> attributes,
-                       final RegisteredService registeredService) {
-        repositories.forEach(repo -> repo.update(id, attributes, registeredService));
+                       final RegisteredServiceAttributeReleasePolicyContext context) {
+        repositories.forEach(repo -> repo.update(id, attributes, context));
     }
 }

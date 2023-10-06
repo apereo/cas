@@ -63,7 +63,7 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
 
     @Test
     @Order(1)
-    public void verifyOK() throws Exception {
+    void verifyOK() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -99,7 +99,7 @@ class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSa
 
     @Test
     @Order(2)
-    public void verifyFault() throws Exception {
+    void verifyFault() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");

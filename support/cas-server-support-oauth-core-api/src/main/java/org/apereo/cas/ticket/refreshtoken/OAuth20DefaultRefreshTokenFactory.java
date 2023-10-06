@@ -59,7 +59,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                       final String accessToken,
                                       final Map<String, Map<String, Object>> requestClaims,
                                       final OAuth20ResponseTypes responseType,
-                                      final OAuth20GrantTypes grantType) {
+                                      final OAuth20GrantTypes grantType) throws Throwable {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val rt = new OAuth20DefaultRefreshToken(codeId, service, authentication,

@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
     private final MultifactorAuthenticationTrustedDeviceBypassEvaluator bypassEvaluator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authn = WebUtils.getAuthentication(requestContext);
         if (authn == null) {
             LOGGER.warn("Could not determine authentication from the request context");

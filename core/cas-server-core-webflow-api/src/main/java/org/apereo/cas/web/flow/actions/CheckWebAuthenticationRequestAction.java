@@ -23,7 +23,7 @@ public class CheckWebAuthenticationRequestAction extends BaseCasWebflowAction {
     private final String contentType;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         LOGGER.trace("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
         val requestContentType = request.getContentType();

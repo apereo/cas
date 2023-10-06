@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.yubikeyAccountRepository.enabled=true"
     })
 @Tag("MFAProvider")
+@ResourceLock(value = "yubiKeyAccountRegistry", mode = ResourceAccessMode.READ_WRITE)
 class YubiKeyAccountRegistryEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -54,7 +57,7 @@ class YubiKeyAccountRegistryEndpointTests {
     private YubiKeyAccountRegistryEndpoint endpoint;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());
@@ -76,7 +79,7 @@ class YubiKeyAccountRegistryEndpointTests {
     }
 
     @Test
-    void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Throwable {
         val toSave = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
             .devices(CollectionUtils.wrapList(YubiKeyRegisteredDevice.builder()
                 .name(UUID.randomUUID().toString())

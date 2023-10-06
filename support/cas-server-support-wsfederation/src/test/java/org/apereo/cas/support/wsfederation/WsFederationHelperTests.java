@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
-    void verifyEncryptedToken() throws Exception {
+    void verifyEncryptedToken() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val wresult = IOUtils.toString(new ClassPathResource("encryptedToken.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
@@ -42,7 +42,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyParseTokenString() throws Exception {
+    void verifyParseTokenString() throws Throwable {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val result = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations.toList(), RegisteredServiceTestUtils.getService());
@@ -50,7 +50,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyCreateCredentialFromToken() throws Exception {
+    void verifyCreateCredentialFromToken() throws Throwable {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations.toList(),
@@ -74,14 +74,14 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyGetSigningCredential() throws Exception {
-        val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().get(0), configBean);
+    void verifyGetSigningCredential() throws Throwable {
+        val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().getFirst(), configBean);
         assertFalse(provider.getSigningCredentials().isEmpty());
         assertNotNull(provider);
     }
 
     @Test
-    void verifyValidateSignatureGoodToken() throws Exception {
+    void verifyValidateSignatureGoodToken() throws Throwable {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
@@ -91,10 +91,10 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyValidateSignatureBadInput() {
+    void verifyValidateSignatureBadInput() throws Throwable {
         assertFalse(wsFederationHelper.validateSignature(null));
         assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
-        val config = wsFederationConfigurations.toList().get(0);
+        val config = wsFederationConfigurations.toList().getFirst();
         val assertion = mock(Assertion.class);
         assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
         when(assertion.getSignature()).thenReturn(mock(Signature.class));
@@ -102,7 +102,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyValidateSignatureModifiedAttribute() throws Exception {
+    void verifyValidateSignatureModifiedAttribute() throws Throwable {
         val wresult = IOUtils.toString(new ClassPathResource("badTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
@@ -112,7 +112,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyValidateSignatureModifiedSignature() throws Exception {
+    void verifyValidateSignatureModifiedSignature() throws Throwable {
         val wresult = IOUtils.toString(new ClassPathResource("badTokenSignature.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,

@@ -48,7 +48,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      */
     private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
                                                  final Set<Authentication> authentications,
-                                                 final Map<String, List<Object>> principalAttributes) {
+                                                 final Map<String, List<Object>> principalAttributes) throws Throwable {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 
@@ -93,12 +93,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) {
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
         return build(principalElectionStrategy, null);
     }
 
     @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) {
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) throws Throwable {
         val authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
@@ -166,7 +166,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return this.authentications.isEmpty();
     }
 
-    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) {
+    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
         if (isEmpty()) {
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;

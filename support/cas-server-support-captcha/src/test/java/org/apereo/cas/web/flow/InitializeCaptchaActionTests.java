@@ -27,6 +27,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
  */
 @SpringBootTest(classes = BaseCaptchaConfigurationTests.SharedTestConfiguration.class,
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
         "cas.google-recaptcha.verify-url=http://localhost:9294",
         "cas.google-recaptcha.site-key=6LauELajSYtaX8",
         "cas.google-recaptcha.secret=6L9LlZyI10_X4LV",
@@ -41,7 +42,7 @@ class InitializeCaptchaActionTests {
     private Action initializeCaptchaAction;
 
     @Test
-    void verifyCaptchaValidated() throws Exception {
+    void verifyCaptchaValidated() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

@@ -41,7 +41,7 @@ class OAuth20RegisteredServiceUIActionTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyOAuthActionWithoutMDUI() throws Exception {
+    void verifyOAuthActionWithoutMDUI() throws Throwable {
         val ctx = new MockRequestContext();
         val service = RegisteredServiceTestUtils.getService();
         WebUtils.putServiceIntoFlowScope(ctx, service);
@@ -55,7 +55,7 @@ class OAuth20RegisteredServiceUIActionTests {
     }
 
     @Test
-    void verifyOAuthActionWithMDUI() throws Exception {
+    void verifyOAuthActionWithMDUI() throws Throwable {
         val svc = new OAuthRegisteredService();
         svc.setClientId("id");
         svc.setName("oauth");

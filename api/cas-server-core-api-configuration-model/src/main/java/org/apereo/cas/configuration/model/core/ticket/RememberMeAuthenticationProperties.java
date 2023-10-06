@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -34,7 +35,8 @@ public class RememberMeAuthenticationProperties implements Serializable {
     /**
      * Time in seconds after which remember-me enabled SSO session will be destroyed.
      */
-    private long timeToKillInSeconds = 1_209_600;
+    @DurationCapable
+    private String timeToKillInSeconds = "P14D";
 
     /**
      * Regular expression that, when defined,

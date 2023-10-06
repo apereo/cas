@@ -1,17 +1,12 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
-import lombok.Synchronized;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -103,7 +98,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @param beanId             the bean id
      * @return the t
      */
-    @Synchronized
     public static <T> T registerBeanIntoApplicationContext(final ConfigurableApplicationContext applicationContext,
                                                            final T beanInstance, final String beanId) {
         val beanFactory = applicationContext.getBeanFactory();
@@ -124,18 +118,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     public static Optional<CasConfigurationProperties> getCasConfigurationProperties() {
         if (CONTEXT != null) {
             return Optional.of(CONTEXT.getBean(CasConfigurationProperties.class));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Gets attribute repository.
-     *
-     * @return the attribute repository
-     */
-    public static Optional<IPersonAttributeDao> getAttributeRepository() {
-        if (CONTEXT != null) {
-            return Optional.of(CONTEXT.getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, IPersonAttributeDao.class));
         }
         return Optional.empty();
     }
@@ -162,52 +144,16 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     /**
-     * Gets attribute definition store.
-     *
-     * @return the attribute definition store
-     */
-    public static Optional<AttributeDefinitionStore> getAttributeDefinitionStore() {
-        if (CONTEXT != null && CONTEXT.containsBean(AttributeDefinitionStore.BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(AttributeDefinitionStore.BEAN_NAME, AttributeDefinitionStore.class));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Gets principal attributes repository.
-     *
-     * @return the principal attributes repository
-     */
-    public static Optional<RegisteredServicePrincipalAttributesRepository> getPrincipalAttributesRepository() {
-        if (CONTEXT != null && CONTEXT.containsBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)) {
-            return Optional.of(CONTEXT.getBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY,
-                RegisteredServicePrincipalAttributesRepository.class));
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Gets principal attributes repository cache.
-     *
-     * @return the principal attributes repository cache
-     */
-    public static Optional<PrincipalAttributesRepositoryCache> getPrincipalAttributesRepositoryCache() {
-        if (CONTEXT != null && CONTEXT.containsBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME,
-                PrincipalAttributesRepositoryCache.class));
-        }
-        return Optional.empty();
-    }
-
-    /**
      * Gets message sanitizer.
      *
      * @return the message sanitizer
      */
     public static Optional<MessageSanitizer> getMessageSanitizer() {
-        if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
-            return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
-        }
-        return Optional.empty();
+        return FunctionUtils.doAndHandle(() -> {
+            if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
+                return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
+            }
+            return Optional.<MessageSanitizer>empty();
+        }, e -> Optional.<MessageSanitizer>empty()).get();
     }
 }

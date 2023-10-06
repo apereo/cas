@@ -28,15 +28,15 @@ const cas = require('../../cas.js');
     let greeting = await cas.textContent(page2, "#greeting");
     assert(greeting === "Hello, CAS Apereo");
     let code = await cas.textContent(page2, "#otpcode");
-    console.log(`Code to use is extracted as ${code}`);
+    await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.submitForm(page, "#registerform");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
     await browser.close();

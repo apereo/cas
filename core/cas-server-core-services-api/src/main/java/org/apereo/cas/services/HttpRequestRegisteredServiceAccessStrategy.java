@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,7 +51,7 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
     private Map<String, String> headers = new TreeMap<>();
 
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo())
             .stream()
             .anyMatch(info -> {

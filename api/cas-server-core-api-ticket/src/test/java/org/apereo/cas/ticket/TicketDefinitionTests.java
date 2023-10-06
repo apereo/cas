@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class TicketDefinitionTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val ticket = mock(TicketDefinition.class);
         when(ticket.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, ticket.getOrder());

@@ -2,6 +2,7 @@ package org.apereo.cas.sba;
 
 import org.apereo.cas.util.app.ApplicationUtils;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 public class CasSpringBootAdminServerInitializerTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val initializers = ApplicationUtils.getApplicationEntrypointInitializers();
         assertFalse(initializers.isEmpty());
-        val initializer = (CasSpringBootAdminServerInitializer) initializers.get(0);
+        val initializer = (CasSpringBootAdminServerInitializer) initializers.getFirst();
         assertNotNull(initializer);
-        assertFalse(initializer.getApplicationSources().isEmpty());
+        assertFalse(initializer.getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY).isEmpty());
     }
 }

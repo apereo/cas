@@ -65,7 +65,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     }
 
     @Override
-    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) throws Throwable {
         initializeWatchableScriptIfNeeded();
         return getGroovyAttributeValue(givenAttributes);
     }
@@ -89,7 +89,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
         }
     }
 
-    private Map<String, List<Object>> getGroovyAttributeValue(final Map<String, List<Object>> resolvedAttributes) {
+    private Map<String, List<Object>> getGroovyAttributeValue(final Map<String, List<Object>> resolvedAttributes) throws Throwable {
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         executableScript.setBinding(args);
         return executableScript.execute(args.values().toArray(), Map.class);

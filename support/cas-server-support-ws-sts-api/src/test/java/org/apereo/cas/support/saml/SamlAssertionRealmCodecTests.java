@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 class SamlAssertionRealmCodecTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val codec = new SamlAssertionRealmCodec("CAS");
         val wrapper = mock(SamlAssertionWrapper.class);
         val keyInfo = mock(SAMLKeyInfo.class);

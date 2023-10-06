@@ -11,7 +11,7 @@ const auth = require('basic-auth');
             res.set('WWW-Authenticate', 'Basic realm="Authentication Required"');
             res.status(401).send('Authentication Required');
         } else {
-            console.log("Authenentication successful");
+            cas.log("Authentication successful");
             next();
         }
     };
@@ -19,7 +19,7 @@ const auth = require('basic-auth');
     let app = express();
     app.post(/^(.+)$/, authenticate, (req, res) => {
         try {
-            console.log("Received request");
+            cas.log("Received request");
             const data = {
                 "@class": "org.apereo.cas.authentication.principal.SimplePrincipal",
                 "id": "casuser",
@@ -38,16 +38,16 @@ const auth = require('basic-auth');
     app.use(authenticate);
     
     let server = app.listen(5432, async () => {
-        console.log(`Listening...`);
+        await cas.log(`Listening...`);
 
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await cas.loginWith(page, "restapi", "YdCP05HvuhOH^*Z");
         await cas.assertCookie(page);
 
         server.close(() => {
-            console.log('Exiting server...');
+            cas.log('Exiting server...');
             browser.close();
         });
         await process.exit(0);

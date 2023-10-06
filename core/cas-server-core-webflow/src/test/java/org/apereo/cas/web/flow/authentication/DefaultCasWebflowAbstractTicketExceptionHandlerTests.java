@@ -5,25 +5,18 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidProxyGrantingTicketForServiceTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.binding.message.MessageContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultCasWebflowAbstractTicketExceptionHandlerTests}.
@@ -38,7 +31,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     private RequestContext context;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(InvalidTicketException.class);
         errors.add(InvalidProxyGrantingTicketForServiceTicketException.class);
@@ -46,21 +39,14 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
         val catalog = new DefaultCasWebflowExceptionCatalog();
         catalog.registerExceptions(errors);
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        this.context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+        this.context = MockRequestContext.create();
 
         this.handler = new DefaultCasWebflowAbstractTicketExceptionHandler(catalog,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @Test
-    void verifyUnauthz() {
+    void verifyUnauthz() throws Throwable {
         val ex = new InvalidProxyGrantingTicketForServiceTicketException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);
@@ -69,7 +55,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     }
 
     @Test
-    void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val ex = new UnrecognizableServiceForServiceTicketValidationException(CoreAuthenticationTestUtils.getService());
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);

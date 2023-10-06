@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class GoogleCaptchaV2ValidatorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new GoogleRecaptchaProperties()
             .setScore(.1)
             .setSecret(UUID.randomUUID().toString())

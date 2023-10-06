@@ -33,7 +33,7 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategy implements
     public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) throws Throwable {
         val registeredService = servicesManager.findServiceBy(service);
         val args = new Object[]{context, service, registeredService, providers, applicationContext, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));

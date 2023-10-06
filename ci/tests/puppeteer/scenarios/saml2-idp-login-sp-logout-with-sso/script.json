@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
@@ -15,8 +14,9 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=debug",
-
+    "--logging.level.org.apereo.cas=info",
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

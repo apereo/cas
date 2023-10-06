@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 async function validateTicket(service, ticket, format = "JSON") {
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}&pgtUrl=https://github.com/apereo/cas`);
-    console.log(body);
+    await cas.log(body);
     return body;
 }
 
@@ -14,7 +14,7 @@ async function validateTicket(service, ticket, format = "JSON") {
     const service = "https://apereo.github.io";
 
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertTicketParameter(page);
     let body = await validateTicket(service, ticket);

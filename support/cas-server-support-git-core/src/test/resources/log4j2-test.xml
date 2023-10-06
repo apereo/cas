@@ -6,11 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.apereo" level="error" />
         <Logger name="org.apereo.cas.git" level="info" />
         <Logger name="org.eclipse.jgit" level="warn" />
         <Logger name="com.jcraft.jsch" level="warn" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

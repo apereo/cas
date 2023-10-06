@@ -15,8 +15,6 @@ import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
-
 /**
  * Class to validate the credential presented by communicating with the web
  * server and checking the certificate that is returned against the hostname,
@@ -31,20 +29,8 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-    /**
-     * Instance of Apache Commons HttpClient.
-     */
     private final HttpClient httpClient;
 
-    /**
-     * Instantiates a new Abstract authentication handler.
-     *
-     * @param name             Handler name.
-     * @param servicesManager  the services manager.
-     * @param principalFactory the principal factory
-     * @param order            the order
-     * @param httpClient       the http client
-     */
     public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
                                                             final Integer order, final HttpClient httpClient) {
@@ -53,7 +39,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws Throwable {
         val httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy()
             .isAllowedProxyCallbackUrl(httpCredential.getService(), httpCredential.getCallbackUrl())) {
@@ -67,7 +53,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, principalFactory.createPrincipal(httpCredential.getId()));
+        val proxyPrincipal = principalFactory.createPrincipal(httpCredential.getId());
+        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, proxyPrincipal);
     }
 
     @Override

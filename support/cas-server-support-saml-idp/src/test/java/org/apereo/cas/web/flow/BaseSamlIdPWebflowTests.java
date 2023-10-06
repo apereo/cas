@@ -5,6 +5,7 @@ import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPThrottleConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.*;
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
     SamlIdPConfiguration.class,
+    SamlIdPThrottleConfiguration.class,
     SamlIdPTicketSerializationConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPMetadataConfiguration.class,

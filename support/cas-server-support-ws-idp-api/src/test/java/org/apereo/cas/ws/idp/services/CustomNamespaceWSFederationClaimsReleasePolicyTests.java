@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +14,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,13 +32,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WSFederation")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class CustomNamespaceWSFederationClaimsReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "verifyWsFedCustomSerializePolicyToJson.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    void verifyAttributeRelease() {
+    void verifyAttributeRelease() throws Throwable {
+
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new CustomNamespaceWSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.getClaim(), "cn",
@@ -41,6 +53,7 @@ class CustomNamespaceWSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
             .build();

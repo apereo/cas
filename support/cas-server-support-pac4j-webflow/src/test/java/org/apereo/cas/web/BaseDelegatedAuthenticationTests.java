@@ -60,6 +60,7 @@ public abstract class BaseDelegatedAuthenticationTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
         MockMvcAutoConfiguration.class,
         ErrorMvcAutoConfiguration.class,

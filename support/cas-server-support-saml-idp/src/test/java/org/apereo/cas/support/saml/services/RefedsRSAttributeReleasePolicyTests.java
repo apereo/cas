@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata1"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata10"
 })
 class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RefedsRSAttributeReleasePolicyTests.json");
@@ -37,13 +37,14 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyMatch() {
+    void verifyMatch() throws Throwable {
         val filter = new RefedsRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user")))
             .build();

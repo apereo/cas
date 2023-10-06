@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
 
     @Test
-    void verifyNoCredentials() {
+    void verifyNoCredentials() throws Throwable {
         val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         val body = new LinkedMultiValueMap<String, String>();
         val results = f.fromRequest(new MockHttpServletRequest(), body);
@@ -28,14 +28,14 @@ class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    void verifyCredentials() {
+    void verifyCredentials() throws Throwable {
         val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         val body = new LinkedMultiValueMap<String, String>();
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_OTP, "132456");
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_ACCT, "132456");
         val results = f.fromRequest(new MockHttpServletRequest(), body);
         assertFalse(results.isEmpty());
-        val credential = (GoogleAuthenticatorTokenCredential) results.get(0);
+        val credential = (GoogleAuthenticatorTokenCredential) results.getFirst();
         assertEquals("132456", credential.getId());
         assertEquals(132456, credential.getAccountId());
     }

@@ -10,7 +10,8 @@ env:
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   PYTHON_VERSION: 3.11
-  JDK_CURRENT: 17
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
 
@@ -34,7 +35,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
+      - uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ github.token }}
 
@@ -42,12 +43,12 @@ jobs:
     runs-on: macos-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -71,12 +72,12 @@ jobs:
           - undertow
     name: locust - ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -115,12 +116,12 @@ jobs:
           - saml
     name: jmeter - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Setup Gradle Wrapper Cache
@@ -144,8 +145,3 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} ${{ matrix.protocols }}
-#      - name: JMeter Test Results Summary
-#        uses: test-summary/action@v2
-#        with:
-#          paths: /tmp/jmeter-results.xml
-#        if: always()

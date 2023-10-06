@@ -1,0 +1,33 @@
+{
+  "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.audit.engine.enabled=true",
+
+    "--cas.authn.attribute-repository.core.expiration-time=0",
+
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.id=MyStub",
+    "--cas.authn.attribute-repository.stub.state=STANDBY",
+
+    "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
+    "--cas.authn.attribute-repository.groovy[0].id=MyGroovy",
+    "--cas.authn.attribute-repository.groovy[0].state=STANDBY",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson",
+    "--cas.authn.attribute-repository.json[0].state=STANDBY",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+
+

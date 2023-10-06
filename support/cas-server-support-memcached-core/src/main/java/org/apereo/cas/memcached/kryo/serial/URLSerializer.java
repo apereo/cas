@@ -8,6 +8,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.val;
 
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -21,7 +22,7 @@ public class URLSerializer extends Serializer<URL> {
     public URL read(final Kryo kryo, final Input input, final Class<? extends URL> aClass) {
         return FunctionUtils.doUnchecked(() -> {
             val url = kryo.readObject(input, String.class);
-            return new URL(url);
+            return new URI(url).toURL();
         });
     }
 

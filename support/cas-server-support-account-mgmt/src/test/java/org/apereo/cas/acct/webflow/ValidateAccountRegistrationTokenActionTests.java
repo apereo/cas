@@ -20,14 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,36 +59,26 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
     private Action submitAccountRegistrationAction;
 
     @Test
-    void verifyOperationFails() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyOperationFails() throws Throwable {
+        val context = MockRequestContext.create();
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, validateAction.execute(context).getId());
     }
 
     @Test
-    void verifyPassRegistrationRequest() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyPassRegistrationRequest() throws Throwable {
+        val context = MockRequestContext.create();
 
-        request.setRemoteAddr("127.0.0.1");
-        request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.getHttpServletRequest().setRemoteAddr("127.0.0.1");
+        context.getHttpServletRequest().setLocalAddr("127.0.0.1");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
 
-        request.addParameter("username", "casuser");
-        request.addParameter("email", "cas@example.org");
-        request.addParameter("phone", "3477465432");
+        context.setParameter("username", "casuser");
+        context.setParameter("email", "cas@example.org");
+        context.setParameter("phone", "3477465432");
 
         val results = submitAccountRegistrationAction.execute(context);
-        val token = new URIBuilder(results.getAttributes().get("result", String.class)).getQueryParams().get(0).getValue();
-        request.addParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
+        val token = new URIBuilder(results.getAttributes().get("result", String.class)).getQueryParams().getFirst().getValue();
+        context.setParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, validateAction.execute(context).getId());
     }
 }

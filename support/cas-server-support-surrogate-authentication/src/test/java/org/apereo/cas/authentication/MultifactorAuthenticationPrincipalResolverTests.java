@@ -35,7 +35,7 @@ class MultifactorAuthenticationPrincipalResolverTests {
     private MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
@@ -48,7 +48,7 @@ class MultifactorAuthenticationPrincipalResolverTests {
     }
 
     @Test
-    void verifyDefaultOperation() {
+    void verifyDefaultOperation() throws Throwable {
         val resolver = MultifactorAuthenticationPrincipalResolver.identical();
         assertEquals(Ordered.LOWEST_PRECEDENCE, resolver.getOrder());
 

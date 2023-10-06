@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TemporaryFileSystemResourceTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val resource = new TemporaryFileSystemResource(File.createTempFile("temp", ".txt"));
         assertFalse(resource.isFile());
 
@@ -33,7 +33,7 @@ class TemporaryFileSystemResourceTests {
     }
 
     @Test
-    void verifyChannel() throws Exception {
+    void verifyChannel() throws Throwable {
         val resource = new TemporaryFileSystemResource(File.createTempFile("temp2", ".txt"));
         try (val channel = resource.readableChannel()) {
             assertTrue(channel.isOpen());

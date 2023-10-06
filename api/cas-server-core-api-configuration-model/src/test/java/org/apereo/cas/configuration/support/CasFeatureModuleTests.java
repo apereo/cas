@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 class CasFeatureModuleTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val clazz = new CasFeatureModuleUnderTest();
         assertTrue(clazz.isDefined());
         clazz.setEnabled(false);

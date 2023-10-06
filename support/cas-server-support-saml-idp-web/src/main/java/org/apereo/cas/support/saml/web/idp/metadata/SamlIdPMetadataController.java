@@ -54,7 +54,7 @@ public class SamlIdPMetadataController {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(
         @RequestParam(value = "service", required = false) final String service,
-        final HttpServletResponse response) throws Exception {
+        final HttpServletResponse response) throws Throwable {
 
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);

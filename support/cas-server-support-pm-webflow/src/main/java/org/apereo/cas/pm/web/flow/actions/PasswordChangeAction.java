@@ -56,7 +56,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val bean = getPasswordChangeRequest(requestContext);
             Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
@@ -78,7 +78,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), StringUtils.EMPTY),
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);

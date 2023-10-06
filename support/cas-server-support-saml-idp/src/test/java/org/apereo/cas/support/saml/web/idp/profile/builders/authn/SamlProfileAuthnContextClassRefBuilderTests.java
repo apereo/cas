@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -13,11 +12,9 @@ import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,10 +27,9 @@ import static org.mockito.Mockito.*;
 @Tag("SAMLResponse")
 class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
-        void verifyGroovyOperationByService() throws Exception {
+        void verifyGroovyOperationByService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("classpath:SamlAuthnContext.groovy");
             val authnRequest = getAuthnRequestFor(service);
@@ -52,7 +48,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByService() throws Exception {
+        void verifyOperationByService() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("some-context-class");
             val authnRequest = getAuthnRequestFor(service);
@@ -71,7 +67,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByAuthnRequest() throws Exception {
+        void verifyOperationByAuthnRequest() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
             val context = mock(RequestedAuthnContext.class);
@@ -91,7 +87,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyOperationByAssertion() throws Exception {
+        void verifyOperationByAssertion() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -113,13 +109,13 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals(AuthnContext.PPT_AUTHN_CTX, result.getAuthnContextClassRef().getURI());
         }
     }
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
     class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
 
         @Test
-        void verifyRefedsContext() throws Exception {
+        void verifyRefedsContext() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -143,8 +139,8 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals("https://refeds.org/profile/mfa", result.getAuthnContextClassRef().getURI());
         }
     }
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.mfa.core.authentication-context-attribute=amr",
         "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"
@@ -152,7 +148,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
     class MappedToValueTests extends BaseSamlIdPConfigurationTests {
 
         @Test
-        void verifyRefedsContextWithPrincipalAttribute() throws Exception {
+        void verifyRefedsContextWithPrincipalAttribute() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
@@ -172,7 +168,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
         }
 
         @Test
-        void verifyRefedsContextWithoutPrincipalAttribute() throws Exception {
+        void verifyRefedsContextWithoutPrincipalAttribute() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 

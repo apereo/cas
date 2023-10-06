@@ -1,9 +1,15 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
+import org.apereo.cas.web.support.WebUtils;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.execution.ActionExecutionException;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Optional;
 
 /**
  * This is {@link BaseCasWebflowAction}.
@@ -19,6 +25,26 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
      * @return true/false
      */
     protected static boolean isLoginFlowActive(final RequestContext requestContext) {
-        return requestContext.getActiveFlow().getId().equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val currentFlowId = Optional.ofNullable(requestContext.getActiveFlow())
+            .map(FlowDefinition::getId).orElse("unknown");
+        return currentFlowId.equalsIgnoreCase(CasWebflowConfigurer.FLOW_ID_LOGIN);
     }
+
+    @Override
+    protected final Event doExecute(final RequestContext requestContext) throws Exception {
+        val activeFlow = requestContext.getActiveFlow();
+        try {
+            WebUtils.putActiveFlow(requestContext);
+            return doExecuteInternal(requestContext);
+        } catch (final Exception e) {
+            throw e;
+        } catch (final Throwable e) {
+            val currentState = Optional.ofNullable(requestContext.getCurrentState())
+                .map(StateDefinition::getId).orElse("unknown");
+            throw new ActionExecutionException(activeFlow.getId(),
+                currentState, this, requestContext.getAttributes(), e);
+        }
+    }
+
+    protected abstract Event doExecuteInternal(RequestContext requestContext) throws Throwable;
 }

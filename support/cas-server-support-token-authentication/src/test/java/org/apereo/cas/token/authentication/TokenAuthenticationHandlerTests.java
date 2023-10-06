@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -44,6 +45,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -62,6 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -77,6 +80,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -108,21 +112,21 @@ class TokenAuthenticationHandlerTests {
     private AuthenticationPostProcessor tokenAuthenticationPostProcessor;
 
     @Test
-    void verifyPostProcessorAuthentication() throws Exception {
+    void verifyPostProcessorAuthentication() throws Throwable {
         val service = RegisteredServiceTestUtils.getService();
         val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         tokenAuthenticationPostProcessor.process(authenticationBuilder,
             CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service));
         val authentication = authenticationBuilder.build();
         assertTrue(authentication.getAttributes().containsKey(TokenConstants.PARAMETER_NAME_TOKEN));
-        val token = authentication.getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN).get(0).toString();
+        val token = authentication.getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN).getFirst().toString();
         val credential = new TokenCredential(token, service);
         val result = tokenAuthenticationHandler.authenticate(credential, credential.getService());
         assertEquals(result.getPrincipal().getId(), authentication.getPrincipal().getId());
     }
 
     @Test
-    void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Throwable {
         val service = RegisteredServiceTestUtils.getService();
         val registeredService = servicesManager.findServiceBy(service);
         val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
@@ -136,7 +140,7 @@ class TokenAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoService() {
+    void verifyNoService() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("nosigningservice");
         val registeredService = servicesManager.findServiceBy(service);
         assertThrows(UnauthorizedServiceException.class,
@@ -146,7 +150,7 @@ class TokenAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoSigning() throws Exception {
+    void verifyNoSigning() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL2);
         val registeredService = servicesManager.findServiceBy(service);
         val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
@@ -160,7 +164,7 @@ class TokenAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoEnc() throws Exception {
+    void verifyNoEnc() throws Throwable {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL3);
         val registeredService = servicesManager.findServiceBy(service);
         val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();

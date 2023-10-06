@@ -6,20 +6,18 @@ import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +27,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
+},
     properties = {
     "cas.authn.cloud-directory.username-attribute-name=username",
     "cas.authn.cloud-directory.password-attribute-name=password"
@@ -41,7 +42,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));
@@ -51,7 +52,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoPassAttr() {
+    void verifyNoPassAttr() throws Throwable {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", List.of("casuser")));
         val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
@@ -61,7 +62,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoMatch() {
+    void verifyNoMatch() throws Throwable {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));

@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyAuthentication")
 class GroovyPrincipalFactoryTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val factory = PrincipalFactoryUtils.newGroovyPrincipalFactory(new ClassPathResource("PrincipalFactory.groovy"));
-        val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
-        assertEquals("casuser", p.getId());
-        assertEquals(1, p.getAttributes().size());
+        val principal = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
+        assertEquals("casuser", principal.getId());
+        assertEquals(1, principal.getAttributes().size());
     }
 }

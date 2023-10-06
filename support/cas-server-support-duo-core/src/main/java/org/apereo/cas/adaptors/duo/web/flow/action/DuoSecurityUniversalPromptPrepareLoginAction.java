@@ -45,8 +45,8 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val authentication = WebUtils.getInProgressAuthentication();
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+        val authentication = WebUtils.getAuthentication(requestContext);
         val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
 
         val duoProvider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
@@ -80,7 +80,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(registeredService -> properties.put(RegisteredService.class.getSimpleName(), registeredService));
 
-        val principal = resolvePrincipal(authentication.getPrincipal());
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val authUrl = client.createAuthUrl(principal.getId(), state);
 
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", authUrl);

@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +37,9 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     @Autowired
     @Qualifier("oauthServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
-
-    @Override
-    @BeforeEach
-    public void setup() {
-        super.setup();
-        servicesManager.deleteAll();
-    }
     
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
         val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());
@@ -60,7 +52,7 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     }
 
     @Test
-    void verifyWithCallback() throws Exception {
+    void verifyWithCallback() throws Throwable {
         val callbackUrl = "http://localhost:8443/cas"
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 

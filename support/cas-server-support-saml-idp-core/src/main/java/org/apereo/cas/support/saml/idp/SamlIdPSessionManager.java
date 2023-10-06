@@ -20,6 +20,7 @@ import lombok.val;
 import net.shibboleth.shared.codec.Base64Support;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -106,20 +107,21 @@ public class SamlIdPSessionManager {
         return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
             .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID)
                 .map(ctx::get)
-                .or(() -> {
+                .or(Unchecked.supplier(() -> {
                     val applicationContext = openSamlConfigBean.getApplicationContext();
                     val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
-                    val service = argumentExtractor.extractService(JEEContext.class.cast(context).getNativeRequest());
-                    return Optional.ofNullable(service).map(__ -> {
-                        val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
-                        val resolvedService = serviceSelectionPlan.resolveService(service);
-                        val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
-                        return CollectionUtils.firstElement(authnRequestId)
-                            .map(Object::toString)
-                            .map(ctx::get)
-                            .orElse(null);
-                    });
-                }))
+                    val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
+                    return Optional.ofNullable(service)
+                        .map(Unchecked.function(__ -> {
+                            val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
+                            val resolvedService = serviceSelectionPlan.resolveService(service);
+                            val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
+                            return CollectionUtils.firstElement(authnRequestId)
+                                .map(Object::toString)
+                                .map(ctx::get)
+                                .orElse(null);
+                        }));
+                })))
             .filter(entry -> StringUtils.isNotBlank(entry.getSamlRequest()))
             .map(entry -> {
                 val authnRequest = fetch(clazz, entry.getSamlRequest());
@@ -143,7 +145,7 @@ public class SamlIdPSessionManager {
             try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
                 return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             return FunctionUtils.doUnchecked(() -> {
                 val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
                 try (val is = new ByteArrayInputStream(encodedRequest)) {

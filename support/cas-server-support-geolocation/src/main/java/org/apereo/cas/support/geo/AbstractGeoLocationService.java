@@ -25,7 +25,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) {
+    public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) throws Throwable {
         LOGGER.trace("Attempting to find geolocation for [{}]", clientIp);
         val loc = locate(clientIp);
 
@@ -39,7 +39,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocationResponse locate(final GeoLocationRequest request) {
+    public GeoLocationResponse locate(final GeoLocationRequest request) throws Throwable {
         return locate(Double.valueOf(request.getLatitude()), Double.valueOf(request.getLongitude()));
     }
 }

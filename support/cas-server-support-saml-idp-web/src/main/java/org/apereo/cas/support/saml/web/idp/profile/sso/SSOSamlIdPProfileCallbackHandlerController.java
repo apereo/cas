@@ -56,7 +56,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     protected ModelAndView handleCallbackProfileRequestGet(final HttpServletResponse response,
-                                                           final HttpServletRequest request) throws Exception {
+                                                           final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -69,7 +69,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
-                                                            final HttpServletRequest request) throws Exception {
+                                                            final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -82,18 +82,19 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         return WebUtils.produceErrorView(new IllegalArgumentException("Unable to build SAML response"));
     }
 
-    private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Throwable {
         val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && !authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest
+            && Boolean.FALSE.equals(authnRequest.isPassive())) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
 
         val authenticationContext = buildAuthenticationContextPair(request, response, authnContext);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        val binding = determineProfileBinding(authenticationContext);
+        val binding = determineProfileBinding(authenticationContext, request);
         if (StringUtils.isBlank(binding)) {
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
@@ -107,10 +108,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         final HttpServletResponse response,
         final HttpServletRequest request,
         final Pair<? extends RequestAbstractType, MessageContext> authnContext)
-        throws Exception {
+        throws Throwable {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest
+            && Boolean.TRUE.equals(authnRequest.isPassive())) {
             LOGGER.info("Unable to establish authentication context for passive authentication request");
             return Optional.empty();
         }

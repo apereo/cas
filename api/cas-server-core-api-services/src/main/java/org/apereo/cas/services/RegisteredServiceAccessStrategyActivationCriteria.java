@@ -36,9 +36,10 @@ public interface RegisteredServiceAccessStrategyActivationCriteria extends Seria
      * Should activate policy based on this request?
      *
      * @param request the request
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean shouldActivate(RegisteredServiceAccessStrategyRequest request);
+    boolean shouldActivate(RegisteredServiceAccessStrategyRequest request) throws Throwable;
 
     /**
      * Gets deactivation status.

@@ -11,15 +11,14 @@ import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
@@ -65,13 +64,13 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         }
         val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
         if (StringUtils.isBlank(username)) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         val passwordlessRequest = passwordlessRequestParser.parse(username);
-        val account = passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername());
+        val account = FunctionUtils.doUnchecked(() -> passwordlessUserAccountStore.findUser(passwordlessRequest.getUsername()));
         if (account.isEmpty()) {
             LOGGER.error("Unable to locate passwordless user account for [{}]", username);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(username));
         }
         val user = account.get();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
@@ -97,12 +96,14 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             communicationsManager.email(emailRequest);
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
-            val smsProperties = passwordlessProperties.getTokens().getSms();
-            val text = SmsBodyBuilder.builder().properties(smsProperties)
-                .parameters(Map.of("token", token)).build().get();
-            val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
-                .to(user.getPhone()).text(text).build();
-            communicationsManager.sms(smsRequest);
+            FunctionUtils.doUnchecked(u -> {
+                val smsProperties = passwordlessProperties.getTokens().getSms();
+                val text = SmsBodyBuilder.builder().properties(smsProperties)
+                    .parameters(Map.of("token", token)).build().get();
+                val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
+                    .to(user.getPhone()).text(text).build();
+                communicationsManager.sms(smsRequest);
+            });
         }
         LOGGER.info("Storing passwordless token for [{}]", user.getUsername());
         passwordlessTokenRepository.deleteTokens(user.getUsername());

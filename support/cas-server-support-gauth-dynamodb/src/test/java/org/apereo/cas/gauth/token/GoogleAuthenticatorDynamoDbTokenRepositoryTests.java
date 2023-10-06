@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
@@ -31,7 +32,6 @@ import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProvide
 import org.apereo.cas.config.GoogleAuthenticatorDynamoDbConfiguration;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
@@ -45,12 +45,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import software.amazon.awssdk.core.SdkSystemSetting;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -82,16 +80,17 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration.class,
     GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
     AopAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreWebConfiguration.class
 },
     properties = {
@@ -112,7 +111,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyExpiredTokens() throws Exception {
+    void verifyExpiredTokens() throws Throwable {
         val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -124,7 +123,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyLargeDataSet() {
+    void verifyLargeDataSet() throws Throwable {
         val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), userId)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();

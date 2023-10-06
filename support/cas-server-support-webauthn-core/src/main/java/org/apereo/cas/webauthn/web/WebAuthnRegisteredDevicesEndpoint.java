@@ -133,7 +133,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     public ResponseEntity<Resource> export() {
         val resource = CompressionUtils.toZipFile(registrationStorage.getObject().stream(),
             Unchecked.function(entry -> {
-                val acct = CredentialRegistration.class.cast(entry);
+                val acct = (CredentialRegistration) entry;
                 val ba = acct.getCredential().getCredentialId().getBase64Url();
                 val fileName = String.format("%s-%s", acct.getUsername(), ba);
                 val sourceFile = File.createTempFile(fileName, ".json");

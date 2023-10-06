@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.clients;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
@@ -15,32 +16,26 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,20 +46,26 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+}, properties = "cas.authn.pac4j.cookie.enabled=true")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     private ServicesManager servicesManager;
 
     private CasCookieBuilder casCookieBuilder;
 
-    private static MockRequestContext getMockRequestContext() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-        return context;
+    private static MockRequestContext getMockRequestContext() throws Exception {
+        return org.apereo.cas.util.MockRequestContext.create();
     }
 
     private static DelegatedClientIdentityProviderConfiguration getProviderConfiguration(final String client) {
@@ -93,7 +94,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyDiscoveryStrategy() {
+    void verifyDiscoveryStrategy() throws Throwable {
 
         val strategy = getStrategy();
         val context = getMockRequestContext();
@@ -110,7 +111,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyExclusiveRedirect() {
+    void verifyExclusiveRedirect() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
@@ -128,7 +129,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyExistingPrimaryProvider() {
+    void verifyExistingPrimaryProvider() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
@@ -144,7 +145,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    void verifyPrimaryViaCookie() {
+    void verifyPrimaryViaCookie() throws Throwable {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
@@ -153,7 +154,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         configureService(policy);
 
         DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
-        
+
         when(casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
@@ -169,14 +170,7 @@ class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     private DelegatedClientIdentityProviderRedirectionStrategy getStrategy() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
-        applicationContext.refresh();
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
-        var props = new CasConfigurationProperties();
-        props.getAuthn().getPac4j().getCookie().setEnabled(true);
         return new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-            casCookieBuilder, props, applicationContext);
+            casCookieBuilder, casProperties, applicationContext);
     }
 }

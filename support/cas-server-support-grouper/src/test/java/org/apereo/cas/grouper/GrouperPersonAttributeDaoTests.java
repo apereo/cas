@@ -47,11 +47,12 @@ class GrouperPersonAttributeDaoTests {
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")
             .build()
+            .fromAllAttributeRepositories()
             .retrieve();
         assertTrue(attributes.containsKey("grouperGroups"));
         assertTrue(attributes.containsKey("givenName"));

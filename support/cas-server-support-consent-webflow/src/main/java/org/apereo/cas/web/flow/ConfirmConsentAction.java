@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentReminderOptions;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,21 +38,23 @@ public class ConfirmConsentAction extends AbstractConsentAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val webService = WebUtils.getService(requestContext);
-        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
-        val registeredService = getRegisteredServiceForConsent(requestContext, service);
-        val authentication = WebUtils.getAuthentication(requestContext);
-        val optionValue = Integer.parseInt(request.getParameter("option"));
-        val option = ConsentReminderOptions.valueOf(optionValue);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+        return FunctionUtils.doUnchecked(() -> {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val webService = WebUtils.getService(requestContext);
+            val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
+            val registeredService = getRegisteredServiceForConsent(requestContext, service);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val optionValue = Integer.parseInt(request.getParameter("option"));
+            val option = ConsentReminderOptions.valueOf(optionValue);
 
-        val reminder = Long.parseLong(request.getParameter("reminder"));
-        val reminderTimeUnit = request.getParameter("reminderTimeUnit");
-        val unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase(Locale.ENGLISH));
+            val reminder = Long.parseLong(request.getParameter("reminder"));
+            val reminderTimeUnit = request.getParameter("reminderTimeUnit");
+            val unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase(Locale.ENGLISH));
 
-        LOGGER.debug("Storing consent decision for service [{}]", service);
-        consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);
-        return new EventFactorySupport().success(this);
+            LOGGER.debug("Storing consent decision for service [{}]", service);
+            consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);
+            return new EventFactorySupport().success(this);
+        });
     }
 }

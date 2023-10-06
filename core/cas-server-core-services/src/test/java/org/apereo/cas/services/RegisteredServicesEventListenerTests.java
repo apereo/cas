@@ -12,7 +12,6 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -25,15 +24,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.annotation.Bean;
-
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RegisteredServicesEventListenerTests.RegisteredServicesEventListenerTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -84,7 +83,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationEventNoContact() {
+    void verifyServiceExpirationEventNoContact() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertDoesNotThrow(new Executable() {
             @Override
@@ -97,7 +96,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationEventWithContact() {
+    void verifyServiceExpirationEventWithContact() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -110,7 +109,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationWithRemovalEvent() {
+    void verifyServiceExpirationWithRemovalEvent() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -130,7 +129,7 @@ class RegisteredServicesEventListenerTests {
         @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
         @Bean
         public SmsSender smsSender() {
-            return new MockSmsSender();
+            return MockSmsSender.INSTANCE;
         }
     }
 }

@@ -59,7 +59,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
@@ -119,10 +119,9 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      */
     protected String getRemoteHostName(final String remoteIp) {
         val revDNS = new ReverseDNSRunnable(remoteIp);
-        val t = new Thread(revDNS);
-        t.start();
+        val thread = Thread.ofVirtual().start(revDNS);
         try {
-            t.join(this.timeout);
+            thread.join(this.timeout);
         } catch (final InterruptedException e) {
             LOGGER.debug("Threaded lookup failed. Defaulting to IP [{}].", remoteIp, e);
             Thread.currentThread().interrupt();

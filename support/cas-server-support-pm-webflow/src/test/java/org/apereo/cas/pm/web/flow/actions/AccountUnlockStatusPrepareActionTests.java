@@ -30,7 +30,7 @@ class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementAction
     protected Action accountUnlockStatusPrepareAction;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
         val request = new MockHttpServletRequest();

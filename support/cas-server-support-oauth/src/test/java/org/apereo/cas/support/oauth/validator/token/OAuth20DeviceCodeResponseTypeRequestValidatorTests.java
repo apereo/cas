@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -39,7 +39,7 @@ class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyValidate() {
+    void verifyValidate() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val validator = new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, serviceFactory, oauthRequestParameterResolver);

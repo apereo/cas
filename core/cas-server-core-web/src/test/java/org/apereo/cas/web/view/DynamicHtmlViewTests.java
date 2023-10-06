@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreWebConfiguration.class
 })
 class DynamicHtmlViewTests {
@@ -36,7 +38,7 @@ class DynamicHtmlViewTests {
     private View dynamicHtmlView;
 
     @Test
-    void verifyViewRendering() throws Exception {
+    void verifyViewRendering() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         dynamicHtmlView.render(Map.of(DynamicHtmlView.class.getName(), "Hello"), request, response);
@@ -44,7 +46,7 @@ class DynamicHtmlViewTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val view = new DynamicHtmlView("<p>Hello</p>");

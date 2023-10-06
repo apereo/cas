@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasConfigurationMetadataRepositoryTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
         assertTrue(properties.isEmpty());
@@ -34,7 +34,7 @@ class CasConfigurationMetadataRepositoryTests {
     }
 
     @Test
-    void verifyQueryOperation() throws Exception {
+    void verifyQueryOperation() throws Throwable {
         var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()
             .build());

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -28,6 +27,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -100,7 +100,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final OutputStream out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
                 val hjsonString = isJsonFormat()
                     ? JsonValue.readHjson(writer.toString()).toString(getJsonFormattingOptions())
                     : writer.toString();
@@ -113,7 +113,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final Writer out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
                 if (isJsonFormat()) {
                     JsonValue.readHjson(writer.toString()).writeTo(out, getJsonFormattingOptions());
                 } else {
@@ -127,7 +127,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final File out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(this.prettyPrinter).writeValue(writer, object);
+                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
 
                 if (isJsonFormat()) {
                     try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
@@ -152,6 +152,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    public String fromList(final Collection<T> json) {
+        return FunctionUtils.doUnchecked(() -> {
+            try (val writer = new StringWriter()) {
+                getObjectMapper().writer(prettyPrinter).writeValue(writer, json);
+                return writer.toString();
+            }
+        });
+    }
+
+    @Override
     public List<T> fromList(final String json) {
         val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
         return readObjectsFromString(jsonString);
@@ -170,10 +180,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      *
      * @return the object mapper
      */
-    @Synchronized
     public ObjectMapper getObjectMapper() {
-        if (this.objectMapper == null) {
-            this.objectMapper = JacksonObjectMapperFactory
+        if (objectMapper == null) {
+            objectMapper = JacksonObjectMapperFactory
                 .builder()
                 .defaultTypingEnabled(isDefaultTypingEnabled())
                 .jsonFactory(getJsonFactory())
@@ -181,7 +190,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 .toObjectMapper();
             configureObjectMapper(objectMapper);
         }
-        return this.objectMapper;
+        return objectMapper;
     }
 
     /**

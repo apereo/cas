@@ -35,7 +35,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
     private MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(yubikeyBypassEvaluator);
         assertEquals(8, yubikeyBypassEvaluator.size());
     }

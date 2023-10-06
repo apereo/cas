@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationTextPublisher;
@@ -12,27 +11,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests}.
+ * This is {@link CasCoreServicesMonitoringConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ObservationAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreServicesMonitoringConfigurationTests.CasCoreServicesMonitoringTestConfiguration.class,
@@ -54,7 +53,7 @@ class CasCoreServicesMonitoringConfigurationTests {
     protected ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.load();
         servicesManager.save(registeredService);

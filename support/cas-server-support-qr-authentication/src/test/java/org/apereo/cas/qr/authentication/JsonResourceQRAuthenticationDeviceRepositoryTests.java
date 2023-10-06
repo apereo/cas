@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
 class JsonResourceQRAuthenticationDeviceRepositoryTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val resource = new FileSystemResource(Files.createTempFile("devices", ".json"));
         val repo = new JsonResourceQRAuthenticationDeviceRepository(resource);
 

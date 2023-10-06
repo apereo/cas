@@ -29,9 +29,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     public AccessTokenPasswordGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
-
     @Override
-    public AccessTokenRequestContext extractRequest(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
         val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getKey();
@@ -41,18 +40,14 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
-        val profile = manager.getProfile();
-        if (profile.isEmpty()) {
-            throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
-        }
-        val uProfile = profile.get();
+        val profile = manager.getProfile().orElseThrow(() -> UnauthorizedServiceException.denied("OAuth user profile cannot be determined"));
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
         val requireServiceHeader = getConfigurationContext().getCasProperties().getAuthn()
             .getOauth().getGrants().getResourceOwner().isRequireServiceHeader();
         val service = getConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = getConfigurationContext().getAuthenticationBuilder().build(uProfile, registeredService, context, service);
+        val authentication = getConfigurationContext().getAuthenticationBuilder().build(profile, registeredService, context, service);
 
         val audit = AuditableContext.builder()
             .service(service)

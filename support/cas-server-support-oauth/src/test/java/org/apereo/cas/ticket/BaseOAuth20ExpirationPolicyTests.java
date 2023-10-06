@@ -40,19 +40,15 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -63,6 +59,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasOAuth20Configuration.class,
     CasOAuth20EndpointsConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -87,8 +84,6 @@ import static org.mockito.Mockito.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseOAuth20ExpirationPolicyTests {
-    protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
-
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -108,7 +103,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
-    protected static TicketGrantingTicket newTicketGrantingTicket() {
+    protected static TicketGrantingTicket newTicketGrantingTicket() throws Throwable {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -116,7 +111,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
             EXP_POLICY_TGT);
     }
 
-    protected OAuth20Code createOAuthCode() {
+    protected OAuth20Code createOAuthCode() throws Throwable {
         val builder = mock(ExpirationPolicyBuilder.class);
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -129,7 +124,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
-    protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) {
+    protected OAuth20AccessToken newAccessToken(final TicketGrantingTicket tgt) throws Throwable {
         val code = createOAuthCode();
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(),
@@ -137,7 +132,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
-    protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) {
+    protected OAuth20RefreshToken newRefreshToken(final OAuth20AccessToken at) throws Throwable {
         val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>(), "clientid12345", at.getId(),

@@ -38,7 +38,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     private Authenticator authenticator;
 
     @Test
-    void verifyClientIdWithoutAnyAttributes() {
+    void verifyClientIdWithoutAnyAttributes() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
@@ -47,13 +47,13 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
     }
 
     @Test
-    void verifyClientIdWithScopesRequest() {
+    void verifyClientIdWithScopesRequest() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
@@ -62,7 +62,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid profile email");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey("email"));
         assertTrue(credentials.getUserProfile().getAttributes().containsKey("family_name"));
@@ -70,7 +70,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyClientIdWithoutScopesRequest() {
+    void verifyClientIdWithoutScopesRequest() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
@@ -79,7 +79,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
     }

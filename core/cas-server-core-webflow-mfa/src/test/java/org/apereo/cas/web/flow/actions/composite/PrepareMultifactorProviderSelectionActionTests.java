@@ -49,7 +49,7 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
     private Action action;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

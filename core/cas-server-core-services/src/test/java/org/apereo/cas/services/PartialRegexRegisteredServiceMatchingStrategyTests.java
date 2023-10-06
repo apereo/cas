@@ -27,7 +27,7 @@ class PartialRegexRegisteredServiceMatchingStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         service.setMatchingStrategy(strategy);
@@ -37,7 +37,7 @@ class PartialRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyPattern1() {
+    void verifyPattern1() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("https://.*");
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -45,7 +45,7 @@ class PartialRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyPattern2() {
+    void verifyPattern2() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService("\\d\\d\\d");
         val strategy = new PartialRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, "https://google123.com"));

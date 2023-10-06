@@ -1,7 +1,8 @@
 {
   "dependencies": "duo,reports",
   "conditions": {
-    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
+    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST",
+    "docker": true
   },
   "environmentVariables": [
     "DUO_REGISTRATION_SIGNING_KEY=Rn8fXz_kmaqBHafs-JhwHW4pyWbMcI0_7mnKoBxd7CFvvsLE9RZLgLwZ_z5m8XjiyDWYAiv4hWFUf3cm-EA0nA"
@@ -10,7 +11,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     
     "--cas.authn.accept.users=unknown::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=true",

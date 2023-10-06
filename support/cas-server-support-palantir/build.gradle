@@ -7,6 +7,9 @@ ext {
             aliases: ["palantir", "adminui", "management"]
     ]
 }
+
+apply plugin: "com.github.node-gradle.node"
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-protocol")
@@ -43,7 +46,7 @@ dependencies {
     implementation libraries.jsonschema
 
     testImplementation libraries.springboottomcat
-    
+
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core-services")
@@ -67,3 +70,29 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }
+
+
+node {
+    version = "${nodeVersion}"
+    yarnVersion = ''
+    download = true
+    distBaseUrl = null
+    nodeProjectDir = new File("${project.projectDir}", "client")
+}
+
+tasks.named("yarn", YarnTask) {
+    args = ['--network-timeout', '600000']
+}
+
+tasks.register("build-ui", NpxTask) {
+    command = "vite"
+    args = [ "build", "--outDir", "../src/main/resources/static/assets"]
+    dependsOn(tasks.named("yarn"))
+    inputs.files(
+        'client/package.json',
+        'client/vite.config.js'
+    )
+    outputs.dir(new File(project.projectDir, "src/main/resources/static/assets"))
+    environment = ["BUILD_PATH": "${buildDir}"]
+}
+[processResources, resourcesJar].each {it.dependsOn(tasks.named("build-ui")) }

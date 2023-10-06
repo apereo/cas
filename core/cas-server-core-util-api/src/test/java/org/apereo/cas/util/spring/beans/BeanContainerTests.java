@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class BeanContainerTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         var results = BeanContainer.of(List.of("one")).and("two").toList();
         assertEquals(2, results.size());
 

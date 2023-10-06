@@ -14,8 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.DirectObjectProvider;
-import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,18 +22,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -72,16 +61,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyFailsToFindToken() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-
+    void verifyFailsToFindToken() throws Throwable {
         val id = UUID.randomUUID().toString();
         val credential = new CasSimpleMultifactorTokenCredential(id);
         assertThrows(FailedLoginException.class,
@@ -89,16 +69,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsPrincipal() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-
+    void verifyFailsPrincipal() throws Throwable {
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
         ticketRegistry.addTicket(ticket);
@@ -109,16 +80,8 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsExpiredToken() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+    void verifyFailsExpiredToken() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal();
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
 
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),
@@ -135,16 +98,8 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+    void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal();
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
 
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),

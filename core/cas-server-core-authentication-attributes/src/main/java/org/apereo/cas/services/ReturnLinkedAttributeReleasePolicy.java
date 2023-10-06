@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serial;
@@ -23,7 +22,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Setter
 @Accessors(chain = true)

@@ -20,7 +20,7 @@ class InweboAuthenticationDeviceMetadataPopulatorTests {
         new InweboAuthenticationDeviceMetadataPopulator();
 
     @Test
-    void verifyPopulator() {
+    void verifyPopulator() throws Throwable {
         val credentials = new InweboCredential();
         credentials.setDeviceName("MyDeviceName");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
@@ -31,6 +31,6 @@ class InweboAuthenticationDeviceMetadataPopulatorTests {
         assertEquals(
             credentials.getDeviceName(),
             auth.getAttributes()
-                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).get(0));
+                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).getFirst());
     }
 }

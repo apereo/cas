@@ -60,9 +60,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -219,7 +219,7 @@ public class CoreAuthenticationUtils {
      * @return the map
      */
     public static Multimap<String, Object> transformPrincipalAttributesListIntoMultiMap(final List<String> list) {
-        val multimap = ArrayListMultimap.<String, Object>create();
+        val attributes = ArrayListMultimap.<String, Object>create();
         if (list.isEmpty()) {
             LOGGER.debug("No principal attributes are defined");
         } else {
@@ -227,17 +227,17 @@ public class CoreAuthenticationUtils {
                 val attributeName = a.trim();
                 if (attributeName.contains(":")) {
                     val attrCombo = Splitter.on(":").splitToList(attributeName);
-                    val name = attrCombo.get(0).trim();
+                    val name = attrCombo.getFirst().trim();
                     val value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
-                    multimap.put(name, value);
+                    attributes.put(name, value);
                 } else {
                     LOGGER.debug("Mapped principal attribute name [{}]", attributeName);
-                    multimap.put(attributeName, attributeName);
+                    attributes.put(attributeName, attributeName);
                 }
             });
         }
-        return multimap;
+        return attributes;
     }
 
 
@@ -381,6 +381,13 @@ public class CoreAuthenticationUtils {
             .collect(Collectors.toList());
         val transformer = new ChainingPrincipalNameTransformer(transformers);
 
+        val activeAttributeRepositoryIdentifiers = Arrays.stream(personDirectory)
+            .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
+            .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+            .filter(p -> !p.isEmpty())
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+
         return PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -399,12 +406,7 @@ public class CoreAuthenticationUtils {
                 .map(p -> p.getUseExistingPrincipalId().toBoolean()).findFirst().orElse(Boolean.FALSE))
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
-            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
-                .filter(p -> !p.isEmpty())
-                .findFirst()
-                .orElse(Collections.<String>emptySet()))
+            .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
             .build();
     }
 

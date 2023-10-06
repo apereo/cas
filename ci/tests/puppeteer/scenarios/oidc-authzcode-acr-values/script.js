@@ -10,7 +10,7 @@ async function fetchCode(page, acr, params) {
         url += `&${params}`;
     }
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
     if (await cas.isVisible(page, "#username")) {
@@ -19,7 +19,7 @@ async function fetchCode(page, acr, params) {
     }
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
-    console.log(`Using scratch code ${scratch} to login...`);
+    await cas.log(`Using scratch code ${scratch} to login...`);
     await cas.screenshot(page);
     await page.waitForTimeout(2000);
     if (await cas.isVisible(page, "#allow")) {
@@ -28,7 +28,7 @@ async function fetchCode(page, acr, params) {
     }
     await cas.screenshot(page);
     await cas.type(page, '#token', scratch);
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     if (await cas.isVisible(page, "#allow")) {
@@ -38,7 +38,7 @@ async function fetchCode(page, acr, params) {
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
     return code;
 }
 
@@ -49,19 +49,19 @@ async function exchangeCode(page, code, successHandler) {
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
+        await cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log(`Received access token ${accessToken}`);
+        await cas.log(`Received access token ${accessToken}`);
 
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
@@ -74,9 +74,9 @@ async function exchangeCode(page, code, successHandler) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
-    console.log("===================================================================");
+    await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth");
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
     await exchangeCode(page, code, idToken => {
@@ -84,9 +84,9 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     });
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
-    console.log("===================================================================");
+    await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth");
     code = await fetchCode(page, "https://refeds.org/profile/mfa", "login=prompt");
     await exchangeCode(page, code, idToken => {
@@ -94,12 +94,12 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     });
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 
-    console.log("===================================================================");
+    await cas.log("===================================================================");
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth for existing SSO");
-    await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.gotoLogin(page);
+    await cas.loginWith(page);
 
     code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, idToken => {

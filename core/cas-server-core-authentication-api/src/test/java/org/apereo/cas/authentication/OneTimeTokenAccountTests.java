@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OneTimeTokenAccountTests {
 
     @Test
-    void verifyComparisonWorks() {
+    void verifyComparisonWorks() throws Throwable {
         val otp1 = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey("secret")

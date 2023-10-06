@@ -35,7 +35,7 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
      * @throws Exception the exception
      */
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val response = InterruptUtils.getInterruptFrom(requestContext);
 
         if (response.isBlock()) {
@@ -50,7 +50,7 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
                 externalContext.recordResponseComplete();
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Denied");
+            throw UnauthorizedServiceException.denied("Rejected");
         }
         val authentication = WebUtils.getAuthentication(requestContext);
         authentication.addAttribute(InquireInterruptAction.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);

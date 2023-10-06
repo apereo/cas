@@ -6,8 +6,6 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jose4j.jwk.JsonWebKeySet;
 
-import java.util.Optional;
-
 /**
  * This is {@link OidcJwtAccessTokenCipherExecutor}.
  *
@@ -16,7 +14,7 @@ import java.util.Optional;
  */
 public class OidcJwtAccessTokenCipherExecutor extends BaseOidcJwtCipherExecutor {
 
-    public OidcJwtAccessTokenCipherExecutor(final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache,
+    public OidcJwtAccessTokenCipherExecutor(final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
                                             final OidcIssuerService oidcIssuerService) {
         super(defaultJsonWebKeystoreCache, oidcIssuerService);
     }

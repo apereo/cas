@@ -20,11 +20,11 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.HazelcastMonitorConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
-
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -34,12 +34,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.Arrays;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +50,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
@@ -61,6 +61,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -85,7 +86,7 @@ class HazelcastHealthIndicatorTests {
     private HealthIndicator hazelcastHealthIndicator;
 
     @Test
-    void verifyMonitor() {
+    void verifyMonitor() throws Throwable {
         val health = hazelcastHealthIndicator.health();
         val status = health.getStatus();
         assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
@@ -107,7 +108,7 @@ class HazelcastHealthIndicatorTests {
     }
 
     @Test
-    void verifyFreeHeapPercentageCalculation() {
+    void verifyFreeHeapPercentageCalculation() throws Throwable {
         val memoryStats = mock(MemoryStats.class);
         when(memoryStats.getFreeHeap()).thenReturn(125_555_248L);
         when(memoryStats.getCommittedHeap()).thenReturn(251_658_240L);

@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -46,13 +44,12 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) {
+        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
         val releaseAttributes = new HashMap<String, List<Object>>();
-        getSamlAuthnRequest(applicationContext).ifPresent(authnRequest -> {
+        getSamlAuthnRequest(context).ifPresent(authnRequest -> {
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
@@ -76,8 +73,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         val definitions = new ArrayList<String>();
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        getSamlAuthnRequest(applicationContext).ifPresent(authnRequest -> {
+        getSamlAuthnRequest(context).ifPresent(authnRequest -> {
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()

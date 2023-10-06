@@ -3,20 +3,18 @@ package org.apereo.cas;
 import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     MongoDbCloudConfigBootstrapConfiguration.class
 },
     properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
@@ -55,7 +54,7 @@ class MongoDbCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 }

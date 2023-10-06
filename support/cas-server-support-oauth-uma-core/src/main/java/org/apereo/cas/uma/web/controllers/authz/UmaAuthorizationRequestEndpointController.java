@@ -90,7 +90,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             }
 
             return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to handle authorization request", HttpStatus.BAD_REQUEST);
@@ -144,22 +144,10 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         return new ResponseEntity(model, HttpStatus.PERMANENT_REDIRECT);
     }
 
-    /**
-     * Generate requesting party token response entity.
-     *
-     * @param request          the request
-     * @param response         the response
-     * @param profileResult    the profile result
-     * @param umaRequest       the uma request
-     * @param permissionTicket the permission ticket
-     * @param resourceSet      the resource set
-     * @return the response entity
-     * @throws Exception the exception
-     */
     protected ResponseEntity generateRequestingPartyToken(
         final HttpServletRequest request, final HttpServletResponse response,
         final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
-        final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) throws Exception {
+        final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) throws Throwable {
         val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));

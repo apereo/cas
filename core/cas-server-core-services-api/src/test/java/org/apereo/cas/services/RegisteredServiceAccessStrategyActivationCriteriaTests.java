@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 class RegisteredServiceAccessStrategyActivationCriteriaTests {
     @Test
-    void verifyAlways() throws Exception {
+    void verifyAlways() throws Throwable {
         val criteria = RegisteredServiceAccessStrategyActivationCriteria.always();
         assertTrue(criteria.shouldActivate(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         assertTrue(criteria.isAllowIfInactive());
@@ -23,7 +23,7 @@ class RegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyNever() throws Exception {
+    void verifyNever() throws Throwable {
         val criteria = RegisteredServiceAccessStrategyActivationCriteria.never();
         assertFalse(criteria.shouldActivate(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         assertTrue(criteria.isAllowIfInactive());

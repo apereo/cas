@@ -13,12 +13,12 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -26,7 +26,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -55,7 +55,7 @@ class RenewAuthenticationRequestCheckActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyProceed() throws Exception {
+    void verifyProceed() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ class RenewAuthenticationRequestCheckActionTests {
     }
 
     @Test
-    void verifyRenew() throws Exception {
+    void verifyRenew() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");

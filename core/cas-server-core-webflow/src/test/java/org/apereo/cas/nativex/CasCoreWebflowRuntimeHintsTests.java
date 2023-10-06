@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasCoreWebflowRuntimeHintsTests {
     @Test
-    void verifyHints() {
+    void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new CasCoreWebflowRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(CasWebflowConfigurer.class).test(hints));

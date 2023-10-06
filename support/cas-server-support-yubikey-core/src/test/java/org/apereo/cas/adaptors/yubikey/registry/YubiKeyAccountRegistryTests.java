@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class YubiKeyAccountRegistryTests {
 
     @Test
-    void verifyAuthz() {
+    void verifyAuthz() throws Throwable {
         val registry = mock(BaseYubiKeyAccountRegistry.class);
         when(registry.isYubiKeyRegisteredFor(anyString(), anyString())).thenCallRealMethod();
         when(registry.isYubiKeyRegisteredFor(anyString())).thenCallRealMethod();
@@ -35,7 +35,7 @@ class YubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyAcct() {
+    void verifyAcct() throws Throwable {
         val registry = mock(BaseYubiKeyAccountRegistry.class);
         when(registry.getAccount(anyString())).thenCallRealMethod();
         when(registry.getAccountInternal(anyString())).thenThrow(new RuntimeException());
@@ -43,7 +43,7 @@ class YubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyInvalidAcct() {
+    void verifyInvalidAcct() throws Throwable {
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
             .name("first-device")

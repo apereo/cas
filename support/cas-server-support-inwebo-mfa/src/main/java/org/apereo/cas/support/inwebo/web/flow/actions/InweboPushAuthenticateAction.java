@@ -21,8 +21,8 @@ public class InweboPushAuthenticateAction extends BaseCasWebflowAction {
     private final InweboService service;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         var response = service.pushAuthenticate(login);
         if (response.getResult() == InweboResult.NOK) {

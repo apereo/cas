@@ -10,6 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,13 +32,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Git")
+@Execution(ExecutionMode.SAME_THREAD)
 class GitRepositoryBuilderTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyTestPrivateKey() throws Exception {
+    void verifyTestPrivateKey() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
@@ -51,7 +54,7 @@ class GitRepositoryBuilderTests {
     }
 
     @Test
-    void verifyBuild() throws Exception {
+    void verifyBuild() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -76,7 +79,7 @@ class GitRepositoryBuilderTests {
      * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
     @Test
-    void verifyBuildWithFilePrefix() throws Exception {
+    void verifyBuildWithFilePrefix() throws Throwable {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");

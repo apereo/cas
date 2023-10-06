@@ -46,7 +46,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     }
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) throws Throwable {
         val credentials = super.fromRequest(request, requestBody);
         if (credentials.isEmpty()) {
             return credentials;
@@ -69,7 +69,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
 
     protected Credential extractCredential(final HttpServletRequest request,
                                            final List<Credential> credentials) throws Exception {
-        val credential = (MutableCredential) credentials.get(0);
+        val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
             var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
             if (StringUtils.isNotBlank(surrogateUsername)) {

@@ -4,8 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -15,9 +14,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,7 +37,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        
+
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
         profileManager = new OAuth20ClientIdAwareProfileManager(context, oauthDistributedSessionStore,
@@ -48,7 +45,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfiles() {
+    void verifyGetProfiles() throws Throwable {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());
@@ -59,7 +56,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfilesWithoutSavedClientId() {
+    void verifyGetProfilesWithoutSavedClientId() throws Throwable {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());

@@ -78,9 +78,8 @@ public class SamlIdentityProviderDiscoveryFeedController {
     @GetMapping(path = "redirect")
     public View redirect(@RequestParam("entityID") final String entityID,
                          final HttpServletRequest httpServletRequest,
-                         final HttpServletResponse httpServletResponse) {
+                         final HttpServletResponse httpServletResponse) throws Throwable {
         val provider = samlIdentityProviderDiscoveryFeedService.getProvider(entityID, httpServletRequest, httpServletResponse);
-
         return new RedirectView('/' + provider.getRedirectUrl(), true, true, true);
     }
 }

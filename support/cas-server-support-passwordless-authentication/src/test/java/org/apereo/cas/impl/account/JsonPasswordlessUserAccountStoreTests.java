@@ -27,7 +27,7 @@ class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountS
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         passwordlessUserAccountStore.reload();
         val user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());

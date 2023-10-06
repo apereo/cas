@@ -9,13 +9,12 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,7 +24,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.List;
 
 /**
@@ -65,7 +63,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
      * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         LOGGER.trace("Service asking for service ticket is [{}]", service);
 
@@ -105,7 +103,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             grantServiceTicket(authenticationResult, service, context);
             return success();
 
-        } catch (final AbstractTicketException e) {
+        } catch (final Throwable e) {
             if (e instanceof InvalidTicketException) {
                 LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
                 ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicket);
@@ -129,10 +127,12 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             .findFirst()
             .ifPresent(auth -> {
                 if (auth.shouldGenerate(authenticationResult, service)) {
-                    val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
-                    val serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-                    WebUtils.putServiceTicketInRequestScope(requestContext, serviceTicketId);
-                    LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
+                    FunctionUtils.doUnchecked(__ -> {
+                        val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
+                        val serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+                        WebUtils.putServiceTicketInRequestScope(requestContext, serviceTicketId);
+                        LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
+                    });
                 }
             });
     }
@@ -155,7 +155,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
      * @param error the error
      * @return the event
      */
-    private Event newEvent(final String id, final Exception error) {
+    private Event newEvent(final String id, final Throwable error) {
         return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
     }
 }

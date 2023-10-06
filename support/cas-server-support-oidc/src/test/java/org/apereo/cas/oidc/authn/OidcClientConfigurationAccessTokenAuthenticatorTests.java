@@ -28,14 +28,14 @@ import static org.mockito.Mockito.*;
 class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val at = getAccessToken();
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        getAuthenticator().validate(new CallContext(ctx, new JEESessionStore()), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -48,14 +48,14 @@ class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcT
     }
 
     @Test
-    void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val at = getAccessToken();
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        getAuthenticator().validate(new CallContext(ctx, new JEESessionStore()), credentials);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

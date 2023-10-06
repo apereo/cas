@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.net.InetAddress;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
     classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasGeoLocationConfiguration.class,
         CasGeoLocationAzureMapsConfiguration.class
     },
@@ -39,7 +41,7 @@ public class AzureMapsGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(geoLocationService.locate("8.8.8.8"));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40, Double.valueOf(resp.getLatitude()).intValue());

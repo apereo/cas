@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class AuditableExecutionResultTests {
 
     @Test
-    void verifyOps() {
+    void verifyOps() throws Throwable {
         val input = AuditableExecutionResult.builder()
             .exception(new IllegalArgumentException())
             .serviceTicket(mock(ServiceTicket.class))

@@ -20,12 +20,6 @@ Duo offers several options for authenticating users:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
-<div class="alert alert-warning">:warning: <strong>Usage</strong>
-<p>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
-is deprecated and scheduled to be removed on March 30, 2024. You should consider switching to the 'Universal Prompt' variant
-described in this document to avoid surprises in future upgrades.</p>
-</div>
-
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
@@ -46,7 +40,8 @@ flows as necessary. The provider id need not be defined if there is only a singl
 
 ## Account Profile Management
 
-The integration with Duo Security is able to provide user device registration information to the account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
+The integration with Duo Security is able to provide user device registration information to the 
+account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
 
 ## User Account Status
 
@@ -147,8 +142,8 @@ levels:
 ```xml
 ...
 <Logger name="com.duosecurity" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ``` 

@@ -57,7 +57,7 @@ public class CompressionUtils {
     }
 
     /**
-     * Deflate the given string via a {@link java.util.zip.Deflater}.
+     * Deflate the given string via a {@link Deflater}.
      *
      * @param data the data
      * @return base64 encoded string

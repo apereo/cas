@@ -6,7 +6,7 @@ const assert = require('assert');
     let value = `casuser:Mellon`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
     await cas.doGet("https://localhost:8443/cas/login?service=https://apereo.github.io",
         res => {
             assert(res.status === 200);

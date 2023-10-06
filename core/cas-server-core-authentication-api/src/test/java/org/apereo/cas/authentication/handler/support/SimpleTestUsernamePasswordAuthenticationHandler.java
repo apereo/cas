@@ -81,21 +81,20 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
 
         val username = credential.getUsername();
         val password = credential.toPassword();
 
         val exception = this.usernameErrorMap.get(username);
-        if (exception instanceof GeneralSecurityException) {
-            throw (GeneralSecurityException) exception;
+        if (exception instanceof final GeneralSecurityException gse) {
+            throw gse;
         }
-        if (exception instanceof PreventedException) {
-            throw (PreventedException) exception;
+        if (exception instanceof final PreventedException pe) {
+            throw pe;
         }
-        if (exception instanceof RuntimeException) {
-            throw (RuntimeException) exception;
+        if (exception instanceof final RuntimeException re) {
+            throw re;
         }
         if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",

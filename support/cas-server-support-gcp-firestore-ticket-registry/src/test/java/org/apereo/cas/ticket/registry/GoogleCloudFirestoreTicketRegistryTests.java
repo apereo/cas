@@ -63,7 +63,7 @@ class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    public void verifyLargeDataset() throws Exception {
+    void verifyLargeDataset() throws Throwable {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);

@@ -27,15 +27,8 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
 
     private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /**
-     * Create delegated authentication request ticket.
-     *
-     * @param service    the service
-     * @param properties the properties
-     * @return the delegated authentication request ticket
-     */
     @Override
-    public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
+    public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
         val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
         val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
         return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);

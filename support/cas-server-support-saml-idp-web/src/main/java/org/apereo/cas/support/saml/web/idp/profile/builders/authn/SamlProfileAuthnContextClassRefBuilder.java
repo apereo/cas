@@ -11,7 +11,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -25,7 +24,6 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +96,13 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
                     .map(cacheMgr -> {
                         val script = cacheMgr.resolveScriptableResource(requiredClass,
                             requiredClass, context.getAdaptor().getEntityId());
-                        return FunctionUtils.doIfNotNull(script, () -> {
-                            val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
-                            script.setBinding(args);
-                            return script.execute(args.values().toArray(), String.class, true);
-                        }, () -> null).get();
+                        return FunctionUtils.doIfNotNull(script,
+                            () -> {
+                                val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
+                                script.setBinding(args);
+                                return script.execute(args.values().toArray(), String.class, true);
+                            },
+                            () -> null).get();
                     })
                     .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager"));
             }
@@ -111,7 +111,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
         val defClass = getDefaultAuthenticationContextClass();
         val requestedAuthnContext = context.getSamlRequest() instanceof AuthnRequest
-            ? AuthnRequest.class.cast(context.getSamlRequest()).getRequestedAuthnContext() : null;
+            ? ((AuthnRequest) context.getSamlRequest()).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return buildDefaultAuthenticationContextClass(defClass, context);

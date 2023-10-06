@@ -32,7 +32,7 @@ public class OidcRegisteredServiceJwtResponseModeCipherExecutor extends Register
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * The service keystore for OIDC tokens.
@@ -64,8 +64,7 @@ public class OidcRegisteredServiceJwtResponseModeCipherExecutor extends Register
 
     @Override
     protected JwtTicketCipherExecutor createCipherExecutorInstance(
-        final String encryptionKey,
-        final String signingKey,
+        final String encryptionKey, final String signingKey,
         final RegisteredService registeredService) {
         return InternalJwtAccessTokenCipherExecutor.get(signingKey, encryptionKey, registeredService, this);
     }

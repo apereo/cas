@@ -10,11 +10,11 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -29,11 +29,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,7 +46,7 @@ class SendPasswordResetInstructionsActionTests {
     static class PasswordManagementTestConfiguration {
         @Bean
         @Autowired
-        public PasswordManagementService passwordChangeService() {
+        public PasswordManagementService passwordChangeService() throws Throwable {
             val service = mock(PasswordManagementService.class);
             when(service.createToken(any())).thenReturn(null);
             when(service.findUsername(any())).thenReturn("casuser");
@@ -60,7 +55,6 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @SpringBootTest(classes = {
         BasePasswordManagementActionTests.SharedTestConfiguration.class,
@@ -86,14 +80,14 @@ class SendPasswordResetInstructionsActionTests {
         @Autowired
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
         private MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider;
-
+        
         @Test
-        void verifyActionRequiresMfa() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+        void verifyActionRequiresMfa() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(casSimpleMultifactorAuthenticationProvider.getId(), sendPasswordResetInstructionsAction.execute(context).getId());
             assertNotNull(WebUtils.getPasswordManagementQuery(context, PasswordManagementQuery.class));
             assertEquals(CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD, WebUtils.getTargetTransition(context));
@@ -102,19 +96,18 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyActionAfterMfa() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+        void verifyActionAfterMfa() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
+
             
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class DefaultTests extends BasePasswordManagementActionTests {
 
@@ -129,12 +122,12 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyAction() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+        void verifyAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
             assertEquals(1, tickets.size());
@@ -142,50 +135,49 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        void verifyNoPhoneOrEmail() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "none");
+        void verifyNoPhoneOrEmail() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "none");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
 
         @Test
-        void verifyNoUsername() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
+        void verifyNoUsername() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @SpringBootTest(classes = {
-            BasePasswordManagementActionTests.SharedTestConfiguration.class,
-            CasPersonDirectoryTestConfiguration.class
+        BasePasswordManagementActionTests.SharedTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class
     }, properties = {
-            "spring.mail.host=localhost",
-            "spring.mail.port=25000",
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
 
-            "cas.authn.pm.core.enabled=true",
-            "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
-            "cas.authn.pm.forgot-username.mail.from=cas@example.org",
-            "cas.authn.pm.reset.mail.from=cas@example.org",
-            "cas.authn.pm.reset.security-questions-enabled=true",
-            "cas.authn.pm.reset.number-of-uses=1"
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+        "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+        "cas.authn.pm.reset.mail.from=cas@example.org",
+        "cas.authn.pm.reset.security-questions-enabled=true",
+        "cas.authn.pm.reset.number-of-uses=1"
     })
     class MultiUseTests extends BasePasswordManagementActionTests {
 
         @Test
-        void verifyActionMultiUse() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "casuser");
+        void verifyActionMultiUse() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
             assertEquals(1, tickets.size());
@@ -193,18 +185,17 @@ class SendPasswordResetInstructionsActionTests {
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @Import(PasswordManagementTestConfiguration.class)
     class WithoutTokens extends BasePasswordManagementActionTests {
 
         @Test
-        void verifyNoLinkAction() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter("username", "unknown");
+        void verifyNoLinkAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            
+            context.setParameter("username", "unknown");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }

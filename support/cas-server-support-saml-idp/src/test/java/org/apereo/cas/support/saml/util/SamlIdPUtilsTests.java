@@ -46,7 +46,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyServiceNameQualifier() {
+    void verifyServiceNameQualifier() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         val nameIdQualifier = UUID.randomUUID().toString();
         service.setNameIdQualifier(nameIdQualifier);
@@ -55,7 +55,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyEndpointWithoutLocation() {
+    void verifyEndpointWithoutLocation() throws Throwable {
         val logoutRequest = mock(LogoutRequest.class);
         val endpoint = mock(SingleLogoutService.class);
         val adaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
@@ -65,7 +65,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyMetadataForAllServices() throws Exception {
+    void verifyMetadataForAllServices() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val md = SamlIdPUtils.getMetadataResolverForAllSamlServices(servicesManager, service.getServiceId(),
@@ -83,7 +83,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
 
     @Test
-    void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() {
+    void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -103,7 +103,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrlWithIndex() {
+    void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrlWithIndex() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -125,7 +125,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() {
+    void verifySignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrl() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -144,7 +144,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithAssertionConsumerServiceIndex() {
+    void verifySignedRequestWithAssertionConsumerServiceIndex() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -163,7 +163,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyUnsignedRequestWithAssertionConsumerServiceIndex() {
+    void verifyUnsignedRequestWithAssertionConsumerServiceIndex() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -184,7 +184,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithAssertionConsumerServiceUnknownIndex() {
+    void verifySignedRequestWithAssertionConsumerServiceUnknownIndex() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -204,7 +204,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySignedRequestWithEmbeddedSignature() {
+    void verifySignedRequestWithEmbeddedSignature() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -228,7 +228,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyUnsignedRequestWithAssertionConsumerServiceUrlMatchingMetadataAcsUrl() {
+    void verifyUnsignedRequestWithAssertionConsumerServiceUrlMatchingMetadataAcsUrl() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -248,7 +248,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyUnsignedRequestWithAssertionConsumerServiceUrlMatchingAlternateMetadataAcsUrl() {
+    void verifyUnsignedRequestWithAssertionConsumerServiceUrlMatchingAlternateMetadataAcsUrl() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         val authnRequest = mock(AuthnRequest.class);
@@ -268,7 +268,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifyPreparePeerEntitySamlEndpointContext() {
+    void verifyPreparePeerEntitySamlEndpointContext() throws Throwable {
         val context = new MessageContext();
         val adaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
 

@@ -54,7 +54,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    void verifyGenerateToken() throws Exception {
+    void verifyGenerateToken() throws Throwable {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
@@ -74,7 +74,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    void verifyStoreToken() throws Exception {
+    void verifyStoreToken() throws Throwable {
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
         try (val webServer = new MockWebServer(9229,
@@ -96,7 +96,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    void verifyValidateTokenFails() throws Exception {
+    void verifyValidateTokenFails() throws Throwable {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
@@ -108,7 +108,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    void verifyValidateTokenOK() throws Exception {
+    void verifyValidateTokenOK() throws Throwable {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
@@ -116,6 +116,18 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             webServer.start();
             val credential = new CasSimpleMultifactorTokenCredential(UUID.randomUUID().toString());
             assertNotNull(multifactorAuthenticationService.validate(authentication.getPrincipal(), credential));
+        }
+    }
+
+    @Test
+    void verifyFetchTokenOK() throws Throwable {
+        val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
+        try (val webServer = new MockWebServer(9229,
+            new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
+                .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val credential = new CasSimpleMultifactorTokenCredential(UUID.randomUUID().toString());
+            assertNotNull(multifactorAuthenticationService.fetch(credential));
         }
     }
 }

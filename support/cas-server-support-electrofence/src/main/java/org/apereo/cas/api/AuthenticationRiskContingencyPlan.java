@@ -22,9 +22,10 @@ public interface AuthenticationRiskContingencyPlan {
      * @param score          the score
      * @param request        the request
      * @return the authentication risk contingency response
+     * @throws Throwable the throwable
      */
     AuthenticationRiskContingencyResponse execute(Authentication authentication,
                                                   RegisteredService service,
                                                   AuthenticationRiskScore score,
-                                                  HttpServletRequest request);
+                                                  HttpServletRequest request) throws Throwable;
 }

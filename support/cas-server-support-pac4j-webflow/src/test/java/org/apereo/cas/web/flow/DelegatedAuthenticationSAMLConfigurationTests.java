@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
     DelegatedAuthenticationClientsTestConfiguration.class,
     DelegatedAuthenticationSAMLConfiguration.class,
@@ -47,7 +49,7 @@ class DelegatedAuthenticationSAMLConfigurationTests {
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(hazelcastSAMLMessageStoreFactory);
     }
 

@@ -10,7 +10,7 @@ const fs = require("fs");
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?state=1001&client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
 
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");
@@ -18,11 +18,11 @@ const fs = require("fs");
     await page.waitForTimeout(5000);
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
-    // console.log(payload);
+    // await cas.log(payload);
     assert(payload.form.response !== undefined);
 
     let response = payload.form.response;
-    console.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
+    await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
     const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, 'utf8'));
     cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then(verified => {
         assert(verified.payload.aud === "client");

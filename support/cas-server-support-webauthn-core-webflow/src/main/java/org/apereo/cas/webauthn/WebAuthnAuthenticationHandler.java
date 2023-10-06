@@ -19,7 +19,6 @@ import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.Objects;
 
 /**
@@ -37,7 +36,8 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
 
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
-    public WebAuthnAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public WebAuthnAuthenticationHandler(final String name,
+                                         final ServicesManager servicesManager,
                                          final PrincipalFactory principalFactory,
                                          final RegistrationStorage webAuthnCredentialRepository,
                                          final SessionManager sessionManager,
@@ -60,7 +60,7 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val webAuthnCredential = (WebAuthnCredential) credential;
         val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
             "CAS has no reference to an authentication event to locate a principal");

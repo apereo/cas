@@ -25,7 +25,7 @@ class NullPrincipalTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeANullPrincipalToJson() throws Exception {
+    void verifySerializeANullPrincipalToJson() throws Throwable {
         val serviceWritten = NullPrincipal.getInstance();
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, NullPrincipal.class);

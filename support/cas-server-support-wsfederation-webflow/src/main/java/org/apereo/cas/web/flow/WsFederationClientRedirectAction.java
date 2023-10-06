@@ -26,7 +26,7 @@ public class WsFederationClientRedirectAction extends BaseCasWebflowAction {
     private final ServerProperties serverProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val clients = WebUtils.getWsFederationDelegatedClients(requestContext, WsFedClient.class);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         clients

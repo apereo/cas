@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.io.Serial;
 
 /**
@@ -19,51 +18,84 @@ public class UnauthorizedServiceException extends RuntimeException {
     /**
      * Error code that indicates the service is unauthorized for use.
      **/
-    public static final String CODE_UNAUTHZ_SERVICE = "screen.service.error.message";
+    private static final String CODE_UNAUTHORIZED_SERVICE = "screen.service.error.message";
 
-    /**
-     * Exception object that indicates the service manager is empty with no service definitions.
-     **/
-    public static final String CODE_EMPTY_SVC_MGMR = "screen.service.empty.error.message";
+    private static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
 
-    /**
-     * Exception object that indicates the service is expired.
-     **/
-    public static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
+    private static final String CODE_REQUIRED_SERVICE = "screen.service.required.message";
+
+    private static final String CODE_INITIAL_SERVICE = "screen.service.initial.message";
 
     @Serial
     private static final long serialVersionUID = 3905807495715960369L;
 
     private final String code;
 
-    /**
-     * Construct the exception object with the associated error code.
-     *
-     * @param message the error message
-     */
-    public UnauthorizedServiceException(final String message) {
+    protected UnauthorizedServiceException(final String message) {
         this(null, message);
     }
 
-    public UnauthorizedServiceException(final String code, final String message) {
+    protected UnauthorizedServiceException(final String code, final String message) {
         super(message);
         this.code = code;
     }
 
-    public UnauthorizedServiceException(final Throwable cause, final String code, final String message) {
+    protected UnauthorizedServiceException(final Throwable cause, final String code, final String message) {
         super(message, cause);
         this.code = code;
     }
 
-    /**
-     * Constructs an UnauthorizedServiceException with a custom message and the
-     * root cause of this exception.
-     *
-     * @param message an explanatory message.
-     * @param cause   the root cause of the exception.
-     */
-    public UnauthorizedServiceException(final String message, final Throwable cause) {
+    protected UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
         this.code = null;
+    }
+    
+    /**
+     * Thrown when service access is rejected.
+     *
+     * @param message the message
+     * @return the runtime exception
+     */
+    public static RuntimeException denied(final String message) {
+        return new UnauthorizedServiceException(CODE_UNAUTHORIZED_SERVICE, message);
+    }
+
+    /**
+     * Thrown when service in the registry has expired.
+     *
+     * @param message the message
+     * @return the runtime exception
+     */
+    public static RuntimeException expired(final String message) {
+        return new UnauthorizedServiceException(CODE_EXPIRED_SERVICE, message);
+    }
+
+    /**
+     * Wrap runtime exception.
+     *
+     * @param ex the ex
+     * @return the runtime exception
+     */
+    public static RuntimeException wrap(final Throwable ex) {
+        return new UnauthorizedServiceException(ex, CODE_UNAUTHORIZED_SERVICE, ex.getMessage());
+    }
+
+    /**
+     * Required exception.
+     *
+     * @return the runtime exception
+     */
+    public static RuntimeException required() {
+        return new UnauthorizedServiceException(CODE_REQUIRED_SERVICE, CODE_REQUIRED_SERVICE);
+    }
+
+    /**
+     * Requested service required on initial access.
+     *
+     * @return the runtime exception
+     */
+    public static RuntimeException requested() {
+        return new UnauthorizedServiceException(CODE_INITIAL_SERVICE, CODE_INITIAL_SERVICE);
+
     }
 }

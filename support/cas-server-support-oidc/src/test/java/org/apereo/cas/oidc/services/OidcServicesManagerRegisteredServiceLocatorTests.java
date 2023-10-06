@@ -48,7 +48,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyFindByQuery() {
+    void verifyFindByQuery() throws Throwable {
         val service1 = getOidcRegisteredService(UUID.randomUUID().toString());
         val service2 = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service1, service2);
@@ -68,9 +68,8 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyWithCallback() throws Exception {
-        val callbackUrl = "http://localhost:8443/cas"
-                          + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
+    void verifyWithCallback() throws Throwable {
+        val callbackUrl = "http://localhost:8443/cas" + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);
@@ -98,7 +97,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
         assertEquals(OidcServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, oidcServicesManagerRegisteredServiceLocator.getOrder());
 
@@ -112,7 +111,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyReverseOperation() {
+    void verifyReverseOperation() throws Throwable {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
         service1.setEvaluationOrder(5);
 

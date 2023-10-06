@@ -279,24 +279,27 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                     return new ResponseEntity<Object>(encoded, HttpStatus.OK);
                 }))
                 .orElseThrow(() -> new SamlException("Unable to locate " + samlRequest.getEntityId()));
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    private AuthenticatedAssertionContext getAssertion(final SamlRequest samlRequest) {
+    private AuthenticatedAssertionContext getAssertion(final SamlRequest samlRequest) throws Throwable {
         val selectedService = serviceFactory.createService(samlRequest.getEntityId());
         val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
 
         val authentication = authenticateRequest(samlRequest, selectedService);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(saml20ObjectBuilder.getOpenSamlConfigBean().getApplicationContext())
             .service(selectedService)
             .principal(authentication.getPrincipal())
             .build();
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
-        val builder = DefaultAuthenticationBuilder.of(authentication.getPrincipal(), principalFactory, attributesToRelease,
+        val builder = DefaultAuthenticationBuilder.of(
+            context.getApplicationContext(), authentication.getPrincipal(),
+            principalFactory, attributesToRelease,
             selectedService, registeredService, authentication);
 
         val finalAuthentication = builder.build();
@@ -307,7 +310,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             .build();
     }
 
-    private Authentication authenticateRequest(final SamlRequest samlRequest, final WebApplicationService selectedService) {
+    private Authentication authenticateRequest(final SamlRequest samlRequest, final WebApplicationService selectedService) throws Throwable {
         if (StringUtils.isNotBlank(samlRequest.getPassword())) {
             val credential = new UsernamePasswordCredential(samlRequest.getUsername(), samlRequest.getPassword());
             val result = authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);

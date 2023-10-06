@@ -5,17 +5,16 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -56,7 +56,7 @@ class CasServiceRegistryInitializationConfigurationTests {
     @Nested
     public class WithoutServiceRegistryLocation {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());
@@ -70,7 +70,7 @@ class CasServiceRegistryInitializationConfigurationTests {
     @TestPropertySource(properties = "cas.service-registry.json.location=unknown-bad-location")
     public class WithUnknownServiceRegistryLocation {
         @Test
-        void verifyOperation() {
+        void verifyOperation() throws Throwable {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifySubjectWithNoNameId() throws Exception {
+    void verifySubjectWithNoNameId() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -59,7 +59,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySubjectWithSkewedConfData() throws Exception {
+    void verifySubjectWithSkewedConfData() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -87,12 +87,12 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
-        val subjectData = subject.getSubjectConfirmations().get(0).getSubjectConfirmationData();
+        val subjectData = subject.getSubjectConfirmations().getFirst().getSubjectConfirmationData();
         assertEquals(now, subjectData.getNotOnOrAfter().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Test
-    void verifyEncryptedSubject() throws Exception {
+    void verifyEncryptedSubject() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -121,7 +121,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
-        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
         assertNotNull(subjectConfirmation.getEncryptedID());
         assertNull(subjectConfirmation.getNameID());
         assertNotNull(subject.getEncryptedID());

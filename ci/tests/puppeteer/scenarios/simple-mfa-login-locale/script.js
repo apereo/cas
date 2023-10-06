@@ -20,15 +20,15 @@ const cas = require('../../cas.js');
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     assert(code.includes("Dear CAS Apereo,Here is your token->"));
     code = code.substring(code.lastIndexOf(">") + 1);
-    console.log(`Code to use is extracted as ${code}`);
+    await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
 
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.submitForm(page, "#registerform");
-    await page2.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await cas.assertInnerText(page, '#content div h2', "Anmeldung erfolgreich");
     await cas.assertCookie(page);
 

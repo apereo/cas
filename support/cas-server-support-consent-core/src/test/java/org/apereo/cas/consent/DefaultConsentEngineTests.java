@@ -44,7 +44,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentDisablesRelease() {
+    void verifyConsentDisablesRelease() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
@@ -54,7 +54,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentIgnored() {
+    void verifyConsentIgnored() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
@@ -65,7 +65,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentExpired() throws Exception {
+    void verifyConsentExpired() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
@@ -78,7 +78,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentIsAlwaysRequired() throws Exception {
+    void verifyConsentIsAlwaysRequired() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
@@ -95,7 +95,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentIsRequiredByAttributeName() throws Exception {
+    void verifyConsentIsRequiredByAttributeName() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
@@ -111,7 +111,7 @@ class DefaultConsentEngineTests {
     }
 
     @Test
-    void verifyConsentFound() throws Exception {
+    void verifyConsentFound() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val service = CoreAuthenticationTestUtils.getService();
         val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");

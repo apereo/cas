@@ -54,7 +54,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     }
 
     @Test
-    void verifyResolver() throws Exception {
+    void verifyResolver() throws Throwable {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -73,7 +73,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     }
 
     @Test
-    void verifyFailsResolver() throws Exception {
+    void verifyFailsResolver() throws Throwable {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -88,7 +88,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     }
 
     @Test
-    void verifyResolverDoesNotSupport() {
+    void verifyResolverDoesNotSupport() throws Throwable {
         assertFalse(resolver.supports(null));
 
     }

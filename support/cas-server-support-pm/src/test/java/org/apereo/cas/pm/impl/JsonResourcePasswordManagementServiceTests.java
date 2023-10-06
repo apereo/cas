@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -29,18 +30,16 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -65,6 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -88,48 +89,48 @@ class JsonResourcePasswordManagementServiceTests {
     private PasswordManagementService passwordChangeService;
 
     @Autowired
-    @Qualifier("passwordValidationService")
+    @Qualifier(PasswordValidationService.BEAN_NAME)
     private PasswordValidationService passwordValidationService;
 
     @Test
-    void verifyUserEmailCanBeFound() {
+    void verifyUserEmailCanBeFound() throws Throwable {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("casuser@example.org", email);
     }
 
     @Test
-    void verifyUserCanBeFound() {
+    void verifyUserCanBeFound() throws Throwable {
         val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
         assertEquals("casuser", user);
     }
 
     @Test
-    void verifyUserPhoneCanBeFound() {
+    void verifyUserPhoneCanBeFound() throws Throwable {
         val phone = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("1234567890", phone);
     }
 
     @Test
-    void verifyUserEmailCanNotBeFound() {
+    void verifyUserEmailCanNotBeFound() throws Throwable {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casusernotfound").build());
         assertNull(email);
     }
 
     @Test
-    void verifyUnlock() {
+    void verifyUnlock() throws Throwable {
         val credentials = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         assertTrue(passwordChangeService.unlockAccount(credentials));
     }
 
     @Test
-    void verifyUserQuestionsCanBeFound() {
+    void verifyUserQuestionsCanBeFound() throws Throwable {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals(2, questions.size());
         assertTrue(passwordChangeService.getSecurityQuestions(
             PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build()).isEmpty());
     }
     @Test
-    void verifyUserPasswordChange() {
+    void verifyUserPasswordChange() throws Throwable {
         val bean = new PasswordChangeRequest();
         bean.setUsername("casuser");
         bean.setConfirmedPassword("newPassword".toCharArray());
@@ -138,7 +139,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertTrue(res);
     }
     @Test
-    void verifyUserPasswordChangeFail() {
+    void verifyUserPasswordChangeFail() throws Throwable {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword".toCharArray());
@@ -155,7 +156,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertFalse(res);
     }
     @Test
-    void verifyPasswordValidationService() {
+    void verifyPasswordValidationService() throws Throwable {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setUsername(c.getUsername());
@@ -165,7 +166,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertTrue(isValid);
     }
     @Test
-    void verifySecurityQuestions() {
+    void verifySecurityQuestions() throws Throwable {
         val query = PasswordManagementQuery.builder().username("casuser").build();
         assertDoesNotThrow(() -> {
             query.securityQuestion("Q1", "A1");

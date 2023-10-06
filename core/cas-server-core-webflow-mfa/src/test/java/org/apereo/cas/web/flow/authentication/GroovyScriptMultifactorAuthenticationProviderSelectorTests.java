@@ -30,7 +30,7 @@ class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCas
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Test
-    void verifySelectionOfMfaProvider() {
+    void verifySelectionOfMfaProvider() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
         val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -41,7 +41,7 @@ class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCas
     }
 
     @Test
-    void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
         val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

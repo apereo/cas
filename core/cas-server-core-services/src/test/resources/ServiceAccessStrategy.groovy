@@ -10,7 +10,7 @@ def run(Object[] args) {
         logger.info("Service request is ${service.id}")
         if (service.id.startsWith("https://")) {
             def result = AuditableExecutionResult.builder().build()
-            result.setException(new UnauthorizedServiceException("Service Unauthorized"))
+            result.setException(UnauthorizedServiceException.denied("Service Unauthorized"))
             logger.error("Service ${service.id} is unauthorized by Groovy script")
             return result
         }

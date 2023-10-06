@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeviceFingerprintComponentManagerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val noOp = DeviceFingerprintComponentManager.noOp();

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -30,7 +31,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyDelegatedAccessAnd() {
+    void verifyDelegatedAccessAnd() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
@@ -54,7 +55,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyDelegatedAccessOr() {
+    void verifyDelegatedAccessOr() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.OR);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
@@ -77,7 +78,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyRequiredAttributes() {
+    void verifyRequiredAttributes() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
@@ -93,58 +94,58 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyAndOperation() {
+    void verifyAndOperation() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertFalse(chain.isServiceAccessAllowed());
-        assertFalse(chain.isServiceAccessAllowedForSso());
+        assertFalse(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        assertFalse(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
     }
 
     @Test
-    void verifyPrincipalAccessAnd() {
+    void verifyPrincipalAccessAnd() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
     }
 
     @Test
-    void verifyPrincipalAccessOr() {
+    void verifyPrincipalAccessOr() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
     }
 
     @Test
-    void verifyOrOperation() throws Exception {
+    void verifyOrOperation() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setUnauthorizedRedirectUrl(new URI("https://google.com"));
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertTrue(chain.isServiceAccessAllowed());
-        assertTrue(chain.isServiceAccessAllowedForSso());
+        assertTrue(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        assertTrue(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
         assertNotNull(chain.getUnauthorizedRedirectUrl());
     }
 
 
     @Test
-    void verifySerializeToJson() throws Exception {
+    void verifySerializeToJson() throws Throwable {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setUnauthorizedRedirectUrl(new URI("https://google.com"));
         chain.setOperator(LogicalOperatorTypes.OR);
@@ -157,7 +158,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyPrincipalAccessMixedRules() throws Exception {
+    void verifyPrincipalAccessMixedRules() throws Throwable {
         val chain1 = new ChainingRegisteredServiceAccessStrategy();
         chain1.setOperator(LogicalOperatorTypes.AND);
         chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
@@ -169,14 +170,14 @@ class ChainingRegisteredServiceAccessStrategyTests {
         parentChain.setOperator(LogicalOperatorTypes.OR);
         parentChain.addStrategies(chain1, chain2);
 
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
 
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key3", Set.of("value3"))).build()));
     }
 }

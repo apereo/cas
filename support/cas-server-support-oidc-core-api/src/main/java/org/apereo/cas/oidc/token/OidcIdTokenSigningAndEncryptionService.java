@@ -28,7 +28,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcIdTokenSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
         final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings) {
@@ -39,7 +39,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        val svc = OidcRegisteredService.class.cast(registeredService);
+        val svc = (OidcRegisteredService) registeredService;
         if (StringUtils.isBlank(svc.getIdTokenSigningAlg())) {
             return super.getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
         }

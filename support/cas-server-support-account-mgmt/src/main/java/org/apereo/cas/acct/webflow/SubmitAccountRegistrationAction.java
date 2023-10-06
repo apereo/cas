@@ -55,7 +55,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
             val registrationRequest = new AccountRegistrationRequest();
@@ -76,21 +76,15 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         WebUtils.addErrorMessageToContext(requestContext, "cas.screen.acct.error.fail");
         return error();
     }
 
-    /**
-     * Send account registration activation sms.
-     *
-     * @param registrationRequest the registration request
-     * @param url                 the url
-     * @return true/false
-     */
-    protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest, final String url) {
+    protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest,
+                                                           final String url) throws Throwable {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
@@ -134,14 +128,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         return EmailCommunicationResult.builder().success(false).build();
     }
 
-    /**
-     * Create account registration activation url.
-     *
-     * @param registrationRequest the registration request
-     * @return the string
-     * @throws Exception the exception
-     */
-    protected String createAccountRegistrationActivationUrl(final AccountRegistrationRequest registrationRequest) throws Exception {
+    protected String createAccountRegistrationActivationUrl(final AccountRegistrationRequest registrationRequest) throws Throwable {
         val token = accountRegistrationService.createToken(registrationRequest);
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val properties = CollectionUtils.<String, Serializable>wrap(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);

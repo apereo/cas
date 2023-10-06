@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class DefaultAuthenticationResultBuilderTests {
     @Test
-    void verifyAuthenticationResultBuildsPrincipals() {
+    void verifyAuthenticationResultBuildsPrincipals() throws Throwable {
         val builder = new DefaultAuthenticationResultBuilder();
         assertFalse(builder.getInitialAuthentication().isPresent());
         assertFalse(builder.getInitialCredential().isPresent());
@@ -52,7 +52,7 @@ class DefaultAuthenticationResultBuilderTests {
     }
 
     @Test
-    void verifyAuthenticationResultMergesPrincipalAttributes() {
+    void verifyAuthenticationResultMergesPrincipalAttributes() throws Throwable {
         val builder = new DefaultAuthenticationResultBuilder();
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1",
             CollectionUtils.wrap("givenName", "CAS", "uid", "casuser1"));

@@ -115,7 +115,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                                                    @RequestParam(required = false) final String roleArn,
                                                    @RequestBody final MultiValueMap<String, String> requestBody,
                                                    final HttpServletRequest request,
-                                                   final HttpServletResponse response) {
+                                                   final HttpServletResponse response) throws Throwable {
 
         var authenticationResult = (AuthenticationResult) null;
         try {
@@ -135,7 +135,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         }
 
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
-            amz.getCredentialSecretKey(), amz.getProfilePath(), StringUtils.defaultString(profile, amz.getProfileName()));
+            amz.getCredentialSecretKey(), amz.getProfilePath(), StringUtils.defaultIfBlank(profile, amz.getProfileName()));
         val builder = StsClient.builder();
         AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         val client = builder.build();
@@ -154,7 +154,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                         .body("Specified role is not allowed. Current roles:" + attributeValues);
                 }
             }
-            val role = StringUtils.defaultString(roleArn, attributeValues.get(0).toString());
+            val role = StringUtils.defaultIfBlank(roleArn, attributeValues.getFirst().toString());
             LOGGER.debug("Using role [{}]", role);
             val roleRequest = AssumeRoleRequest.builder()
                 .durationSeconds(Long.valueOf(Beans.newDuration(duration).toSeconds()).intValue())

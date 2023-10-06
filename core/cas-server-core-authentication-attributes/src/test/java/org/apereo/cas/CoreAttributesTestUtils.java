@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -28,7 +29,7 @@ public class CoreAttributesTestUtils {
 
     private static final String CONST_TEST_URL = "https://google.com";
 
-    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
+    public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) throws Throwable {
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
@@ -50,7 +51,7 @@ public class CoreAttributesTestUtils {
         when(service.getDescription()).thenReturn("description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed()).thenReturn(true);
+        when(access.isServiceAccessAllowed(service, CoreAuthenticationTestUtils.getService())).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;
     }

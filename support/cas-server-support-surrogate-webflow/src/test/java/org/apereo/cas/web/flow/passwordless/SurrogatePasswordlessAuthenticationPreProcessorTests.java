@@ -43,7 +43,7 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
     private PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val uid = "casuser";
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication(uid));
         val account = PasswordlessUserAccount.builder().username(uid).build();
@@ -54,7 +54,7 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
             PasswordlessAuthenticationToken.builder().username(uid).build().property("surrogateUsername", "cassurrogate"));
         assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         val authns = new ArrayList<>(results.getAuthentications());
-        assertTrue(authns.get(0).getPrincipal() instanceof SimplePrincipal);
+        assertTrue(authns.getFirst().getPrincipal() instanceof SimplePrincipal);
         assertTrue(authns.get(1).getPrincipal() instanceof SurrogatePrincipal);
     }
 }

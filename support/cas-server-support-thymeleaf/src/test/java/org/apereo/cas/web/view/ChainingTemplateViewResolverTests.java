@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Web")
 class ChainingTemplateViewResolverTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val r = new ChainingTemplateViewResolver();
         val resolver = new StringTemplateResolver();
         resolver.setCheckExistence(true);

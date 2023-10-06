@@ -4,13 +4,13 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.config.GoogleAuthenticatorRedisConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,22 +50,17 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
-
-    @BeforeEach
-    public void cleanUp() {
-        registry.deleteAll();
-    }
-
+    
     @Test
     void verifySave() {
         val username = UUID.randomUUID().toString();
         assertNull(registry.get(654321));
         assertNull(registry.get(username, 654321));
-
-        var toSave = OneTimeTokenAccount.builder()
+        val validationCode = RandomUtils.nextInt(1, 999999);
+        val toSave = OneTimeTokenAccount.builder()
             .username(username)
             .secretKey("secret")
-            .validationCode(143211)
+            .validationCode(validationCode)
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
@@ -73,6 +68,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
 
         val account = registry.get(username).iterator().next();
         assertEquals("secret", account.getSecretKey());
+        assertEquals(validationCode, account.getValidationCode());
         val accounts = registry.load();
         assertFalse(accounts.isEmpty());
     }
@@ -96,22 +92,25 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     @Test
     void verifySaveAndUpdate() {
         val username = UUID.randomUUID().toString();
+        var validationCode = RandomUtils.nextInt(1, 999999);
         val toSave = OneTimeTokenAccount.builder()
             .username(username)
             .secretKey("secret")
-            .validationCode(222222)
+            .validationCode(validationCode)
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
-        val s = registry.get(username).iterator().next();
-        assertNotNull(s.getRegistrationDate());
-        assertEquals(222222, s.getValidationCode());
-        s.setSecretKey("newSecret");
-        s.setValidationCode(999666);
-        registry.update(s);
+        val tokenAccount = registry.get(username).iterator().next();
+        assertNotNull(tokenAccount.getRegistrationDate());
+        assertEquals(validationCode, tokenAccount.getValidationCode());
+        tokenAccount.setSecretKey("newSecret");
+
+        validationCode = RandomUtils.nextInt(1, 999999);
+        tokenAccount.setValidationCode(validationCode);
+        registry.update(tokenAccount);
         val s2 = registry.get(username).iterator().next();
-        assertEquals(999666, s2.getValidationCode());
+        assertEquals(validationCode, s2.getValidationCode());
         assertEquals("newSecret", s2.getSecretKey());
     }
 
@@ -120,10 +119,11 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         val allAccounts = Stream.generate(
                 () -> {
                     val username = UUID.randomUUID().toString();
+                    var validationCode = RandomUtils.nextInt(1, 999999);
                     return OneTimeTokenAccount.builder()
                         .username(username)
                         .secretKey("secret")
-                        .validationCode(222222)
+                        .validationCode(validationCode)
                         .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
                         .name(UUID.randomUUID().toString())
                         .build();

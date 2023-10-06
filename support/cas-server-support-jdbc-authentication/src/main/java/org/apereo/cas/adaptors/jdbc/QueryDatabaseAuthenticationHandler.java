@@ -23,7 +23,6 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -67,9 +66,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential,
-        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.toPassword();

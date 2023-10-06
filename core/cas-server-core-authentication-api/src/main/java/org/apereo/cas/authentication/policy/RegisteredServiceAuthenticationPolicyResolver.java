@@ -43,7 +43,7 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     private int order;
 
     @Override
-    public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) {
+    public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
         val criteria = registeredService.getAuthenticationPolicy().getCriteria();
@@ -56,14 +56,14 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     }
 
     @Override
-    public boolean supports(final AuthenticationTransaction transaction) {
+    public boolean supports(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
-            val registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
-                throw new UnauthorizedSsoServiceException();
+                throw new UnauthorizedSsoServiceException("Denied: %s".formatted(service));
             }
             val authenticationPolicy = registeredService.getAuthenticationPolicy();
             if (authenticationPolicy != null) {

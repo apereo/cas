@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SystemUtilsTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val info = SystemUtils.getSystemInfo();
         assertNotNull(info);
         assertFalse(info.isEmpty());

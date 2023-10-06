@@ -198,8 +198,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @throws GeneralSecurityException security exception
      */
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
-
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val x509Credential = (X509CertificateCredential) credential;
         val certificates = x509Credential.getCertificates();
 
@@ -231,13 +230,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         LOGGER.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
     }
-
-    /**
-     * Validate the X509Certificate received.
-     *
-     * @param cert the cert
-     * @throws GeneralSecurityException the general security exception
-     */
+    
     private void validate(final X509Certificate cert) throws GeneralSecurityException {
         cert.checkValidity();
         this.revocationChecker.check(cert);

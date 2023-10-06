@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 class PrincipalElectionStrategyTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(PrincipalElectionStrategy.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Integer.MAX_VALUE, policy.getOrder());

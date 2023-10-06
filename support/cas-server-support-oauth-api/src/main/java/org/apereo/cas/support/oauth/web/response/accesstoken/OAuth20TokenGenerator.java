@@ -16,7 +16,7 @@ public interface OAuth20TokenGenerator {
      *
      * @param responseHolder the response holder
      * @return the token result
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    OAuth20TokenGeneratedResult generate(AccessTokenRequestContext responseHolder) throws Exception;
+    OAuth20TokenGeneratedResult generate(AccessTokenRequestContext responseHolder) throws Throwable;
 }

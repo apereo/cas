@@ -40,7 +40,7 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
@@ -60,7 +60,7 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationJWS() throws Exception {
+    void verifyOperationJWS() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -83,7 +83,7 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(id);
         service.setUserInfoSigningAlg(AlgorithmIdentifiers.NONE);

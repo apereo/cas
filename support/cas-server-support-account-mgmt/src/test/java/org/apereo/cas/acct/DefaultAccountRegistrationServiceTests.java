@@ -4,7 +4,6 @@ import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -14,11 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreHttpConfiguration.class
 },
     properties = "cas.server.prefix=https://sso.example.org/cas")
@@ -56,7 +56,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    void verifyMissingIssuer() throws Exception {
+    void verifyMissingIssuer() throws Throwable {
         val claims = new JwtClaims();
         claims.setIssuer("unknown");
         val token = claims.toJson();
@@ -64,7 +64,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    void verifyMissingAudience() throws Exception {
+    void verifyMissingAudience() throws Throwable {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience("unknown");
@@ -73,7 +73,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    void verifyMissingSubject() throws Exception {
+    void verifyMissingSubject() throws Throwable {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());
@@ -82,7 +82,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    void verifyMissingClientInfo() throws Exception {
+    void verifyMissingClientInfo() throws Throwable {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());

@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import lombok.Getter;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +33,6 @@ import static org.mockito.Mockito.*;
 @Tag("Hazelcast")
 class HazelcastTicketRegistryTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Getter
     @Import({
         HazelcastTicketRegistryConfiguration.class,
@@ -58,7 +55,6 @@ class HazelcastTicketRegistryTests {
 
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Getter
     @Import({
         HazelcastTicketRegistryConfiguration.class,
@@ -84,7 +80,7 @@ class HazelcastTicketRegistryTests {
         private CasConfigurationProperties casProperties;
 
         @RepeatedTest(1)
-        public void verifyBadExpPolicyValue() {
+        void verifyBadExpPolicyValue() throws Throwable {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);
@@ -99,7 +95,7 @@ class HazelcastTicketRegistryTests {
         }
 
         @RepeatedTest(1)
-        public void verifyBadTicketInCatalog() {
+        void verifyBadTicketInCatalog() throws Throwable {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);

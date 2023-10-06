@@ -55,8 +55,8 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
         values.put(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName(), AttributeValue.builder().s(record.getResourceOperatedUpon()).build());
         values.put(ColumnNames.APPLICATION_CODE.getColumnName(), AttributeValue.builder().s(record.getApplicationCode()).build());
         values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(record.getActionPerformed()).build());
-        values.put(ColumnNames.USER_AGENT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultString(record.getClientInfo().getUserAgent(), "N/A")).build());
-        values.put(ColumnNames.GEO_LOCATION.getColumnName(), AttributeValue.builder().s(StringUtils.defaultString(record.getClientInfo().getGeoLocation(), "N/A")).build());
+        values.put(ColumnNames.USER_AGENT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getUserAgent(), "N/A")).build());
+        values.put(ColumnNames.GEO_LOCATION.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getGeoLocation(), "N/A")).build());
         val time = record.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC);
         values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);

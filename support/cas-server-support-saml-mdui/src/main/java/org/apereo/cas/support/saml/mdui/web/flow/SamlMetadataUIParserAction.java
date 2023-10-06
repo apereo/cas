@@ -46,7 +46,7 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
     private final ArgumentExtractor argumentExtractor;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val entityId = getEntityIdFromRequest(requestContext);
         if (StringUtils.isBlank(entityId)) {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
@@ -86,36 +86,25 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
 
-    /**
-     * Verify registered service.
-     *
-     * @param requestContext    the request context
-     * @param registeredService the registered service
-     */
+
     protected void verifyRegisteredService(final RequestContext requestContext, final RegisteredService registeredService) {
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        val service = WebUtils.getService(requestContext);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             LOGGER.debug("Service [{}] is not recognized/allowed by the CAS service registry", registeredService);
             if (registeredService != null) {
                 WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             }
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Rejected");
         }
     }
 
-    /**
-     * Gets registered service from request.
-     *
-     * @param requestContext the request context
-     * @param entityId       the entity id
-     * @return the registered service from request
-     */
     protected WebBasedRegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
         val service = this.serviceFactory.createService(entityId);
         var registeredService = (WebBasedRegisteredService) servicesManager.findServiceBy(service);
         if (registeredService == null) {
             val currentService = WebUtils.getService(requestContext);
             LOGGER.debug("Entity id [{}] not found in the registry. Fallback onto [{}]", entityId, currentService);
-            registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(currentService);
+            registeredService = (WebBasedRegisteredService) servicesManager.findServiceBy(currentService);
         }
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;
@@ -144,7 +133,7 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
         if (StringUtils.isBlank(entityId)) {
             val service = argumentExtractor.extractService(request);
             if (service != null && service.getAttributes().containsKey(this.entityIdParameterName)) {
-                entityId = service.getAttributes().get(this.entityIdParameterName).get(0).toString();
+                entityId = service.getAttributes().get(this.entityIdParameterName).getFirst().toString();
             }
         }
         return entityId;

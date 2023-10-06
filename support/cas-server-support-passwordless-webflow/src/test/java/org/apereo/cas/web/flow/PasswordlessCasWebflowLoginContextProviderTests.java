@@ -1,19 +1,13 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.UUID;
 
@@ -32,13 +26,8 @@ class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswordlessAu
     private CasWebflowLoginContextProvider passwordlessCasWebflowLoginContextProvider;
 
     @Test
-    void verifyOperation() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyOperation() throws Throwable {
+        val context = MockRequestContext.create();
 
         val account = new PasswordlessUserAccount();
         account.setUsername(UUID.randomUUID().toString());

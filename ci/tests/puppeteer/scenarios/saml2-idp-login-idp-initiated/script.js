@@ -19,27 +19,27 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.screenshot(page);
     await page.waitForTimeout(4000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(4000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await browser.close();
 
     let endpoint = await getActuatorEndpoint(entityId);
-    console.log("===================================");
-    console.log(`Trying ${endpoint} via GET`);
-    console.log(await cas.doRequest(endpoint, "GET", {}, 200));
-    console.log("===================================");
-    console.log(`Trying ${endpoint} via POST`);
-    console.log(await cas.doRequest(endpoint, "POST", {}, 200));
-    console.log("===================================");
+    await cas.log("===================================");
+    await cas.log(`Trying ${endpoint} via GET`);
+    await cas.log(await cas.doRequest(endpoint, "GET", {}, 200));
+    await cas.log("===================================");
+    await cas.log(`Trying ${endpoint} via POST`);
+    await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
+    await cas.log("===================================");
     endpoint = await getActuatorEndpoint(entityId, "");
-    console.log(`Trying ${endpoint} via POST without password`);
-    console.log(await cas.doRequest(endpoint, "POST", {}, 200));
+    await cas.log(`Trying ${endpoint} via POST without password`);
+    await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
 
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
 })();

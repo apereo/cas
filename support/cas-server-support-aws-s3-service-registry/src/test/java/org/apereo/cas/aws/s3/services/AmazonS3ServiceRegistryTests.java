@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4566",
@@ -60,7 +62,7 @@ class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     private S3Client amazonS3ServiceRegistryClient;
 
     @Test
-    void verifyFailsOp() {
+    void verifyFailsOp() throws Throwable {
         assertNotNull(amazonS3ServiceRegistryClient);
         val service = mock(RegisteredService.class);
         when(service.getId()).thenThrow(new RuntimeException());

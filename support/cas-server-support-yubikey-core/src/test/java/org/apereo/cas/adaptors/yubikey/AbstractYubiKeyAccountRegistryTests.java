@@ -37,19 +37,19 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyCipher() {
+    void verifyCipher() throws Throwable {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(OTP);
         val encoded = getYubikeyAccountCipherExecutor().encode(pubKey);
         assertEquals(pubKey, getYubikeyAccountCipherExecutor().decode(encoded));
     }
 
     @Test
-    void verifyAccountNotRegistered() {
+    void verifyAccountNotRegistered() throws Throwable {
         assertFalse(isYubiKeyRegisteredFor("missing-user", null));
     }
 
     @Test
-    void verifyAccountNotRegisteredWithBadToken() {
+    void verifyAccountNotRegisteredWithBadToken() throws Throwable {
         val request = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
             .token(BAD_TOKEN).name(UUID.randomUUID().toString()).build();
         assertFalse(registerAccount(request));
@@ -57,7 +57,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyAccountRegistered() {
+    void verifyAccountRegistered() throws Throwable {
         val request1 = YubiKeyDeviceRegistrationRequest.builder().username("casuser2")
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request1));
@@ -81,7 +81,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifySaveAccount() {
+    void verifySaveAccount() throws Throwable {
         val account = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
             .devices(List.of(YubiKeyRegisteredDevice.builder()
                 .name(UUID.randomUUID().toString())
@@ -94,7 +94,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyDeviceRemoval() {
+    void verifyDeviceRemoval() throws Throwable {
         val username = "casuser-registered-device";
         for (var i = 0; i < 4; i++) {
             val request = YubiKeyDeviceRegistrationRequest.builder()
@@ -115,7 +115,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     }
 
     @Test
-    void verifyEncryptedAccount() {
+    void verifyEncryptedAccount() throws Throwable {
         val request1 = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser")
             .token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registerAccount(request1));

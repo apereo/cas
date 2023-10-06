@@ -86,7 +86,7 @@ class RadiusAuthenticationHandlerTests {
     private AuthenticationHandler radiusAuthenticationHandler;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = radiusAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);

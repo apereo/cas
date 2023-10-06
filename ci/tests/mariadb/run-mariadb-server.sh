@@ -5,7 +5,7 @@
 echo "Running MariaDb docker image..."
 docker stop mariadb || true
 docker run --rm -p 3306:3306 --rm --name mariadb \
-  -e MYSQL_ROOT_PASSWORD=mypass -d mariadb:11.0.2
+  -e MYSQL_ROOT_PASSWORD=mypass -d mariadb:11.1.2
 
 docker ps | grep "mariadb"
 retVal=$?

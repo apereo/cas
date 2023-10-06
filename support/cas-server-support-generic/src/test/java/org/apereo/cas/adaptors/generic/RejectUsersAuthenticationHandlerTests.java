@@ -39,7 +39,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupportsProperUserCredentials() throws Exception {
+    void verifySupportsProperUserCredentials() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fff");
         credential.assignPassword("rutgers");
@@ -47,7 +47,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDoesntSupportBadUserCredentials() {
+    void verifyDoesntSupportBadUserCredentials() throws Throwable {
         try {
             assertFalse(authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
@@ -58,7 +58,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsUserInMap() {
+    void verifyFailsUserInMap() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("scott");
         credential.assignPassword("rutgers");
@@ -66,7 +66,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyPassesUserNotInMap() throws Exception {
+    void verifyPassesUserNotInMap() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fds");
         credential.assignPassword("rutgers");
@@ -74,7 +74,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyPassesNullUserName() {
+    void verifyPassesNullUserName() throws Throwable {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword("user");
@@ -82,7 +82,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyPassesNullUserNameAndPassword() {
+    void verifyPassesNullUserNameAndPassword() throws Throwable {
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(new UsernamePasswordCredential(), mock(Service.class)));
     }
 }

@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
-
 import java.io.Serial;
 import java.util.Map;
 import java.util.TreeMap;
@@ -54,9 +53,9 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
     private Map<String, String> headers = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         return Unchecked.supplier(() -> {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.valueOf(this.method))
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(endpointUrl))
                 .headers(headers)

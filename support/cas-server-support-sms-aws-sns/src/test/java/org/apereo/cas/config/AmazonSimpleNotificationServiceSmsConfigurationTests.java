@@ -1,14 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.notifications.sms.SmsSender;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     AmazonSimpleNotificationServiceSmsConfiguration.class
 }, properties = {
@@ -35,7 +35,7 @@ class AmazonSimpleNotificationServiceSmsConfigurationTests {
     private SmsSender smsSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(smsSender);
     }
 }

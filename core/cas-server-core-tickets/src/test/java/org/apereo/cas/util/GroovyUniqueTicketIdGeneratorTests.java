@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 class GroovyUniqueTicketIdGeneratorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resource = new ClassPathResource("GroovyUniqueTicketIdGenerator.groovy");
         val gen = new GroovyUniqueTicketIdGenerator(resource);
         assertEquals("sys666", gen.getNewTicketId("SYS"));

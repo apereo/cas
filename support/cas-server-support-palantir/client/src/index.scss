@@ -1,0 +1,38 @@
+:root {
+    --mdc-text-button-label-text-color: #f7f7f7;
+    --mdc-theme-error: #d9534f;
+    --cas-theme-primary: #153e50;
+    --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
+    --cas-theme-button-bg: #26418f;
+    --cas-theme-primary-light: #006d85;
+    --cas-theme-secondary: #74C163;
+    --cas-theme-success: var(--cas-theme-secondary);
+    --cas-theme-danger: var(--mdc-theme-error);
+    --cas-theme-warning: #e6a210;
+    --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
+    --mdc-theme-primary: var(--cas-theme-primary, #153e50);
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+body, #app-root {
+    width: 100vw;
+    height: 100vh;
+}
+
+.codeMarker {
+    background: #fff677;
+    position: absolute;
+    z-index: 20;
+  }

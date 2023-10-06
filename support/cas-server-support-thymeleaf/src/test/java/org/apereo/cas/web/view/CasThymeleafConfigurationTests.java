@@ -37,7 +37,7 @@ class CasThymeleafConfigurationTests {
      * classpath and one for templates in thymeleaf/templates.
      */
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(chainingTemplateViewResolver);
         assertEquals(7, ((ChainingTemplateViewResolver) chainingTemplateViewResolver).getResolvers().size());
         assertNotNull(chainingTemplateViewResolver.resolveTemplate(mock(IEngineConfiguration.class), null, "testTemplate", new HashMap<>()));

@@ -36,7 +36,7 @@ class ChainingCasProtocolValidationSpecificationTests {
     }
 
     @Test
-    void verifyOperationByAny() {
+    void verifyOperationByAny() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(true);
         chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true),
@@ -47,7 +47,7 @@ class ChainingCasProtocolValidationSpecificationTests {
     }
 
     @Test
-    void verifyOperationByAll() {
+    void verifyOperationByAll() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(false);
         chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true));

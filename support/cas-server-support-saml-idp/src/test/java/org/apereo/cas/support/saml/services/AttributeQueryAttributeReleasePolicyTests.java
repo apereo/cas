@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata14"
 })
 class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "AttributeQueryAttributeReleasePolicyTests.json");
@@ -49,7 +49,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    void verifyReleasesAttributes() {
+    void verifyReleasesAttributes() throws Throwable {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "cn"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -60,6 +60,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(service)
             .principal(principal)
             .build();

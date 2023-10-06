@@ -25,20 +25,20 @@ public class GroovyDelegatedClientAuthenticationRequestCustomizer implements Del
     private final ApplicationContext applicationContext;
 
     @Override
-    public void customize(final IndirectClient client, final WebContext webContext) {
+    public void customize(final IndirectClient client, final WebContext webContext) throws Throwable {
         val args = new Object[]{client, webContext, applicationContext, LOGGER};
         watchableScript.execute(args, Void.class);
     }
 
     @Override
-    public boolean supports(final IndirectClient client, final WebContext webContext) {
+    public boolean supports(final IndirectClient client, final WebContext webContext) throws Throwable {
         val args = new Object[]{client, webContext, applicationContext, LOGGER};
         return watchableScript.execute("supports", Boolean.class, args);
     }
 
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
-                                final WebApplicationService currentService) {
+                                final WebApplicationService currentService) throws Throwable {
         val args = new Object[]{client, webContext, currentService, applicationContext, LOGGER};
         return watchableScript.execute("isAuthorized", Boolean.class, args);
     }

@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
 
     await cas.type(page,'#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await page.waitForTimeout(1000);
@@ -41,7 +41,7 @@ const cas = require('../../cas.js');
 
     await cas.type(page,'#q0', "answer1");
     await cas.type(page,'#q1', "answer2");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
 
@@ -50,7 +50,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, '#password-confirm-mismatch-msg');
     await cas.assertInvisibility(page, '#password-policy-violation-msg');
 
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
 
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");

@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,15 +147,16 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
+        val attributeMatcherPredicate = Unchecked.<String>predicate(key -> requiredAttributeFound(key, request, requiredAttributes));
         if (this.requireAllAttributes) {
-            return difference.stream().allMatch(key -> requiredAttributeFound(key, request, requiredAttributes));
+            return difference.stream().allMatch(attributeMatcherPredicate);
         }
-        return difference.stream().anyMatch(key -> requiredAttributeFound(key, request, requiredAttributes));
+        return difference.stream().anyMatch(attributeMatcherPredicate);
     }
 
     protected boolean requiredAttributeFound(final String attributeName,
                                              final RegisteredServiceAccessStrategyRequest request,
-                                             final Map<String, Set<String>> requiredAttributes) {
+                                             final Map<String, Set<String>> requiredAttributes) throws Throwable {
         val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(request.getAttributes().get(attributeName));
 

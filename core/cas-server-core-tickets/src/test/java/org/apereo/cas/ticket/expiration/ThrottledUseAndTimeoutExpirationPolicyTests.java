@@ -63,18 +63,18 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyTicketIsNotExpired() {
+    void verifyTicketIsNotExpired() throws Throwable {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    void verifyTicketIsExpired() {
+    void verifyTicketIsExpired() throws Throwable {
         expirationPolicy.setTimeToKillInSeconds(-TIMEOUT);
         assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    void verifyTicketUsedButWithTimeout() {
+    void verifyTicketUsedButWithTimeout() throws Throwable {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
@@ -83,7 +83,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyThrottleNotTriggeredWithinOneSecond() {
+    void verifyThrottleNotTriggeredWithinOneSecond() throws Throwable {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
@@ -92,7 +92,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyNotWaitingEnoughTime() {
+    void verifyNotWaitingEnoughTime() throws Throwable {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
@@ -108,7 +108,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, ThrottledUseAndTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

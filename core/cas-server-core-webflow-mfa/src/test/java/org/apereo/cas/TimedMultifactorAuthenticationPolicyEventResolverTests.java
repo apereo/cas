@@ -3,10 +3,9 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -28,7 +27,6 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -77,7 +75,7 @@ class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebf
     }
 
     @Test
-    void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() throws Throwable {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

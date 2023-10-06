@@ -26,20 +26,20 @@ class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
     private SamlIdPMetadataController samlIdPMetadataController;
 
     @Test
-    void verifyOperationByServiceId() {
+    void verifyOperationByServiceId() throws Throwable {
         val response = new MockHttpServletResponse();
         val service = RegisteredServiceTestUtils.getService().getId();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(service, response));
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp("1000", response));
     }
 
     @Test
-    void verifyNoServiceOperation() {
+    void verifyNoServiceOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(null, response));
     }

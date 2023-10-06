@@ -22,8 +22,9 @@ public interface ProxyHandler {
      * @param credential            The credential of the item that will be proxying.
      * @param proxyGrantingTicketId The ticketId for the PGT (which really is a TGT)
      * @return the String value that needs to be passed to the CAS client.
+     * @throws Throwable the throwable
      */
-    String handle(Credential credential, TicketGrantingTicket proxyGrantingTicketId);
+    String handle(Credential credential, TicketGrantingTicket proxyGrantingTicketId) throws Throwable;
 
     /**
      * Whether this handler can support the proxy request identified by the given credentials.

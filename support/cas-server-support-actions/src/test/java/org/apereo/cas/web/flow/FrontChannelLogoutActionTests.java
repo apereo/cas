@@ -6,29 +6,22 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,9 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 class FrontChannelLogoutActionTests {
-    
+
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=true")
     class SingleLogoutDisabledTests extends AbstractWebflowActionsTests {
 
@@ -48,11 +40,8 @@ class FrontChannelLogoutActionTests {
         private Action frontChannelLogoutAction;
 
         @Test
-        void verifyNoSlo() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        void verifyNoSlo() throws Throwable {
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -66,7 +55,7 @@ class FrontChannelLogoutActionTests {
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
                 .ticketId(id)
                 .status(LogoutRequestStatus.NOT_ATTEMPTED)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .build();
 
             WebUtils.putLogoutRequests(context, List.of(sloReq));
@@ -76,7 +65,6 @@ class FrontChannelLogoutActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.slo.disabled=false")
     class SingleLogoutEnabledTests extends AbstractWebflowActionsTests {
 
@@ -85,11 +73,8 @@ class FrontChannelLogoutActionTests {
         private Action frontChannelLogoutAction;
 
         @Test
-        void verifyLogoutNone() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        void verifyLogoutNone() throws Throwable {
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -102,7 +87,7 @@ class FrontChannelLogoutActionTests {
                     .build())
                 .logoutType(RegisteredServiceLogoutType.NONE)
                 .ticketId(id)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .status(LogoutRequestStatus.SUCCESS)
                 .build();
 
@@ -112,11 +97,8 @@ class FrontChannelLogoutActionTests {
         }
 
         @Test
-        void verifyLogout() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        void verifyLogout() throws Throwable {
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
@@ -129,7 +111,7 @@ class FrontChannelLogoutActionTests {
                     .build())
                 .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
                 .ticketId(id)
-                .logoutUrl(new URL("https://apereo.org/cas"))
+                .logoutUrl(new URI("https://apereo.org/cas").toURL())
                 .status(LogoutRequestStatus.NOT_ATTEMPTED)
                 .build();
 
@@ -137,13 +119,10 @@ class FrontChannelLogoutActionTests {
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROPAGATE, event.getId());
         }
-        
+
         @Test
-        void verifyNoRequests() throws Exception {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        void verifyNoRequests() throws Throwable {
+            val context = MockRequestContext.create();
             RequestContextHolder.setRequestContext(context);
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 

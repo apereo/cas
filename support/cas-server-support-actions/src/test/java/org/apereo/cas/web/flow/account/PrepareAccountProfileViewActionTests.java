@@ -55,7 +55,7 @@ class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
     private Action prepareAccountProfileViewAction;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         registeredService1.setEvaluationOrder(200);
         val registeredService2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
@@ -82,7 +82,7 @@ class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
         assertTrue(list.indexOf(registeredService1) > list.indexOf(registeredService2));
         assertNotNull(WebUtils.getAuthentication(context));
 
-        val session = (PrepareAccountProfileViewAction.SingleSignOnSession) WebUtils.getSingleSignOnSessions(context).get(0);
+        val session = (PrepareAccountProfileViewAction.SingleSignOnSession) WebUtils.getSingleSignOnSessions(context).getFirst();
         assertNotNull(session.getAuthenticationDate());
         assertNotNull(session.getPayload());
         assertNotNull(session.getPrincipal());

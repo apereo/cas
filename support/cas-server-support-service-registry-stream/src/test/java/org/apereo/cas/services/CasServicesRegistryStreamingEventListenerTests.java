@@ -4,16 +4,15 @@ import org.apereo.cas.config.CasServicesStreamingConfiguration;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasServicesStreamingConfiguration.class
 }, properties = "cas.service-registry.stream.core.enabled=true")
 @Tag("RegisteredService")
@@ -33,7 +33,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     private CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener;
 
     @Test
-    void verifyDeleted() {
+    void verifyDeleted() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceDeletedEvent(
@@ -41,7 +41,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     }
 
     @Test
-    void verifyLoaded() {
+    void verifyLoaded() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceLoadedEvent(
@@ -49,7 +49,7 @@ class CasServicesRegistryStreamingEventListenerTests {
     }
 
     @Test
-    void verifySaved() {
+    void verifySaved() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceSavedEvent(

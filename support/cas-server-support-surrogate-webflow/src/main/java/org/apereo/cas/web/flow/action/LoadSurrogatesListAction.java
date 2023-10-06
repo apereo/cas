@@ -35,7 +35,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
-    private boolean loadSurrogates(final RequestContext requestContext) {
+    private boolean loadSurrogates(final RequestContext requestContext) throws Throwable {
         val credential = WebUtils.getCredential(requestContext, MutableCredential.class);
         if (credential != null) {
             val username = credential.getId();
@@ -61,7 +61,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
                 WebUtils.removeSurrogateAuthenticationRequest(requestContext);
@@ -79,7 +79,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
             }
             return success();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             requestContext.getMessageContext().addMessage(new MessageBuilder()
                 .error()
                 .source("surrogate")
@@ -87,11 +87,11 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 .defaultText("Unable to accept or authorize selection")
                 .build());
             LoggingUtils.error(LOGGER, e);
-            return error(e);
+            return error(new RuntimeException(e));
         }
     }
 
-    protected Event loadSurrogateAccounts(final RequestContext requestContext) {
+    protected Event loadSurrogateAccounts(final RequestContext requestContext) throws Throwable {
         LOGGER.trace("Attempting to load surrogates...");
         val eventFactorySupport = new EventFactorySupport();
         if (loadSurrogates(requestContext)) {

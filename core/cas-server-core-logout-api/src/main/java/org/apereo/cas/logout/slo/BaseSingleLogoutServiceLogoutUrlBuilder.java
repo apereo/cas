@@ -67,7 +67,7 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return registeredService != null && singleLogoutService != null
-               && registeredService.getAccessStrategy().isServiceAccessAllowed();
+               && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, singleLogoutService);
     }
 
     @Override

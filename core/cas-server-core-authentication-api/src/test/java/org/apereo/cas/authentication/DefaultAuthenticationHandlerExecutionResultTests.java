@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultAuthenticationHandlerExecutionResultTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val res = new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
             credential, CollectionUtils.wrapList(new DefaultMessageDescriptor("code1")));

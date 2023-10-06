@@ -55,7 +55,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookiePathNotModified() {
+    void verifyCookiePathNotModified() throws Throwable {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
         var gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/custom/path/"));
@@ -68,7 +68,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyRemoveAllCookiesByName() {
+    void verifyRemoveAllCookiesByName() throws Throwable {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
 
@@ -84,12 +84,12 @@ class CookieRetrievingCookieGeneratorTests {
         request.setCookies(cookie1, cookie2, cookie3);
         response = new MockHttpServletResponse();
         gen1.removeAll(request, response);
-        assertEquals(6, response.getCookies().length);
+        assertEquals(3, response.getCookies().length);
         assertTrue(Arrays.stream(response.getCookies()).allMatch(cookie -> cookie.getMaxAge() == 0));
     }
 
     @Test
-    void verifyExistingCookieInResponse() {
+    void verifyExistingCookieInResponse() throws Throwable {
         val context = getCookieGenerationContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -99,17 +99,17 @@ class CookieRetrievingCookieGeneratorTests {
         assertNotNull(cookie);
         var headers = response.getHeaders("Set-Cookie");
         assertEquals(1, headers.size());
-        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+        assertTrue(headers.getFirst().contains(context.getName() + '=' + cookie.getValue()));
 
         cookie = gen.addCookie(request, response, "updated-value");
         assertNotNull(cookie);
         headers = response.getHeaders("Set-Cookie");
         assertEquals(1, headers.size());
-        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+        assertTrue(headers.getFirst().contains(context.getName() + '=' + cookie.getValue()));
     }
 
     @Test
-    void verifyOtherSetCookieHeaderIsNotDiscarded() {
+    void verifyOtherSetCookieHeaderIsNotDiscarded() throws Throwable {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -132,7 +132,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieValueMissing() {
+    void verifyCookieValueMissing() throws Throwable {
         val context = getCookieGenerationContext();
         context.setName(StringUtils.EMPTY);
 
@@ -144,7 +144,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieSameSiteLax() {
+    void verifyCookieSameSiteLax() throws Throwable {
         val ctx = getCookieGenerationContext();
         ctx.setSameSitePolicy("lax");
 
@@ -163,7 +163,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieValueByHeader() {
+    void verifyCookieValueByHeader() throws Throwable {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -175,7 +175,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieForRememberMeByAuthnRequest() {
+    void verifyCookieForRememberMeByAuthnRequest() throws Throwable {
         val ctx = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
@@ -192,7 +192,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieForRememberMeByRequestContext() {
+    void verifyCookieForRememberMeByRequestContext() throws Throwable {
         val ctx = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);

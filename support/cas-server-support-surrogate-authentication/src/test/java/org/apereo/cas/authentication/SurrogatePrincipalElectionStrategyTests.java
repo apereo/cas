@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class SurrogatePrincipalElectionStrategyTests {
     private static Principal buildSurrogatePrincipal(final String surrogateId,
                                                      final Authentication primaryAuth,
-                                                     final IPersonAttributeDao attributeRepository) {
+                                                     final IPersonAttributeDao attributeRepository) throws Throwable {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(PrincipalFactoryUtils.newPrincipalFactory(), attributeRepository,
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")),
                 mock(ServicesManager.class)));
@@ -40,7 +40,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    void verifyNominate() {
+    void verifyNominate() throws Throwable {
         val surrogate = buildSurrogatePrincipal("cas-surrogate",
             CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getAttributeRepository());
@@ -52,7 +52,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val strategy = new SurrogatePrincipalElectionStrategy();
         val attributes = CollectionUtils.wrap(
             "formalName", CollectionUtils.wrapSet("cas"),
@@ -84,7 +84,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    void verifyMultiPrincipalsWithNoAttributes() {
+    void verifyMultiPrincipalsWithNoAttributes() throws Throwable {
         val strategy = new SurrogatePrincipalElectionStrategy();
         val attributes = CollectionUtils.<String, List<Object>>wrap(
             "primaryName1", CollectionUtils.wrapList("cas"),

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
-    void verifyJwtForServiceTicketEncoding() throws Exception {
+    void verifyJwtForServiceTicketEncoding() throws Throwable {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val claims = JWTParser.parse(jwt).getJWTClaimsSet();

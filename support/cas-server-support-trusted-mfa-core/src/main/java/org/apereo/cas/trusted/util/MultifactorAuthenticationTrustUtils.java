@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,7 +44,7 @@ public class MultifactorAuthenticationTrustUtils {
             .addAttribute(attributeName, Boolean.TRUE)
             .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);
-        authn.update(newAuthn);
+        authn.updateAttributes(newAuthn);
     }
 
     /**

@@ -18,8 +18,9 @@ public interface AccessTokenGrantRequestExtractor {
      *
      * @param webContext the web context
      * @return the access token request data holder
+     * @throws Throwable the throwable
      */
-    AccessTokenRequestContext extract(WebContext webContext);
+    AccessTokenRequestContext extract(WebContext webContext) throws Throwable;
 
     /**
      * Supports grant type?

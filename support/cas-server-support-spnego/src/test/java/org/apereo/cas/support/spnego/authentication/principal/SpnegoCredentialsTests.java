@@ -21,13 +21,13 @@ class SpnegoCredentialsTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyToStringWithNoPrincipal() {
+    void verifyToStringWithNoPrincipal() throws Throwable {
         val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
-    void verifyToStringWithPrincipal() {
+    void verifyToStringWithPrincipal() throws Throwable {
         val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
@@ -38,7 +38,7 @@ class SpnegoCredentialsTests {
      * Make sure that when the Principal becomes populated / changes we return a new hash
      */
     @Test
-    void verifyPrincipalAffectsHash() {
+    void verifyPrincipalAffectsHash() throws Throwable {
         val credential = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         val hash1 = credential.hashCode();
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test");
@@ -48,7 +48,7 @@ class SpnegoCredentialsTests {
     }
 
     @Test
-    void verifyToStringWithToken() throws Exception {
+    void verifyToStringWithToken() throws Throwable {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
         assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));
@@ -57,7 +57,7 @@ class SpnegoCredentialsTests {
     }
 
     @Test
-    void verifyJsonWithToken() throws Exception {
+    void verifyJsonWithToken() throws Throwable {
         val credentials = new SpnegoCredential(new byte[16]);
         credentials.setNextToken(new byte[16]);
         assertFalse(MAPPER.writeValueAsString(credentials).contains("initToken"));

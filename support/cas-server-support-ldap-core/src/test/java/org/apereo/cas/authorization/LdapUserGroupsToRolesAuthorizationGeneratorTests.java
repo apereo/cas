@@ -40,7 +40,7 @@ class LdapUserGroupsToRolesAuthorizationGeneratorTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -58,7 +58,7 @@ class LdapUserGroupsToRolesAuthorizationGeneratorTests {
         var profile = new CommonProfile();
         profile.setId("casTest");
 
-        val callContext = new CallContext(mock(WebContext.class), JEESessionStore.INSTANCE);
+        val callContext = new CallContext(mock(WebContext.class), new JEESessionStore());
         val result = generator.generate(callContext, profile);
         assertFalse(result.isEmpty());
         assertTrue(profile.getAttributes().isEmpty());

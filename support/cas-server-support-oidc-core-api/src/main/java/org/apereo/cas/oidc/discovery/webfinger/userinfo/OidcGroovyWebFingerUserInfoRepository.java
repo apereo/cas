@@ -25,13 +25,13 @@ public class OidcGroovyWebFingerUserInfoRepository implements OidcWebFingerUserI
     }
 
     @Override
-    public Map<String, Object> findByEmailAddress(final String email) {
+    public Map<String, Object> findByEmailAddress(final String email) throws Throwable {
         val args = new Object[]{email, LOGGER};
         return watchableScript.execute("findByEmailAddress", Map.class, args);
     }
 
     @Override
-    public Map<String, Object> findByUsername(final String username) {
+    public Map<String, Object> findByUsername(final String username) throws Throwable {
         val args = new Object[]{username, LOGGER};
         return watchableScript.execute("findByUsername", Map.class, args);
     }

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 class CasInfoEndpointContributorTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val contributor = new CasInfoEndpointContributor(new DefaultCasRuntimeModuleLoader());
         val builder = new Info.Builder();
         contributor.contribute(builder);

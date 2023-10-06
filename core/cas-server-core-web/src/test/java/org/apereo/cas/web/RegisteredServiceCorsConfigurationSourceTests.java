@@ -10,20 +10,18 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceCorsConfigurationSource;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +33,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Web")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
+}, properties = {
     "cas.http-web-request.cors.allow-credentials=true",
     "cas.http-web-request.cors.allow-origins[0]=*",
     "cas.http-web-request.cors.allow-origin-patterns[0]=https://*.example.com",
@@ -50,7 +51,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
@@ -70,7 +71,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     }
 
     @Test
-    void verifyService() {
+    void verifyService() throws Throwable {
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(),
             new DefaultRegisteredServiceProperty("false"));

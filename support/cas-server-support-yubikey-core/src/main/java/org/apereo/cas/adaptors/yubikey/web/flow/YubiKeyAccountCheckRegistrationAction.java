@@ -23,9 +23,9 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractMultifactorAu
     private final YubiKeyAccountRegistry registry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val uid = resolvePrincipal(authentication.getPrincipal()).getId();
+        val uid = resolvePrincipal(authentication.getPrincipal(), requestContext).getId();
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }

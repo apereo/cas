@@ -33,8 +33,8 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         LOGGER.trace("Login: [{}]", login);
 

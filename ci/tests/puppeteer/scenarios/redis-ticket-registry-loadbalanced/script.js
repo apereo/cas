@@ -4,11 +4,11 @@ const cas = require('../../cas.js');
 
 async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await page.goto(url);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     assert(payload.totalTicketGrantingTickets === 0);
     assert(payload.totalTickets === 0);
 }
@@ -20,7 +20,7 @@ async function testBasicLoginLogout(browser) {
     const service = "https://apereo.github.io";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
     await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     let content = await cas.textContent(page, "body");
@@ -46,17 +46,17 @@ async function checkTicketValidationAcrossNodes(browser) {
     const service = `https://localhost:9859/anything/100`;
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
 
-    console.log("Validating ticket on second node");
+    await cas.log("Validating ticket on second node");
     let response = await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     let content = await cas.textContent(page, "body");
     let payload = JSON.parse(content);
     let authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
 
-    console.log(`Validating ticket ${ticket} again on original node`);
+    await cas.log(`Validating ticket ${ticket} again on original node`);
     response = await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     content = await cas.textContent(page, "body");
     payload = JSON.parse(content);
@@ -68,9 +68,9 @@ async function checkTicketValidationAcrossNodes(browser) {
 }
 
 async function ensureSessionsRecorded(page, port, conditions) {
-    console.log(`Checking for recorded session via CAS server running on ${port}`);
+    await cas.log(`Checking for recorded session via CAS server running on ${port}`);
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await page.goto(url);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
@@ -80,7 +80,7 @@ async function ensureSessionsRecorded(page, port, conditions) {
     assert(payload.totalTickets === 1);
 
     for (const ticket in conditions) {
-        console.log(`Checking for issued ticket ${ticket}`);
+        await cas.log(`Checking for issued ticket ${ticket}`);
         const service = conditions[ticket];
         assert(payload.activeSsoSessions[0].authenticated_services[ticket].id === service);
     }
@@ -94,18 +94,18 @@ async function checkSessionsAreSynced(browser) {
     const s2 = `https://apereo.github.io`;
     const s3 = `https://example.org`;
 
-    console.log("Getting first ticket");
+    await cas.log("Getting first ticket");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${s1}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     const ticket1 = await cas.assertTicketParameter(page);
 
-    console.log("Getting second ticket");
+    await cas.log("Getting second ticket");
     await cas.goto(page, `https://localhost:8444/cas/login?service=${s2}`);
     await page.waitForTimeout(1000);
     const ticket2 = await cas.assertTicketParameter(page);
 
-    console.log("Getting third ticket");
+    await cas.log("Getting third ticket");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${s3}`);
     await page.waitForTimeout(1000);
     const ticket3 = await cas.assertTicketParameter(page);

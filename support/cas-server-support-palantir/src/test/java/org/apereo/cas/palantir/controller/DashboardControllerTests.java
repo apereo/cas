@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
     classes = {
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         CasPalantirConfiguration.class
     },
-    properties = "server.port=8080",
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
@@ -50,7 +50,9 @@ public class DashboardControllerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         mvc.perform(get("/palantir/dashboard")).andExpect(status().isOk());
+        mvc.perform(get("/palantir/")).andExpect(status().isOk());
+        mvc.perform(get("/palantir")).andExpect(status().isOk());
     }
 }

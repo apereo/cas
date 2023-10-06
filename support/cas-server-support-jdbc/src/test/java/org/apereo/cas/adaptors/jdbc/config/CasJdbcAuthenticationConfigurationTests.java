@@ -28,16 +28,15 @@ import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.DigestUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
@@ -107,21 +107,21 @@ class CasJdbcAuthenticationConfigurationTests {
 
     @BeforeEach
     public void initialize() throws Exception {
-        val props = casProperties.getAuthn().getJdbc().getQuery().get(0);
+        val props = casProperties.getAuthn().getJdbc().getQuery().getFirst();
         val dataSource = JpaBeans.newDataSource(props.getDriverClass(), props.getUser(),
             props.getPassword(), props.getUrl());
 
-        try (val c = dataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
-                s.execute("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL, uid VARCHAR(50), psw VARCHAR(512));");
-                s.execute("INSERT INTO users VALUES (1, 'casuser', '" + DigestUtils.sha256("Mellon") + "');");
+        try (val connection = dataSource.getConnection()) {
+            try (val statement = connection.createStatement()) {
+                connection.setAutoCommit(true);
+                statement.execute("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL, uid VARCHAR(50), psw VARCHAR(512));");
+                statement.execute("INSERT INTO users VALUES (1, 'casuser', '" + DigestUtils.sha256("Mellon") + "');");
             }
         }
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(), credential);
         val result = authenticationManager.authenticate(transaction);

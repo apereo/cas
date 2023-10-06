@@ -1,38 +1,31 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
@@ -40,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -49,6 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
+@Execution(ExecutionMode.SAME_THREAD)
 class ReturnAllowedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
 
@@ -64,31 +57,28 @@ class ReturnAllowedAttributeReleasePolicyTests {
         properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class AttributeDefinitionsTests {
         @Autowired
-        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
-        private AttributeDefinitionStore attributeDefinitionStore;
+        private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyUnresolvedAttributes() {
-            assertNotNull(attributeDefinitionStore);
+        void verifyUnresolvedAttributes() throws Throwable {
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
 
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .applicationContext(applicationContext)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("casuser"))))
                 .build();
-            val results = policy.getAttributes(context);
-            assertEquals(1, results.size());
-            assertTrue(results.containsKey("displayName"));
+            val attributes = policy.getAttributes(context);
+            assertEquals(1, attributes.size());
+            assertTrue(attributes.containsKey("displayName"));
         }
 
         @Test
-        void verifyVirtualAttributesInChain() {
-            assertNotNull(attributeDefinitionStore);
+        void verifyVirtualAttributesInChain() throws Throwable {
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
             policy.setOrder(0);
@@ -99,6 +89,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
 
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .applicationContext(applicationContext)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("casuser"))))
                 .build();
@@ -106,29 +97,37 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy, policy2);
 
-            val results = chain.getAttributes(context);
-            assertEquals(2, results.size());
-            assertTrue(results.containsKey("displayName"));
-            assertTrue(results.containsKey("calculated-displayName"));
+            val attributes = chain.getAttributes(context);
+            assertEquals(2, attributes.size());
+            assertTrue(attributes.containsKey("displayName"));
+            assertTrue(attributes.containsKey("calculated-displayName"));
         }
     }
 
-    @SpringBootTest(classes = RefreshAutoConfiguration.class,
-        properties = "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail")
+    @SpringBootTest(classes = {
+        CasPersonDirectoryTestConfiguration.class,
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        RefreshAutoConfiguration.class
+    },
+        properties = {
+            "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/return-allowed-definitions.json",
+            "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail"
+        })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @SuppressWarnings("ClassCanBeStatic")
     @Nested
     class DefaultTests {
 
         @Autowired
-        private CasConfigurationProperties casProperties;
+        private ConfigurableApplicationContext applicationContext;
 
         @Test
         void verifySerialization() throws IOException {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("attributeOne");
             val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
+            policyWritten.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
             policyWritten.setPrincipalIdAttribute("principalId");
             MAPPER.writeValue(JSON_FILE, policyWritten);
             val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
@@ -136,8 +135,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifyInlineGroovy() {
-            buildApplicationContext();
+        void verifyInlineGroovy() throws Throwable {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("groovy { [ fullName: [ 'MyGivenName' + attributes['cn'][0] ] ] } ");
@@ -146,7 +144,9 @@ class ReturnAllowedAttributeReleasePolicyTests {
                 val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
                 val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
                 when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
-                val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                val context = RegisteredServiceAttributeReleasePolicyContext
+                    .builder()
+                    .applicationContext(applicationContext)
                     .registeredService(registeredService)
                     .service(CoreAuthenticationTestUtils.getService())
                     .principal(principal)
@@ -157,19 +157,8 @@ class ReturnAllowedAttributeReleasePolicyTests {
             }
         }
 
-        private ConfigurableApplicationContext buildApplicationContext() {
-            val applicationContext = new StaticApplicationContext();
-            applicationContext.refresh();
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
-                CasConfigurationProperties.class.getSimpleName());
-            ApplicationContextProvider.holdApplicationContext(applicationContext);
-            return applicationContext;
-        }
-
         @Test
-        void verifyConsentable() {
-            buildApplicationContext();
-
+        void verifyConsentable() throws Throwable {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("cn");
@@ -182,6 +171,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
                 .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
@@ -192,7 +182,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifyRequestedDefinitions() {
+        void verifyRequestedDefinitions() throws Throwable {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("cn");
@@ -200,6 +190,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
 
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(CoreAuthenticationTestUtils.getPrincipal())
@@ -208,57 +199,33 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifyRequestedDefinitionsWithExistingPrincipalAttribute() {
-            val applicationContext = buildApplicationContext();
+        void verifyRequestedDefinitionsWithExistingPrincipalAttribute() throws Throwable {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("custom-name");
             val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
-
-            val defn = DefaultAttributeDefinition.builder()
-                .key("customName")
-                .name("custom-name")
-                .build();
-            val store = new DefaultAttributeDefinitionStore(defn);
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, store, AttributeDefinitionStore.BEAN_NAME);
-
             val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("customName", List.of("CAS")));
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
                 .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
                 .build();
             val attributes = policy.getAttributes(context);
             assertTrue(attributes.containsKey("custom-name"));
-            assertEquals("CAS", attributes.get("custom-Name").get(0));
+            assertEquals("CAS", attributes.get("custom-Name").getFirst());
         }
 
         @Test
-        void verifyRequestedDefinitionsWithoutPrincipalAttribute() {
-            val applicationContext = new StaticApplicationContext();
-            applicationContext.refresh();
-
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
-                CasConfigurationProperties.class.getSimpleName());
-
+        void verifyRequestedDefinitionsWithoutPrincipalAttribute() throws Throwable {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("given-name");
             allowedAttributes.add("uid");
             val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
-
-            val defn = DefaultAttributeDefinition.builder()
-                .key("given-name")
-                .script("groovy { return ['hello'] }")
-                .build();
-            val store = new DefaultAttributeDefinitionStore(defn);
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, store, AttributeDefinitionStore.BEAN_NAME);
-            ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-                GroovyScriptResourceCacheManager.class, ScriptResourceCacheManager.BEAN_NAME);
-            ApplicationContextProvider.holdApplicationContext(applicationContext);
-
             val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("uid", List.of("UID")));
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
                 .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
@@ -266,13 +233,11 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val attributes = policy.getAttributes(context);
             assertEquals(2, attributes.size());
             assertTrue(attributes.containsKey("given-name"));
-            assertEquals("hello", attributes.get("given-name").get(0));
+            assertEquals("hello", attributes.get("given-name").getFirst());
         }
 
         @Test
-        void verifyDefaultAttributes() {
-            buildApplicationContext();
-
+        void verifyDefaultAttributes() throws Throwable {
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setPrincipalIdAttribute("principalId");
             policy.postLoad();
@@ -290,6 +255,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             });
 
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
                 .registeredService(registeredService)
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
@@ -300,9 +266,30 @@ class ReturnAllowedAttributeReleasePolicyTests {
             assertTrue(attributes.containsKey("cn"));
             assertTrue(attributes.containsKey("mail"));
         }
+
+        @Test
+        void verifyValueCaseTransformation() throws Throwable {
+            val policy = new ReturnAllowedAttributeReleasePolicy();
+            policy.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+            policy.setAllowedAttributes(List.of("uid"));
+            policy.postLoad();
+            val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("uid", List.of("cas1", "cas2")));
+            val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .registeredService(registeredService)
+                .service(CoreAuthenticationTestUtils.getService())
+                .principal(principal)
+                .build();
+            val attributes = policy.getAttributes(context);
+            assertEquals(1, attributes.size());
+            val values = attributes.get("uid");
+            assertTrue(values.contains("CAS1"));
+            assertTrue(values.contains("CAS2"));
+        }
     }
 
-    @TestConfiguration
+    @TestConfiguration(proxyBeanMethods = false)
     static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {

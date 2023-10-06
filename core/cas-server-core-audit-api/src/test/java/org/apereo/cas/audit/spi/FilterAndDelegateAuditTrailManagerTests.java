@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
-    void verifyExcludeOperationForAllActions() {
+    void verifyExcludeOperationForAllActions() throws Throwable {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
@@ -44,7 +44,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForAllActions() {
+    void verifyOperationForAllActions() throws Throwable {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
@@ -53,7 +53,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForAllSupportedActions() {
+    void verifyOperationForAllSupportedActions() throws Throwable {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
@@ -62,7 +62,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForUnmatchedActions() {
+    void verifyOperationForUnmatchedActions() throws Throwable {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
@@ -71,7 +71,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyAuditRecordsSinceDate() {
+    void verifyAuditRecordsSinceDate() throws Throwable {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS",
             LocalDateTime.now(ZoneOffset.UTC).plusDays(1),

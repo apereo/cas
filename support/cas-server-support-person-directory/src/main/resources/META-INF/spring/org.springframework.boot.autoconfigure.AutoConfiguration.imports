@@ -4,3 +4,4 @@ org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration
 org.apereo.cas.config.CasPersonDirectoryJsonConfiguration
 org.apereo.cas.config.CasPersonDirectoryLdapConfiguration
 org.apereo.cas.config.CasPersonDirectoryRestConfiguration
+org.apereo.cas.config.CasPersonDirectoryStubConfiguration

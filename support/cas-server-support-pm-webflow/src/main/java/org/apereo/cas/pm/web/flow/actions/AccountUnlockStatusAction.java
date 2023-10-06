@@ -27,7 +27,7 @@ public class AccountUnlockStatusAction extends BaseCasWebflowAction {
     private final PasswordManagementService passwordManagementService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         try {
             val credential = requestContext.getConversationScope().get(Credential.class.getName(), Credential.class);
             LOGGER.debug("Attempting to unlock account for [{}]", credential);
@@ -40,7 +40,7 @@ public class AccountUnlockStatusAction extends BaseCasWebflowAction {
             val message = new MessageBuilder().info().code("screen.account.unlock.success").build();
             requestContext.getMessageContext().addMessage(message);
             return success();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             val message = new MessageBuilder().error().code("screen.account.unlock.fail").build();
             requestContext.getMessageContext().addMessage(message);
             LoggingUtils.error(LOGGER, e);

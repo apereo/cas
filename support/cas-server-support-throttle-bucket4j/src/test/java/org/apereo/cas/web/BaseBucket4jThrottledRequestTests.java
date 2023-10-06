@@ -3,7 +3,6 @@ package org.apereo.cas.web;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.config.CasBucket4jThrottlingConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -11,11 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasBucket4jThrottlingConfiguration.class
 })
 public abstract class BaseBucket4jThrottledRequestTests {
@@ -42,7 +42,7 @@ public abstract class BaseBucket4jThrottledRequestTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(throttledRequestExecutor);
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

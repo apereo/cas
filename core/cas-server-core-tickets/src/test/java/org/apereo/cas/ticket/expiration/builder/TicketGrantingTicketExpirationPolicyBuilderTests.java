@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketGrantingTicketExpirationPolicyBuilderTests {
 
     @Test
-    void verifyRememberMe() {
+    void verifyRememberMe() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getRememberMe().setEnabled(true);
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
@@ -35,7 +35,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyNever() {
+    void verifyNever() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("-1");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("-1");
@@ -44,7 +44,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("10");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("10");
@@ -53,7 +53,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyTimeout() {
+    void verifyTimeout() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getTimeout().setMaxTimeToLiveInSeconds("10");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
@@ -61,7 +61,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyHard() {
+    void verifyHard() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getHardTimeout().setTimeToKillInSeconds("PT10S");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
@@ -69,7 +69,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyThrottle() {
+    void verifyThrottle() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getThrottledTimeout().setTimeInBetweenUsesInSeconds("10");
         props.getTicket().getTgt().getThrottledTimeout().setTimeToKillInSeconds("10");
@@ -78,7 +78,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyAlways() {
+    void verifyAlways() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("0");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("NEVER");

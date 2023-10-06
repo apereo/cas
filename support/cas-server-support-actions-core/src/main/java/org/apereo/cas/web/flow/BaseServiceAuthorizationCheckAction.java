@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -27,33 +28,33 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val serviceInContext = WebUtils.getService(context);
-        val service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
+        val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext));
         if (service == null) {
             return success();
         }
 
-        if (this.servicesManager.getAllServices().isEmpty()) {
+        if (servicesManager.getAllServices().isEmpty()) {
             val msg = String.format("No service definitions are found in the service manager. "
                 + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
             val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             val msg = String.format("Service Management: Unauthorized Service Access. "
                 + "Service [%s] is not allowed access via the service registry.", service.getId());
             LOGGER.warn(msg);
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
                 registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
         WebUtils.putCasLoginFormViewable(context, delegatedPolicy == null || !delegatedPolicy.isExclusive());

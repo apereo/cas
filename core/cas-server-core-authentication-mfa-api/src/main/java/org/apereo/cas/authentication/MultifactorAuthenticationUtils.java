@@ -6,17 +6,15 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -227,17 +225,6 @@ public class MultifactorAuthenticationUtils {
     }
 
     /**
-     * Find the MultifactorAuthenticationProvider in the application contact that matches the specified providerId (e.g. "mfa-duo").
-     *
-     * @param providerId the provider id
-     * @return the registered service multifactor authentication provider
-     */
-    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
-        final String providerId) {
-        return getMultifactorAuthenticationProviderFromApplicationContext(providerId, ApplicationContextProvider.getApplicationContext());
-    }
-
-    /**
      * Gets multifactor authentication provider from application context.
      *
      * @param providerId         the provider id
@@ -249,7 +236,7 @@ public class MultifactorAuthenticationUtils {
         final ApplicationContext applicationContext) {
         LOGGER.trace("Locating bean definition for [{}]", providerId);
         return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
-            .filter(p -> p.matches(providerId))
+            .filter(provider -> provider.matches(providerId))
             .findFirst();
     }
 
@@ -287,16 +274,8 @@ public class MultifactorAuthenticationUtils {
      * @param applicationContext the application context
      * @return the all multifactor authentication providers from application context
      */
-    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
-        final ApplicationContext applicationContext) {
-        try {
-            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
-        } catch (final Exception e) {
-            LOGGER.trace("No beans of type [{}] are available in the application context. "
-                         + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
-                MultifactorAuthenticationProvider.class);
-        }
-        return new HashMap<>(0);
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(final ApplicationContext applicationContext) {
+        return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, MultifactorAuthenticationProvider.class);
     }
 
     /**
@@ -308,8 +287,7 @@ public class MultifactorAuthenticationUtils {
      * @return - Optional
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(
-        final String providerId,
-        final ApplicationContext context) {
+        final String providerId, final ApplicationContext context) {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()

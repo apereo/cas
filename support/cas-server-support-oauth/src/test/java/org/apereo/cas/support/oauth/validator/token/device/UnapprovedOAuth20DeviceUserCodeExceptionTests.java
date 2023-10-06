@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class UnapprovedOAuth20DeviceUserCodeExceptionTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> {
             throw new UnapprovedOAuth20DeviceUserCodeException("bad-ticket");
         });

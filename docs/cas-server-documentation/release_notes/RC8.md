@@ -38,6 +38,19 @@ maintenance and release planning, especially when it comes to addressing critica
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
+With JDK `21` as the baseline platform, frameworks such as Spring and Spring Boot start to support virtual threads. 
+To use virtual threads, CAS automatically sets the property `spring.threads.virtual.enabled` to `true`. When virtual threads are enabled, 
+Tomcat and Jetty will use virtual threads for request processing. This means that when CAS is handling a web request, 
+that request will run on a virtual thread.
+ 
+Furthermore, the CAS codebase has made modest and small efforts where possible to either use virtual threads, or to
+adjust parts of the codebase that would assist with request execution and handling inside virtual threads. These efforts
+mainly include the following:
+
+- Removing `synchronized` blocks and constructs and replacing them with locking that is more appropriate for virtual threads without thread pinning.
+- Replacing `@Synchronized` annotations with locking constructs that are more appropriate for virtual threads.
+- Removing references to `ThreadLocal` as much as possible.
+
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
@@ -58,10 +71,69 @@ Note that Spring Framework `6.1` provides a first-class experience on JDK `21` a
 runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of
 Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
 
-As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
-in the next few release candidates.
+As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline 
+in the next few release candidates. As a result, the required Gradle version has also changed to `8.4.0`.
+
+### Graal VM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
+ 
+### Weak Password Detection
+
+[Password Management facilities](../password_management/Password-Management.html) in CAS are able to intercept the user's password after a successful authentication attempt
+to evaluate its strength. Passwords detected as weak or insure then force the flow and the user to update and reset their password.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `436` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
+
+### Groovy Access Strategy
+
+The [Groovy Access Strategy](../services/Service-Access-Strategy-Groovy.html) assigned to service definitions 
+is now revamped to allow for optional operations. The structure
+of the script is also changed to allow the script to remain lean and lightweight. 
+
+<div class="alert alert-info">:information_source: <strong>Breaking Change</strong><p>This is potentially a breaking change.
+Please consult the documentation to review the new requirements and adjust your scripts accordingly.</p></div>
 
 ## Other Stuff
-
+                          
+- U2F functionality is removed from the CAS codebase and is no longer supported. The [underlying library](https://github.com/Yubico/java-u2flib-server) provided by Yubico has been deprecated and archived since 2022.
+- Likewise, Authy multifactor authentication support is removed from the CAS codebase and is no longer supported. 
+- Authentication throttling support in CAS is now extended to SAML2 identity provider endpoints and functionality.
+- OpenID Connect claims can now be [optionally decorated](../authentication/OIDC-Attribute-Definitions.html) to mark an attribute as a structured claim.
+- Following the recommendations of the [OAuth Security Workshop](https://oauth.secworkshop.events/osw2023), the validation rules of `redirect_uri` parameters are now tightened to ensure the parameter value does not have URL fragments, invalid schemes such as `javascript` or `data` or suspicious parameters such as `code`, `state`, etc.
+- [Risk-based authentication](../authentication/Configuring-RiskBased-Authentication.html) now supports a *Risk Confirmation* flow via a special link sent to the user via email, sms, etc.
+- Multifactor provider selection is now skipped when a valid [multifactor-enabled trusted device](../mfa/Multifactor-TrustedDevice-Authentication.html) is found for the user record.
+- The WebSDK variation of [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is now removed.
+- Deployments that run on top of Jetty can now switch to Jetty `12` and the CAS-supplied Jetty container has also made the switch to Jetty `12`.
 
 ## Library Upgrades
+   
+- Spring Boot
+- Nimbus OIDC
+- Spring Boot Admin Server
+- SnakeYAML
+- Spring Cloud
+- Spring Security
+- Spring Integration
+- Spring Framework
+- Spring Shell
+- Spring AMQP
+- Apache Tomcat
+- Gradle
+- Hazelcast
+- Oshi
+- Apache Ignite
+- Pac4j
+- OpenSAML
+- Hibernate
+- Jetty

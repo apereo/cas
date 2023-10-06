@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());

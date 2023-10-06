@@ -80,8 +80,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
         return transactionTemplate.execute(__ -> {
             remove();
-            val query = entityManager
-                .createQuery(QUERY_SELECT, getEntityFactory().getType());
+            val query = entityManager.createQuery(QUERY_SELECT, getEntityFactory().getType());
             val results = query.getResultList();
             return new HashSet<>(results);
         });

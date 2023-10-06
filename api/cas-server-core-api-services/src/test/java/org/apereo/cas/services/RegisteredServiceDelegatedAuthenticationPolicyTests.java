@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class RegisteredServiceDelegatedAuthenticationPolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(RegisteredServiceDelegatedAuthenticationPolicy.class);
         when(policy.isProviderAllowed(anyString(), any())).thenCallRealMethod();
         assertTrue(policy.isProviderAllowed("hello", mock(RegisteredService.class)));

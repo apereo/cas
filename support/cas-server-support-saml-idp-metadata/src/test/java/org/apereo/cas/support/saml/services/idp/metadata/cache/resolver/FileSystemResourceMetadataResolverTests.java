@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -20,11 +19,11 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +37,7 @@ import static org.mockito.Mockito.*;
 class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static File METADATA_FILE;
 
-    private SamlRegisteredServiceMetadataResolver resolver;
+    private SamlRegisteredServiceMetadataResolver metadataResolver;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -52,20 +51,20 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val properties = new SamlIdPProperties();
         val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
         properties.getMetadata().getFileSystem().setLocation(path);
-        this.resolver = new FileSystemResourceMetadataResolver(properties, openSamlConfigBean);
-    }
-    
-    @Test
-    void verifyResolverSupports() throws Exception {
-        val service = new SamlRegisteredService();
-        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
-        assertTrue(resolver.supports(service));
-        assertFalse(resolver.isAvailable(null));
-        assertTrue(resolver.resolve(null).isEmpty());
+        this.metadataResolver = new FileSystemResourceMetadataResolver(properties, openSamlConfigBean);
     }
 
     @Test
-    void verifyResolverWithBadSigningCert() throws Exception {
+    void verifyResolverSupports() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
+        assertTrue(metadataResolver.supports(service));
+        assertFalse(metadataResolver.isAvailable(null));
+        assertTrue(metadataResolver.resolve(null).isEmpty());
+    }
+
+    @Test
+    void verifyResolverWithBadSigningCert() throws Throwable {
         val service = new SamlRegisteredService();
         service.setMetadataMaxValidity(30000);
         service.setMetadataCriteriaRoles(String.join(",", Set.of(
@@ -73,16 +72,31 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
             SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())));
         service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
         service.setMetadataSignatureLocation("classpath:inc-md-cert.pem");
-        assertTrue(resolver.resolve(service).isEmpty());
+        assertTrue(metadataResolver.resolve(service).isEmpty());
     }
 
     @Test
-    void verifyResolverWithDirectory() throws Exception {
+    void verifyResolverWithEntityAttributes() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setMetadataCriteriaEntityAttributes(Map.of("http://macedir.org/entity-category",
+            List.of("http://id.incommon.org/category/research-and-scholarship", "http://refeds.org/category/research-and-scholarship")));
+        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
+        service.setMetadataCriteriaDirection("include");
+        val resolvers = metadataResolver.resolve(service);
+        assertFalse(resolvers.isEmpty());
+        val resolver = resolvers.iterator().next();
+        val criteria = getCriteriaFor(service.getServiceId());
+        assertNotNull(resolver.resolve(criteria));
+    }
+
+    @Test
+    void verifyResolverWithDirectory() throws Throwable {
         val service = new SamlRegisteredService();
         val file = new FileSystemResource("src/test/resources/md-dir").getFile().getCanonicalPath();
         service.setMetadataLocation(file);
 
-        val resolvers = resolver.resolve(service);
+        val resolvers = metadataResolver.resolve(service);
         assertFalse(resolvers.isEmpty());
         val directoryResolver = resolvers.iterator().next();
 

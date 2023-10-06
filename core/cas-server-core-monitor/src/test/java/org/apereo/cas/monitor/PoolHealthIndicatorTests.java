@@ -23,7 +23,7 @@ class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    void verifyObserveOK() {
+    void verifyObserveOK() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -48,7 +48,7 @@ class PoolHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveDown() {
+    void verifyObserveDown() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
@@ -73,7 +73,7 @@ class PoolHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveError() {
+    void verifyObserveError() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {

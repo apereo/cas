@@ -10,7 +10,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.jee.context.JEEContext;
@@ -65,7 +65,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
     @Override
     public DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
                                                                     final HttpServletRequest httpServletRequest,
-                                                                    final HttpServletResponse httpServletResponse) {
+                                                                    final HttpServletResponse httpServletResponse) throws Throwable {
         val idp = getDiscoveryFeed()
             .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))
@@ -85,7 +85,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
 
         val authorized = authorizers
             .stream()
-            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest)));
 
         if (authorized) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
@@ -100,6 +100,6 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
                 return provider.get();
             }
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        throw UnauthorizedServiceException.denied("Denied: %s".formatted(entityID));
     }
 }

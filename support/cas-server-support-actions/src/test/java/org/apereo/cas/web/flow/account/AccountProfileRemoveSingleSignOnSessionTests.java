@@ -46,7 +46,7 @@ class AccountProfileRemoveSingleSignOnSessionTests extends AbstractWebflowAction
     private Action removeSessionAction;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val tgt = new TicketGrantingTicketImpl(RandomUtils.randomAlphabetic(8),
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);

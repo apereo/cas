@@ -9,7 +9,7 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?token=${token}&response_type=code&client_id=client1&scope=openid%20profile%20ssotoken%20email&redirect_uri=${service}`;
 
     await cas.goto(page, url);
@@ -20,14 +20,14 @@ const assert = require('assert');
         await page.waitForNavigation();
     }
     let code = await cas.assertParameter(page, "code");
-    console.log(`Current code is ${code}`);
+    await cas.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=client1&client_secret=secret1&redirect_uri=${service}&code=${code}`;
     await cas.goto(page, accessTokenUrl);
     await page.waitForTimeout(1000);
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     assert(payload.access_token != null);
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded["family_name"] !== undefined);
@@ -36,7 +36,7 @@ const assert = require('assert');
     assert(decoded["token"] !== undefined);
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
-    console.log(`Calling user profile ${profileUrl}`);
+    await cas.log(`Calling user profile ${profileUrl}`);
 
     let ssoToken = await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"

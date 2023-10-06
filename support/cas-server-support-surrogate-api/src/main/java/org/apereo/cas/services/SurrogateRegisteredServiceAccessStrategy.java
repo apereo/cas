@@ -43,7 +43,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         if (isSurrogateAuthenticationSession(request)) {
             return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(request);
         }

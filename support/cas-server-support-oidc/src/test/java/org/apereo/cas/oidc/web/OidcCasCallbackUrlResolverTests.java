@@ -33,7 +33,7 @@ class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
     private UrlResolver casCallbackUrlResolver;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.addParameter(OAuth20Constants.CLIENT_ID, UUID.randomUUID().toString());

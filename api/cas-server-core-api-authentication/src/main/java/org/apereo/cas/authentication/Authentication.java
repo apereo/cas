@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -110,7 +108,7 @@ public interface Authentication extends Serializable {
      *
      * @param authn the authn object
      */
-    void update(Authentication authn);
+    void updateAttributes(Authentication authn);
 
     /**
      * Updates the authentication object with what's passed.
@@ -119,7 +117,7 @@ public interface Authentication extends Serializable {
      *
      * @param authn the authn object
      */
-    void updateAll(Authentication authn);
+    void replaceAttributes(Authentication authn);
 
     /**
      * Determines if two authentication objects

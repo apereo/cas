@@ -22,7 +22,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
-
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,19 +35,10 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends BaseTokenSigningAndEncryptionService {
-    /**
-     * The default keystore for OIDC tokens.
-     */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
-    /**
-     * The service keystore for OIDC tokens.
-     */
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
 
-    /**
-     * Issuer service.
-     */
     protected final OidcIssuerService issuerService;
 
     @Override
@@ -93,7 +83,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     protected abstract String encryptToken(OAuthRegisteredService svc, String token);
 
     @Override
-    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> registeredService) {
+    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> registeredService) throws Throwable {
         val servicePassed = registeredService
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
@@ -105,11 +95,11 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return getJsonWebKeySigningKeyFrom(jwks, registeredService);
     }
 
-    protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final Optional<JsonWebKeySet> jwks,
-                                                           final Optional<OAuthRegisteredService> serviceResult) {
-        FunctionUtils.throwIf(jwks.isEmpty(),
+    protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final JsonWebKeySet jwks,
+                                                           final Optional<OAuthRegisteredService> serviceResult) throws Throwable {
+        FunctionUtils.throwIfNull(jwks,
             () -> new IllegalArgumentException("JSON web keystore is empty and contains no keys"));
-        val jsonWebKeys = jwks.orElseThrow().getJsonWebKeys();
+        val jsonWebKeys = jwks.getJsonWebKeys();
         LOGGER.trace("JSON web keystore contains [{}] key(s)", jsonWebKeys);
 
         val finalKey = serviceResult
@@ -125,9 +115,9 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
                 .findFirst())
             .flatMap(Optional::stream)
             .findFirst();
-        
+
         LOGGER.debug("Located key [{}] for service [{}]", finalKey, serviceResult);
-        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.get(0));
+        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.getFirst());
     }
 
     /**

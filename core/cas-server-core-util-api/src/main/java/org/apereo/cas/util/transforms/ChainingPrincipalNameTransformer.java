@@ -26,10 +26,10 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
     private List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
 
     @Override
-    public String transform(final String formUserId) {
+    public String transform(final String formUserId) throws Throwable{
         var idToTransform = formUserId;
-        for (val t : this.transformers) {
-            idToTransform = t.transform(idToTransform);
+        for (val transformer : this.transformers) {
+            idToTransform = transformer.transform(idToTransform);
         }
         return idToTransform;
     }

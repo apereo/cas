@@ -30,7 +30,7 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
     private Authenticator authenticator;
 
     @RetryingTest(3)
-    public void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Throwable {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
 
@@ -41,7 +41,7 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
 
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
 
@@ -54,18 +54,18 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
 
         val badRefreshTokenCtx = new JEEContext(badRefreshTokenRequest, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
-            () -> authenticator.validate(new CallContext(badRefreshTokenCtx, JEESessionStore.INSTANCE), badRefreshTokenCredentials));
+            () -> authenticator.validate(new CallContext(badRefreshTokenCtx, new JEESessionStore()), badRefreshTokenCredentials));
 
 
-        val badClientIdCredentials = new UsernamePasswordCredentials("clientWithoutSecret2", refreshToken.getId());
+        val badClientIdCredentials = new UsernamePasswordCredentials(serviceWithoutSecret2.getClientId(), refreshToken.getId());
         val badClientIdRequest = new MockHttpServletRequest();
         badClientIdRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
         badClientIdRequest.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret2");
+        badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, serviceWithoutSecret2.getClientId());
 
         val badClientIdCtx = new JEEContext(badClientIdRequest, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
-            () -> authenticator.validate(new CallContext(badClientIdCtx, JEESessionStore.INSTANCE), badClientIdCredentials));
+            () -> authenticator.validate(new CallContext(badClientIdCtx, new JEESessionStore()), badClientIdCredentials));
 
         val unsupportedClientRefreshToken = getRefreshToken(service);
         ticketRegistry.addTicket(unsupportedClientRefreshToken);
@@ -77,7 +77,7 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
         unsupportedClientRequest.addParameter(OAuth20Constants.CLIENT_ID, "client");
 
         val unsupportedClientCtx = new JEEContext(unsupportedClientRequest, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(unsupportedClientCtx, JEESessionStore.INSTANCE), unsupportedClientCredentials);
+        authenticator.validate(new CallContext(unsupportedClientCtx, new JEESessionStore()), unsupportedClientCredentials);
         assertNull(unsupportedClientCredentials.getUserProfile());
 
         val unknownClientCredentials = new UsernamePasswordCredentials("unknownclient", refreshToken.getId());
@@ -87,7 +87,7 @@ class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTest
         unknownclientRequest.addParameter(OAuth20Constants.CLIENT_ID, "unknownclient");
 
         val unknownclientCtx = new JEEContext(unknownclientRequest, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(unknownclientCtx, JEESessionStore.INSTANCE), unknownClientCredentials);
+        authenticator.validate(new CallContext(unknownclientCtx, new JEESessionStore()), unknownClientCredentials);
         assertNull(unknownClientCredentials.getUserProfile());
     }
 }

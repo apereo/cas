@@ -79,6 +79,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @param serviceId the service id
      * @param entityId  the entity id
      * @return the response entity
+     * @throws Throwable the throwable
      */
     @DeleteMapping
     @Operation(summary = "Invalidate SAML2 metadata cache using a service id or entity id. The service id could be the registered service numeric identifier, its name or actual service id. "
@@ -94,7 +95,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         final String serviceId,
         @Nullable
         @RequestParam(required = false)
-        final String entityId) {
+        final String entityId) throws Throwable {
 
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.invalidate();
@@ -119,6 +120,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      *
      * @param serviceId the service id
      * @param entityId  the entity id
+     * @param force     the force
      * @return the cached metadata object
      */
     @GetMapping(produces = {
@@ -173,7 +175,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
         }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
     }
 
-    private SamlRegisteredService findRegisteredService(final String serviceId) {
+    protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {
         var matchedServices = (Collection<RegisteredService>) null;
         if (NumberUtils.isCreatable(serviceId)) {
             val id = Long.parseLong(serviceId);

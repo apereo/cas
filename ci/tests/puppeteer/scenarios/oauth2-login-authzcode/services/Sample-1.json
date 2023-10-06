@@ -5,5 +5,13 @@
   "serviceId" : "https://apereo.github.io.*",
   "bypassApprovalPrompt": true,
   "name" : "Sample",
-  "id" : 1
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "excludeDefaultAttributes": true,
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
+  },
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
 }

@@ -26,7 +26,7 @@ public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketF
         final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
-            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+            expirationPolicy = (ExpirationPolicy) properties.remove(ExpirationPolicy.class.getName());
         }
         return expirationPolicy;
     }
@@ -37,8 +37,9 @@ public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketF
      * @param service    the service
      * @param properties the properties
      * @return the delegated authentication request ticket
+     * @throws Throwable the throwable
      */
-    CasSimpleMultifactorAuthenticationTicket create(Service service, Map<String, Serializable> properties);
+    CasSimpleMultifactorAuthenticationTicket create(Service service, Map<String, Serializable> properties) throws Throwable;
 
     /**
      * Create cas simple multifactor authentication ticket.

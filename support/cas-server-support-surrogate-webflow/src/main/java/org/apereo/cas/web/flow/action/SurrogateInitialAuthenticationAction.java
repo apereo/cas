@@ -28,7 +28,7 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
     private final SurrogateCredentialParser surrogateCredentialParser;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val credential = WebUtils.getCredential(context, MutableCredential.class);
         FunctionUtils.doIfNotNull(credential, __ -> {
             val surrogateRequest = surrogateCredentialParser.parse(credential);

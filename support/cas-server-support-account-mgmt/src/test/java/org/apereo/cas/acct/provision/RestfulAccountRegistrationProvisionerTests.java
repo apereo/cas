@@ -4,29 +4,21 @@ import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasAccountManagementWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     CasCoreHttpConfiguration.class
@@ -49,17 +42,12 @@ class RestfulAccountRegistrationProvisionerTests {
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @BeforeEach
-    public void setup() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    public void setup() throws Exception {
+        MockRequestContext.create();
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(5002, HttpStatus.OK)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
@@ -69,7 +57,7 @@ class RestfulAccountRegistrationProvisionerTests {
     }
 
     @Test
-    void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Throwable {
         try (val webServer = new MockWebServer(5002, HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));

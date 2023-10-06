@@ -66,6 +66,7 @@ class TicketRegistrySessionStoreTests {
         ticketRegistry.deleteAll();
 
         val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
+        cookie.setName("DISSESSIONxxx");
         this.cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
 
         this.request = new MockHttpServletRequest();
@@ -76,7 +77,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifyTracking() {
+    void verifyTracking() throws Throwable {
         assertNotNull(request.getSession());
         assertFalse(sessionStore.renewSession(webContext));
         assertTrue(sessionStore.buildFromTrackableSession(webContext, "trackable-session").isPresent());
@@ -84,7 +85,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifyCookieValue() {
+    void verifyCookieValue() throws Throwable {
         assertTrue(sessionStore.get(webContext, "SessionAttribute1").isEmpty());
         assertTrue(sessionStore.getSessionId(webContext, true).isEmpty());
         assertThrows(InvalidCookieException.class, this::getDistributedSessionCookie);
@@ -105,7 +106,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifySetGet() {
+    void verifySetGet() throws Throwable {
         assertTrue(sessionStore.getSessionId(webContext, false).isEmpty());
         sessionStore.set(webContext, "attribute", "test");
         assertTrue(sessionStore.getSessionId(webContext, false).isPresent());

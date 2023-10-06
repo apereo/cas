@@ -2,13 +2,10 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +18,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     private static final String TEST = "test";
 
     @Test
-    void verifyFindByQuery() {
+    void verifyFindByQuery() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(1984);
         service.setName(TEST + 1984);
@@ -36,20 +33,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyInvalidServiceSave() {
-        val service = new CasRegisteredService();
-        service.setId(2233);
-        service.setName(TEST);
-        service.setServiceId(null);
-        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
-
-        service.setName(null);
-        service.setServiceId(TEST);
-        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
-    }
-
-    @Test
-    void verifyFindByName() {
+    void verifyFindByName() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(6100);
         service.setName(TEST);
@@ -65,7 +49,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyFindByNameAndType() {
+    void verifyFindByNameAndType() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(6200);
         service.setName(TEST);
@@ -92,7 +76,7 @@ class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultSe
     }
 
     @Test
-    void verifyEmptyCacheFirst() {
+    void verifyEmptyCacheFirst() throws Throwable {
         val service = new CasRegisteredService();
         service.setId(5000);
         service.setName(TEST);

@@ -21,10 +21,11 @@ public interface OAuth20TokenSigningAndEncryptionService {
      * Sign id token.
      *
      * @param registeredService the service
-     * @param claims  the claims
+     * @param claims            the claims
      * @return the string
+     * @throws Throwable the throwable
      */
-    String encode(OAuthRegisteredService registeredService, JwtClaims claims);
+    String encode(OAuthRegisteredService registeredService, JwtClaims claims) throws Throwable;
 
     /**
      * Decode jwt claims.
@@ -48,7 +49,7 @@ public interface OAuth20TokenSigningAndEncryptionService {
         if (signingKey instanceof EllipticCurveJsonWebKey) {
             defaultAlgorithm = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;
         }
-        return StringUtils.defaultString(signingKey.getAlgorithm(), defaultAlgorithm);
+        return StringUtils.defaultIfBlank(signingKey.getAlgorithm(), defaultAlgorithm);
     }
 
     /**
@@ -56,8 +57,9 @@ public interface OAuth20TokenSigningAndEncryptionService {
      *
      * @param registeredService the service result
      * @return the json web key signing key
+     * @throws Throwable the throwable
      */
-    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> registeredService);
+    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> registeredService) throws Throwable;
 
     /**
      * Should sign token for service?

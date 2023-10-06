@@ -4,7 +4,6 @@ import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
@@ -51,8 +50,13 @@ public class CasX509Certificate extends X509Certificate {
 
     private Boolean keyUsage;
 
-    @SneakyThrows
-    public String getContent() {
+    /**
+     * Gets content.
+     *
+     * @return the content
+     * @throws Exception the exception
+     */
+    public String getContent() throws Exception {
         return IOUtils.toString(this.certificateResource.getInputStream(), StandardCharsets.UTF_8);
     }
 

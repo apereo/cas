@@ -3,7 +3,6 @@ package org.apereo.cas.webauthn;
 import org.apereo.cas.config.LdapWebAuthnConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
@@ -11,7 +10,6 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -45,8 +43,7 @@ import org.springframework.test.context.TestPropertySource;
 @Import(LdapWebAuthnConfiguration.class)
 class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Override
-    @SneakyThrows
-    protected String getUsername() {
+    protected String getUsername() throws Exception {
         val uid = super.getUsername();
 
         val bindInit = new BindConnectionInitializer("CN=admin,CN=Users,DC=cas,DC=example,DC=org", new Credential("P@ssw0rd"));

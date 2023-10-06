@@ -5,19 +5,18 @@ import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     InterruptWebflowConfigurerTests.SharedTestConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.interrupt.json.location=classpath:/interrupt.json")
@@ -39,7 +39,7 @@ class InterruptSingleSignOnParticipationStrategyTests {
     private SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy;
 
     @Test
-    void verifyStrategyWithoutInterrupt() {
+    void verifyStrategyWithoutInterrupt() throws Throwable {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
             .httpServletResponse(new MockHttpServletResponse())
@@ -49,7 +49,7 @@ class InterruptSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyStrategyWithInterruptDisabled() {
+    void verifyStrategyWithInterruptDisabled() throws Throwable {
         val ctx = new MockRequestContext();
         val response = new InterruptResponse();
         response.setSsoEnabled(false);

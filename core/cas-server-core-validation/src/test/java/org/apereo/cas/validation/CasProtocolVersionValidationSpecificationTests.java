@@ -3,6 +3,7 @@ package org.apereo.cas.validation;
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.CoreValidationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
@@ -24,29 +25,27 @@ import static org.mockito.Mockito.*;
 @Tag("CAS")
 class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val spec = new CasProtocolVersionValidationSpecification(
-            Set.of(CasProtocolValidationSpecification.CasProtocolVersions.CAS10));
+            Set.of(CasProtocolVersions.CAS10));
         val registeredService = mock(RegisteredService.class);
         val assertion = CoreValidationTestUtils.getAssertion(registeredService);
         assertTrue(spec.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 
     @Test
-    void verifySupportOperations() {
+    void verifySupportOperations() throws Throwable {
         val spec = new CasProtocolVersionValidationSpecification(
-            Set.of(CasProtocolValidationSpecification.CasProtocolVersions.CAS10,
-                CasProtocolValidationSpecification.CasProtocolVersions.CAS20));
+            Set.of(CasProtocolVersions.CAS10, CasProtocolVersions.CAS20));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getSupportedProtocols()).thenReturn(
-            Set.of(CasProtocolValidationSpecification.CasProtocolVersions.CAS20.name()));
+            Set.of(CasProtocolVersions.CAS20));
 
         val assertion = CoreValidationTestUtils.getAssertion(registeredService);
         assertFalse(spec.isSatisfiedBy(assertion, new MockHttpServletRequest()));
 
         when(registeredService.getSupportedProtocols()).thenReturn(
-            Set.of(CasProtocolValidationSpecification.CasProtocolVersions.CAS10.name(),
-                CasProtocolValidationSpecification.CasProtocolVersions.CAS20.name()));
+            Set.of(CasProtocolVersions.CAS10, CasProtocolVersions.CAS20));
         assertTrue(spec.isSatisfiedBy(assertion, new MockHttpServletRequest()));
 
         when(registeredService.getSupportedProtocols()).thenReturn(Set.of());

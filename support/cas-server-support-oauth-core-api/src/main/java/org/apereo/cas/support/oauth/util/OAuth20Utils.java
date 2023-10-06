@@ -15,8 +15,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +29,8 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,6 +121,7 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                 final String redirectUri) {
+        validateRedirectUri(redirectUri);
         return FunctionUtils.doIfNotBlank(redirectUri,
             () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
             () -> null);
@@ -153,7 +153,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView(final HttpStatus status) {
-        val ex = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val ex = UnauthorizedServiceException.denied("Rejected: %s".formatted(status));
         return produceErrorView(ex, status);
     }
 
@@ -256,6 +256,7 @@ public class OAuth20Utils {
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
         val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
+        validateRedirectUri(redirectUri);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                          + "Service is considered unauthorized. Verify the service matching strategy used in the service "
@@ -293,7 +294,7 @@ public class OAuth20Utils {
         val attrs = new HashMap<>(profile.getAttributes());
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
-            return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
+            return CollectionUtils.toCollection(attribute, ArrayList.class).getFirst().toString();
         }
         return null;
     }
@@ -330,5 +331,16 @@ public class OAuth20Utils {
      */
     public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
         return StringUtils.isNotBlank(registeredService.getClientSecret());
+    }
+
+    /**
+     * Validate redirect uri.
+     *
+     * @param redirectUri the redirect uri
+     */
+    public void validateRedirectUri(final String redirectUri) {
+        if (StringUtils.isNotBlank(redirectUri)) {
+            RedirectURIValidator.ensureLegal(URI.create(redirectUri));
+        }
     }
 }

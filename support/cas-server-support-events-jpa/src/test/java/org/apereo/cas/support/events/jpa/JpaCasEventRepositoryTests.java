@@ -41,14 +41,14 @@ class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Override
     @Transactional
     @Test
-    protected void verifyLoadOps() throws Exception {
+    protected void verifyLoadOps() throws Throwable {
         super.verifyLoadOps();
     }
 
     @Override
     @Transactional
     @Test
-    protected void verifySave() throws Exception {
+    protected void verifySave() throws Throwable {
         super.verifySave();
     }
 }

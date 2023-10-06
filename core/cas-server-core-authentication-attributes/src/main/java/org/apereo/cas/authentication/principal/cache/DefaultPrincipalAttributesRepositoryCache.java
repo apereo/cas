@@ -5,13 +5,12 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCach
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
-
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;
@@ -31,23 +30,21 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
 
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>(0);
 
-    /**
-     * Build registered service cache key string.
-     *
-     * @param registeredService the registered service
-     * @return the string
-     */
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
         val key = registeredService.getId() + "@" + registeredService.getName();
-        return DigestUtils.sha512(key);
+        val cacheKey = DigestUtils.sha512(key);
+        LOGGER.trace("Built registered service cache key [{}] for [{}]:", cacheKey, key);
+        return cacheKey;
     }
 
     private static Cache<String, Map<String, List<Object>>> initializeCache(
         final RegisteredServicePrincipalAttributesRepository repository) {
-        val cachedRepository = CachingPrincipalAttributesRepository.class.cast(repository);
-        val unit = TimeUnit.valueOf(StringUtils.defaultString(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
+        val cachedRepository = (CachingPrincipalAttributesRepository) repository;
+        val unit = TimeUnit.valueOf(StringUtils.defaultIfBlank(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
             .initialCapacity(DEFAULT_MAXIMUM_CACHE_SIZE)
             .maximumSize(DEFAULT_MAXIMUM_CACHE_SIZE)
@@ -60,22 +57,21 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         invalidate();
     }
 
-    /**
-     * Invalidate all.
-     */
     @Override
     public void invalidate() {
-        registeredServicesCache.values().forEach(Cache::invalidateAll);
+        lock.tryLock(__ -> registeredServicesCache.values().forEach(Cache::invalidateAll));
     }
 
     @Override
     public Map<String, List<Object>> fetchAttributes(final RegisteredService registeredService,
                                                      final RegisteredServicePrincipalAttributesRepository repository,
                                                      final Principal principal) {
-        val cache = getRegisteredServiceCacheInstance(registeredService, repository);
-        return cache.get(principal.getId(), s -> {
-            LOGGER.debug("No cached attributes could be found for [{}]", principal.getId());
-            return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        return lock.tryLock(() -> {
+            val cache = getRegisteredServiceCacheInstance(registeredService, repository);
+            return cache.get(principal.getId(), __ -> {
+                LOGGER.debug("No cached attributes could be found for [{}]", principal.getId());
+                return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            });
         });
     }
 
@@ -83,17 +79,12 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
     public void putAttributes(final RegisteredService registeredService,
                               final RegisteredServicePrincipalAttributesRepository repository,
                               final String id, final Map<String, List<Object>> attributes) {
-        val cache = getRegisteredServiceCacheInstance(registeredService, repository);
-        cache.put(id, attributes);
+        lock.tryLock(__ -> {
+            val cache = getRegisteredServiceCacheInstance(registeredService, repository);
+            cache.put(id, attributes);
+        });
     }
 
-    /**
-     * Gets registered service cache instance.
-     *
-     * @param registeredService the registered service
-     * @param repository        the repository
-     * @return the registered service cache instance
-     */
     private Cache<String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(
         final RegisteredService registeredService, final RegisteredServicePrincipalAttributesRepository repository) {
 

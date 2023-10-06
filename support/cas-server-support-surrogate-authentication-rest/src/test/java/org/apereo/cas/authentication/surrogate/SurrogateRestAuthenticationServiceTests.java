@@ -45,7 +45,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
     @Override
     @Test
-    void verifyUserAllowedToProxy() throws Exception {
+    void verifyUserAllowedToProxy() throws Throwable {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -57,7 +57,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
     @Override
     @Test
-    void verifyUserNotAllowedToProxy() throws Exception {
+    void verifyUserNotAllowedToProxy() throws Throwable {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList());
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -69,7 +69,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
     @Override
     @Test
-    void verifyWildcard() throws Exception {
+    void verifyWildcard() throws Throwable {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT));
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -81,7 +81,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
     @Override
     @Test
-    void verifyProxying() throws Exception {
+    void verifyProxying() throws Throwable {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -103,7 +103,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyBadResponse() throws Exception {
+    void verifyBadResponse() throws Throwable {
         var data = MAPPER.writeValueAsString("@@@");
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {

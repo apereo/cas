@@ -45,7 +45,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
     private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
 
@@ -77,8 +77,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
                 .stream()
                 .anyMatch(service -> RegexUtils.find(initialServicePattern, service.getId()));
             if (!matches) {
-                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                    new UnauthorizedServiceException("screen.service.initial.message", "Service is required"));
+                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(), UnauthorizedServiceException.requested());
             }
         }
     }

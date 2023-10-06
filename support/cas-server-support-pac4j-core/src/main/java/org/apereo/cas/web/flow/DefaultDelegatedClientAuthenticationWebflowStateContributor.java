@@ -57,7 +57,7 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
 
     @Override
     public Map<String, ? extends Serializable> store(final RequestContext requestContext, final WebContext webContext,
-                                                     final Client client) throws Exception {
+                                                     final Client client) throws Throwable {
         val httpRequest = ((JEEContext) webContext).getNativeRequest();
         val originalService = configContext.getArgumentExtractor().extractService(httpRequest);
         val service = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(originalService);

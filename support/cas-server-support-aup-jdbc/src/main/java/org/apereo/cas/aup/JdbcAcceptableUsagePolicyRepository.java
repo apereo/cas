@@ -49,7 +49,7 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         var status = super.verify(requestContext);
         if (status.isDenied()) {
             val jdbc = aupProperties.getJdbc();
@@ -58,8 +58,8 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val principalId = determinePrincipalId(principal);
             LOGGER.debug("Executing search query [{}] for principal [{}]", sql, principalId);
-            return this.transactionTemplate.execute(action -> {
-                val acceptedFlag = this.jdbcTemplate.queryForObject(sql, String.class, principalId);
+            return transactionTemplate.execute(action -> {
+                val acceptedFlag = jdbcTemplate.queryForObject(sql, String.class, principalId);
                 return new AcceptableUsagePolicyStatus(
                     TriStateBoolean.fromBoolean(BooleanUtils.toBoolean(acceptedFlag)), status.getPrincipal());
             });

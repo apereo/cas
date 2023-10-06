@@ -43,7 +43,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     protected OidcIntrospectionEndpointController oidcIntrospectionEndpointController;
 
     @Test
-    void verifyOperationWithValidTicketAsJwtSignedEncrypted() throws Exception {
+    void verifyOperationWithValidTicketAsJwtSignedEncrypted() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
         request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
@@ -65,7 +65,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithValidTicketAsJwtSigned() throws Exception {
+    void verifyOperationWithValidTicketAsJwtSigned() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
         request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
@@ -84,7 +84,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithValidTicketAsJwtSignedWithNone() throws Exception {
+    void verifyOperationWithValidTicketAsJwtSignedWithNone() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
         request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
@@ -103,7 +103,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithValidTicketAsJwtSignedWithNoneEncryption() throws Exception {
+    void verifyOperationWithValidTicketAsJwtSignedWithNoneEncryption() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
         request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
@@ -122,7 +122,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithValidTicketAsJwtPlain() throws Exception {
+    void verifyOperationWithValidTicketAsJwtPlain() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
         request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
@@ -142,7 +142,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithValidTicket() throws Exception {
+    void verifyOperationWithValidTicket() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 
@@ -162,7 +162,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadEndpointRequest() {
+    void verifyBadEndpointRequest() throws Throwable {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -171,7 +171,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationWithInvalidTicket() throws Exception {
+    void verifyOperationWithInvalidTicket() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 

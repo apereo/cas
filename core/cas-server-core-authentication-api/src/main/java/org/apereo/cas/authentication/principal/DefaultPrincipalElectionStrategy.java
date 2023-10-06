@@ -56,7 +56,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, List<Object>> principalAttributes) {
+                              final Map<String, List<Object>> principalAttributes) throws Throwable {
         val principal = getPrincipalFromAuthentication(authentications);
         val attributes = getPrincipalAttributesForPrincipal(principal, principalAttributes);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
@@ -65,7 +65,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
+    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         val principalIds = principals.stream()
             .filter(Objects::nonNull)
             .map(p -> p.getId().trim().toLowerCase(Locale.ENGLISH))

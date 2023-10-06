@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,12 +38,12 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     private AuthenticationServiceSelectionStrategy strategy;
 
     @Test
-    void verifyNullService() {
+    void verifyNullService() throws Throwable {
         assertNotNull(strategy.resolveServiceFrom(mock(Service.class)));
     }
 
     @Test
-    void verifyGrantType() {
+    void verifyGrantType() throws Throwable {
         val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addHeader("X-" + CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL2);
@@ -57,7 +58,7 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyJwtRequest() {
+    void verifyJwtRequest() throws Throwable {
         val registeredService = addRegisteredService();
         val claims = new JWTClaimsSet.Builder().subject("cas")
             .claim("scope", new String[]{"profile"})
@@ -79,12 +80,13 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyBadRequest() {
+    void verifyBadRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));
         assertNotNull(service);
-        assertEquals(1, service.getAttributes().size());
+        assertTrue(service.getAttributes().containsKey("%s.requestURL".formatted(HttpServletRequest.class.getName())));
+        assertTrue(service.getAttributes().containsKey("%s.localeName".formatted(HttpServletRequest.class.getName())));
         assertTrue(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_SERVICE));
     }
 }

@@ -28,11 +28,11 @@ import static org.mockito.Mockito.*;
 class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends AbstractOidcTests {
 
     @Test
-    void verifyEmptyCacheOperation() {
+    void verifyEmptyCacheOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);
-        when(defaultCache.get(any())).thenReturn(Optional.empty());
+        when(defaultCache.get(any())).thenReturn(null);
 
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());
@@ -53,11 +53,11 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends Abst
     }
 
     @Test
-    void verifyCipherOperation() {
+    void verifyCipherOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);
-        when(defaultCache.get(any())).thenReturn(Optional.empty());
+        when(defaultCache.get(any())).thenReturn(null);
 
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());

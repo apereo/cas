@@ -1,21 +1,14 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,29 +27,23 @@ class FinishLogoutActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    void verifyLogout() throws Exception {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+    void verifyLogout() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, result.getId());
     }
 
     @Test
-    void verifyLogoutRedirect() throws Exception {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+    void verifyLogoutRedirect() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putLogoutRedirectUrl(context, URL);
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, result.getId());
     }
 
     @Test
-    void verifyLogoutPost() throws Exception {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-                new MockHttpServletRequest(), new MockHttpServletResponse()));
+    void verifyLogoutPost() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putLogoutPostUrl(context, URL);
         val data = new HashMap<String, Object>();
         data.put("SAMLResponse", "xyz");

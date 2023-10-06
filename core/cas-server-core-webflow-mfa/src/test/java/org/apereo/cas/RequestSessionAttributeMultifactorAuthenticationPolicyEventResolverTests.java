@@ -40,7 +40,7 @@ class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests e
     private CasWebflowEventResolver requestSessionAttributeAuthenticationPolicyWebflowEventResolver;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

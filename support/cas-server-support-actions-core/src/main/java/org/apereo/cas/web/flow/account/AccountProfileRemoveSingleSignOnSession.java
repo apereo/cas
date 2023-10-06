@@ -21,7 +21,7 @@ public class AccountProfileRemoveSingleSignOnSession extends BaseCasWebflowActio
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
         val id = requestContext.getRequestParameters().get("id", String.class);
         ticketRegistry.deleteTicket(id);

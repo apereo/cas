@@ -41,24 +41,24 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
     }
 
     @Test
-    void verifyLoadWithBadTicketInSession() {
+    void verifyLoadWithBadTicketInSession() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
         val profile = new BasicUserProfile();
         profile.addAttribute(TicketGrantingTicket.class.getName(), UUID.randomUUID().toString());
         profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, new JEESessionStore()), profileManager, List.of()).isEmpty());
     }
 
     @Test
-    void verifyLoadWithValidTicket() throws Exception {
+    void verifyLoadWithValidTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, new BasicUserProfile(), false);
 
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
@@ -67,18 +67,18 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
         ticketRegistry.addTicket(tgt);
         profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertFalse(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
+        assertFalse(logic.loadProfiles(new CallContext(context, new JEESessionStore()), profileManager, List.of()).isEmpty());
     }
 
     @Test
-    void verifyLoadNoProfileWhenNoTgtAvailable() {
+    void verifyLoadNoProfileWhenNoTgtAvailable() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         val context = new JEEContext(request, response);
-        val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, new JEESessionStore()), profileManager, List.of()).isEmpty());
     }
 }

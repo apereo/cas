@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JavaUtilDate")
 class DefaultYubiKeyAccountValidatorTests {
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val client = mock(YubicoClient.class);
         val r = mock(VerificationResponse.class);
         when(client.verify(anyString())).thenReturn(r);
@@ -33,7 +33,7 @@ class DefaultYubiKeyAccountValidatorTests {
     }
 
     @Test
-    void verifyActionFailsStatus() throws Exception {
+    void verifyActionFailsStatus() throws Throwable {
         val client = mock(YubicoClient.class);
         val r = mock(VerificationResponse.class);
         when(client.verify(anyString())).thenReturn(r);
@@ -44,14 +44,14 @@ class DefaultYubiKeyAccountValidatorTests {
     }
 
     @Test
-    void verifyBadPubKey() {
+    void verifyBadPubKey() throws Throwable {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client);
         assertFalse(v.isValid("casuser", "abcdeyf"));
     }
 
     @Test
-    void verifyNoPubKey() {
+    void verifyNoPubKey() throws Throwable {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client) {
             @Override

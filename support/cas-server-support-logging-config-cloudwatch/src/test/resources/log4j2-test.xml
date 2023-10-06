@@ -25,7 +25,7 @@
             <AppenderRef ref="CloudWatchAppender"/>
         </Logger>
         <Logger name="com.amazonaws" level="debug" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

@@ -78,7 +78,7 @@ class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServic
     }
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val generator = new JwtGenerator();
 
         generator.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));

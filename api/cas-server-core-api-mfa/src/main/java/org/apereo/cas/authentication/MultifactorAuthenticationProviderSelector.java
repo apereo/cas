@@ -28,8 +28,8 @@ public interface MultifactorAuthenticationProviderSelector {
      * @param service   the service
      * @param principal the principal
      * @return the multifactor authentication provider
+     * @throws Throwable the throwable
      */
     MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
-                                              RegisteredService service,
-                                              Principal principal);
+                                              RegisteredService service, Principal principal) throws Throwable;
 }

@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "div.container-fluid");
     await cas.assertVisibility(page, "div#HttpRequestTrigger");
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.focus("#username");
     await page.keyboard.press("Tab");
     await page.focus("#password");
@@ -35,8 +35,8 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://anything-matches-here");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page, "https://anything-matches-here");
     await cas.assertVisibility(page, "#wildcardService");
 
     await browser.close();

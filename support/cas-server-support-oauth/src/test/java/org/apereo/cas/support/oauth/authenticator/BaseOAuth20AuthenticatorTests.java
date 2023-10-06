@@ -48,8 +48,8 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
-
 import lombok.val;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,12 +67,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
-
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -148,20 +146,20 @@ public abstract class BaseOAuth20AuthenticatorTests {
     public void initialize() {
         service = new OAuthRegisteredService();
         service.setName("OAuth");
-        service.setId(1);
+        service.setId(RandomUtils.nextLong());
         service.setServiceId("https://www.example.org");
         service.setClientSecret("secret");
         service.setClientId("client");
 
         serviceWithoutSecret = new OAuthRegisteredService();
         serviceWithoutSecret.setName("OAuth2");
-        serviceWithoutSecret.setId(2);
+        serviceWithoutSecret.setId(RandomUtils.nextLong());
         serviceWithoutSecret.setServiceId("https://www.example2.org");
         serviceWithoutSecret.setClientId("clientWithoutSecret");
 
         serviceWithoutSecret2 = new OAuthRegisteredService();
         serviceWithoutSecret2.setName("OAuth3");
-        serviceWithoutSecret2.setId(3);
+        serviceWithoutSecret2.setId(RandomUtils.nextLong());
         serviceWithoutSecret2.setServiceId("https://www.example3org");
         serviceWithoutSecret2.setClientId("clientWithoutSecret2");
 
@@ -169,13 +167,14 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setName("The registered service name");
         serviceJwtAccessToken.setServiceId("https://oauth.jwt.service");
         serviceJwtAccessToken.setClientId("clientid");
+        serviceJwtAccessToken.setId(RandomUtils.nextLong());
         serviceJwtAccessToken.setClientSecret("clientsecret");
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
 
         serviceWithAttributesMapping = new OAuthRegisteredService();
         serviceWithAttributesMapping.setName("OAuth5");
-        serviceWithAttributesMapping.setId(5);
+        serviceWithAttributesMapping.setId(RandomUtils.nextLong());
         serviceWithAttributesMapping.setServiceId("https://www.example5.org");
         serviceWithAttributesMapping.setClientSecret("secret");
         serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
@@ -184,13 +183,14 @@ public abstract class BaseOAuth20AuthenticatorTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.LOWER.name());
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
-            new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
+            new ReturnAllowedAttributeReleasePolicy(List.of("eduPersonAffiliation")));
 
         servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -230,10 +230,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     protected static OAuth20AccessToken getAccessToken() {
         val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService();
-
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
-        when(accessToken.getId()).thenReturn("ABCD");
+        when(accessToken.getId()).thenReturn(UUID.randomUUID().toString());
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());

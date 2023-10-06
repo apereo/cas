@@ -20,20 +20,20 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 class UnauthorizedAuthenticationExceptionTests {
     @Test
-    void verifyOpsErrorsAndMessage() {
+    void verifyOpsErrorsAndMessage() throws Throwable {
         val ex = new UnauthorizedAuthenticationException("message", Map.of("error", new RuntimeException()));
         assertNotNull(ex.getMessage());
         assertFalse(ex.getHandlerErrors().isEmpty());
     }
 
     @Test
-    void verifyOpsErrors() {
+    void verifyOpsErrors() throws Throwable {
         val ex = new UnauthorizedAuthenticationException(Map.of("error", new RuntimeException()));
         assertFalse(ex.getHandlerErrors().isEmpty());
     }
 
     @Test
-    void verifyOpsErrorsAndResult() {
+    void verifyOpsErrorsAndResult() throws Throwable {
         val ex = new UnauthorizedAuthenticationException(Map.of("error", new RuntimeException()),
             Map.of("result", mock(AuthenticationHandlerExecutionResult.class)));
         assertFalse(ex.getHandlerErrors().isEmpty());
@@ -41,7 +41,7 @@ class UnauthorizedAuthenticationExceptionTests {
     }
 
     @Test
-    void verifyOpsErrorsAndResultMsg() {
+    void verifyOpsErrorsAndResultMsg() throws Throwable {
         val ex = new UnauthorizedAuthenticationException("message",
             Map.of("error", new RuntimeException()),
             Map.of("result", mock(AuthenticationHandlerExecutionResult.class)));

@@ -8,15 +8,19 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -87,7 +92,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyOp() {
+    void verifyOp() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(true)
             .principalAttributeNames("cn")
@@ -103,7 +108,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalAttributeNames("cn")
@@ -120,7 +125,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyNullPrincipal() {
+    void verifyNullPrincipal() throws Throwable {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(String::trim)
@@ -136,7 +141,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyNoPrincipalAttrWithoutNull() {
+    void verifyNoPrincipalAttrWithoutNull() throws Throwable {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(String::trim)
@@ -154,7 +159,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyUnknownPrincipalAttrWithNull() {
+    void verifyUnknownPrincipalAttrWithNull() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(true)
             .principalNameTransformer(String::trim)
@@ -172,7 +177,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyNullAttributes() {
+    void verifyNullAttributes() throws Throwable {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(true)
             .principalNameTransformer(String::trim)
@@ -189,7 +194,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyNullAttributeValues() {
+    void verifyNullAttributeValues() throws Throwable {
         val attributes = new ArrayList<>();
         attributes.add(null);
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(Map.of("a", attributes)))
@@ -206,7 +211,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyNoAttributesWithPrincipal() {
+    void verifyNoAttributesWithPrincipal() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -223,7 +228,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyAttributesWithPrincipal() {
+    void verifyAttributesWithPrincipal() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -242,7 +247,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyChainingResolverOverwrite() {
+    void verifyChainingResolverOverwrite() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -270,7 +275,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyChainingResolver() {
+    void verifyChainingResolver() throws Throwable {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -293,7 +298,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyChainingResolverOverwritePrincipal() {
+    void verifyChainingResolverOverwritePrincipal() throws Throwable {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -331,7 +336,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyMultiplePrincipalAttributeNames() {
+    void verifyMultiplePrincipalAttributeNames() throws Throwable {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -363,7 +368,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyMultiplePrincipalAttributeNamesNotFound() {
+    void verifyMultiplePrincipalAttributeNamesNotFound() throws Throwable {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -395,7 +400,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyPrincipalIdViaCurrentPrincipal() {
+    void verifyPrincipalIdViaCurrentPrincipal() throws Throwable {
         Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
             .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
                 .returnNullIfNoAttributes(true)
@@ -403,15 +408,62 @@ class PersonDirectoryPrincipalResolverTests {
                 .useCurrentPrincipalId(true)
                 .resolveAttributes(true)
                 .build())
-            .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context)).forEach(resolver -> {
+            .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context))
+            .forEach(Unchecked.consumer(resolver -> {
                 val credential = mock(Credential.class);
                 val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
-                val p = resolver.resolve(credential, Optional.of(principal),
+                val resolved = resolver.resolve(credential, Optional.of(principal),
                     Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
                     Optional.of(CoreAuthenticationTestUtils.getService()));
-                assertNotNull(p);
-                assertEquals("customUserId", p.getId());
-            });
+                assertNotNull(resolved);
+                assertEquals("customUserId", resolved.getId());
+            }));
+
+    }
+
+    @Test
+    void verifyAttributeRepositoryByService() throws Throwable {
+        Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
+            .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
+                .returnNullIfNoAttributes(true)
+                .principalAttributeNames("custom:attribute")
+                .useCurrentPrincipalId(true)
+                .resolveAttributes(true)
+                .build())
+            .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context))
+            .forEach(Unchecked.consumer(resolver -> {
+                val credential = mock(Credential.class);
+                val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
+
+                val attributePolicy = new RegisteredServiceAttributeReleasePolicy() {
+                    @Serial
+                    private static final long serialVersionUID = 6118477243447737445L;
+
+                    @Override
+                    public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
+                        val repo = mock(RegisteredServicePrincipalAttributesRepository.class);
+                        when(repo.getAttributeRepositoryIds()).thenReturn(Set.of("StubPersonAttributeDao"));
+                        return repo;
+                    }
+
+                    @Override
+                    public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+                        return context.getPrincipal().getAttributes();
+                    }
+                };
+
+                val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+                val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+                when(registeredService.getAttributeReleasePolicy()).thenReturn(attributePolicy);
+
+                when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+                val resolved = resolver.resolve(credential, Optional.of(principal),
+                    Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+                    Optional.of(service));
+                assertNotNull(resolved);
+                assertEquals("customUserId", resolved.getId());
+            }));
 
     }
 }

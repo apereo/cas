@@ -1,13 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,10 +14,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.JdbcHttpSessionConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasJdbcSessionConfigurationTests.TransactionTestConfiguration.class,
     TransactionAutoConfiguration.class,
     JdbcHttpSessionConfiguration.class,
@@ -52,7 +52,7 @@ class CasJdbcSessionConfigurationTests {
     private SessionRepository sessionRepository;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(sessionRepository);
     }
 
@@ -62,7 +62,7 @@ class CasJdbcSessionConfigurationTests {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerYubiKey() {
-            return new PseudoPlatformTransactionManager();
+            return new PseudoTransactionManager();
         }
     }
 }

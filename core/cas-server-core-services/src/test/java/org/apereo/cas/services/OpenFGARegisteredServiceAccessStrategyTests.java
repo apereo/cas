@@ -45,7 +45,7 @@ class OpenFGARegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val strategy = new OpenFGARegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");
@@ -57,13 +57,13 @@ class OpenFGARegisteredServiceAccessStrategyTests {
             .service(RegisteredServiceTestUtils.getService())
             .principalId("casuser")
             .build();
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(request));
+        assertFalse(strategy.authorizeRequest(request));
 
         val data = mapper.writeValueAsString(CollectionUtils.wrap("allowed", true));
         try (val webServer = new MockWebServer(8755,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(request));
+            assertTrue(strategy.authorizeRequest(request));
         }
     }
 

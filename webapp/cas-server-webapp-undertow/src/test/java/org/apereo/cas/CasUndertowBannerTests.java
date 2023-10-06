@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
-
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class
 })
 @Tag("WebApp")
@@ -32,10 +32,10 @@ class CasUndertowBannerTests {
     private Environment environment;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val banner = new CasUndertowBanner();
         val writer = new StringWriter();
-        val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        val out = WriterOutputStream.builder().setWriter(writer).get();
         try (val stream = new PrintStream(out, true, StandardCharsets.UTF_8)) {
             banner.printBanner(environment, CasUndertowBanner.class, stream);
         }

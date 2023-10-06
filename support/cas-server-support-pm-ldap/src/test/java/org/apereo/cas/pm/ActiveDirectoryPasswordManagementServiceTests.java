@@ -3,7 +3,6 @@ package org.apereo.cas.pm;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -44,13 +43,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+        public static void bootstrap() {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyPasswordReset() {
+    void verifyPasswordReset() throws Throwable {
         val credential = new UsernamePasswordCredential("changepassword", StringUtils.EMPTY);
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("P@ssw0rdMellon".toCharArray());
@@ -60,7 +58,7 @@ class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordMana
     }
 
     @Test
-    void verifyPasswordChange() {
+    void verifyPasswordChange() throws Throwable {
         val credential = new UsernamePasswordCredential("changepasswordnoreset", "P@ssw0rd");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("P@ssw0rd2".toCharArray());
@@ -70,19 +68,19 @@ class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordMana
     }
 
     @Test
-    void verifyFindEmail() {
+    void verifyFindEmail() throws Throwable {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("changepassword@example.org", email);
     }
 
     @Test
-    void verifyFindPhone() {
+    void verifyFindPhone() throws Throwable {
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("1234567890", ph);
     }
 
     @Test
-    void verifyFindSecurityQuestions() {
+    void verifyFindSecurityQuestions() throws Throwable {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("DepartmentQuestion"));

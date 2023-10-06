@@ -1,0 +1,35 @@
+{
+    "type": "Categorization",
+    "elements": [
+        {
+            "type": "Category",
+            "label": "Page 1",
+            "elements": [
+                {
+                    "type": "HorizontalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/name"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Category",
+            "label": "Page 2",
+            "elements": [
+                {
+                    "type": "HorizontalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/evaluationOrder"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

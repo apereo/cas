@@ -12,7 +12,6 @@ import lombok.val;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -38,7 +37,7 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
 
         val username = credential.getUsername();
 
@@ -53,7 +52,7 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
-        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).get(0).toString();
+        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).getFirst().toString();
         if (!matches(originalPassword, userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();

@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
 
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "table tbody td a");
     await page.waitForTimeout(1000);
     let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
-    console.log(`Activation link is ${link}`);
+    await cas.log(`Activation link is ${link}`);
     await cas.goto(page, link);
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, '#content h2', "Account Registration");

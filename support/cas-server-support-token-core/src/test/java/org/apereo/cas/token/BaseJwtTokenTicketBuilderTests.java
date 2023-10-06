@@ -28,18 +28,16 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.TicketValidator;
-
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-
 import java.util.List;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -50,6 +48,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     BaseJwtTokenTicketBuilderTests.TokenTicketBuilderTestConfiguration.class,
     TokenCoreConfiguration.class,
     TokenCoreComponentSerializationConfiguration.class,
@@ -101,7 +100,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
         }
 
         @Bean
-        public TicketValidator tokenTicketValidator() {
+        public TicketValidator tokenTicketValidator() throws Throwable {
             val validator = mock(TicketValidator.class);
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser",
                 CollectionUtils.wrap("name", List.of("value"),

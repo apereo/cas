@@ -4,27 +4,21 @@ import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,6 +29,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 class ReturnLinkedAttributeReleasePolicyTests {
@@ -45,16 +40,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @BeforeEach
-    public void beforeEach() {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            new GroovyScriptResourceCacheManager(), ScriptResourceCacheManager.BEAN_NAME);
-        ApplicationContextProvider.getScriptResourceCacheManager()
-            .ifPresent(ScriptResourceCacheManager::clear);
-    }
-
+    
     @Test
     void verifySerializeToJson() throws IOException {
         val policy = new ReturnLinkedAttributeReleasePolicy();
@@ -65,7 +51,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyMappedToMultipleAttributes() {
+    void verifyMappedToMultipleAttributes() throws Throwable {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", List.of("cn", "givenName", "unknown", "firstName"));
         val p1 = new ReturnLinkedAttributeReleasePolicy().setAllowedAttributes(allowed1);
         val service1 = CoreAttributesTestUtils.getRegisteredService();
@@ -77,6 +63,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service1)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();

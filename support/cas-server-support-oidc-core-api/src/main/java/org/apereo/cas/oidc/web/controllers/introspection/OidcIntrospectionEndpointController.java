@@ -50,13 +50,6 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         super(context);
     }
 
-    /**
-     * Handle request.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the response entity
-     */
     @GetMapping(consumes = {
         OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -70,9 +63,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity handleRequest(
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+    public ResponseEntity handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.INTROSPECTION_URL)) {
             val body = OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer"));
@@ -80,14 +71,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         }
         return super.handleRequest(request, response);
     }
-
-    /**
-     * Handle post request.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the response entity
-     */
+    
     @PostMapping(consumes = {
         OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
         MediaType.APPLICATION_JSON_VALUE,
@@ -101,7 +85,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return super.handlePostRequest(request, response);
     }
 
@@ -166,7 +150,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
 
     protected ResponseEntity<String> signAndEncryptIntrospection(final WebContext context,
                                                                  final OAuth20IntrospectionAccessTokenSuccessResponse introspect,
-                                                                 final OAuthRegisteredService registeredService) throws Exception {
+                                                                 final OAuthRegisteredService registeredService) throws Throwable {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         LOGGER.debug("Collected introspection claims, before cipher operations, are [{}]", claims);
         val signingAndEncryptionService = getConfigurationContext().getTokenIntrospectionSigningAndEncryptionService();

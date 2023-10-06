@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
         resource_scopes: ["create", "read"]
     };
     let resourceRequest = JSON.stringify(resourceObject);
-    console.log(`Creating resource ${resourceRequest}`);
+    await cas.log(`Creating resource ${resourceRequest}`);
     let resource = JSON.parse(await cas.doRequest(resourceUrl, "POST",
         {
             "Authorization": `Bearer ${protectionToken}`,
@@ -36,7 +36,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, resourceRequest));
-    console.log(resource);
+    await cas.log(resource);
 
     const policyUrl = `https://localhost:8443/cas/oauth2.0/${resource.resourceId}/policy`;
     let policyObject = {
@@ -63,7 +63,7 @@ const cas = require('../../cas.js');
         ]
     };
     let policyRequest = JSON.stringify(policyObject);
-    console.log(`Creating policy ${policyRequest}`);
+    await cas.log(`Creating policy ${policyRequest}`);
     let result = JSON.parse(await cas.doRequest(policyUrl, "POST",
         {
             "Authorization": `Bearer ${protectionToken}`,
@@ -71,7 +71,7 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, policyRequest));
-    console.log(result);
+    await cas.log(result);
 
     let permissionObject = {
         resource_id: resource.resourceId,
@@ -82,7 +82,7 @@ const cas = require('../../cas.js');
     };
 
     let permissionRequest = JSON.stringify(permissionObject);
-    console.log(`Creating permission ${permissionRequest}`);
+    await cas.log(`Creating permission ${permissionRequest}`);
     result = JSON.parse(await cas.doRequest("https://localhost:8443/cas/oauth2.0/permission", "POST",
         {
             "Authorization": `Bearer ${protectionToken}`,
@@ -90,22 +90,20 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, permissionRequest));
-    console.log(result);
+    await cas.log(result);
     assert(result.ticket !== null);
     assert(result.code !== null);
 
     let permissionTicket = result.ticket;
-    console.log(`Found UMA permission ticket ${permissionTicket}`);
+    await cas.log(`Found UMA permission ticket ${permissionTicket}`);
 
-    console.log("Checking for UMA JWKS");
+    await cas.log("Checking for UMA JWKS");
     await cas.doGet(`https://localhost:8443/cas/oauth2.0/umaJwks`,
-        res => {
-            assert(res.status === 200);
-        }, error => {
+        res => assert(res.status === 200), error => {
             throw error;
         });
 
-    console.log("Getting access token for authorization");
+    await cas.log("Getting access token for authorization");
     params = "client_id=client&";
     params += "client_secret=secret&";
     params += "scope=uma_authorization read&";
@@ -123,7 +121,7 @@ const cas = require('../../cas.js');
         throw `Operation failed: ${error}`;
     });
 
-    console.log(`Asking for relying party token (RPT) based on ${authorizationToken}`);
+    await cas.log(`Asking for relying party token (RPT) based on ${authorizationToken}`);
     let authzObject = {
         ticket: permissionTicket,
         'grant_type': "urn:ietf:params:oauth:grant-type:uma-ticket"
@@ -136,12 +134,12 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 308, authzRequest));
-    console.log(result);
+    await cas.log(result);
     assert(result.error_details.requesting_party_claims.required_claims !== null);
     assert(result.error_details.requesting_party_claims.required_scopes !== null);
 
 
-    console.log("Executing claim collection...");
+    await cas.log("Executing claim collection...");
     params = `client_id=client&ticket=${permissionTicket}&state=12345&redirect_uri=https://apereo.github.io`;
     await cas.doRequest(`https://localhost:8443/cas/oauth2.0/rqpClaims?${params}`, "GET",
         {
@@ -149,12 +147,11 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 302, undefined,
-        res => {
+        res =>
             assert(res.headers.location.includes(
-                "https://apereo.github.io?authorization_state=claims_submitted&state=12345"));
-        });
+                "https://apereo.github.io?authorization_state=claims_submitted&state=12345")));
 
-    console.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`);
+    await cas.log(`After claim collection, asking for relying party token (RPT) based on ${authorizationToken}`);
     authzObject = {
         ticket: permissionTicket,
         'grant_type': "urn:ietf:params:oauth:grant-type:uma-ticket"
@@ -167,13 +164,13 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }, 200, authzRequest));
-    console.log(result);
+    await cas.log(result);
     assert(result.rpt !== null);
 
     let value = `client:secret`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
     await cas.doPost(`https://localhost:8443/cas/oauth2.0/introspect?token=${result.rpt}`,
         {},
         {

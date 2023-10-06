@@ -20,7 +20,7 @@ public class YubiKeyAuthenticationPrepareLoginAction extends BaseCasWebflowActio
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(requestContext,
             casProperties.getAuthn().getMfa().getYubikey().isMultipleDeviceRegistrationEnabled());
         return null;

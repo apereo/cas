@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.ADDRESS.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -36,6 +35,7 @@ class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
@@ -43,15 +43,13 @@ class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+    void verifySerialization() throws Throwable {
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = serializer.toString(service);
         assertNotNull(json);
         assertNotNull(serializer.from(json));

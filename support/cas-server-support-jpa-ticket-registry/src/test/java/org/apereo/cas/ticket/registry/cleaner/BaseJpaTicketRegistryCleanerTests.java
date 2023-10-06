@@ -99,7 +99,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -127,7 +127,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    void verifyTransientTicketCleaning() throws Exception {
+    void verifyTransientTicketCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -151,7 +151,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @RepeatedTest(2)
-    public void verifyOauthOperation() throws Exception {
+    void verifyOauthOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -181,7 +181,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    void verifyDeviceCodeAndUserCleaning() throws Exception {
+    void verifyDeviceCodeAndUserCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -211,7 +211,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @RetryingTest(2)
-    public void verifyConcurrentCleaner() throws Exception {
+    void verifyConcurrentCleaner() throws Throwable {
         val registryTask = new TimerTask() {
             @Override
             public void run() {
@@ -250,7 +250,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         ticketRegistry.deleteAll();
     }
 
-    private OAuth20Code createOAuthCode() {
+    private OAuth20Code createOAuthCode() throws Throwable {
         val builder = mock(ExpirationPolicyBuilder.class);
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 

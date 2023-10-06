@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflat
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +71,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(1)
-    public void verifyPostSignRequest() throws Exception {
+    void verifyPostSignRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -85,7 +84,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(2)
-    public void verifyRedirectRequest() throws Exception {
+    void verifyRedirectRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("GET");
         val response = new MockHttpServletResponse();
@@ -104,7 +103,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(3)
-    public void verifyPutRequest() {
+    void verifyPutRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("PUT");
         val response = new MockHttpServletResponse();
@@ -114,7 +113,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(3)
-    public void verifyBadRequest() throws Exception {
+    void verifyBadRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -125,7 +124,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(4)
-    public void verifyPostRequest() throws Exception {
+    void verifyPostRequest() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -138,7 +137,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(5)
-    public void verifyPostRequestWithSso() throws Exception {
+    void verifyPostRequestWithSso() throws Throwable {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -159,7 +158,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(6)
-    public void verifyPostRequestWithSsoForcedAuthn() throws Exception {
+    void verifyPostRequestWithSsoForcedAuthn() throws Throwable {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -179,7 +178,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(7)
-    public void verifyPostRequestWithUnknownCookie() throws Exception {
+    void verifyPostRequestWithUnknownCookie() throws Throwable {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
@@ -197,7 +196,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(8)
-    public void verifyPostRequestWithSsoAndAccessStrategy() throws Exception {
+    void verifyPostRequestWithSsoAndAccessStrategy() throws Throwable {
         samlRegisteredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("authnMethod", Set.of("X509"))));
         servicesManager.save(samlRegisteredService);
 
@@ -220,11 +219,9 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, mv.getViewName());
         assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
-
-    @SneakyThrows
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
-                                          final AuthnRequest authnRequest) {
+                                          final AuthnRequest authnRequest) throws Exception {
         val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();

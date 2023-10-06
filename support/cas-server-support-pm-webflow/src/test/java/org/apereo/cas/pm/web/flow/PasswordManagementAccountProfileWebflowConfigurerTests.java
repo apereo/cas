@@ -43,7 +43,7 @@ class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflow
     private FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
         assertTrue(Arrays.stream(flow.getStartActionList().toArray())

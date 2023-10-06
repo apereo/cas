@@ -37,7 +37,7 @@ class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIde
     private SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher;
 
     @Test
-    void verifySecurityPopulator() {
+    void verifySecurityPopulator() throws Throwable {
         val realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
 
         val registeredService = new WSFederationRegisteredService();

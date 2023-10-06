@@ -31,27 +31,27 @@ class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyAuthenticationTypeFound() {
+    void verifyAuthenticationTypeFound() throws Throwable {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
-            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).getFirst());
     }
 
     @Test
-    void verifyAuthenticationTypeFoundByDefault() {
+    void verifyAuthenticationTypeFoundByDefault() throws Throwable {
         val credentials = new CustomCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
-        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
+        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).getFirst());
     }
 
     @Test
-    void verifyAuthenticationTypeFoundCustom() {
+    void verifyAuthenticationTypeFoundCustom() throws Throwable {
         val credentials = new CustomCredential();
 
         val added = new HashMap<String, String>();
@@ -65,7 +65,7 @@ class SamlAuthenticationMetaDataPopulatorTests {
 
         assertEquals(
             "FF",
-            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).get(0));
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD).getFirst());
     }
 
     private static final class CustomCredential implements Credential {

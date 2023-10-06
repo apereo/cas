@@ -3,9 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -22,10 +21,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.Cookie;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +36,6 @@ class SendTicketGrantingTicketActionTests {
     private static final String LOCALHOST_IP = "127.0.0.1";
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class PublicWorkstationCookie extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -53,7 +49,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        void verifyTgtMismatch() throws Exception {
+        void verifyTgtMismatch() throws Throwable {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -78,7 +74,6 @@ class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class CreateSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -92,14 +87,14 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        void verifyNoTgtToSet() throws Exception {
+        void verifyNoTgtToSet() throws Throwable {
             context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
 
         @Test
-        void verifyTgtToSet() throws Exception {
+        void verifyTgtToSet() throws Throwable {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -118,7 +113,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        void verifyTgtToSetRemovingOldTgt() throws Exception {
+        void verifyTgtToSetRemovingOldTgt() throws Throwable {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -139,7 +134,6 @@ class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
     class IgnoreSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
@@ -154,7 +148,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
+        void verifySsoSessionCookieOnRenewAsParameter() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -172,7 +166,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
+        void verifySsoSessionCookieOnServiceSsoDisallowed() throws Throwable {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
 

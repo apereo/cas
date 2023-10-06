@@ -50,7 +50,7 @@ class X509TomcatServletWebServiceFactoryWebflowConfigurerTests extends BaseWebfl
     private CasWebflowConfigurer webflowConfigurer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(webflowConfigurer);
     }
 

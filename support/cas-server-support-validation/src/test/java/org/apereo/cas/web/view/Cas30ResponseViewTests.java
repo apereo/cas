@@ -25,8 +25,6 @@ import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
-
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -46,14 +44,12 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.Cipher;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
+import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -85,15 +81,14 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
-    @SneakyThrows
-    private static String decryptCredential(final String cred) {
+    private static String decryptCredential(final String cred) throws Throwable {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
         factory.setSingleton(false);
         val privateKey = factory.getObject();
 
-        LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+        LOGGER.debug("Initializing cipher based on [{}]", Objects.requireNonNull(privateKey).getAlgorithm());
         val cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
         LOGGER.debug("Decoding value [{}]", cred);
@@ -124,6 +119,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .applicationContext(applicationContext)
             .principalFactory(getPrincipalFactory())
             .ticketRegistry(getTicketRegistry())
             .principalResolver(getDefaultPrincipalResolver())
@@ -143,7 +139,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyViewAuthnAttributes() throws Exception {
+    void verifyViewAuthnAttributes() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
@@ -151,7 +147,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
@@ -162,7 +158,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Throwable {
         val attributes = renderView();
         LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
@@ -173,14 +169,14 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    void verifyViewBinaryAttributes() throws Exception {
+    void verifyViewBinaryAttributes() throws Throwable {
         val attributes = renderView();
         assertTrue(attributes.containsKey("binaryAttribute"));
         val binaryAttr = attributes.get("binaryAttribute");
         assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
     }
 
-    protected Map<?, ?> renderView() throws Exception {
+    protected Map<?, ?> renderView() throws Throwable {
         val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
         LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 

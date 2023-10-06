@@ -35,25 +35,10 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
-    /**
-     * To successful result.
-     *
-     * @return the authentication context validation result
-     */
     protected static AuthenticationContextValidationResult toSuccessfulResult() {
         return AuthenticationContextValidationResult.builder().success(true).build();
     }
 
-    /**
-     * Validate multifactor provider bypass.
-     *
-     * @param provider          the provider
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @param service           the service
-     * @param request           the request
-     * @return the authentication context validation result
-     */
     protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(
         final MultifactorAuthenticationProvider provider,
         final RegisteredService registeredService,
@@ -90,7 +75,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     @Override
     public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion,
                                                                                final HttpServletRequest request,
-                                                                               final HttpServletResponse response) {
+                                                                               final HttpServletResponse response) throws Throwable {
         LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
@@ -103,7 +88,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         final HttpServletResponse response,
         final RegisteredService registeredService,
         final Authentication authentication,
-        final Service service) {
+        final Service service) throws Throwable {
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();

@@ -5,9 +5,10 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.util.Optional;
 
 /**
@@ -36,7 +36,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        generate(Optional.empty());
+        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)

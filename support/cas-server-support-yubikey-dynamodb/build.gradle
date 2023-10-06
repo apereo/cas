@@ -1,4 +1,4 @@
-description = "Apereo CAS U2F YubiKey DynamoDb Support"
+description = "Apereo CAS YubiKey DynamoDb Support"
 
 ext {
     maxParallelForksForTests = 1

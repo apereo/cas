@@ -45,7 +45,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
-    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Throwable {
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         val result = configurationContext.getAccessTokenGenerator().generate(holder);
         val accessToken = result.getAccessToken().orElse(null);
@@ -63,10 +63,10 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
         final List<NameValuePair> params,
-        final OAuth20RefreshToken refreshToken) throws Exception {
+        final OAuth20RefreshToken refreshToken) throws Throwable {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
+        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
 
         val builder = UriComponentsBuilder.fromUriString(holder.getRedirectUri());
         val stringBuilder = new StringBuilder();

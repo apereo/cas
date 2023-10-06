@@ -22,6 +22,7 @@ bin/
 .DS_Store
 production/
 .idea
+.java-version
 overlays/
 pom.xml.versionsBackup
 build.xml
@@ -64,7 +65,6 @@ ci/tests/puppeteer/package-*.json
 ci/tests/puppeteer/overlay
 ci/tests/puppeteer/scenarios/**/screenshot*.png
 ci/tests/puppeteer/**/screenshot*.png
-ci/tests/puppeteer/**/strapi
 ci/tests/puppeteer/**/*.jwks
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md
@@ -73,3 +73,5 @@ ci/tests/perf/saml/md/*
 ci/tests/cassandra/security/**
 ci/tests/k3d/install.sh
 ci/tests/k3d/get_helm.sh
+**/yarn.lock
+support/cas-server-support-palantir/src/main/resources/static/assets

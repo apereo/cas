@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationA
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationPrepareLoginAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
-import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -16,10 +15,10 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -87,7 +86,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
         public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            return new YubiKeyAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+            return new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext);
         }
 
 

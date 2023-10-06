@@ -82,7 +82,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifyNoServiceOrPolicy() {
+    void verifyNoServiceOrPolicy() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -114,7 +114,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifySsoWithMismatchedClient() throws Exception {
+    void verifySsoWithMismatchedClient() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -150,7 +150,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    void verifySsoWithMissingClientAndExclusive() throws Exception {
+    void verifySsoWithMissingClientAndExclusive() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

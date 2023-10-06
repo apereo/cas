@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CasAppenderTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(CasAppender.class.getName());
         val appender = (CasAppender) logger.getAppenders().get("CasAppender");

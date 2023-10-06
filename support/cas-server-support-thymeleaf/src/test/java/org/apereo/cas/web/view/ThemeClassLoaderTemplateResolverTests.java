@@ -1,20 +1,18 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.thymeleaf.IEngineConfiguration;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -43,7 +42,7 @@ class ThemeClassLoaderTemplateResolverTests {
     }
 
     @Test
-    void verifyOperationByDefaultValue() {
+    void verifyOperationByDefaultValue() throws Throwable {
         verifyThemeFile("test");
     }
 }

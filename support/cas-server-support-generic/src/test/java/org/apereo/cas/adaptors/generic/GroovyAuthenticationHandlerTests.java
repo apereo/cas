@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class GroovyAuthenticationHandlerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resource = new ClassPathResource("GroovyAuthnHandler.groovy");
         val handler = new GroovyAuthenticationHandler("Test", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), resource, 0);

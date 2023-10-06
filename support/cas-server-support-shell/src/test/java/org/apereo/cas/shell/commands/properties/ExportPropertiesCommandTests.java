@@ -4,7 +4,6 @@ import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,11 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 class ExportPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "export-props --dir /tmp"));
     }
 }

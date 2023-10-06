@@ -103,7 +103,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyFails() {
+    void verifyFails() throws Throwable {
         val su = casProperties.getAuthn().getSurrogate();
         val factory = mock(ConnectionFactory.class);
         val ldapService = new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager);
@@ -113,7 +113,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyNoAttr() {
+    void verifyNoAttr() throws Throwable {
         val su = casProperties.getAuthn().getSurrogate();
         val props = new SurrogateLdapAuthenticationProperties();
         BeanUtils.copyProperties(su.getLdap(), props);
@@ -124,7 +124,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     }
 
     @Test
-    void verifyFailsProxying() {
+    void verifyFailsProxying() throws Throwable {
         val su = casProperties.getAuthn().getSurrogate();
         val factory = mock(ConnectionFactory.class);
         val props = new SurrogateLdapAuthenticationProperties();

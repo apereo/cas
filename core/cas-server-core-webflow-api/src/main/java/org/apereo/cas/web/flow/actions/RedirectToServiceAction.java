@@ -26,7 +26,7 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
     private final ResponseBuilderLocator<WebApplicationService> responseBuilderLocator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
         LOGGER.debug("Located service [{}] from the context", service);
 

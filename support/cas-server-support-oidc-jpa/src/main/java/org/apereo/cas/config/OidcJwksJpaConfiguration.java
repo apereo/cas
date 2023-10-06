@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
@@ -28,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -66,7 +66,7 @@ public class OidcJwksJpaConfiguration {
                 mgmr.setEntityManagerFactory(emf.getObject());
                 return mgmr;
             })
-            .otherwise(PseudoPlatformTransactionManager::new)
+            .otherwise(PseudoTransactionManager::new)
             .get();
     }
 

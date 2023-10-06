@@ -17,9 +17,9 @@ function updateProperty(properties, propertiesFile, value) {
     let propertiesFile = path.join(__dirname, 'custom_messages.properties');
     let properties = propertiesReader(propertiesFile, 'utf-8', {writer: { saveSections: false }});
     try {
-        console.log(`Loading properties file ${propertiesFile}`);
+        await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);
-        await cas.goto(page, "https://localhost:8443/cas/login");
+        await cas.gotoLogin(page);
         await page.waitForTimeout(1000);
         await cas.assertInnerText(page, "#sidebar div p", "Stay safe!");
         await cas.assertInnerText(page, "#login-form-controls h3 span", "Welcome to CAS");

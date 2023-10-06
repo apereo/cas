@@ -111,6 +111,7 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      *
      * @param context the context
      * @return the list
+     * @throws Throwable the throwable
      */
-    List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context);
+    List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context) throws Throwable;
 }

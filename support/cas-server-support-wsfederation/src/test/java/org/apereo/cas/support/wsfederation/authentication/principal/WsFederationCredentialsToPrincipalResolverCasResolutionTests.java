@@ -27,7 +27,7 @@ class WsFederationCredentialsToPrincipalResolverCasResolutionTests extends Abstr
     private AuthenticationManager authenticationManager;
 
     @Test
-    void verifyAuth() {
+    void verifyAuth() throws Throwable {
         val credential = getCredential();
         val auth = authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         assertNotNull(auth);

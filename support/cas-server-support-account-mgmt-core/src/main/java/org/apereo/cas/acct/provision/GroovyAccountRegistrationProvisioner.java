@@ -23,7 +23,7 @@ public class GroovyAccountRegistrationProvisioner implements AccountRegistration
     private final ApplicationContext applicationContext;
 
     @Override
-    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
+    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Throwable {
         val args = new Object[]{request, applicationContext, LOGGER};
         return watchableScript.execute(args, AccountRegistrationResponse.class);
     }

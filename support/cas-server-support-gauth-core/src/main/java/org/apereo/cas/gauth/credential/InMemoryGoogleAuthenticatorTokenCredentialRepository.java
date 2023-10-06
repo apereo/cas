@@ -1,12 +1,11 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
+    private final CasReentrantLock lock = new CasReentrantLock();
 
     private final Map<String, List<OneTimeTokenAccount>> accounts;
 
@@ -35,84 +35,92 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        return get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null);
+        return lock.tryLock(() -> get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null));
     }
 
     @Override
     public OneTimeTokenAccount get(final long id) {
-        return this.accounts.values().stream()
+        return lock.tryLock(() -> accounts
+            .values()
+            .stream()
             .flatMap(List::stream)
             .filter(ac -> ac.getId() == id)
             .findFirst()
-            .orElse(null);
+            .orElse(null));
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String userName) {
-        if (contains(userName)) {
-            val account = this.accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
-            return decode(account);
-        }
-        return new ArrayList<>(0);
+        return lock.tryLock(() -> {
+            if (contains(userName)) {
+                val account = accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
+                return decode(account);
+            }
+            return new ArrayList<>(0);
+        });
     }
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
-        val encoded = encode(account);
-        val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
-        records.add(encoded);
-        accounts.put(account.getUsername(), records);
-        return encoded;
+        return lock.tryLock(() -> {
+            val encoded = encode(account);
+            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
+            records.add(encoded);
+            accounts.put(account.getUsername(), records);
+            return encoded;
+        });
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        val encoded = encode(account);
-        if (accounts.containsKey(account.getUsername().toLowerCase(Locale.ENGLISH).trim())) {
-            val records = accounts.get(account.getUsername().toLowerCase(Locale.ENGLISH).trim());
-            records.stream()
-                .filter(rec -> rec.getId() == account.getId())
-                .findFirst()
-                .ifPresent(act -> {
-                    act.setSecretKey(account.getSecretKey());
-                    act.setScratchCodes(account.getScratchCodes());
-                    act.setValidationCode(account.getValidationCode());
-                });
-        }
-        return encoded;
+        return lock.tryLock(() -> {
+            val encoded = encode(account);
+            if (accounts.containsKey(account.getUsername().toLowerCase(Locale.ENGLISH).trim())) {
+                val records = accounts.get(account.getUsername().toLowerCase(Locale.ENGLISH).trim());
+                records.stream()
+                    .filter(rec -> rec.getId() == account.getId())
+                    .findFirst()
+                    .ifPresent(act -> {
+                        act.setSecretKey(account.getSecretKey());
+                        act.setScratchCodes(account.getScratchCodes());
+                        act.setValidationCode(account.getValidationCode());
+                    });
+            }
+            return encoded;
+        });
     }
 
     @Override
     public void deleteAll() {
-        this.accounts.clear();
+        lock.tryLock(__ -> accounts.clear());
     }
 
     @Override
     public void delete(final String username) {
-        this.accounts.remove(username.toLowerCase(Locale.ENGLISH).trim());
+        lock.tryLock(__ -> accounts.remove(username.toLowerCase(Locale.ENGLISH).trim()));
     }
 
     @Override
     public void delete(final long id) {
-        accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
+        lock.tryLock(__ -> accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id)));
     }
 
     @Override
     public long count() {
-        return this.accounts.size();
+        return lock.tryLock(accounts::size);
     }
 
     @Override
     public long count(final String username) {
-        return get(username.toLowerCase(Locale.ENGLISH).trim()).size();
+        return lock.tryLock(() -> get(username.toLowerCase(Locale.ENGLISH).trim()).size());
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return accounts.values().stream().flatMap(List::stream).collect(Collectors.toList());
+        return lock.tryLock(() -> accounts.values().stream().flatMap(List::stream).collect(Collectors.toList()));
     }
 
     private boolean contains(final String username) {
-        return this.accounts.containsKey(username.toLowerCase(Locale.ENGLISH).trim());
+        return accounts.containsKey(username.toLowerCase(Locale.ENGLISH).trim());
     }
 }

@@ -19,7 +19,7 @@ public class DelegatedClientAuthenticationFailureAction extends BaseCasWebflowAc
     private final DelegatedClientAuthenticationFailureEvaluator evaluator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val mv = evaluator.evaluate(request, response.getStatus());

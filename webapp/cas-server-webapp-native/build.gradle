@@ -37,6 +37,9 @@ configurations {
 }
 
 dependencies {
+    processAotClasspath libraries.graalvmsdk
+    processTestAotClasspath libraries.graalvmsdk
+    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -119,12 +122,11 @@ graalvmNative {
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
             buildArgs.add('-H:+BuildReport')
-//            buildArgs.add('-H:+IncludeAllLocales')
             buildArgs.add('-H:+AddAllCharsets')
+            buildArgs.add('-H:+UnlockExperimentalVMOptions')
 
-            buildArgs.add('-J-Xmx8G')
+            buildArgs.add('-J-Xmx12G')
             buildArgs.add('-J-Xms4G')
-            buildArgs.add('--no-server')
             buildArgs.add('--native-image-info')
 
             buildArgs.add('-march=native')
@@ -134,19 +136,19 @@ graalvmNative {
                 ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
                 buildArgs.add("--pgo=${profileFile.path}")
             }
-//            buildArgs.add('--gc=G1')
+            buildArgs.add('--trace-class-initialization=true')
 
-            buildArgs.add('--initialize-at-build-time=org.hibernate.internal.util.ReflectHelper')
-            buildArgs.add('--initialize-at-build-time=java.beans.Introspector')
+            buildArgs.add('--initialize-at-build-time=java.beans')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
-            buildArgs.add('--initialize-at-build-time=org.apache.xerces.impl.dv.xs.TypeValidator')
 
-            buildArgs.add('--initialize-at-run-time=com.sun.xml.ws,org.codehaus.groovy.control.XStreamUtils,org.codehaus.groovy.vmplugin.v8.Java8\$LookupHolder,groovy.grape.GrapeIvy')
-            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default,org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
+            buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
+            buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
 
             buildArgs.add('--features=org.apereo.cas.nativex.features.BouncyCastleProviderFeature')
 
@@ -156,6 +158,8 @@ graalvmNative {
 }
 
 processAot {
+    enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+
     def list = []
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")

@@ -30,7 +30,7 @@ public class ScimAccountRegistrationProvisioner implements AccountRegistrationPr
     private final PrincipalFactory principalFactory;
 
     @Override
-    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
+    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Throwable {
         val attributes = new LinkedHashMap<String, List<Object>>();
         request.asMap().forEach((key, value) -> attributes.put(key, CollectionUtils.wrapList(value)));
         val principal = principalFactory.createPrincipal(request.getUsername(), attributes);

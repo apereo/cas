@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -71,9 +73,11 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.authn.mongo.client-uri=mongodb://root:secret@localhost:27017/admin",
@@ -118,7 +122,7 @@ class MongoDbAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "p1");
         val result = authenticationHandler.authenticate(creds, mock(Service.class));
         assertEquals("u1", result.getPrincipal().getId());
@@ -128,19 +132,19 @@ class MongoDbAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticationFails() {
+    void verifyAuthenticationFails() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown", "p1");
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }
 
     @Test
-    void verifyNoPsw() {
+    void verifyNoPsw() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("userPlain", "p1");
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }
 
     @Test
-    void verifyBadPsw() {
+    void verifyBadPsw() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "other");
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }

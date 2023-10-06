@@ -66,7 +66,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     private DelegatedClientAuthenticationCredentialResolver ldapDelegatedClientAuthenticationCredentialResolver;
 
     @BeforeAll
-    public static void bootstrap() throws Exception {
+    public static void bootstrap() throws Throwable {
         ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
@@ -78,7 +78,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setAttribute(Credentials.class.getName(), "caspac4j");
@@ -91,7 +91,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
         assertTrue(ldapDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));
         val results = ldapDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
-        val profile = results.get(0);
+        val profile = results.getFirst();
         assertEquals("caspac4j", profile.getLinkedId());
         assertEquals(USER, profile.getId());
         assertTrue(profile.getAttributes().containsKey("mail"));

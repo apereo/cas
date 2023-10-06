@@ -99,7 +99,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         }

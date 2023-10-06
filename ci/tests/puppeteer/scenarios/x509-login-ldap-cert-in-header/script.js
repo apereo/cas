@@ -6,7 +6,8 @@ const fs = require('fs');
 (async () => {
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
+    
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
@@ -25,12 +26,12 @@ const fs = require('fs');
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null);
 
-    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    await cas.log(`Certificate file: ${config.trustStoreCertificateFile}`);
 
     const certBuffer = fs.readFileSync(config.trustStoreCertificateFile);
     const certHeader = certBuffer.toString().replace(/\n/g, " ").replace(/\r/g,"");
 
-    console.log(`ssl-client-cert-from-proxy: ${certHeader}`);
+    await cas.log(`ssl-client-cert-from-proxy: ${certHeader}`);
 
     page.on('request', request => {
         let data = {
@@ -43,13 +44,13 @@ const fs = require('fs');
         request.continue(data);
     });
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await page.waitForTimeout(5000);
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com");
+    await cas.gotoLogin(page, "https://github.com");
     await page.waitForTimeout(5000);
     await assertFailure(page);
     await browser.close();

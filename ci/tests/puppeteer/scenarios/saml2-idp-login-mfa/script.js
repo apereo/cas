@@ -7,8 +7,8 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.log("Establishing SSO session...");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
@@ -26,18 +26,18 @@ const assert = require('assert');
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await page2.waitForTimeout(2000);
+    await page.waitForTimeout(4000);
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
 
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-    console.log(authData);
+    await cas.log(authData);
     let initialAuthData = authData.AuthnInstant;
     await cas.logg(`Initial authentication instant: ${initialAuthData}`);
     let allCookies = await page.cookies();
     allCookies.forEach(cookie => {
-        console.log(`Deleting cookie ${cookie.name}`);
+        cas.log(`Deleting cookie ${cookie.name}`);
         page.deleteCookie({
             name : cookie.name,
             domain : cookie.domain
@@ -48,7 +48,7 @@ const assert = require('assert');
     await page.waitForTimeout(3000);
 
     authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-    console.log(authData);
+    await cas.log(authData);
     let nextAuthData = authData.AuthnInstant;
     await cas.logg(`Second authentication instant: ${nextAuthData}`);
     assert(nextAuthData !== initialAuthData);

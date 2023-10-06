@@ -29,7 +29,7 @@ public class HandlePasswordExpirationWarningMessagesAction extends BaseCasWebflo
     public static final String ATTRIBUTE_NAME_EXPIRATION_WARNING_FOUND = "passwordExpirationWarningFound";
 
     @Override
-    public Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val attributes = context.getCurrentEvent().getAttributes();
         val warnings = (Collection<MessageDescriptor>)
             attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>(0));

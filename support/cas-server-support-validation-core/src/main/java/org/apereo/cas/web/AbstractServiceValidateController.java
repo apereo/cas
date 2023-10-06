@@ -36,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -71,13 +71,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (registeredService == null) {
             val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
             val msg = String.format("ServiceManagement: Unauthorized Service Access. "
                 + "Service [%s] is not enabled in the CAS service registry.", service.getId());
             LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
     }
 
@@ -87,11 +87,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @param credential      the service credential
      * @return the ticket granting ticket
-     * @throws AuthenticationException the authentication exception
-     * @throws AbstractTicketException the abstract ticket exception
+     * @throws Throwable the throwable
      */
-    public ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
-        throws AuthenticationException, AbstractTicketException {
+    public ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) throws Throwable {
         val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
             .finalizeAuthenticationTransaction(serviceTicket.getService(), credential);
@@ -128,7 +126,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, description, request, service);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
         }
@@ -164,7 +162,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 val registeredService = serviceValidateConfigurationContext.getServicesManager()
                     .findServiceBy(service, CasModelRegisteredService.class);
                 verifyRegisteredServiceProperties(registeredService, service);
-                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
+                return new HttpBasedServiceCredential(new URI(pgtUrl).toURL(), registeredService);
             } catch (final Exception e) {
                 LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
                 LoggingUtils.error(LOGGER, e);
@@ -195,18 +193,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
-    /**
-     * Handle ticket validation model and view.
-     *
-     * @param request         the request
-     * @param response        the response
-     * @param service         the service
-     * @param serviceTicketId the service ticket id
-     * @return the model and view
-     */
     protected ModelAndView handleTicketValidation(final HttpServletRequest request,
                                                   final HttpServletResponse response,
-                                                  final WebApplicationService service, final String serviceTicketId) {
+                                                  final WebApplicationService service, final String serviceTicketId) throws Throwable {
         var proxyGrantingTicketId = (ProxyGrantingTicket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         if (serviceCredential != null) {
@@ -266,14 +255,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             ctxResult.getContextId(), proxyGrantingTicketId);
     }
 
-    /**
-     * Validate service ticket assertion.
-     *
-     * @param service         the service
-     * @param serviceTicketId the service ticket id
-     * @return the assertion
-     */
-    protected Assertion validateServiceTicket(final WebApplicationService service, final String serviceTicketId) {
+    protected Assertion validateServiceTicket(final WebApplicationService service, final String serviceTicketId) throws Throwable {
         return serviceValidateConfigurationContext.getCentralAuthenticationService().validateServiceTicket(serviceTicketId, service);
     }
 
@@ -296,9 +278,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected void enforceTicketValidationAuthorizationFor(final HttpServletRequest request, final Service service, final Assertion assertion) {
         val authorizers = serviceValidateConfigurationContext.getValidationAuthorizers().getAuthorizers();
-        for (val a : authorizers) {
+        for (val authorizer : authorizers) {
             try {
-                a.authorize(request, service, assertion);
+                authorizer.authorize(request, service, assertion);
             } catch (final Exception e) {
                 throw new UnauthorizedServiceTicketValidationException(service);
             }
@@ -318,7 +300,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return new HashMap<>(0);
     }
 
-    private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) {
+    private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) throws Throwable {
         return serviceValidateConfigurationContext.getProxyHandler().handle(serviceCredential, proxyGrantingTicketId);
     }
 

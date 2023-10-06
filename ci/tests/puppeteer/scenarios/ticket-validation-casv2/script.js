@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/serviceValidate?service=${service}&ticket=${ticket}`);
-    console.log(body);
+    await cas.log(body);
     assert(body.includes('<cas:serviceResponse xmlns:cas=\'http://www.yale.edu/tp/cas\'>'));
     assert(body.includes('<cas:user>casuser</cas:user>'));
     assert(body.includes('<cas:credentialType>UsernamePasswordCredential</cas:credentialType>'));

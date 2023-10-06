@@ -35,7 +35,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     }
 
     @Override
-    public Service resolveService(final Service service) {
+    public Service resolveService(final Service service) throws Throwable {
         val strategy = this.strategies
             .stream()
             .filter(s -> s.supports(service))
@@ -49,7 +49,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     }
 
     @Override
-    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) {
+    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) throws Throwable {
         val result = resolveService(service);
         if (result == null) {
             return null;

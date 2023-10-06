@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.inwebo.service.InweboService;
-import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorWebflowConfigurer;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationAction;
@@ -17,10 +16,10 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
+import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -81,7 +80,7 @@ public class InweboWebflowConfiguration {
     public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        return new InweboMultifactorAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+        return new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @Configuration(value = "InweboWebflowRegistryConfiguration", proxyBeanMethods = false)

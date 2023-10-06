@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
@@ -10,13 +11,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.UUID;
 
@@ -37,24 +31,19 @@ class GroovyDelegatedClientAuthenticationCredentialResolverTests {
     private DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver;
 
     @Test
-    void verifyOperation() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyOperation() throws Throwable {
+        val context = MockRequestContext.create();
 
         val credentials = new TokenCredentials(UUID.randomUUID().toString());
         val clientCredential = new ClientCredential(credentials, "FacebookClient");
         assertTrue(groovyDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));
         val results = groovyDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());
-        val profile = results.get(0);
+        val profile = results.getFirst();
         assertEquals("casuser", profile.getLinkedId());
         assertEquals("resolved-casuser", profile.getId());
         assertTrue(profile.getAttributes().containsKey("memberOf"));
         assertTrue(profile.getAttributes().containsKey("uid"));
-        DisposableBean.class.cast(groovyDelegatedClientAuthenticationCredentialResolver).destroy();
+        ((DisposableBean) groovyDelegatedClientAuthenticationCredentialResolver).destroy();
     }
 }

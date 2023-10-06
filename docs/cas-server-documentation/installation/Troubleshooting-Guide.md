@@ -17,8 +17,8 @@ Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo`
 
 ```xml
 <Logger name="org.apereo.cas" level="trace" additivity="false" includeLocation="true">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```
 
@@ -29,7 +29,7 @@ Note that the above configuration block only addresses logging behavior of CAS c
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
 Those are usually your best data source for diagnostics and troubleshooting.
 
-If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-10.1-doc/logging.html), 
+If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-11.0-doc/logging.html), 
 you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
 
 ## Deployment Problem; Configuration Issue X. Can You Help?

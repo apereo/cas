@@ -59,7 +59,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx">
 <img src="https://user-images.githubusercontent.com/1205228/233796891-6ac3488d-5ae3-4e59-a3be-ce2593026032.png" height="48" width="110"></a> 
 
-<a href="https://asana.com/guide/help/premium/authentication#gl-saml">
+<a href="https://asana.com">
 <img src="https://user-images.githubusercontent.com/1205228/233796907-c6e9df3b-c51e-4da4-a7b3-56ffdbd6711c.png" height="48" width="100"></a> 
 
 <a href="https://onlinehelp.tableau.com/current/server/en-us/saml_requ.htm">

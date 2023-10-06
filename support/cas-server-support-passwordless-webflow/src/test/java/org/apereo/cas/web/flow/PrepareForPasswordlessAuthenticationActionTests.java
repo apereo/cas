@@ -32,7 +32,7 @@ class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAu
     private Action prepareLoginAction;
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
         val context = new MockRequestContext(exec);
 

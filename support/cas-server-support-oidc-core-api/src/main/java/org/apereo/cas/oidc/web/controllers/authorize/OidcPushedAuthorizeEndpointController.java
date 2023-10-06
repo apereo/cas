@@ -35,7 +35,7 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
 
     @Override
     @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
-    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");

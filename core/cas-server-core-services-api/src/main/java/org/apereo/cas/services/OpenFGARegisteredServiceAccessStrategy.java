@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
     private String token;
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
@@ -81,12 +80,12 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
             val fgaApiUrl = String.format("%s/stores/%s/check", url, store);
 
             val checkEntity = AuthorizationRequestEntity.builder()
-                .object(StringUtils.defaultString(this.object, request.getService().getId()))
-                .relation(StringUtils.defaultString(this.relation, "owner"))
+                .object(StringUtils.defaultIfBlank(this.object, request.getService().getId()))
+                .relation(StringUtils.defaultIfBlank(this.relation, "owner"))
                 .user(request.getPrincipalId())
                 .build()
                 .toJson();
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(fgaApiUrl)
                 .headers(headers)

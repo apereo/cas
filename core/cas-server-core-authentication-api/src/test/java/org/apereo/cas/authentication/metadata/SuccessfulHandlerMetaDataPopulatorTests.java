@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationHandler")
 class SuccessfulHandlerMetaDataPopulatorTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new SuccessfulHandlerMetaDataPopulator();
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(),

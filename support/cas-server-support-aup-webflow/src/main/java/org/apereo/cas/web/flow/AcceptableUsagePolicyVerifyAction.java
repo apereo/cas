@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.services.WebBasedRegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -35,8 +36,8 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> verify(requestContext));
     }
 
     /**
@@ -46,7 +47,7 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
      * @return {@link CasWebflowConstants#TRANSITION_ID_AUP_ACCEPTED} if policy is
      * accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
-    private Event verify(final RequestContext context) {
+    private Event verify(final RequestContext context) throws Throwable {
         val authentication = WebUtils.getAuthentication(context);
         val res = ObjectUtils.defaultIfNull(repository.verify(context),
             AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));

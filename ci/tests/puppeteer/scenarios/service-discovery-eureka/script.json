@@ -1,0 +1,31 @@
+{
+  "dependencies": "reports,eureka-client",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--spring.main.lazy-initialization=false",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=true",
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--eureka.client.enabled=true",
+    "--eureka.client.healthcheck=true",
+    "--eureka.client.service-url.defaultZone=https://localhost:8761/eureka/",
+    "--eureka.client.fetch-registry=false",
+    "--eureka.client.register-with-eureka=true",
+    "--eureka.client.instance.hostname=localhost",
+
+    "--eureka.instance.prefer-ip-address=true",
+    "--eureka.instance.health-check-url=https://localhost:8443/cas/actuator/health",
+    "--eureka.instance.home-page-url=https://localhost:8443/cas/",
+    "--eureka.instance.status-page-url=https://localhost:8443/cas/actuator/info"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

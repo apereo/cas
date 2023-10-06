@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.GoogleCloudFirestoreServiceRegistryConfiguration;
-
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -20,14 +19,13 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-
 import java.util.UUID;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -49,6 +47,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
     
     GcpFirestoreAutoConfiguration.class,

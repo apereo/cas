@@ -26,6 +26,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
@@ -36,7 +37,6 @@ import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlRestConfiguration;
 import org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
-
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -55,7 +55,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -128,6 +127,7 @@ public abstract class AbstractOpenSamlTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
@@ -145,6 +145,7 @@ public abstract class AbstractOpenSamlTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreValidationConfiguration.class,

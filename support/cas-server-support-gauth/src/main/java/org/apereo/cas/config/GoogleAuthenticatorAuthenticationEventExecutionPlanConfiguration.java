@@ -30,6 +30,9 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateTokenAction;
+import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfilePrepareAction;
+import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileRegistrationAction;
+import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
@@ -50,7 +53,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -489,7 +491,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             final FlowDefinitionRegistry accountProfileFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new MultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
+            return new GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
                 accountProfileFlowRegistry, applicationContext, casProperties);
         }
 
@@ -504,11 +506,33 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAccountDeviceProviderAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_DEVICE_PROVIDER)
         public MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction(
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
             return new GoogleAuthenticatorAuthenticationDeviceProviderAction(googleAuthenticatorAccountRegistry);
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE)
+        public Action googleAccountProfilePrepareAction(
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("googleAuthenticatorAccountRegistry")
+            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            return new GoogleMultifactorAuthenticationAccountProfilePrepareAction(googleAuthenticatorAccountRegistry,
+                googleAuthenticatorMultifactorAuthenticationProvider, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
+        public Action googleAccountProfileRegistrationAction(@Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+                                                             final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+            return new GoogleMultifactorAuthenticationAccountProfileRegistrationAction(googleAuthenticatorMultifactorAuthenticationProvider);
+        }
+        
     }
 }

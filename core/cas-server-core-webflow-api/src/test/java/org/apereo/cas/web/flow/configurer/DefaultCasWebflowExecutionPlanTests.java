@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 class DefaultCasWebflowExecutionPlanTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val plan = new DefaultCasWebflowExecutionPlan();
 
         val p1 = mock(CasWebflowLoginContextProvider.class);
@@ -37,7 +37,7 @@ class DefaultCasWebflowExecutionPlanTests {
         assertDoesNotThrow(plan::execute);
         assertEquals(2, plan.getWebflowLoginContextProviders().size());
         assertEquals(1, plan.getWebflowConfigurers().size());
-        assertEquals("P2", plan.getWebflowLoginContextProviders().get(0).getName());
+        assertEquals("P2", plan.getWebflowLoginContextProviders().getFirst().getName());
         assertEquals("P1", plan.getWebflowLoginContextProviders().get(1).getName());
     }
 }

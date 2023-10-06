@@ -158,11 +158,11 @@ public class WsFederationHelper {
             credential.setNotBefore(DateTimeUtils.zonedDateTimeOf(conditions.getNotBefore()));
             credential.setNotOnOrAfter(DateTimeUtils.zonedDateTimeOf(conditions.getNotOnOrAfter()));
             if (!conditions.getAudienceRestrictionConditions().isEmpty()) {
-                credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getURI());
+                credential.setAudience(conditions.getAudienceRestrictionConditions().getFirst().getAudiences().getFirst().getURI());
             }
         }
         if (!assertion.getAuthenticationStatements().isEmpty()) {
-            credential.setAuthenticationMethod(assertion.getAuthenticationStatements().get(0).getAuthenticationMethod());
+            credential.setAuthenticationMethod(assertion.getAuthenticationStatements().getFirst().getAuthenticationMethod());
         }
         val attributes = new HashMap<String, List<Object>>();
         assertion.getAttributeStatements()
@@ -201,7 +201,7 @@ public class WsFederationHelper {
             LOGGER.debug("Locating list of requested security tokens");
             val rst = rsToken.getRequestedSecurityToken();
             LOGGER.debug("Locating the first occurrence of a requested security token in the list");
-            return rst.get(0);
+            return rst.getFirst();
         } catch (final Exception ex) {
             LoggingUtils.error(LOGGER, ex);
         }
@@ -246,7 +246,7 @@ public class WsFederationHelper {
      * @return the assertion from security token
      */
     public XMLObject getAssertionFromSecurityToken(final RequestedSecurityToken reqToken) {
-        return reqToken.getSecurityTokens().get(0);
+        return reqToken.getSecurityTokens().getFirst();
     }
 
     /**
@@ -333,7 +333,7 @@ public class WsFederationHelper {
         val func = FunctionUtils.doIf(Predicates.instanceOf(EncryptedData.class),
             () -> {
                 LOGGER.trace("Security token is encrypted. Attempting to decrypt to extract the assertion");
-                val encryptedData = EncryptedData.class.cast(securityTokenFromAssertion);
+                val encryptedData = (EncryptedData) securityTokenFromAssertion;
                 val it = config.iterator();
                 while (it.hasNext()) {
                     try {

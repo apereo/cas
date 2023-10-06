@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuditConfiguration.class,
     GroovyAuditTrailManagerTests.GroovyAuditTrailManagerTestConfiguration.class
@@ -48,7 +50,7 @@ class GroovyAuditTrailManagerTests {
     private AuditTrailManager auditTrailManager;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val ctx = new AuditActionContext("casuser",
             "TEST", "TEST", "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));

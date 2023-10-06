@@ -4,23 +4,17 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,166 +39,139 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     private CasCookieBuilder warnCookieGenerator;
 
     @Test
-    void verifySuccessfulAuthenticationWithNoService() throws Exception {
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
-        request.addParameter(USERNAME_PARAM, TEST);
-        request.addParameter(PASSWORD_PARAM, TEST);
-
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        putCredentialInRequestScope(context, c);
-
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+    void verifySuccessfulAuthenticationWithNoService() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(USERNAME_PARAM, TEST);
+        context.setParameter(PASSWORD_PARAM, TEST);
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        putCredentialInRequestScope(context, credentials);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
-    void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new MockRequestContext();
+    void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
-        request.addParameter(USERNAME_PARAM, TEST);
-        request.addParameter(PASSWORD_PARAM, TEST);
-        request.addParameter("warn", "true");
+        context.setParameter(USERNAME_PARAM, TEST);
+        context.setParameter(PASSWORD_PARAM, TEST);
+        context.setParameter("warn", "true");
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        putCredentialInRequestScope(context, c);
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        putCredentialInRequestScope(context, credentials);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
-    void verifySuccessfulAuthenticationWithServiceAndWarn() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new MockRequestContext();
+    void verifySuccessfulAuthenticationWithServiceAndWarn() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
-        request.addParameter(USERNAME_PARAM, TEST);
-        request.addParameter(PASSWORD_PARAM, TEST);
-        request.addParameter("warn", "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST);
+        context.setParameter(USERNAME_PARAM, TEST);
+        context.setParameter(PASSWORD_PARAM, TEST);
+        context.setParameter("warn", "true");
+        context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST);
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        putCredentialInRequestScope(context, c);
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        putCredentialInRequestScope(context, credentials);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        assertNotNull(context.getHttpServletResponse().getCookie(warnCookieGenerator.getCookieName()));
     }
 
     @Test
-    void verifyFailedAuthenticationWithNoService() throws Exception {
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
+    void verifyFailedAuthenticationWithNoService() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
-        request.addParameter(USERNAME_PARAM, TEST);
-        request.addParameter(PASSWORD_PARAM, "test2");
+        context.setParameter(USERNAME_PARAM, TEST);
+        context.setParameter(PASSWORD_PARAM, "test2");
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        putCredentialInRequestScope(context, credential);
 
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
-        putCredentialInRequestScope(context, c);
-
-        context.getRequestScope().put("org.springframework.validation.BindException.credentials", new BindException(c, "credential"));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
+        context.getRequestScope().put("org.springframework.validation.BindException.credentials", new BindException(credential, "credential"));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
     @Test
-    void verifyRenewWithServiceAndSameCredentials() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+    void verifyRenewWithServiceAndSameCredentials() throws Throwable {
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
-            getAuthenticationSystemSupport(), service, c);
+            getAuthenticationSystemSupport(), service, credentials);
 
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
-
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
 
-        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE,
+        context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        context.setParameter(CasProtocolConstants.PARAMETER_SERVICE,
             RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL).getId());
         putCredentialInRequestScope(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
-
-        val ev = this.action.execute(context);
+        val ev = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, ev.getId());
     }
 
     @Test
-    void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+    void verifyRenewWithServiceAndDifferentCredentials() throws Throwable {
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
-            getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
+            getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), credentials);
 
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(TEST).getId());
+        context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(TEST).getId());
 
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
-    void verifyServiceTicketCreationWithSso() throws Exception {
+    void verifyServiceTicketCreationWithSso() throws Throwable {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val authResult = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             RegisteredServiceTestUtils.getService(TEST), credential);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authResult);
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
+
+        val context = MockRequestContext.create(applicationContext);
 
         putCredentialInRequestScope(context, credential);
         WebUtils.putAuthenticationResult(authResult, context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(TEST));
         WebUtils.putAuthentication(authResult.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-       
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, this.action.execute(context).getId());
+
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, action.execute(context).getId());
     }
 
     @Test
-    void verifyRenewWithServiceAndBadCredentials() throws Exception {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+    void verifyRenewWithServiceAndBadCredentials() throws Throwable {
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val service = RegisteredServiceTestUtils.getService(TEST);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
-            getAuthenticationSystemSupport(), service, c);
+            getAuthenticationSystemSupport(), service, credentials);
 
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        val request = new MockHttpServletRequest();
-        val context = new MockRequestContext();
+
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.execute(context).getId());
     }
 
-    /**
-     * Put credentials in request scope.
-     *
-     * @param context the context
-     * @param c       the credential
-     */
-    private static void putCredentialInRequestScope(final RequestContext context, final Credential c) {
-        context.getRequestScope().put("credential", c);
+    private static void putCredentialInRequestScope(final RequestContext context,
+                                                    final Credential credential) {
+        context.getRequestScope().put("credential", credential);
     }
 }

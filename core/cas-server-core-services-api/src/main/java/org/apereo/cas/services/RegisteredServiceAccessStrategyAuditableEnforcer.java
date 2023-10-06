@@ -13,9 +13,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -30,7 +30,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
     
@@ -45,7 +44,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 val serviceTicket = context.getServiceTicket().orElseThrow();
                 val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
                 ensurePrincipalAccessIsAllowedForService(providedRegisteredService.get(), serviceTicket.getService(), authResult);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -69,7 +68,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
                 ensurePrincipalAccessIsAllowedForService(registeredService, service, authResult);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -79,7 +78,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
     protected static void ensurePrincipalAccessIsAllowedForService(final RegisteredService registeredService,
                                                                    final Service service,
-                                                                   final Authentication authentication) {
+                                                                   final Authentication authentication) throws Throwable {
         val attributes = CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes());
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
             registeredService, authentication.getPrincipal().getId(), (Map) attributes);
@@ -148,7 +147,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, principal.getId(), principal.getAttributes());
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -172,7 +171,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .build();
             try {
                 ensurePrincipalAccessIsAllowedForService(registeredService, service, authentication);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+            } catch (final Throwable e) {
                 result.setException(e);
             }
             return Optional.of(result);
@@ -198,8 +197,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     .service(context.getService().orElse(null))
                     .authentication(context.getAuthentication().orElse(null))
                     .build();
-                result.setException(new UnauthorizedServiceException(
-                    UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service Unauthorized"));
+                result.setException(UnauthorizedServiceException.denied("Unauthorized"));
                 return result;
             });
     }
@@ -210,7 +208,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .map(enforcer -> enforcer.execute(context))
+            .map(Unchecked.function(enforcer -> enforcer.execute(context)))
             .filter(Objects::nonNull)
             .filter(AuditableExecutionResult::isExecutionFailure)
             .findFirst();

@@ -41,7 +41,7 @@ class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private CasMultifactorWebflowCustomizer x509CasMultifactorWebflowCustomizer;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
 
         val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

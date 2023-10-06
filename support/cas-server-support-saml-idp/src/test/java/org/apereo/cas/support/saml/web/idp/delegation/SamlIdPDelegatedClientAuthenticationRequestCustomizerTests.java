@@ -3,12 +3,15 @@ package org.apereo.cas.support.saml.web.idp.delegation;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,6 +33,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,7 +52,55 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
     @Test
-    void verifyAuthorization() throws Exception {
+    void verifyScopedIdentityProviderPerServiceImplicitly() throws Throwable {
+        val saml2Client = mock(SAML2Client.class);
+        when(saml2Client.getName()).thenCallRealMethod();
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val webContext = new JEEContext(request, response);
+
+        val webApplicationService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(webApplicationService.getId());
+        val delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegatedAuthenticationPolicy.setPermitUndefined(true);
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
+        registeredService.setAccessStrategy(accessStrategy);
+        servicesManager.save(registeredService);
+
+        when(saml2Client.getIdentityProviderResolvedEntityId()).thenReturn(UUID.randomUUID().toString());
+        setAuthnRequestFor(webContext, UUID.randomUUID().toString());
+
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+    }
+
+    @Test
+    void verifyScopedIdentityProviderPerService() throws Throwable {
+        val saml2Client = mock(SAML2Client.class);
+        when(saml2Client.getName()).thenCallRealMethod();
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val webContext = new JEEContext(request, response);
+
+        val webApplicationService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(webApplicationService.getId());
+        val delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegatedAuthenticationPolicy.setAllowedProviders(List.of(saml2Client.getName()));
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy().setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
+        registeredService.setAccessStrategy(accessStrategy);
+        servicesManager.save(registeredService);
+
+        when(saml2Client.getIdentityProviderResolvedEntityId()).thenReturn(UUID.randomUUID().toString());
+        setAuthnRequestFor(webContext, UUID.randomUUID().toString());
+
+        assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
+    }
+
+    @Test
+    void verifyAuthorization() throws Throwable {
         val saml2Client = mock(SAML2Client.class);
 
         val request = new MockHttpServletRequest();

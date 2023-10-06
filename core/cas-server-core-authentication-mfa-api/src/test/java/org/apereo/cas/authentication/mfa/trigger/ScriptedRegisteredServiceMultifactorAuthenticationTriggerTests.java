@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("GroovyAuthentication")
 class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    void verifyOperationByProviderEmbeddedScript() {
+    void verifyOperationByProviderEmbeddedScript() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return '" + multifactorAuthenticationProvider.getId() + "' }");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
@@ -34,7 +34,7 @@ class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends Bas
     }
 
     @Test
-    void verifyUnknownProvider() {
+    void verifyUnknownProvider() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return 'unknown' }");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
@@ -46,7 +46,7 @@ class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends Bas
     }
 
     @Test
-    void verifyNoResult() {
+    void verifyNoResult() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return null }");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
@@ -58,7 +58,7 @@ class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends Bas
     }
 
     @Test
-    void verifyEmptyProviders() {
+    void verifyEmptyProviders() throws Throwable {
         val ctx = new StaticApplicationContext();
         ctx.refresh();
 
@@ -73,7 +73,7 @@ class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends Bas
     }
 
     @Test
-    void verifyOperationByProviderScript() {
+    void verifyOperationByProviderScript() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("classpath:ScriptedRegisteredServiceMultifactorAuthenticationTrigger.groovy");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
@@ -85,7 +85,7 @@ class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends Bas
     }
 
     @Test
-    void verifyOperationByProviderScriptUnknown() {
+    void verifyOperationByProviderScriptUnknown() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("classpath:Unknown.groovy");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);

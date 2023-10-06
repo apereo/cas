@@ -67,7 +67,7 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
         ticketRegistry.updateTicket(ticket);
 
         if (StringUtils.isBlank(redirectUri) || !service.matches(redirectUri)) {
-            throw new UnauthorizedServiceException("Redirect URI is unauthorized for this service definition");
+            throw UnauthorizedServiceException.denied("Redirect URI is unauthorized for this service definition");
         }
 
         val template = UriComponentsBuilder.fromUriString(redirectUri);

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -21,7 +20,6 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 
 /**
  * An authentication handler that uses the token provided
@@ -61,9 +59,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service)
-        throws GeneralSecurityException, PreventedException {
-
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
         val authentication = WebUtils.getInProgressAuthentication();
 

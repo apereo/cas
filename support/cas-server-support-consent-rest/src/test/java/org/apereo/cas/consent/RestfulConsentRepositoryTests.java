@@ -6,14 +6,12 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +49,6 @@ import java.util.stream.Collectors;
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
-@EnableAutoConfiguration
 class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -91,9 +88,8 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             private RestConsentRepositoryStorage storage;
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
             public ResponseEntity<String> find(@RequestHeader(value = "principal", required = false) final String principal,
-                                               @RequestHeader(value = "service", required = false) final String service) {
+                                               @RequestHeader(value = "service", required = false) final String service) throws Exception {
                 if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
                     val results = storage.getRecords().get(principal)
                         .stream()

@@ -38,27 +38,27 @@ class DefaultRegisteredServiceAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyAnySerializeToJson() throws Exception {
+    void verifyAnySerializeToJson() throws Throwable {
         val criteria = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setTryAll(true);
         verify(criteria);
     }
 
     @Test
-    void verifyAllSerializeToJson() throws Exception {
+    void verifyAllSerializeToJson() throws Throwable {
         val criteria = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
         verify(criteria);
     }
 
     @Test
-    void verifyGroovySerializeToJson() throws Exception {
+    void verifyGroovySerializeToJson() throws Throwable {
         val criteria = new GroovyRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setScript("groovy { return Optional.empty() }");
         verify(criteria);
     }
 
     @Test
-    void verifyRestfulerializeToJson() throws Exception {
+    void verifyRestfulerializeToJson() throws Throwable {
         val criteria = new RestfulRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setUrl("https://example.org");
         verify(criteria);

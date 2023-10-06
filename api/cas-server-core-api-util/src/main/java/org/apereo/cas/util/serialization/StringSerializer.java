@@ -167,6 +167,15 @@ public interface StringSerializer<T> extends Serializable {
      */
     List<T> fromList(String json);
 
+    /**
+     * Collect a list of objects and transform them into a String
+     * in the intended format.
+     *
+     * @param json the json
+     * @return the string
+     */
+    String fromList(Collection<T> json);
+    
     default List<MediaType> getContentTypes() {
         return List.of(MediaType.TEXT_PLAIN);
     }

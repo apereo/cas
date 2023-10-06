@@ -31,6 +31,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @param responseType         the response type
      * @param grantType            the grant type
      * @return the refresh token
+     * @throws Throwable the throwable
      */
     OAuth20RefreshToken create(Service service, Authentication authentication,
                                TicketGrantingTicket ticketGrantingTicket,
@@ -39,5 +40,5 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
                                String accessToken,
                                Map<String, Map<String, Object>> requestClaims,
                                OAuth20ResponseTypes responseType,
-                               OAuth20GrantTypes grantType);
+                               OAuth20GrantTypes grantType) throws Throwable;
 }

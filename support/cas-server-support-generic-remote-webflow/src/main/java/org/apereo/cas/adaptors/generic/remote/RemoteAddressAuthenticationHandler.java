@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.GeneralSecurityException;
 
 /**
  * Checks if the remote address is in the range of allowed addresses.
@@ -83,13 +82,13 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws Throwable {
         val c = (RemoteAddressCredential) credential;
         if (this.inetNetmask != null && this.inetNetworkRange != null) {
             try {
                 val inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
                 if (containsAddress(this.inetNetworkRange, this.inetNetmask, inetAddress)) {
-                    return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+                    return new DefaultAuthenticationHandlerExecutionResult(this, c, principalFactory.createPrincipal(c.getId()));
                 }
             } catch (final UnknownHostException e) {
                 LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());
@@ -117,7 +116,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         if (StringUtils.isNotBlank(ipAddressRange)) {
             val splitAddress = Splitter.on("/").splitToList(ipAddressRange);
             if (splitAddress.size() == 2) {
-                val network = splitAddress.get(0).trim();
+                val network = splitAddress.getFirst().trim();
                 val netmask = splitAddress.get(1).trim();
 
                 try {

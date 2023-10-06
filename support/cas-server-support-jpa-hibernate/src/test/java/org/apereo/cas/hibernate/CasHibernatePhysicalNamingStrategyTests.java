@@ -2,18 +2,17 @@ package org.apereo.cas.hibernate;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,6 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.jdbc.physicalTableNames.CasHibernatePhysicalNamingStrategyTests=testtable",
@@ -37,7 +37,7 @@ class CasHibernatePhysicalNamingStrategyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyMappedTable() {
+    void verifyMappedTable() throws Throwable {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(
@@ -46,7 +46,7 @@ class CasHibernatePhysicalNamingStrategyTests {
     }
 
     @Test
-    void verifyMappedTableViaGroovy() {
+    void verifyMappedTableViaGroovy() throws Throwable {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(Identifier.toIdentifier("GroovyTable"), mock(JdbcEnvironment.class));

@@ -68,7 +68,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
         @RequestParam(value = "state", required = false) final String state,
         @RequestParam(value = "id_token_hint", required = false) final String idToken,
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.LOGOUT_URL)) {
@@ -101,13 +101,15 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                     .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
+                val postLogoutService = configContext.getWebApplicationServiceServiceFactory().createService(postLogoutRedirectUrl);
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url));
+                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url))
+                    || configContext.getServicesManager().findServiceBy(postLogoutService) != null;
+
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                        Optional.of(postLogoutRedirectUrl), Optional.of(clientId),
-                        request, response));
+                        Optional.of(postLogoutRedirectUrl), Optional.of(clientId), request, response));
                 }
             }
             val validURL = urls.stream().filter(urlValidator::isValid).findFirst();

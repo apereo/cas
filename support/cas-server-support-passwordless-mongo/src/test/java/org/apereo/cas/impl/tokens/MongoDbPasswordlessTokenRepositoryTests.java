@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 27017)
 class MongoDbPasswordlessTokenRepositoryTests extends BaseMongoDbPasswordlessTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
         val uid = UUID.randomUUID().toString();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
@@ -41,7 +41,7 @@ class MongoDbPasswordlessTokenRepositoryTests extends BaseMongoDbPasswordlessTes
 
 
     @Test
-    void verifyCleaner() {
+    void verifyCleaner() throws Throwable {
         val uid = UUID.randomUUID().toString();
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
         val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();

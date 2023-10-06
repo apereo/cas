@@ -70,7 +70,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyUpdateFirstAndClean() throws Exception {
+    void verifyUpdateFirstAndClean() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val result = newTicketRegistry.updateTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
@@ -78,7 +78,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyBadTicketInCatalog() throws Exception {
+    void verifyBadTicketInCatalog() throws Throwable {
         val ticket = new MockTicketGrantingTicket("casuser");
         val catalog = mock(TicketCatalog.class);
         val defn = new DefaultTicketDefinition(ticket.getClass(), TicketGrantingTicket.class, ticket.getPrefix(), 0);

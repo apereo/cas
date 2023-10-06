@@ -82,7 +82,7 @@ public class OidcJwtAuthenticator implements Authenticator {
     protected final ApplicationContext applicationContext;
 
     protected OidcRegisteredService verifyCredentials(final UsernamePasswordCredentials credentials,
-                                                      final WebContext webContext) {
+                                                      final WebContext webContext) throws Throwable {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
@@ -125,32 +125,33 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
-        val credentials = (UsernamePasswordCredentials) creds;
-        val registeredService = verifyCredentials(credentials, callContext.webContext());
-        if (registeredService == null) {
-            LOGGER.warn("Unable to verify credentials");
-            return Optional.empty();
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            val credentials = (UsernamePasswordCredentials) creds;
+            val registeredService = verifyCredentials(credentials, callContext.webContext());
+            if (registeredService == null) {
+                LOGGER.warn("Unable to verify credentials");
+                return Optional.empty();
+            }
 
-        val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
-            applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
-        keys.ifPresent(Unchecked.consumer(jwks ->
-            jwks.getJsonWebKeys()
-                .forEach(Unchecked.consumer(jsonWebKey -> {
-                    val consumer = new JwtConsumerBuilder()
-                        .setVerificationKey(jsonWebKey.getKey())
-                        .setRequireJwtId()
-                        .setRequireExpirationTime()
-                        .setRequireSubject()
-                        .setExpectedIssuer(true, issuerService.determineIssuer(Optional.of(registeredService)))
-                        .setExpectedAudience(true, registeredService.getClientId())
-                        .build();
-                    determineUserProfile(credentials, consumer);
-                }))));
-        return Optional.of(credentials);
+            val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
+                applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
+            keys.ifPresent(Unchecked.consumer(jwks ->
+                jwks.getJsonWebKeys()
+                    .forEach(Unchecked.consumer(jsonWebKey -> {
+                        val consumer = new JwtConsumerBuilder()
+                            .setVerificationKey(jsonWebKey.getKey())
+                            .setRequireJwtId()
+                            .setRequireExpirationTime()
+                            .setRequireSubject()
+                            .setExpectedIssuer(true, issuerService.determineIssuer(Optional.of(registeredService)))
+                            .setExpectedAudience(true, registeredService.getClientId())
+                            .build();
+                        determineUserProfile(credentials, consumer);
+                    }))));
+            return Optional.of(credentials);
+        });
     }
-
-
+    
     protected void determineUserProfile(final UsernamePasswordCredentials credentials,
                                         final JwtConsumer consumer) throws Exception {
         FunctionUtils.doAndHandle(c -> {

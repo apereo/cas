@@ -11,8 +11,8 @@ import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20In
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -85,8 +85,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @return the response entity
      */
     @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
-    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
-                                                                                               final HttpServletResponse response) {
+    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
+        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handlePostRequest(request, response);
     }
 
@@ -96,9 +96,10 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param request  the request
      * @param response the response
      * @return the response entity
+     * @throws Throwable the throwable
      */
     @PostMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
-    public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
             val context = new JEEContext(request, response);
             val credentialsResult = extractCredentials(context);
@@ -186,7 +187,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
             val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {
-                introspect.setGrantType(grant.get(0).toString().toLowerCase(Locale.ENGLISH));
+                introspect.setGrantType(grant.getFirst().toString().toLowerCase(Locale.ENGLISH));
             }
         } else {
             introspect.setActive(false);
@@ -196,7 +197,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
     private Optional<ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse>> validateIntrospectionRequest(
         final OAuthRegisteredService registeredService, final UsernamePasswordCredentials credentials,
-        final HttpServletRequest request) {
+        final HttpServletRequest request) throws Throwable {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 

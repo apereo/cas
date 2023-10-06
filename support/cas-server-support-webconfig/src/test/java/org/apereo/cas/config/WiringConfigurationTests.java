@@ -1,9 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
@@ -15,22 +12,17 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.mock.web.MockFilterChain;
-import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.Controller;
-
 import java.util.List;
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -74,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
@@ -101,19 +94,15 @@ class WiringConfigurationTests {
     @Autowired
     @Qualifier("localeResolver")
     private LocaleResolver localeResolver;
-
-    @Autowired
-    @Qualifier("currentCredentialsAndAuthenticationClearingFilter")
-    private FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter;
-
+    
     @Test
-    void verifyConfigurationClasses() {
+    void verifyConfigurationClasses() throws Throwable {
         assertNotNull(applicationContext);
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 
     @Test
-    void verifyRootController() throws Exception {
+    void verifyRootController() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpGet.METHOD_NAME);
         request.setRequestURI("/cas/example");
@@ -122,7 +111,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    void verifyLocale() {
+    void verifyLocale() throws Throwable {
         var request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.ENGLISH));
         assertEquals(Locale.ENGLISH, localeResolver.resolveLocale(request));
@@ -131,19 +120,5 @@ class WiringConfigurationTests {
         request.setPreferredLocales(List.of(Locale.ITALIAN));
         assertEquals(Locale.ITALIAN, localeResolver.resolveLocale(request));
     }
-
-    @Test
-    void verifyAuthFilterClearing() throws Exception {
-        AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
-        val filter = currentCredentialsAndAuthenticationClearingFilter.getFilter();
-        filter.init(new MockFilterConfig());
-        filter.doFilter(new MockHttpServletRequest(), new MockHttpServletResponse(), new MockFilterChain());
-        filter.destroy();
-        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication());
-        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentAuthenticationBuilder());
-        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIds());
-        assertNull(AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString());
-        assertNull(AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication());
-    }
-
+    
 }

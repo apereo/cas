@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 class X509UPNExtractorUtilsTests {
     @Test
-    void verifyEmptyValue() {
+    void verifyEmptyValue() throws Throwable {
         val names = new ArrayList();
         names.add(100);
         names.add(ArrayUtils.EMPTY_BYTE_ARRAY);
@@ -39,7 +39,7 @@ class X509UPNExtractorUtilsTests {
     }
 
     @Test
-    void verifyBadValue() {
+    void verifyBadValue() throws Throwable {
         val names = new ArrayList();
         names.add(100);
         names.add(new byte[]{1, 2, 3, 4});

@@ -54,7 +54,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
      */
     public boolean canPing() {
         val uidPsw = getClass().getSimpleName();
-        for (final val server : this.servers) {
+        for (val server : this.servers) {
             LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                 + "successfully, mock authentication will fail correctly.", server);
             try {

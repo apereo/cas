@@ -26,9 +26,10 @@ public interface InterruptInquirer extends Ordered {
      * @param credential        the credential
      * @param requestContext    the request context
      * @return the interrupt response
+     * @throws Throwable the throwable
      */
     InterruptResponse inquire(Authentication authentication, RegisteredService registeredService,
-                              Service service, Credential credential, RequestContext requestContext);
+                              Service service, Credential credential, RequestContext requestContext) throws Throwable;
 
     @Override
     default int getOrder() {

@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -57,6 +58,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -86,12 +88,12 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyHandler() {
+    void verifyHandler() throws Throwable {
         assertNotNull(amazonCognitoAuthenticationHandler);
     }
 
     @Test
-    void verifyExpiredPassword() throws Exception {
+    void verifyExpiredPassword() throws Throwable {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
 
         val provider = mock(CognitoIdentityProviderClient.class);
@@ -106,33 +108,33 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAccountDisabled() throws Exception {
+    void verifyAccountDisabled() throws Throwable {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("disabled").build(), AccountDisabledException.class);
     }
 
     @Test
-    void verifyAccountExpired() throws Exception {
+    void verifyAccountExpired() throws Throwable {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("expired").build(), AccountExpiredException.class);
     }
 
     @Test
-    void verifyAccountFail() throws Exception {
+    void verifyAccountFail() throws Throwable {
         verifyAccountStatusFailure(UserNotFoundException.builder().message("no-found").build(), AccountNotFoundException.class);
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("not-found").build(), FailedLoginException.class);
     }
 
     @Test
-    void verifyAccountNotFound() throws Exception {
+    void verifyAccountNotFound() throws Throwable {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("fail").build(), FailedLoginException.class);
     }
 
     @Test
-    void verifyAccountPassword() throws Exception {
+    void verifyAccountPassword() throws Throwable {
         verifyAccountStatusFailure(InvalidPasswordException.builder().message("fail").build(), AccountPasswordMustChangeException.class);
     }
 
     @Test
-    void verifyNoSub() throws Exception {
+    void verifyNoSub() throws Throwable {
         val jwtProcessor = getConfigurableJWTProcessor(StringUtils.EMPTY);
         val provider = mock(CognitoIdentityProviderClient.class);
 
@@ -148,7 +150,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
     @Test
     @SuppressWarnings("JdkObsolete")
-    public void verifyOK() throws Exception {
+    void verifyOK() throws Throwable {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
         val provider = mock(CognitoIdentityProviderClient.class);
 
@@ -174,7 +176,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
     @Test
     @SuppressWarnings("JdkObsolete")
-    public void verifyOKWithMappedAttributes() throws Exception {
+    void verifyOKWithMappedAttributes() throws Throwable {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
         val provider = mock(CognitoIdentityProviderClient.class);
 
@@ -197,7 +199,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
                 PrincipalFactoryUtils.newPrincipalFactory(), provider,
                 casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
-        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").get(0));
+        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").getFirst());
     }
 
     private static ConfigurableJWTProcessor getConfigurableJWTProcessor(final String sub) throws Exception {

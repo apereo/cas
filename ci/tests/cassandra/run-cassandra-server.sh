@@ -12,7 +12,7 @@ docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 90
   -v "$PWD"/ci/tests/cassandra/cqlshrc:/root/.cassandra/cqlshrc \
   -v "$PWD"/ci/tests/cassandra/security:/security \
   -e CASSANDRA_USER=cassandra -e CASSANDRA_PASSWORD=cassandra \
-  cassandra:4.1.2
+  cassandra:4.1.3
   
 #docker logs -f cassandra &
 

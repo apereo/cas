@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckWebAuthenticationRequestActionTests {
 
     @Test
-    void verifyNoWeb() throws Exception {
+    void verifyNoWeb() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setContentType(MediaType.TEXT_HTML_VALUE);
@@ -40,7 +40,7 @@ class CheckWebAuthenticationRequestActionTests {
     }
 
     @Test
-    void verifyYesWeb() throws Exception {
+    void verifyYesWeb() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setContentType(MediaType.TEXT_HTML_VALUE);

@@ -57,7 +57,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
      * @return - the resolved service.
      */
     @Override
-    public Service resolveServiceFrom(final Service service) {
+    public Service resolveServiceFrom(final Service service) throws Throwable {
         val result = getEntityIdAsParameter(service);
         if (result.isPresent()) {
             val entityId = result.get();
@@ -101,7 +101,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
                 val paramRequest = Arrays.stream(query)
                     .map(p -> {
                         var params = Splitter.on("=").splitToList(p);
-                        return Pair.of(params.get(0), params.get(1));
+                        return Pair.of(params.getFirst(), params.get(1));
                     })
                     .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                     .map(Pair::getValue)
@@ -110,13 +110,13 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
                 LOGGER.debug("Found entity id as part of request url [{}]", paramRequest);
                 return paramRequest;
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
-    private boolean isEntityIdServiceRegistered(final String entityId, final Service original) {
+    private boolean isEntityIdServiceRegistered(final String entityId, final Service original) throws Throwable {
         val service = createService(entityId, original);
         val registeredService = getServicesManager().findServiceBy(service);
         val audit = AuditableContext.builder()

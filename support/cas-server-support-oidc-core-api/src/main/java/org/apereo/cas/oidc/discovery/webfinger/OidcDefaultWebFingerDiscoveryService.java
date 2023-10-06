@@ -62,7 +62,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
     private final OidcServerDiscoverySettings discovery;
 
     @Override
-    public ResponseEntity<Map> handleRequest(final String resource, final String rel) {
+    public ResponseEntity<Map> handleRequest(final String resource, final String rel) throws Throwable {
         if (StringUtils.isNotBlank(rel) && !OidcConstants.WEBFINGER_REL.equalsIgnoreCase(rel)) {
             LOGGER.warn("Handling discovery request for a non-standard OIDC relation [{}]", rel);
         }

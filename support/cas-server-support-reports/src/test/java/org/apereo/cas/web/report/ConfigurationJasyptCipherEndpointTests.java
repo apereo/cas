@@ -29,7 +29,7 @@ class ConfigurationJasyptCipherEndpointTests extends AbstractCasEndpointTests {
     private ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val value = UUID.randomUUID().toString();
         val encoded = casConfigurationCipherEndpoint.encrypt(value).getBody();
         assertEquals(casConfigurationCipherEndpoint.decrypt(encoded).getBody(), value);

@@ -1,19 +1,21 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.google.common.collect.ArrayListMultimap;
-import lombok.Setter;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serial;
 import java.util.Arrays;
@@ -29,8 +31,9 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.12
  */
-@Setter
 @Tag("RegisteredService")
+@SpringBootTest(classes = CasCoreHttpConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServiceTests {
     private static final long ID = 1000;
 
@@ -54,6 +57,9 @@ class RegisteredServiceTests {
 
     private static final String ATTR_3 = "attr3";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     private final BaseRegisteredService baseService = new BaseRegisteredService() {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -74,37 +80,28 @@ class RegisteredServiceTests {
         }
     };
 
-    @BeforeEach
-    public void beforeEach() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
-
     @Test
-    void verifyAllowToProxyIsFalseByDefault() {
+    void verifyAllowToProxyIsFalseByDefault() throws Throwable {
         val service = new CasRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
     @Test
-    void verifySettersAndGetters() {
+    void verifySettersAndGetters() throws Throwable {
         prepareService();
         assertEquals(DESCRIPTION, baseService.getDescription());
-        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed());
+        assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed(baseService, CoreAuthenticationTestUtils.getService()));
         assertEquals(ID, baseService.getId());
         assertEquals(NAME, baseService.getName());
         assertEquals(SERVICEID, baseService.getServiceId());
-        assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso());
+        assertEquals(SSO_ENABLED, baseService.getAccessStrategy().isServiceAccessAllowedForSso(baseService));
         assertEquals(THEME, baseService.getTheme());
         assertNotNull(baseService);
         assertEquals(baseService, baseService);
     }
 
     @Test
-    void verifyServiceAttributeFilterAllAttributes() {
+    void verifyServiceAttributeFilterAllAttributes() throws Throwable {
         prepareService();
         baseService.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val p = mock(Principal.class);
@@ -118,6 +115,7 @@ class RegisteredServiceTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
@@ -125,7 +123,7 @@ class RegisteredServiceTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterAllowedAttributes() {
+    void verifyServiceAttributeFilterAllowedAttributes() throws Throwable {
         prepareService();
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
@@ -141,6 +139,7 @@ class RegisteredServiceTests {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(p)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
@@ -150,7 +149,7 @@ class RegisteredServiceTests {
     }
 
     @Test
-    void verifyServiceAttributeFilterMappedAttributes() {
+    void verifyServiceAttributeFilterMappedAttributes() throws Throwable {
         prepareService();
         val policy = new ReturnMappedAttributeReleasePolicy();
         val mappedAttr = ArrayListMultimap.<String, Object>create();
@@ -169,6 +168,7 @@ class RegisteredServiceTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
             .service(RegisteredServiceTestUtils.getService())
             .principal(p)
+            .applicationContext(applicationContext)
             .build();
         val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
         assertEquals(1, attr.size());
@@ -176,14 +176,14 @@ class RegisteredServiceTests {
     }
 
     @Test
-    void verifyServiceEquality() {
+    void verifyServiceEquality() throws Throwable {
         val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         assertEquals(svc1, svc2);
     }
 
     @Test
-    void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
+    void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() throws Throwable {
         val invalidId = "***";
         val service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
         service.matches("notRelevant");

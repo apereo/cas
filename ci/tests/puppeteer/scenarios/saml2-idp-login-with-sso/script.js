@@ -6,8 +6,8 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Establishing SSO session...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.log("Establishing SSO session...");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, "#table_with_attributes");
 
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-    console.log(authData);
+    await cas.log(authData);
     
     let entityId = "https://localhost:9859/shibboleth";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";

@@ -28,7 +28,6 @@ class ResponseHeadersEnforcementFilterTests {
     public void setup() {
         val servletContext = new MockServletContext();
         this.filterConfig = new MockFilterConfig(servletContext);
-        filterConfig.addInitParameter(AbstractSecurityFilter.THROW_ON_ERROR, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS, "true");
@@ -40,13 +39,13 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyUnrecognizedParam() {
+    void verifyUnrecognizedParam() throws Throwable {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
 
     @Test
-    void verifyParam() {
+    void verifyParam() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -66,7 +65,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamJpeg() {
+    void verifyNoCacheParamJpeg() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -81,7 +80,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamPng() {
+    void verifyNoCacheParamPng() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();

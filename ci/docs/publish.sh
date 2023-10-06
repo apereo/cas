@@ -217,6 +217,7 @@ if [[ $cloneRepository == "true" ]]; then
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes"
   mkdir -p "$PWD/gh-pages/javascripts"
+  mkdir -p "$PWD/gh-pages/stylesheets"
   mkdir -p "$PWD/gh-pages/_layouts"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
@@ -232,8 +233,10 @@ if [[ $cloneRepository == "true" ]]; then
     echo "Moving developer documentation into project documentation"
     mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"
   fi
+  rm -Rf "$PWD/gh-pages/$branchVersion/developer"
   mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"
-  mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"  
+  mv "$PWD"/docs-latest/stylesheets/* "$PWD/gh-pages/stylesheets/"
+  mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"

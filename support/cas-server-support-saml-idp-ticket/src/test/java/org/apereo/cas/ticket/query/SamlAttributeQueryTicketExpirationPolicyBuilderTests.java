@@ -22,19 +22,21 @@ import static org.mockito.Mockito.*;
 @Tag("ExpirationPolicy")
 class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val properties = new CasConfigurationProperties();
-        properties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().setTimeToKillInSeconds(5);
+        properties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().setTimeToKillInSeconds(15);
         val builder = new SamlAttributeQueryTicketExpirationPolicyBuilder(properties);
+
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).plusSeconds(2));
         assertFalse(builder.toTicketExpirationPolicy().isExpired(ticket));
-        when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusSeconds(10));
+
+        when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusSeconds(30));
         assertTrue(builder.toTicketExpirationPolicy().isExpired(ticket));
     }
 
     @Test
-    void verifyNeverExpiresOperation() {
+    void verifyNeverExpiresOperation() throws Throwable {
         val properties = new CasConfigurationProperties();
         properties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().setTimeToKillInSeconds(0);
         val builder = new SamlAttributeQueryTicketExpirationPolicyBuilder(properties);

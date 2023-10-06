@@ -60,8 +60,8 @@ class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    void verifyValidCredentials() {
-        this.spnegoCredentials.setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
+    void verifyValidCredentials() throws Throwable {
+        spnegoCredentials.setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
@@ -69,7 +69,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    void verifySupports() {
+    void verifySupports() throws Throwable {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @Tag("Web")
 class ThreadContextMDCServletFilterTests {
     @Test
-    void verifyFilter() throws Exception {
+    void verifyFilter() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");
         request.setRemoteAddr("1.2.3.4");

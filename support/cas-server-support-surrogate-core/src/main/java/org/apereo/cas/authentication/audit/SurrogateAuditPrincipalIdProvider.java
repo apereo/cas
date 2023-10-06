@@ -29,8 +29,8 @@ public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdPr
         }
         if (supports(auditTarget, authentication, returnValue, exception)) {
             val attributes = authentication.getAttributes();
-            val surrogateUser = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).get(0).toString();
-            val principalId = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).get(0).toString();
+            val surrogateUser = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).getFirst().toString();
+            val principalId = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).getFirst().toString();
             return String.format("(Primary User: [%s], Surrogate User: [%s])", principalId, surrogateUser);
         }
         return super.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);

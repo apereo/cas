@@ -68,7 +68,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyResolverWithTags() throws Exception {
+    void verifyResolverWithTags() throws Throwable {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
         @Cleanup
         val connection = new LDAPConnection("localhost", 11389,
@@ -96,7 +96,7 @@ class PersonDirectoryPrincipalResolverOpenLdapTests {
     }
 
     protected String getLdif(final String user) {
-        val baseDn = casProperties.getAuthn().getAttributeRepository().getLdap().get(0).getBaseDn();
+        val baseDn = casProperties.getAuthn().getAttributeRepository().getLdap().getFirst().getBaseDn();
         return String.format("dn: cn=%s,%s%n"
             + "objectClass: top%n"
             + "objectClass: person%n"

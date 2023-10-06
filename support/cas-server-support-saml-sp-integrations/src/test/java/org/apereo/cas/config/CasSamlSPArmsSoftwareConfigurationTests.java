@@ -19,6 +19,6 @@ class CasSamlSPArmsSoftwareConfigurationTests extends BaseCasSamlSPConfiguration
 
     @Override
     protected String getServiceProviderId() {
-        return casProperties.getSamlSp().getArmsSoftware().getEntityIds().get(0);
+        return casProperties.getSamlSp().getArmsSoftware().getEntityIds().getFirst();
     }
 }

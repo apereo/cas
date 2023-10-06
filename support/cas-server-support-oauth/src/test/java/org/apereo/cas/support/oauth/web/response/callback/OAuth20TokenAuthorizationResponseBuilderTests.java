@@ -50,7 +50,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
         assertEquals(expectedParamValue,
             params
                 .get(paramName)
-                .get(0),
+                .getFirst(),
             () -> "Expected unchanged " + paramName + "  param");
     }
 
@@ -73,7 +73,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
     }
 
     @Test
-    void verifyUnchangedStateAndNonceParameter() throws Exception {
+    void verifyUnchangedStateAndNonceParameter() throws Throwable {
         assertEquals(Ordered.LOWEST_PRECEDENCE, oauthAuthorizationCodeResponseBuilder.getOrder());
 
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());

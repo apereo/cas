@@ -43,7 +43,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyOperationByValue() throws Exception {
+    void verifyOperationByValue() throws Throwable {
         val request = new MockHttpServletRequest();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -52,7 +52,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -62,7 +62,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
         request.setCookies(response.getCookies());
         val entity = singleSignOnSessionStatusEndpoint.ssoStatus(null, request);
         assertTrue(entity.getStatusCode().is2xxSuccessful());
-        val body = Objects.requireNonNull(Map.class.cast(entity.getBody()));
+        val body = Objects.requireNonNull((Map) entity.getBody());
         assertTrue(body.containsKey("principal"));
         assertTrue(body.containsKey("authenticationDate"));
         assertTrue(body.containsKey("ticketGrantingTicketCreationTime"));
@@ -71,7 +71,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyNoTicket() {
+    void verifyNoTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
 

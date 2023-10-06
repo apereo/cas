@@ -10,13 +10,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegiste
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -24,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,15 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
-    private static CriteriaSet getCriteriaFor(final String entityId) {
-        val criteriaSet1 = new CriteriaSet();
-        criteriaSet1.add(new EntityIdCriterion(entityId));
-        criteriaSet1.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        return criteriaSet1;
-    }
-
     @Test
-    void verifyAggregateCacheOverUrlResource() {
+    void verifyAggregateCacheOverUrlResource() throws Throwable {
         val aggregateRegisteredService = new SamlRegisteredService();
         aggregateRegisteredService.setName("AggregateMetadata");
         aggregateRegisteredService.setId(1000);
@@ -59,13 +49,13 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
             val criteriaSet2 = getCriteriaFor("unknown-entity");
-            assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+            assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
         }
     }
 
     @Test
-    void verifyCacheValidityForAggregates() {
+    void verifyCacheValidityForAggregates() throws Throwable {
         val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
 
         val aggregateRegisteredService = new SamlRegisteredService();
@@ -79,7 +69,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
 
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
@@ -91,7 +81,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyCacheValidityWithUnknownEntityId() {
+    void verifyCacheValidityWithUnknownEntityId() throws Throwable {
         val criteriaSet = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
 
         val service = new SamlRegisteredService();
@@ -105,14 +95,14 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
         assertFalse(resolver.resolveIfPresent(service, criteriaSet).isPresent());
         resolver.invalidate();
     }
 
     @Test
-    void verifyRetryableOpWithFailure() {
+    void verifyRetryableOpWithFailure() throws Throwable {
         val criteriaSet = getCriteriaFor("urn:app.e2ma.net");
 
         val service = new SamlRegisteredService();
@@ -122,12 +112,12 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         service.setMetadataLocation("classpath:metadata-invalid.xml");
 
         val resolver = getResolver("PT5S");
-        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet));
         resolver.invalidate();
     }
 
     @Test
-    void verifyRetryableOp() {
+    void verifyRetryableOp() throws Throwable {
 
         val service = new SamlRegisteredService();
         service.setName("Example");
@@ -140,7 +130,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertNotNull(resolver.resolve(service, criteriaSet1));
 
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
-        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
         assertFalse(resolver.resolveIfPresent(service, criteriaSet1).isPresent());
         resolver.invalidate();
@@ -171,15 +161,15 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyMissingMetadataInMDQ() {
+    void verifyMissingMetadataInMDQ() throws Throwable {
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
-        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet1));
+        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet1));
     }
 
     @Test
-    void verifyDynamicMetadata() {
+    void verifyDynamicMetadata() throws Throwable {
         val criteriaSet1 = getCriteriaFor("urn:mace:incommon:internet2.edu");
 
         val service = new SamlRegisteredService();

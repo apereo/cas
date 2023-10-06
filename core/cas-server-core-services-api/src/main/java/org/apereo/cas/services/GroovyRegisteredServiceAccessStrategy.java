@@ -1,25 +1,21 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import groovy.lang.GroovyObject;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
-
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -37,9 +33,6 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     @Serial
     private static final long serialVersionUID = -2407494148882123062L;
 
-    /**
-     * The sorting/execution order of this strategy.
-     */
     private int order;
 
     @ExpressionLanguageCapable
@@ -48,56 +41,48 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
+    private transient GroovyObject groovyStrategyInstance;
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowed() {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.isServiceAccessAllowed();
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
+        try {
+            buildGroovyAccessStrategyInstanceIfNeeded();
+            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
+                "isServiceAccessAllowed", new Object[]{registeredService, service}, Boolean.class, false));
+        } catch (final Throwable throwable) {
+            throw UnauthorizedServiceException.wrap(throwable);
+        }
     }
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowedForSso() {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.isServiceAccessAllowedForSso();
+    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
+        try {
+            buildGroovyAccessStrategyInstanceIfNeeded();
+            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
+                "isServiceAccessAllowedForSso", new Object[]{registeredService}, Boolean.class, false));
+        } catch (final Throwable throwable) {
+            throw UnauthorizedServiceException.wrap(throwable);
+        }
     }
 
     @Override
-    @JsonIgnore
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.doPrincipalAttributesAllowServiceAccess(request);
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+        try {
+            buildGroovyAccessStrategyInstanceIfNeeded();
+            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
+                "authorizeRequest", new Object[]{request}, Boolean.class, false));
+        } catch (final Throwable throwable) {
+            throw UnauthorizedServiceException.wrap(throwable);
+        }
     }
 
-    @JsonIgnore
-    @Override
-    public URI getUnauthorizedRedirectUrl() {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.getUnauthorizedRedirectUrl();
-    }
-
-    @Override
-    @JsonIgnore
-    public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        return this.groovyStrategyInstance.getDelegatedAuthenticationPolicy();
-    }
-
-    @Override
-    @JsonIgnore
-    public Map<String, Set<String>> getRequiredAttributes() {
-        return this.groovyStrategyInstance.getRequiredAttributes();
-    }
-
-    private void buildGroovyAccessStrategyInstanceIfNeeded() {
+    protected void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (this.groovyStrategyInstance == null) {
             val groovyResource = FunctionUtils.doUnchecked(() -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 return ResourceUtils.getResourceFrom(location);
             });
-            this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
+            this.groovyStrategyInstance = ScriptingUtils.parseGroovyScript(groovyResource, true);
         }
     }
 }

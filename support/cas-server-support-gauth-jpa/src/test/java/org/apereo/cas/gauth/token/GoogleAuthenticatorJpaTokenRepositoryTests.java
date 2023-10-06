@@ -25,12 +25,12 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -67,6 +67,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -79,8 +80,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     AopAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreWebConfiguration.class
 }, properties = "cas.jdbc.show-sql=true"
 )

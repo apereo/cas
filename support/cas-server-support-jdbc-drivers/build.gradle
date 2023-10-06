@@ -13,7 +13,7 @@ dependencies {
     runtimeOnly "com.yugabyte:jdbc-yugabytedb:$yugabytedbVersion"
     runtimeOnly "org.hsqldb:hsqldb:$hsqlVersion"
     runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
-    runtimeOnly "mysql:mysql-connector-java:$mysqlVersion"
+    runtimeOnly "com.mysql:mysql-connector-j:$mysqlVersion"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion"
     runtimeOnly "net.sourceforge.jtds:jtds:$jtdsVersion"
     runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion"

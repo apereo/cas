@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    void verifyAction() throws Exception {
+    void verifyAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("q0", "securityAnswer1");
@@ -33,7 +33,7 @@ class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTes
     }
 
     @Test
-    void verifyFailsAction() throws Exception {
+    void verifyFailsAction() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.getFlowScope().put("username", "casuser");

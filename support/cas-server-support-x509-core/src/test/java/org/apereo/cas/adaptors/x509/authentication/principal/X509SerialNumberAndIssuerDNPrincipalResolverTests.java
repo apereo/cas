@@ -61,26 +61,26 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     }
 
     @Test
-    void verifyResolvePrincipalInternal() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        c.setCertificate(VALID_CERTIFICATE);
+    void verifyResolvePrincipalInternal() throws Throwable {
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        credential.setCertificate(VALID_CERTIFICATE);
         val value = "SERIALNUMBER="
             + VALID_CERTIFICATE.getSerialNumber().toString()
             + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
 
-        assertEquals(value, this.resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        assertEquals(value, this.resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService())).getId());
     }
 
     @Test
-    void verifySupport() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        assertTrue(this.resolver.supports(c));
+    void verifySupport() throws Throwable {
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        assertTrue(this.resolver.supports(credential));
     }
 
     @Test
-    void verifySupportFalse() {
+    void verifySupportFalse() throws Throwable {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 

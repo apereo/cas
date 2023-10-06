@@ -1,0 +1,37 @@
+{
+  "dependencies": "events-memory,electrofence,geolocation",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.adaptive.risk.core.threshold=0.2",
+    "--cas.authn.adaptive.risk.ip.enabled=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
+    "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
+
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    
+    "--cas.authn.adaptive.risk.response.mail.html=false",
+    "--cas.authn.adaptive.risk.response.mail.from=cas@example.org",
+    "--cas.authn.adaptive.risk.response.mail.subject=CasRiskyAuthN",
+    "--cas.authn.adaptive.risk.response.mail.text=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/email.gtemplate"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

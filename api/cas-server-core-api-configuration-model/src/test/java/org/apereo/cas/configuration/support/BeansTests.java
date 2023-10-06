@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BeansTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new PrincipalAttributesProperties();
         props.getStub().setId("helloworld");
         props.getStub().getAttributes().put("name", "true");
@@ -27,7 +27,7 @@ class BeansTests {
     }
 
     @Test
-    void verifyDurations() {
+    void verifyDurations() throws Throwable {
         assertNotNull(Beans.newDuration("0"));
         assertNotNull(Beans.newDuration("never"));
         assertNotNull(Beans.newDuration("infinite"));

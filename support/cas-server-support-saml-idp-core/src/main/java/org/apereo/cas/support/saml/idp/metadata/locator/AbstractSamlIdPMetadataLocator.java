@@ -57,7 +57,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveSigningCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching signing certificate resource for metadata document [{}]", metadataDocument.getId());
@@ -67,7 +67,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveSigningKey(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getSigningKey();
@@ -78,7 +78,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveMetadata(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching metadata resource for metadata document [{}]", metadataDocument.getId());
@@ -88,7 +88,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) {
+    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching encryption certificate resource for metadata document [{}]", metadataDocument.getId());
@@ -98,7 +98,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) {
+    public Resource resolveEncryptionKey(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             val data = metadataDocument.getEncryptionKey();
@@ -109,7 +109,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     }
 
     @Override
-    public boolean exists(final Optional<SamlRegisteredService> registeredService) {
+    public boolean exists(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         return metadataDocument != null && metadataDocument.isValid();
     }

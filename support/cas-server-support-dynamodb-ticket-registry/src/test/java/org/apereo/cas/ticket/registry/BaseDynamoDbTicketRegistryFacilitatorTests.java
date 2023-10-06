@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.DynamoDbCoreConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
@@ -27,6 +28,7 @@ import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -62,6 +64,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
+    CasPersonDirectoryStubConfiguration.class,
+    WebMvcAutoConfiguration.class,
     RefreshAutoConfiguration.class
     },
     properties = {

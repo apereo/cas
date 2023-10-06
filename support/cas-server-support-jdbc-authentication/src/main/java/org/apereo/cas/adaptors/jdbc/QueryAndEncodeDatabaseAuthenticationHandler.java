@@ -34,7 +34,7 @@ import java.util.Map;
  * number of iterations as well as private salt.
  * <p>
  * This handler uses the hashing method defined by Apache Shiro's
- * {@link org.apache.shiro.crypto.hash.DefaultHashService}. Refer to the Javadocs
+ * {@link DefaultHashService}. Refer to the Javadocs
  * to learn more about the behavior. If the hashing behavior and/or configuration
  * of private and public salts does nto meet your needs, a extension can be developed
  * to specify alternative methods of encoding and digestion of the encoded password.
@@ -61,7 +61,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential transformedCredential,
         final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        throws Throwable {
 
         if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
@@ -87,8 +87,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
-
+            val principal = principalFactory.createPrincipal(username);
+            return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
@@ -103,13 +103,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         return getJdbcTemplate().queryForMap(properties.getSql(), username);
     }
 
-    /**
-     * Digest encoded password.
-     *
-     * @param encodedPassword the encoded password
-     * @param values          the values retrieved from database
-     * @return the digested password
-     */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
         val hashService = new DefaultHashService();
         if (StringUtils.isNotBlank(properties.getStaticSalt())) {

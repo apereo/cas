@@ -53,7 +53,7 @@ class DelegatedClientAuthenticationHandlerTests {
     private ClientCredential clientCredential;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         val ctx = new StaticApplicationContext();
         ctx.refresh();
 
@@ -68,7 +68,7 @@ class DelegatedClientAuthenticationHandlerTests {
         val clients = new Clients(CALLBACK_URL, fbClient);
         handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp(), JEESessionStore.INSTANCE, ctx);
+            DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore(), ctx);
         handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
@@ -79,7 +79,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyOk() throws Exception {
+    void verifyOk() throws Throwable {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
@@ -89,7 +89,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyMissingClient() {
+    void verifyMissingClient() throws Throwable {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
@@ -99,7 +99,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyOkWithSimpleIdentifier() throws Exception {
+    void verifyOkWithSimpleIdentifier() throws Throwable {
         handler.setTypedIdUsed(false);
 
         val facebookProfile = new FacebookProfile();
@@ -111,7 +111,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoProfile() {
+    void verifyNoProfile() throws Throwable {
         assertThrows(PreventedException.class, () -> {
             fbClient.setProfileCreator((callContext, sessionStore) -> Optional.empty());
             handler.authenticate(clientCredential, mock(Service.class));

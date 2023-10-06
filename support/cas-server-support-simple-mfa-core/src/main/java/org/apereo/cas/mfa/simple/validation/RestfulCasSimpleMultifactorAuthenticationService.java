@@ -9,9 +9,9 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import javax.security.auth.login.FailedLoginException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -57,7 +56,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
             val parameters = new LinkedHashMap<String, String>();
             Optional.ofNullable(service).ifPresent(s -> parameters.put("service", s.getId()));
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat("new"))
@@ -88,7 +87,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, token);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .headers(properties.getHeaders())
                 .url(properties.getUrl())
@@ -113,11 +112,35 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(credential.getToken()))
                 .entity(writer.toString())
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .build();
+            response = HttpUtils.execute(exec);
+            val statusCode = response.getCode();
+            if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), Principal.class);
+            }
+            throw new FailedLoginException("Unable to validate multifactor credential with status " + statusCode);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) throws Exception {
+        HttpResponse response = null;
+        try {
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .headers(properties.getHeaders())
+                .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))

@@ -30,12 +30,12 @@ class PrincipalBearingCredentialsTests {
     private PrincipalBearingCredential principalBearingCredentials;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         this.principalBearingCredentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
     }
 
     @Test
-    void verifyGetOfPrincipal() {
+    void verifyGetOfPrincipal() throws Throwable {
         assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
     }
 

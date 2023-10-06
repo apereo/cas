@@ -18,9 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class DuoSecurityDirectAuthenticationAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val c = new DuoSecurityDirectCredential(resolvePrincipal(authentication.getPrincipal()), provider.getId());
+        val c = new DuoSecurityDirectCredential(resolvePrincipal(authentication.getPrincipal(), requestContext), provider.getId());
         WebUtils.putCredential(requestContext, c);
         return success();
     }

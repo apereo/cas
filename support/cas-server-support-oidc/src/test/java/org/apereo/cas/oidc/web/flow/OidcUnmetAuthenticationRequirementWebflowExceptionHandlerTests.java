@@ -35,7 +35,7 @@ class OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests extends Abs
     private CasWebflowExceptionHandler oidcUnmetAuthenticationRequirementWebflowExceptionHandler;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 

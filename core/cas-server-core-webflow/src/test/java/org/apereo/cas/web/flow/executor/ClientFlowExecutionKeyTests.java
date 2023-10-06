@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClientFlowExecutionKeyTests {
 
     @Test
-    void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val key = new ClientFlowExecutionKey(getClass().getSimpleName().getBytes(StandardCharsets.UTF_8));
         val result = SerializationUtils.serialize(key);
         assertNotNull(result);
@@ -29,7 +29,7 @@ class ClientFlowExecutionKeyTests {
     }
 
     @Test
-    void verifyBadKey() {
+    void verifyBadKey() throws Throwable {
         assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad-key"));
         assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad_key"));
 

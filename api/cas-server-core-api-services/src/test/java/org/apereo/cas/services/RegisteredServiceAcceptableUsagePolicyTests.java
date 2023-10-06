@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisteredServiceAcceptableUsagePolicyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new RegisteredServiceAcceptableUsagePolicy() {
             @Serial
             private static final long serialVersionUID = -4878764188998002053L;

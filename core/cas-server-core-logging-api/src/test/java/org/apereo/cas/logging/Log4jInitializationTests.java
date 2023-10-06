@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class Log4jInitializationTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow(() -> {
             val init = new Log4jInitialization();
             init.initialize(new String[]{"--logging.level.org.apereo.cas=debug"});

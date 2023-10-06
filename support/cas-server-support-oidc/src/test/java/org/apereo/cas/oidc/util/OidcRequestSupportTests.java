@@ -47,21 +47,21 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyRemovePrompt() {
+    void verifyRemovePrompt() throws Throwable {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT;
         val request = OidcRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_CONSENT);
         assertFalse(request.contains(OAuth20Constants.PROMPT));
     }
 
     @Test
-    void verifyOidcPrompt() {
+    void verifyOidcPrompt() throws Throwable {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=login";
         val authorizationRequest = oauthRequestParameterResolver.resolveSupportedPromptValues(url);
         assertEquals("login", authorizationRequest.toArray()[0]);
     }
 
     @Test
-    void verifyOidcPromptFromContext() {
+    void verifyOidcPromptFromContext() throws Throwable {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=login";
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn(url);
@@ -70,7 +70,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcMaxAgeTooOld() {
+    void verifyOidcMaxAgeTooOld() throws Throwable {
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1");
         val authenticationDate = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5);
@@ -87,7 +87,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcMaxAgeTooOldForContext() {
+    void verifyOidcMaxAgeTooOldForContext() throws Throwable {
         val authenticationDate = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5);
         val authn = CoreAuthenticationTestUtils.getAuthentication("casuser", authenticationDate);
 
@@ -105,7 +105,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOidcMaxAge() {
+    void verifyOidcMaxAge() throws Throwable {
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
         val age = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
@@ -123,7 +123,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyAuthnProfile() {
+    void verifyAuthnProfile() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
@@ -131,11 +131,11 @@ class OidcRequestSupportTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(OidcRequestSupport.isAuthenticationProfileAvailable(context, JEESessionStore.INSTANCE).isPresent());
+        assertTrue(OidcRequestSupport.isAuthenticationProfileAvailable(context, new JEESessionStore()).isPresent());
     }
 
     @Test
-    void verifyGetRedirectUrlWithError() {
+    void verifyGetRedirectUrlWithError() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setScheme("https");
         request.setServerName("example.org");

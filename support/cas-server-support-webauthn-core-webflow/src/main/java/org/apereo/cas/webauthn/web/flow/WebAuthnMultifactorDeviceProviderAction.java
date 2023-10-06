@@ -33,7 +33,7 @@ public class WebAuthnMultifactorDeviceProviderAction extends BaseCasWebflowActio
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
 

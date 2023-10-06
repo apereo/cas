@@ -224,16 +224,21 @@ A basic modest outline of the test configuration may be:
   },
   "requirements": {
     "graalvm": {
-      "build": true
+      "build": false
+    },
+    "docker": {
+      "build": false
     }
   },
   "properties": [
     "--cas.server.something=something"
   ],
   "jvmArgs": "...",
+  "server": "tomcat|jetty|undertow|...",
   "SPRING_APPLICATION_JSON": {},
-  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
   "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh",
   "instances": 2,
   "instance1": {

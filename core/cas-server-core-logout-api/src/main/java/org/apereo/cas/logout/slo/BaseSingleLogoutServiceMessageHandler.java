@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -56,7 +56,8 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
         }
-        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = FunctionUtils.doUnchecked(() ->
+            (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
 
         LOGGER.trace("Processing logout request for service [{}]...", selectedService);
         val registeredService = servicesManager.findServiceBy(selectedService);
@@ -77,11 +78,12 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
 
     @Override
     public boolean supports(final SingleLogoutExecutionRequest context, final WebApplicationService singleLogoutService) {
-        val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val selectedService = FunctionUtils.doUnchecked(() ->
+            (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
         val registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(selectedService);
 
         return registeredService != null
-               && registeredService.getAccessStrategy().isServiceAccessAllowed()
+               && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, selectedService)
                && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
                && supportsInternal(singleLogoutService, registeredService, context);
     }
@@ -92,14 +94,14 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             LOGGER.trace("Creating back-channel logout request based on [{}]", request);
             val logoutRequest = createSingleLogoutMessage(request);
             return sendSingleLogoutMessage(request, logoutRequest);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
     @Override
-    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequestContext logoutRequest) {
+    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequestContext logoutRequest) throws Throwable {
         return this.logoutMessageBuilder.create(logoutRequest);
     }
 
@@ -157,7 +159,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .ticketId(ticketId)
             .service(selectedService)
-            .logoutUrl(FunctionUtils.doUnchecked(() -> new URL(logoutUrl.getUrl())))
+            .logoutUrl(FunctionUtils.doUnchecked(() -> new URI(logoutUrl.getUrl()).toURL()))
             .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
             .executionRequest(context)

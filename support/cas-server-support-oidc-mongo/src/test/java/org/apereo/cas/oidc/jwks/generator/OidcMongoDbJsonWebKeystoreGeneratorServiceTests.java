@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(OidcJwksMongoDbConfiguration.class)
 class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val resource1 = oidcJsonWebKeystoreGeneratorService.generate();
         val jwks1 = IOUtils.toString(resource1.getInputStream(), StandardCharsets.UTF_8);
 

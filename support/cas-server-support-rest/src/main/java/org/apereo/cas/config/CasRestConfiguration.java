@@ -31,7 +31,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -113,8 +113,8 @@ public class CasRestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+        public CasWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));

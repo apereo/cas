@@ -27,7 +27,7 @@ class DefaultAuthenticationTests {
         .build().toObjectMapper();
 
     @Test
-    void verifySerializeADefaultAuthenticationToJson() throws Exception {
+    void verifySerializeADefaultAuthenticationToJson() throws Throwable {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
         MAPPER.writeValue(JSON_FILE, authn);
         val authn2 = MAPPER.readValue(JSON_FILE, Authentication.class);

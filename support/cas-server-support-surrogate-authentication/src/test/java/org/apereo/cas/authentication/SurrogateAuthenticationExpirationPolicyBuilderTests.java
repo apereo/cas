@@ -27,7 +27,7 @@ class SurrogateAuthenticationExpirationPolicyBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val builder = new SurrogateAuthenticationExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(casProperties), casProperties);
         assertNotNull(builder.buildTicketExpirationPolicy());

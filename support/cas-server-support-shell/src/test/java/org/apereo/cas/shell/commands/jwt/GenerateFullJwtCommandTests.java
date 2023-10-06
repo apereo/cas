@@ -5,7 +5,6 @@ import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,16 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
 class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyPlain() {
+    void verifyPlain() throws Throwable {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-full-jwt --sub casuser --claims {'name':'CAS','clients':['1234']}"));
     }
 
     @Test
-    void verifySigned() throws Exception {
+    void verifySigned() throws Throwable {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
             runShellCommand(() -> () -> "generate-full-jwt --sub casuser "
@@ -35,7 +33,7 @@ class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    void verifySignedNeverExpires() throws Exception {
+    void verifySignedNeverExpires() throws Throwable {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
             runShellCommand(() -> () -> "generate-full-jwt --sub casuser "

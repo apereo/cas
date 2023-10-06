@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider
 import org.apereo.cas.ticket.catalog.DefaultTicketCatalogConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketCatalogConfiguration {

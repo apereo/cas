@@ -51,9 +51,9 @@ public interface ConsentRepository extends Serializable {
      *
      * @param decision the decision
      * @return consent decision updated/added
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
-    ConsentDecision storeConsentDecision(ConsentDecision decision) throws Exception;
+    ConsentDecision storeConsentDecision(ConsentDecision decision) throws Throwable;
 
     /**
      * Delete consent decision.
@@ -61,19 +61,23 @@ public interface ConsentRepository extends Serializable {
      * @param id        the decision id
      * @param principal the principal
      * @return true / false
+     * @throws Throwable the throwable
      */
-    boolean deleteConsentDecision(long id, String principal);
+    boolean deleteConsentDecision(long id, String principal) throws Throwable;
 
     /**
      * Delete consent decisions.
      *
      * @param principal the principal
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    boolean deleteConsentDecisions(String principal);
+    boolean deleteConsentDecisions(String principal) throws Throwable;
 
     /**
      * Delete all.
+     *
+     * @throws Throwable the throwable
      */
-    void deleteAll();
+    void deleteAll() throws Throwable;
 }

@@ -35,7 +35,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
                                                   final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
-            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+            expirationPolicy = (ExpirationPolicy) properties.remove(ExpirationPolicy.class.getName());
         }
         return expirationPolicy;
     }
@@ -46,8 +46,9 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param service    the service
      * @param properties the properties
      * @return the delegated authentication request ticket
+     * @throws Throwable the throwable
      */
-    T create(Service service, Map<String, Serializable> properties);
+    T create(Service service, Map<String, Serializable> properties) throws Throwable;
 
     /**
      * Create transient session ticket.
@@ -75,8 +76,9 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      *
      * @param service the service
      * @return the delegated authentication request ticket
+     * @throws Throwable the throwable
      */
-    default T create(final Service service) {
+    default T create(final Service service) throws Throwable {
         return create(service, new LinkedHashMap<>(0));
     }
 }

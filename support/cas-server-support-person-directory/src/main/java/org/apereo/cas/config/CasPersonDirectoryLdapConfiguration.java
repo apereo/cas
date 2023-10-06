@@ -148,7 +148,7 @@ public class CasPersonDirectoryLdapConfiguration {
                 .supply(() -> plan -> {
                     val results = ldapAttributeRepositories.toList()
                         .stream()
-                        .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                        .filter(IPersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

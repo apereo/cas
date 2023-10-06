@@ -28,21 +28,21 @@ public class DefaultAuditTrailRecordResolutionPlan implements AuditTrailRecordRe
     @Override
     public void registerAuditResourceResolver(final String key, final AuditResourceResolver resolver) {
         if (BeanSupplier.isNotProxy(resolver)) {
-            this.auditResourceResolvers.put(key, resolver);
+            this.auditResourceResolvers.putIfAbsent(key, resolver);
         }
     }
 
     @Override
     public void registerAuditPrincipalResolver(final String key, final PrincipalResolver resolver) {
         if (BeanSupplier.isNotProxy(resolver)) {
-            this.auditPrincipalResolvers.put(key, resolver);
+            this.auditPrincipalResolvers.putIfAbsent(key, resolver);
         }
     }
 
     @Override
     public void registerAuditActionResolver(final String key, final AuditActionResolver resolver) {
         if (BeanSupplier.isNotProxy(resolver)) {
-            this.auditActionResolvers.put(key, resolver);
+            this.auditActionResolvers.putIfAbsent(key, resolver);
         }
     }
 

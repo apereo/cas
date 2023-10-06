@@ -11,7 +11,7 @@ env:
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-  JDK_CURRENT: 17
+  JDK_CURRENT: 21
   CATEGORY_REGEX: ".*" # Use this to limit which tests run
 ##########################################################################
 
@@ -47,12 +47,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -69,12 +69,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [initialize]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -84,7 +84,7 @@ jobs:
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
       - uses: actions/cache@v3
@@ -101,12 +101,12 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -131,12 +131,12 @@ jobs:
     name: ${{ matrix.category }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: "zulu"
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:

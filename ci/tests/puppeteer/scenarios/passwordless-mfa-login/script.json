@@ -1,6 +1,5 @@
 {
   "dependencies": "passwordless-webflow,yubikey",
-
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
@@ -12,9 +11,9 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.http-client.host-name-verifier=none",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
+    "--cas.http-client.host-name-verifier=none",
     "--logging.level.org.apereo.cas=debug"
   ]
 }

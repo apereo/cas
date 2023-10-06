@@ -51,8 +51,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private final MongoOperations mongoTemplate;
 
     public MongoDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                 final TicketCatalog ticketCatalog,
-                                 final MongoOperations mongoTemplate) {
+                                 final TicketCatalog ticketCatalog, final MongoOperations mongoTemplate) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.mongoTemplate = mongoTemplate;
     }
@@ -87,7 +86,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
             mongoTemplate.insert(document, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LOGGER.error("Failed adding [{}]", ticket);
             LoggingUtils.error(LOGGER, e);
         }
@@ -119,7 +118,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 }
                 return null;
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LOGGER.error("Failed fetching [{}]", ticketId);
             LoggingUtils.error(LOGGER, e);
         }
@@ -169,7 +168,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             val result = mongoTemplate.updateFirst(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}] with result [{}]", ticket, result);
             return result.getMatchedCount() > 0 ? ticket : null;
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LOGGER.error("Failed updating [{}]", ticket);
             LoggingUtils.error(LOGGER, e);
         }
@@ -266,7 +265,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .sum();
     }
 
-    protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket) throws Exception {
+    protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket) throws Throwable {
         val encTicket = encodeTicket(ticket);
 
         val json = serializeTicket(encTicket);

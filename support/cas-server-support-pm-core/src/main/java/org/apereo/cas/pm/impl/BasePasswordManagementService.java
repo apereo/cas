@@ -59,7 +59,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
                 LOGGER.error("Token issuer does not match CAS");
                 return null;
             }
-            if (claims.getAudience().isEmpty() || !claims.getAudience().get(0).equals(issuer)) {
+            if (claims.getAudience().isEmpty() || !claims.getAudience().getFirst().equals(issuer)) {
                 LOGGER.error("Token audience does not match CAS");
                 return null;
             }
@@ -129,7 +129,7 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
         actionResolverName = AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    public boolean change(final PasswordChangeRequest bean) throws InvalidPasswordException {
+    public boolean change(final PasswordChangeRequest bean) throws Throwable {
         if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {
             LOGGER.debug("Password history policy disallows reusing the password for [{}]", bean.getUsername());
             return false;
@@ -151,5 +151,5 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
      * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public abstract boolean changeInternal(PasswordChangeRequest bean) throws InvalidPasswordException;
+    public abstract boolean changeInternal(PasswordChangeRequest bean) throws Throwable;
 }

@@ -9,7 +9,7 @@ async function callRegisteredServices() {
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, res => {
         assert(res.status === 200);
-        console.log(`Services found: ${res.data[1].length}`);
+        cas.log(`Services found: ${res.data[1].length}`);
     }, err => {
         throw err;
     }, {
@@ -20,9 +20,7 @@ async function callRegisteredServices() {
 async function callAuditLog() {
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
         'Content-Type': 'application/json'
-    }, res => {
-        console.log(`Found ${res.data.length} audit records`);
-    }, error => {
+    }, res => cas.log(`Found ${res.data.length} audit records`), error => {
         throw(error);
     })
 }
@@ -34,38 +32,38 @@ async function callAuditLog() {
 
     let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(6000);
     await page.close();
     await browser.close();
 
     await callAuditLog();
 
-    console.log("Updating configuration...");
+    await cas.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
     await cas.sleep(5000);
     await cas.refreshContext();
 
-    console.log("Testing authentication after refresh...");
+    await cas.log("Testing authentication after refresh...");
     browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
 
     await callAuditLog();
     await callRegisteredServices();
 
-    console.log("Waiting for audit log cleaner to resume...");
+    await cas.log("Waiting for audit log cleaner to resume...");
     await cas.sleep(5000);
     
     await browser.close();
@@ -83,7 +81,7 @@ async function updateConfig(configFile, configFilePath, data) {
         }
     };
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

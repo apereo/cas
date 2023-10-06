@@ -21,7 +21,8 @@ public interface ProxyTicketFactory extends TicketFactory {
      * @param service              the service
      * @param clazz                the clazz
      * @return the t
+     * @throws Throwable the throwable
      */
     <T extends Ticket> T create(ProxyGrantingTicket ticketGrantingTicket,
-                                Service service, Class<T> clazz);
+                                Service service, Class<T> clazz) throws Throwable;
 }

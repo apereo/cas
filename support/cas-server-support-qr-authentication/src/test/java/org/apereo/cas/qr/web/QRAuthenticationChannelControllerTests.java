@@ -64,7 +64,7 @@ class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    void verifyOK() throws Exception {
+    void verifyOK() throws Throwable {
         assertNotNull(qrAuthenticationChannelController);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -95,7 +95,7 @@ class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    void verifyFails() throws Exception {
+    void verifyFails() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val payload = JwtBuilder.JwtRequest.builder()
@@ -119,7 +119,7 @@ class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    void verifyMissingHeader() {
+    void verifyMissingHeader() throws Throwable {
         assertNotNull(qrAuthenticationChannelController);
         val message = mock(Message.class);
         var headers = new MessageHeaders(Map.of("nativeHeaders", new LinkedMultiValueMap<>()));

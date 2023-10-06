@@ -79,7 +79,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     }
 
     @Test
-    void verifyNoServiceOrPolicy() {
+    void verifyNoServiceOrPolicy() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -107,7 +107,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     }
 
     @Test
-    void verifyNoServiceOrSso() {
+    void verifyNoServiceOrSso() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -128,7 +128,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     }
 
     @Test
-    void verifySsoWithMismatchedHandlers() throws Exception {
+    void verifySsoWithMismatchedHandlers() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -161,7 +161,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     }
 
     @Test
-    void verifySsoWithHandlers() throws Exception {
+    void verifySsoWithHandlers() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -194,7 +194,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     }
 
     @Test
-    void verifySsoWithExcludedHandlers() throws Exception {
+    void verifySsoWithExcludedHandlers() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

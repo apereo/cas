@@ -20,10 +20,11 @@ buildscript {
 
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
+        classpath "com.github.node-gradle:gradle-node-plugin:$gradleNodeVersion"
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
-        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath "io.freefair.gradle:lombok-plugin:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
         classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
@@ -119,6 +120,7 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
             property "sonar.login", token
+            property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
         }
@@ -193,8 +195,10 @@ allprojects {
     }
 
     tasks.named('javadoc') {
+        options.memberLevel = JavadocMemberLevel.PUBLIC
         options.addBooleanOption('html5', true)
         options.addStringOption('Xdoclint:html,reference,syntax', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
@@ -364,19 +368,20 @@ subprojects {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
-            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF', '-Xep:NotJavadoc:OFF']
+            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF',
+                                                    '-Xep:ClassCanBeStatic:OFF',
+                                                    '-Xep:NotJavadoc:OFF',
+                                                    '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
     }
 
     if (projectRequiresLombok(project)) {
-        apply plugin: "io.franzbecker.gradle-lombok"
+        apply plugin: "io.freefair.lombok"
         lombok {
             version = "$lombokVersion"
-            sha256 = ""
         }
-        installLombok.enabled = false
     }
 
     tasks.named('jar') {
@@ -434,21 +439,17 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
-
+        
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
-        
+
         testImplementation libraries.tests
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
-
-        if (!ci) {
-            testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
-        }
-
+        
         runtimeOnly libraries.httpclient4
     }
 }

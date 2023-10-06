@@ -32,7 +32,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
     private String groovyScript;
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         if (isSurrogateAuthenticationSession(request)) {
             try {
                 val args = new Object[]{request.getPrincipalId(), request.getAttributes(), LOGGER};
@@ -43,6 +43,6 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
             }
             return false;
         }
-        return super.doPrincipalAttributesAllowServiceAccess(request);
+        return super.authorizeRequest(request);
     }
 }

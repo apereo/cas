@@ -1,0 +1,37 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.audit.engine.enabled=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.uid=apereo-casuser",
+    "--cas.authn.attribute-repository.stub.attributes.organization=apereo,cas,oss",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email",
+    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,email,preferred_username,organization",
+
+    "--cas.authn.oidc.core.claims-map.email=mail",
+    "--cas.authn.oidc.core.claims-map.name=cn",
+    "--cas.authn.oidc.core.claims-map.family_name=sn",
+    "--cas.authn.oidc.core.claims-map.given_name=givenName",
+
+    "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

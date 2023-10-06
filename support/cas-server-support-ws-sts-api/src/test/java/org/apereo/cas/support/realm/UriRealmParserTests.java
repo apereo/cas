@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UriRealmParserTests {
 
     @Test
-    void verifyToken() {
+    void verifyToken() throws Throwable {
         val properties = new RealmProperties();
         val parser = new UriRealmParser(Map.of("APEREO.ORG", properties));
         assertEquals("APEREO.ORG", parser.parseRealm(Map.of("org.apache.cxf.request.url", "https://apereo.org/cas")));

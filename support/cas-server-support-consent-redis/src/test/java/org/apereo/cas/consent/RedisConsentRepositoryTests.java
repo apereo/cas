@@ -41,13 +41,13 @@ class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected ConsentRepository repository;
 
     @Test
-    void storeBadDecision() throws Exception {
+    void storeBadDecision() throws Throwable {
         val repo = getRepository();
         assertNull(repo.storeConsentDecision(null));
     }
     
     @Test
-    void verifyDeleteFails() {
+    void verifyDeleteFails() throws Throwable {
         val repo = getRepository();
         assertFalse(repo.deleteConsentDecision(-1, UUID.randomUUID().toString()));
     }

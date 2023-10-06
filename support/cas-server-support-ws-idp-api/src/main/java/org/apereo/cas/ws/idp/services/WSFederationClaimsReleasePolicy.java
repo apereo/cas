@@ -3,11 +3,11 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
-
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -112,12 +111,13 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                     final Map<String, List<Object>> attributesToRelease,
                                                                     final String file) {
 
-        ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(cacheMgr -> {
-            val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
-            if (script != null) {
-                fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
-            }
-        },
+        ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(
+            cacheMgr -> {
+                val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
+                if (script != null) {
+                    fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
+                }
+            },
             () -> {
                 throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
             });
@@ -128,10 +128,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                 final Map<String, List<Object>> attributesToRelease,
                                                                 final String inlineGroovy) {
         ApplicationContextProvider.getScriptResourceCacheManager()
-            .ifPresentOrElse(cacheMgr -> {
-                val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-                fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
-            },
+            .ifPresentOrElse(
+                cacheMgr -> {
+                    val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
+                    fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
+                },
                 () -> {
                     throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
                 });
@@ -141,15 +142,17 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                       final String attributeName,
                                                       final Map<String, List<Object>> resolvedAttributes,
                                                       final Map<String, List<Object>> attributesToRelease) {
-        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
-        script.setBinding(args);
-        val result = script.execute(args.values().toArray(), Object.class);
-        if (result != null) {
-            LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
-            attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
-        } else {
-            LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
-        }
+        FunctionUtils.doUnchecked(__ -> {
+            val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+            script.setBinding(args);
+            val result = script.execute(args.values().toArray(), Object.class);
+            if (result != null) {
+                LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
+                attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
+            } else {
+                LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
+            }
+        });
     }
 
     @Override

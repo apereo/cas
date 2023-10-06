@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
 
     @Test
-    void verifySupportedClaims() throws Exception {
+    void verifySupportedClaims() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
         assertFalse(handler.getSupportedClaimTypes().isEmpty());
@@ -38,7 +38,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML2Type() {
+    void verifySAML2Type() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -55,13 +55,13 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.get(0);
+        val processed = (ProcessedClaim) values.getFirst();
         assertEquals("givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }
 
     @Test
-    void verifySAML1Type() {
+    void verifySAML1Type() throws Throwable {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -78,7 +78,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.get(0);
+        val processed = (ProcessedClaim) values.getFirst();
         assertEquals("https://apereo.org/cas/givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }

@@ -38,26 +38,26 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:8755");
         strategy.setAcceptableResponseCodes("200,201");
         try (val webServer = new MockWebServer(8755,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertTrue(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 
     @Test
-    void verifyFails() {
+    void verifyFails() throws Throwable {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:1234");
         strategy.setAcceptableResponseCodes("600");
         try (val webServer = new MockWebServer(8756,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertFalse(strategy.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertFalse(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
         }
     }
 }

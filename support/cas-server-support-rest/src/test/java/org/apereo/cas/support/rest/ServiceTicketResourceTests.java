@@ -66,7 +66,7 @@ class ServiceTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         val mgmr = mock(AuthenticationManager.class);
         lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -85,7 +85,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void normalCreationOfST() throws Exception {
+    void normalCreationOfST() throws Throwable {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -96,7 +96,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void normalCreationOfSTWithRenew() throws Exception {
+    void normalCreationOfSTWithRenew() throws Throwable {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -112,7 +112,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void creationOfSTWithInvalidTicketException() throws Exception {
+    void creationOfSTWithInvalidTicketException() throws Throwable {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -121,7 +121,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void creationOfSTWithGeneralException() throws Exception {
+    void creationOfSTWithGeneralException() throws Throwable {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -131,7 +131,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void creationOfSTWithBadRequestException() throws Exception {
+    void creationOfSTWithBadRequestException() throws Throwable {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -143,7 +143,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    void creationOfSTWithAuthenticationException() throws Exception {
+    void creationOfSTWithAuthenticationException() throws Throwable {
         configureCasMockSTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -156,17 +156,17 @@ class ServiceTicketResourceTests {
         assertTrue(content.contains("Login failed"));
     }
 
-    private void configureCasMockSTCreationToThrow(final Throwable e) {
+    private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenThrow(e);
     }
 
-    private void configureCasMockToCreateValidST() {
+    private void configureCasMockToCreateValidST() throws Throwable {
         val st = mock(ServiceTicket.class);
         lenient().when(st.getId()).thenReturn("ST-1");
         lenient().when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 
-    private void configureCasMockSTCreationToThrowAuthenticationException() {
+    private void configureCasMockSTCreationToThrowAuthenticationException() throws Throwable {
         val handlerErrors = new HashMap<String, Throwable>(1);
         handlerErrors.put("TestCaseAuthenticationHandler", new LoginException("Login failed"));
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class)))

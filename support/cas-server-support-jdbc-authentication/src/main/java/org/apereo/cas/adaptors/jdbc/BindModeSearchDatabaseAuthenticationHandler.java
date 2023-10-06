@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.monitor.Monitorable;
@@ -12,7 +11,6 @@ import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -38,16 +36,14 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential,
-        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val username = credential.getUsername();
         val password = credential.toPassword();
         try (val connection = getDataSource().getConnection(username, password)) {
             LOGGER.trace("Established connection to schema [{}]", connection.getSchema());
             val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             throw new FailedLoginException(e.getMessage());
         }
     }

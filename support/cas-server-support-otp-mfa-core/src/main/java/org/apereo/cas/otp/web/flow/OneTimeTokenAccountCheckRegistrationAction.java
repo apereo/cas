@@ -22,8 +22,8 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractMultifac
     private final OneTimeTokenCredentialRepository repository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
         val uid = principal.getId();
 
         val accounts = repository.get(uid);

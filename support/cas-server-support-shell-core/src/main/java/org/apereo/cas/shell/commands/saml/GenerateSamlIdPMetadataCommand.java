@@ -56,7 +56,7 @@ public class GenerateSamlIdPMetadataCommand {
      * @param scope            the scope
      * @param force            force generation of metadata
      * @param subjectAltNames  additional subject alternative names for cert (besides entity id)
-     * @throws Exception the exception
+     * @throws Throwable the throwable
      */
     @ShellMethod(key = "generate-idp-metadata", value = "Generate SAML2 IdP Metadata")
     public void generate(
@@ -76,7 +76,7 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Force metadata generation (XML only, not certs), overwriting anything at the specified location") final boolean force,
         @ShellOption(value = {"subjectAltNames", "--subjectAltNames"},
             help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
-            defaultValue = StringUtils.EMPTY) final String subjectAltNames) throws Exception {
+            defaultValue = StringUtils.EMPTY) final String subjectAltNames) throws Throwable {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation),
             Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build());

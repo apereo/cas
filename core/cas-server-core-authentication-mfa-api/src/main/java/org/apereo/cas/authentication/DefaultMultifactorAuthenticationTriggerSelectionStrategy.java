@@ -27,7 +27,7 @@ public record DefaultMultifactorAuthenticationTriggerSelectionStrategy(Collectio
                                                                final HttpServletResponse response,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication,
-                                                               final Service service) {
+                                                               final Service service) throws Throwable {
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication policy for [{}] will ignore trigger executions", registeredService.getName());
             return Optional.empty();

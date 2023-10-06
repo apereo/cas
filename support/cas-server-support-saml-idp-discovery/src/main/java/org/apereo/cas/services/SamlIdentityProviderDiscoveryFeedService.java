@@ -36,9 +36,10 @@ public interface SamlIdentityProviderDiscoveryFeedService {
      * @param httpServletRequest  the servlet request
      * @param httpServletResponse the servlet response
      * @return the provider
+     * @throws Throwable the throwable
      */
     DelegatedClientIdentityProviderConfiguration getProvider(String entityID,
                                                              HttpServletRequest httpServletRequest,
-                                                             HttpServletResponse httpServletResponse);
+                                                             HttpServletResponse httpServletResponse) throws Throwable;
 
 }

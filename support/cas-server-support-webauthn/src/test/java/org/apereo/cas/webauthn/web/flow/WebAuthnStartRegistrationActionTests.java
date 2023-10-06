@@ -2,8 +2,8 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -15,18 +15,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
+
 
 import java.util.Map;
 
@@ -52,24 +46,15 @@ class WebAuthnStartRegistrationActionTests {
 
     @Autowired
     @Qualifier("webAuthnProtocolEndpointConfigurer")
-    private ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Exception {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            this.webAuthnMultifactorAuthenticationProvider, "webAuthnMultifactorAuthenticationProvider");
-
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+    void verifyOperation() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         assertNotNull(webAuthnStartRegistrationAction);

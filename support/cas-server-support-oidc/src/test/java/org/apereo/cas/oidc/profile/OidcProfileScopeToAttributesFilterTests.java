@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
-    void verifyOAuth() {
+    void verifyOAuth() throws Throwable {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
@@ -38,7 +38,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationFilterWithoutOpenId() {
+    void verifyOperationFilterWithoutOpenId() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
@@ -49,7 +49,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyScopeFreeWithOpenIdScope() {
+    void verifyScopeFreeWithOpenIdScope() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -73,7 +73,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
 
     @Test
-    void verifyOperationFilterWithOpenId() {
+    void verifyOperationFilterWithOpenId() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -101,7 +101,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationFilterWithServiceDefinedScopes() {
+    void verifyOperationFilterWithServiceDefinedScopes() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -126,7 +126,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperationFilterWithServiceDefinedReleasePolicy() {
+    void verifyOperationFilterWithServiceDefinedReleasePolicy() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -151,7 +151,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyByUserInfoClaims() {
+    void verifyByUserInfoClaims() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getClaims()).thenReturn(Map.of("userinfo", Map.of(
@@ -174,7 +174,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyAccessTokenNoScopes() {
+    void verifyAccessTokenNoScopes() throws Throwable {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));

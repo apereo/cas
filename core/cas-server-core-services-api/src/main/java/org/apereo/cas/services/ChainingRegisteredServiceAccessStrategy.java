@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.io.Serial;
 import java.net.URI;
@@ -70,29 +72,28 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService,
+                                          final Service service) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
+            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowed(registeredService, service));
         }
-        return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
+        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowed(registeredService, service));
     }
 
     @Override
-    @JsonIgnore
-    public boolean isServiceAccessAllowedForSso() {
+    public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
+            return strategies.stream().anyMatch(strategy -> strategy.isServiceAccessAllowedForSso(registeredService));
         }
-        return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
+        return strategies.stream().allMatch(strategy -> strategy.isServiceAccessAllowedForSso(registeredService));
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         if (operator == LogicalOperatorTypes.OR) {
-            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
+            return strategies.stream().anyMatch(Unchecked.predicate(strategy -> strategy.authorizeRequest(request)));
         }
-        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
+        return strategies.stream().allMatch(Unchecked.predicate(strategy -> strategy.authorizeRequest(request)));
     }
 
     @Override

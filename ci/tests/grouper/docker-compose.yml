@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    image: "postgres:15"
+    image: "postgres:16"
     restart: always
     ports:
       - '5432:5432'
@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:4.2.1"
+    image: "i2incommon/grouper:4.6.0"
     restart: always
     ports:
       - '443:443'

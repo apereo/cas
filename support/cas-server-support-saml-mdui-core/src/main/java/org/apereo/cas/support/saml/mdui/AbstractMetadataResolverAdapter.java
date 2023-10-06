@@ -5,7 +5,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -66,9 +65,9 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
         return FunctionUtils.doUnchecked(() -> {
-            val criterions = new CriteriaSet(new EntityIdCriterion(entityId));
+            val criteriaSet = new CriteriaSet(new EntityIdCriterion(entityId));
             if (this.metadataResolver != null) {
-                return this.metadataResolver.resolveSingle(criterions);
+                return this.metadataResolver.resolveSingle(criteriaSet);
             }
             return null;
         });
@@ -87,7 +86,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      *
      * @param entityId the entity id
      */
-    @Synchronized
     public void buildMetadataResolverAggregate(final String entityId) {
         LOGGER.trace("Building metadata resolver aggregate");
         this.metadataResolver = new ChainingMetadataResolver();
@@ -107,14 +105,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         });
     }
 
-    /**
-     * Retrieve the remote source's input stream to parse data.
-     *
-     * @param resource the resource
-     * @param entityId the entity id
-     * @return the input stream
-     * @throws IOException if stream cannot be read
-     */
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         LOGGER.debug("Locating metadata resource from input stream.");
         if (!resource.exists() || !resource.isReadable()) {
@@ -123,14 +113,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         return resource.getInputStream();
     }
 
-    /**
-     * Load metadata from resource.
-     *
-     * @param metadataFilter the metadata filter
-     * @param resource       the resource
-     * @param entityId       the entity id
-     * @return the list
-     */
     private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource,
                                                             final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());

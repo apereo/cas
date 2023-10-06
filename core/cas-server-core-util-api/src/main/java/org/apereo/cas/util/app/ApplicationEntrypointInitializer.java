@@ -1,5 +1,6 @@
 package org.apereo.cas.util.app;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.List;
 
 /**
@@ -14,10 +15,18 @@ public interface ApplicationEntrypointInitializer {
      *
      * @param mainArguments the main arguments
      */
-    default void initialize(final String[] mainArguments) {
+    @CanIgnoreReturnValue
+    default ApplicationEntrypointInitializer initialize(final String[] mainArguments) {
+        return this;
     }
 
-    default List<Class> getApplicationSources() {
+    /**
+     * Gets application sources.
+     *
+     * @param args the args
+     * @return the application sources
+     */
+    default List<Class> getApplicationSources(final String[] args) {
         return List.of();
     }
 

@@ -25,7 +25,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
     private final PasswordManagementService passwordManagementService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
 
         if (StringUtils.isBlank(token)) {

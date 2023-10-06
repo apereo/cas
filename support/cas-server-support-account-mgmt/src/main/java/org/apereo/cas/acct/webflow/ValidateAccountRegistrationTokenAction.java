@@ -29,7 +29,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
     private final AccountRegistrationService accountRegistrationService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         var accountRegTicket = (TransientSessionTicket) null;
         try {
             val activationToken = requestContext.getRequestParameters()

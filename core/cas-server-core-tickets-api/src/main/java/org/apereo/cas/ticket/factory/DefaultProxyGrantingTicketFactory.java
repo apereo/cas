@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -53,7 +52,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-                                                    final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
+                                                    final Authentication authentication, final Class<T> clazz) throws Throwable {
         val pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
@@ -127,12 +126,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     }
 
-    /**
-     * Produce ticket identifier.
-     *
-     * @return the ticket
-     */
-    protected String produceTicketIdentifier() {
+    protected String produceTicketIdentifier() throws Throwable {
         val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return pgtId;

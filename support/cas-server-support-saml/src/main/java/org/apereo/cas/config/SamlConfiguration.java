@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -28,7 +29,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.CasProtocolVersionValidationSpecification;
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
-import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -171,8 +172,8 @@ public class SamlConfiguration {
     public static class SamlWebSecurityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
-            return new ProtocolEndpointWebSecurityConfigurer<>() {
+        public CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
@@ -218,7 +219,7 @@ public class SamlConfiguration {
             final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
             val validationChain = new ChainingCasProtocolValidationSpecification();
             validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
-            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolValidationSpecification.CasProtocolVersions.SAML1)));
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolVersions.SAML1)));
             return validationChain;
         }
 

@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
@@ -17,13 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -54,7 +53,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     protected ServiceRegistry newServiceRegistry;
 
     @Test
-    void verifyLargeDataset() {
+    void verifyLargeDataset() throws Throwable {
         newServiceRegistry.save(
             () -> {
                 val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
@@ -72,7 +71,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    void verifyCompatibilityWithRegex() {
+    void verifyCompatibilityWithRegex() throws Throwable {
         val service = new RegexRegisteredService();
         service.setId(2020);
         service.setServiceId("http://localhost:8080");
@@ -94,7 +93,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    void verifySaveInStreams() {
+    void verifySaveInStreams() throws Throwable {
         var servicesToImport = Stream.<RegisteredService>empty();
         for (int i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);

@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
 @Tag("Web")
@@ -36,7 +37,7 @@ class CasProtocolThymeleafViewFactoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         val view = (CasThymeleafView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);

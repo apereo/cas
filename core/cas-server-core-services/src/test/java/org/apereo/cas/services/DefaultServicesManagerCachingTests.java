@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class DefaultServicesManagerCachingTests {
 
     @Test
-    void verifyServicesCache() throws Exception {
+    void verifyServicesCache() throws Throwable {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 
         val applicationContext = new StaticApplicationContext();

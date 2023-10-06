@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -40,5 +41,6 @@ public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientPropertie
      * specified tenant can login</li>
      * </ul>
      */
+    @ExpressionLanguageCapable
     private String tenant;
 }

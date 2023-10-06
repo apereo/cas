@@ -21,32 +21,32 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(2000);
     await cas.screenshot(page);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     let result = new URL(page.url());
-    console.log(result.searchParams.toString());
+    await cas.log(result.searchParams.toString());
 
     assert(result.searchParams.has("ticket") === false);
     assert(result.searchParams.has("client_id"));
     assert(result.searchParams.has("redirect_uri"));
     assert(result.searchParams.has("scope"));
 
-    console.log("Allowing release of scopes and claims...");
+    await cas.log("Allowing release of scopes and claims...");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    console.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await cas.screenshot(page);
-    assert(page.url().startsWith("https://oidcdebugger.com/debug"));
+    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         res => {
             assert(res.status === 200);
             let length = res.data.Resources.length;
-            console.log(`Found ${length} record`);
+            cas.log(`Found ${length} record`);
             assert(length === 1);
             assert(res.data.Resources[0].userName === "casuser")
         },

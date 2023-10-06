@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
 
     let pswd = await page.$('#password');
     assert(pswd == null);
@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     assert(await uid.evaluate(el => el.getAttribute("autocomplete")) === "username");
 
     await cas.type(page,'#username', "casuser");
-    await page.keyboard.press('Enter');
+    await cas.pressEnter(page);
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#login h3", "Provide Token");
     await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");

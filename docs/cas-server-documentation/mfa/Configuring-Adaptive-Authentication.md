@@ -18,6 +18,8 @@ days and times. For example, you may wish to trigger multifactor on select days 
 if the current hour is after 11pm or before 6am. Each rule block may be assigned 
 to an mfa provider where successful matching of rules allows for the multifactor trigger to execute.
 
+You might also be interested in reviewing [Risk-based Authentication](../authentication/Configuring-RiskBased-Authentication.html).
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.adaptive.policy" %}

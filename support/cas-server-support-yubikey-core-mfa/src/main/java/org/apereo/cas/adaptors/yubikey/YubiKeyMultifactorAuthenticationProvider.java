@@ -16,7 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
-import java.net.URL;
+import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -53,7 +53,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
             val endpoints = client.getWsapiUrls();
             for (val endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
-                val msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
+                val msg = this.httpClient.sendMessageToEndPoint(new URI(endpoint).toURL());
                 val message = Optional.ofNullable(msg).map(HttpMessage::getMessage).orElse(null);
                 if (StringUtils.isNotBlank(message)) {
                     val response = EncodingUtils.urlDecode(message);

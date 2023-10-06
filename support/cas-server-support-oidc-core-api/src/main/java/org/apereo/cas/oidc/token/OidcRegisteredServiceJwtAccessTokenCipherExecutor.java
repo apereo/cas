@@ -8,7 +8,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-
 import java.util.Optional;
 
 /**
@@ -33,7 +31,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * The service keystore for OIDC tokens.
@@ -68,7 +66,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             return Optional.empty();
         }
         val result = super.getEncryptionKey(registeredService);
-        if (result.isPresent()) {     
+        if (result.isPresent()) {
             return result;
         }
 
@@ -81,10 +79,9 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
     @Override
     protected JwtTicketCipherExecutor createCipherExecutorInstance(
-        final String encryptionKey,
-        final String signingKey,
+        final String encryptionKey, final String signingKey,
         final RegisteredService registeredService) {
-        return InternalJwtAccessTokenCipherExecutor.get(signingKey, encryptionKey, registeredService, this);
+        val cipher = InternalJwtAccessTokenCipherExecutor.get(signingKey, encryptionKey, registeredService, this);
+        return prepareCipherExecutor(cipher, registeredService);
     }
-
 }

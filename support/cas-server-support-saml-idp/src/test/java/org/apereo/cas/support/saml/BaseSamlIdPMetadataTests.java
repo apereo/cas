@@ -27,6 +27,7 @@ import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
@@ -35,7 +36,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
-
+import org.apereo.cas.config.SamlIdPThrottleConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -55,6 +56,7 @@ public abstract class BaseSamlIdPMetadataTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         ObservationAutoConfiguration.class,
@@ -79,6 +81,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         SamlIdPConfiguration.class,
+        SamlIdPThrottleConfiguration.class,
         SamlIdPMonitoringConfiguration.class,
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,
@@ -96,6 +99,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CoreSamlConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

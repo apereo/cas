@@ -35,7 +35,7 @@ class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends Base
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val accountView = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         assertEquals(1, accountView.getRenderActionList().size());

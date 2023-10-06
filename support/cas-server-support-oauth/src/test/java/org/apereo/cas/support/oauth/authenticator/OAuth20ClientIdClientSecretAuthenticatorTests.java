@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -22,10 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Locale;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,38 +38,54 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
     static class NullPrincipalTestConfiguration {
         @Bean
-        public PrincipalResolver defaultPrincipalResolver() {
+        public PrincipalResolver defaultPrincipalResolver() throws Throwable {
             val mockPrincipalResolver = mock(PrincipalResolver.class);
             when(mockPrincipalResolver.resolve(any())).thenReturn(NullPrincipal.getInstance());
             return mockPrincipalResolver;
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
+    @Nested
+    class AttributeMappingTests extends BaseOAuth20AuthenticatorTests {
+        @Test
+        @RetryingTest(2)
+        void verifyAuthenticationWithAttributesMapping() throws Throwable {
+            val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
+            val request = new MockHttpServletRequest();
+            val ctx = new JEEContext(request, new MockHttpServletResponse());
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
+            assertNotNull(credentials.getUserProfile());
+
+            assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
+            assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
+            assertNotNull(credentials.getUserProfile().getAttribute("groupMembership"));
+        }
+    }
+
     @Nested
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
-        public void verifyAuthentication() {
+        void verifyAuthentication() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
             assertEquals("client", credentials.getUserProfile().getId());
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypePassword() {
+        void verifyAuthenticationWithGrantTypePassword() throws Throwable {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
         }
 
         @Test
-        void verifyAuthenticationWithBadSecret() throws Exception {
+        void verifyAuthenticationWithBadSecret() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -83,11 +96,11 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
 
             assertThrows(CredentialsException.class,
-                () -> oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
+                () -> oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));
         }
 
         @Test
-        void verifyAuthenticationWithCodeChallengePkce() throws Exception {
+        void verifyAuthenticationWithCodeChallengePkce() throws Throwable {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -102,16 +115,16 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
             request.addParameter(OAuth20Constants.CODE, code.getId());
 
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
+        void verifyAuthenticationWithGrantTypeRefreshToken() throws Throwable {
             val refreshToken = getRefreshToken(serviceWithoutSecret);
             ticketRegistry.addTicket(refreshToken);
 
-            val credentials = new UsernamePasswordCredentials("serviceWithoutSecret", refreshToken.getId());
+            val credentials = new UsernamePasswordCredentials(serviceWithoutSecret.getClientId(), refreshToken.getId());
             val registeredService = new OAuthRegisteredService();
             registeredService.setClientId(credentials.getUsername());
             registeredService.setName(UUID.randomUUID().toString());
@@ -125,44 +138,30 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
 
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNull(credentials.getUserProfile());
 
             request.removeAllParameters();
             request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
 
             request.removeAllParameters();
             request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
             request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-            request.addParameter(OAuth20Constants.CLIENT_SECRET, "serviceWithoutSecret");
+            request.addParameter(OAuth20Constants.CLIENT_SECRET, serviceWithoutSecret.getClientSecret());
             request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
-        }
-
-        @Test
-        void verifyAuthenticationWithAttributesMapping() {
-            val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
-            val request = new MockHttpServletRequest();
-            val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
-            assertNotNull(credentials.getUserProfile());
-
-            assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
-            assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
-            assertNotNull(credentials.getUserProfile().getAttribute("groupMembership"));
         }
     }
 
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(NullPrincipalTestConfiguration.class)
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        void verifyAuthenticationWithoutResolvedPrincipal() {
+        void verifyAuthenticationWithoutResolvedPrincipal() throws Throwable {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();
@@ -173,7 +172,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
 
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
-            oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+            oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
             assertEquals(credentials.getUsername(), credentials.getUserProfile().getId());
         }

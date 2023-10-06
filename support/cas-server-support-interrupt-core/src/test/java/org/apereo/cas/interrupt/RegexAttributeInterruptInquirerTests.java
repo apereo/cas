@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 class RegexAttributeInterruptInquirerTests {
     @Test
-    void verifyResponseCanBeFoundFromAttributes() {
+    void verifyResponseCanBeFoundFromAttributes() throws Throwable {
         val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
@@ -34,7 +34,7 @@ class RegexAttributeInterruptInquirerTests {
     }
 
     @Test
-    void verifyInterruptSkippedWithServicePolicy() {
+    void verifyInterruptSkippedWithServicePolicy() throws Throwable {
         val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");
         val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setEnabled(false));

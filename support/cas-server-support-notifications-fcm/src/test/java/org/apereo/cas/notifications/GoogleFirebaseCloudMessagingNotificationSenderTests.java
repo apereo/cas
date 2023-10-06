@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GoogleFirebaseCloudMessagingConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
-
 import com.google.common.io.Files;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -15,16 +14,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     GoogleFirebaseCloudMessagingConfiguration.class,
     CasCoreUtilConfiguration.class
@@ -65,7 +64,7 @@ class GoogleFirebaseCloudMessagingNotificationSenderTests {
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(firebaseCloudMessagingNotificationSender);
         assertNotNull(notificationSender);
         val id = UUID.randomUUID().toString();

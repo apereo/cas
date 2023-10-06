@@ -46,7 +46,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
@@ -77,11 +77,11 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                         CasWebflowConstants.TRANSITION_ID_REDIRECT, ticket.getClass().getName(), ticket))
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new UnauthorizedServiceException("Unable to locate client identity provider " + clientName)),
+                    .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate client identity provider %s".formatted(clientName))),
                 throwable -> {
                     val message = String.format("Authentication request was denied from the provider %s", clientName);
                     LoggingUtils.warn(LOGGER, message, throwable);
-                    throw new UnauthorizedServiceException(throwable.getMessage(), throwable);
+                    throw UnauthorizedServiceException.wrap(throwable);
                 })
             .get();
     }
@@ -91,7 +91,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()
-            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, requestContext)));
     }
 
 }

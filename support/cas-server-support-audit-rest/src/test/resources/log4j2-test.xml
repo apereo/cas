@@ -15,7 +15,7 @@
         <Logger name="org.apereo.cas.audit" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

@@ -26,7 +26,7 @@ public class TicketGrantingTicketCheckAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (StringUtils.isBlank(tgtId)) {
             return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_NOT_EXISTS);

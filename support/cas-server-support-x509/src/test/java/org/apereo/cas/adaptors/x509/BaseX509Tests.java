@@ -22,11 +22,11 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.X509AuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.X509AuthenticationConfiguration;
 import org.apereo.cas.config.X509CertificateExtractorConfiguration;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseX509Tests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -65,6 +66,7 @@ public abstract class BaseX509Tests {
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryStubConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,
         CasPersonDirectoryGroovyConfiguration.class,
         CasCoreAuthenticationConfiguration.class,

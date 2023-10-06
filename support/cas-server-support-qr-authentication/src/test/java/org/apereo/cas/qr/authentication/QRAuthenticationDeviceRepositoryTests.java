@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class QRAuthenticationDeviceRepositoryTests {
     @Test
-    void verifyPermitAll() {
+    void verifyPermitAll() throws Throwable {
         val permitAll = QRAuthenticationDeviceRepository.permitAll();
         permitAll.removeDevice(UUID.randomUUID().toString());
         permitAll.removeAll();

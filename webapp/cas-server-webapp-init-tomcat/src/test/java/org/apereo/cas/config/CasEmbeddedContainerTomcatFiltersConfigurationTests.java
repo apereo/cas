@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -17,7 +17,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasEmbeddedContainerTomcatConfiguration.class,
     CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
@@ -53,7 +53,7 @@ class CasEmbeddedContainerTomcatFiltersConfigurationTests {
     private FilterRegistrationBean tomcatRemoteAddressFilter;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(tomcatCsrfPreventionFilter.getFilter());
         assertNotNull(tomcatRemoteAddressFilter.getFilter());
 

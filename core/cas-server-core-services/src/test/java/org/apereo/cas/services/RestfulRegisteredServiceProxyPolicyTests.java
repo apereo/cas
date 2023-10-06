@@ -14,7 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +33,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val policy = new RestfulRegisteredServiceProxyPolicy();
         policy.setEndpoint("http://localhost:9222");
         policy.setHeaders(CollectionUtils.wrap("header", "value"));
@@ -43,7 +43,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Throwable {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -51,12 +51,12 @@ class RestfulRegisteredServiceProxyPolicyTests {
             val policy = new RestfulRegisteredServiceProxyPolicy();
             policy.setEndpoint("http://localhost:9222");
             policy.setHeaders(CollectionUtils.wrap("header", "value"));
-            assertTrue(policy.isAllowedProxyCallbackUrl(service, new URL("https://proxy.example.org")));
+            assertTrue(policy.isAllowedProxyCallbackUrl(service, new URI("https://proxy.example.org").toURL()));
         }
     }
 
     @Test
-    void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Throwable {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();
@@ -64,7 +64,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
             val policy = new RestfulRegisteredServiceProxyPolicy();
             policy.setEndpoint("http://localhost:9222");
             policy.setHeaders(CollectionUtils.wrap("header", "value"));
-            assertFalse(policy.isAllowedProxyCallbackUrl(service, new URL("https://proxy.example.org")));
+            assertFalse(policy.isAllowedProxyCallbackUrl(service, new URI("https://proxy.example.org").toURL()));
         }
     }
 }

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public class OidcJpaJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() throws Throwable {
         val resource1 = oidcJsonWebKeystoreGeneratorService.generate();
         val jwks1 = IOUtils.toString(resource1.getInputStream(), StandardCharsets.UTF_8);
 

@@ -1,10 +1,8 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.Setter;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;

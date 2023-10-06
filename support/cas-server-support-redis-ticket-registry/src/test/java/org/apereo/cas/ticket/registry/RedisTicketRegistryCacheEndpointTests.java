@@ -45,7 +45,7 @@ class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyCachedTicket() throws Exception {
+    void verifyCachedTicket() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val generator = new TicketGrantingTicketIdGenerator(10, "redis");
         val ticket = new TicketGrantingTicketImpl(generator.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -61,7 +61,7 @@ class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyUnknownTicket() {
+    void verifyUnknownTicket() throws Throwable {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val generator = new TicketGrantingTicketIdGenerator(10, "redis");
         val ticket = new TicketGrantingTicketImpl(generator.getNewTicketId(TicketGrantingTicket.PREFIX),

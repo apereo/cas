@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

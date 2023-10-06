@@ -103,7 +103,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-                                              final AuthenticationTransaction transaction) {
+                                              final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
 
@@ -112,14 +112,14 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
     }
 
     @Override
-    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
+    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         if (service != null) {
             val registeredService = servicesManager.findServiceBy(service);
             LOGGER.trace("Located registered service definition [{}] for this authentication transaction", registeredService);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, service)) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
-                throw new UnauthorizedSsoServiceException();
+                throw new UnauthorizedSsoServiceException("Denied: %s".formatted(service));
             }
             val authenticationPolicy = registeredService.getAuthenticationPolicy();
             return !authenticationPolicy.getRequiredAuthenticationHandlers().isEmpty()

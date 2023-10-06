@@ -3,19 +3,18 @@ package org.apereo.cas.support.sms;
 import org.apereo.cas.config.ClickatellSmsConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link ClickatellSmsSenderTests}.
@@ -25,6 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ClickatellSmsConfiguration.class
 }, properties = {
     "cas.sms-provider.clickatell.server-url=http://localhost:8099",
@@ -37,7 +37,7 @@ class ClickatellSmsSenderTests {
     private SmsSender smsSender;
 
     @Test
-    void verifySmsSender() {
+    void verifySmsSender() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + '{'
@@ -64,7 +64,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyError() {
+    void verifyError() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "],"
@@ -80,7 +80,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyUnacceptable() {
+    void verifyUnacceptable() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\": \"false\", \"error\": \"fails\"}"
@@ -95,7 +95,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyBadPayload() {
+    void verifyBadPayload() throws Throwable {
         val data = '{'
             + "\"messages\": ["
             + "{\"accepted\":..."
@@ -110,7 +110,7 @@ class ClickatellSmsSenderTests {
     }
 
     @Test
-    void verifyBadSmsSender() {
+    void verifyBadSmsSender() throws Throwable {
         try (val webServer = new MockWebServer(8099,
             new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();

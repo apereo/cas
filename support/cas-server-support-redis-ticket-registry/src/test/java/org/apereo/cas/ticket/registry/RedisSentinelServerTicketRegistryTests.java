@@ -20,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.redis.pool.enabled=true",
 
     "cas.ticket.registry.redis.sentinel.master=mymaster",
+    "cas.ticket.registry.redis.sentinel.password=password456",
     "cas.ticket.registry.redis.sentinel.node[0]=localhost:26379",
     "cas.ticket.registry.redis.sentinel.node[1]=localhost:26380",
     "cas.ticket.registry.redis.sentinel.node[2]=localhost:26381",

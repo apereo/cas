@@ -19,7 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 @Tag("Groovy")
 class GroovyDelegatedClientUserProfileProvisionerTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val p = new GroovyDelegatedClientUserProfileProvisioner(new ClassPathResource("delegated-provisioner.groovy"));
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");

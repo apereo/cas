@@ -39,7 +39,7 @@ class SurrogateSelectionActionTests {
     private Action selectSurrogateAction;
 
     @Test
-    void verifyFails() throws Exception {
+    void verifyFails() throws Throwable {
         val context = new MockRequestContext();
         context.setExternalContext(mock(ServletExternalContext.class));
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -47,7 +47,7 @@ class SurrogateSelectionActionTests {
     }
 
     @Test
-    void verifyNoCredentialFound() throws Exception {
+    void verifyNoCredentialFound() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
@@ -58,7 +58,7 @@ class SurrogateSelectionActionTests {
     }
 
     @Test
-    void verifyCredentialFound() throws Exception {
+    void verifyCredentialFound() throws Throwable {
         val context = new MockRequestContext();
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val request = new MockHttpServletRequest();

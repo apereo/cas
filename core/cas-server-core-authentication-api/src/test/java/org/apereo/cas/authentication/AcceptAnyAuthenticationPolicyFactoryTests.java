@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
-import org.apereo.cas.services.ServiceContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,10 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationPolicy")
 class AcceptAnyAuthenticationPolicyFactoryTests {
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = new AcceptAnyAuthenticationPolicyFactory();
-        val policy = input.createPolicy(new ServiceContext(CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService()));
+        val policy = input.createPolicy(CoreAuthenticationTestUtils.getRegisteredService());
         assertNotNull(policy.getContext());
     }
 

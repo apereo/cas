@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowServiceActions")
 class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();
         getServicesManager().save(services.stream());
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

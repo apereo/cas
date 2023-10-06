@@ -26,14 +26,14 @@ public class DisplayUserGraphicsBeforeAuthenticationAction extends BaseCasWebflo
     private final UserGraphicalAuthenticationRepository repository;
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         val graphics = repository.getGraphics(username);
         if (graphics == null || graphics.isEmpty()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         val image = EncodingUtils.encodeBase64ToByteArray(graphics.read());
         WebUtils.putGraphicalUserAuthenticationUsername(requestContext, username);

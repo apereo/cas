@@ -62,14 +62,13 @@ public class PasswordManagementConfiguration {
     @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementValidationConfiguration {
-        @ConditionalOnMissingBean(name = "passwordValidationService")
+        @ConditionalOnMissingBean(name = PasswordValidationService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,
                                                                    @Qualifier(PasswordHistoryService.BEAN_NAME)
                                                                    final PasswordHistoryService passwordHistoryService) {
-            val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
-            return new DefaultPasswordValidationService(policyPattern, passwordHistoryService);
+            return new DefaultPasswordValidationService(casProperties, passwordHistoryService);
         }
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.delegation;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,8 +39,8 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     private ServicesManager servicesManager;
 
     @Test
-    void verifyNoneDefined() throws Exception {
-        val context = new MockRequestContext();
+    void verifyNoneDefined() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of())
@@ -50,8 +50,8 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyDefined() throws Exception {
-        val context = new MockRequestContext();
+    void verifyDefined() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of("CasClient"))
@@ -61,8 +61,8 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyUnknown() throws Exception {
-        val context = new MockRequestContext();
+    void verifyUnknown() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
             .allowedDelegatedClients(List.of("AnotherClient"))
@@ -72,13 +72,13 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    void verifyNoAccount() throws Exception {
-        val context = new MockRequestContext();
+    void verifyNoAccount() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         assertFalse(isAuthorized(context));
     }
 
 
-    private boolean isAuthorized(final MockRequestContext context) {
+    private boolean isAuthorized(final MockRequestContext context) throws Throwable {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);

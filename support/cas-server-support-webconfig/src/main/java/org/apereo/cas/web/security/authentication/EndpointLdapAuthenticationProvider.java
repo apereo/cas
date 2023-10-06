@@ -4,10 +4,9 @@ import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenera
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +32,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,12 +82,17 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
             val request = new AuthenticationRequest(username, new Credential(password), ReturnAttributes.ALL.value());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 
-            val response = this.authenticator.authenticate(request);
+            val response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.isSuccess()) {
-
-                val roles = securityProperties.getUser().getRoles();
+                val roles = securityProperties.getUser()
+                    .getRoles()
+                    .stream()
+                    .map(role -> StringUtils.prependIfMissing(role, ldapProperties.getLdapAuthz().getRolePrefix()))
+                    .map(String::toUpperCase)
+                    .collect(Collectors.toList());
+                LOGGER.debug("Required roles are [{}]", roles);
                 if (roles.isEmpty()) {
                     LOGGER.info("No user security roles are defined to enable authorization. User [{}] is considered authorized", username);
                     return generateAuthenticationToken(authentication, new ArrayList<>(0));
@@ -98,7 +101,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 val entry = response.getLdapEntry();
                 val profile = new CommonProfile();
                 profile.setId(username);
-                entry.getAttributes().forEach(a -> profile.addAttribute(a.getName(), a.getStringValues()));
+                entry.getAttributes().forEach(attribute -> profile.addAttribute(attribute.getName(), attribute.getStringValues()));
 
                 LOGGER.debug("Collected user profile [{}]", profile);
 
@@ -106,7 +109,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                     HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
                 val authZGen = buildAuthorizationGenerator();
 
-                val callContext = new CallContext(context, JEESessionStore.INSTANCE);
+                val callContext = new CallContext(context, new JEESessionStore());
                 authZGen.generate(callContext, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
@@ -116,9 +119,9 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                     .collect(Collectors.toCollection(ArrayList::new));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
                 val authorizer = new RequireAnyRoleAuthorizer(roles);
-                LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
+                LOGGER.debug("Executing authorization for expected roles [{}]", authorizer.getElements());
 
-                if (authorizer.isAllAuthorized(context, JEESessionStore.INSTANCE, CollectionUtils.wrap(profile))) {
+                if (authorizer.isAllAuthorized(context, new JEESessionStore(), CollectionUtils.wrap(profile))) {
                     return generateAuthenticationToken(authentication, authorities);
                 }
                 LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",

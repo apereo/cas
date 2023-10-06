@@ -26,10 +26,7 @@
     
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
-    "--cas.authn.pac4j.cas[0].client-name=CasClient",
-
-    "--cas.authn.oauth.session-replication.cookie.name=OAUTHDISSESSION",
-    "--cas.authn.pac4j.core.session-replication.cookie.name=PAC4JDISSESSION"
+    "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ],
-  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

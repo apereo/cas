@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
@@ -17,7 +18,6 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -59,7 +59,10 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     public Response buildResponse(final Optional<Assertion> assertion,
                                   final SamlProfileBuilderContext context) throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
-        val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), context.getSamlRequest().getID(), null);
+
+        val entityId = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId();
+        val recipient = getInResponseTo(context.getSamlRequest(), entityId, context.getRegisteredService().isSkipGeneratingResponseInResponseTo());
+        val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), recipient, null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
 
         val issuerId = FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getIssuerEntityId()),
@@ -124,7 +127,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().getSignResponses().isTrue()
             || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
-            List.of(Triple.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
+            List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 
@@ -133,7 +136,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             if (context.getSamlRequest() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
                 val message = """
                     SAML2 authentication request from %s indicated a passive authentication request, \
-                    but CAS is unable to satify and support this requirement, likely because \
+                    but CAS is unable to satisfy and support this requirement, likely because \
                     no existing single sign-on session is available yet to build the SAML2 response.
                     """.formatted(context.getAdaptor().getEntityId()).stripIndent().trim();
                 return newStatus(StatusCode.NO_PASSIVE, message);

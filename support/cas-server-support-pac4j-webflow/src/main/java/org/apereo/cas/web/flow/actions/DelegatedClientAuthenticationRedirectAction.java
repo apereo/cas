@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
@@ -57,6 +58,23 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
      */
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
+    @Override
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
+        val client = locateClientIdentityProvider(ticket);
+        initializeClientIdentityProvider(client);
+        val action = getRedirectionAction(ticket, requestContext);
+        LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action.toString());
+        if (action instanceof WithLocationAction) {
+            LOGGER.debug("Redirecting client [{}] based on identifier [{}]", client.getName(), ticket.getId());
+            handleIdentityProviderWithExternalRedirect(requestContext, client, action);
+        }
+        if (action instanceof WithContentAction) {
+            handleIdentityProviderWithDynamicContent(requestContext, client, action);
+        }
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+    }
+
     protected RedirectionAction getRedirectionAction(final TransientSessionTicket ticket,
                                                      final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -72,7 +90,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         }
 
         Optional.ofNullable(ticket.getService())
-            .ifPresent(service -> configureWebContextForRegisteredService(webContext, ticket));
+            .ifPresent(Unchecked.consumer(service -> configureWebContextForRegisteredService(webContext, ticket)));
 
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
         return configContext.getClients().findClient(clientName)
@@ -82,8 +100,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                .filter(contributor -> contributor.supports(client, webContext))
-                .forEach(contributor -> contributor.customize(client, webContext)))
+                .filter(Unchecked.predicate(contributor -> contributor.supports(client, webContext)))
+                .forEach(Unchecked.consumer(contributor -> contributor.customize(client, webContext))))
             .map(client -> {
                 val callContext = new CallContext(webContext, configContext.getSessionStore());
                 return client.getRedirectionActionBuilder().getRedirectionAction(callContext);
@@ -93,13 +111,8 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
             .orElseThrow();
     }
 
-    /**
-     * Configure web context for registered service.
-     *
-     * @param webContext the web context
-     * @param ticket     the ticket
-     */
-    protected void configureWebContextForRegisteredService(final WebContext webContext, final TransientSessionTicket ticket) {
+    protected void configureWebContextForRegisteredService(final WebContext webContext,
+                                                           final TransientSessionTicket ticket) throws Throwable {
         val registeredService = configContext.getServicesManager().findServiceBy(ticket.getService());
         val audit = AuditableContext.builder()
             .service(ticket.getService())
@@ -126,24 +139,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         }
     }
 
-    @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
-        val client = locateClientIdentityProvider(ticket);
-        initializeClientIdentityProvider(client);
-        val action = getRedirectionAction(ticket, requestContext);
-        LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action.toString());
-        if (action instanceof WithLocationAction) {
-            LOGGER.debug("Redirecting client [{}] based on identifier [{}]", client.getName(), ticket.getId());
-            handleIdentityProviderWithExternalRedirect(requestContext, client, action);
-        }
-        if (action instanceof WithContentAction) {
-            handleIdentityProviderWithDynamicContent(requestContext, client, action);
-        }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    }
-
-    protected void initializeClientIdentityProvider(final IndirectClient client) {
+    protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
         client.init();
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
@@ -160,7 +156,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected void handleIdentityProviderWithDynamicContent(final RequestContext requestContext,
                                                             final IndirectClient client,
                                                             final RedirectionAction action) throws Exception {
-        val seeOtherAction = WithContentAction.class.cast(action);
+        val seeOtherAction = (WithContentAction) action;
         val view = new DynamicHtmlView(seeOtherAction.getContent());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
@@ -172,7 +168,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected void handleIdentityProviderWithExternalRedirect(final RequestContext requestContext,
                                                               final IndirectClient client,
                                                               final RedirectionAction action) throws Exception {
-        val foundAction = WithLocationAction.class.cast(action);
+        val foundAction = (WithLocationAction) action;
         val builder = new URIBuilder(foundAction.getLocation());
         val url = builder.toString();
         LOGGER.debug("Redirecting to [{}] via client [{}]", url, client.getName());

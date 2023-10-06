@@ -17,20 +17,17 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.LinkedHashSet;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +39,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -64,7 +62,7 @@ class UniquePrincipalAuthenticationPolicyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyPolicyIsGoodUserNotFound() {
+    void verifyPolicyIsGoodUserNotFound() throws Throwable {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
@@ -72,7 +70,7 @@ class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyPolicyWithAssertion() throws Exception {
+    void verifyPolicyWithAssertion() throws Throwable {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
@@ -80,8 +78,7 @@ class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPolicyFailsUserFoundOnce() {
+    void verifyPolicyFailsUserFoundOnce() throws Throwable {
         this.ticketRegistry.deleteAll();
         val ticket = new TicketGrantingTicketImpl("TGT-1",
             CoreAuthenticationTestUtils.getAuthentication("casuser"),

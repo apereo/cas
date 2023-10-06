@@ -7,28 +7,19 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.Cookie;
 import java.util.List;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,24 +31,7 @@ class LogoutActionTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
 
-    private static final String TEST_SERVICE_ID = "TestService";
-
-    private MockHttpServletRequest request;
-
-    private MockRequestContext requestContext;
-
-    @BeforeEach
-    public void onSetUp() {
-        request = new MockHttpServletRequest();
-        requestContext = new MockRequestContext();
-        val response = new MockHttpServletResponse();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(requestContext);
-        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
-    }
-
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
     class FollowServiceRedirectsTests extends AbstractWebflowActionsTests {
         @Autowired
@@ -65,25 +39,29 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
-            request.addParameter("service", TEST_SERVICE_ID);
+        void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Throwable {
+            val testServiceId = UUID.randomUUID().toString();
+            val requestContext = MockRequestContext.create();
+            requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, testServiceId);
             val service = new CasRegisteredService();
-            service.setServiceId(TEST_SERVICE_ID);
-            service.setName(TEST_SERVICE_ID);
+            service.setServiceId(testServiceId);
+            service.setName(testServiceId);
             getServicesManager().save(service);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
-            assertEquals(TEST_SERVICE_ID, WebUtils.getLogoutRedirectUrl(requestContext, String.class));
+            assertEquals(testServiceId, WebUtils.getLogoutRedirectUrl(requestContext, String.class));
         }
 
         @Test
-        void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
+        void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Throwable {
+            val testServiceId = UUID.randomUUID().toString();
+            val requestContext = MockRequestContext.create();
             val service = new CasRegisteredService();
-            service.setServiceId(TEST_SERVICE_ID);
-            service.setName(TEST_SERVICE_ID);
+            service.setServiceId(testServiceId);
+            service.setName(testServiceId);
             getServicesManager().save(service);
 
-            WebUtils.putLogoutRedirectUrl(request, "https://example.com");
+            WebUtils.putLogoutRedirectUrl(requestContext.getHttpServletRequest(), "https://example.com");
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
             assertEquals("https://example.com", WebUtils.getLogoutRedirectUrl(requestContext, String.class));
@@ -91,7 +69,6 @@ class LogoutActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
     class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
@@ -99,15 +76,17 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        void verifyLogoutNoCookie() throws Exception {
+        void verifyLogoutNoCookie() throws Throwable {
+            val requestContext = MockRequestContext.create();
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
 
         @Test
         void logoutForServiceWithNoFollowRedirects() throws Exception {
-            getServicesManager().deleteAll();
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
+            val testServiceId = UUID.randomUUID().toString();
+            val requestContext = MockRequestContext.create();
+            requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, testServiceId);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
             assertNull(WebUtils.getLogoutRedirectUrl(requestContext, String.class));
@@ -115,29 +94,27 @@ class LogoutActionTests {
 
         @Test
         void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
-            getServicesManager().deleteAll();
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-            val service = new CasRegisteredService();
-            service.setServiceId("http://FooBar");
-            service.setName("FooBar");
-            getServicesManager().save(service);
+            val requestContext = MockRequestContext.create();
+            requestContext.getHttpServletRequest().addParameter(CasProtocolConstants.PARAMETER_SERVICE, UUID.randomUUID().toString());
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
             assertNull(WebUtils.getLogoutRedirectUrl(requestContext, String.class));
         }
 
         @Test
-        void verifyLogoutCookie() throws Exception {
+        void verifyLogoutCookie() throws Throwable {
+            val requestContext = MockRequestContext.create();
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            request.setCookies(cookie);
+            requestContext.getHttpServletRequest().setCookies(cookie);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
 
         @Test
-        void verifyLogoutRequestBack() throws Exception {
+        void verifyLogoutRequestBack() throws Throwable {
+            val requestContext = MockRequestContext.create();
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            request.setCookies(cookie);
+            requestContext.getHttpServletRequest().setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .registeredService(RegisteredServiceTestUtils.getRegisteredService())
                 .executionRequest(SingleLogoutExecutionRequest.builder()
@@ -151,9 +128,10 @@ class LogoutActionTests {
         }
 
         @Test
-        void verifyLogoutRequestFront() throws Exception {
+        void verifyLogoutRequestFront() throws Throwable {
+            val requestContext = MockRequestContext.create();
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            request.setCookies(cookie);
+            requestContext.getHttpServletRequest().setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .registeredService(RegisteredServiceTestUtils.getRegisteredService())
                 .executionRequest(SingleLogoutExecutionRequest.builder()
@@ -165,7 +143,7 @@ class LogoutActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_FRONT, event.getId());
             val logoutRequests = WebUtils.getLogoutRequests(requestContext);
             assertEquals(1, logoutRequests.size());
-            assertEquals(logoutRequest, logoutRequests.get(0));
+            assertEquals(logoutRequest, logoutRequests.getFirst());
         }
     }
 

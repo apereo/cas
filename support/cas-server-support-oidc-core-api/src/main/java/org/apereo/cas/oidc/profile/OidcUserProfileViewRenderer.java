@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.profile;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.oidc.OidcConstants;
@@ -14,7 +15,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
@@ -22,7 +22,6 @@ import org.jose4j.jwt.NumericDate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,22 +79,26 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
 
     private JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
         val claims = new JwtClaims();
-        userProfile.forEach((key, value) -> {
-            if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(key)) {
-                val attributes = (Map<String, Object>) value;
-                val newAttributes = new HashMap<String, Object>();
-                attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
-                claims.setClaim(key, newAttributes);
-            } else {
-                claims.setClaim(key, determineAttributeValue(key, value));
-            }
-        });
+        userProfile
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
+            .forEach(entry -> {
+                if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(entry.getKey())) {
+                    val attributes = (Map<String, Object>) entry.getValue();
+                    val newAttributes = new HashMap<String, Object>();
+                    attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
+                    claims.setClaim(entry.getKey(), newAttributes);
+                } else {
+                    claims.setClaim(entry.getKey(), determineAttributeValue(entry.getKey(), entry.getValue()));
+                }
+            });
         return claims;
     }
 
     protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
                                                                      final HttpServletResponse response,
-                                                                     final OidcRegisteredService registeredService) {
+                                                                     final OidcRegisteredService registeredService) throws Throwable {
         val claims = convertUserProfileIntoClaims(userProfile);
         claims.setAudience(registeredService.getClientId());
         claims.setIssuedAt(NumericDate.now());
@@ -125,7 +128,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
     protected Object determineAttributeValue(final String name, final Object attrValue) {
         val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
         val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
-        return result.map(defn -> defn.isSingleValue() && values.size() == 1 ? values.get(0) : attrValue)
-            .orElseGet(() -> values.size() == 1 ? values.get(0) : values);
+        return result.map(defn -> defn.toAttributeValue(values))
+            .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
     }
 }

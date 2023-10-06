@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("Hazelcast")
 class GoogleCloudPlatformDiscoveryStrategyTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val cluster = new HazelcastClusterProperties();
         val gcp = cluster.getDiscovery().getGcp();
         gcp.setLabel("label");

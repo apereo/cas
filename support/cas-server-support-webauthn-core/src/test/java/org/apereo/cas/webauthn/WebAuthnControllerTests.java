@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 class WebAuthnControllerTests {
 
     @Test
-    void verifyStartAuthentication() throws Exception {
+    void verifyStartAuthentication() throws Throwable {
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
@@ -78,7 +78,7 @@ class WebAuthnControllerTests {
     }
 
     @Test
-    void verifyFinishAuthentication() throws Exception {
+    void verifyFinishAuthentication() throws Throwable {
         val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);
@@ -137,7 +137,7 @@ class WebAuthnControllerTests {
     }
 
     @Test
-    void verifyStartRegistration() throws Exception {
+    void verifyStartRegistration() throws Throwable {
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
@@ -172,7 +172,7 @@ class WebAuthnControllerTests {
     }
 
     @Test
-    void verifyFinishRegistration() throws Exception {
+    void verifyFinishRegistration() throws Throwable {
         val authn = RegisteredServiceTestUtils.getAuthentication();
 
         val server = mock(WebAuthnServer.class);

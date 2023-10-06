@@ -3,7 +3,6 @@ package org.apereo.cas.notifications.sms;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -17,14 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulSmsSenderTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class
@@ -76,7 +74,7 @@ class RestfulSmsSenderTests {
         }
 
         @Test
-        void verifySms() {
+        void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
                 .to("1234567890").text("Hello CAS").build();
@@ -85,9 +83,9 @@ class RestfulSmsSenderTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class
@@ -96,7 +94,7 @@ class RestfulSmsSenderTests {
             "cas.sms-provider.rest.style=QUERY_PARAMETERS",
             "cas.sms-provider.rest.url=http://localhost:8132"
         })
-    
+
     public class RequestParameters {
         @Autowired
         @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -123,13 +121,11 @@ class RestfulSmsSenderTests {
         }
 
         @Test
-        void verifySms() {
+        void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
                 .to("1234567890").text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }
-
-
 }

@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val input = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         val token = getAccessToken();
         val credentials = new TokenCredentials(token.getId());
         ticketRegistry.addTicket(token);
         assertThrows(CredentialsException.class, () -> {
             val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-            input.validate(new CallContext(webContext, JEESessionStore.INSTANCE), credentials);
+            input.validate(new CallContext(webContext, new JEESessionStore()), credentials);
         });
     }
 

@@ -66,7 +66,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                 context.getRegisteredService().getServiceId(), usernameAttribute);
             val value = releasePolicyAttributes.get(usernameAttribute);
-            principalId = CollectionUtils.wrap(value).get(0).toString();
+            principalId = CollectionUtils.wrap(value).getFirst().toString();
         } else if (originalPrincipalAttributes.containsKey(usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
                          + "principal attribute and not through the attribute release policy for service [{}]. "
@@ -74,7 +74,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                          + "is explicitly authorized for release via the service attribute release policy.",
                 usernameAttribute, context.getRegisteredService(), usernameAttribute);
             val value = originalPrincipalAttributes.get(usernameAttribute);
-            principalId = CollectionUtils.wrap(value).get(0).toString();
+            principalId = CollectionUtils.wrap(value).getFirst().toString();
         } else {
             LOGGER.info("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                         + "provide the user attribute the service expects. "
@@ -87,8 +87,9 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     }
 
     protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(
-        final RegisteredServiceUsernameProviderContext context) {
-        if (context.getRegisteredService() != null && context.getRegisteredService().getAccessStrategy().isServiceAccessAllowed()) {
+        final RegisteredServiceUsernameProviderContext context) throws Throwable {
+        if (context.getRegisteredService() != null && context.getRegisteredService().getAccessStrategy()
+            .isServiceAccessAllowed(context.getRegisteredService(), context.getService())) {
             LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]",
                 context.getRegisteredService(), context.getPrincipal().getId());
             if (context.getRegisteredService().getAttributeReleasePolicy() == null) {
@@ -99,10 +100,11 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                 .registeredService(context.getRegisteredService())
                 .service(context.getService())
                 .principal(context.getPrincipal())
+                .applicationContext(context.getApplicationContext())
                 .build();
             return context.getRegisteredService().getAttributeReleasePolicy().getAttributes(releasePolicyContext);
         }
         LOGGER.debug("Could not locate service [{}] in the registry.", context.getService().getId());
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        throw UnauthorizedServiceException.denied("Rejected: %s".formatted(context.getService().getId()));
     }
 }

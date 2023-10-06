@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class GroovyPasswordEncoderTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val enc = new GroovyPasswordEncoder(new ClassPathResource("GroovyPasswordEncoder.groovy"), mock(ApplicationContext.class));
         assertTrue(enc.matches("helloworld", "6adfb183a4a2c94a2f92dab5ade762a47889a5a1"));
         assertNotNull(enc.encode("helloworld", "thisIsSalt".getBytes(StandardCharsets.UTF_8)));

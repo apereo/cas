@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
@@ -41,7 +40,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val resultMap = new HashMap<String, Object>();
         try {
             val credential = WebUtils.getCredential(requestContext);
@@ -49,8 +48,6 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                 val target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
                 LOGGER.debug("Located surrogate target as [{}]", target);
                 if (StringUtils.isNotBlank(target)) {
-                    val currentAuth = WebUtils.getAuthentication(requestContext);
-                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(currentAuth);
                     resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, target);
                     val registeredService = WebUtils.getRegisteredService(requestContext);
                     val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
@@ -65,11 +62,11 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                 LOGGER.debug("Credential is not supported [{}]", credential);
             }
             return success(resultMap);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             WebUtils.addErrorMessageToContext(requestContext, "screen.surrogates.account.selection.error",
                 "Unable to accept or authorize selection");
             LoggingUtils.error(LOGGER, e);
-            return error(e);
+            return error(new RuntimeException(e));
         }
     }
 }

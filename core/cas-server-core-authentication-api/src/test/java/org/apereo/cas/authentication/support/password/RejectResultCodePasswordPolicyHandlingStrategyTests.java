@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RejectResultCodePasswordPolicyHandlingStrategyTests {
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val s = new RejectResultCodePasswordPolicyHandlingStrategy<>();
         assertFalse(s.supports(null));
         val response = new Object();

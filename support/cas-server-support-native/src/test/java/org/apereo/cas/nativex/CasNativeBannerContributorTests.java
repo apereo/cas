@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasNativeBannerContributorTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         System.setProperty("java.vendor.version", "Oracle GraalVM");
         val environment = new MockEnvironment();
         val banner = CasBanner.getInstance();

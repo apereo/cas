@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.core.session-replication.cookie.auto-configure-cookie-path=true",
     "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata46"
 })
 class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "AuthnRequestRequestedAttributesAttributeReleasePolicyTests.json");
@@ -68,12 +68,10 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private MockHttpServletRequest httpRequest;
-
     private SAML2MessageContext saml2MessageContext;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    public void initialize() throws Throwable {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
@@ -88,15 +86,15 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        httpRequest = new MockHttpServletRequest();
+        val httpRequest = new MockHttpServletRequest();
         httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 
         val response = new MockHttpServletResponse();
         val ctx = new JEEContext(httpRequest, response);
 
-        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, new JEESessionStore()));
         saml2MessageContext.setSaml2Configuration(saml2Configuration);
-        
+
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
         assertNotNull(peer);
         peer.setEntityId("https://cas.example.org/idp");
@@ -131,7 +129,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyNoAuthnRequest() {
+    void verifyNoAuthnRequest() throws Throwable {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
@@ -141,6 +139,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")))
@@ -149,7 +148,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyAuthnRequestWithoutExtensions() throws Exception {
+    void verifyAuthnRequestWithoutExtensions() throws Throwable {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
@@ -164,6 +163,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")))
             .build();
@@ -172,7 +172,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyAuthnRequestWithExtensionsNotAllowed() throws Exception {
+    void verifyAuthnRequestWithExtensionsNotAllowed() throws Throwable {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(false);
@@ -199,6 +199,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")))
             .build();
@@ -207,7 +208,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyAuthnRequestWithExtensionsAllowed() throws Exception {
+    void verifyAuthnRequestWithExtensionsAllowed() throws Throwable {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalName"));
         filter.setUseFriendlyName(false);
@@ -231,10 +232,11 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         authnRequest.setID(UUID.randomUUID().toString());
 
         storeSamlAuthnRequest(authnRequest);
-        
+
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")))
             .build();
@@ -244,7 +246,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
         assertTrue(definitions.contains("eduPersonPrincipalName"));
     }
 
-    private void storeSamlAuthnRequest(@NotNull final AuthnRequest authnRequest) throws Exception {
+    private void storeSamlAuthnRequest(@NotNull final AuthnRequest authnRequest) throws Throwable {
         val request = (MockHttpServletRequest) HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         request.setParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
 

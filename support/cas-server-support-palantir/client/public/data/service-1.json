@@ -1,0 +1,8 @@
+{
+    "@class": "org.apereo.cas.services.CasRegisteredService",
+    "serviceId": "test",
+    "name": "sample",
+    "id": 1,
+    "theme": "twbs",
+    "evaluationOrder": 10
+}

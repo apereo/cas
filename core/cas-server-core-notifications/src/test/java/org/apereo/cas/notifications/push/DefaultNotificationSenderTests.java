@@ -3,20 +3,18 @@ package org.apereo.cas.notifications.push;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.Ordered;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,6 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     DefaultNotificationSenderTests.DefaultNotificationSenderTestConfiguration.class,
     CasCoreNotificationsConfiguration.class
 })
@@ -38,7 +37,7 @@ class DefaultNotificationSenderTests {
     private NotificationSender notificationSender;
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(notificationSender.canSend());
         assertFalse(new DefaultNotificationSender(List.of()).notify(CoreAuthenticationTestUtils.getPrincipal(), Map.of()));
 

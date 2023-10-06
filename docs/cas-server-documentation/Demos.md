@@ -14,7 +14,6 @@ The following demos are provided by the Apereo CAS project:
 |-----------------------------------------------------------------------------------------------------|--------------------------|-------------------------------------------------------------------|
 | [CAS Web Application Server](index.html)                                                            | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas)                       |
 | [CAS Zipkin Server](development/monitoring/Monitoring-Statistics.html)                              | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/)                    |
-| [CAS Service Discovery Server](development/installation/Service-Discovery-Guide.html)               | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/)                          |
 | [CAS Configuration Server](development/configuration/Configuration-Server-Management.html)          | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver/env) |
 
 Credentials used for the above CAS demos, where needed, are: `casuser` / `Mellon`.
