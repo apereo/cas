@@ -1,3 +1,4 @@
+import org.apereo.cas.authentication.principal.*
 import org.apereo.cas.services.*
 
 def isServiceAccessAllowed(RegisteredService registeredService, Service service) {

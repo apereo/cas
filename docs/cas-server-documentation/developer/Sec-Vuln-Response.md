@@ -148,7 +148,7 @@ a **four-week grace period** to allow community members and deployers to transit
 no additional details (i.e. steps to reproduce, severity and impact, etc) about the security issue are made public and fixes and
 commits to the codebase are kept privately. As a result, all release tags and other modifications to the CAS codebase related to the security fix
 are put on hold until the grace period is over. At the end of the grace period, details about the security vulnerability are made public and the
-actual patch, commit and release tags are then pushed to the CAS codebase, available to anyone.
+actual patch, commit and release tags are then pushed to the CAS codebase, available to everyone.
 
 <div class="alert alert-info">:information_source: <strong>GitHub Notifications</strong><p>Release notifications that are sent out by GitHub
 to those that watch the Apereo CAS repository on GitHub can only be sent out when and once after a tagged commit is made public. As a result, security releases whose

@@ -82,9 +82,9 @@ class DefaultAuthenticationManagerTests {
         when(mock.supports(any(Credential.class))).thenReturn(true);
         when(mock.getState()).thenCallRealMethod();
         if (success) {
-            val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
             val metadata = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("nobody");
-            val result = new DefaultAuthenticationHandlerExecutionResult(mock, metadata, p);
+            val result = new DefaultAuthenticationHandlerExecutionResult(mock, metadata, principal);
             when(mock.authenticate(any(Credential.class), any(Service.class))).thenReturn(result);
         } else if (!error) {
             when(mock.authenticate(any(Credential.class), any(Service.class))).thenThrow(new FailedLoginException());
@@ -373,8 +373,7 @@ class DefaultAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
-        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan, false,
-            applicationContext);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan, false, applicationContext);
 
         val auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
