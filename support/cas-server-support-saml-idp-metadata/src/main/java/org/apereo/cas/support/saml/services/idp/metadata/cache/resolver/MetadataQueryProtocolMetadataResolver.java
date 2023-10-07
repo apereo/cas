@@ -8,10 +8,10 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -24,7 +24,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -105,7 +104,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             }
         });
         LOGGER.trace("Fetching metadata via MDQ for [{}]", metadataLocation);
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(metadata.getBasicAuthnPassword())
             .basicAuthUsername(metadata.getBasicAuthnUsername())
             .method(HttpMethod.GET)
@@ -116,7 +115,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
         val response = HttpUtils.execute(exec);
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(metadataLocation));
         }
         return response;
     }

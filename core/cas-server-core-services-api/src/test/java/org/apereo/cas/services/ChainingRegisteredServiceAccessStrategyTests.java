@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -98,8 +99,8 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertFalse(chain.isServiceAccessAllowed());
-        assertFalse(chain.isServiceAccessAllowedForSso());
+        assertFalse(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        assertFalse(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
     }
 
     @Test
@@ -109,11 +110,11 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertFalse(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
     }
 
@@ -124,9 +125,9 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertTrue(chain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
     }
 
@@ -137,8 +138,8 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
-        assertTrue(chain.isServiceAccessAllowed());
-        assertTrue(chain.isServiceAccessAllowedForSso());
+        assertTrue(chain.isServiceAccessAllowed(CoreAuthenticationTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
+        assertTrue(chain.isServiceAccessAllowedForSso(CoreAuthenticationTestUtils.getRegisteredService()));
         assertNotNull(chain.getUnauthorizedRedirectUrl());
     }
 
@@ -169,14 +170,14 @@ class ChainingRegisteredServiceAccessStrategyTests {
         parentChain.setOperator(LogicalOperatorTypes.OR);
         parentChain.addStrategies(chain1, chain2);
 
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
-        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
 
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
-        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key3", Set.of("value3"))).build()));
     }
 }

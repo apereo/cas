@@ -81,35 +81,11 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     }
 
     /**
-     * Disable Spring Security configuration for protocol endpoints
-     * allowing CAS' own security configuration to handle protection
-     * of endpoints where necessary.
+     * Configure web security for spring security.
      *
      * @param web web security
      */
     public void configureWebSecurity(final WebSecurity web) {
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-        patterns.add("/webjars/**");
-        patterns.add("/themes/**");
-        patterns.add("/js/**");
-        patterns.add("/css/**");
-        patterns.add("/images/**");
-        patterns.add("/static/**");
-        patterns.add("/error");
-        patterns.add("/favicon.ico");
-        patterns.add("/");
-        patterns.add(webEndpointProperties.getBasePath());
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
-
-        val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
-        web.debug(LOGGER.isDebugEnabled())
-            .ignoring()
-            .requestMatchers(matchers);
     }
 
     /**
@@ -142,13 +118,15 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/static/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
+        patterns.add("/");
+        patterns.add(webEndpointProperties.getBasePath());
 
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         var requests = http.authorizeHttpRequests(customizer -> {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
-        
+
         protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
@@ -285,10 +263,10 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     private boolean isLdapAuthorizationActive() {
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         return StringUtils.isNotBlank(ldap.getBaseDn())
-               && StringUtils.isNotBlank(ldap.getLdapUrl())
-               && StringUtils.isNotBlank(ldap.getSearchFilter())
-               && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
-                   || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
+            && StringUtils.isNotBlank(ldap.getLdapUrl())
+            && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
+            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 
     private void configureLdapAuthenticationProvider(final HttpSecurity http,

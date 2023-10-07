@@ -2,11 +2,13 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
@@ -24,6 +26,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -123,10 +126,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
-            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).getFirst());
         }
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
-            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
         generateAccessTokenHash(accessToken, registeredService, claims);
 
@@ -196,7 +199,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         if (!mappedAcrValues.isEmpty()) {
             FunctionUtils.doIf(mappedAcrValues.size() == 1,
-                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.get(0)),
+                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.getFirst()),
                     __ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
                 .accept(mappedAcrValues);
         }
@@ -242,7 +245,21 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
         val mappedClaim = mapper.toMappedClaimName(claimName, registeredService);
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
-        return oidc.getDiscovery().getClaims().contains(claimName) || oidc.getDiscovery().getClaims().contains(mappedClaim);
+        val claims = oidc.getDiscovery().getClaims();
+        LOGGER.trace("Checking if any of [{}] are specified in the list of discovery claims [{}]", ImmutableSet.of(claimName, mappedClaim), claims);
+        return claims.contains(claimName) || claims.contains(mappedClaim) || isClaimDefinitionSupportedForRelease(mappedClaim);
+    }
+
+    private boolean isClaimDefinitionSupportedForRelease(final String claimName) {
+        val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        val claims = oidc.getDiscovery().getClaims();
+        val definitionName = getConfigurationContext().getAttributeDefinitionStore()
+            .locateAttributeDefinitionByName(claimName)
+            .filter(OidcAttributeDefinition.class::isInstance)
+            .map(AttributeDefinition::getKey)
+            .orElse(claimName);
+        LOGGER.trace("Checking if attribute definition [{}] is specified in the list of discovery claims [{}]", definitionName, claims);
+        return claims.contains(definitionName);
     }
 
     protected void handleMappedClaimOrDefault(final String claimName,

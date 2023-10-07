@@ -1,14 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -23,13 +22,9 @@ import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,19 +41,19 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
     private Action delegatedAuthenticationClientFinishLogoutAction;
-    
+
     @Autowired
     @Qualifier("builtClients")
     private Clients builtClients;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     @Order(1)
     void verifyOperationWithRedirect() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
@@ -76,19 +71,16 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1)
     void verifyOperationNoLogoutRedirectUrl() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
         val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
         logoutProcessor.setPostLogoutURL("https://google.com");
-        
+
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
-        
+
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
         assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());
@@ -98,12 +90,9 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1)
     void verifyOperationWithRelay() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
     }
@@ -111,19 +100,16 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1000)
     void verifyOperationFailsWithError() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
         val handler = mock(LogoutProcessor.class);
         when(handler.processLogout(any(), any())).thenReturn(new FoundAction("https://google.com"));
         samlClient.setLogoutProcessor(handler);
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
-        assertEquals(HttpStatus.FOUND.value(), response.getStatus());
-        assertEquals("https://google.com", response.getHeader("Location"));
+        assertEquals(HttpStatus.FOUND.value(), context.getHttpServletResponse().getStatus());
+        assertEquals("https://google.com", context.getHttpServletResponse().getHeader("Location"));
     }
 }

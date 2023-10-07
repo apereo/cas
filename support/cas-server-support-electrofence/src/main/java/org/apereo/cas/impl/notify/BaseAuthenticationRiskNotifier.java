@@ -4,13 +4,30 @@ import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.RiskAuthenticationCheckTokenAction;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.val;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.inspektr.common.web.ClientInfo;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * This is {@link BaseAuthenticationRiskNotifier}.
@@ -23,28 +40,58 @@ import lombok.Setter;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
 
-    /**
-     * CAS properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * The Authentication.
-     */
+    protected final CommunicationsManager communicationsManager;
+
+    protected final ServicesManager servicesManager;
+
+    protected final CipherExecutor riskVerificationCipherExecutor;
+
     protected Authentication authentication;
 
-    /**
-     * The Service.
-     */
     protected RegisteredService registeredService;
 
-    /**
-     * The Score.
-     */
     protected AuthenticationRiskScore authenticationRiskScore;
+
+    protected ClientInfo clientInfo;
 
     @Override
     public void run() {
         FunctionUtils.doUnchecked(__ -> publish());
+    }
+
+    protected String buildRiskVerificationUrl() {
+        return FunctionUtils.doUnchecked(() -> {
+            val riskToken = createRiskToken();
+            return new URIBuilder(casProperties.getServer().getPrefix())
+                .appendPath(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION)
+                .addParameter(RiskAuthenticationCheckTokenAction.PARAMETER_NAME_RISK_TOKEN, riskToken)
+                .build()
+                .toString();
+        });
+    }
+
+    @Override
+    public String createRiskToken() {
+        val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor, servicesManager, casProperties);
+        val expiration = Beans.newDuration(casProperties.getAuthn().getAdaptive()
+            .getRisk().getResponse().getRiskVerificationTokenExpiration());
+        val expirationDate = DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plus(expiration));
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("clientIpAddress", List.of(clientInfo.getClientIpAddress()));
+        attributes.put("userAgent", List.of(clientInfo.getUserAgent()));
+        attributes.put("geoLocation", List.of(clientInfo.getGeoLocation()));
+        val jwtRequest = JwtBuilder.JwtRequest
+            .builder()
+            .serviceAudience(Set.of(casProperties.getServer().getPrefix()))
+            .subject(authentication.getPrincipal().getId())
+            .jwtId(UUID.randomUUID().toString())
+            .registeredService(Optional.of(registeredService))
+            .issuer(casProperties.getServer().getName())
+            .validUntilDate(expirationDate)
+            .attributes(attributes)
+            .build();
+        return jwtBuilder.build(jwtRequest);
     }
 }

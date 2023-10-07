@@ -116,9 +116,9 @@ public class TokenAuthenticationSecurity {
 
     private static String getRegisteredServiceJwtProperty(final RegisteredService service,
                                                           final RegisteredServiceProperties propName) {
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed(service, null)) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Denied");
         }
         if (propName.isAssignedTo(service)) {
             val propertyValue = propName.getPropertyValue(service).value();

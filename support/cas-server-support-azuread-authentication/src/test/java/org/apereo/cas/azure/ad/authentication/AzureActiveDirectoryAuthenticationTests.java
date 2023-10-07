@@ -44,7 +44,6 @@ class AzureActiveDirectoryAuthenticationTests {
         "cas.authn.azure-active-directory.resource=https://unknown.example.org"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class UnknownResourceTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
@@ -64,7 +63,6 @@ class AzureActiveDirectoryAuthenticationTests {
         "cas.authn.azure-active-directory.tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class PublicClientTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
@@ -94,7 +92,6 @@ class AzureActiveDirectoryAuthenticationTests {
         "cas.authn.azure-active-directory.tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ConfidentialClientTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
@@ -115,7 +112,6 @@ class AzureActiveDirectoryAuthenticationTests {
         "cas.authn.attribute-repository.azure-active-directory[0].tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class AttributeResolutionTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
@@ -123,7 +119,7 @@ class AzureActiveDirectoryAuthenticationTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val repository = microsoftAzureActiveDirectoryAttributeRepositories.get(0);
+            val repository = microsoftAzureActiveDirectoryAttributeRepositories.getFirst();
             val person = repository.getPerson("castest@" + AZURE_AD_DOMAIN);
             assertNotNull(person);
         }

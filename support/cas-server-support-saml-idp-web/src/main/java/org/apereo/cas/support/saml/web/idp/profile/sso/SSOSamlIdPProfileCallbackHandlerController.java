@@ -86,14 +86,15 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && !authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest
+            && Boolean.FALSE.equals(authnRequest.isPassive())) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
 
         val authenticationContext = buildAuthenticationContextPair(request, response, authnContext);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        val binding = determineProfileBinding(authenticationContext);
+        val binding = determineProfileBinding(authenticationContext, request);
         if (StringUtils.isBlank(binding)) {
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
@@ -110,7 +111,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         throws Throwable {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof final AuthnRequest authnRequest
+            && Boolean.TRUE.equals(authnRequest.isPassive())) {
             LOGGER.info("Unable to establish authentication context for passive authentication request");
             return Optional.empty();
         }

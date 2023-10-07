@@ -4,17 +4,14 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -26,12 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthWeb")
 class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
-    @Override
-    @BeforeEach
-    public void setup() {
-        super.setup();
-        servicesManager.deleteAll();
-    }
 
     @Test
     void verifyAuthorizationAuth() throws Throwable {

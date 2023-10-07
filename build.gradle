@@ -120,6 +120,7 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
             property "sonar.login", token
+            property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
         }
@@ -367,7 +368,10 @@ subprojects {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
-            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF', '-Xep:NotJavadoc:OFF', '-Xep:AddressSelection:OFF']
+            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF',
+                                                    '-Xep:ClassCanBeStatic:OFF',
+                                                    '-Xep:NotJavadoc:OFF',
+                                                    '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs

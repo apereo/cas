@@ -153,7 +153,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
             if (policyChain.size() == 1) {
-                oidcService.setAttributeReleasePolicy(policyChain.getPolicies().get(0));
+                oidcService.setAttributeReleasePolicy(policyChain.getPolicies().getFirst());
             } else {
                 oidcService.setAttributeReleasePolicy(policyChain);
             }

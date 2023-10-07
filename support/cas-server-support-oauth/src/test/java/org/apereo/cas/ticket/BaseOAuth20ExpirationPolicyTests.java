@@ -40,19 +40,15 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -63,6 +59,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasOAuth20Configuration.class,
     CasOAuth20EndpointsConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -87,8 +84,6 @@ import static org.mockito.Mockito.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseOAuth20ExpirationPolicyTests {
-    protected static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthTokenExpirationPolicy.json");
-
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

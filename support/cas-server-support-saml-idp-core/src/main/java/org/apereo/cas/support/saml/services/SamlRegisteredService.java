@@ -71,6 +71,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String metadataSignatureLocation;
 
+    @JacksonInject("logoutResponseEnabled")
     private boolean logoutResponseEnabled = true;
 
     private String logoutResponseBinding;
@@ -95,40 +96,66 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @JacksonInject("signAssertions")
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
+    @JacksonInject("signUnsolicitedAuthnRequest")
     private boolean signUnsolicitedAuthnRequest;
 
+    @JacksonInject("skipGeneratingAssertionNameId")
     private boolean skipGeneratingAssertionNameId;
 
+    @JacksonInject("skipGeneratingSubjectConfirmationInResponseTo")
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
+    @JacksonInject("isSkipGeneratingResponseInResponseTo")
+    private boolean isSkipGeneratingResponseInResponseTo;
+
+    @JacksonInject("skipGeneratingSubjectConfirmationNotOnOrAfter")
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
+    @JacksonInject("skipGeneratingSubjectConfirmationRecipient")
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
+    @JacksonInject("skipGeneratingSubjectConfirmationAddress")
+    private boolean skipGeneratingSubjectConfirmationAddress;
+
+    @JacksonInject("skipGeneratingSubjectConfirmationNotBefore")
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
+    @JacksonInject("skipGeneratingSubjectConfirmationNameId")
     private boolean skipGeneratingSubjectConfirmationNameId = true;
 
+    @JacksonInject("skipGeneratingNameIdQualifiers")
     private boolean skipGeneratingNameIdQualifiers;
 
+    @JacksonInject("skipGeneratingTransientNameId")
     private boolean skipGeneratingTransientNameId;
 
+    @JacksonInject("skipValidatingAuthnRequest")
     private boolean skipValidatingAuthnRequest;
 
+    @JacksonInject("skipGeneratingServiceProviderNameIdQualifier")
     private boolean skipGeneratingServiceProviderNameIdQualifier;
 
+    @JacksonInject("skipGeneratingNameIdQualifier")
     private boolean skipGeneratingNameIdQualifier;
 
+    @JacksonInject("skipGeneratingSessionNotOnOrAfter")
     private boolean skipGeneratingSessionNotOnOrAfter;
     
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     @JacksonInject("signResponses")
     private TriStateBoolean signResponses = TriStateBoolean.TRUE;
 
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
+    @JacksonInject("signLogoutResponse")
+    private TriStateBoolean signLogoutResponse = TriStateBoolean.UNDEFINED;
+
+    @JacksonInject("encryptAssertions")
     private boolean encryptAssertions;
 
+    @JacksonInject("encryptAttributes")
     private boolean encryptAttributes;
 
+    @JacksonInject("encryptionOptional")
     private boolean encryptionOptional;
 
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;

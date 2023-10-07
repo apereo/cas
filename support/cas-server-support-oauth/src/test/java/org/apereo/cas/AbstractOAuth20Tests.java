@@ -90,6 +90,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -106,6 +107,8 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -131,6 +134,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -403,7 +407,7 @@ public abstract class AbstractOAuth20Tests {
                                                                  final String secret,
                                                                  final Set<OAuth20GrantTypes> grantTypes) {
         val service = new OAuthRegisteredService();
-        service.setName("The registered service name");
+        service.setName("RegisteredService-" + RandomUtils.randomAlphabetic(6));
         service.setServiceId(serviceId);
         service.setClientId(clientId);
         service.setClientSecret(secret);
@@ -717,14 +721,17 @@ public abstract class AbstractOAuth20Tests {
         return accessTokenResponseGenerator.generate(result);
     }
 
-    /**
-     * Gets default access token expiration.
-     *
-     * @return the default access token expiration
-     */
     protected long getDefaultAccessTokenExpiration() {
         val seconds = casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds();
         return Beans.newDuration(seconds).getSeconds();
+    }
+
+    protected HttpSession storeProfileIntoSession(final HttpServletRequest request, final CommonProfile profile) {
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute("OauthOidcServerSupport" + Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        return session;
     }
 
     @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)
@@ -756,6 +763,7 @@ public abstract class AbstractOAuth20Tests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

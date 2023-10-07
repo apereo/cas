@@ -13,11 +13,9 @@ length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
 
-Note: Remember that while the below policies are typically applied at release time on a per-service level, 
-CAS automatically does create attribute release caching policies at a more global with configurable timeouts
-and durations. 
-
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.core" %}
+
+## Principal Attribute Repositories
 
 The following settings are shared by all principal attribute repositories:
 
@@ -83,7 +81,7 @@ Sample configuration follows:
 
 {% endtabs %}
 
-## Merging Strategies
+### Merging Strategies
 
 By default, no merging strategy takes place, which means the principal attributes are always ignored and
 attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
@@ -184,7 +182,7 @@ For example:
 
 {% endtabs %}
 
-## Attribute Repository Filtering
+### Attribute Repository Filtering
 
 Principal attribute repositories can consult attribute sources defined and controlled by [Person Directory](Attribute-Resolution.html). Assuming a JSON attribute 
 repository source is defined with the identifier `MyJsonRepository`, the following definition disregards all previously-resolved attributes and contacts `MyJsonRepository`

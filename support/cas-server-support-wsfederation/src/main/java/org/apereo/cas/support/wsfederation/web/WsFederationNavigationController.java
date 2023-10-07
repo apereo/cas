@@ -65,7 +65,7 @@ public class WsFederationNavigationController {
                                    final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
         val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst()
-            .orElseThrow(() -> new UnauthorizedServiceException("Could not locate WsFederation configuration for " + wsfedId));
+            .orElseThrow(() -> UnauthorizedServiceException.denied("Could not locate WsFederation configuration for %s".formatted(wsfedId)));
         val service = determineService(request);
         val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
         val url = cfg.getAuthorizationUrl(id, cfg.getId());

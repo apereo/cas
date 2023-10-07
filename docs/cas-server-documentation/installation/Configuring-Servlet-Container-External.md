@@ -19,7 +19,7 @@ While there is no official project support, the following containers should be c
 * [JBoss](https://www.jboss.org/)
 * [Wildfly](https://wildfly.org/)
 * [Undertow](http://undertow.io/)
-* [Jetty](https://www.eclipse.org/jetty/) (At a minimum, Jetty `12` is required)
+* [Jetty](https://projects.eclipse.org/projects/rt.jetty) (At a minimum, Jetty `12` is required)
 * [GlassFish](https://glassfish.java.net/)
 * [WebSphere](https://www.ibm.com/cloud/websphere-hybrid-edition)
 
@@ -74,7 +74,7 @@ To disable CAS' own logging, define a `log4j2.xml` under `src/main/resources` an
     </Appenders>
     <Loggers>
         <AsyncRoot level="off">
-            <AppenderRef ref="console"/>
+            <AppenderRef ref="casConsole"/>
         </AsyncRoot>
     </Loggers>
 </Configuration>

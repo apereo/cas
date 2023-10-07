@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     assert(code.includes("Dear CAS Apereo,Here is your token->"));
     code = code.substring(code.lastIndexOf(">") + 1);
-    console.log(`Code to use is extracted as ${code}`);
+    await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
 
     await page.bringToFront();

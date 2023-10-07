@@ -12,7 +12,6 @@ import org.jooq.lambda.Unchecked;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,12 +57,10 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
         if (operator == LogicalOperatorTypes.OR) {
             return conditions
                 .stream()
-                .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
                 .anyMatch(Unchecked.predicate(condition -> condition.shouldActivate(request)));
         }
         return conditions
             .stream()
-            .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
             .allMatch(Unchecked.predicate(condition -> condition.shouldActivate(request)));
     }
 
@@ -72,12 +69,10 @@ public class ChainingRegisteredServiceAccessStrategyActivationCriteria implement
         if (operator == LogicalOperatorTypes.OR) {
             return conditions
                 .stream()
-                .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
                 .anyMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
         }
         return conditions
             .stream()
-            .sorted(Comparator.comparing(RegisteredServiceAccessStrategyActivationCriteria::getOrder))
             .allMatch(RegisteredServiceAccessStrategyActivationCriteria::isAllowIfInactive);
     }
 }

@@ -35,7 +35,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcUserProfileSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
         final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings) {

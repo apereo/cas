@@ -65,8 +65,8 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         final List<NameValuePair> params,
         final OAuth20RefreshToken refreshToken) throws Throwable {
         val attributes = holder.getAuthentication().getAttributes();
-        val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
-        val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
+        val state = attributes.get(OAuth20Constants.STATE).getFirst().toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).getFirst().toString();
 
         val builder = UriComponentsBuilder.fromUriString(holder.getRedirectUri());
         val stringBuilder = new StringBuilder();

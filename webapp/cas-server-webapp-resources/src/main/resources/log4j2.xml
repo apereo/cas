@@ -20,6 +20,7 @@ or override log42.component.properties to turn off async
         <Property name="pac4j.log.level">${main:\--logging.level.org.pac4j:-warn}</Property>
         <Property name="opensaml.log.level">${main:\--logging.level.org.opensaml:-warn}</Property>
         <Property name="hazelcast.log.level">${main:\--logging.level.com.hazelcast:-warn}</Property>
+        <Property name="jdbc.log.level">${main:\--logging.level.org.hibernate:-error}</Property>
         
         <Property name="log.console.stacktraces">true</Property>
         <Property name="log.file.stacktraces">false</Property>
@@ -131,7 +132,6 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.boot.devtools" level="debug" />
 
         <Logger name="org.springframework" level="warn" />
-
         <Logger name="org.springframework.ui" level="warn" />
         <Logger name="org.springframework.context" level="warn" />
         <Logger name="org.springframework.context.support" level="warn" />
@@ -148,20 +148,24 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.integration" level="warn"/>
         <Logger name="org.springframework.messaging" level="warn"/>
         <Logger name="org.springframework.web" level="${sys:spring.web.log.level}"/>
-        <Logger name="org.springframework.orm.jpa" level="warn"/>
         <Logger name="org.springframework.scheduling" level="warn"/>
         <Logger name="org.springframework.context.annotation" level="off"/>
         <Logger name="org.springframework.web.socket" level="warn"/>
         <Logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace"/>
         <Logger name="org.springframework.cloud.netflix.eureka" level="debug" />
-        
+
         <Logger name="de.codecentric.boot" level="info" />
+
+        <Logger name="io.micrometer" level="warn" />
 
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>
 
         <Logger name="org.thymeleaf" level="${sys:thymeleaf.log.level}" />
+
+        <Logger name="org.springframework.orm.jpa" level="${sys:jdbc.log.level}"/>
+        <Logger name="org.hibernate" level="${sys:jdbc.log.level}"/>
 
         <Logger name="org.pac4j" level="${sys:pac4j.log.level}"/>
 

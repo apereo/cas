@@ -1,27 +1,19 @@
 package org.apereo.cas.web.support.filters;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link RequestParameterPolicyEnforcementFilter}.
@@ -50,12 +42,7 @@ class RequestParameterPolicyEnforcementFilterTests {
 
         RequestParameterPolicyEnforcementFilter.checkOnlyPostParameters(method, parameterMap, onlyPostParameters);
     }
-
-    @BeforeEach
-    public void setup() {
-        AbstractSecurityFilter.setThrowOnErrors(true);
-    }
-
+    
     @Test
     void verifyParseFails() throws Throwable {
         RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(Set.of(), Set.of(), Map.of());
@@ -82,78 +69,17 @@ class RequestParameterPolicyEnforcementFilterTests {
     @Test
     void verifyNoOpConfigurationFailsFilterInit() throws Throwable {
         val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-            .thenReturn("true");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-            .thenReturn("none");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-            .thenReturn(null);
-
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS, "true");
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
-
-    @Test
-    void verifySettingFailSafeTrueFromInitParam() throws Throwable {
-
-        val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR)).thenReturn("true");
-
-        filter.init(filterConfig);
-        assertTrue(AbstractSecurityFilter.isThrowOnErrors());
-    }
-
-    @Test
-    void verifySettingFailSafeFalseFromInitParam() throws Throwable {
-
-        val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR))
-            .thenReturn("false");
-
-        filter.init(filterConfig);
-        assertFalse(AbstractSecurityFilter.isThrowOnErrors());
-    }
+    
 
     @Test
     void verifyRejectsMultiValuedRequestParameter() throws Throwable {
-
         val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-            .thenReturn(null);
-
+        val filterConfig = new MockFilterConfig();
 
         try {
             filter.init(filterConfig);
@@ -173,22 +99,10 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAcceptsMultiValuedRequestParameter() throws IOException, ServletException {
+    void verifyAcceptsMultiValuedRequestParameter() throws Exception {
         val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-            .thenReturn("true");
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-            .thenReturn(null);
-
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS, "true");
         try {
             filter.init(filterConfig);
         } catch (final Exception e) {
@@ -208,22 +122,9 @@ class RequestParameterPolicyEnforcementFilterTests {
 
     @Test
     void verifyRejectsRequestWithIllicitCharacterInCheckedParameter() throws Throwable {
-
         val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-            .thenReturn(null);
-
-
+        val filterConfig = new MockFilterConfig();
+        
         try {
             filter.init(filterConfig);
         } catch (final Exception e) {
@@ -242,23 +143,11 @@ class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    void verifyAllowsUncheckedParametersToHaveIllicitCharacters() throws IOException, ServletException {
+    void verifyAllowsUncheckedParametersToHaveIllicitCharacters() throws Exception {
         val filter = new RequestParameterPolicyEnforcementFilter();
-
-        val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
-        val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        val filterConfig = mock(FilterConfig.class);
-        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
-
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
-            .thenReturn(null);
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
-            .thenReturn("ticket");
-
-
+        val filterConfig = new MockFilterConfig();
+        filterConfig.addInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK, "ticket");
+        
         try {
             filter.init(filterConfig);
         } catch (final Exception e) {

@@ -8,13 +8,13 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&client_id=${clientId}&scope=profile&state=9qa3`;
 
     await cas.goto(page, url);
-    console.log(`Page URL: ${page.url()}`);
+    await cas.logPage(page);
     await page.waitForTimeout(1000);
     await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = `client_id=${clientId}&`;
     accessTokenParams += "client_secret=secret&";
@@ -22,13 +22,13 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     accessTokenParams += `redirect_uri=${encodeURIComponent(redirectUri)}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oauth2.0/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
+        cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
@@ -63,7 +63,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             throw error;
         });
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
 }
 
 (async () => {

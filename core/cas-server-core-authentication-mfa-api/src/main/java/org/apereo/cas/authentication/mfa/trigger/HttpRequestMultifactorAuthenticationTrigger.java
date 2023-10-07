@@ -66,7 +66,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
                 throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
             }
 
-            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, values.get(0));
+            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, values.getFirst());
             if (providerFound.isPresent()) {
                 return providerFound;
             }

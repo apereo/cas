@@ -16,6 +16,7 @@ import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,12 +30,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -63,7 +58,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     private OneTimeTokenCredentialRepository tokenCredentialRepository;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Exception {
         val servicesManager = mock(ServicesManager.class);
         val builder = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         googleAuthenticator = new GoogleAuthenticator(builder.build());
@@ -77,11 +72,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticator, tokenRepository, tokenCredentialRepository),
             null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
+        val context = MockRequestContext.create();
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
     }
 
@@ -145,7 +136,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             .build();
         tokenCredentialRepository.save(toSave);
         credential.setAccountId(toSave.getId());
-        credential.setToken(Integer.toString(account.getScratchCodes().get(0)));
+        credential.setToken(Integer.toString(account.getScratchCodes().getFirst()));
         val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         val otp = Integer.valueOf(credential.getToken());

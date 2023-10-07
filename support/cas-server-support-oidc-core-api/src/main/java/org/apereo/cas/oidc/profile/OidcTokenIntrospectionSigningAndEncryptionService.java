@@ -29,7 +29,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcTokenIntrospectionSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache,
+        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
         final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings) {

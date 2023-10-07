@@ -87,7 +87,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
-        val subjectData = subject.getSubjectConfirmations().get(0).getSubjectConfirmationData();
+        val subjectData = subject.getSubjectConfirmations().getFirst().getSubjectConfirmationData();
         assertEquals(now, subjectData.getNotOnOrAfter().truncatedTo(ChronoUnit.SECONDS));
     }
 
@@ -121,7 +121,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
-        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
         assertNotNull(subjectConfirmation.getEncryptedID());
         assertNull(subjectConfirmation.getNameID());
         assertNotNull(subject.getEncryptedID());

@@ -8,6 +8,7 @@ import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResult;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.ssl.SSLUtils;
 
@@ -48,6 +49,8 @@ class InweboServiceTests {
 
     private InweboService service;
 
+    private int serviceApiPort;
+
     @BeforeEach
     public void setUp() {
         val casProperties = new CasConfigurationProperties();
@@ -60,7 +63,10 @@ class InweboServiceTests {
 
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         inwebo.setClientCertificate(clientCertificate);
-        inwebo.setServiceApiUrl("http://localhost:8282");
+
+        serviceApiPort = RandomUtils.nextInt(4000, 9999);
+        inwebo.setServiceApiUrl("http://localhost:" + serviceApiPort);
+
         inwebo.setConsoleAdminUrl("http://localhost:8288");
 
         val sslContext = SSLUtils.buildSSLContext(clientCertificate);
@@ -169,7 +175,7 @@ class InweboServiceTests {
     @Test
     void verifyCheckPushResult() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -180,7 +186,7 @@ class InweboServiceTests {
     @Test
     void verifyAuthExtended() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -191,7 +197,7 @@ class InweboServiceTests {
     @Test
     void verifyPush() throws Throwable {
         val data = MAPPER.writeValueAsString(Map.of("err", "OK", "name", "Device", "sessionId", "123456"));
-        try (val webServer = new MockWebServer(8282,
+        try (val webServer = new MockWebServer(serviceApiPort,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

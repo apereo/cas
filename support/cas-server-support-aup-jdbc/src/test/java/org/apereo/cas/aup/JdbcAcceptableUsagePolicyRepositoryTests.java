@@ -51,7 +51,7 @@ class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePo
     }
     
     @Test
-    void determinePrincipalId() {
+    void determinePrincipalId() throws Throwable {
         val principalId = determinePrincipalId("casuser", CollectionUtils.wrap("accepted", "false"));
         assertEquals("casuser", principalId);
     }

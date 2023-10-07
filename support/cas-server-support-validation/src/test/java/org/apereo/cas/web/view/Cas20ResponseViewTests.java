@@ -45,6 +45,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,6 +73,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .applicationContext(applicationContext)
             .ticketRegistry(getTicketRegistry())
             .principalResolver(getDefaultPrincipalResolver())
             .principalFactory(getPrincipalFactory())
@@ -188,7 +190,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
             
             @Override
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
-                map.forEach(request::setAttribute);
+                Objects.requireNonNull(map).forEach(request::setAttribute);
             }
         };
         val view = new Cas20ResponseView(true, new NoOpProtocolAttributeEncoder(),

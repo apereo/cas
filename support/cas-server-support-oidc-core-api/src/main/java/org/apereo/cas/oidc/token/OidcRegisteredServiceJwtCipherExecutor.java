@@ -21,7 +21,7 @@ public interface OidcRegisteredServiceJwtCipherExecutor {
      *
      * @return the default json web keystore cache
      */
-    LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> getDefaultJsonWebKeystoreCache();
+    LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> getDefaultJsonWebKeystoreCache();
 
     /**
      * Gets registered service json web keystore cache.

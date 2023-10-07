@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.risk.RiskBasedAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;

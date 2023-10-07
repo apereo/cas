@@ -53,7 +53,7 @@ class X509RestMultipartBodyCredentialFactoryTests {
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
-        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).iterator().next();
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).getFirst();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 

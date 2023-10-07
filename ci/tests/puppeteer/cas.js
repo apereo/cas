@@ -18,6 +18,17 @@ const operativeSystemModule = require("os");
 const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
 const jose = require('jose');
+const pino = require('pino');
+const xml2js = require('xml2js');
+const {Docker} = require('node-docker-api');
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+
+const LOGGER = pino({
+    level: "debug",
+    transport: {
+        target: 'pino-pretty'
+    }
+});
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -25,7 +36,8 @@ const BROWSER_OPTIONS = {
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     timeout: 60000,
-    dumpio: true,
+    protocolTimeout: 60000,
+    dumpio: false,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
@@ -37,28 +49,37 @@ exports.browserOptions = (opt) => ({
     ...opt
 });
 
+exports.log = async(text, ...args) => {
+    await LOGGER.debug(`👉 ${text}`, args);
+};
+
 exports.logy = async (text) => {
-    console.log(colors.yellow(text));
+    await LOGGER.warn(`🔥 ${colors.yellow(text)}`);
 };
 
 exports.logb = async (text) => {
-    console.log(colors.blue(text));
+    await LOGGER.debug(`ℹ️ ${colors.blue(text)}`);
 };
 
 exports.logg = async (text) => {
-    console.log(colors.green(text));
+    await LOGGER.info(`✅ ${colors.green(text)}`);
 };
 
 exports.logr = async (text) => {
-    console.log(colors.red(text));
+    await LOGGER.error(`🔴 ${colors.red(text)}`);
+};
+
+exports.logPage = async(page) => {
+    const url = await page.url();
+    await this.log(`Page URL: ${url}`);
 };
 
 exports.removeDirectory = async (directory) => {
-    console.log(`Removing directory ${colors.green(directory)}`);
+    this.logg(`Removing directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await fs.rmSync(directory, {recursive: true});
     }
-    console.log(`Removed directory ${colors.green(directory)}`);
+    this.logg(`Removed directory ${colors.green(directory)}`);
     if (fs.existsSync(directory)) {
         await this.logr(`Removed directory still present at: ${directory}`);
     }
@@ -67,13 +88,14 @@ exports.removeDirectory = async (directory) => {
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
         let buttonNode = document.querySelector(button);
-        console.log(`Clicking element ${button} with link ${buttonNode.href}`);
+        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 };
 
 exports.asciiart = async (text) => {
-    await this.logb(figlet.textSync(text));
+    const art = figlet.textSync(text);
+    console.log(colors.blue(art));
 };
 
 exports.clickLast = async (page, button) => {
@@ -85,36 +107,48 @@ exports.clickLast = async (page, button) => {
 
 exports.innerHTML = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerHTML.trim());
-    console.log(`HTML for selector [${selector}] is: [${text}]`);
+    await this.log(`HTML for selector [${selector}] is: [${text}]`);
     return text;
 };
 
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
-    console.log(`Text for selector [${selector}] is: [${text}]`);
+    await this.log(`Text for selector [${selector}] is: [${text}]`);
     return text;
 };
 
-exports.innerTexts = async (page, selector) => {
-    return await page.evaluate((button) => {
+exports.elementValue = async (page, selector, valueToSet = undefined) => {
+    let text = await page.$eval(selector, el => el.value.trim());
+    if (valueToSet !== undefined && valueToSet !== null) {
+        await this.log(`Setting value for selector [${selector}] to: [${valueToSet}]`);
+        await page.$eval(selector, (el, toSet) => {
+            el.value = toSet;
+        }, valueToSet);
+    } else {
+        await this.log(`Value for selector [${selector}] is: [${text}]`);
+    }
+    return text;
+};
+
+exports.innerTexts = async (page, selector) =>
+    await page.evaluate((button) => {
         let results = [];
         let elements = document.querySelectorAll(button);
         elements.forEach(entry => results.push(entry.innerText.trim()));
         return results;
     }, selector);
-};
 
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(`Text content for selector [${selector}] is: [${text}]`);
+    await this.log(`Text content for selector [${selector}] is: [${text}]`);
     return text;
 };
 
 exports.inputValue = async (page, selector) => {
     const element = await page.$(selector);
     const text = await page.evaluate(element => element.value, element);
-    console.log(`Input value for selector [${selector}] is: [${text}]`);
+    await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
 };
 
@@ -122,24 +156,24 @@ exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
         const client = new ImgurClient({clientId: clientId});
-        console.log(`Uploading image ${colors.green(imagePath)}`);
-        client.on('uploadProgress', (progress) => console.log(progress));
+        await this.logg(`Uploading image ${colors.green(imagePath)}`);
+        client.on('uploadProgress', (progress) => this.log(progress));
         const response = await client.upload({
             image: fs.createReadStream(imagePath),
             type: 'stream',
         });
-        console.log(`Uploaded image is at ${colors.green(response.data.link)}`);
+        await this.logg(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
 };
 
-exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
+exports.waitForElement = async (page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
 exports.loginWith = async (page,
                            user = "casuser",
                            password = "Mellon",
                            usernameField = "#username",
                            passwordField = "#password") => {
-    console.log(`Logging in with ${user} and ${password}`);
+    await this.log(`Logging in with ${user} and ${password}`);
     await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
 
@@ -151,7 +185,7 @@ exports.loginWith = async (page,
 };
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
-    console.log(`Fetching Scratch codes for ${user}...`);
+    await this.log(`Fetching Scratch codes for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
         "GET", {
             'Accept': 'application/json'
@@ -161,7 +195,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     let result = (element != null && await element.boundingBox() != null);
-    console.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
+    await this.log(`Checking element visibility for ${selector} while on page ${page.url()}: ${result}`);
     return result;
 };
 
@@ -172,24 +206,24 @@ exports.assertVisibility = async (page, selector) => {
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     let result = element == null || await element.boundingBox() == null;
-    console.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
+    await this.log(`Checking element invisibility for ${selector} while on page ${page.url()}: ${result}`);
     assert(result);
 };
 
 
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter(c => {
-        console.log(`Checking cookie ${c.name}:${c.value}`);
+        this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName
     });
-    console.log(`Found cookies ${cookies.length}`);
+    await this.log(`Found cookies ${cookies.length}`);
     if (cookieMustBePresent) {
-        console.log(`Checking for cookie ${cookieName}, which MUST be present`);
+        await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0);
-        console.log(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
+        await this.logg(`Asserting cookie:\n${colors.green(JSON.stringify(cookies, undefined, 2))}`);
         return cookies[0];
     }
-    console.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
+    await this.log(`Checking for cookie ${cookieName}, which MUST NOT be present`);
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
@@ -202,9 +236,9 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
 };
 
 exports.submitForm = async (page, selector, predicate = undefined) => {
-    console.log(`Submitting form ${selector}`);
+    await this.log(`Submitting form ${selector}`);
     if (predicate === undefined) {
-        console.log("Waiting for page to produce a valid response status code");
+        await this.log("Waiting for page to produce a valid response status code");
         predicate = async response => response.status() > 0;
     }
     return await Promise.all([
@@ -214,31 +248,56 @@ exports.submitForm = async (page, selector, predicate = undefined) => {
     ]);
 };
 
-exports.pressEnter = async(page) => {
+exports.pressEnter = async (page) => {
     page.keyboard.press('Enter');
     page.waitForTimeout(1000);
 };
 
 exports.type = async (page, selector, value, obfuscate = false) => {
     let logValue = obfuscate ? `******` : value;
-    console.log(`Typing ${logValue} in field ${selector}`);
+    await this.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 };
 
 exports.newPage = async (browser) => {
-    let page = (await browser.pages())[0];
+    let page = undefined;
+    try {
+        page = (await browser.pages())[0];
+    } catch (e) {
+        this.logr(e);
+        await this.sleep(1000);
+    }
+    
     if (page === undefined) {
-        console.log("Opening a new page...");
-        page = await browser.newPage();
+        let counter = 0;
+        while (page === undefined && counter < 5) {
+            try {
+                counter++;
+                await this.log(`Opening a new browser page...`);
+                page = await browser.newPage();
+            } catch (e) {
+                this.logr(e);
+                await this.sleep(1000);
+            }
+        }
     }
     // await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
+
+    if (page === null || page === undefined) {
+        const err = "Unable to open a new browser page";
+        await this.logr(err);
+        throw err;
+    }
+    
     await page.bringToFront();
     page
         .on('console', message => {
             if (message.type() === "warning") {
                 this.logy(`Console ${message.type()}: ${message.text()}`)
+            } else if (message.type() === "error") {
+                this.logr(`Console ${message.type()}: ${message.text()}`)
             } else {
                 this.logg(`Console ${message.type()}: ${message.text()}`)
             }
@@ -248,10 +307,10 @@ exports.newPage = async (browser) => {
 };
 
 exports.assertParameter = async (page, param) => {
-    console.log(`Asserting parameter ${param} in URL: ${page.url()}`);
+    await this.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
-    console.log(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
+    await this.logg(`Parameter ${colors.green(param)} with value ${colors.green(value)}`);
     assert(value != null);
     return value;
 };
@@ -268,12 +327,12 @@ exports.sleep = async (ms) =>
     });
 
 exports.assertTicketParameter = async (page, found = true) => {
-    console.log(`Page URL: ${page.url()}`);
+    await this.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
     if (found) {
         assert(result.searchParams.has("ticket"));
         let ticket = result.searchParams.get("ticket");
-        console.log(`Ticket: ${ticket}`);
+        await this.log(`Ticket: ${ticket}`);
         assert(ticket != null);
         return ticket;
     }
@@ -292,12 +351,12 @@ exports.doRequest = async (url, method = "GET",
             rejectUnauthorized: false,
             headers: headers
         };
-        options.agent = new https.Agent( options );
+        options.agent = new https.Agent(options);
 
-        console.log(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
-        const handler = (res) => {
-            console.log(`Response status code: ${colors.green(res.statusCode)}`);
-            // console.log(`Response headers: ${colors.green(res.headers)}`)
+        this.logg(`Contacting ${colors.green(url)} via ${colors.green(method)}`);
+        const handler = async (res) => {
+            this.logg(`Response status code: ${colors.green(res.statusCode)}`);
+            // this.logg(`Response headers: ${colors.green(res.headers)}`)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
@@ -306,7 +365,7 @@ exports.doRequest = async (url, method = "GET",
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
             if (callback !== undefined) {
-                callback(res);
+                await callback(res);
             }
         };
 
@@ -320,6 +379,7 @@ exports.doRequest = async (url, method = "GET",
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
+        timeout: 10000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -330,34 +390,33 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
     if (responseType !== undefined) {
         config["responseType"] = responseType
     }
-    console.log(`Sending GET request to ${url}`);
+    await this.log(`Sending GET request to ${url}`);
     return await instance
         .get(url, config)
         .then(res => {
             if (responseType !== "blob" && responseType !== "stream") {
                 // let json = JSON.parse(body)
                 console.dir(res.data, {depth: null, colors: true});
-                // console.log(res.data);
+                // this.log(res.data);
             }
             return successHandler(res);
         })
-        .catch(error => {
-            return failureHandler(error);
-        })
+        .catch(error => failureHandler(error))
 };
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
+        timeout: 10000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    console.log(`Posting to URL ${colors.green(url)}`);
+    await this.logg(`Posting to URL ${colors.green(url)}`);
     return await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
-            console.log(res.data);
+            this.log(res.data);
             return successHandler(res);
         })
         .catch(error => {
@@ -392,7 +451,7 @@ exports.runGradle = async (workdir, opts = [], exitFunc) => {
     const exec = spawn(gradleCmd, opts, {cwd: workdir});
     await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
     exec.stdout.on('data', (data) => {
-        console.log(data.toString());
+        this.log(data.toString());
     });
     exec.stderr.on('data', (data) => {
         console.error(data.toString());
@@ -405,16 +464,14 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
     args = args.concat(opts);
     await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    return this.runGradle(spDir, args, (code) => {
-        console.log(`WSFED SP Child process exited with code ${code}`);
-    });
+    return this.runGradle(spDir, args, (code) => this.log(`WSFED SP Child process exited with code ${code}`));
 };
 
 exports.stopGradleApp = async (gradleDir, deleteDir = true) => {
     let args = ['appStop', '-q', '--no-daemon'];
     await this.logg(`Stopping process in ${gradleDir} with ${args}`);
     return this.runGradle(gradleDir, args, (code) => {
-        console.log(`Stopped child process exited with code ${code}`);
+        this.log(`Stopped child process exited with code ${code}`);
         if (deleteDir) {
             this.sleep(3000);
             this.removeDirectory(gradleDir);
@@ -434,19 +491,19 @@ exports.shutdownCas = async (baseUrl) => {
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    console.log(`Checking ${header} to start with ${value}`);
+    await this.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    console.log(`Checking [${header}] to contain [${value}]`);
+    await this.log(`Checking [${header}] to contain [${value}]`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
-    console.log(`Checking ${header} to contain ${value}`);
+    await this.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
 };
 
@@ -457,13 +514,13 @@ exports.assertInnerText = async (page, selector, value) => {
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
-    console.log(`Page Title: ${title}`);
+    await this.log(`Page Title: ${title}`);
     assert(title === value)
 };
 
 exports.assertPageTitleContains = async (page, value) => {
     const title = await page.title();
-    console.log(`Page Title: ${title}`);
+    await this.log(`Page Title: ${title}`);
     assert(title.includes(value))
 };
 
@@ -480,7 +537,7 @@ exports.recordScreen = async (page) => {
         aspectRatio: '4:3',
     };
     const recorder = new PuppeteerScreenRecorder(page, config);
-    console.log(`Recording screen to ${filePath}`);
+    await this.log(`Recording screen to ${filePath}`);
     await recorder.start(filePath);
     return recorder;
 };
@@ -488,84 +545,84 @@ exports.recordScreen = async (page) => {
 exports.createJwt = async (payload, key, alg = "RS256", options = {}) => {
     let allOptions = {...{algorithm: alg}, ...options};
     const token = JwtOps.sign(payload, key, allOptions, undefined);
-    console.log(`Created JWT:\n${colors.green(token)}\n`);
+    await this.logg(`Created JWT:\n${colors.green(token)}\n`);
     return token;
 };
 
 exports.verifyJwt = async (token, secret, options) => {
-    console.log(`Decoding token ${token}`);
+    await this.log(`Decoding token ${token}`);
     let decoded = JwtOps.verify(token, secret, options, undefined);
     if (options.complete) {
-        console.log(`Decoded token header: ${colors.green(decoded.header)}`);
-        console.log("Decoded token payload:");
+        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
-        console.log("Decoded token payload:");
+        await this.log("Decoded token payload:");
         await this.logg(decoded);
     }
     return decoded;
 };
 
-exports.verifyJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.verifyJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     await this.logg("Using key to verify JWT:");
-    console.log(keyContent);
+    await this.log(keyContent);
     const secretKey = await jose.importJWK(keyContent, alg);
     const decoded = await jose.jwtVerify(ticket, secretKey);
-    console.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded.payload);
     return decoded;
 };
 
-exports.decryptJwt = async(ticket, keyPath, alg = "RS256") => {
-    console.log(`Using private key path ${keyPath}`);
+exports.decryptJwt = async (ticket, keyPath, alg = "RS256") => {
+    await this.log(`Using private key path ${keyPath}`);
     if (fs.existsSync(keyPath)) {
         const keyContent = fs.readFileSync(keyPath, 'utf8');
         await this.logg("Using private key to verify JWT:");
-        console.log(keyContent);
+        await this.log(keyContent);
         const secretKey = await jose.importPKCS8(keyContent, alg);
         const decoded = await jose.jwtDecrypt(ticket, secretKey, {});
-        console.log("Verified JWT:\n");
+        await this.log("Verified JWT:\n");
         await this.logg(decoded.payload);
         return decoded;
     }
     throw `Unable to locate private key ${keyPath} to verify JWT`
 };
 
-exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
+exports.decryptJwtWithJwk = async (ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
-    console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
+    await this.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
-    console.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;
 };
 
-exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
-    console.log(`Decrypting JWT with key ${secret}`);
+exports.decryptJwtWithSecret = async (jwt, secret, options = {}) => {
+    await this.log(`Decrypting JWT with key ${secret}`);
     const buff = jose.base64url.decode(secret);
     const decoded = await jose.jwtDecrypt(jwt, buff, options);
-    console.log("Verified JWT:");
+    await this.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;
 };
 
 exports.decodeJwt = async (token, complete = false) => {
-    console.log(`Decoding token ${token}`);
-    
+    await this.log(`Decoding token ${token}`);
+
     let decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
-        console.log(`Decoded token header: ${colors.green(decoded.header)}`);
-        console.log("Decoded token payload:");
+        await this.logg(`Decoded token header: ${colors.green(decoded.header)}`);
+        await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
-        console.log("Decoded token payload:");
+        await this.log("Decoded token payload:");
         await this.logg(decoded);
     }
     return decoded;
 };
 
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
-    console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
+    await this.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
         "POST", {
             'Accept': 'application/json',
@@ -585,23 +642,23 @@ exports.screenshot = async (page) => {
         let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
             let url = await page.url();
-            console.log(`Page URL when capturing screenshot: ${url}`);
-            console.log(`Attempting to take a screenshot and save at ${filePath}`);
+            await this.log(`Page URL when capturing screenshot: ${url}`);
+            await this.log(`Attempting to take a screenshot and save at ${filePath}`);
             await page.setViewport({width: 1920, height: 1080});
             await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
-            console.log(`Screenshot saved at ${colors.green(filePath)}`);
+            this.logg(`Screenshot saved at ${colors.green(filePath)}`);
             await this.uploadImage(filePath);
         } catch (e) {
-            console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+            this.logr(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
         }
     } else {
-        console.log("Capturing screenshots is disabled in non-CI environments");
+        await this.log("Capturing screenshots is disabled in non-CI environments");
     }
 };
 
-exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+exports.isCiEnvironment = async () => process.env.CI !== undefined && process.env.CI === "true";
 
-exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
+exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
@@ -662,14 +719,14 @@ exports.killProcess = async (command, arguments) => {
             throw new Error(err);
         }
         resultList.forEach(process => {
-            console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s',
+            this.log('PID: %s, COMMAND: %s, ARGUMENTS: %s',
                 process.pid, process.command, process.arguments);
             if (process) {
                 ps.kill(process.pid, err => {
                     if (err) {
                         throw new Error(err);
                     } else {
-                        console.log('Process %s has been killed!', process.pid);
+                        this.log('Process %s has been killed!', process.pid);
                     }
                 });
             }
@@ -677,11 +734,11 @@ exports.killProcess = async (command, arguments) => {
     });
 };
 
-exports.sha256 = async(value) => CryptoJS.SHA256(value);
+exports.sha256 = async (value) => CryptoJS.SHA256(value);
 
-exports.base64Url = async(value) => CryptoJS.enc.Base64url.stringify(value);
+exports.base64Url = async (value) => CryptoJS.enc.Base64url.stringify(value);
 
-exports.pageVariable = async(page, name) => await page.evaluate(name);
+exports.pageVariable = async (page, name) => await page.evaluate(name);
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
@@ -691,86 +748,90 @@ exports.goto = async (page, url, retryCount = 5) => {
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            console.log(`Navigating to: ${colors.green(url)}`);
+            await this.logg(`Navigating to: ${colors.green(url)}`);
             response = await page.goto(url);
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
-            console.log(colors.red(`#${attempts}: Failed to goto to ${url}.`));
-            console.log(colors.red(err.message));
+            this.logr(colors.red(`#${attempts}: Failed to goto to ${url}.`));
+            this.logr(colors.red(err.message));
             await this.sleep(timeout);
         }
     }
     if (response != null) {
-        console.log(`Response status: ${colors.green(await response.status())}`);
+        this.logg(`Response status: ${colors.green(await response.status())}`);
     }
     return response;
 };
 
-exports.refreshContext = async(url = "https://localhost:8443/cas") => {
-    console.log("Refreshing CAS application context...");
+exports.gotoLogin = async(page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/login` + (service === undefined ? "" : `?service=${service}`);
+    return await this.goto(page, url);
+};
+
+exports.gotoLogout = async(page, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/logout` + (service === undefined ? "" : `?service=${service}`);
+    return await this.goto(page, url);
+}
+
+exports.parseXML = async(xml, options = {}) => {
+    let parsedXML = undefined;
+    const parser = new xml2js.Parser(options);
+    await parser.parseString(xml, (err, result) => {
+        parsedXML = result;
+    });
+    return parsedXML;
+};
+
+exports.refreshContext = async (url = "https://localhost:8443/cas") => {
+    await this.log("Refreshing CAS application context...");
     const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
-    console.log(response);
+    await this.log(response);
 };
 
-exports.refreshBusContext = async(url = "https://localhost:8443/cas") => {
-    console.log(`Refreshing CAS application context in ${url}`);
+exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
+    await this.log(`Refreshing CAS application context in ${url}`);
     const response = await this.doRequest(`${url}/actuator/busrefresh`, "POST", {}, 204);
-    console.log(response);
+    await this.log(response);
 };
 
-exports.loginDuoSecurityBypassCode = async (page, type, username = "casuser") => {
+exports.loginDuoSecurityBypassCode = async (page, username = "casuser") => {
     await page.waitForTimeout(12000);
-    if (type === "websdk") {
-        const frame = await page.waitForSelector("iframe#duo_iframe");
-        await this.screenshot(page);
-        const rect = await page.evaluate(el => {
-            const {x, y, width, height} = el.getBoundingClientRect();
-            return {x, y, width, height};
-        }, frame);
-        let x1 = rect.x + rect.width - 120;
-        let y1 = rect.y + rect.height - 160;
-        await page.mouse.click(x1, y1);
-        await this.screenshot(page);
-    } else {
-        await this.click(page, "button#passcode");
-    }
+    await this.click(page, "button#passcode");
     let bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
-    console.log(`Duo Security ${type}: Retrieved bypass codes ${bypassCodes}`);
-    if (type === "websdk") {
-        let bypassCode = String(bypassCodes[0]);
+    await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
+    let i = 0;
+    let error = false;
+    while (!error && i < bypassCodes.length) {
+        let bypassCode = `${String(bypassCodes[i])}`;
         await page.keyboard.sendCharacter(bypassCode);
         await this.screenshot(page);
-        console.log(`Submitting Duo Security bypass code ${bypassCode}`);
-        await page.keyboard.down('Enter');
-        await page.keyboard.up('Enter');
+        await this.log(`Submitting Duo Security bypass code ${bypassCode}`);
+        await this.type(page, "input[name='passcode']", bypassCode);
         await this.screenshot(page);
-        console.log(`Waiting for Duo Security to accept bypass code for ${type}...`);
-        await page.waitForTimeout(15000);
-    } else {
-        let i = 0;
-        let error = false;
-        while (!error && i < bypassCodes.length) {
-            let bypassCode = `${String(bypassCodes[i])}`;
-            await page.keyboard.sendCharacter(bypassCode);
+        await this.pressEnter(page);
+        await this.log(`Waiting for Duo Security to accept bypass code...`);
+        await page.waitForTimeout(10000);
+        let error = await this.isVisible(page, "div.message.error");
+        if (error) {
+            await this.log(`Duo Security is unable to accept bypass code`);
             await this.screenshot(page);
-            console.log(`Submitting Duo Security bypass code ${bypassCode}`);
-            await this.type(page, "input[name='passcode']", bypassCode);
-            await this.screenshot(page);
-            await this.pressEnter(page);
-            console.log(`Waiting for Duo Security to accept bypass code...`);
-            await page.waitForTimeout(10000);
-            let error = await this.isVisible(page, "div.message.error");
-            if (error) {
-                console.log(`Duo Security is unable to accept bypass code`);
-                await this.screenshot(page);
-                i++;
-            } else {
-                console.log(`Duo Security accepted the bypass code ${bypassCode}`);
-                return;
-            }
+            i++;
+        } else {
+            await this.log(`Duo Security accepted the bypass code ${bypassCode}`);
+            return;
         }
     }
 };
 
-console.clear();
+exports.dockerContainer = async(name) => {
+    let containers = await docker.container.list();
+    let results = containers.filter(c => c.data.Names[0].slice(1) === name);
+    await this.log(`Docker containers found for ${name} are\n: ${results}`);
+    if (results.length > 0) {
+        return results[0];
+    }
+    await this.logr(`Unable to find Docker container with name ${name}`);
+    return undefined;
+};
+
 this.asciiart("Apereo CAS - Puppeteer");

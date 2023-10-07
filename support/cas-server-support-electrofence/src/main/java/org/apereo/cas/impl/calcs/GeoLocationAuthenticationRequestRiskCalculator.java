@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
@@ -7,13 +8,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -36,10 +37,10 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     }
 
     @Override
-    protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
+    protected BigDecimal calculateScore(final ClientInfo clientInfo, final Authentication authentication,
                                         final RegisteredService service, final List<? extends CasEvent> events) {
-        val loc = WebUtils.getHttpServletRequestGeoLocation(request);
-        if (loc != null && loc.isValid()) {
+        val loc = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+        if (loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
             val count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
             LOGGER.debug("Total authentication events found for [{}]: [{}]", loc, count);
@@ -47,15 +48,17 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
         }
         val remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
-        val response = this.geoLocationService.locate(remoteAddr);
+        val response = geoLocationService.locate(remoteAddr);
         if (response != null) {
-            val count = events.stream()
-                .filter(e -> e.getGeoLocation().equals(new GeoLocationRequest(response.getLatitude(), response.getLongitude())))
+            val locationRequest = new GeoLocationRequest(response.getLatitude(), response.getLongitude());
+            val count = events
+                .stream()
+                .filter(e -> e.getGeoLocation().equals(locationRequest))
                 .count();
             LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
             return calculateScoreBasedOnEventsCount(authentication, events, count);
         }
         LOGGER.debug("Request does not contain enough geolocation data");
-        return HIGHEST_RISK_SCORE;
+        return AuthenticationRiskScore.highestRiskScore().getScore();
     }
 }

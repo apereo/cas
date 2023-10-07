@@ -69,11 +69,6 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    /**
-     * Configure the POST parameters in webflow.
-     *
-     * @param context the webflow context
-     */
     protected static void configureWebflowForPostParameters(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
@@ -97,12 +92,6 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         });
     }
 
-    /**
-     * Configure the ticket granting ticket in webflow.
-     *
-     * @param context the webflow context
-     * @return the TGT identifier or {@code null}
-     */
     protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
@@ -124,24 +113,14 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             .ifPresent(Unchecked.consumer(id -> ticketRegistrySupport.getTicketRegistry().deleteTicket(id)));
     }
 
-    /**
-     * Configure the custom fields in webflow.
-     *
-     * @param context the webflow context
-     */
     protected void configureWebflowForCustomFields(final RequestContext context) {
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
     }
 
-    /**
-     * Configure the services in webflow.
-     *
-     * @param context the webflow context
-     */
     protected void configureWebflowForServices(final RequestContext context) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         if (HttpStatus.valueOf(response.getStatus()).isError()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied");
         }
 
         val service = WebUtils.getService(argumentExtractors, context);
@@ -150,7 +129,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             val selectedService = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(service));
             val registeredService = servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
-            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, selectedService)) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                     registeredService.getServiceId(),
                     registeredService.getId());
@@ -188,14 +167,9 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
     }
 
-    /**
-     * Configure the webflow.
-     *
-     * @param context the webflow context
-     */
     protected void configureWebflowContext(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+        WebUtils.putWarningCookie(context, Boolean.valueOf(warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().getCore().isTrackGeolocation());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
@@ -208,8 +182,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
             val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
                 .stream()
-                .filter(h -> h.supports(UsernamePasswordCredential.class))
-                .map(h -> StringUtils.capitalize(h.getName().trim()))
+                .filter(handler -> handler.supports(UsernamePasswordCredential.class))
+                .map(handler -> StringUtils.capitalize(handler.getName().trim()))
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
@@ -219,22 +193,17 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         context.getFlowScope().put("httpRequestMethod", request.getMethod());
     }
 
-    /**
-     * Configure the cookie generators in webflow.
-     *
-     * @param context the webflow context
-     */
     protected void configureCookieGenerators(final RequestContext context) {
         val contextPath = context.getExternalContext().getContextPath();
         val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
         if (casProperties.getWarningCookie().isAutoConfigureCookiePath()) {
-            val path = this.warnCookieGenerator.getCookiePath();
+            val path = warnCookieGenerator.getCookiePath();
             if (StringUtils.isBlank(path)) {
                 LOGGER.debug("Setting path for cookies for warn cookie generator to: [{}]", cookiePath);
-                this.warnCookieGenerator.setCookiePath(cookiePath);
+                warnCookieGenerator.setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("Warning cookie is set to [{}] with path [{}]", this.warnCookieGenerator.getCookieDomain(), path);
+                LOGGER.trace("Warning cookie is set to [{}] with path [{}]", warnCookieGenerator.getCookieDomain(), path);
             }
         }
 
@@ -244,7 +213,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
                 LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
                 ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
+                LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
             }
         }
     }

@@ -40,9 +40,9 @@ import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -54,18 +54,11 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -76,17 +69,13 @@ import static org.mockito.Mockito.*;
  */
 public abstract class BaseDuoSecurityTests {
 
-    public static RequestContext getMockRequestContext(final ConfigurableApplicationContext applicationContext) {
-        val context = new MockRequestContext();
+    public static RequestContext getMockRequestContext(final ConfigurableApplicationContext applicationContext) throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("195.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        context.getHttpServletRequest().setRemoteAddr("185.86.151.11");
+        context.getHttpServletRequest().setLocalAddr("195.88.151.11");
+        context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(context.getHttpServletRequest()));
 
         val provider = getDuoSecurityMultifactorAuthenticationProvider();
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
@@ -115,6 +104,7 @@ public abstract class BaseDuoSecurityTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -123,7 +113,7 @@ public abstract class BaseDuoSecurityTests {
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
-        
+
         DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
         DuoSecurityComponentSerializationConfiguration.class,
         DuoSecurityMultifactorProviderBypassConfiguration.class,

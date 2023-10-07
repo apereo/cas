@@ -10,7 +10,7 @@ def run(Object[] args) {
         logger.info("Service request is ${service.id}")
         if (service.id.startsWith("https://apereo.github.io")) {
             def result = AuditableExecutionResult.builder().build()
-            result.setException(new UnauthorizedServiceException("Service unauthorized"))
+            result.setException(UnauthorizedServiceException.denied("Service unauthorized"))
             return result
         }
     }

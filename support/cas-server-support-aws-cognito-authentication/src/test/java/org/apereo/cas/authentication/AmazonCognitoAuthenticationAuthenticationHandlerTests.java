@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -57,6 +58,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -197,7 +199,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
                 PrincipalFactoryUtils.newPrincipalFactory(), provider,
                 casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
-        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").get(0));
+        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").getFirst());
     }
 
     private static ConfigurableJWTProcessor getConfigurableJWTProcessor(final String sub) throws Exception {

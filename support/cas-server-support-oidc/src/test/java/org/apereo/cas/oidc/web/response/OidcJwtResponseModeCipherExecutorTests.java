@@ -1,13 +1,11 @@
 package org.apereo.cas.oidc.web.response;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +23,6 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class EncryptOnlyTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -44,7 +41,6 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SignOnlyTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -63,7 +59,6 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
         "cas.authn.oidc.response.crypto.strategy-type=SIGN_AND_ENCRYPT"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SignAndEncryptTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {

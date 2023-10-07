@@ -44,7 +44,7 @@ class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(VALUE, attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().getFirst().toString());
     }
 
     @Test
@@ -55,7 +55,7 @@ class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(VALUE, attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().getFirst().toString());
     }
 
     @Test
@@ -66,7 +66,7 @@ class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertEquals(VALUE, attribute.getValues().get(0).toString());
+        assertEquals(VALUE, attribute.getValues().getFirst().toString());
     }
 
     @Test
@@ -76,7 +76,7 @@ class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
             .name("unknown")
             .values(CollectionUtils.wrapList(value))
             .build());
-        assertTrue(attribute.getValues().get(0) instanceof Serializable);
+        assertTrue(attribute.getValues().getFirst() instanceof Serializable);
     }
 
     @Test

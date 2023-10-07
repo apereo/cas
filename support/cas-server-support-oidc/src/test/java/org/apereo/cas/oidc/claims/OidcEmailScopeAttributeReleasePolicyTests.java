@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -41,6 +40,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
@@ -59,6 +59,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertEquals(List.of("cas@example.org"), attrs.get("email"));
@@ -70,6 +71,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(serviceTicketPrincipal)
+            .applicationContext(applicationContext)
             .build();
         val releaseAttrs = policy.getAttributes(releasePolicyContext2);
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email"));
@@ -79,14 +81,12 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
     void verifySerialization() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = serializer.toString(service);
         assertNotNull(json);
         assertNotNull(serializer.from(json));

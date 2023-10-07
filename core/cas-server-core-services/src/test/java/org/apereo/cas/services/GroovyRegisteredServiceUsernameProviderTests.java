@@ -3,19 +3,19 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyServices")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 class GroovyRegisteredServiceUsernameProviderTests {
@@ -34,6 +35,9 @@ class GroovyRegisteredServiceUsernameProviderTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyUsernameProvider() throws Throwable {
@@ -44,6 +48,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .principal(RegisteredServiceTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val id = provider.resolveUsername(usernameContext);
         assertEquals("fromscript", id);
@@ -57,6 +62,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System")))
             .build();
         val id = provider.resolveUsername(usernameContext);
@@ -70,6 +76,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", List.of("CAS-System"))))
             .build();
         val id = provider.resolveUsername(usernameContext);

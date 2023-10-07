@@ -16,9 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +30,6 @@ import static org.mockito.Mockito.*;
 class DefaultDelegatedClientFactoryTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
         "cas.authn.pac4j.bitbucket.id=123456",
@@ -52,7 +49,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.facebook.id=123456",
         "cas.authn.pac4j.facebook.secret=secret",
@@ -109,7 +105,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.github.scope=user",
         "cas.authn.pac4j.github.id=12345",
@@ -127,7 +122,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.oauth2[0].id=123456",
         "cas.authn.pac4j.oauth2[0].secret=s3cr3t",
@@ -142,7 +136,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.cas[0].login-url=https://login.example.org/login",
         "cas.authn.pac4j.cas[0].protocol=SAML",
@@ -162,7 +155,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.oidc[0].apple.private-key=classpath:apple.pem",
         "cas.authn.pac4j.oidc[0].apple.private-key-id=VB4MYGJ3TQ",
@@ -185,7 +177,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.oidc[0].generic.id=123",
         "cas.authn.pac4j.oidc[0].generic.secret=123",
@@ -226,7 +217,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.bitbucket.id=123456",
         "cas.authn.pac4j.bitbucket.secret=secret",
@@ -246,7 +236,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
@@ -263,14 +252,13 @@ class DefaultDelegatedClientFactoryTests {
         void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
-            val client = SAML2Client.class.cast(clients.iterator().next());
+            val client = (SAML2Client) clients.iterator().next();
             assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
             assertTrue(client.getConfiguration().getMetadataSigner() instanceof DefaultSAML2MetadataSigner);
         }
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
@@ -290,7 +278,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.saml[0].saml2-attribute-converter=classpath:/SAMLAttributeConverter.groovy",
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
@@ -313,17 +300,16 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-            "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
-            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-            "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-            "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-            "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-            "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-            "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-            "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
-            "cas.authn.pac4j.core.lazy-init=true"
+        "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
+        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
+        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
+        "cas.authn.pac4j.core.lazy-init=true"
     })
     class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
@@ -353,7 +339,6 @@ class DefaultDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].callback-url-type=NONE",
@@ -381,7 +366,7 @@ class DefaultDelegatedClientFactoryTests {
         void verifyClient() throws Throwable {
             val clients = delegatedClientFactory.build();
             assertEquals(1, clients.size());
-            val client = SAML2Client.class.cast(clients.iterator().next());
+            val client = (SAML2Client) clients.iterator().next();
             assertTrue(client.getConfiguration().getSamlMessageStoreFactory() instanceof HttpSessionStoreFactory);
         }
     }

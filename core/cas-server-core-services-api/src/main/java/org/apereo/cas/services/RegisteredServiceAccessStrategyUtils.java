@@ -46,17 +46,16 @@ public class RegisteredServiceAccessStrategyUtils {
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
             LOGGER.warn("Unauthorized Service Access. Service [{}] is not registered in the service registry.", service);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                "Service " + StringUtils.defaultIfBlank(service, "unknown") + " is not found in the service registry.");
+            throw UnauthorizedServiceException.denied("Service " + StringUtils.defaultIfBlank(service, "unknown") + " is not found in the service registry.");
         }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, null)) {
             val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry. You should "
                                     + "review the service access strategy to evaluate the conditions and policies required for service access.", service);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            throw UnauthorizedServiceException.denied(msg);
         }
         if (!ensureServiceIsNotExpired(registeredService)) {
             val msg = String.format("Expired service access is denied. Service [%s] has been expired", service);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EXPIRED_SERVICE, msg);
+            throw UnauthorizedServiceException.expired(msg);
         }
     }
 
@@ -105,18 +104,17 @@ public class RegisteredServiceAccessStrategyUtils {
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
 
-        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)) {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
             if (ticketGrantingTicket.getProxiedBy() != null) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO for proxying.", service.getId());
-                throw new UnauthorizedSsoServiceException();
             }
             if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn(
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
                     + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
-                throw new UnauthorizedSsoServiceException();
             }
+            throw new UnauthorizedSsoServiceException();
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
@@ -129,7 +127,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param registeredService the registered service
      * @param principalId       the principal id
      * @param attributes        the attributes
-     * @return the boolean
+     * @return true/false
      * @throws Throwable the throwable
      */
     public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
@@ -137,24 +135,22 @@ public class RegisteredServiceAccessStrategyUtils {
                                                                    final String principalId,
                                                                    final Map<String, List<Object>> attributes) throws Throwable {
         ensureServiceAccessIsAllowed(service, registeredService);
-        LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].",
-            service != null ? service.getId() : "unknown", principalId, attributes);
 
+        val serviceId = service != null ? service.getId() : "unknown";
+        LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].", serviceId, principalId, attributes);
         val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
             .service(service)
             .principalId(principalId)
             .attributes(attributes)
             .registeredService(registeredService)
             .build();
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(accessRequest)) {
-            LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].",
-                service != null ? service.getId() : "unknown", principalId);
+        if (!registeredService.getAccessStrategy().authorizeRequest(accessRequest)) {
+            LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].", serviceId, principalId);
             val handlerErrors = new HashMap<String, Throwable>();
-            val message = String.format("Cannot grant service access to %s", principalId);
+            val message = String.format("Cannot grant service access %s to %s", serviceId, principalId);
             val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
-            throw new PrincipalException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                handlerErrors, new HashMap<>(0));
+            throw new PrincipalException(message, handlerErrors, new HashMap<>(0));
         }
         return true;
     }

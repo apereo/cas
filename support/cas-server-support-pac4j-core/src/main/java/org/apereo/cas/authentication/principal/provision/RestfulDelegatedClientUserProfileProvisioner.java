@@ -3,9 +3,9 @@ package org.apereo.cas.authentication.principal.provision;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +14,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -42,15 +41,15 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             headers.put("profileAttributes", profile.getAttributes().toString());
             headers.put("clientName", client.getName());
             headers.putAll(restProperties.getHeaders());
-            
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
                 .headers(headers)
                 .build();
-            
+
             response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getCode());

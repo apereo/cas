@@ -69,8 +69,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
 
     @Test
     void verifyWithCallback() throws Throwable {
-        val callbackUrl = "http://localhost:8443/cas"
-                          + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
+        val callbackUrl = "http://localhost:8443/cas" + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);

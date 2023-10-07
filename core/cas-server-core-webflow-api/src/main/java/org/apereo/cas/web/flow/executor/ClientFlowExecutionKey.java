@@ -63,7 +63,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
         }
         try {
-            val uuid = UUID.fromString(tokens.get(0));
+            val uuid = UUID.fromString(tokens.getFirst());
             val decoded = CodecUtil.b64(tokens.get(1));
             return new ClientFlowExecutionKey(uuid, decoded);
         } catch (final Exception e) {

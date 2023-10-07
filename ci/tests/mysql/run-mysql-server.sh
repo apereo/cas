@@ -5,7 +5,7 @@
 echo "Running MySQL docker image..."
 docker stop mysql-server || true
 docker run --rm -p 3306:3306 --name mysql-server --rm \
-  -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.33 --lower_case_table_names=1
+  -e MYSQL_ROOT_PASSWORD=password -d mysql:8.1.0 --lower_case_table_names=1
 
 docker ps | grep "mysql-server"
 retVal=$?

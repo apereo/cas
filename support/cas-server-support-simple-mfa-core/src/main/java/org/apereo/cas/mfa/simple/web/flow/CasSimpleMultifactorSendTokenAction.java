@@ -62,22 +62,25 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val authentication = WebUtils.getInProgressAuthentication();
-        val result = bucketConsumer.consume(getThrottledRequestKeyFor(authentication));
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val result = bucketConsumer.consume(getThrottledRequestKeyFor(authentication, requestContext));
         result.getHeaders().forEach(response::addHeader);
         return result.isConsumed() ? super.doPreExecute(requestContext) : error();
     }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val authentication = WebUtils.getInProgressAuthentication();
-        val principal = resolvePrincipal(authentication.getPrincipal());
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val token = getOrCreateToken(requestContext, principal);
         LOGGER.debug("Using token [{}] created at [{}]", token.getId(), token.getCreationTime());
 
         val strategy = tokenCommunicationStrategy.determineStrategy(token);
         val smsSent = strategy.contains(TokenSharingStrategyOptions.SMS)
             && CasSimpleMultifactorSendSms.of(communicationsManager, properties).send(principal, token, requestContext);
+
+        val phoneCallSent = strategy.contains(TokenSharingStrategyOptions.PHONE)
+            && CasSimpleMultifactorMakePhoneCall.of(communicationsManager, properties).call(principal, token, requestContext);
 
         return FunctionUtils.doUnchecked(() -> {
             var emailSent = false;
@@ -97,7 +100,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }
 
             val notificationSent = strategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);
-            if (smsSent || emailSent || notificationSent) {
+            if (smsSent || emailSent || notificationSent || phoneCallSent) {
                 LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
                 storeToken(requestContext, token);
                 return buildSuccessEvent(token);
@@ -164,8 +167,9 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }));
     }
 
-    private String getThrottledRequestKeyFor(final Authentication authentication) {
-        val principal = resolvePrincipal(authentication.getPrincipal());
+    private String getThrottledRequestKeyFor(final Authentication authentication,
+                                             final RequestContext requestContext) {
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         return principal.getId();
     }
 

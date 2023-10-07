@@ -22,13 +22,8 @@ public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGranti
     @Serial
     private static final long serialVersionUID = -1862937393590213844L;
 
-    /**
-     * Instantiates a new CAS sso session established event.
-     *
-     * @param source               the source
-     * @param ticketGrantingTicket the ticket granting ticket
-     */
-    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ClientInfo clientInfo) {
+    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket,
+                                               final ClientInfo clientInfo) {
         super(source, ticketGrantingTicket, clientInfo);
     }
 }

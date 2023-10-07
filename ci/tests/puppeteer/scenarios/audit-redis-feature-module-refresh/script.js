@@ -12,32 +12,28 @@ const YAML = require("yaml");
     
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
 
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
         'Content-Type': 'application/json'
-    }, res => {
-        assert(res.data.length === 0);
-    }, error => {
+    }, res => assert(res.data.length === 0), error => {
         throw(error);
     });
 
-    console.log("Updating configuration and waiting for changes to reload...");
+    await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, true);
     await page.waitForTimeout(5000);
 
     await cas.refreshContext();
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
 
     try {
         await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
             'Content-Type': 'application/json'
-        }, res => {
-            assert(res.data.length >= 1);
-        }, error => {
+        }, res => assert(res.data.length >= 1), error => {
             throw(error);
         })
     } finally {
@@ -58,7 +54,7 @@ async function updateConfig(configFile, configFilePath, data) {
         }
     };
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

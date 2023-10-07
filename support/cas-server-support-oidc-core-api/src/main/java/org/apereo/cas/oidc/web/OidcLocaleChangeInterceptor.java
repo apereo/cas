@@ -44,7 +44,7 @@ public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
         if (service != null) {
             val newLocale = service.getAttributes().get(OidcConstants.UI_LOCALES);
             if (newLocale != null && !newLocale.isEmpty()) {
-                configureLocale(request, response, Locale.forLanguageTag(newLocale.get(0).toString()));
+                configureLocale(request, response, Locale.forLanguageTag(newLocale.getFirst().toString()));
             }
         }
     }

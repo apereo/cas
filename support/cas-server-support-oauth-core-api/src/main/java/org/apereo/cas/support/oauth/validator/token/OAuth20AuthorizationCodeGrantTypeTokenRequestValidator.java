@@ -42,6 +42,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                                        final ProfileManager manager, final UserProfile uProfile) throws Throwable {
         val redirectUri = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI);
+        
         val code = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CODE);
 

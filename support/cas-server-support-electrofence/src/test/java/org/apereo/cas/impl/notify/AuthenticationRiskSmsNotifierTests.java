@@ -6,11 +6,14 @@ import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,13 +39,22 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SMS")
 class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
+    @BeforeEach
+    public void onSetUp() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.100");
+        request.setLocalAddr("223.456.789.200");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+    }
+
     @Test
     void verifyOperation() throws Throwable {
+        authenticationRiskSmsNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
         authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         authenticationRiskSmsNotifier.setAuthentication(authentication);
-        authenticationRiskSmsNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        authenticationRiskSmsNotifier.setAuthenticationRiskScore(AuthenticationRiskScore.highestRiskScore());
         assertDoesNotThrow(() -> authenticationRiskSmsNotifier.publish());
     }
 }

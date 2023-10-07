@@ -174,22 +174,27 @@ public class CoreAuthenticationTestUtils {
         return getRegisteredService(CONST_TEST_URL);
     }
 
-    public static CasModelRegisteredService getRegisteredService(final String url) {
+    public static CasModelRegisteredService getRegisteredService(final String name, final String url) {
         val service = mock(CasModelRegisteredService.class);
         when(service.getFriendlyName()).thenCallRealMethod();
         when(service.getServiceId()).thenReturn(url);
-        when(service.getName()).thenReturn("service name");
+        when(service.getName()).thenReturn(name);
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("service description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed()).thenReturn(true);
+        when(access.isServiceAccessAllowed(any(), any())).thenReturn(true);
+        when(access.isServiceAccessAllowedForSso(any())).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
 
         val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
         when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
         when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
         return service;
+    }
+
+    public static CasModelRegisteredService getRegisteredService(final String url) {
+        return getRegisteredService("service name", url);
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,

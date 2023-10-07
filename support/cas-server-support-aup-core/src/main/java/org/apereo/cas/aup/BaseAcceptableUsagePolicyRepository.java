@@ -64,7 +64,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
             return AcceptableUsagePolicyStatus.accepted(principal);
         }
 
-        LOGGER.warn("Acceptable usage policy policy has not been accepted by [{}]", principal.getId());
+        LOGGER.info("Acceptable usage policy has not been accepted by [{}]", principal.getId());
         return AcceptableUsagePolicyStatus.denied(principal);
     }
 

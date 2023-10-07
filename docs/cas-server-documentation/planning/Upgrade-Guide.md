@@ -76,7 +76,9 @@ Your changes typically are:
 
 ## Prepare Development Environment
 
-<img src="http://i.imgur.com/jcdDHWb.jpg" width="160px" height="200px">
+<a href="http://i.imgur.com/jcdDHWb.jpg" data-lightbox="image-1">
+  <img src="http://i.imgur.com/jcdDHWb.jpg" width="160px" height="200px">
+</a>
 
 Um, No. 
 
@@ -105,7 +107,7 @@ and compare files.
 
 Needless to say, you are going to need:
 
-1. A decent diff tool, such as [KDiff3](http://kdiff3.sourceforge.net/), [WinDiff](http://winmerge.org), 
+1. A decent diff tool, such as [KDiff3](https://github.com/KDE/kdiff3), [WinDiff](http://winmerge.org), 
 [Beyond Compare](http://www.scootersoftware.com/), etc.
 2. A decent intelligent text editor, such as [Sublime](http://www.sublimetext.com),
 [Visual Studio Code](https://code.visualstudio.com/) or a full blown IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/).
@@ -113,4 +115,4 @@ Needless to say, you are going to need:
 ## Document Changes
 
 Remember to document the remaining changes that exist within your local overlay, so that the next time you do the
-same process, you have a clue as for why the overlay looks the way it does. 
+same process, you have a clue as for why the overlay looks the way it does.

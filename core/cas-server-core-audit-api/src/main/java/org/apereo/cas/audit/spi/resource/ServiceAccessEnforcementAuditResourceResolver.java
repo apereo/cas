@@ -26,7 +26,7 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
-        val serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
+        val serviceAccessCheckResult = (AuditableExecutionResult) returnValue;
         val accessCheckOutcome = "Service Access "
                                  + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
         val values = new HashMap<>();

@@ -37,7 +37,6 @@ import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
 import org.apereo.cas.config.SamlIdPThrottleConfiguration;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -57,6 +56,7 @@ public abstract class BaseSamlIdPMetadataTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         ObservationAutoConfiguration.class,

@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileTrustStoreSslSocketFactoryTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class SslSocketFactoryTests {
         private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
@@ -92,7 +91,6 @@ class FileTrustStoreSslSocketFactoryTests {
     @Nested
     @SpringBootTest(classes = DefaultCasSSLContextTests.SharedTestConfiguration.class,
         properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
-    @SuppressWarnings("ClassCanBeStatic")
     public class DefaultSslContext {
         @Autowired
         @Qualifier(CasSSLContext.BEAN_NAME)

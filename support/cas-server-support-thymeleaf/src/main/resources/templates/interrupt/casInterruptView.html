@@ -36,7 +36,7 @@
             not yet established a single sign-on session for <strong>{0}</strong>.</p>
 
         <div th:if="${interrupt.message}">
-            <div class="alert alert-info">:information_source:
+            <div class="alert alert-info">
                 <p id="interruptMessage" th:utext="${interrupt.message}">interrupt.message</p>
                 <div id="interruptLinks" th:if="${interrupt.links}">
                     <form method="post" id="formlinks">

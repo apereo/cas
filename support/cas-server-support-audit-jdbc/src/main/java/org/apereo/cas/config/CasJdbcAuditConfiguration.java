@@ -15,6 +15,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.thread.Cleanable;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -67,8 +68,7 @@ public class CasJdbcAuditConfiguration {
         @Bean
         public JpaVendorAdapter inspektrAuditJpaVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
 
@@ -76,14 +76,11 @@ public class CasJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<EntityManagerFactory> inspektrAuditEntityManagerFactory(
-            @Qualifier("inspektrAuditJpaVendorAdapter")
-            final JpaVendorAdapter inspektrAuditJpaVendorAdapter,
+            @Qualifier("inspektrAuditJpaVendorAdapter") final JpaVendorAdapter inspektrAuditJpaVendorAdapter,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("inspektrAuditTrailDataSource")
-            final DataSource inspektrAuditTrailDataSource,
+            @Qualifier("inspektrAuditTrailDataSource") final DataSource inspektrAuditTrailDataSource,
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
@@ -126,8 +123,7 @@ public class CasJdbcAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionOperations inspektrAuditTransactionTemplate(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("inspektrAuditTransactionManager")
-            final PlatformTransactionManager inspektrAuditTransactionManager,
+            @Qualifier("inspektrAuditTransactionManager") final PlatformTransactionManager inspektrAuditTransactionManager,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -162,12 +158,9 @@ public class CasJdbcAuditConfiguration {
         @DependsOn("inspektrAuditEntityManagerFactory")
         public AuditTrailManager jdbcAuditTrailManager(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("auditCleanupCriteria")
-            final WhereClauseMatchCriteria auditCleanupCriteria,
-            @Qualifier("inspektrAuditTransactionTemplate")
-            final TransactionOperations inspektrAuditTransactionTemplate,
-            @Qualifier("inspektrAuditTrailDataSource")
-            final DataSource inspektrAuditTrailDataSource,
+            @Qualifier("auditCleanupCriteria") final WhereClauseMatchCriteria auditCleanupCriteria,
+            @Qualifier("inspektrAuditTransactionTemplate") final TransactionOperations inspektrAuditTransactionTemplate,
+            @Qualifier("inspektrAuditTrailDataSource") final DataSource inspektrAuditTrailDataSource,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuditTrailManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -197,8 +190,7 @@ public class CasJdbcAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("jdbcAuditTrailManager")
-            final AuditTrailManager jdbcAuditTrailManager) {
+            @Qualifier("jdbcAuditTrailManager") final AuditTrailManager jdbcAuditTrailManager) {
             return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager))
@@ -217,20 +209,11 @@ public class CasJdbcAuditConfiguration {
         @Lazy(false)
         public Cleanable inspektrAuditTrailCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("jdbcAuditTrailManager")
-            final AuditTrailManager jdbcAuditTrailManager) {
+            @Qualifier("jdbcAuditTrailManager") final AuditTrailManager jdbcAuditTrailManager) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.audit.jdbc.schedule.enabled").isTrue().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> new Cleanable() {
-                    @Scheduled(
-                        initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
-                        fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
-                    @Override
-                    public void clean() {
-                        jdbcAuditTrailManager.clean();
-                    }
-                })
+                .supply(() -> new JdbcAuditTrailCleaner(jdbcAuditTrailManager))
                 .otherwiseProxy()
                 .get();
         }
@@ -245,8 +228,7 @@ public class CasJdbcAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager inspektrAuditTransactionManager(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("inspektrAuditTrailDataSource")
-            final DataSource inspektrAuditTrailDataSource) {
+            @Qualifier("inspektrAuditTrailDataSource") final DataSource inspektrAuditTrailDataSource) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DataSourceTransactionManager(inspektrAuditTrailDataSource))
@@ -270,6 +252,19 @@ public class CasJdbcAuditConfiguration {
                 .supply(() -> JpaBeans.newDataSource(casProperties.getAudit().getJdbc()))
                 .otherwiseProxy()
                 .get();
+        }
+    }
+
+    @RequiredArgsConstructor
+    static class JdbcAuditTrailCleaner implements Cleanable {
+        private final AuditTrailManager jdbcAuditTrailManager;
+
+        @Scheduled(
+            initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
+            fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
+        @Override
+        public void clean() {
+            jdbcAuditTrailManager.clean();
         }
     }
 }

@@ -3,16 +3,13 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.LoginException;
-
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,7 +35,6 @@ import static org.mockito.Mockito.*;
 @Tag("LdapAuthentication")
 class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
         void verifyAuthenticateNotFound() throws Throwable {
@@ -59,7 +55,6 @@ class AuthenticatedLdapAuthenticationHandlerTests {
 
     @TestPropertySource(properties = "cas.authn.ldap[0].principal-attribute-id=unknown")
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class WithUnknownCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
     }
 
@@ -68,7 +63,6 @@ class AuthenticatedLdapAuthenticationHandlerTests {
         "cas.authn.ldap[0].allow-missing-principal-attribute-value=false"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
         @Override
         void verifyAuthenticateSuccess() throws Throwable {

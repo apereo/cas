@@ -56,6 +56,7 @@ class Ansi {
 }
 
 Object.metaClass.ansi = new Ansi()
+project.ext.set("ansi", new Ansi())
 
 tasks.register('pathingJar', Jar) {
     description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"

@@ -35,33 +35,22 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockParameterMap;
-import org.springframework.webflow.test.MockRequestContext;
-
+import org.springframework.webflow.engine.Flow;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -80,6 +69,9 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
 
     /**
@@ -92,22 +84,11 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyFetchingPolicy(final RegisteredService service,
-        final Authentication authentication,
-        final boolean expectPolicyFound) {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        val flowDefn = mock(FlowDefinition.class);
-        when(flowDefn.getApplicationContext()).thenReturn(applicationContext);
-        when(context.getActiveFlow()).thenReturn(flowDefn);
-
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+        final Authentication authentication, final boolean expectPolicyFound) throws Exception {
+        val context = MockRequestContext.create();
+        val flowDefinition = mock(Flow.class);
+        when(flowDefinition.getApplicationContext()).thenReturn(applicationContext);
+        context.setActiveFlow(flowDefinition);
 
         WebUtils.putRegisteredService(context, service);
         WebUtils.putAuthentication(authentication, context);
@@ -116,8 +97,8 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
         final Map<String, List<Object>> profileAttributes) throws Throwable {
-        val c = getCredential(actualPrincipalId);
-        val context = getRequestContext(actualPrincipalId, profileAttributes, c);
+        val credential = getCredential(actualPrincipalId);
+        val context = getRequestContext(actualPrincipalId, profileAttributes, credential);
 
         assertTrue(getAcceptableUsagePolicyRepository().verify(context).isDenied());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context));
@@ -131,11 +112,9 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
-        final Map<String, List<Object>> profileAttributes,
-        final Credential credential) throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+                                                   final Map<String, List<Object>> profileAttributes,
+                                                   final Credential credential) throws Throwable {
+        val context = MockRequestContext.create();
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, credential, profileAttributes);
         ticketRegistry.addTicket(tgt);
         val principal = CoreAuthenticationTestUtils.getPrincipal(credential.getId(), profileAttributes);
@@ -146,6 +125,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

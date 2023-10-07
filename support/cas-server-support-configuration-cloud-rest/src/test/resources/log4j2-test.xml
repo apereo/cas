@@ -12,7 +12,7 @@
         <Logger name="org.apache" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

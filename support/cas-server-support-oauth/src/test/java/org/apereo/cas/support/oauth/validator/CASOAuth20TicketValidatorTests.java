@@ -11,8 +11,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,9 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,7 +50,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     @Test
     void verifyOperation() throws Throwable {
         val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix())
-                          + "?client_name=" + oauthCasClient.getName();
+            + "?client_name=" + oauthCasClient.getName();
 
         val tgt = new MockTicketGrantingTicket("casuser", RegisteredServiceTestUtils.getTestAttributes());
         ticketRegistry.addTicket(tgt);

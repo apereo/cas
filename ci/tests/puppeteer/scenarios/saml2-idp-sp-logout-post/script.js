@@ -7,7 +7,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
 
     let page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await page.close();
 
@@ -27,9 +27,9 @@ const path = require("path");
 
     await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
     await page.waitForTimeout(3000);
-    console.log("Checking for page URL...");
-    console.log(await page.url());
-    assert(page.url() === 'https://samltest.id/Shibboleth.sso/SLO/POST');
+    await cas.log("Checking for page URL...");
+    await cas.logPage(page);
+    assert(await page.url() === 'https://samltest.id/Shibboleth.sso/SLO/POST');
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

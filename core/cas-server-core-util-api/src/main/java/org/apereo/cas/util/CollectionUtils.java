@@ -155,7 +155,7 @@ public class CollectionUtils {
             val set = (Set<Map.Entry>) map.entrySet();
             resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            if (byte[].class.isInstance(obj)) {
+            if (obj instanceof byte[]) {
                 resultingSet.add(obj);
             } else {
                 resultingSet.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
@@ -654,7 +654,7 @@ public class CollectionUtils {
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
+                return Pair.of(bits.getFirst(), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;

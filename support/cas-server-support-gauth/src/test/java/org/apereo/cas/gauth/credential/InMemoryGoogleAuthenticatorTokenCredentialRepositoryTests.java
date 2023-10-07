@@ -8,13 +8,12 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,10 +27,10 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ScratchCodesEncryptionTests extends BaseOneTimeTokenCredentialRepositoryTests {
         private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();
 
@@ -49,10 +48,10 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseOneTimeTokenCredentialRepositoryTests {
         private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();
 

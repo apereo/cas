@@ -12,7 +12,6 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -60,7 +59,7 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
     private Map<String, String> configProperties = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         val allAttributes = new HashMap<>(request.getAttributes());
         val results = fetchWsGetGroupsResults(request.getPrincipalId());
         if (results.isEmpty()) {
@@ -83,9 +82,8 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
             .apply(request.withAttributes(allAttributes));
     }
 
-    @Synchronized
     protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
-        if (!this.configProperties.isEmpty()) {
+        if (!configProperties.isEmpty()) {
             GrouperClientConfig.retrieveConfig().propertiesThreadLocalOverrideMap().putAll(this.configProperties);
         }
         return new DefaultGrouperFacade().getGroupsForSubjectId(principal);

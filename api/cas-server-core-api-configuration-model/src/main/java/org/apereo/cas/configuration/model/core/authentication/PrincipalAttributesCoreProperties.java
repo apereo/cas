@@ -140,6 +140,6 @@ public class PrincipalAttributesCoreProperties implements Serializable {
          * Multivalued attributes.
          * Combines all values into a single attribute, essentially creating a multi-valued attribute.
          */
-        MULTIVALUED;
+        MULTIVALUED
     }
 }

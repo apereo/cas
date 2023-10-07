@@ -9,7 +9,7 @@ export const routes = [
         element: <Layout />,
         children: [
             dashboard,
-            services
+            services,
         ]
     }
 ]

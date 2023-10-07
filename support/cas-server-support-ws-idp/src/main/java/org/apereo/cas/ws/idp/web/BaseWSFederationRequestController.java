@@ -41,15 +41,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext configContext;
 
-    /**
-     * Construct service url string.
-     *
-     * @param request      the request
-     * @param response     the response
-     * @param wsfedRequest the ws federation request
-     * @return the service url
-     * @throws Exception the exception
-     */
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
                                          final WSFederationRequest wsfedRequest) throws Exception {
@@ -110,13 +101,6 @@ public abstract class BaseWSFederationRequestController {
     }
 
 
-    /**
-     * Is authentication required?
-     *
-     * @param fedRequest the fed request
-     * @param request    the request
-     * @return true/false
-     */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
         if (StringUtils.isBlank(fedRequest.wfresh()) || !NumberUtils.isCreatable(fedRequest.wfresh())) {
@@ -143,35 +127,22 @@ public abstract class BaseWSFederationRequestController {
         return false;
     }
 
-    /**
-     * Gets ws federation registered service.
-     *
-     * @param targetService the target service
-     * @param fedRequest    the fed request
-     * @return the ws federation registered service
-     */
     protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
         if (StringUtils.isBlank(fedRequest.wtrealm()) || !StringUtils.equals(fedRequest.wtrealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.wtrealm(), svc);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
         val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
         if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.wtrealm(), idp.getRealm());
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
 
         return svc;
     }
 
-    /**
-     * Gets ws federation registered service.
-     *
-     * @param targetService the target service
-     * @return the ws federation registered service
-     */
     protected WSFederationRegisteredService getWsFederationRegisteredService(final Service targetService) {
         val svc = configContext.getServicesManager().findServiceBy(targetService, WSFederationRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);

@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -23,9 +22,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.NonNull;
@@ -40,8 +39,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Event;
@@ -127,7 +126,7 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
-        val servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
         }
@@ -151,7 +150,7 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
-        val servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
         }
@@ -562,10 +561,10 @@ public class WebUtils {
      * Put authentication into conversation scope.
      *
      * @param authentication the authentication
-     * @param ctx            the ctx
+     * @param requestContext the ctx
      */
-    public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
-        ctx.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
+        requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
     }
 
     /**
@@ -1010,7 +1009,7 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView(final Exception ex) {
-        val error = new UnauthorizedServiceException(ex, UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val error = UnauthorizedServiceException.wrap(ex);
         return produceErrorView(error);
     }
 
@@ -1058,11 +1057,7 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         val context = RequestContextHolder.getRequestContext();
-        val authentication = Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
-        if (authentication == null) {
-            return AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
-        }
-        return authentication;
+        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
     }
 
 
@@ -1881,5 +1876,29 @@ public class WebUtils {
      */
     public static <T> T getPasswordManagementQuery(final RequestContext requestContext, final Class<T> clazz) {
         return requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY, clazz);
+    }
+
+    /**
+     * Put active flow id.
+     *
+     * @param requestContext the request context
+     */
+    public static void putActiveFlow(final RequestContext requestContext) {
+        val id = requestContext.getActiveFlow().getId();
+        requestContext.getFlashScope().put("activeFlowId", id);
+        requestContext.getFlowScope().put("activeFlowId", id);
+        requestContext.getConversationScope().put("activeFlowId", id);
+    }
+
+    /**
+     * Gets active flow.
+     *
+     * @param requestContext the request context
+     * @return the active flow
+     */
+    public static String getActiveFlow(final RequestContext requestContext) {
+        return (String) requestContext.getFlashScope().get("activeFlowId",
+            requestContext.getFlowScope().get("activeFlowId",
+                requestContext.getConversationScope().get("activeFlowId")));
     }
 }

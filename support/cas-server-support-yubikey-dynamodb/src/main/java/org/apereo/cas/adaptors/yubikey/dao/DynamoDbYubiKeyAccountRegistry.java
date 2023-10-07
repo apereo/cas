@@ -38,7 +38,7 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         if (accounts.isEmpty()) {
             return null;
         }
-        return accounts.iterator().next();
+        return accounts.getFirst();
     }
 
     @Override

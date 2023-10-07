@@ -35,19 +35,10 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends BaseTokenSigningAndEncryptionService {
-    /**
-     * The default keystore for OIDC tokens.
-     */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
-    /**
-     * The service keystore for OIDC tokens.
-     */
     protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache;
 
-    /**
-     * Issuer service.
-     */
     protected final OidcIssuerService issuerService;
 
     @Override
@@ -104,11 +95,11 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
         return getJsonWebKeySigningKeyFrom(jwks, registeredService);
     }
 
-    protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final Optional<JsonWebKeySet> jwks,
+    protected PublicJsonWebKey getJsonWebKeySigningKeyFrom(final JsonWebKeySet jwks,
                                                            final Optional<OAuthRegisteredService> serviceResult) throws Throwable {
-        FunctionUtils.throwIf(jwks.isEmpty(),
+        FunctionUtils.throwIfNull(jwks,
             () -> new IllegalArgumentException("JSON web keystore is empty and contains no keys"));
-        val jsonWebKeys = jwks.orElseThrow().getJsonWebKeys();
+        val jsonWebKeys = jwks.getJsonWebKeys();
         LOGGER.trace("JSON web keystore contains [{}] key(s)", jsonWebKeys);
 
         val finalKey = serviceResult
@@ -126,7 +117,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             .findFirst();
 
         LOGGER.debug("Located key [{}] for service [{}]", finalKey, serviceResult);
-        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.get(0));
+        return finalKey.orElseGet(() -> (PublicJsonWebKey) jsonWebKeys.getFirst());
     }
 
     /**

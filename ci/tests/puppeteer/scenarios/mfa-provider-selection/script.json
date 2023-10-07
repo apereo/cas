@@ -13,9 +13,6 @@
     
     "--cas.authn.mfa.core.provider-selection-enabled=true",
 
-    "--cas.audit.engine.enabled=false"
+    "--cas.audit.engine.enabled=true"
   ]
 }
-
-
-

@@ -5,14 +5,12 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -27,9 +25,6 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
-    /**
-     * Services manager instance.
-     */
     protected final ServicesManager servicesManager;
 
     private final OAuthProperties oauthProperties;
@@ -42,14 +37,6 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
         return renderProfileForModel(userProfile, accessToken, response);
     }
 
-    /**
-     * Render profile for model.
-     *
-     * @param userProfile the user profile
-     * @param accessToken the access token
-     * @param response    the response
-     * @return the string
-     */
     protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
                                                    final OAuth20AccessToken accessToken, final HttpServletResponse response) {
         val json = OAuth20Utils.toJson(userProfile);
@@ -57,14 +44,6 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    /**
-     * Gets rendered user profile.
-     *
-     * @param model       the model
-     * @param accessToken the access token
-     * @param response    the response
-     * @return the rendered user profile
-     */
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
@@ -78,13 +57,13 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
         if (type == OAuthCoreProperties.UserProfileViewTypes.FLAT) {
             val flattened = new LinkedHashMap<String, Object>();
             if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
-                val attributes = Map.class.cast(model.get(MODEL_ATTRIBUTE_ATTRIBUTES));
+                val attributes = (Map) model.get(MODEL_ATTRIBUTE_ATTRIBUTES);
                 flattened.putAll(attributes);
             }
             model.keySet()
                 .stream()
-                .filter(k -> !k.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
-                .forEach(k -> flattened.put(k, model.get(k)));
+                .filter(attributeName -> !attributeName.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
+                .forEach(attributeName -> flattened.put(attributeName, model.get(attributeName)));
             LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
             return flattened;
         }

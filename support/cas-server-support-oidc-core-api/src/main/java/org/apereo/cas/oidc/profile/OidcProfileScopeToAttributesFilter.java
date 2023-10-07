@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,7 +40,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final CasConfigurationProperties casProperties;
 
     private final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
-    
+
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Principal filter(final Service service, final Principal profile,
                             final RegisteredService registeredService,
@@ -117,6 +120,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                     .registeredService(registeredService)
                     .service(service)
                     .principal(principal)
+                    .applicationContext(applicationContext)
                     .build();
                 val policyAttr = policy.getAttributes(releasePolicyContext);
                 LOGGER.debug("Calculated attributes [{}] via attribute release policy [{}]", policyAttr, policy.getName());
@@ -146,6 +150,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .registeredService(oidcService)
             .service(service)
             .principal(principal)
+            .applicationContext(applicationContext)
             .attributeReleasePolicyPredicate(policy -> !(policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
                 || scopes.contains(((OidcRegisteredServiceAttributeReleasePolicy) policy).getScopeType()))
             .build();

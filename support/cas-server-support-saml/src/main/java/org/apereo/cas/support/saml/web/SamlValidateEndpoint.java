@@ -129,6 +129,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .registeredService(registeredService)
             .service(selectedService)
             .principal(principal)
+            .applicationContext(openSamlConfigBean.getApplicationContext())
             .build();
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
 
@@ -137,6 +138,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .registeredService(registeredService)
             .service(selectedService)
             .principal(principal)
+            .applicationContext(openSamlConfigBean.getApplicationContext())
             .build();
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 

@@ -9,13 +9,11 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentExce
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -28,7 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
 
     public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
-        final ApplicationContext applicationContext) {
+                                                    final ApplicationContext applicationContext) {
         super(casProperties, applicationContext);
     }
 
@@ -45,7 +43,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                 LOGGER.warn("No multifactor authentication providers are available in the application context. Authentication is blocked");
                 throw new AuthenticationException(new RiskyAuthenticationException());
             }
-            
+
             if (providerMap.size() == 1) {
                 id = providerMap.values().iterator().next().getId();
             } else {
@@ -59,7 +57,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             .addAttribute(attributeName, Boolean.TRUE)
             .build();
         LOGGER.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);
-        authentication.update(newAuthn);
+        authentication.updateAttributes(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }
 }

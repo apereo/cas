@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,7 +37,6 @@ class OidcMultifactorAuthenticationTriggerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=unknown")
     class NoMultifactorProvidersTests extends AbstractOidcTests {
         @Test
@@ -56,7 +53,6 @@ class OidcMultifactorAuthenticationTriggerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
     @TestPropertySource(properties = {
         "cas.authn.oidc.discovery.acr-values-supported=1,2",
@@ -91,7 +87,6 @@ class OidcMultifactorAuthenticationTriggerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
     class WithMultifactorProvidersTests extends AbstractOidcTests {

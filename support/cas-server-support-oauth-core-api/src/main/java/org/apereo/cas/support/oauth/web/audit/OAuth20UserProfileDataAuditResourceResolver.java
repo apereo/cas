@@ -23,8 +23,8 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "User profile data must not be null");
-        val profileMap = Map.class.cast(retval);
-        val accessToken = OAuth20AccessToken.class.cast(auditableTarget.getArgs()[0]);
+        val profileMap = (Map) retval;
+        val accessToken = (OAuth20AccessToken) auditableTarget.getArgs()[0];
 
         var service = profileMap.get(CasProtocolConstants.PARAMETER_SERVICE);
         if (service == null) {

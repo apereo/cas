@@ -91,7 +91,7 @@ public class EncryptedTranscoder implements Transcoder {
         var object = o;
         if (AopUtils.isAopProxy(o)) {
             try {
-                object = Advised.class.cast(o).getTargetSource().getTarget();
+                object = ((Advised) o).getTargetSource().getTarget();
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }

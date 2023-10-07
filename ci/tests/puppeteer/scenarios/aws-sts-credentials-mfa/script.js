@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
         params, {
             'Content-Type': "application/x-www-form-urlencoded"
         }, res => {
-            console.log(res.data);
+            cas.log(res.data);
             throw 'Operation must fail to fetch credentials without mfa';
         }, error => {
             assert(error.response.status === 401);

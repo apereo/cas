@@ -53,10 +53,10 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
         when(loader.buildJsonWebKeySet(any(OidcJsonWebKeyCacheKey.class))).thenReturn(Optional.of(jwks));
         when(loader.load(any(OidcJsonWebKeyCacheKey.class))).thenCallRealMethod();
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)));
 
         jwks.getJsonWebKeys().add(mock(JsonWebKey.class));
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)));
     }
 
     @Test
@@ -70,10 +70,10 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         when(loader.load(any(OidcJsonWebKeyCacheKey.class))).thenCallRealMethod();
         when(loader.generateJwksResource()).thenReturn(new ByteArrayResource("jwks".getBytes(StandardCharsets.UTF_8)));
         when(loader.buildJsonWebKeySet(any(Resource.class), any(OidcJsonWebKeyCacheKey.class))).thenReturn(jwks);
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)));
 
         when(jsonWebKey.getAlgorithm()).thenReturn("some-alg");
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey(UUID.randomUUID().toString(), OidcJsonWebKeyUsage.SIGNING)));
     }
 
     @Test
@@ -81,12 +81,10 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey("https://sso.example.org/cas/oidc", OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(publicJsonWebKey1);
-        assertTrue(publicJsonWebKey1.isPresent());
 
         val publicJsonWebKey2 = oidcDefaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey("https://sso.example.org/cas/oidc", OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(publicJsonWebKey2);
-        assertTrue(publicJsonWebKey2.isPresent());
     }
 
     @Test
@@ -94,7 +92,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         when(gen.generate()).thenReturn(null);
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
     }
 
     @Test
@@ -102,12 +100,12 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         when(gen.generate()).thenReturn(ResourceUtils.EMPTY_RESOURCE);
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
 
         val file = File.createTempFile("keys", ".json");
         FileUtils.writeStringToFile(file, new JsonWebKeySet(List.of()).toJson(), StandardCharsets.UTF_8);
         when(gen.generate()).thenReturn(new FileSystemResource(file));
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
     }
 
     @Test
@@ -118,6 +116,6 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
                    + "9H8\",\"crv\":\"P-256\"} ]}";
         when(gen.generate()).thenReturn(new ByteArrayResource(keys.getBytes(StandardCharsets.UTF_8)));
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
-        assertTrue(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)).isEmpty());
+        assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
     }
 }

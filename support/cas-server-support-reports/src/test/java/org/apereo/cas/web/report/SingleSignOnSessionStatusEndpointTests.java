@@ -62,7 +62,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
         request.setCookies(response.getCookies());
         val entity = singleSignOnSessionStatusEndpoint.ssoStatus(null, request);
         assertTrue(entity.getStatusCode().is2xxSuccessful());
-        val body = Objects.requireNonNull(Map.class.cast(entity.getBody()));
+        val body = Objects.requireNonNull((Map) entity.getBody());
         assertTrue(body.containsKey("principal"));
         assertTrue(body.containsKey("authenticationDate"));
         assertTrue(body.containsKey("ticketGrantingTicketCreationTime"));

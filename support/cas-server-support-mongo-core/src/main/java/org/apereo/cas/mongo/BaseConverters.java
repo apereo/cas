@@ -222,7 +222,7 @@ public abstract class BaseConverters {
         public String convert(
             @Nonnull
             final ZonedDateTime source) {
-            return Optional.ofNullable(source).map(ZonedDateTime::toString).orElse(null);
+            return Optional.of(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
 

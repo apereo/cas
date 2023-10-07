@@ -70,22 +70,10 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
         return res;
     }
 
-    /**
-     * Generate key.
-     *
-     * @param r the record
-     * @return the string
-     */
     protected String generateKey(final MultifactorAuthenticationTrustRecord r) {
         val key = keyGenerationStrategy.generate(r);
         return cipherExecutor.encode(key);
     }
 
-    /**
-     * Set records.
-     *
-     * @param record the record
-     * @return the record
-     */
     protected abstract MultifactorAuthenticationTrustRecord saveInternal(MultifactorAuthenticationTrustRecord record);
 }

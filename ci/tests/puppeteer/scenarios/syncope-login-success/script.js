@@ -26,8 +26,8 @@ const path = require("path");
 
 
 async function doLogin(page, uid, psw, email) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page);
     await cas.loginWith(page,uid, psw);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
@@ -49,7 +49,7 @@ async function updateConfig(configFile, configFilePath, data) {
         }
     };
     const newConfig = YAML.stringify(config);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

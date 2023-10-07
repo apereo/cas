@@ -9,7 +9,7 @@ category: Configuration
 # Configuration Security - CAS
 
 If you are running CAS in standalone mode without the presence of the configuration server,
-you can take advantage of built-in [Jasypt](http://www.jasypt.org/) functionality to decrypt 
+you can take advantage of built-in [Jasypt](https://github.com/jasypt/jasypt) functionality to decrypt 
 sensitive CAS settings. Configuration security specified here should apply to all configuration 
 files and settings loaded by CAS in all supported formats (i.e. `properties`, `yaml`, `yml`).
 
@@ -43,7 +43,7 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <Logger name="org.apereo.cas.configuration" level="trace" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```

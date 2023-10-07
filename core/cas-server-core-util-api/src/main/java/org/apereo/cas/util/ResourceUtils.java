@@ -80,7 +80,7 @@ public class ResourceUtils {
      * that is picked up by the GraalVM native image.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public boolean isEmbeddedResource(final String resource) {
         val lowerCase = resource.toLowerCase(Locale.ENGLISH);

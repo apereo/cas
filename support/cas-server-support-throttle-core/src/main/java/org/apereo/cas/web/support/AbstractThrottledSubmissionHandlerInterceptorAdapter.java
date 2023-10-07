@@ -145,7 +145,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     @SuppressWarnings("JavaUtilDate")
     protected boolean calculateFailureThresholdRateAndCompare(final List<? extends ThrottledSubmission> failures) {
         if (failures.size() >= 2) {
-            val lastTime = DateTimeUtils.dateOf(failures.get(0).getValue()).getTime();
+            val lastTime = DateTimeUtils.dateOf(failures.getFirst().getValue()).getTime();
             val secondToLastTime = DateTimeUtils.dateOf(failures.get(1).getValue()).getTime();
             val difference = lastTime - secondToLastTime;
             val rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;

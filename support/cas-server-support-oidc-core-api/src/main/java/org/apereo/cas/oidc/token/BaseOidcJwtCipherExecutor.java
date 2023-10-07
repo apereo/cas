@@ -18,8 +18,8 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * This is {@link BaseOidcJwtCipherExecutor}.
@@ -34,7 +34,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.
@@ -43,8 +43,8 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     @Override
     public boolean isEnabled() {
-        val signing = isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).stream().findAny().isPresent();
-        val enc = isEncryptionEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION).stream().findAny().isPresent();
+        val signing = isSigningEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING).findAny().isPresent();
+        val enc = isEncryptionEnabled() && getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION).findAny().isPresent();
         return signing || enc;
     }
 
@@ -56,12 +56,14 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     private void prepareKeysForSigningAndEncryption() {
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
+            .findAny()
             .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey())));
 
         getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
+            .findAny()
             .ifPresent(key -> {
                 setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey()));
                 configureEncryptionSettingsFor(key);
@@ -81,22 +83,24 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
 
     private void prepareKeysForDecryptionAndVerification() {
         getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
+            .findAny()
             .ifPresent(key -> {
                 setEncryptionKey(new BasicIdentifiableKey(key.getKeyId(), key.getPrivateKey()));
                 configureEncryptionSettingsFor(key);
             });
         getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
-            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(jwks -> jwks.getJsonWebKeys().getFirst())
             .map(PublicJsonWebKey.class::cast)
+            .findAny()
             .ifPresent(key -> setSigningKey(new BasicIdentifiableKey(key.getKeyId(), key.getKey())));
     }
 
 
-    private Optional<JsonWebKeySet> getJsonWebKeyFor(final OidcJsonWebKeyUsage usage) {
+    private Stream<JsonWebKeySet> getJsonWebKeyFor(final OidcJsonWebKeyUsage usage) {
         val issuer = oidcIssuerService.determineIssuer(Optional.empty());
         LOGGER.trace("Determined issuer [{}] to fetch the JSON web key", issuer);
-        return Objects.requireNonNull(defaultJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(issuer, usage)));
+        return Stream.of(defaultJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(issuer, usage)));
     }
 }

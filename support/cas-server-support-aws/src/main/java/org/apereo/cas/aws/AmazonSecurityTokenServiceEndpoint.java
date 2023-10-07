@@ -154,7 +154,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                         .body("Specified role is not allowed. Current roles:" + attributeValues);
                 }
             }
-            val role = StringUtils.defaultIfBlank(roleArn, attributeValues.get(0).toString());
+            val role = StringUtils.defaultIfBlank(roleArn, attributeValues.getFirst().toString());
             LOGGER.debug("Using role [{}]", role);
             val roleRequest = AssumeRoleRequest.builder()
                 .durationSeconds(Long.valueOf(Beans.newDuration(duration).toSeconds()).intValue())

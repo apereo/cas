@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -49,7 +50,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends BaseRegisteredServ
     private String zoneId = ZoneOffset.UTC.getId();
 
     @Override
-    public boolean isServiceAccessAllowed() {
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess();
     }
 

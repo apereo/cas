@@ -31,6 +31,9 @@ configurations.configureEach {
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
+                if (requested.group == "org.springframework.amqp")  {
+                    details.useVersion("${springRabbitVersion}")
+                }
                 if (requested.group == "jakarta.activation")  {
                     details.useVersion("${jakartaActivationVersion}")
                 }
@@ -191,4 +194,7 @@ configurations.configureEach {
     exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+
+    exclude(group: "io.netty", module: "netty-transport-native-epoll")
+    exclude(group: "io.netty", module: "netty-transport-native-kqueue")
 }

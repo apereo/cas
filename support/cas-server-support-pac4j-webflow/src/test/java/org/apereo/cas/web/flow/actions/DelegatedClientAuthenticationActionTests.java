@@ -17,8 +17,9 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.BaseDelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -26,7 +27,6 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -47,15 +47,12 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -73,57 +70,44 @@ class DelegatedClientAuthenticationActionTests {
     static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
-            final DelegatedClientAuthenticationConfigurationContext configurationContext) {
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME) final DelegatedClientAuthenticationConfigurationContext configurationContext) {
             return new TestBaseDelegatedClientAuthenticationCredentialResolver(configurationContext);
         }
     }
 
     @Import(CredentialTestConfiguration.class)
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class CredentialSelectionTests extends BaseDelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyCredentialSelectionStart() throws Throwable {
-            val request = new MockHttpServletRequest();
-            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
+            val context = MockRequestContext.create();
+            context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
+            context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
-            request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-
-            val context = new MockRequestContext();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
             val client = builtClients.findClient("FacebookClient").get();
-            val webContext = new JEEContext(request, new MockHttpServletResponse());
+            val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
-            request.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+            context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
             val event = delegatedAuthenticationAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
         }
 
         @Test
         void verifyCredentialSelectionFinish() throws Throwable {
-            val request = new MockHttpServletRequest();
-            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
-            val context = new MockRequestContext();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            RequestContextHolder.setRequestContext(context);
-            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            val context = MockRequestContext.create();
+            context.getHttpServletRequest().addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
+            context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
             val client = builtClients.findClient("FacebookClient").get();
-            val webContext = new JEEContext(request, new MockHttpServletResponse());
+            val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
-            request.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+            context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
             val p1 = DelegatedAuthenticationCandidateProfile.builder()
                 .id("casuser")
                 .key(UUID.randomUUID().toString())
@@ -136,7 +120,6 @@ class DelegatedClientAuthenticationActionTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
         void verifyStartAuthenticationNoService() throws Throwable {

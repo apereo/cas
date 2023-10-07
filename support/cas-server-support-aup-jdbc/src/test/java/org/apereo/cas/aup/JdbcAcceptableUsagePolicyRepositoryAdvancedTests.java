@@ -5,6 +5,7 @@ import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -12,12 +13,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
+
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @BeforeEach
     public void initialize() throws SQLException {
-        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
+        try (val connection = this.acceptableUsagePolicyDataSource.getConnection()) {
+            try (val s = connection.createStatement()) {
+                connection.setAutoCommit(true);
                 s.execute("CREATE TABLE users_table (id int primary key, username varchar(255), mail varchar(255), aup boolean)");
                 s.execute("INSERT INTO users_table (id, username, mail, aup) values (100, 'casuser', 'casuser@example.org', false);");
             }
@@ -102,7 +99,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    void determinePrincipalIdWithAdvancedConfig() {
+    void determinePrincipalIdWithAdvancedConfig() throws Throwable {
         val principalId = determinePrincipalId("casuser",
             CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
         assertEquals("CASuser@example.org", principalId);
@@ -128,19 +125,17 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
         return true;
     }
 
-    private void raiseException(final Map<String, List<Object>> profileAttributes) {
+    private void raiseException(final Map<String, List<Object>> profileAttributes) throws Exception {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
             aupProperties,
             acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create();
 
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
-        val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
+        val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        val principal = CoreAuthenticationTestUtils.getPrincipal(credentials.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
         assertNotNull(jdbcAupRepository.determinePrincipalId(principal));

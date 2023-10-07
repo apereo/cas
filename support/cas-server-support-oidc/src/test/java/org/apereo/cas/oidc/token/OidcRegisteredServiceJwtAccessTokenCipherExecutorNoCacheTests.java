@@ -32,7 +32,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends Abst
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);
-        when(defaultCache.get(any())).thenReturn(Optional.empty());
+        when(defaultCache.get(any())).thenReturn(null);
 
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());
@@ -57,7 +57,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends Abst
         val id = UUID.randomUUID().toString();
 
         val defaultCache = mock(LoadingCache.class);
-        when(defaultCache.get(any())).thenReturn(Optional.empty());
+        when(defaultCache.get(any())).thenReturn(null);
 
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());

@@ -197,8 +197,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     .service(context.getService().orElse(null))
                     .authentication(context.getAuthentication().orElse(null))
                     .build();
-                result.setException(new UnauthorizedServiceException(
-                    UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service Unauthorized"));
+                result.setException(UnauthorizedServiceException.denied("Unauthorized"));
                 return result;
             });
     }

@@ -2,7 +2,7 @@
   "dependencies": "core",
 
   "properties": [
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.webflow.login-decorator.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/LoginDecorator.groovy",

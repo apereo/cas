@@ -6,20 +6,20 @@ const path = require("path");
 async function tryServiceProviders(entityIds, page, timeout) {
     let count = 0;
     for (const entityId of entityIds) {
-        console.log(`Trying service provider ${entityId} with timeout ${timeout}`);
+        await cas.log(`Trying service provider ${entityId} with timeout ${timeout}`);
 
         let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
         url += `?providerId=${entityId}`;
         url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
-        console.log(`Navigating to ${url}`);
+        await cas.log(`Navigating to ${url}`);
         let s = performance.now();
         await cas.goto(page, url);
         await page.waitForTimeout(2000);
         await cas.screenshot(page);
         let e = performance.now();
         let duration = (e - s) / 1000;
-        console.log(`Request took ${duration} seconds for ${entityId}`);
+        await cas.log(`Request took ${duration} seconds for ${entityId}`);
 
         if (count > 1 && duration > duration) {
             throw `Request took longer than expected:${duration}`;
@@ -28,7 +28,7 @@ async function tryServiceProviders(entityIds, page, timeout) {
         await page.waitForTimeout(2000);
         await cas.assertVisibility(page, '#username');
         await cas.assertVisibility(page, '#password');
-        console.log("=====================================")
+        await cas.log("=====================================");
         count++;
     }
 }

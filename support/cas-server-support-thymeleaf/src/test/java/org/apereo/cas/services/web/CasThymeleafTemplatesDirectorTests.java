@@ -2,18 +2,12 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
 import java.net.URI;
 import java.time.Clock;
@@ -33,12 +27,7 @@ import static org.mockito.Mockito.*;
 class CasThymeleafTemplatesDirectorTests {
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        MockRequestContext.create();
 
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.getWebflowLoginContextProviders()).thenReturn(List.of());

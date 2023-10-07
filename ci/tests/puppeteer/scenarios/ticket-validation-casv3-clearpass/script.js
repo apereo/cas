@@ -8,11 +8,11 @@ const cas = require('../../cas.js');
     const service = "https://apereo.github.io";
 
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body);
+    await cas.log(body);
     let json = JSON.parse(body);
     let authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");

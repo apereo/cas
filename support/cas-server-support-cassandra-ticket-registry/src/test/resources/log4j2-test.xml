@@ -9,7 +9,7 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="com.datastax.driver" level="debug" />
         <Logger name="org.springframework.data.cassandra" level="info" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

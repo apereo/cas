@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
 
     await cas.assertVisibility(page, '#continueButton');
-    console.log("Checking all emails");
+    await cas.log("Checking all emails");
     await page.evaluate(() => {
         const emails = document.querySelectorAll("input[type=checkbox]");
         emails.forEach(lnk => {
@@ -34,7 +34,7 @@ const cas = require('../../cas.js');
     assert(addresses.includes("casperson@example.com"));
     assert(addresses.includes("casuser@example.org"));
     let code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
-    console.log(`Code to use is extracted as ${code}`);
+    await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
     await page.bringToFront();
     await cas.type(page, "#token", code);

@@ -12,9 +12,7 @@
 
 <body>
 <span th:fragment="overview">
-        <div id="divOverview"
-             class="profile-content p-1 text-justify"
-             style="display: none;">
+        <div id="divOverview" class="profile-content p-1 text-justify" style="display: none;">
             <h2>
                 <i class="mdi mdi-door-open fas fa-door-open"></i>
                 <span>Hello, <span th:text="${authentication.principal.id}"></span>!</span>
@@ -24,6 +22,12 @@
             <p th:utext="#{screen.account.security}">
                 When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
             </p>
+
+            <div id="infoMessages" class="banner banner-success banner-dismissible text-justify my-2" th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
+                <a href="#" class="close" onclick="$(this).parent().hide();" aria-label="close"><span class="mdi mdi-close-box"></span></a>
+                <span th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</span>
+                <script>autoHideElement("infoMessages");</script>
+            </div>
         </div>
 
     </span>

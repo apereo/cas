@@ -30,15 +30,16 @@ public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val cookie = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        Optional.ofNullable(cookie).ifPresent(c -> {
+        val cookieResult = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        Optional.ofNullable(cookieResult).ifPresent(cookie -> {
             LOGGER.debug("Attempting to locate ticket-granting ticket from cookie value [{}]", cookie);
             val ticket = FunctionUtils.doAndHandle(
-                () -> ticketRegistry.getTicket(c, TicketGrantingTicket.class), throwable -> null).get();
+                () -> ticketRegistry.getTicket(cookie, TicketGrantingTicket.class), throwable -> null).get();
             if (ticket != null) {
                 LOGGER.debug("Found ticket-granting ticket [{}]", ticket.getId());
                 WebUtils.putTicketGrantingTicket(requestContext, ticket);
                 WebUtils.putTicketGrantingTicketInScopes(requestContext, ticket);
+                WebUtils.putAuthentication(ticket.getAuthentication(), requestContext);
             }
         });
         return null;

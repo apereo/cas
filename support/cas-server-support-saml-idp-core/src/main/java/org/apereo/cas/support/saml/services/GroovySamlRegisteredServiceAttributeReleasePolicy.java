@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
@@ -58,7 +56,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                 return Optional.ofNullable(script)
                     .map(Unchecked.function(sc -> {
                         val args = new Object[]{attributes, context.getRegisteredService(), resolver,
-                            facade, entityDescriptor, applicationContext, LOGGER};
+                            facade, entityDescriptor, context.getApplicationContext(), LOGGER};
                         return (Map<String, List<Object>>) script.execute(args, Map.class, true);
                     }))
                     .orElseGet(() -> {

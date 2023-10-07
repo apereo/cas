@@ -7,9 +7,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
@@ -54,13 +53,11 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -203,7 +200,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
-        assertTrue(result.isForceAuthn());
+        assertEquals(Boolean.TRUE, result.isForceAuthn());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());
@@ -227,7 +224,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val builder = new SAML2AuthnRequestBuilder();
         val result = builder.build(pair.getRight());
-        assertTrue(result.isPassive());
+        assertEquals(Boolean.TRUE, result.isPassive());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, pair.getLeft());
@@ -275,7 +272,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.init();
 
         val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
-        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val callContext = new CallContext(webContext, new JEESessionStore());
         val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);

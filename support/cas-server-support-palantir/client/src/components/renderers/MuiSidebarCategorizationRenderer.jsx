@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Tab, Tabs, Toolbar } from '@mui/material';
+import React, { useState, useMemo, Fragment } from 'react';
+import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import {
     and,
     deriveLabelForUISchemaElement,
@@ -15,8 +16,11 @@ import {
     MaterialLayoutRenderer,
     withAjvProps,
 } from '@jsonforms/material-renderers';
-import { defaultTranslator } from '@jsonforms/core'
-import { useTheme } from '@emotion/react';
+import { defaultTranslator } from '@jsonforms/core';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
+const drawerWidth = 240;
 
 export const isSingleLevelCategorization = and(
     uiTypeIs('Categorization'),
@@ -38,6 +42,34 @@ export const muiSidebarCategorizationTester = rankWith(
     isSingleLevelCategorization
 );
 
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  }));
+
+const Main = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+      flexGrow: 1,
+      padding: theme.spacing(3),
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      marginLeft: `-${drawerWidth}px`,
+      ...(open && {
+        transition: theme.transitions.create('margin', {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginLeft: 0,
+      }),
+    }),
+  );
+
 export const MuiSidebarCategorizationRenderer = (
     props
 ) => {
@@ -53,8 +85,14 @@ export const MuiSidebarCategorizationRenderer = (
         selected,
         onChange,
         ajv,
+        config,
         t,
     } = props;
+
+    const { context } = config;
+    const { open, setOpen } = context;
+
+    const theme = useTheme();
     const categorization = uischema;
     const [previousCategorization, setPreviousCategorization] =
         useState(uischema);
@@ -66,8 +104,6 @@ export const MuiSidebarCategorizationRenderer = (
             ),
         [categorization, data, ajv]
     );
-
-    const theme = useTheme();
 
     if (categorization !== previousCategorization) {
         setActiveCategory(0);
@@ -83,13 +119,12 @@ export const MuiSidebarCategorizationRenderer = (
         path,
         direction: 'column',
         enabled,
-        visible: !visible,
+        visible,
         renderers,
         cells,
     };
 
     const onTabChange = (value) => {
-        console.log(value)
         if (onChange) {
             onChange(value, safeCategory);
         }
@@ -100,25 +135,45 @@ export const MuiSidebarCategorizationRenderer = (
         return categories.map((e) => deriveLabelForUISchemaElement(e, defaultTranslator));
     }, [categories]);
 
-    const drawerWidth = 240;
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
 
     return (
-        <Box sx={{ display: 'flex', flexGrow: 1 }}>
-            <List sx={{ minWidth: '240px', borderRight: `1px solid rgba(0, 0, 0, 0.3)`, boxShadow: 1 }}>
-                {categories.map((_, idx) => (
-                    <ListItem key={idx} disablePadding>
-                        <ListItemButton onClick={() => onTabChange(idx)}>
-                            <ListItemText primary={tabLabels[idx]} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-            <Box
-                component="main"
+        <Box sx={{ display: 'flex' }}>
+            <Drawer
+                variant="persistent"
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                }}
+                open={open}
+            >
+                <Toolbar />
+                <DrawerHeader>
+                    <IconButton onClick={handleDrawerClose}>
+                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                    </IconButton>
+                </DrawerHeader>
+                <Divider light />
+                <Box sx={{ display: 'flex' }}>
+                    <List>
+                        {categories.map((_, idx) => (
+                            <ListItem key={idx} disablePadding>
+                                <ListItemButton onClick={() => onTabChange(idx)} selected={activeCategory === idx}>
+                                    <ListItemText primary={tabLabels[idx]} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Box>
+            </Drawer>
+            <Main open={open}
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
                 <MaterialLayoutRenderer {...childProps} key={safeCategory} />
-            </Box>
+            </Main>
         </Box>
     );
 };

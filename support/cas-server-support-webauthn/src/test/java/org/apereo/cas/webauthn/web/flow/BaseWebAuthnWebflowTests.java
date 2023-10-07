@@ -35,7 +35,6 @@ import org.apereo.cas.config.WebAuthnComponentSerializationConfiguration;
 import org.apereo.cas.config.WebAuthnConfiguration;
 import org.apereo.cas.config.WebAuthnMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.WebAuthnWebflowConfiguration;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -53,6 +52,7 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseWebAuthnWebflowTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         AopAutoConfiguration.class

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -15,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,7 +39,6 @@ class SyncopePersonAttributeDaoTests {
         })
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
-    @SuppressWarnings("ClassCanBeStatic")
     class SyncopeCoreServerTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -78,7 +74,6 @@ class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
         })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")

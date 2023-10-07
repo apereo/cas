@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +21,6 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,7 +34,6 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.cookie.enabled=true")
-    @SuppressWarnings("ClassCanBeStatic")
     public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Autowired
         @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
@@ -88,12 +85,10 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class MenuSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     class DynamicSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Test

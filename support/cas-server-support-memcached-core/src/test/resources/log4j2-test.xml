@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="com.esotericsoftware" level="trace" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

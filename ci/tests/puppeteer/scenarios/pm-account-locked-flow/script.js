@@ -1,9 +1,8 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const {ca} = require("wait-on/exampleConfig");
 
 async function loginWith(page, user, password) {
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, user, password);
     await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#content h2", `This account has been ${user}.`);
@@ -26,5 +25,6 @@ async function loginWith(page, user, password) {
     await cas.assertInnerText(page, "#content h2", "Your account is now unlocked.");
     await page.waitForTimeout(1000);
     await cas.click(page, "#loginbtn");
+    await page.waitForTimeout(1000);
     await browser.close();
 })();

@@ -8,7 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.http-client.host-name-verifier=none",
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
 
     "--cas.authn.attribute-repository.grouper.id=Grouper",
     "--cas.authn.attribute-repository.grouper.subject-type=SUBJECT_ID",

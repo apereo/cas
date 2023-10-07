@@ -15,7 +15,6 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -59,7 +58,6 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
-    @Synchronized
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val spnegoCredential = (SpnegoCredential) credential;
         if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
@@ -158,6 +156,6 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             return this.principalFactory.createPrincipal(name);
         }
         val splitList = Splitter.on("@").splitToList(name);
-        return this.principalFactory.createPrincipal(splitList.get(0));
+        return this.principalFactory.createPrincipal(splitList.getFirst());
     }
 }

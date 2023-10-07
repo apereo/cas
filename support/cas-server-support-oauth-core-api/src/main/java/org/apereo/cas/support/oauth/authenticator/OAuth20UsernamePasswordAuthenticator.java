@@ -30,6 +30,7 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -60,6 +61,8 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
     private final TicketFactory ticketFactory;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
         try {
@@ -81,6 +84,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             }
             val redirectUri = requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
+            OAuth20Utils.validateRedirectUri(redirectUri);
             val service = StringUtils.isNotBlank(redirectUri)
                 ? webApplicationServiceFactory.createService(redirectUri)
                 : webApplicationServiceFactory.createService(clientId);
@@ -121,6 +125,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             .registeredService(registeredService)
             .service(service)
             .principal(principal)
+            .applicationContext(applicationContext)
             .build();
         val id = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         LOGGER.debug("Created profile id [{}]", id);

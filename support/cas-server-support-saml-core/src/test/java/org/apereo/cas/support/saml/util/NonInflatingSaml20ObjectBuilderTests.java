@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
-
+import org.apereo.cas.util.InetAddressUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.xs.XSObject;
@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.ZoneOffset;
@@ -30,7 +29,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +44,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;
-    
+
     @Test
     void verifyAttrValueTypeString() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
@@ -141,8 +139,11 @@ class NonInflatingSaml20ObjectBuilderTests {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, "https://www.apereo.org/app/sp", ZonedDateTime.now(ZoneOffset.UTC),
-            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+
+        val confirmation = builder.newSubjectConfirmation("https://www.apereo.org/app/sp",
+            ZonedDateTime.now(ZoneOffset.UTC), "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2",
+            ZonedDateTime.now(ZoneOffset.UTC), InetAddressUtils.getByName("https://www.apereo.org/app/sp"));
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 
@@ -151,8 +152,9 @@ class NonInflatingSaml20ObjectBuilderTests {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, null, ZonedDateTime.now(ZoneOffset.UTC),
-                "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+        val confirmation = builder.newSubjectConfirmation(null, ZonedDateTime.now(ZoneOffset.UTC),
+            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC), null);
+        val sub = builder.newSubject(id, subjectId, confirmation);
         assertNotNull(sub);
     }
 

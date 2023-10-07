@@ -3,10 +3,12 @@ package org.apereo.cas.ticket.refreshtoken;
 import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("OAuthToken")
 class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OAuth20RefreshTokenExpirationPolicy.json");
+
     @Test
     void verifyRefreshTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();

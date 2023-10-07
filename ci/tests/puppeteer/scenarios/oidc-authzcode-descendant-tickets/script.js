@@ -7,10 +7,10 @@ const redirectUrl = "https://github.com/apereo/cas";
 async function fetchCode(page) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
@@ -35,7 +35,7 @@ async function exchangeCode(page, code, clientId) {
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
         res => {
-            console.log(res.data);
+            cas.log(res.data);
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
 
@@ -76,12 +76,12 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
-    console.log(`Calling endpoint: ${accessTokenUrl}`);
+    await cas.log(`Calling endpoint: ${accessTokenUrl}`);
 
     let value = `${clientId}:secret`;
     let buff = Buffer.alloc(value.length, value);
     let authzHeader = `Basic ${buff.toString('base64')}`;
-    console.log(`Authorization header: ${authzHeader}`);
+    await cas.log(`Authorization header: ${authzHeader}`);
 
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json",
@@ -97,15 +97,13 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     let tokens = await exchangeCode(page, code, "client");
     await fetchProfile(tokens.accessToken);
     await refreshTokens(tokens.refreshToken, "client",
-        res => {
-            assert(res.status === 200);
-        }, error => {
+        res => assert(res.status === 200), error => {
             throw `Operation should fail but instead produced: ${error}`;
         });
 
 
     await cas.logg("Logging out, removing all tokens...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     try {
         await exchangeCode(page, code, "client");
         throw `Request should not pass; ${code} is expired`
@@ -123,9 +121,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     await refreshTokens(tokens.refreshToken, "client",
         res => {
             throw `Refresh Token request should not pass; ${tokens.accessToken} is expired`
-        }, error => {
-            cas.logg("Refresh Token request has failed, correctly.")
-        });
+        }, error => cas.logg("Refresh Token request has failed, correctly."));
 
     await browser.close();
 })();

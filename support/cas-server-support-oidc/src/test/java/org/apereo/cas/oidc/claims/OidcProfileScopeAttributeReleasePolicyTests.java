@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +35,7 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(principal)
+            .applicationContext(oidcConfigurationContext.getApplicationContext())
             .build();
         val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
@@ -44,15 +44,13 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
     void verifySerialization() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrapList("name", "gender"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val json = serializer.toString(service);
         assertNotNull(json);
         val read = serializer.from(json);

@@ -42,12 +42,10 @@ import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +70,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -91,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
@@ -98,7 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
     CasWebAppConfiguration.class,
-    CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
+    BaseCasWebflowSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -128,19 +125,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasPersonDirectoryStubConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    WebMvcAutoConfiguration.class
-})
+    CasCoreMultifactorAuthenticationConfiguration.class
+}, properties = "spring.main.allow-bean-definition-overriding=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) throws Exception {
-        val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
-        try (val reader = new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)) {
-            assertEquals(IOUtils.toString(reader), nativeResponse.getContentAsString());
-        }
-    }
-
     private static MockRequestContext getMockRequestContext() {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();

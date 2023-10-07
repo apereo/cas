@@ -325,4 +325,54 @@ to service providers that contain the entity attribute value `https://refeds.org
 
 {% endtab %}
 
+{% tab saml2attrrel Pseudonymous Access %}
+
+A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/pseudonymous)
+to service providers that contain the entity attribute value `https://refeds.org/category/pseudonymous`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+         {"@class": "org.apereo.cas.support.saml.services.PseudonymousAccessAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+{% endtab %}
+
+{% tab saml2attrrel Personalized Access %}
+
+A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/personalized)
+to service providers that contain the entity attribute value `https://refeds.org/category/personalized`:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/incommon/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+         {"@class": "org.apereo.cas.support.saml.services.PersonalizedAccessAttributeReleasePolicy"}
+      ]
+    ]
+  }
+}
+```
+
+{% endtab %}
+
 {% endtabs %}

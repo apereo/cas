@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePol
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -21,13 +20,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +38,6 @@ import static org.mockito.Mockito.*;
 class DefaultAcceptableUsagePolicyRepositoryTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @Getter
     class DefaultTests extends BaseAcceptableUsagePolicyRepositoryTests {
         @Autowired
@@ -69,7 +65,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
             assertTrue(repo.verify(context).isAccepted());
         }
-        
+
         @Test
         void verifyActionDefaultAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
@@ -98,7 +94,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             assertEquals(List.of("casuser"), status.getProperty("user"));
             assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
             assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
-            
+
             assertEquals(List.of("hello1", "hello2"), status.getPropertyOrDefault("nada", "hello1", "hello2"));
             assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", "hello1", "hello2"));
         }
@@ -139,7 +135,6 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
 
     @Nested
     @Getter
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-omit-if-attribute-missing=true")
     class MissingStatusAttributeTests extends BaseAcceptableUsagePolicyRepositoryTests {
 

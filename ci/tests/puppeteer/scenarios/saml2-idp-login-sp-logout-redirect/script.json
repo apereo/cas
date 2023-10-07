@@ -1,6 +1,8 @@
 {
   "dependencies": "saml-idp",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
@@ -10,12 +12,14 @@
     "--cas.server.scope=example.net",
 
     "--cas.authn.accept.name=STATIC",
-    "--cas.audit.engine.enabled=false",
-    
+    "--cas.audit.engine.enabled=true",
+    "--cas.audit.slf4j.use-single-line=true",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.authn.saml-idp.logout.force-signed-logout-requests=false"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }

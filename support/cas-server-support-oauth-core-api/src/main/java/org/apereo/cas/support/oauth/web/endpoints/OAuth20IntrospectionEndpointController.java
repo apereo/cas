@@ -11,8 +11,8 @@ import org.apereo.cas.support.oauth.web.response.introspection.success.OAuth20In
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -187,7 +187,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
             val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {
-                introspect.setGrantType(grant.get(0).toString().toLowerCase(Locale.ENGLISH));
+                introspect.setGrantType(grant.getFirst().toString().toLowerCase(Locale.ENGLISH));
             }
         } else {
             introspect.setActive(false);

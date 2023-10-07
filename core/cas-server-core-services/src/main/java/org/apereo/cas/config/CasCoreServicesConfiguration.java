@@ -317,8 +317,7 @@ public class CasCoreServicesConfiguration {
                 .supply(() -> {
                     val managementType = casProperties.getServiceRegistry().getCore().getManagementType();
                     if (managementType == ServiceRegistryCoreProperties.ServiceManagementTypes.DOMAIN) {
-                        return () -> new DefaultDomainAwareServicesManager(configurationContext,
-                            new DefaultRegisteredServiceDomainExtractor());
+                        return () -> new DefaultDomainAwareServicesManager(configurationContext, new DefaultRegisteredServiceDomainExtractor());
                     }
                     return () -> new DefaultServicesManager(configurationContext);
                 })
@@ -362,9 +361,7 @@ public class CasCoreServicesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "servicesManagerCache")
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
-            val cacheProperties = casProperties.getServiceRegistry().getCache();
-            val duration = Beans.newDuration(cacheProperties.getDuration());
-            return Beans.newCache(casProperties.getServiceRegistry().getCache(), duration);
+            return Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build();
         }
 
         @EventListener

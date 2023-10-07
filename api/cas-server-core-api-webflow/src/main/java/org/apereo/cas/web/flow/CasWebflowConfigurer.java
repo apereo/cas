@@ -34,6 +34,11 @@ import java.util.Map;
 public interface CasWebflowConfigurer extends Ordered {
 
     /**
+     * Flow id for risk-based authentication's verification.
+     */
+    String FLOW_ID_RISK_VERIFICATION = "riskauthverify";
+
+    /**
      * Flow id for delegated authentication redirect.
      */
     String FLOW_ID_DELEGATION_REDIRECT = "clientredirect";
@@ -501,6 +506,17 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     Transition createTransitionForState(TransitionableState state, String criteriaOutcome,
                                         String targetState, boolean removeExisting);
+
+    /**
+     * Insert transition for state.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    Transition insertTransitionForState(TransitionableState state, String criteriaOutcome,
+                                        String targetState);
 
     /**
      * Create expression expression.

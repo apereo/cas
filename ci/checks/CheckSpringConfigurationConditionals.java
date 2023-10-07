@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 public class CheckSpringConfigurationConditionals {
     public static void main(final String[] args) throws Exception {
         checkPattern(args[0]);
+        checkDuplicateConfigurationNames(args[0]);
     }
 
     private static void print(final String message, final Object... args) {
@@ -41,12 +43,36 @@ public class CheckSpringConfigurationConditionals {
                     && pattern.matcher(text).find()) {
                     print("- Using @ConditionalOnProperty on configuration classes found in %s is not allowed. "
                           + "Consider using a feature module if appropriate, or using the BeanSupplier/BeanCondition API "
-                          + "to allow bean definitions to support resfresh requests and application context refreshes."
+                          + "to allow bean definitions to support refresh requests and application context refreshes."
                           + "If you determine that using @ConditionalOnProperty is appropriate for the use case at hand, "
                           + "you may annotate the class with @SuppressWarnings(\"ConditionalOnProperty\").%n%n", file.getFileName().toString());
                     failBuild.set(true);
                 }
 
+            });
+        if (failBuild.get()) {
+            System.exit(1);
+        }
+    }
+
+    protected static void checkDuplicateConfigurationNames(final String arg) throws IOException {
+        var allConfigurationNames = new HashSet<String>();
+        var failBuild = new AtomicBoolean(false);
+        var pattern = Pattern.compile("@Configuration\\(value\\s+=\\s+\"(\\w+)\"");
+        Files.walk(Paths.get(arg))
+            .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
+            .forEach(file -> {
+                var text = readFile(file);
+                var matcher = pattern.matcher(text);
+                while (matcher.find()) {
+                    var configName = matcher.group(1);
+                    if (allConfigurationNames.contains(configName)) {
+                        print("Found a duplicate configuration name %s in file %s", configName, file.toFile().getAbsolutePath());
+                        failBuild.set(true);
+                    } else {
+                        allConfigurationNames.add(configName);
+                    }
+                }
             });
         if (failBuild.get()) {
             System.exit(1);

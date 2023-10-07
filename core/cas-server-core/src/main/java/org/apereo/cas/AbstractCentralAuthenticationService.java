@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketFactory;
@@ -41,9 +40,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Serial
     private static final long serialVersionUID = -7572316677901391166L;
 
-    /**
-     * Configuration context.
-     */
     protected final CentralAuthenticationServiceContext configurationContext;
 
     @Override
@@ -51,11 +47,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return this.configurationContext.getTicketFactory();
     }
 
-    /**
-     * Publish CAS events.
-     *
-     * @param e the event
-     */
     protected void doPublishEvent(final ApplicationEvent e) {
         if (configurationContext.getApplicationContext() != null) {
             LOGGER.trace("Publishing [{}]", e);
@@ -63,17 +54,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    /**
-     * Gets the authentication satisfied by policy.
-     *
-     * @param authentication the authentication
-     * @param context        the context
-     * @return the authentication satisfied by policy
-     * @throws AbstractTicketException the ticket exception
-     */
     protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication,
-                                                                final ServiceContext context) throws AbstractTicketException {
-        val policy = configurationContext.getAuthenticationPolicyFactory().createPolicy(context);
+                                                                final Service service,
+                                                                final RegisteredService registeredService) throws AbstractTicketException {
+        val policy = configurationContext.getAuthenticationPolicyFactory().createPolicy(registeredService);
         try {
             if (policy.isSatisfiedBy(authentication)) {
                 return authentication;
@@ -84,13 +68,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
-    /**
-     * Evaluate proxied service if needed.
-     *
-     * @param service              the service
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param registeredService    the registered service
-     */
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {

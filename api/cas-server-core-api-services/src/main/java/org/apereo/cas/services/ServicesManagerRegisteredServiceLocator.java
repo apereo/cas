@@ -17,6 +17,11 @@ import java.util.List;
  */
 public interface ServicesManagerRegisteredServiceLocator extends Ordered {
     /**
+     * Default order, used to determine the execution sequence.
+     */
+    int DEFAULT_ORDER = -1000;
+
+    /**
      * Locate registered service.
      *
      * @param candidates the candidates
@@ -37,7 +42,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
 
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return DEFAULT_ORDER;
     }
 
     /**

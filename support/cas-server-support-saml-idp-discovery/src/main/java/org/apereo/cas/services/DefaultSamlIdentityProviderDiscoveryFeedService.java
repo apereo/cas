@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.util.InitializableObject;
@@ -101,6 +100,6 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
                 return provider.get();
             }
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        throw UnauthorizedServiceException.denied("Denied: %s".formatted(entityID));
     }
 }

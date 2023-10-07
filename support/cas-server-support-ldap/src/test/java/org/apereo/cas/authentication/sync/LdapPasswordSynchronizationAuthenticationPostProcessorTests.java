@@ -5,13 +5,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +25,6 @@ import static org.mockito.Mockito.*;
 class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
         void verifySyncFindsNoUser() throws Throwable {
@@ -43,7 +40,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         @Test
         void verifyBadCredential() throws Throwable {
             assertThrows(AuthenticationException.class, () -> {
-                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0));
+                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().getFirst());
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
@@ -54,7 +51,6 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.password-sync.ldap[0].password-synchronization-failure-fatal=false",
         "cas.authn.password-sync.ldap[0].password-attribute=unicodePwd"
@@ -72,7 +68,6 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.password-sync.ldap[0].password-attribute=st")
     class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test

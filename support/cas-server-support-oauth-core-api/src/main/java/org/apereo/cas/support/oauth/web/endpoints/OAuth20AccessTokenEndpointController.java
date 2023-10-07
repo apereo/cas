@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -119,7 +118,6 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
                     "Grant Type", requestHolder.getGrantType().getType(),
                     "Response Type", requestHolder.getResponseType().getType()));
             LOGGER.debug("Creating access token for [{}]", requestHolder);
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(requestHolder, tokenResult);

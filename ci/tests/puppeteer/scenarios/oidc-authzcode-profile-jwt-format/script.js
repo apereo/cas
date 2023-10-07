@@ -10,15 +10,15 @@ const assert = require('assert');
 
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
-    console.log(`Navigating to ${url}`);
+    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
     let code = await cas.assertParameter(page, "code");
-    console.log(`OAuth code ${code}`);
+    await cas.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -26,19 +26,19 @@ const assert = require('assert');
     accessTokenParams += `redirect_uri=${redirectUrl}`;
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
-    console.log(`Calling ${accessTokenUrl}`);
+    await cas.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
+        await cas.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log(`Received access token ${accessToken}`);
+        await cas.log(`Received access token ${accessToken}`);
 
-        console.log("Decoding ID token...");
+        await cas.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(decoded.sub !== null);
@@ -50,11 +50,11 @@ const assert = require('assert');
     assert(accessToken != null, "Access Token cannot be null");
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
-    console.log(`Calling user profile ${profileUrl}`);
+    await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         'Accept': "application/jwt"
     }, res => {
-        console.log(res.data);
+        cas.log(res.data);
         assert(res.data != null)
     }, error => {
         throw `Operation failed: ${error}`;

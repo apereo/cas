@@ -24,7 +24,7 @@ const assert = require('assert');
     };
 
     let body = JSON.stringify(service, undefined, 2);
-    console.log(`Sending ${body}`);
+    await cas.log(`Sending ${body}`);
     let result = await cas.doRequest("https://localhost:8443/cas/oidc/register", "POST",
         {
             'Content-Length': body.length,
@@ -32,19 +32,19 @@ const assert = require('assert');
         }, 201, body);
     assert(result !== null);
     let entity = JSON.parse(result.toString());
-    console.log(entity);
+    await cas.log(entity);
     assert(entity.client_id !== null);
     assert(entity.client_secret !== null);
     assert(entity.registration_access_token !== null);
     assert(entity.registration_client_uri !== null);
     assert(entity.contacts.length === 2);
 
-    console.log("Fetching client configuration...");
-    console.log("==================================");
+    await cas.log("Fetching client configuration...");
+    await cas.log("==================================");
     
     await cas.doGet(entity.registration_client_uri,
         res => {
-            console.log(`Registered entity: ${JSON.stringify(res.data)}`);
+            cas.log(`Registered entity: ${JSON.stringify(res.data)}`);
             assert(res.data.client_secret_expires_at > 0);
             assert(res.data.client_name === "My Example");
             assert(res.data.client_id === entity.client_id);

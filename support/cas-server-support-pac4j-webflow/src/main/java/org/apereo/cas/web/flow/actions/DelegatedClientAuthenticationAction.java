@@ -251,9 +251,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val clientResult = configContext.getClients().findClient(clientName);
         if (clientResult.isEmpty()) {
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(clientName));
         }
-        val client = BaseClient.class.cast(clientResult.get());
+        val client = (BaseClient) clientResult.get();
         client.init();
         return client;
     }
@@ -266,7 +266,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         if (!isDelegatedClientAuthorizedForService(client, service, requestContext)) {
             LOGGER.error("Delegated client [{}] is not authorized by service [{}]", client, service);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(service));
         }
     }
 
@@ -289,7 +289,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        throw UnauthorizedServiceException.denied("Denied: %s".formatted(givenClientName));
     }
 
     protected boolean isDelegatedClientAuthorizedForService(final Client client,

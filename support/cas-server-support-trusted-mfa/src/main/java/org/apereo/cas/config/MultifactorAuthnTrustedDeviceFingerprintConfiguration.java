@@ -43,6 +43,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Configuration for {@link DefaultDeviceFingerprintStrategy}.
@@ -128,7 +129,8 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentManager> extractors,
                                                                    final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
-            return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
+            val activeExtractors = extractors.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList());
+            return new DefaultDeviceFingerprintStrategy(activeExtractors, properties.getComponentSeparator());
         }
 
     }

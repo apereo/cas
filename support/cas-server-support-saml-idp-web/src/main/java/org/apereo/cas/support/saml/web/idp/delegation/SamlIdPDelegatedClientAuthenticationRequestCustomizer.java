@@ -3,11 +3,11 @@ package org.apereo.cas.support.saml.web.idp.delegation;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +23,6 @@ import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
 import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +41,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     private final OpenSamlConfigBean openSamlConfigBean;
 
+    private final ServicesManager servicesManager;
+
     private final CasConfigurationProperties casProperties;
 
     @Override
@@ -53,10 +54,10 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         result.ifPresent(authnRequest -> {
             LOGGER.debug("Retrieved the SAML2 authentication request from [{}]",
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
-            if (authnRequest.isForceAuthn()) {
+            if (Boolean.TRUE.equals(authnRequest.isForceAuthn())) {
                 customizeForceAuthnRequest(client, webContext, authnRequest);
             }
-            if (authnRequest.isPassive()) {
+            if (Boolean.TRUE.equals(authnRequest.isPassive())) {
                 customizePassiveAuthnRequest(client, webContext);
             }
             customizeAuthnContextClass(client, webContext, authnRequest);
@@ -74,19 +75,21 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         }
 
         val authnRequest = (AuthnRequest) result.get().getLeft();
-        LOGGER.trace("Retrieved the SAML2 authentication request from [{}]",
-            SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
-
+        LOGGER.trace("Retrieved the SAML2 authentication request from [{}]", SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         val idpList = authnRequest.getScoping() != null ? authnRequest.getScoping().getIDPList() : null;
         val idpEntries = idpList != null && idpList.getIDPEntrys() != null ? idpList.getIDPEntrys() : List.<IDPEntry>of();
-        val providerList = idpEntries.stream().map(IDPEntry::getProviderID).collect(Collectors.toList());
-
+        val providerList = idpEntries.stream().map(IDPEntry::getProviderID).collect(Collectors.toSet());
         LOGGER.debug("Scoped identity providers are [{}] to examine against client [{}]", providerList, client.getName());
         if (supports(client, webContext)) {
             val saml2Client = (SAML2Client) client;
-            LOGGER.debug("Comparing [{}] against scoped identity providers [{}]",
+            LOGGER.debug("Comparing delegated SAML2 identity provider [{}] against scoped identity providers [{}]",
                 saml2Client.getIdentityProviderResolvedEntityId(), providerList);
-            return providerList.isEmpty() || providerList.contains(saml2Client.getIdentityProviderResolvedEntityId());
+            val authorized = providerList.isEmpty() || providerList.contains(saml2Client.getIdentityProviderResolvedEntityId());
+            if (!authorized) {
+                val registeredService = servicesManager.findServiceBy(currentService);
+                val delegatedAuthenticationPolicy = registeredService != null ? registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy() : null;
+                return delegatedAuthenticationPolicy != null && delegatedAuthenticationPolicy.isProviderAllowed(saml2Client.getName(), registeredService);
+            }
         }
         return true;
     }

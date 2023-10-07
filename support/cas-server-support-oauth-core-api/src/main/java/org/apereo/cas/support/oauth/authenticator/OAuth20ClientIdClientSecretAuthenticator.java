@@ -34,6 +34,7 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Map;
 import java.util.Optional;
 
@@ -65,6 +66,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
 
     private final TicketFactory ticketFactory;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
         return FunctionUtils.doUnchecked(() -> {
@@ -76,38 +79,41 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 .registeredService(registeredService)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-
-            if (!accessResult.isExecutionFailure() && canAuthenticate(callContext)) {
-                val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-                validateCredentials(upc, registeredService, callContext);
-
-                val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
-                val resolvedPrincipal = principalResolver.resolve(credential);
-
-                val profile = new CommonProfile();
-                if (resolvedPrincipal instanceof NullPrincipal) {
-                    LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
-                    profile.setId(id);
-                } else {
-                    val usernameContext = RegisteredServiceUsernameProviderContext.builder()
-                        .registeredService(registeredService)
-                        .service(service)
-                        .principal(resolvedPrincipal)
-                        .build();
-                    val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
-                    profile.setId(username);
-                }
-                profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
-                LOGGER.debug("Created profile id [{}]", profile.getId());
-
-                val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, callContext);
-                profile.addAttributes((Map) principal.getAttributes());
-
-                LOGGER.debug("Authenticated user profile [{}]", profile);
-                credentials.setUserProfile(profile);
-                return Optional.of(credentials);
+            val proceed = !accessResult.isExecutionFailure() && canAuthenticate(callContext);
+            if (!proceed) {
+                val name = getClass().getSimpleName();
+                LOGGER.debug("Skipping authenticator [{}]; service access is rejected for [{}] or the authentication request is not supported", name, registeredService);
+                return Optional.empty();
             }
-            return Optional.empty();
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            validateCredentials(upc, registeredService, callContext);
+
+            val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
+            val resolvedPrincipal = principalResolver.resolve(credential);
+
+            val profile = new CommonProfile();
+            if (resolvedPrincipal instanceof NullPrincipal) {
+                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
+                profile.setId(id);
+            } else {
+                val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                    .registeredService(registeredService)
+                    .service(service)
+                    .principal(resolvedPrincipal)
+                    .applicationContext(applicationContext)
+                    .build();
+                val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
+                profile.setId(username);
+            }
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, id);
+            LOGGER.debug("Created profile id [{}]", profile.getId());
+
+            val principal = buildAuthenticatedPrincipal(resolvedPrincipal, registeredService, service, callContext);
+            profile.addAttributes((Map) principal.getAttributes());
+
+            LOGGER.debug("Authenticated user profile [{}]", profile);
+            credentials.setUserProfile(profile);
+            return Optional.of(credentials);
         });
     }
 
@@ -139,7 +145,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val grantType = requestParameterResolver.resolveGrantType(context);
 
         if (grantType == OAuth20GrantTypes.PASSWORD) {
-            LOGGER.debug("Skipping Client credential authentication to use password authentication");
+            LOGGER.debug("Skipping client credential authentication to use password authentication");
             return false;
         }
 

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const cas = require('../../cas.js');
 
-(async () => {
+(async () =>
     await cas.doGet("https://localhost:8443/cas/actuator/discoveryProfile",
         res => {
             assert(res.status === 200);
@@ -15,5 +15,4 @@ const cas = require('../../cas.js');
         },
         error => {
             throw error;
-        })
-})();
+        }))();

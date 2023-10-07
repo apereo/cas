@@ -94,7 +94,7 @@ The expiration policy of device tokens can be defined on a per application basis
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
   "id" : 100,
-  "accessTokenExpirationPolicy": {
+  "deviceTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
     "timeToKill": "PT100S"
   }
@@ -115,7 +115,7 @@ The expiration policy of refresh tokens can be defined on a per application basi
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
   "id" : 100,
-  "accessTokenExpirationPolicy": {
+  "refreshTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
     "timeToKill": "PT100S"
   }

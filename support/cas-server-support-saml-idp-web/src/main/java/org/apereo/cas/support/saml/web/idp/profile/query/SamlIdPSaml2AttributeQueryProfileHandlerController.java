@@ -68,10 +68,9 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
         val query = (AttributeQuery) ctx.getMessage();
         try {
             val issuer = Objects.requireNonNull(query).getIssuer().getValue();
-            val registeredService = verifySamlRegisteredService(issuer);
+            val registeredService = verifySamlRegisteredService(issuer, request);
             val adaptor = getSamlMetadataFacadeFor(registeredService, query);
-            val facade = adaptor.orElseThrow(() -> new UnauthorizedServiceException(
-                UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer));
+            val facade = adaptor.orElseThrow(() -> UnauthorizedServiceException.denied("Cannot find metadata linked to %s".formatted(issuer)));
             verifyAuthenticationContextSignature(ctx, request, query, facade, registeredService);
 
             val nameIdValue = determineNameIdForQuery(query, registeredService, facade);
@@ -90,6 +89,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val principal = resolvePrincipalForAttributeQuery(authentication, registeredService);
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .service(ticket.getService())
                 .principal(principal)
                 .build();
@@ -105,6 +105,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .registeredService(registeredService)
                 .service(ticket.getService())
                 .principal(authentication.getPrincipal())
+                .applicationContext(getConfigurationContext().getOpenSamlConfigBean().getApplicationContext())
                 .build();
             
             val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);

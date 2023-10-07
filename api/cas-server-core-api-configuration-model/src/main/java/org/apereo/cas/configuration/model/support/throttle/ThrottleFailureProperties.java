@@ -38,14 +38,12 @@ public class ThrottleFailureProperties implements Serializable {
     private String code = DEFAULT_AUTHN_FAILED_ACTION;
 
     /**
-     * Number of failed login attempts permitted in the given period.
-     * All login throttling components that ship with CAS limit successive failed
-     * login attempts that exceed a threshold rate in failures per second.
+     * Number of failed login attempts for the threshold rate.
      */
     private int threshold = -1;
 
     /**
-     * Period of time in seconds during which the threshold applies.
+     * Period of time in seconds for the threshold rate.
      */
     private int rangeSeconds = -1;
 

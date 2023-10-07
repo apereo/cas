@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 const assert = require("assert");
 
 (async () => {
-    console.log("Removing previous consent decisions for casuser");
+    await cas.log("Removing previous consent decisions for casuser");
     await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
 
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -21,12 +21,13 @@ const assert = require("assert");
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(4000);
-    console.log(page.url());
-    assert(page.url().startsWith("https://localhost:9859/post"));
+    await page.waitForTimeout(6000);
+    await cas.logPage(page);
+    await cas.screenshot(page);
+    assert(await page.url().startsWith("https://localhost:9859/post"));
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    console.log(payload);
+    await cas.log(payload);
     assert(payload.form.RelayState != null);
     assert(payload.form.SAMLResponse != null);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

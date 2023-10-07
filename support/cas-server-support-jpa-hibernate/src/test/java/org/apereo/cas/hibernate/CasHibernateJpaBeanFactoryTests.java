@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -16,14 +15,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import javax.sql.DataSource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreUtilConfiguration.class
 })

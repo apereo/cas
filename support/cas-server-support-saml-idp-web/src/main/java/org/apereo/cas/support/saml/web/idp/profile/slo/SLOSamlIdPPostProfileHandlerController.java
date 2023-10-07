@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.val;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -34,6 +35,6 @@ public class SLOSamlIdPPostProfileHandlerController extends AbstractSamlSLOProfi
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Throwable {
         val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
-        handleSloProfileRequest(response, request, decoder);
+        handleSloProfileRequest(response, request, decoder, SAMLConstants.SAML2_POST_BINDING_URI);
     }
 }

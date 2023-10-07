@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasYamlHttpMessageConverter;
@@ -23,8 +25,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,11 +37,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -86,8 +96,7 @@ public class CasCoreWebConfiguration {
         @Bean
         public HierarchicalMessageSource messageSource(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casCommonMessages")
-            final Properties casCommonMessages) {
+            @Qualifier("casCommonMessages") final Properties casCommonMessages) {
             val bean = new CasReloadableMessageBundle();
             val mb = casProperties.getMessageBundle();
             bean.setDefaultEncoding(mb.getEncoding());
@@ -131,6 +140,20 @@ public class CasCoreWebConfiguration {
         @ConditionalOnMissingBean(name = "yamlHttpMessageConverter")
         public HttpMessageConverter yamlHttpMessageConverter() {
             return new CasYamlHttpMessageConverter();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultMappedExceptionErrorViewResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ErrorViewResolver defaultMappedExceptionErrorViewResolver(
+            final WebProperties webProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            val mv = new ModelAndView();
+            mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
+            mv.setViewName(CasWebflowConstants.VIEW_ID_SERVICE_ERROR);
+            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
+            return new MappedExceptionErrorViewResolver(applicationContext,
+                webProperties.getResources(), mappings, errorContext -> Optional.empty());
         }
     }
 

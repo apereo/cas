@@ -116,7 +116,7 @@ class DefaultLogoutManagerTests {
                 .httpServletResponse(Optional.of(new MockHttpServletResponse()))
                 .httpServletRequest(Optional.of(new MockHttpServletRequest()))
                 .build());
-        val logoutRequest = logoutRequests.iterator().next();
+        val logoutRequest = logoutRequests.getFirst();
         assertEquals(this.registeredService.getLogoutUrl(), logoutRequest.getLogoutUrl().toExternalForm());
     }
 
@@ -156,7 +156,7 @@ class DefaultLogoutManagerTests {
             .httpServletRequest(Optional.of(new MockHttpServletRequest()))
             .build());
         assertEquals(1, logoutRequests.size());
-        val logoutRequest = logoutRequests.iterator().next();
+        val logoutRequest = logoutRequests.getFirst();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -172,7 +172,7 @@ class DefaultLogoutManagerTests {
             .httpServletRequest(Optional.of(new MockHttpServletRequest()))
             .build());
         assertEquals(1, logoutRequests.size());
-        val logoutRequest = logoutRequests.iterator().next();
+        val logoutRequest = logoutRequests.getFirst();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -200,7 +200,7 @@ class DefaultLogoutManagerTests {
             .httpServletRequest(Optional.of(new MockHttpServletRequest()))
             .build());
         assertEquals(1, logoutRequests.size());
-        val logoutRequest = logoutRequests.iterator().next();
+        val logoutRequest = logoutRequests.getFirst();
         assertEquals(ID, logoutRequest.getTicketId());
     }
 
@@ -214,7 +214,7 @@ class DefaultLogoutManagerTests {
             .httpServletRequest(Optional.of(new MockHttpServletRequest()))
             .build());
         assertEquals(1, logoutRequests.size());
-        val logoutRequest = logoutRequests.iterator().next();
+        val logoutRequest = logoutRequests.getFirst();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());

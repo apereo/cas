@@ -76,7 +76,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
 
         var entityCertificate = getEntityCertificate();
         if (null == entityCertificate) {
-            entityCertificate = certificates.get(0);
+            entityCertificate = certificates.getFirst();
         }
 
         val privateKey = getPrivateKey();

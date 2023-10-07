@@ -10,7 +10,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  JDK_CURRENT: 21-ea
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
   DOCS_BRANCH: master
   RUBY_VERSION: 3.2.2
   RUBY_GC_HEAP_GROWTH_MAX_SLOTS: 104857600 # 4GB
@@ -33,7 +34,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
+      - uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ github.token }}
 
@@ -43,12 +44,12 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -65,12 +66,12 @@ jobs:
     needs: [initialize]
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -104,4 +105,3 @@ jobs:
           max_attempts: 3
           shell: bash
           command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
-#        run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}

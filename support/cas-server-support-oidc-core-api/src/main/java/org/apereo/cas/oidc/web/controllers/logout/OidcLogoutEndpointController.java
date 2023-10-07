@@ -101,13 +101,15 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                     .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
+                val postLogoutService = configContext.getWebApplicationServiceServiceFactory().createService(postLogoutRedirectUrl);
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url));
+                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url))
+                    || configContext.getServicesManager().findServiceBy(postLogoutService) != null;
+
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                        Optional.of(postLogoutRedirectUrl), Optional.of(clientId),
-                        request, response));
+                        Optional.of(postLogoutRedirectUrl), Optional.of(clientId), request, response));
                 }
             }
             val validURL = urls.stream().filter(urlValidator::isValid).findFirst();

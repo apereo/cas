@@ -64,7 +64,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
                             final Optional<HttpServletRequest> httpRequest) {
         return super.supports(registeredService, singleLogoutService, httpRequest)
             && registeredService instanceof SamlRegisteredService
-            && registeredService.getAccessStrategy().isServiceAccessAllowed()
+            && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, singleLogoutService)
             && buildLogoutUrl(registeredService, singleLogoutService) != null;
     }
 

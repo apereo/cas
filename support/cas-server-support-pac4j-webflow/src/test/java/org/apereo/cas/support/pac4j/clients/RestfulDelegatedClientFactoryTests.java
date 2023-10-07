@@ -3,7 +3,6 @@ package org.apereo.cas.support.pac4j.clients;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -15,12 +14,10 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,7 +48,6 @@ class RestfulDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
         "cas.authn.pac4j.rest.url=http://localhost:9212"
@@ -69,7 +65,6 @@ class RestfulDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=true",
         "cas.authn.pac4j.rest.url=http://localhost:9212"
@@ -101,7 +96,6 @@ class RestfulDelegatedClientFactoryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.server.name=https://sso.example.org",
         "cas.server.prefix=${cas.server.name}/cas",
@@ -130,7 +124,7 @@ class RestfulDelegatedClientFactoryTests {
                 var clientsFound = List.copyOf(delegatedClientFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
-                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.get(0).getCallbackUrl());
+                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.getFirst().getCallbackUrl());
 
                 /*
                  * Try the cache once the list is retrieved...

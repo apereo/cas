@@ -1,27 +1,27 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,14 +32,20 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("WebflowActions")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreHttpConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class FinalizeInterruptFlowActionTests {
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyFinalizedInterruptBlocked() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         val interrupt = InterruptResponse.interrupt();
         interrupt.setBlock(true);
@@ -53,8 +59,7 @@ class FinalizeInterruptFlowActionTests {
 
     @Test
     void verifyFinalizedInterruptBlockedUnauthzUrl() throws Throwable {
-        val context = new MockRequestContext();
-        context.setExternalContext(new MockExternalContext());
+        val context = MockRequestContext.create(applicationContext);
 
         val interrupt = InterruptResponse.interrupt();
         interrupt.setBlock(true);
@@ -75,10 +80,7 @@ class FinalizeInterruptFlowActionTests {
 
     @Test
     void verifyFinalizedInterruptNonBlocked() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val context = MockRequestContext.create(applicationContext);
 
         val interrupt = InterruptResponse.interrupt();
 

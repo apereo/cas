@@ -7,16 +7,13 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcDefaultAttributeToScopeClaimMapperTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class ClaimMappingTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -63,7 +59,6 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
         void verifyValueTypes() throws Throwable {
@@ -74,11 +69,11 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("status1", "true",
                     "status2", false, "status3", 1));
-            var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).get(0);
+            var value = mapper.mapClaim("active1", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Boolean);
-            value = mapper.mapClaim("active2", oidcRegisteredService, principal, null).get(0);
+            value = mapper.mapClaim("active2", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Boolean);
-            value = mapper.mapClaim("active3", oidcRegisteredService, principal, null).get(0);
+            value = mapper.mapClaim("active3", oidcRegisteredService, principal, null).getFirst();
             assertTrue(value instanceof Number);
         }
 
@@ -102,6 +97,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
                 .principal(principal)
+                .applicationContext(applicationContext)
                 .build();
             val attrs = policy.getAttributes(releasePolicyContext);
             assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));

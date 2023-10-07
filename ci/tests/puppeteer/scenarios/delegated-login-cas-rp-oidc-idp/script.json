@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,jpa-util",
+  "dependencies": "pac4j-webflow,jpa-util,mongo-ticket-registry",
   "conditions": {
     "docker": "true"
   },
@@ -46,7 +46,17 @@
     "--cas.authn.attribute-repository.jdbc[0].require-all-attributes=true",
     "--cas.authn.attribute-repository.jdbc[0].single-row=true",
     "--cas.authn.attribute-repository.jdbc[0].attributes.department=department",
-    "--cas.authn.attribute-repository.jdbc[0].attributes.role=cas_role"
+    "--cas.authn.attribute-repository.jdbc[0].attributes.role=cas_role",
+
+    "--logging.level.org.apereo.cas=info",
+    
+    "--cas.ticket.registry.mongo.database-name=ticket-registry",
+    "--cas.ticket.registry.mongo.authentication-database-name=admin",
+    "--cas.ticket.registry.mongo.host=localhost",
+    "--cas.ticket.registry.mongo.port=27017",
+    "--cas.ticket.registry.mongo.drop-collection=true",
+    "--cas.ticket.registry.mongo.user-id=root",
+    "--cas.ticket.registry.mongo.password=secret"
   ],
-  "initScript": "${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
+  "initScript": "${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }

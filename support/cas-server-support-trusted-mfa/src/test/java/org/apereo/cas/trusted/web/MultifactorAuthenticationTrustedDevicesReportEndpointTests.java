@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.web;
 import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,16 +44,26 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Test
+    void verifyRemovals() throws Throwable {
+        assertNotNull(endpoint);
+        var record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
+        mfaTrustEngine.save(record);
+        endpoint.clean();
+        endpoint.removeSince(DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plusDays(1)));
+        assertFalse(endpoint.devices().isEmpty());
+    }
+
+    @Test
     void verifyOperation() throws Throwable {
         assertNotNull(endpoint);
-        var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        var record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
         record = mfaTrustEngine.save(record);
         assertFalse(endpoint.devices().isEmpty());
-        assertFalse(endpoint.devicesForUser("casuser").isEmpty());
+        assertFalse(endpoint.devicesForUser(record.getPrincipal()).isEmpty());
 
         endpoint.revoke(record.getRecordKey());
         assertTrue(endpoint.devices().isEmpty());
-        assertTrue(endpoint.devicesForUser("casuser").isEmpty());
+        assertTrue(endpoint.devicesForUser(record.getPrincipal()).isEmpty());
     }
 
     @Test

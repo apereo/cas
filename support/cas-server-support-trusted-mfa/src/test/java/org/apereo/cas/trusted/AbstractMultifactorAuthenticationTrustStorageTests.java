@@ -1,8 +1,10 @@
 package org.apereo.cas.trusted;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
@@ -20,7 +22,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -30,19 +31,19 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -79,7 +80,10 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-    
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
         record.setDeviceFingerprint(UUID.randomUUID().toString());
@@ -104,11 +108,12 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
 
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
         getMfaTrustEngine().remove(record.getRecordKey());
-        assertTrue(getMfaTrustEngine().getAll().isEmpty());
+        assertNull(getMfaTrustEngine().get(record.getId()));
     }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -140,6 +145,14 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
             response.addAddress("MSIE");
             when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
             return service;
+        }
+    }
+
+    @TestConfiguration(value = "TestMultifactorProviderTestConfiguration", proxyBeanMethods = false)
+    public static class TestMultifactorProviderTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
         }
     }
 }

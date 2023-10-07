@@ -18,11 +18,11 @@ const assert = require("assert");
 })();
 
 async function login(page, providerId, service = undefined) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
 
-    console.log(`Trying with provider id ${providerId} and service ${service}`);
+    await cas.log(`Trying with provider id ${providerId} and service ${service}`);
     let url = `https://localhost:8443/cas/login?authn_method=${providerId}`;
     if (service !== undefined) {
         url += `&service=${service}`;
@@ -33,10 +33,10 @@ async function login(page, providerId, service = undefined) {
     if (service !== undefined) {
         await page.waitForTimeout(4000);
         const url = await page.url();
-        console.log(`Page url: ${url}`);
+        await cas.logPage(page);
         let ticket = await cas.assertTicketParameter(page);
         let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        console.log(body);
+        await cas.log(body);
         let json = JSON.parse(body);
         let authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.attributes.authnContextClass === undefined);

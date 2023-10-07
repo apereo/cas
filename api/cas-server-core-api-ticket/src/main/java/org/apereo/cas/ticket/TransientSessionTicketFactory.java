@@ -35,7 +35,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
                                                   final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
-            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+            expirationPolicy = (ExpirationPolicy) properties.remove(ExpirationPolicy.class.getName());
         }
         return expirationPolicy;
     }

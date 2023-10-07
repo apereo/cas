@@ -1,112 +1,122 @@
-import java.util.regex.*
+import java.util.regex.Pattern
 
 enum TestCategories {
     ActiveDirectory,
-    ActuatorEndpoint,
+    ActuatorEndpoint(true),
     AmazonWebServices,
     AMQP,
-    Attributes,
-    Audits,
-    Authentication,
-    AuthenticationHandler,
-    AuthenticationPolicy,
-    AuthenticationMetadata,
+    Attributes(true),
+    Audits(true),
+    Authentication(true),
+    AuthenticationHandler(true),
+    AuthenticationPolicy(true),
+    AuthenticationMetadata(true),
     AuthenticationThrottling,
     Azure,
-    CAS,
-    CasConfiguration,
+    CAS(true),
+    CasConfiguration(true),
     Cassandra,
-    Cipher,
-    Consent,
-    Cookie,
-    Delegation,
-    DuoSecurity,
+    Cipher(true),
+    Consent(true),
+    Cookie(true),
+    Delegation(true),
+    DuoSecurity(true),
     DynamoDb,
     Elastic,
-    ExpirationPolicy,
-    Events,
+    ExpirationPolicy(true),
+    Events(true),
     FileSystem,
     GCP,
-    GeoLocation,
-    Git,
-    Groovy,
-    GroovyAuthentication,
-    GroovyMfa,
-    GroovyServices,
+    GeoLocation(true),
+    Git(true),
+    Groovy(true),
+    GroovyAuthentication(true),
+    GroovyMfa(true),
+    GroovyServices(true),
     Grouper,
     Hazelcast,
     Hibernate,
     Ignite,
-    Impersonation,
+    Impersonation(true),
     InfluxDb,
     JDBC,
     JDBCMFA,
     JDBCAuthentication,
-    JMX,
-    Kafka,
+    JMX(true),
+    Kafka(true),
     LdapAttributes,
     LdapAuthentication,
     Ldap,
     LdapServices,
     LdapRepository,
-    Logout,
+    Logout(true),
     Mail,
     MariaDb,
     Memcached,
-    Metrics,
-    MFA,
-    MFAProvider,
-    MFATrigger,
+    Metrics(true),
+    MFA(true),
+    MFAProvider(true),
+    MFATrigger(true),
     MFATrustedDevices,
     MongoDb,
     MongoDbMFA,
     MsSqlServer,
     MySQL,
-    Native,
-    OAuth,
-    OAuthToken,
+    Native(true),
+    OAuth(true),
+    OAuthToken(true),
     OAuthWeb,
     OIDC,
     Oracle,
-    PasswordOps,
+    PasswordOps(true),
     Postgres,
     Radius,
     Redis,
     RegisteredService,
     RestfulApi,
     RestfulApiAuthentication,
-    SAML,
-    SAML1,
+    SAML(true),
+    SAML1(true),
     SAML2,
     SAML2Web,
-    SAMLMetadata,
-    SAMLServiceProvider,
-    SAMLLogout,
-    SAMLAttributes,
-    SAMLResponse,
-    SCIM,
-    SHELL,
-    Simple,
+    SAMLMetadata(true),
+    SAMLServiceProvider(true),
+    SAMLLogout(true),
+    SAMLAttributes(true),
+    SAMLResponse(true),
+    SCIM(true),
+    SHELL(true),
+    Simple(true),
     SMS,
-    Spnego,
+    Spnego(true),
     Syncope,
     Tickets,
-    UMA,
-    Utility,
-    Web,
-    WebApp,
-    Webflow,
-    WebflowActions,
-    WebflowAccountActions,
-    WebflowServiceActions,
-    WebflowAuthenticationActions,
-    WebflowConfig,
-    WebflowMfaConfig,
-    WebflowEvents,
-    WebflowMfaActions,
+    UMA(true),
+    Utility(true),
+    Web(true),
+    WebApp(true),
+    Webflow(true),
+    WebflowActions(true),
+    WebflowAccountActions(true),
+    WebflowServiceActions(true),
+    WebflowAuthenticationActions(true),
+    WebflowConfig(true),
+    WebflowMfaConfig(true),
+    WebflowEvents(true),
+    WebflowMfaActions(true),
     WSFederation,
-    X509,
-    ZooKeeper
+    X509(true),
+    ZooKeeper(true)
+
+    boolean parallelEnabled;
+
+    TestCategories() {
+        parallelEnabled = false
+    }
+
+    TestCategories(boolean parallelEnabled) {
+        this.parallelEnabled = parallelEnabled
+    }
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
@@ -116,7 +126,7 @@ if (rootProject.tasks.findByName("testCategories") == null) {
             def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
-                    .findAll {it.name().find(categoryMatchPattern) }
+                    .findAll { it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
@@ -156,20 +166,27 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     }
 }
 
-TestCategories.values().each({ category ->
+TestCategories.values().each({ testCategory ->
     def sourceTestDirs = project.sourceSets.test.java.srcDirs
     def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-    if (hasTestsOfCategory(sourceTestDirs, category.name())) {
-        def taskName = "test${category.name()}"
+    if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
+        def taskName = "test${testCategory.name()}"
         if (!tasks.getNames().contains(taskName)) {
             // println "Creating task ${taskName} for ${project.name}"
             tasks.register(taskName, Test) {
-                description = "Run unit/integration tests to verify the test category: ${category.name()}"
+                description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
-                enabled = shouldTest(sourceTestDirs, category.name())
+                enabled = shouldTest(sourceTestDirs, testCategory.name())
                 outputs.file(jacocoTestExecutionResultsFile)
                 useJUnitPlatform {
-                    includeTags category.name()
+                    includeTags testCategory.name()
+                }
+                if (testCategory.parallelEnabled) {
+                    systemProperty("junit.jupiter.execution.parallel.enabled", true)
+                    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
+                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "4")
                 }
             }
         }
@@ -187,7 +204,7 @@ tasks.withType(Test).configureEach {
     it.inputs.property("github.repository") {
         System.getenv("GITHUB_REPOSITORY") ?: "apereo/cas"
     }
-    
+
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
@@ -201,6 +218,7 @@ tasks.withType(Test).configureEach {
     }
     systemProperty("spring.main.banner-mode", "off")
     systemProperty("CI", ci)
+
 
     failFast = true
 
@@ -242,16 +260,16 @@ tasks.withType(Test).configureEach {
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
     list.add("--add-opens")
-    list.add("java.base/jdk.unsupported=ALL-UNNAMED")
-    
-    list.add("--add-opens")
     list.add("java.base/sun.security.action=jdk.crypto.ec")
 
     list.add("-Xms512m")
     list.add("-Xmx4g")
+
+    list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
+    def ansi = project.ansi
     testLogging {
         events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
@@ -272,7 +290,7 @@ tasks.withType(Test).configureEach {
             beforeTest { desc ->
                 ansi.cyan "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
             }
-            
+
             afterTest { desc, result ->
                 ansi.green """
 Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
@@ -305,7 +323,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
         }
     }
-    
+
     filter {
         setFailOnNoMatchingTests(false)
         excludeTestsMatching "*TestsSuite"

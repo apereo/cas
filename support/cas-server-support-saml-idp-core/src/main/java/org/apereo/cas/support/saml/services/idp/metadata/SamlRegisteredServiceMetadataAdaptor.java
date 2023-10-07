@@ -177,11 +177,11 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
     }
 
     public boolean isWantAssertionsSigned() {
-        return this.ssoDescriptor.getWantAssertionsSigned();
+        return Boolean.TRUE.equals(this.ssoDescriptor.getWantAssertionsSigned());
     }
 
     public boolean isAuthnRequestsSigned() {
-        return this.ssoDescriptor.isAuthnRequestsSigned();
+        return Boolean.TRUE.equals(this.ssoDescriptor.isAuthnRequestsSigned());
     }
 
     /**
@@ -226,7 +226,7 @@ public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor
     }
 
     public SingleLogoutService getSingleLogoutService() {
-        return getSingleLogoutServices().get(0);
+        return getSingleLogoutServices().getFirst();
     }
 
     /**

@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
@@ -25,10 +24,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import java.util.Locale;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcAuthorizeEndpointControllerTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
     class PushedAuthorizationRequests extends AbstractOidcTests {
         @Autowired
@@ -62,7 +58,6 @@ class OidcAuthorizeEndpointControllerTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultAuthorizationRequests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcAuthorizeController")
@@ -83,7 +78,7 @@ class OidcAuthorizeEndpointControllerTests {
             val service = getOidcRegisteredService(id);
             service.setBypassApprovalPrompt(true);
             servicesManager.save(service);
-            
+
             val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
             mockRequest.setMethod(HttpMethod.GET.name());
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);

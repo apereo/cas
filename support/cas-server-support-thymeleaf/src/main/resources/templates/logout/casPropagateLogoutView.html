@@ -72,17 +72,23 @@
 
             <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
 
-            <button type="button" th:if="${logoutRedirectUrl}"
-                   class="mdc-button mdc-button--raised btn btn-primary" onclick="redirectToApp();"
-                   th:value="${'Go to ' + logoutRedirectUrl}" value="Go to...">
-                   <span class="mdc-button__label" th:text="${'Go to ' + logoutRedirectUrl}"></span>
+            <button type="button"
+                    id="logoutRedirectButton"
+                    th:if="${logoutRedirectUrl}"
+                    class="mdc-button mdc-button--raised btn btn-primary"
+                    onclick="redirectToApp();">
+               <span class="mdc-button__label" th:utext="#{screen.welcome.button.logout}"/>
             </button>
-            <form th:if="${logoutPostUrl != null && logoutPostData != null}" th:action="${logoutPostUrl}" method="post">
+
+            <form id="logoutPostButton"
+                  th:if="${logoutPostUrl != null && logoutPostData != null}"
+                  th:action="${logoutPostUrl}"
+                  method="post">
                 <span th:each="entry : ${logoutPostData}" th:remove="tag">
                     <input type="hidden" th:name="${entry.key}" th:value="${entry.value}"/>
                 </span>
                 <button type="submit" class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label" th:text="${'Go to ' + logoutPostUrl}"></span>
+                    <span class="mdc-button__label" th:utext="#{screen.welcome.button.logout}" />
                 </button>
             </form>
         </div>

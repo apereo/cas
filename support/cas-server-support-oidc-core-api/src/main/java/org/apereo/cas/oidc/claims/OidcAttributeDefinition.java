@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
+import java.util.List;
 
 /**
  * This is {@link OidcAttributeDefinition}.
@@ -32,4 +32,17 @@ public class OidcAttributeDefinition extends DefaultAttributeDefinition {
     private static final long serialVersionUID = -144152663366303322L;
 
     private boolean singleValue;
+
+    private boolean structured;
+
+    /**
+     * To attribute value.
+     *
+     * @param values the values
+     * @return the object
+     */
+    @JsonIgnore
+    public Object toAttributeValue(final List values) {
+        return singleValue && values.size() == 1 ? values.getFirst() : values;
+    }
 }

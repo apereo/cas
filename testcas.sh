@@ -99,7 +99,7 @@ while (( "$#" )); do
         flags+=" --no-watch-fs "
         shift
         ;;
-    --test)
+    --test|--tests)
         tests="--tests \"$2\" "
         shift 2
         ;;
@@ -290,7 +290,7 @@ while (( "$#" )); do
             mfa)
                 task+="testMFA "
                 ;;
-            mfaprovider|gauth|webauthn|authy|fido)
+            mfaprovider|gauth|webauthn|fido)
                 task+="testMFAProvider "
                 ;;
             mfatrigger)

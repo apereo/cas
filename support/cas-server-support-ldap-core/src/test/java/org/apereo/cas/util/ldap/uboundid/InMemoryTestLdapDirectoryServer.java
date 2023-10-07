@@ -10,6 +10,7 @@ import com.unboundid.ldap.sdk.schema.Schema;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -32,6 +33,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
 
     private final InMemoryDirectoryServer directoryServer;
 
+    @Getter
     private Collection<LdapEntry> ldapEntries;
 
     /**
@@ -140,11 +142,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
     }
 
     public String getBaseDn() {
-        return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
-    }
-
-    public Collection<LdapEntry> getLdapEntries() {
-        return this.ldapEntries;
+        return this.directoryServer.getBaseDNs().getFirst().toNormalizedString();
     }
 
     public LDAPConnection getConnection() throws LDAPException {

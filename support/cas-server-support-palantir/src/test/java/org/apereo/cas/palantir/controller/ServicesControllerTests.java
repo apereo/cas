@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
     classes = {
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
@@ -48,8 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         CasCoreNotificationsConfiguration.class,
         CasPalantirConfiguration.class
     },
-    properties = "server.port=8181",
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
@@ -82,7 +82,7 @@ public class ServicesControllerTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound());
 
-        mvcResult = mvc.perform(get("/palantir/services/" + services.get(0).getId())
+        mvcResult = mvc.perform(get("/palantir/services/" + services.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -90,7 +90,7 @@ public class ServicesControllerTests {
         var registeredService = registeredServiceSerializer.from(mvcResult.getResponse().getContentAsString());
         assertNotNull(registeredService);
 
-        mvcResult = mvc.perform(delete("/palantir/services/" + services.get(0).getId())
+        mvcResult = mvc.perform(delete("/palantir/services/" + services.getFirst().getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

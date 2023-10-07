@@ -50,7 +50,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
             eachAccount.stream()
                 .map(account -> Splitter.on("::").splitToList(account))
                 .filter(results -> results.size() == 2)
-                .forEach(results -> accounts.put(results.get(0), results.get(1)));
+                .forEach(results -> accounts.put(results.getFirst(), results.get(1)));
         }
     }
 

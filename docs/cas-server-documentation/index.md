@@ -27,7 +27,7 @@ The following items include a summary of features and technologies presented by 
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML v1](protocol/SAML-Protocol.html), [SAML v2](authentication/Configuring-SAML2-Authentication.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
-providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
+providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external identity providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, OIDC OPs, etc.
 * Built-in support for [password management](password_management/Password-Management.html), [notifications](webflow/Webflow-Customization-Interrupt.html), [terms of use](webflow/Webflow-Customization-AUP.html) and [impersonation](authentication/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).

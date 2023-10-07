@@ -1,14 +1,16 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.util.CollectionUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link AnonymousAccessAttributeReleasePolicy}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 7.0.0
  */
 public class AnonymousAccessAttributeReleasePolicy extends BaseEntityCategoryAttributeReleasePolicy {
     /**
@@ -26,4 +28,11 @@ public class AnonymousAccessAttributeReleasePolicy extends BaseEntityCategoryAtt
     protected Map<String, String> getEntityCategoryAttributes() {
         return ALLOWED_ATTRIBUTES;
     }
+
+    @JsonIgnore
+    @Override
+    public Set<String> getEntityAttributeValues() {
+        return CollectionUtils.wrapSet("https://refeds.org/category/anonymous");
+    }
+    
 }

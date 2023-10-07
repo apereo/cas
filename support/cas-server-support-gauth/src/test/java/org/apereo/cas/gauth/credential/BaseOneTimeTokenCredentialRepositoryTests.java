@@ -32,7 +32,6 @@ import org.apereo.cas.config.GoogleAuthenticatorAuthenticationEventExecutionPlan
 import org.apereo.cas.config.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -50,13 +49,11 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -100,7 +97,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
 
-        var toSave = OneTimeTokenAccount.builder()
+        val toSave = OneTimeTokenAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
@@ -232,6 +229,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
@@ -267,6 +265,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
         CasCoreWebConfiguration.class
     })
     static class SharedTestConfiguration {

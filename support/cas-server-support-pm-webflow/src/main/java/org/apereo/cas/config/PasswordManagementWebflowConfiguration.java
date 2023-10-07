@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.acct.AccountProfileServiceTicketGeneratorAuthority;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
@@ -10,11 +12,13 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.pm.PasswordStrengthAuthenticationPostProcessor;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.WeakPasswordWebflowExceptionHandler;
 import org.apereo.cas.pm.web.flow.actions.AccountProfilePasswordChangeRequestAction;
 import org.apereo.cas.pm.web.flow.actions.AccountProfilePreparePasswordManagementAction;
 import org.apereo.cas.pm.web.flow.actions.AccountProfileUpdateSecurityQuestionsAction;
@@ -48,6 +52,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -89,12 +94,9 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy(
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new PasswordManagementSingleSignOnParticipationStrategy(
                 servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan);
         }
@@ -103,8 +105,7 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
         public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer(
-            @Qualifier("passwordManagementSingleSignOnParticipationStrategy")
-            final SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy) {
+            @Qualifier("passwordManagementSingleSignOnParticipationStrategy") final SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy);
         }
     }
@@ -115,8 +116,7 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public HandlerAdapter passwordResetHandlerAdapter(
-            @Qualifier("loginFlowExecutor")
-            final FlowExecutor loginFlowExecutor) {
+            @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
             val handler = new FlowHandlerAdapter() {
                 @Override
                 public boolean supports(final Object handler) {
@@ -138,10 +138,8 @@ public class PasswordManagementWebflowConfiguration {
         public CasWebflowConfigurer passwordManagementWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
             return new PasswordManagementWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, applicationContext, casProperties);
         }
@@ -150,8 +148,7 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
-            @Qualifier("passwordManagementWebflowConfigurer")
-            final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
+            @Qualifier("passwordManagementWebflowConfigurer") final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer);
         }
 
@@ -174,23 +171,56 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
-        public Action accountUnlockStatusPrepareAction() {
-            return new AccountUnlockStatusPrepareAction();
+        public Action accountUnlockStatusPrepareAction(final ConfigurableApplicationContext applicationContext,
+                                                       final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .alwaysMatch()
+                    .supply(AccountUnlockStatusPrepareAction::new)
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
-        public Action accountUnlockStatusAction(@Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-                                                final PasswordManagementService passwordManagementService) {
-            return new AccountUnlockStatusAction(passwordManagementService);
+        public Action accountUnlockStatusAction(@Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
+                                                final ConfigurableApplicationContext applicationContext,
+                                                final CasConfigurationProperties casProperties) {
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .alwaysMatch()
+                    .supply(() -> new AccountUnlockStatusAction(passwordManagementService))
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
+                .build()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
-        public Action initPasswordChangeAction(final CasConfigurationProperties casProperties) {
-            return new InitPasswordChangeAction(casProperties);
+        public Action initPasswordChangeAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> BeanSupplier.of(Action.class)
+                    .alwaysMatch()
+                    .supply(() -> new InitPasswordChangeAction(casProperties))
+                    .get())
+                .withId(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT)
@@ -199,8 +229,7 @@ public class PasswordManagementWebflowConfiguration {
         public Action initPasswordResetAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -219,10 +248,8 @@ public class PasswordManagementWebflowConfiguration {
         public Action passwordChangeAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService,
-            @Qualifier("passwordValidationService")
-            final PasswordValidationService passwordValidationService) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
+            @Qualifier(PasswordValidationService.BEAN_NAME) final PasswordValidationService passwordValidationService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -239,24 +266,16 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action sendPasswordResetInstructionsAction(
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
-            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME) final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(CommunicationsManager.BEAN_NAME)
-            final CommunicationsManager communicationsManager,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
-            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
-            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(CommunicationsManager.BEAN_NAME) final CommunicationsManager communicationsManager,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME) final PasswordResetUrlBuilder passwordResetUrlBuilder) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -279,10 +298,8 @@ public class PasswordManagementWebflowConfiguration {
         public Action verifyPasswordResetRequestAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final TicketRegistrySupport ticketRegistrySupport) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -307,8 +324,7 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action verifySecurityQuestionsAction(final CasConfigurationProperties casProperties,
-                                                    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-                                                    final PasswordManagementService passwordManagementService) {
+                                                    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             if (!casProperties.getAuthn().getPm().getReset().isSecurityQuestionsEnabled()) {
                 LOGGER.debug("Functionality to handle security questions for password management is not enabled");
                 return new StaticEventExecutionAction("success");
@@ -322,10 +338,8 @@ public class PasswordManagementWebflowConfiguration {
         public Action validatePasswordResetTokenAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService) {
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -335,6 +349,50 @@ public class PasswordManagementWebflowConfiguration {
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_TOKEN)
                 .build()
+                .get();
+        }
+    }
+
+    @Configuration(value = "PasswordManagementPolicyConfiguration", proxyBeanMethods = false)
+    public static class PasswordManagementPolicyConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.core.password-policy-pattern");
+
+        @ConditionalOnMissingBean(name = "passwordStrengthAuthenticationPostProcessor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationPostProcessor passwordStrengthAuthenticationPostProcessor(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordValidationService.BEAN_NAME) final PasswordValidationService passwordValidationService) {
+            return BeanSupplier.of(AuthenticationPostProcessor.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new PasswordStrengthAuthenticationPostProcessor(passwordValidationService))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "passwordManagementAuthenticationExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer passwordManagementAuthenticationExecutionPlanConfigurer(
+            @Qualifier("passwordStrengthAuthenticationPostProcessor") final AuthenticationPostProcessor passwordStrengthAuthenticationPostProcessor,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationPostProcessor(passwordStrengthAuthenticationPostProcessor))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "weakPasswordWebflowExceptionHandler")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExceptionHandler weakPasswordWebflowExceptionHandler(
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(CasWebflowExceptionHandler.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(WeakPasswordWebflowExceptionHandler::new)
+                .otherwiseProxy()
                 .get();
         }
     }
@@ -350,10 +408,8 @@ public class PasswordManagementWebflowConfiguration {
         public CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -372,8 +428,7 @@ public class PasswordManagementWebflowConfiguration {
         public Action passwordResetValidateCaptchaAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("passwordResetCaptchaActivationStrategy")
-            final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy) {
+            @Qualifier("passwordResetCaptchaActivationStrategy") final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -389,8 +444,7 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return BeanSupplier.of(CaptchaActivationStrategy.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultCaptchaActivationStrategy(servicesManager))
@@ -403,8 +457,7 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
         public Action passwordResetInitializeCaptchaAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("passwordResetCaptchaActivationStrategy")
-            final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy,
+            @Qualifier("passwordResetCaptchaActivationStrategy") final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -424,8 +477,7 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("passwordManagementCaptchaWebflowConfigurer")
-            final CasWebflowConfigurer cfg) {
+            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer cfg) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(cfg))
@@ -452,8 +504,7 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
         public Action accountProfileUpdateSecurityQuestionsAction(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             return new AccountProfileUpdateSecurityQuestionsAction(passwordManagementService, casProperties);
         }
 
@@ -461,10 +512,8 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
         public Action accountProfilePasswordChangeRequestAction(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
-            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME) final PasswordResetUrlBuilder passwordResetUrlBuilder) {
             return new AccountProfilePasswordChangeRequestAction(ticketRegistry, passwordResetUrlBuilder);
         }
 
@@ -473,8 +522,7 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
         public Action prepareAccountProfilePasswordMgmtAction(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final PasswordManagementService passwordManagementService) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             return new AccountProfilePreparePasswordManagementAction(passwordManagementService, casProperties);
         }
 
@@ -485,10 +533,8 @@ public class PasswordManagementWebflowConfiguration {
         public CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry accountProfileFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
             return new PasswordManagementAccountProfileWebflowConfigurer(flowBuilderServices,
                 accountProfileFlowRegistry, applicationContext, casProperties);
         }
@@ -497,8 +543,7 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementAccountProfileWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementAccountProfileWebflowExecutionPlanConfigurer(
-            @Qualifier("passwordManagementAccountProfileWebflowConfigurer")
-            final CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer) {
+            @Qualifier("passwordManagementAccountProfileWebflowConfigurer") final CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(passwordManagementAccountProfileWebflowConfigurer);
         }
     }

@@ -5,21 +5,21 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.gotoLogin(page, "https://apereo.github.io");
 
     await cas.loginWith(page);
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await cas.assertTicketParameter(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     const sessionCookie = (await page.cookies()).filter(value => {
-        console.log(`Checking cookie ${value.name}`);
+        cas.log(`Checking cookie ${value.name}`);
         return value.name === "SESSION"
     })[0];
-    console.log(`Found session cookie ${sessionCookie.name}`);
+    await cas.log(`Found session cookie ${sessionCookie.name}`);
     let cookieValue = await cas.base64Decode(sessionCookie.value);
-    console.log(`Session cookie value ${cookieValue}`);
+    await cas.log(`Session cookie value ${cookieValue}`);
     await page.waitForTimeout(1000);
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,
         res => {

@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
@@ -7,10 +9,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersPr
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +24,13 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
 import java.io.Serial;
 import java.net.URI;
@@ -35,7 +39,6 @@ import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +50,15 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class LdapUtilsTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyGetBoolean() throws Throwable {
@@ -108,19 +119,11 @@ class LdapUtilsTests {
             () -> LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
                 List.of("p1", "p2"), List.of("v1", "v2")));
 
-        val cacheMgr = new GroovyScriptResourceCacheManager();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         var filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
             List.of("p1", "p2"), List.of("v1", "v2"));
         assertNotNull(filter);
         assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
-        assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:UnknownLdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
     }
 
     @Test

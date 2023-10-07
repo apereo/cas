@@ -14,9 +14,6 @@ env:
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_IKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_IKEY }}
-  DUO_SECURITY_WEBSDK_SKEY: ${{ secrets.DUO_SECURITY_WEBSDK_SKEY }}
-  DUO_SECURITY_WEBSDK_IKEY: ${{ secrets.DUO_SECURITY_WEBSDK_IKEY }}
-  DUO_SECURITY_WEBSDK_AKEY: ${{ secrets.DUO_SECURITY_WEBSDK_AKEY }}
   DUO_SECURITY_API_HOST: ${{ secrets.DUO_SECURITY_API_HOST }}
   ADFS_HOST: ${{ secrets.ADFS_HOST }}
   ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
@@ -31,8 +28,9 @@ env:
   AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
-  JDK_CURRENT: 21-ea
-  NODE_CURRENT: '20'
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
+  NODE_CURRENT: '20.7.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
   SCENARIO_REGEX: ".*"
@@ -57,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
+      - uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ github.token }}
   ##########################################################################
@@ -65,12 +63,12 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -89,12 +87,12 @@ jobs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -120,12 +118,12 @@ jobs:
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -165,12 +163,12 @@ jobs:
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
@@ -187,6 +185,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_CURRENT }}
+          check-latest: true
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Run Tests

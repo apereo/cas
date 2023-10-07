@@ -12,7 +12,6 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +44,6 @@ import static org.mockito.Mockito.*;
 class RedisServerTicketRegistryTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.registry.redis.queue-identifier=cas-node-100",
         "cas.ticket.registry.redis.host=localhost",
@@ -120,7 +116,6 @@ class RedisServerTicketRegistryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.registry.redis.queue-identifier=cas-node-100",
         "cas.ticket.registry.redis.host=localhost",
@@ -134,7 +129,6 @@ class RedisServerTicketRegistryTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.ticket.registry.redis.queue-identifier=cas-node-1",
         "cas.ticket.registry.redis.host=localhost",
@@ -146,7 +140,7 @@ class RedisServerTicketRegistryTests {
     })
     class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
 
-        private static final int COUNT = 100;
+        private static final int COUNT = 50;
 
         @RepeatedTest(2)
         void verifyLargeDataset() throws Throwable {

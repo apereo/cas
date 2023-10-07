@@ -12,7 +12,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.context.ApplicationContext;
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -45,11 +44,10 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) {
+        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
 
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
             getEntityAttribute(), getEntityAttributeValues());

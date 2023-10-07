@@ -5,10 +5,10 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.loginWith(page);
     const url = await page.url();
-    console.log(`Page url: ${url}`);
+    await cas.logPage(page);
     await cas.assertTicketParameter(page);
     await browser.close();
 
@@ -16,7 +16,7 @@ const assert = require("assert");
     await cas.doGet(baseUrl, res => {
         assert(res.status === 200);
         const length = res.data[1].length;
-        console.log(`Services found: ${length}`);
+        cas.log(`Services found: ${length}`);
         assert(length === 1);
         res.data[1].forEach(service => {
             assert(service.id === 1);

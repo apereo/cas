@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link BaseAcceptableUsagePolicyActionTests}.
@@ -70,4 +71,8 @@ public abstract class BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
 }

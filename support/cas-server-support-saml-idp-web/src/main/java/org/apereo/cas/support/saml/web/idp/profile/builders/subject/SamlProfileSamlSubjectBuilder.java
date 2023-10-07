@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
+import org.apereo.cas.util.InetAddressUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -63,24 +64,32 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             context.getAdaptor(), context.getBinding());
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         val subjectNameId = getNameIdForService(context);
-        val subjectConfNameId = context.getRegisteredService().isSkipGeneratingSubjectConfirmationNameId()
+
+        val registeredService = context.getRegisteredService();
+        val subjectConfNameId = registeredService.isSkipGeneratingSubjectConfirmationNameId()
             ? null
             : getNameIdForService(context);
 
-        val notOnOrAfter = context.getRegisteredService().isSkipGeneratingSubjectConfirmationNotOnOrAfter()
-            ? null
-            : validFromDate.plusSeconds(context.getRegisteredService().getSkewAllowance() != 0
-            ? context.getRegisteredService().getSkewAllowance()
+        val notOnOrAfterDateTime = validFromDate.plusSeconds(registeredService.getSkewAllowance() != 0
+            ? registeredService.getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds());
+        val notOnOrAfter = registeredService.isSkipGeneratingSubjectConfirmationNotOnOrAfter()
+            ? null
+            : notOnOrAfterDateTime;
+        LOGGER.trace("Subject confirmation notOnOrAfter for service [{}] is [{}]", registeredService.getServiceId(), notOnOrAfter);
 
         val finalSubjectNameId = encryptNameIdIfNecessary(subjectNameId, context);
         val finalSubjectConfigNameId = encryptNameIdIfNecessary(subjectConfNameId, context);
 
-        val subject = newSubject(finalSubjectNameId, finalSubjectConfigNameId,
-            context.getRegisteredService().isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
+        val entityId = casProperties.getAuthn().getSamlIdp().getCore().getEntityId();
+        val subjectConfirmation = newSubjectConfirmation(
+            registeredService.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             notOnOrAfter,
-            context.getRegisteredService().isSkipGeneratingSubjectConfirmationInResponseTo() ? null : context.getSamlRequest().getID(),
-            context.getRegisteredService().isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
+            getInResponseTo(context.getSamlRequest(), entityId, registeredService.isSkipGeneratingSubjectConfirmationInResponseTo()),
+            registeredService.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC),
+            registeredService.isSkipGeneratingSubjectConfirmationAddress() ? null : InetAddressUtils.getByName(location));
+        
+        val subject = newSubject(finalSubjectNameId, finalSubjectConfigNameId, subjectConfirmation);
         LOGGER.debug("Created SAML subject [{}]", subject);
         return subject;
     }

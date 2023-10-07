@@ -98,6 +98,16 @@ public class JwtBuilder {
     }
 
     /**
+     * Unpack jwt claims set.
+     *
+     * @param jwtJson the jwt json
+     * @return the jwt claims set
+     */
+    public JWTClaimsSet unpack(final String jwtJson) {
+        return unpack(Optional.empty(), jwtJson);
+    }
+
+    /**
      * Unpack jwt.
      *
      * @param service the service
@@ -171,7 +181,7 @@ public class JwtBuilder {
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new UnauthorizedServiceException("Unable to locate registered service via any of " + serviceAudience)));
+                .orElseThrow(() -> UnauthorizedServiceException.denied("Unable to locate registered service via any of %s".formatted(serviceAudience))));
         return build(registeredService, claimsSet);
     }
 

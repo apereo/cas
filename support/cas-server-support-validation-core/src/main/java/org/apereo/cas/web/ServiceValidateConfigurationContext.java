@@ -20,7 +20,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
+import jakarta.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -61,6 +63,9 @@ public class ServiceValidateConfigurationContext {
     private final PrincipalFactory principalFactory;
 
     private final PrincipalResolver principalResolver;
+
+    @Nonnull
+    private final ConfigurableApplicationContext applicationContext;
 
     private ProxyHandler proxyHandler;
 }

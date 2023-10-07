@@ -2,21 +2,21 @@ package org.apereo.cas.support.wsfederation.web;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link WsFederationCookieManager}.
@@ -33,10 +33,9 @@ public class WsFederationCookieManager {
     public static final String WCTX = "wctx";
 
     private final Collection<WsFederationConfiguration> configurations;
-    private final String themeParamName;
-    private final String localParamName;
+    private final CasConfigurationProperties casProperties;
 
-    private final WsFederationCookieSerializer serializer = new WsFederationCookieSerializer();
+    private final WsFederationServerStateSerializer serializer = new WsFederationServerStateSerializer();
 
     /**
      * Retrieve service.
@@ -58,22 +57,28 @@ public class WsFederationCookieManager {
             .filter(cookie -> cookie.getId().equalsIgnoreCase(contextId))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + contextId));
-        
+
         val cookieGen = configuration.getCookieGenerator();
-        val value = cookieGen.retrieveCookieValue(request);
-        if (StringUtils.isBlank(value)) {
-            LOGGER.error("No cookie value could be retrieved to determine the state of the delegated authentication session");
-            throw new IllegalArgumentException("No cookie could be found to determine session state");
+        var serverState = cookieGen.retrieveCookieValue(request);
+        if (StringUtils.isBlank(serverState)) {
+            serverState = Optional.ofNullable(request.getSession(false))
+                .map(session -> session.getAttribute(configuration.getId()))
+                .map(String.class::cast)
+                .orElse(null);
         }
-        val blob = EncodingUtils.hexDecode(value);
+        if (StringUtils.isBlank(serverState)) {
+            LOGGER.error("No server state value could be retrieved to determine the state of the delegated authentication session");
+            throw new IllegalArgumentException("No state could be found to determine session state");
+        }
+        val blob = EncodingUtils.hexDecode(serverState);
         val session = serializer.from(blob);
-        request.setAttribute(this.themeParamName, session.get(this.themeParamName));
-        request.setAttribute(this.localParamName, session.get(this.localParamName));
+        request.setAttribute(casProperties.getTheme().getParamName(), session.get(casProperties.getTheme().getParamName()));
+        request.setAttribute(casProperties.getLocale().getParamName(), session.get(casProperties.getLocale().getParamName()));
         request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD));
 
         val serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + contextId;
         val service = (Service) session.get(serviceKey);
-        LOGGER.debug("Located service [{}] from session cookie", service);
+        LOGGER.debug("Located service [{}] from session", service);
         WebUtils.putServiceIntoFlowScope(context, service);
         return service;
     }
@@ -90,25 +95,27 @@ public class WsFederationCookieManager {
     public void store(final HttpServletRequest request, final HttpServletResponse response,
                       final String wctx, final Service service,
                       final WsFederationConfiguration configuration) {
-        val session = new HashMap<String, Object>();
-        session.put(CasProtocolConstants.PARAMETER_SERVICE + '-' + wctx, service);
+        val details = new HashMap<String, Object>();
+        details.put(CasProtocolConstants.PARAMETER_SERVICE + '-' + wctx, service);
         val methods = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methods)) {
-            session.put(CasProtocolConstants.PARAMETER_METHOD + '-' + wctx, methods);
+            details.put(CasProtocolConstants.PARAMETER_METHOD + '-' + wctx, methods);
         }
-        val locale = request.getAttribute(this.localParamName);
+        val locale = request.getAttribute(casProperties.getLocale().getParamName());
         if (locale != null) {
-            session.put(this.localParamName + '-' + wctx, locale);
+            details.put(casProperties.getLocale().getParamName() + '-' + wctx, locale);
         }
-        val theme = request.getAttribute(this.themeParamName);
+        val theme = request.getAttribute(casProperties.getTheme().getParamName());
         if (theme != null) {
-            session.put(this.themeParamName + '-' + wctx, theme);
+            details.put(casProperties.getTheme().getParamName() + '-' + wctx, theme);
         }
 
-        val cookieValue = serializeSessionValues(session);
+        val cookieValue = serializeSessionValues(details);
         val cookieGen = configuration.getCookieGenerator();
         LOGGER.debug("Adding WsFederation cookie [{}] with value [{}]", cookieGen.getCookieName(), cookieValue);
         cookieGen.addCookie(request, response, cookieValue);
+        Optional.ofNullable(request.getSession(false))
+            .ifPresent(session -> session.setAttribute(configuration.getId(), cookieValue));
     }
 
     private String serializeSessionValues(final Map<String, Object> attributes) {

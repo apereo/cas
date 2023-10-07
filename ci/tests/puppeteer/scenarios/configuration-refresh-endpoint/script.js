@@ -9,8 +9,8 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Attempting to login with default credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.log("Attempting to login with default credentials...");
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casuser", "p@$$word");
     await cas.assertCookie(page);
 
@@ -18,17 +18,17 @@ const path = require('path');
     const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
     const users = configFile.cas.authn.accept.users;
-    console.log(`Current users: ${users}`);
+    await cas.log(`Current users: ${users}`);
 
-    console.log("Updating configuration and waiting for changes to reload...");
+    await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
     await page.waitForTimeout(5000);
 
     await cas.refreshContext();
 
-    console.log("Attempting to login with new updated credentials...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.log("Attempting to login with new updated credentials...");
+    await cas.gotoLogout(page);
+    await cas.gotoLogin(page);
     await cas.loginWith(page, "casrefresh", "p@$$word");
     await cas.assertCookie(page);
 
@@ -40,7 +40,7 @@ async function updateConfig(configFile, configFilePath, data) {
     configFile.cas.authn.accept.users = data;
 
     const newConfig = YAML.stringify(configFile);
-    console.log(`Updated configuration:\n${newConfig}`);
+    await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
-    console.log(`Wrote changes to ${configFilePath}`);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }

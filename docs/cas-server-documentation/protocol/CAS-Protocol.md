@@ -49,23 +49,26 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```
 
-## Web flow diagram
+## Webflow Diagram
 
-<a href="../images/cas_flow_diagram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
+<a href="../images/cas_flow_diagram.png" data-lightbox="image-0">
+    <img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" />
+</a>
 
-## Proxy web flow diagram
+## Proxy Webflow Diagram
 
 One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a 
 proxy for another CAS service, transmitting the user identity.
 
-<a href="../images/cas_proxy_flow_diagram.jpg" target="_blank">
-<img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" /></a>
+<a href="../images/cas_proxy_flow_diagram.jpg" data-lightbox="image-1">
+    <img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" />
+</a>
 
 
 ## Other Protocols

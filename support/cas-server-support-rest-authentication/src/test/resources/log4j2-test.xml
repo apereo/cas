@@ -11,7 +11,7 @@
         <Logger name="org.springframework.web" level="warn" />
         <Logger name="org.springframework.http" level="warn" />
         <Logger name="com.fasterxml.jackson" level="warn" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

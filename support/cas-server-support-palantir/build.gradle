@@ -80,6 +80,10 @@ node {
     nodeProjectDir = new File("${project.projectDir}", "client")
 }
 
+tasks.named("yarn", YarnTask) {
+    args = ['--network-timeout', '600000']
+}
+
 tasks.register("build-ui", NpxTask) {
     command = "vite"
     args = [ "build", "--outDir", "../src/main/resources/static/assets"]
@@ -91,4 +95,4 @@ tasks.register("build-ui", NpxTask) {
     outputs.dir(new File(project.projectDir, "src/main/resources/static/assets"))
     environment = ["BUILD_PATH": "${buildDir}"]
 }
-processResources.dependsOn(tasks.named("build-ui"))
+[processResources, resourcesJar].each {it.dependsOn(tasks.named("build-ui")) }

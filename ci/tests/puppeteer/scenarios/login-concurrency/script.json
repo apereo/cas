@@ -1,0 +1,21 @@
+{
+  "dependencies": "saml",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.PROTOCOL_MESSAGE=off",
+    
+    "--cas.audit.engine.enabled=true",
+    "--cas.authn.accept.users=casuser::Mellon,casadmin::Mellon",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=15",
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json"
+  ],
+  "loadScript": "./ci/tests/puppeteer/scenarios/login-concurrency/test.js",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

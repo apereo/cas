@@ -1,0 +1,17 @@
+{
+  "dependencies": "aup-webflow,aup-rest",
+  "properties": [
+    "--cas.audit.engine.enabled=true",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.acceptable-usage-policy.rest.url=http://localhost:5544/aup",
+    "--cas.acceptable-usage-policy.core.aup-attribute-name=aupAccepted"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

@@ -14,13 +14,15 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,6 +61,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @Tag("Events")
+@ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
 class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
@@ -89,8 +92,8 @@ class CasAuthenticationEventListenerTests {
         assertRepositoryIsEmpty();
         ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
-                CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -101,8 +104,8 @@ class CasAuthenticationEventListenerTests {
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val event = new CasAuthenticationTransactionFailureEvent(this,
-                CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
@@ -113,8 +116,8 @@ class CasAuthenticationEventListenerTests {
     @Test
     void verifyCasAuthenticationTransactionFailureEvent() throws Throwable {
         val event = new CasAuthenticationTransactionFailureEvent(this,
-                CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
@@ -140,8 +143,8 @@ class CasAuthenticationEventListenerTests {
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         val event = new CasAuthenticationPolicyFailureEvent(this,
-                CollectionUtils.wrap("error", new FailedLoginException()), transaction,
-                CoreAuthenticationTestUtils.getAuthentication(), null);
+            CollectionUtils.wrap("error", new FailedLoginException()), transaction,
+            CoreAuthenticationTestUtils.getAuthentication(), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -150,9 +153,9 @@ class CasAuthenticationEventListenerTests {
     void verifyCasRiskyAuthenticationDetectedEvent() throws Throwable {
         assertRepositoryIsEmpty();
         val event = new CasRiskyAuthenticationDetectedEvent(this,
-                CoreAuthenticationTestUtils.getAuthentication(),
-                CoreAuthenticationTestUtils.getRegisteredService(),
-                new Object(), null);
+            CoreAuthenticationTestUtils.getAuthentication(),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            new Object(), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -161,7 +164,7 @@ class CasAuthenticationEventListenerTests {
     void verifyCasTicketGrantingTicketDestroyed() throws Throwable {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
+            new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -171,7 +174,7 @@ class CasAuthenticationEventListenerTests {
     void verifyEventRepositoryHasOneEventOnly() throws Throwable {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
+            new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertNotNull(casEventRepository.load());
         val resultingCount = casEventRepository.load().count();
@@ -182,12 +185,12 @@ class CasAuthenticationEventListenerTests {
     void verifyCasTicketGrantingTicketDestroyedHasClientInfo() throws Throwable {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
+            new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertNotNull(casEventRepository.load());
         val list = casEventRepository.load().toList();
         assertFalse(list.isEmpty());
-        val result = list.get(0).getClientIpAddress();
+        val result = list.getFirst().getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP, result);
     }
 

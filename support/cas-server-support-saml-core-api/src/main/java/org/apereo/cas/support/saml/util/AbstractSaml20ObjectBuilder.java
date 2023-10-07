@@ -5,11 +5,11 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.InetAddressUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -27,6 +27,8 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.core.Statement;
@@ -37,8 +39,8 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
-
 import java.io.Serial;
+import java.net.InetAddress;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -47,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -342,70 +345,61 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New subject subject.
+     * New subject confirmation.
      *
-     * @param nameIdFormat the name id format
-     * @param nameIdValue  the name id value
      * @param recipient    the recipient
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
      * @param notBefore    the not before
+     * @param address      the address
+     * @return the subject confirmation
+     */
+    public SubjectConfirmation newSubjectConfirmation(final String recipient, final ZonedDateTime notOnOrAfter,
+                                                      final String inResponseTo, final ZonedDateTime notBefore,
+                                                      final InetAddress address) {
+        LOGGER.debug("Building subject confirmation for recipient [{}], in response to [{}]", recipient, inResponseTo);
+        val confirmation = newSamlObject(SubjectConfirmation.class);
+        confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
+        val data = newSamlObject(SubjectConfirmationData.class);
+        FunctionUtils.doIfNotBlank(recipient, data::setRecipient);
+        FunctionUtils.doIfNotBlank(inResponseTo, data::setInResponseTo);
+        FunctionUtils.doIfNotNull(address, __ -> data.setAddress(address.getHostAddress()));
+        FunctionUtils.doIfNotNull(notOnOrAfter, __ -> data.setNotOnOrAfter(notOnOrAfter.toInstant()));
+        FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
+        confirmation.setSubjectConfirmationData(data);
+        return confirmation;
+    }
+
+    /**
+     * New subject subject.
+     *
+     * @param nameIdFormat        the name id format
+     * @param nameIdValue         the name id value
+     * @param subjectConfirmation the subject confirmation
      * @return the subject
      */
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final String recipient, final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo, final ZonedDateTime notBefore) {
+                              final SubjectConfirmation subjectConfirmation) {
         val nameID = getNameID(nameIdFormat, nameIdValue);
-        return newSubject(nameID, null, recipient, notOnOrAfter, inResponseTo, notBefore);
+        return newSubject(nameID, null, subjectConfirmation);
     }
 
     /**
      * New subject element.
      *
-     * @param nameId            the nameId
-     * @param subjectConfNameId the subject conf name id
-     * @param recipient         the recipient
-     * @param notOnOrAfter      the not on or after
-     * @param inResponseTo      the in response to
-     * @param notBefore         the not before
+     * @param nameId              the nameId
+     * @param subjectConfNameId   the subject conf name id
+     * @param subjectConfirmation the subject confirmation
      * @return the subject
      */
     public Subject newSubject(final SAMLObject nameId,
                               final SAMLObject subjectConfNameId,
-                              final String recipient,
-                              final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo,
-                              final ZonedDateTime notBefore) {
+                              final SubjectConfirmation subjectConfirmation) {
 
-        LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
-        val confirmation = newSamlObject(SubjectConfirmation.class);
-        confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
-        val data = newSamlObject(SubjectConfirmationData.class);
-
-        if (StringUtils.isNotBlank(recipient)) {
-            data.setRecipient(recipient);
-            val ip = InetAddressUtils.getByName(recipient);
-            if (ip != null) {
-                data.setAddress(ip.getHostName());
-            }
-        }
-
-        if (notOnOrAfter != null) {
-            data.setNotOnOrAfter(notOnOrAfter.toInstant());
-        }
-
-        if (StringUtils.isNotBlank(inResponseTo)) {
-            data.setInResponseTo(inResponseTo);
-        }
-
-        if (notBefore != null) {
-            data.setNotBefore(notBefore.toInstant());
-        }
-
-        confirmation.setSubjectConfirmationData(data);
+        LOGGER.debug("Building subject for NameID [{}]", nameId);
         val subject = newSamlObject(Subject.class);
         subject.setNameID(null);
-        subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
+        subject.getSubjectConfirmations().forEach(confirmation -> confirmation.setNameID(null));
 
         if (nameId instanceof final NameID instance) {
             subject.setNameID(instance);
@@ -416,15 +410,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             subject.setEncryptedID(instance);
         }
         if (subjectConfNameId instanceof final NameID instance) {
-            confirmation.setNameID(instance);
-            confirmation.setEncryptedID(null);
+            subjectConfirmation.setNameID(instance);
+            subjectConfirmation.setEncryptedID(null);
         }
         if (subjectConfNameId instanceof final EncryptedID instance) {
-            confirmation.setNameID(null);
-            confirmation.setEncryptedID(instance);
+            subjectConfirmation.setNameID(null);
+            subjectConfirmation.setEncryptedID(instance);
         }
-        subject.getSubjectConfirmations().add(confirmation);
-
+        subject.getSubjectConfirmations().add(subjectConfirmation);
         LOGGER.debug("Built subject [{}]", subject);
         return subject;
     }
@@ -495,17 +488,25 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return attribute;
     }
 
-    /**
-     * Inflate authn request string.
-     *
-     * @param decodedBytes the decoded bytes
-     * @return the string
-     */
     protected String inflateAuthnRequest(final byte[] decodedBytes) {
         val inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
         return CompressionUtils.decodeByteArrayToString(decodedBytes);
+    }
+
+    protected String getInResponseTo(final RequestAbstractType request, final String entityId, final boolean skipInResponseTo) {
+        var generateInResponseTo = !skipInResponseTo && StringUtils.isNotBlank(request.getID());
+        if (generateInResponseTo && request.getExtensions() != null) {
+            val extensions = Optional.ofNullable(request.getExtensions())
+                .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
+            generateInResponseTo = extensions
+                .stream()
+                .filter(RequesterID.class::isInstance)
+                .map(RequesterID.class::cast)
+                .noneMatch(info -> entityId.equalsIgnoreCase(info.getURI()));
+        }
+        return generateInResponseTo ? request.getID() : null;
     }
 }

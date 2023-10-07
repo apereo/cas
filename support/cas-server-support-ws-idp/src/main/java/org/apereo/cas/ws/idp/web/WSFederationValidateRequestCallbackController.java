@@ -107,7 +107,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val token = getConfigContext().getSecurityTokenServiceTokenFetcher().fetch(targetService, principal);
         if (token.isEmpty()) {
             LOGGER.warn("No security token could be retrieved for service [{}] and principal [{}]", targetService, principal);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+            throw UnauthorizedServiceException.denied("Denied: %s".formatted(targetService.getId()));
         }
         return token.get();
     }

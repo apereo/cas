@@ -77,8 +77,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
                 .stream()
                 .anyMatch(service -> RegexUtils.find(initialServicePattern, service.getId()));
             if (!matches) {
-                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                    new UnauthorizedServiceException("screen.service.initial.message", "Service is required"));
+                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(), UnauthorizedServiceException.requested());
             }
         }
     }

@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,10 +13,10 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -46,6 +44,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 class ReturnMappedAttributeReleasePolicyTests {
@@ -55,16 +54,7 @@ class ReturnMappedAttributeReleasePolicyTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @BeforeEach
-    public void beforeEach() {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            new GroovyScriptResourceCacheManager(), ScriptResourceCacheManager.BEAN_NAME);
-        ApplicationContextProvider.getScriptResourceCacheManager()
-            .ifPresent(ScriptResourceCacheManager::clear);
-    }
-
+    
     @Test
     void verifyAttributeMappingWorksForCollections() throws Throwable {
         val file = Files.createTempFile("attr", ".json").toFile();
@@ -86,6 +76,7 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAttributesTestUtils.getService())
             .principal(principal)
             .build();
@@ -120,6 +111,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -141,12 +133,13 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
         val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
-        assertEquals(2, Collection.class.cast(result.get("attr1")).size());
+        assertEquals(2, ((Collection) result.get("attr1")).size());
     }
 
     @Test
@@ -166,6 +159,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -189,6 +183,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         var releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -200,6 +195,7 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -221,6 +217,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -246,6 +243,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service1)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();
@@ -264,6 +262,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         when(service2.getAttributeReleasePolicy()).thenReturn(p2);
         val releasePolicyContext2 = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service2)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();
@@ -287,6 +286,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service1)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();
@@ -307,6 +307,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service1)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
             .build();
@@ -331,6 +332,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val attributes = policy.determineRequestedAttributeDefinitions(releasePolicyContext);
         assertTrue(attributes.containsAll(policy.getAllowedAttributes().keySet()));
@@ -351,6 +353,7 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
+            .applicationContext(applicationContext)
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
@@ -376,6 +379,7 @@ class ReturnMappedAttributeReleasePolicyTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
             .build();
         val result = policy.getAttributes(releasePolicyContext);
@@ -407,14 +411,15 @@ class ReturnMappedAttributeReleasePolicyTests {
                     val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                         .registeredService(registeredService)
                         .service(CoreAuthenticationTestUtils.getService())
+                        .applicationContext(applicationContext)
                         .principal(principal)
                         .build();
                     var result = policy.getAttributes(releasePolicyContext);
                     assertNotNull(result);
                     assertTrue(result.containsKey("uid"));
                     assertTrue(result.containsKey("taxId"));
-                    assertEquals(uid, result.get("uid").get(0));
-                    assertTrue(result.get("taxId").get(0).toString().contains(uid));
+                    assertEquals(uid, result.get("uid").getFirst());
+                    assertTrue(result.get("taxId").getFirst().toString().contains(uid));
                 }));
                 future.get();
             }));
@@ -435,6 +440,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
 
         val chain = new ChainingAttributeReleasePolicy();
@@ -442,8 +448,8 @@ class ReturnMappedAttributeReleasePolicyTests {
 
         val attributes = chain.getAttributes(releasePolicyContext);
         assertEquals(2, attributes.size());
-        assertEquals("test", attributes.get("my-userid").get(0));
-        assertEquals("test-new", attributes.get("new-uid").get(0));
+        assertEquals("test", attributes.get("my-userid").getFirst());
+        assertEquals("test-new", attributes.get("new-uid").getFirst());
     }
 
 }

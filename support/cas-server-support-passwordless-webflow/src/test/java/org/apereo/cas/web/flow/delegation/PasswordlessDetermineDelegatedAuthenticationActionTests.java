@@ -7,11 +7,12 @@ import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,9 +27,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowAuthenticationActions")
+@Execution(ExecutionMode.SAME_THREAD)
 class PasswordlessDetermineDelegatedAuthenticationActionTests {
     @Nested
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
@@ -46,7 +46,6 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-activated=true",
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
-    @SuppressWarnings("ClassCanBeStatic")
     class WithoutClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
@@ -78,7 +77,6 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-activated=true",
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
-    @SuppressWarnings("ClassCanBeStatic")
     class WithClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)

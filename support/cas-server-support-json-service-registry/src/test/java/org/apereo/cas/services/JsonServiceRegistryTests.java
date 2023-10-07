@@ -14,9 +14,11 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import java.net.URI;
@@ -36,9 +38,13 @@ import static org.mockito.Mockito.*;
 @Tag("FileSystem")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() throws Exception {
         this.newServiceRegistry = buildResourceBasedServiceRegistry(RESOURCE);
@@ -57,10 +63,8 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyRequiredHandlersServiceDefinition() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
@@ -68,9 +72,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @Test
     void verifyExistingDefinitionForCompatibility2() throws Throwable {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -81,10 +83,8 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyExistingDefinitionForCompatibility1() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
@@ -95,14 +95,13 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Test
     void verifyUsernameProviderWithAttributeReleasePolicy() throws Throwable {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");
-        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val service = serializer.from(resource.getInputStream());
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(service)
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(RegisteredServiceTestUtils.getPrincipal("casuser",
                 Map.of("groups", List.of("g1", "g2"), "username", List.of("casuser"))))
             .build();
@@ -116,6 +115,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             .registeredService(context.getRegisteredService())
             .service(context.getService())
             .principal(context.getPrincipal())
+            .applicationContext(applicationContext)
             .build();
         val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
         assertEquals("casuser", username);
@@ -131,11 +131,9 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             WSFederationRegisteredService.class);
     }
 
-    private static AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
+    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
         return new JsonServiceRegistry(location, WatcherService.noOp(),
-            appCtx,
+            applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

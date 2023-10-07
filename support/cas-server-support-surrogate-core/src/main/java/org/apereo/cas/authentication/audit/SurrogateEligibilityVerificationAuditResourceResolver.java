@@ -23,7 +23,7 @@ public class SurrogateEligibilityVerificationAuditResourceResolver extends Retur
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
-        val surrogateEligibilityResult = AuditableExecutionResult.class.cast(returnValue);
+        val surrogateEligibilityResult = (AuditableExecutionResult) returnValue;
         val outcome = "Surrogate Authentication " + BooleanUtils
             .toString(surrogateEligibilityResult.getProperties().containsKey("eligible"), "Eligible", "Ineligible");
         val values = new HashMap<>();

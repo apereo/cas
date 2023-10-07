@@ -2,7 +2,7 @@
   "dependencies": "throttle,throttle-hazelcast",
 
   "properties": [
-    "--cas.audit.engine.enabled=false",
+    "--cas.audit.engine.enabled=true",
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=10",

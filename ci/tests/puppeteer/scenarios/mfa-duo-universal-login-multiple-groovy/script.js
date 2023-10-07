@@ -16,17 +16,17 @@ const assert = require("assert");
 })();
 
 async function login(page, service, providerId) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, false);
-    console.log(`Trying with service ${service}`);
+    await cas.log(`Trying with service ${service}`);
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000);
     await cas.loginWith(page, "duobypass", "Mellon");
     await page.waitForTimeout(4000);
     await cas.screenshot(page);
 
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.gotoLogin(page);
     await cas.screenshot(page);
     await page.waitForSelector("#content", {visible: true});
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

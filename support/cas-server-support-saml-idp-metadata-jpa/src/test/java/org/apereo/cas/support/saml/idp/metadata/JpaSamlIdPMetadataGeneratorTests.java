@@ -2,15 +2,12 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseJpaSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,7 +26,6 @@ class JpaSamlIdPMetadataGeneratorTests {
         "cas.jdbc.show-sql=false"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -48,7 +44,6 @@ class JpaSamlIdPMetadataGeneratorTests {
         "cas.jdbc.show-sql=false"
     })
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
         void verifyOperation() throws Throwable {

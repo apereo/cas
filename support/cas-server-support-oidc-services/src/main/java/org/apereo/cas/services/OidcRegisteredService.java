@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,8 +46,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
+    @JacksonInject("signIdToken")
     private boolean signIdToken = true;
 
+    @JacksonInject("encryptIdToken")
     private boolean encryptIdToken;
 
     private String idTokenEncryptionAlg;

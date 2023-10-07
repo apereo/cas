@@ -54,7 +54,7 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
             Objects.requireNonNull(signingContext).setSignatureSigningParameters(signingParams);
         }
 
-        val samlObject = SAMLObject.class.cast(request);
+        val samlObject = (SAMLObject) request;
         removeSignature(samlObject);
         encodedRequest = deflateAndBase64Encode(samlObject);
         messageContext.setMessage(request);

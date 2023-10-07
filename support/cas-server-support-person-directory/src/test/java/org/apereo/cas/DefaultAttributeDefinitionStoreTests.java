@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -13,7 +14,6 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -25,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,7 +36,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -67,11 +66,18 @@ class DefaultAttributeDefinitionStoreTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifyFlattenedDefn() throws Throwable {
@@ -96,7 +102,7 @@ class DefaultAttributeDefinitionStoreTests {
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
         assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
-        assertTrue(List.class.cast(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
+        assertTrue(((List) attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
     }
 
     private Map<String, List<Object>> getAllReleasedAttributesForCasUser() throws Throwable {
@@ -106,6 +112,7 @@ class DefaultAttributeDefinitionStoreTests {
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
+            .applicationContext(applicationContext)
             .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
             .build();
         return policy.getAttributes(releasePolicyContext);
@@ -179,7 +186,7 @@ class DefaultAttributeDefinitionStoreTests {
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("interesting-attribute"));
-        assertTrue(List.class.cast(attributes.get("interesting-attribute")).contains("cas-given-name@cas.org"));
+        assertTrue(((List) attributes.get("interesting-attribute")).contains("cas-given-name@cas.org"));
     }
 
     @Test
@@ -453,6 +460,11 @@ class DefaultAttributeDefinitionStoreTests {
             store.removeAttributeDefinition(defn.getKey());
             assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
         }
+    }
+
+    @Test
+    void verifyLocateAttributeDefnByName() throws Throwable {
+        assertTrue(attributeDefinitionStore.locateAttributeDefinitionByName("interesting-attribute", AttributeDefinition.class).isPresent());
     }
 
 }

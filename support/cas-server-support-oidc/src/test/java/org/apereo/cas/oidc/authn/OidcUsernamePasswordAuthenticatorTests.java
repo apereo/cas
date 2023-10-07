@@ -47,7 +47,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
     }
@@ -62,7 +62,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid profile email");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().containsKey("email"));
         assertTrue(credentials.getUserProfile().getAttributes().containsKey("family_name"));
@@ -79,7 +79,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
         request.addParameter(OAuth20Constants.SCOPE, "openid");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
+        authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
         assertTrue(credentials.getUserProfile().getAttributes().isEmpty());
     }
