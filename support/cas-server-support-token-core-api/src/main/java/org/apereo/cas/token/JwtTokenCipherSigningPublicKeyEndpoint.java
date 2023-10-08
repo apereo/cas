@@ -63,8 +63,9 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {
-            val registeredService = servicesManager.findServiceBy(webApplicationServiceFactory.createService(service));
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+            val webApplicationService = webApplicationServiceFactory.createService(service);
+            val registeredService = servicesManager.findServiceBy(webApplicationService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(webApplicationService, registeredService);
             val serviceCipher = new RegisteredServiceJwtTicketCipherExecutor();
             if (serviceCipher.supports(registeredService)) {
                 val cipher = serviceCipher.getTokenTicketCipherExecutorForService(registeredService);

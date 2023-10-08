@@ -93,7 +93,8 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
+        val clientService = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientService, registeredService);
 
         if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
             val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
