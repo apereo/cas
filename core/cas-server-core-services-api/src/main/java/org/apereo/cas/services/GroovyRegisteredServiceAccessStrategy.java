@@ -4,10 +4,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import groovy.lang.GroovyObject;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,14 +40,13 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient GroovyObject groovyStrategyInstance;
+    private transient WatchableGroovyScriptResource watchableScript;
 
     @Override
     public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
-            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "isServiceAccessAllowed", new Object[]{registeredService, service}, Boolean.class, false));
+            return Boolean.TRUE.equals(watchableScript.execute("isServiceAccessAllowed", Boolean.class, registeredService, service));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }
@@ -58,8 +56,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     public boolean isServiceAccessAllowedForSso(final RegisteredService registeredService) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
-            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "isServiceAccessAllowedForSso", new Object[]{registeredService}, Boolean.class, false));
+            return Boolean.TRUE.equals(watchableScript.execute("isServiceAccessAllowedForSso", Boolean.class, registeredService));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }
@@ -69,20 +66,19 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
-            return Boolean.TRUE.equals(ScriptingUtils.executeGroovyScript(this.groovyStrategyInstance,
-                "authorizeRequest", new Object[]{request}, Boolean.class, false));
+            return Boolean.TRUE.equals(watchableScript.execute("authorizeRequest", Boolean.class, request));
         } catch (final Throwable throwable) {
             throw UnauthorizedServiceException.wrap(throwable);
         }
     }
 
     protected void buildGroovyAccessStrategyInstanceIfNeeded() {
-        if (this.groovyStrategyInstance == null) {
+        if (watchableScript == null) {
             val groovyResource = FunctionUtils.doUnchecked(() -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 return ResourceUtils.getResourceFrom(location);
             });
-            this.groovyStrategyInstance = ScriptingUtils.parseGroovyScript(groovyResource, true);
+            watchableScript = new WatchableGroovyScriptResource(groovyResource).setFailOnError(false);
         }
     }
 }
