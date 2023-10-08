@@ -6,7 +6,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import groovy.lang.GroovyObject;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
@@ -20,6 +22,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 @ToString(of = "resource")
+@Accessors(chain = true)
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
     private final CasReentrantLock lock = new CasReentrantLock();
 
@@ -29,6 +32,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
     private GroovyObject groovyScript;
 
+    @Setter
+    private boolean failOnError = true;
+
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
         if (ResourceUtils.doesResourceExist(script)) {
@@ -36,8 +42,9 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
                 watcherService = FunctionUtils.doUnchecked(
                     () -> new FileWatcherService(script.getFile(),
                         Unchecked.consumer(file -> {
-                            LOGGER.info("Reloading script at [{}]", file);
+                            LOGGER.debug("Reloading script at [{}]", file);
                             compileScriptResource(script);
+                            LOGGER.info("Reloaded script at [{}]", file);
                         })));
                 watcherService.start(script.getFilename());
             }
@@ -51,17 +58,17 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
-        return execute(args, clazz, true);
+        return execute(args, clazz, failOnError);
     }
 
     @Override
     public void execute(final Object[] args) throws Throwable {
-        execute(args, Void.class, true);
+        execute(args, Void.class, failOnError);
     }
 
     @Override
     public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
-        return execute(methodName, clazz, true, args);
+        return execute(methodName, clazz, failOnError, args);
     }
 
     @Override
@@ -77,7 +84,6 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
             }
         });
     }
-
 
     /**
      * Execute.
@@ -112,6 +118,6 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     }
 
     private void compileScriptResource(final Resource script) {
-        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
+        this.groovyScript = ScriptingUtils.parseGroovyScript(script, failOnError);
     }
 }
