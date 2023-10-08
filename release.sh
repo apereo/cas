@@ -2,26 +2,46 @@
 
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
+RED="\e[31m"
 NORMAL=$(tput sgr0)
 TIMEOUT=640000
 
+function printgreen() {
+  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
+}
+
+function printred() {
+  printf "🔴 ${RED}$1${ENDCOLOR}\n"
+}
+
 function build {
-    ./gradlew clean --parallel
-    echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew assemble -x test -x check --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    ./gradlew clean --parallel --no-configuration-cache
+    printgreen "Building CAS. Please be patient as this might take a while..."
+    ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-configuration-cache \
+        -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    if [ $? -ne 0 ]; then
+        printred "Building CAS faild."
+        exit 1
+    fi
 }
 
 function publish {
-    echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew publishToSonatype closeAndReleaseStagingRepository --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
+    printgreen "Publishing CAS. Please be patient as this might take a while..."
+    ./gradlew publishToSonatype closeAndReleaseStagingRepository \
+      --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+      -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" \
       -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  \
       -Dorg.gradle.internal.publish.checksums.insecure=true
+    if [ $? -ne 0 ]; then
+        printred "Publishing CAS faild."
+        exit 1
+    fi
 }
 
 function instructions {
-    echo -e "\n${YELLOW}Done!\nThe release should be automatically closed and published on Sonatype.\nThank you!${NORMAL}"
+    printgreen "Done! The release is now automatically closed and published on Sonatype. Thank you!"
 }
 
 clear
@@ -30,7 +50,7 @@ java -version
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 if [[ "${casVersion}" == v* ]] ;
 then
-    echo "CAS version ${} is incorrect and likely a tag."
+    printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
 fi
 
@@ -50,20 +70,25 @@ echo -e "\t\torg.gradle.daemon=false"
 echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 
-read -s -p "If you are ready, press ENTER to continue..." anykey
-clear
-
-read -s -p "Sonatype Username: " username
-echo
-read -s -p "Sonatype Password: " password
-echo
-
-clear
-
-echo "1) Clean, Build and Publish"
-echo "2) Publish"
-read -p "Choose (1, 2, etc): " selection
-echo
+if [[ -z $SONATYPE_USERNAME && -z $SONATYPE_PASSWORD ]]; then
+  read -s -p "If you are ready, press ENTER to continue..." anykey
+  echo
+  read -s -p "Sonatype Username: " username
+  echo
+  read -s -p "Sonatype Password: " password
+  echo
+  echo "1) Clean, Build and Publish"
+  echo "2) Publish"
+  read -p "Choose (1, 2, etc): " selection
+  echo
+  clear
+else
+  printgreen "Sonatype username and password are defined. Starting the CAS release process..."
+  selection="1"
+  username="$SONATYPE_USERNAME"
+  password="$SONATYPE_PASSWORD"
+  clear
+fi
 
 case "$selection" in
     1)
@@ -76,7 +101,7 @@ case "$selection" in
         instructions
         ;;
     *)
-        echo "Unable to recognize selection"
+        printred "Unable to recognize selection"
         ;;
 esac
 exit 0
