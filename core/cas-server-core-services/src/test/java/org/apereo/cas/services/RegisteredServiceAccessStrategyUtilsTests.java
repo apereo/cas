@@ -30,7 +30,7 @@ class RegisteredServiceAccessStrategyUtilsTests {
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false,
             LocalDate.now(ZoneOffset.UTC).minusDays(1)));
         assertThrows(UnauthorizedServiceException.class, () ->
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(RegisteredServiceTestUtils.getService().getId(), service));
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(RegisteredServiceTestUtils.getService(), service));
     }
 
     @Test

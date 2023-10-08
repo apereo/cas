@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/.+",
+  "id": 1,
+  "name": "Sample",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
+    "groovyScript" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/AccessStrategy.groovy"
+  }
+}
