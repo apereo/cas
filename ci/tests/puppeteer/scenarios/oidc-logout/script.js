@@ -27,12 +27,15 @@ const puppeteer = require("puppeteer");
     url = await page.url();
     assert(url === casService);
     
-    let params = "client_id=client&client_secret=secret&grant_type=client_credentials&";
+    let params = "grant_type=client_credentials&";
     params += `scope=${encodeURIComponent("openid")}`;
     let tokenUrl = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${tokenUrl}`);
 
-    let idToken = await cas.doPost(tokenUrl, "", {'Content-Type': "application/json" }, async res => {
+    let idToken = await cas.doPost(tokenUrl, "", {
+        'Content-Type': "application/json",
+        'Authorization': 'Basic ' + btoa('client:secret')
+    }, async res => {
         await cas.log(res.data.id_token);
         return res.data.id_token;
     }, error => {

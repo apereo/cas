@@ -52,13 +52,13 @@ const assert = require('assert');
 
 
 async function executeRequest(clientId, clientSecret, expectFailure) {
-    let params = `client_id=${clientId}&client_secret=${clientSecret}`;
-    params += "&grant_type=client_credentials&scope=openid";
+    let params = "&grant_type=client_credentials&scope=openid";
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
     }, async res => await cas.log(res.data), error => {
         if (expectFailure) {
             cas.logr(`Operation has correctly failed with status: ${error.response.status}`);

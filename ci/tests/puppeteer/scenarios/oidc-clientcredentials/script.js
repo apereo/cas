@@ -2,10 +2,18 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 async function sendRequest(url, clientid, clientsecret) {
-    await cas.doPost(url, "", {
-        'Content-Type': "application/json",
-        'Authorization': 'Basic ' + btoa(clientid + ':' + clientsecret)
-    }, async res => {
+    let headers;
+    if (clientsecret !== "") {
+        headers = {
+            'Content-Type': "application/json",
+            'Authorization': 'Basic ' + btoa(clientid + ':' + clientsecret)
+        };
+    } else {
+        headers = {
+            'Content-Type': "application/json"
+        };
+    }
+    await cas.doPost(url, "", headers, async res => {
         const urlObj = new URL(url);
 
         await cas.log(res.data);
@@ -47,11 +55,11 @@ async function sendRequest(url, clientid, clientsecret) {
 }
 
 async function verifyPasswordGrantType() {
-    let params = "grant_type=password&username=casuser&password=P@SSw0rd&";
+    let params = "client_id=client&client_secret=secret&grant_type=password&username=casuser&password=P@SSw0rd&";
     params += `scope=${encodeURIComponent("openid MyCustomScope email profile eduPerson")}`;
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
-    await sendRequest(url, "client", "secret");
+    await sendRequest(url, "client", "");
 }
 
 async function verifyClientCredentialsGrantType() {

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.jee.context.JEEContext;
 
 /**
  * This is {@link OAuth20ClientCredentialsGrantTypeTokenRequestValidator}.
@@ -25,16 +24,19 @@ public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAut
 
     @Override
     public boolean supports(final WebContext context) {
-        val queryString = ((JEEContext) context).getNativeRequest().getQueryString();
-        if (StringUtils.contains(queryString, OAuth20Constants.CLIENT_SECRET)) {
-            LOGGER.error("Cannot accept the [{}] in the query string for [{}]", OAuth20Constants.CLIENT_SECRET, OAuth20GrantTypes.CLIENT_CREDENTIALS);
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+
+        val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        if (!OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
             return false;
         }
 
-        val grantType = getConfigurationContext().getRequestParameterResolver()
-            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
+        if (requestParameterResolver.isParameterOnQueryString(context, OAuth20Constants.CLIENT_SECRET)) {
+            LOGGER.error("Cannot accept the [{}] in the query string for [{}]", OAuth20Constants.CLIENT_SECRET, OAuth20GrantTypes.CLIENT_CREDENTIALS);
+            return false;
+        }
+        return true;
     }
 
     @Override
