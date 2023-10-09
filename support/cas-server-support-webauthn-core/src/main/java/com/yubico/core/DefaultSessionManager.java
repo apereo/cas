@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
-
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -22,19 +21,16 @@ public class DefaultSessionManager implements SessionManager {
     }
 
     @Override
-    public ByteArray createSession(
-        @NonNull
-        final ByteArray userHandle) throws ExecutionException {
-        var sessionId = this.usersToSessionIds.get(userHandle, () -> SessionManager.generateRandom(32));
-        this.sessionIdsToUsers.put(sessionId, userHandle);
+    public ByteArray createSession(@NonNull final ByteArray userHandle) throws ExecutionException {
+        var sessionId = usersToSessionIds.get(userHandle, () -> SessionManager.generateRandom(32));
+        sessionIdsToUsers.put(sessionId, userHandle);
         return sessionId;
     }
 
     @Override
     public Optional<ByteArray> getSession(
-        @NonNull
-        final ByteArray token) {
-        return Optional.ofNullable(this.sessionIdsToUsers.getIfPresent(token));
+        @NonNull final ByteArray token) {
+        return Optional.ofNullable(sessionIdsToUsers.getIfPresent(token));
     }
 
 }

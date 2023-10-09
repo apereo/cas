@@ -1,4 +1,4 @@
-package org.apereo.cas.webauthn.web.flow;
+package org.apereo.cas.webauthn.web.flow.account;
 
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.util.function.FunctionUtils;

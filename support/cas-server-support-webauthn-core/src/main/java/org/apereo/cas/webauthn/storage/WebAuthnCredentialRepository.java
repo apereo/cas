@@ -12,6 +12,10 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 public interface WebAuthnCredentialRepository extends RegistrationStorage, WebAuthnRegistrationStorageCleaner {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "webAuthnCredentialRepository";
 
     /**
      * Stream.

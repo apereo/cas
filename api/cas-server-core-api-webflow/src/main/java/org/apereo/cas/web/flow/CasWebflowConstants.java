@@ -1300,7 +1300,7 @@ public interface CasWebflowConstants {
      * Action id 'googleAccountProfileRegistrationAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE = "googleAccountProfilePrepareAction";
-    
+
     /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
      */
@@ -1769,6 +1769,25 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnStartAuthenticationAction .
      */
     String ACTION_ID_WEBAUTHN_START_AUTHENTICATION = "webAuthnStartAuthenticationAction";
+    /**
+     * Action id 'webAuthnPopulateCsrfTokenAction .
+     */
+    String ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN = "webAuthnPopulateCsrfTokenAction";
+
+    /**
+     * Action id 'webAuthnAccountProfileRegistrationAction .
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION = "webAuthnAccountProfileRegistrationAction";
+
+    /**
+     * Action id 'webAuthnAccountProfilePrepareAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_PREPARE = "webAuthnAccountProfilePrepareAction";
+
+    /**
+     * Action id 'webAuthnAccountProfileRegistrationAction .
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_DEVICE_PROVIDER = "webAuthnDeviceProviderAction";
 
     /**
      * Action id 'webAuthnAuthenticationWebflowAction .

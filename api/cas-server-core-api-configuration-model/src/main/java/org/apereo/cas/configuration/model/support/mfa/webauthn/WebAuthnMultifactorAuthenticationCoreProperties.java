@@ -131,6 +131,13 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      */
     private boolean allowPrimaryAuthentication;
 
+    /**
+     * When enabled, allows the user/system to accept multiple accounts
+     * and device registrations per user, allowing one to switch between
+     * or register new devices/accounts automatically.
+     */
+    private boolean multipleDeviceRegistrationEnabled;
+
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }

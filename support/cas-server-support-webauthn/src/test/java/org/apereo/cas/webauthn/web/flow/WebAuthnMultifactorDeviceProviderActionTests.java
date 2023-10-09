@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -38,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "CasFeatureModule.AccountManagement.enabled=true")
 class WebAuthnMultifactorDeviceProviderActionTests {
     @Autowired
-    @Qualifier("webAuthnDeviceProviderAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_DEVICE_PROVIDER)
     private MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
     
     @Test

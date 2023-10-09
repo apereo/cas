@@ -43,7 +43,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     private Action webAuthnAuthenticationWebflowAction;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired

@@ -38,7 +38,7 @@ class WebAuthnStartAuthenticationActionTests {
     private Action webAuthnStartAuthenticationAction;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired

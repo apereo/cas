@@ -3,20 +3,14 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnCredential;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,35 +27,20 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
      */
     public static final String FLOW_ID_MFA_WEBAUTHN = "mfa-webauthn";
 
-    private final CsrfTokenRepository csrfTokenRepository;
-
     public WebAuthnMultifactorWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         final FlowDefinitionRegistry flowDefinitionRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers,
-        final CsrfTokenRepository csrfTokenRepository) {
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
             casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
-        this.csrfTokenRepository = csrfTokenRepository;
     }
 
     @Override
     protected void doInitialize() {
-        val addCsrfTokenAction = new ConsumerExecutionAction(context -> {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-            request.setAttribute(HttpServletResponse.class.getName(), response);
 
-            var csrfToken = csrfTokenRepository.loadToken(request);
-            if (csrfToken == null) {
-                csrfToken = csrfTokenRepository.generateToken(request);
-                csrfTokenRepository.saveToken(csrfToken, request, response);
-            }
-            context.getFlowScope().put(csrfToken.getParameterName(), csrfToken);
-        });
 
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
             val flow = getFlow(registry, FLOW_ID_MFA_WEBAUTHN);
@@ -87,7 +66,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             val viewRegState = createViewState(flow, CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_REGISTRATION, "webauthn/casWebAuthnRegistrationView");
             viewRegState.getEntryActionList().addAll(
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT),
-                addCsrfTokenAction,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION),
                 setPrincipalAction);
             createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
@@ -101,7 +80,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             val viewLoginFormState = createViewState(flow,
                 CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "webauthn/casWebAuthnLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, WebAuthnCredential.class);
-            viewLoginFormState.getEntryActionList().addAll(addCsrfTokenAction,
+            viewLoginFormState.getEntryActionList().addAll(createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_START_AUTHENTICATION), setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_VALIDATE,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
@@ -123,7 +102,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 StringUtils.quote(appId));
             flow.getStartActionList().add(setAppIdAction);
 
-            flow.getStartActionList().add(addCsrfTokenAction);
+            flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN));
 
             val setPrimaryAuthAction = createSetAction("flowScope.webAuthnPrimaryAuthenticationEnabled", "true");
             flow.getStartActionList().add(setPrimaryAuthAction);

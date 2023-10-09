@@ -46,7 +46,7 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     private Action webAuthnValidateSessionCredentialTokenAction;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired

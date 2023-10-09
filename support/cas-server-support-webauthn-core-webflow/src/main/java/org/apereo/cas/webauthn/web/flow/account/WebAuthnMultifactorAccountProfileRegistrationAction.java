@@ -1,0 +1,18 @@
+package org.apereo.cas.webauthn.web.flow.account;
+
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.support.WebUtils;
+
+/**
+ * This is {@link WebAuthnMultifactorAccountProfileRegistrationAction}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
+public class WebAuthnMultifactorAccountProfileRegistrationAction extends ConsumerExecutionAction {
+    public WebAuthnMultifactorAccountProfileRegistrationAction(final MultifactorAuthenticationProvider provider) {
+        super(requestContext -> WebUtils.putMultifactorAuthenticationProvider(requestContext, provider));
+    }
+}
+
