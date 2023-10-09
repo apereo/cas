@@ -44,7 +44,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     protected WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired

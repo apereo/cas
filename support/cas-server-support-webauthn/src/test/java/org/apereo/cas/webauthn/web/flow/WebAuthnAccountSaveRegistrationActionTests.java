@@ -45,7 +45,7 @@ class WebAuthnAccountSaveRegistrationActionTests {
     private Action webAuthnSaveAccountRegistrationAction;
 
     @Autowired
-    @Qualifier("webAuthnCredentialRepository")
+    @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired

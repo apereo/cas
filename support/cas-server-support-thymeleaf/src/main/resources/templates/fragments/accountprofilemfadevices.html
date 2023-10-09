@@ -77,6 +77,7 @@
                         <td class="mdc-data-table__cell">
                             <span th:switch="${entry.source}">
                                 <span th:case="'Google Authenticator'"><i class="mdi mdi-google"></i></span>
+                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint"></i></span>
                                 <span th:case="*"></span>
                             </span>
                             <span th:utext="${entry.source}"/>
@@ -101,6 +102,7 @@
 
             <div th:if="${#bools.isTrue(gauthAccountProfileRegistrationEnabled) || #bools.isTrue(webauthnAccountProfileRegistrationEnabled)}">
                 <hr>
+                
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <div id="toolbar" class="mdc-menu-surface--anchor">
                     <button id="register" name="register" accesskey="r" value="Register" type="button"
@@ -126,9 +128,9 @@
                                            onclick="submitRegistrationRequest('gauth');"/>
                                     </div>
                                 </li>
-                                <li class="mdc-list-item" role="menuitem" th:if="${webauthnAccountProfileRegistrationEnabled}">
+                                <li class="mdc-list-item" role="menuitem" style="margin-top: 10px;" th:if="${webauthnAccountProfileRegistrationEnabled}">
                                     <span class="mdc-list-item__ripple"></span>
-                                    <i class="mdi mdi-fingerprint" style="margin-top: 2px;"></i>
+                                    <i class="mdi mdi-fingerprint"></i>
                                     <div class="text-justify">
                                         <h4 th:utext="#{cas.mfa.providerselection.mfa-webauthn}"
                                             style="margin-top: 2px;"/>
@@ -143,10 +145,10 @@
                             </ul>
                         </div>
                         </div>
-                    <input type="hidden" name="type" value=""/>
-                    <input type="hidden" name="_eventId_register" value="Register"/>
-                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                </form>
+                        <input type="hidden" name="type" value=""/>
+                        <input type="hidden" name="_eventId_register" value="Register"/>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    </form>
 
                 <script type="text/javascript" th:inline="javascript">
                     function initializeMenus() {
