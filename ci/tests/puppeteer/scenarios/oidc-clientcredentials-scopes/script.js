@@ -3,9 +3,7 @@ const cas = require('../../cas.js');
 
 (async () => {
 
-    let params = "client_id=client&";
-    params += "client_secret=secret&";
-    params += "grant_type=password&";
+    let params = "grant_type=password&";
     params += "username=casuser&";
     params += "password=Mellon&";
     params += "scope=openid%20MyCustomScope%20email";
@@ -14,7 +12,8 @@ const cas = require('../../cas.js');
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Authorization': 'Basic ' + btoa('client' + ':' + 'secret')
     }, async res => {
 
         await cas.log(res.data);
