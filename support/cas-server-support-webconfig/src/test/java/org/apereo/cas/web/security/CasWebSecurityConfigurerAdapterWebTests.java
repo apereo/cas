@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         "spring.security.user.name=casuser",
         "spring.security.user.password=Mellon",
-
         "management.endpoints.enabled-by-default=true",
         "management.endpoints.web.exposure.include=*",
 
@@ -98,12 +97,41 @@ class CasWebSecurityConfigurerAdapterWebTests {
         mvc.perform(get("/cas/actuator/health")).andExpect(status().isUnauthorized());
     }
 
+    @Test
+    /**
+     * Test page that should be on permit all list with Basic Auth.
+     * Some OIDC applications pass clientid and secret as basic authentication credentials and they need to get passed spring security.
+     * Using /cas/login instead of /cas/oidc/oidcAccessToken because the oidc module isn't configured here.
+     */
+    void verifyCasLoginBasicAuth() throws Throwable {
+        mvc.perform(post("/cas/login").with(httpBasic("casuser", "XYZ"))).andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyCasLoginNoBasic() throws Throwable {
+        mvc.perform(post("/cas/login")).andExpect(status().isOk());
+    }
+
     @TestConfiguration(value = "WebTestConfiguration", proxyBeanMethods = false)
     static class WebTestConfiguration {
 
         @RestController("TestController")
         @RequestMapping("/oidc/accessToken")
         public class TestController {
+            @GetMapping
+            public ResponseEntity getMethod() {
+                return ResponseEntity.ok().build();
+            }
+
+            @PostMapping
+            public ResponseEntity postMethod() {
+                return ResponseEntity.ok().build();
+            }
+        }
+
+        @RestController("LoginController")
+        @RequestMapping("/login")
+        public class LoginController {
             @GetMapping
             public ResponseEntity getMethod() {
                 return ResponseEntity.ok().build();
