@@ -286,12 +286,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        shiro                      : [
-                dependencies.create("org.apache.shiro:shiro-core:$apacheShiroVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-beanutils", module: "commons-beanutils")
-                }
-        ],
         cassandra                  : [
                 dependencies.create("com.datastax.oss:java-driver-core:$apacheCassandraVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
