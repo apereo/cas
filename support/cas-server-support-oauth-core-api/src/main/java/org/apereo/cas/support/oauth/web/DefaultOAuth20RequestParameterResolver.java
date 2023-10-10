@@ -277,6 +277,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     @Override
     public boolean isParameterOnQueryString(final WebContext context, final String name) {
         val queryString = ((JEEContext) context).getNativeRequest().getQueryString();
-        return StringUtils.contains(queryString, name + '=');
+        return context.getRequestParameter(name).isPresent() && StringUtils.contains(queryString, name + '=');
     }
 }

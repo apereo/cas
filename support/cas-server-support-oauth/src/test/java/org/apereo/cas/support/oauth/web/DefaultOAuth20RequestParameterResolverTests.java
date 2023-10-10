@@ -71,6 +71,8 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
     void verifyParameterIsOnQueryString() {
         val request = new MockHttpServletRequest();
         request.setQueryString("client_id=myid&client_secret=mysecret");
+        request.setParameter("client_id", "myid");
+        request.setParameter("client_secret", "mysecret");
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         assertTrue(oauthRequestParameterResolver.isParameterOnQueryString(context, OAuth20Constants.CLIENT_SECRET));
@@ -80,6 +82,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
     void verifyParameterIsNotOnQueryString() {
         val request = new MockHttpServletRequest();
         request.setQueryString("client_id=myid");
+        request.setParameter("client_id", "myid");
         request.setParameter("client_secret", "mysecret");
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
