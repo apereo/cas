@@ -203,6 +203,10 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * List of ACR values supported.
      * This discovery element contains a list of the supported acr values supported by this server.
+     * Support for authentication context class references is implemented in form of {@code acr_values} as part of the original
+     * authorization request, which is mostly taken into account by
+     * the multifactor authentication features of CAS.
+     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
      */
     private List<String> acrValuesSupported = new ArrayList<>();
 

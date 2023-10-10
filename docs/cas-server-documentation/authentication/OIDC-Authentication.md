@@ -59,22 +59,9 @@ Instead, use the Dynamic Discovery endpoint and parse the discovery document to 
 
 {% include_cached casproperties.html properties="cas.authn.oidc.core" %}
 
-## Server Configuration
-
-Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
-by default as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
-You will need to configure your deployment environment and load-balancers accordingly.
-
 ## Sample Client Applications
 
 - [MITREid Sample Java Webapp](https://github.com/apereo/oidc-sample-java-webapp)
-
-## Authentication Context Class
-
-Support for authentication context class references is implemented in form of `acr_values` as part of the original 
-authorization request, which is mostly taken into account by 
-the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
-Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Troubleshooting
 
