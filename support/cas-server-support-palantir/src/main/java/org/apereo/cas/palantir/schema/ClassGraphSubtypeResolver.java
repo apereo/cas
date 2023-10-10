@@ -73,8 +73,10 @@ class ClassGraphSubtypeResolver implements SubtypeResolver {
                 : getScanResult().getSubclasses(declaredType.getErasedType());
             val typeContext = context.getTypeContext();
 
-            return subtypes.loadClasses(true)
+            return subtypes
+                .loadClasses(true)
                 .stream()
+                .filter(subclass -> !subclass.isAnonymousClass())
                 .map(subclass -> typeContext.resolveSubtype(declaredType, subclass))
                 .collect(Collectors.toList());
         }

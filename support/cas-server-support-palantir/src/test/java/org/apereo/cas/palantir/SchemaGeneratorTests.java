@@ -5,6 +5,7 @@ import org.apereo.cas.services.CasProtocolVersions;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceServiceTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTicketGrantingTicketExpirationPolicy;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +50,8 @@ public class SchemaGeneratorTests {
             arguments(SimpleContainer1.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer1")),
             arguments(SimpleContainer2.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer2")),
             arguments(SimpleContainer3.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer3")),
-            arguments(SimpleContainer4.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4"))
+            arguments(SimpleContainer4.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4")),
+            arguments(SimpleContainer5.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4"))
         );
     }
 
@@ -82,5 +84,11 @@ public class SchemaGeneratorTests {
     @Setter
     static class SimpleContainer4 {
         private Set<CasProtocolVersions> supportedProtocols = EnumSet.allOf(CasProtocolVersions.class);
+    }
+
+    @Getter
+    @Setter
+    static class SimpleContainer5 {
+        private RegisteredServiceServiceTicketExpirationPolicy policy;
     }
 }
