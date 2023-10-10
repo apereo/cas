@@ -59,7 +59,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                 .filter(msft -> StringUtils.isNotBlank(msft.getClientId()) && StringUtils.isNotBlank(msft.getClientSecret()))
                 .forEach(msft -> {
                     val dao = new MicrosoftGraphPersonAttributeDao();
-                    FunctionUtils.doIfNotNull(msft.getId(), dao::setId);
+                    FunctionUtils.doIfNotNull(msft.getId(), id -> dao.setId(id));
                     FunctionUtils.doIfNotNull(msft.getApiBaseUrl(), dao::setApiBaseUrl);
                     FunctionUtils.doIfNotNull(msft.getGrantType(), dao::setGrantType);
                     FunctionUtils.doIfNotNull(msft.getLoginBaseUrl(), dao::setLoginBaseUrl);

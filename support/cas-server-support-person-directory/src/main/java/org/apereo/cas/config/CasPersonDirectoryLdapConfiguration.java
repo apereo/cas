@@ -70,7 +70,7 @@ public class CasPersonDirectoryLdapConfiguration {
                         .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
                         .forEach(ldap -> {
                             val dao = new LdaptivePersonAttributeDao();
-                            FunctionUtils.doIfNotNull(ldap.getId(), dao::setId);
+                            FunctionUtils.doIfNotNull(ldap.getId(), id -> dao.setId(id));
                             LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                             dao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
                             dao.setBaseDN(ldap.getBaseDn());

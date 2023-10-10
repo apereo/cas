@@ -3,7 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
 
     implementation libraries.scimsdk
-    implementation libraries.pac4jcore
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
@@ -23,8 +22,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-
-    testImplementation project(":support:cas-server-support-pac4j-core")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

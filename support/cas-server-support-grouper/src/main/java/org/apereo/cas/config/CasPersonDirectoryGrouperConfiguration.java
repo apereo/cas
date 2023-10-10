@@ -53,7 +53,7 @@ public class CasPersonDirectoryGrouperConfiguration {
             dao.setEnabled(gp.getState() != AttributeRepositoryStates.DISABLED);
             dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
                 gp.getState() == AttributeRepositoryStates.ACTIVE);
-            FunctionUtils.doIfNotNull(gp.getId(), dao::setId);
+            FunctionUtils.doIfNotNull(gp.getId(), id -> dao.setId(id));
             LOGGER.debug("Configured Grouper attribute source");
             list.add(dao);
             return BeanContainer.of(list);

@@ -66,7 +66,7 @@ public class CasPersonDirectoryGroovyConfiguration {
                             dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);
                             dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
                                 groovy.getState() == AttributeRepositoryStates.ACTIVE);
-                            FunctionUtils.doIfNotNull(groovy.getId(), dao::setId);
+                            FunctionUtils.doIfNotNull(groovy.getId(), id -> dao.setId(id));
                             LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                             list.add(dao);
                         });

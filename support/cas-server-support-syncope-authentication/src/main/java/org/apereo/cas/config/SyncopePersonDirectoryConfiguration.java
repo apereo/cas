@@ -53,7 +53,7 @@ public class SyncopePersonDirectoryConfiguration {
                     .map(domain -> {
                         val dao = new SyncopePersonAttributeDao(properties);
                         dao.setOrder(properties.getOrder());
-                        FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
+                        FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id));
                         return dao;
                     })
                     .toList();
