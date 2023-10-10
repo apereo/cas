@@ -80,6 +80,16 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext addHeader(final String name, final Object value) {
+        getHttpServletRequest().addHeader(name, value);
+        return this;
+    }
+
+    public MockRequestContext setSessionAttribute(final String name, final String value) {
+        Objects.requireNonNull(getHttpServletRequest().getSession(true)).setAttribute(name, value);
+        return this;
+    }
+
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();
         staticContext.refresh();

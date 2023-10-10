@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
+    @Qualifier(ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
     private Action initCaptchaAction;
     
     @Test

@@ -38,6 +38,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -94,6 +95,8 @@ public abstract class BaseConsentActionTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
     @Autowired
     protected CasConfigurationProperties casProperties;
 }

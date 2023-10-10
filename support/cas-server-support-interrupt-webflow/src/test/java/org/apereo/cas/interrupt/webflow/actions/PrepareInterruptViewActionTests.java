@@ -1,14 +1,9 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,11 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrepareInterruptViewActionTests {
     @Test
     void verifyOperation() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
+        val context = MockRequestContext.create();
         val action = new PrepareInterruptViewAction();
         val event = action.execute(context);
         assertNull(event);

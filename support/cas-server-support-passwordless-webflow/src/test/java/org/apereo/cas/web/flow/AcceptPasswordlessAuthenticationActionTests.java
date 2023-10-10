@@ -13,16 +13,12 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
+import org.apereo.cas.util.MockRequestContext;
 
 import java.util.UUID;
 
@@ -50,14 +46,14 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     @Test
     void verifyAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-        val context = new MockRequestContext(exec);
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(exec);
 
         putAccountInto(context);
         val token = createToken();
 
-        val request = new MockHttpServletRequest();
-        request.addParameter("token", token.getToken());
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        context.setParameter("token", token.getToken());
+
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptPasswordlessAuthenticationAction.execute(context).getId());
         assertTrue(passwordlessTokenRepository.findToken("casuser").isEmpty());
     }
@@ -65,25 +61,23 @@ class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthen
     @Test
     void verifyUnknownToken() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-        val context = new MockRequestContext(exec);
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(exec);
 
         putAccountInto(context);
         createToken();
-        
-        val request = new MockHttpServletRequest();
-        request.addParameter("token", UUID.randomUUID().toString());
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        context.setParameter("token", UUID.randomUUID().toString());
+
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, acceptPasswordlessAuthenticationAction.execute(context).getId());
     }
 
     @Test
     void verifyMissingTokenAction() throws Throwable {
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-        val context = new MockRequestContext(exec);
-        val request = new MockHttpServletRequest();
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(exec);
 
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putAccountInto(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, acceptPasswordlessAuthenticationAction.execute(context).getId());
     }

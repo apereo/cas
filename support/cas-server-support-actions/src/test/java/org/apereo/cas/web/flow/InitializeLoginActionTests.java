@@ -1,20 +1,15 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,12 +24,9 @@ class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    void disableFlowIfNoService() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setMethod(HttpMethod.POST.name());
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            request, new MockHttpServletResponse()));
+    void disableFlowIfNoService() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.getHttpServletRequest().setMethod(HttpMethod.POST.name());
         assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
     }
 }
