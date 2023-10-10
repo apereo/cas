@@ -51,7 +51,7 @@ public class SchemaGeneratorTests {
             arguments(SimpleContainer2.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer2")),
             arguments(SimpleContainer3.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer3")),
             arguments(SimpleContainer4.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4")),
-            arguments(SimpleContainer5.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer4"))
+            arguments(SimpleContainer5.class, Collections.emptyList(), getExpectedSchemaResource("SimpleContainer5"))
         );
     }
 
