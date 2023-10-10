@@ -154,7 +154,7 @@ public class RedisAuthenticationConfiguration {
                         template.initialize();
                         val cb = new RedisPersonAttributeDao(template);
                         cb.setOrder(r.getOrder());
-                        FunctionUtils.doIfNotNull(r.getId(), cb::setId);
+                        FunctionUtils.doIfNotNull(r.getId(), id -> cb.setId(id));
                         return cb;
                     })
                     .collect(Collectors.toList()));

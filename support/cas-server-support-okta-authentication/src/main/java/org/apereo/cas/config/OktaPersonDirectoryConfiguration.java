@@ -68,7 +68,7 @@ public class OktaPersonDirectoryConfiguration {
                 val dao = new OktaPersonAttributeDao(oktaPersonDirectoryClient);
                 dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(properties.getUsernameAttribute()));
                 dao.setOrder(properties.getOrder());
-                FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
+                FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id));
                 return BeanContainer.of(CollectionUtils.wrapList(dao));
             })
             .otherwise(BeanContainer::empty)

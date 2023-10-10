@@ -55,7 +55,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) throws Exception {
         val soapContext = decodeSoapRequest(request);
-        val credential = extractBasicAuthenticationCredential(request, response);
+        val credential = extractBasicAuthenticationCredential(request);
 
         if (credential == null) {
             LOGGER.error("Credentials could not be extracted from the SAML ECP request");
@@ -66,7 +66,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
-
         val buildContext = SamlProfileBuilderContext.builder()
             .httpRequest(request)
             .httpResponse(response)
@@ -76,13 +75,6 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         handleEcpRequest(buildContext, credential);
     }
 
-    /**
-     * Handle ecp request.
-     *
-     * @param context    the context
-     * @param credential the credential
-     * @throws Exception the exception
-     */
     protected void handleEcpRequest(final SamlProfileBuilderContext context, final Credential credential) throws Exception {
         LOGGER.debug("Handling ECP request for SOAP context [{}]", context.getMessageContext());
 
@@ -140,8 +132,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         return authenticationResult.getAuthentication();
     }
 
-    private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
-                                                                   final HttpServletResponse response) {
+    private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request) {
         val converter = new BasicAuthenticationConverter();
         val token = converter.convert(request);
         return FunctionUtils.doIfNotNull(token, () -> {

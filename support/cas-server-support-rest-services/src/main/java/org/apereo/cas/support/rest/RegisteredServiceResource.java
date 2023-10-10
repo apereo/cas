@@ -65,7 +65,7 @@ public class RegisteredServiceResource {
     public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
                                                 final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
-            val auth = authenticateRequest(request, response);
+            val auth = authenticateRequest(request);
             if (isAuthenticatedPrincipalAuthorized(auth)) {
                 this.servicesManager.save(service);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -95,7 +95,7 @@ public class RegisteredServiceResource {
         return false;
     }
 
-    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+    private Authentication authenticateRequest(final HttpServletRequest request) {
         val converter = new BasicAuthenticationConverter();
         val token = converter.convert(request);
         return FunctionUtils.doIfNotNull(token, () -> {
