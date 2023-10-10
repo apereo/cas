@@ -223,4 +223,13 @@ public interface OAuth20RequestParameterResolver {
     default Set<String> resolveSupportedPromptValues(final WebContext context) {
         return resolveSupportedPromptValues(context.getFullRequestURL());
     }
+
+    /**
+     * Is the provided parameter name on the query string.
+     *
+     * @param context the web context
+     * @param name the parameter name
+     * @return whether the paremeter name is on the query string
+     */
+    boolean isParameterOnQueryString(WebContext context, String name);
 }
