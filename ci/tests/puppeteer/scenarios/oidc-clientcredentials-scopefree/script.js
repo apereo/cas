@@ -3,16 +3,15 @@ const cas = require('../../cas.js');
 
 (async () => {
 
-    let params = "client_id=client&";
-    params += "client_secret=secret&";
-    params += "grant_type=client_credentials&";
+    let params = "grant_type=client_credentials&";
     params += "scope=openid";
 
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Authorization': 'Basic ' + btoa('client' + ':' + 'secret')
     }, async res => {
 
         await cas.log(res.data);

@@ -26,6 +26,7 @@ import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.jee.context.JEEContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -271,5 +272,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .flatMap(Arrays::stream)
             .filter(supported::contains)
             .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public boolean isParameterOnQueryString(final WebContext context, final String name) {
+        val queryString = ((JEEContext) context).getNativeRequest().getQueryString();
+        return context.getRequestParameter(name).isPresent() && StringUtils.contains(queryString, name + '=');
     }
 }
