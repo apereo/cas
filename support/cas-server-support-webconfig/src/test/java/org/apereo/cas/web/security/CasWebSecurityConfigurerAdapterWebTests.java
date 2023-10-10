@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         "spring.security.user.name=casuser",
         "spring.security.user.password=Mellon",
+
         "management.endpoints.enabled-by-default=true",
         "management.endpoints.web.exposure.include=*",
 
@@ -100,11 +101,11 @@ class CasWebSecurityConfigurerAdapterWebTests {
     @Test
     /**
      * Test page that should be on permit all list with Basic Auth.
-     * Some OIDC applications pass clientid and secret as basic authentication credentials and they need to get passed spring security.
+     * Some OIDC applications pass clientid and secret as basic authentication credentials, and they need to get passed spring security.
      * Using /cas/login instead of /cas/oidc/oidcAccessToken because the oidc module isn't configured here.
      */
     void verifyCasLoginBasicAuth() throws Throwable {
-        mvc.perform(post("/cas/login").with(httpBasic("casuser", "XYZ"))).andExpect(status().isOk());
+        mvc.perform(post("/cas/login").with(httpBasic("clientid", "clientsecret"))).andExpect(status().isOk());
     }
 
     @Test
