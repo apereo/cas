@@ -39,6 +39,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
@@ -54,14 +55,15 @@ public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
     protected Action prepareLoginAction;
-
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION)
     protected Action displayUserGraphicsBeforeAuthenticationAction;
-
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER)
     protected Action acceptUserGraphicsForAuthenticationAction;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,

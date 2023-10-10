@@ -10,22 +10,16 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -56,12 +50,8 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     void verifyEntityIdUIInfoExists() throws Throwable {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
-        val response = new MockHttpServletResponse();
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        val ctx = MockRequestContext.create(applicationContext);
+        ctx.setParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
         ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
@@ -69,17 +59,12 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     void verifyEntityIdUIInfoExistsEmbedded() throws Throwable {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-
+        val ctx = MockRequestContext.create(applicationContext);
         val url = "https://google.com?entityId=https://carmenwiki.osu.edu/shibboleth";
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("^https://google.com\\?entityId=.+"));
 
         val service = RegisteredServiceTestUtils.getService(url);
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        val response = new MockHttpServletResponse();
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        ctx.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
@@ -87,14 +72,8 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     void verifyEntityIdUIInfoNoParam() throws Throwable {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");
-
-        val response = new MockHttpServletResponse();
-
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        val ctx = MockRequestContext.create(applicationContext);
+        ctx.setParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");
         samlMetadataUIParserAction.execute(ctx);
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
     }
