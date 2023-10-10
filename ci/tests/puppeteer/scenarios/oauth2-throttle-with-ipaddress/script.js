@@ -2,9 +2,7 @@ const assert = require('assert');
 const cas = require('../../cas.js');
 
 async function throttleTokenEndpoint() {
-    let params = "client_id=unknown&";
-    params += "client_secret=unknown&";
-    params += "grant_type=client_credentials&";
+    let params = "grant_type=client_credentials&";
     params += "scope=openid";
     let url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
 
@@ -37,7 +35,8 @@ async function throttleUserInfoEndpoint() {
 async function submitRequest(url, status) {
     await cas.log(`Calling ${url}`);
     await cas.doPost(url, "", {
-        'Content-Type': "application/json"
+        'Content-Type': "application/json",
+        'Authorization': 'Basic ' + btoa('unknown:unknown')
     }, res => {
         throw `Operation should not have passed: ${res}`
     }, error => {

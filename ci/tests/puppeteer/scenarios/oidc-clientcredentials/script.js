@@ -1,10 +1,19 @@
 const assert = require('assert');
 const cas = require('../../cas.js');
 
-async function sendRequest(url) {
-    await cas.doPost(url, "", {
-        'Content-Type': "application/json"
-    }, async res => {
+async function sendRequest(url, clientid, clientsecret) {
+    let headers;
+    if (clientsecret !== "") {
+        headers = {
+            'Content-Type': "application/json",
+            'Authorization': 'Basic ' + btoa(clientid + ':' + clientsecret)
+        };
+    } else {
+        headers = {
+            'Content-Type': "application/json"
+        };
+    }
+    await cas.doPost(url, "", headers, async res => {
         const urlObj = new URL(url);
 
         await cas.log(res.data);
@@ -14,7 +23,7 @@ async function sendRequest(url) {
         let accessToken = await cas.decodeJwt(res.data.access_token);
         assert(accessToken.sub === "casuser");
         assert(accessToken.name === "ApereoCAS");
-        assert(accessToken["client_id"] === urlObj.searchParams.get("client_id"));
+        assert(accessToken["client_id"] === clientid);
         assert(accessToken["gender"] === "Female");
         assert(accessToken["family_name"] === "Apereo");
         assert(accessToken["given_name"] === "CAS");
@@ -33,7 +42,7 @@ async function sendRequest(url) {
         assert(idToken.sub === "casuser");
         assert(idToken["cn"] === undefined);
         assert(idToken.name === "ApereoCAS");
-        assert(idToken["client_id"] === urlObj.searchParams.get("client_id"));
+        assert(idToken["client_id"] === clientid);
         assert(idToken["preferred_username"] === "casuser");
         assert(idToken["gender"] === "Female");
         assert(idToken["family_name"] === "Apereo");
@@ -50,15 +59,15 @@ async function verifyPasswordGrantType() {
     params += `scope=${encodeURIComponent("openid MyCustomScope email profile eduPerson")}`;
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
-    await sendRequest(url);
+    await sendRequest(url, "client", "");
 }
 
 async function verifyClientCredentialsGrantType() {
-    let params = "client_id=client2&client_secret=secret2&grant_type=client_credentials&";
+    let params = "grant_type=client_credentials&";
     params += `scope=${encodeURIComponent("openid MyCustomScope email profile eduPerson")}`;
     let url = `https://localhost:8443/cas/oidc/token?${params}`;
     await cas.log(`Calling ${url}`);
-    await sendRequest(url);
+    await sendRequest(url, "client2", "secret2");
 }
 
 (async () => {
