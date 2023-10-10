@@ -24,6 +24,7 @@ import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.WebContextHelper;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 
@@ -275,10 +276,6 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public boolean isParameterOnQueryString(final WebContext context, final String name) {
-        val queryString = context.getQueryString();
-        if (queryString.isPresent()) {
-            return context.getRequestParameter(name).isPresent() && StringUtils.contains(queryString.get(), name + '=');
-        }
-        return false;
+        return WebContextHelper.isQueryStringParameter(context, name);
     }
 }
