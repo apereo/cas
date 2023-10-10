@@ -37,7 +37,7 @@ class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePoli
 
     @Test
     void verifyPolicyTerms() throws Throwable {
-        val context = org.apereo.cas.util.MockRequestContext.create();
+        val context = MockRequestContext.create();
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val tgt = new MockTicketGrantingTicket(credential.getId(), credential, Map.of());
         ticketRegistry.addTicket(tgt);

@@ -10,13 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
+import org.apereo.cas.util.MockRequestContext;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,11 +35,9 @@ class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests 
 
     @Test
     void verifyTerminateActionConfirmed() throws Throwable {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        Objects.requireNonNull(request.getSession(true)).setAttribute(Pac4jConstants.REQUESTED_URL, "https://github.com");
-        request.addParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        context.setSessionAttribute(Pac4jConstants.REQUESTED_URL, "https://github.com");
+        context.setParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, action.execute(context).getId());
     }
