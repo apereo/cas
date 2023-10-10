@@ -13,8 +13,6 @@
 
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
-
-    "--spring.main.lazy-initialization=false"
+    "--management.endpoints.enabled-by-default=true"
   ]
 }

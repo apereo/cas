@@ -2,7 +2,7 @@
   "dependencies": "core,events-configuration",
 
   "properties": [
-    "--spring.main.lazy-initialization=false",
+
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.events.core.track-configuration-modifications=true",
