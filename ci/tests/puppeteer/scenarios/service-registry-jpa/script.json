@@ -14,7 +14,7 @@
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
 
-    "--spring.main.lazy-initialization=false",
+
 
     "--cas.service-registry.jpa.ddl-auto=create",
     "--cas.service-registry.jpa.user=root",

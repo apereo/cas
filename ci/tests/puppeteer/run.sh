@@ -626,8 +626,9 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
           -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
-          --server.port=${serverPort} --spring.profiles.active=none --server.ssl.key-store="$keystore" \
-          ${properties} &
+          --spring.main.lazy-initialization=false \
+          --server.port=${serverPort} --spring.profiles.active=none  \
+          --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
         printcyan "Launching Docker image cas-${scenarioName}:latest"
         docker run -d --rm \
@@ -645,6 +646,7 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
         java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
            -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
+           --spring.main.lazy-initialization=false \
            --spring.profiles.active=none --server.ssl.key-store="$keystore" \
            ${properties} &
       fi

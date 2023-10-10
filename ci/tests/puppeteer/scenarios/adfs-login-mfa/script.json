@@ -5,7 +5,7 @@
     "docker": "true"
   },
   "properties": [
-    "--spring.main.lazy-initialization=false",
+
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

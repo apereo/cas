@@ -7,7 +7,7 @@
     "CAS_LDAP_BIND_DN=cn=Directory Manager"
   ],
   "properties": [
-    "--spring.main.lazy-initialization=false",
+
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

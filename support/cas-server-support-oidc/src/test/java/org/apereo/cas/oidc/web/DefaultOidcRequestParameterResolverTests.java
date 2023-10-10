@@ -3,32 +3,29 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.token.JwtBuilder;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultOAuth20RequestParameterResolverTests}.
+ * This is {@link DefaultOidcRequestParameterResolverTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
 @Tag("OIDC")
 @SuppressWarnings("JavaUtilDate")
-class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
+class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
     @Test
     void verifySignedJwtWithClientId() throws Throwable {
         val registeredService = getOidcRegisteredService("client");

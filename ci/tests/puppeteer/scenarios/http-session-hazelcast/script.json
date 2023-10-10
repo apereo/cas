@@ -20,8 +20,6 @@
     "--cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
     "--cas.webflow.session.server.hazelcast.cluster.network.port=5703",
 
-    "--cas.webflow.session.storage=true",
-
-    "--spring.main.lazy-initialization=false"
+    "--cas.webflow.session.storage=true"
   ]
 }

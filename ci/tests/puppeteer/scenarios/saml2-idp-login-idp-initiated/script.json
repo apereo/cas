@@ -5,7 +5,7 @@
   },
 
   "properties": [
-    "--spring.main.lazy-initialization=false",
+
     
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
