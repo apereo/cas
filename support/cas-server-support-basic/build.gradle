@@ -20,7 +20,7 @@ dependencies {
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-authentication-mfa")
 
-    implementation libraries.pac4jcore
+    implementation libraries.springsecurityweb
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")

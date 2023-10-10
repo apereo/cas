@@ -30,7 +30,7 @@ public class CasEurekaDiscoveryClientTests {
         CasEurekaDiscoveryClientConfiguration.class,
         CasCoreHttpConfiguration.class,
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         UtilAutoConfiguration.class,
         DiscoveryClientOptionalArgsConfiguration.class,
         EurekaClientAutoConfiguration.class

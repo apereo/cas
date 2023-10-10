@@ -156,7 +156,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
         return authExtractor.extract(callContext);
     }
-
+    
     protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
         final String accessTokenId, final OAuth20Token ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenSuccessResponse();

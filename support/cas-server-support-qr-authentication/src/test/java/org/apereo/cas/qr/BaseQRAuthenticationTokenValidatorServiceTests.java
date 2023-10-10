@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.CallContext;
@@ -39,14 +38,6 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
-
-    @BeforeEach
-    @Override
-    public void setup() {
-        super.setup();
-        clearAllServices();
-    }
-
     @Test
     void verifyOperation() throws Throwable {
         val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix())

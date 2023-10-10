@@ -43,7 +43,7 @@ public abstract class BaseWebSecurityTests {
         WebEndpointAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
         WebMvcEndpointManagementContextConfiguration.class
