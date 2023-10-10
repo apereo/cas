@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

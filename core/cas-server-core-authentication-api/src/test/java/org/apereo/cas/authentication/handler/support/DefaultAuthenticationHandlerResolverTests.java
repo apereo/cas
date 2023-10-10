@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 
-import java.util.Set;
-
 import static java.util.Set.*;
 import static org.apereo.cas.authentication.AuthenticationHandlerResolver.*;
 import static org.junit.jupiter.api.Assertions.*;
