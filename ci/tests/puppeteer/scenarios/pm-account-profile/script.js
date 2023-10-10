@@ -34,7 +34,7 @@ const assert = require("assert");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(2)", "1");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "MyRecordName");
     await cas.click(page, "button#register");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     await cas.click(page, "#gauthRegistrationLink");
     await page.waitForTimeout(1000);
 

@@ -13,25 +13,20 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -84,7 +79,8 @@ public class RegisteredServiceResource {
         }
     }
 
-    private boolean isAuthenticatedPrincipalAuthorized(final Authentication auth) {
+    private boolean isAuthenticatedPrincipalAuthorized(final Authentication auth) throws Throwable {
+        FunctionUtils.throwIfNull(auth, () -> new AuthenticationException("Unable to determine or verify authentication attempt"));
         val attributes = auth.getPrincipal().getAttributes();
         LOGGER.debug("Evaluating principal attributes [{}]", attributes.keySet());
         if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
@@ -100,18 +96,17 @@ public class RegisteredServiceResource {
     }
 
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        val extractor = new BasicAuthExtractor();
-        val webContext = new JEEContext(request, response);
-        val callContext = new CallContext(webContext, new JEESessionStore());
-        val credentialsResult = extractor.extract(callContext);
-        val credentials = (UsernamePasswordCredentials) credentialsResult.get();
-        LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
-        val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-        val serviceRequest = this.serviceFactory.createService(request);
-        val result = authenticationSystemSupport.finalizeAuthenticationTransaction(serviceRequest, c);
-        if (result == null) {
-            throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + c.getUsername());
-        }
-        return result.getAuthentication();
+        val converter = new BasicAuthenticationConverter();
+        val token = converter.convert(request);
+        return FunctionUtils.doIfNotNull(token, () -> {
+            LOGGER.debug("Received basic authentication ECP request from credentials [{}]", token.getPrincipal());
+            val upc = new UsernamePasswordCredential(token.getPrincipal().toString(), token.getCredentials().toString());
+            val serviceRequest = this.serviceFactory.createService(request);
+            val result = authenticationSystemSupport.finalizeAuthenticationTransaction(serviceRequest, upc);
+            if (result == null) {
+                throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + upc.getUsername());
+            }
+            return result.getAuthentication();
+        });
     }
 }

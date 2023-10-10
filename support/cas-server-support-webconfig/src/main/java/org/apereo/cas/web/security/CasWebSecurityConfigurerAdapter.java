@@ -24,6 +24,7 @@ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -31,6 +32,7 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -137,11 +139,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         configureEndpointAccessByFormLogin(requests);
 
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
-        if (jaas.getLoginConfig() != null) {
-            configureJaasAuthenticationProvider(http, jaas);
-        } else {
-            LOGGER.trace("No JAAS login config is defined to enable JAAS authentication");
-        }
+        FunctionUtils.doIfNotNull(jaas.getLoginConfig(), __ -> configureJaasAuthenticationProvider(http, jaas));
 
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
@@ -155,7 +153,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         return http;
     }
 
-    private List<String> getAllowedPatternsToIgnore() {
+    protected List<String> getAllowedPatternsToIgnore() {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
@@ -174,7 +172,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add(webEndpointProperties.getBasePath());
         return patterns;
     }
-
 
     protected void configureEndpointAccessToDenyUndefined(
         final HttpSecurity http) {
@@ -297,7 +294,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         private final List<RequestMatcher> patternsToIgnore;
 
         private CasBasicAuthenticationFilter(final BasicAuthenticationFilter delegate, final List<String> patternsToIgnore) {
-            super(getField("authenticationManager", delegate), getField("authenticationEntryPoint", delegate));
+            super(getField("authenticationManager", delegate, AuthenticationManager.class),
+                getField("authenticationEntryPoint", delegate, AuthenticationEntryPoint.class));
             setField("authenticationConverter", this, new CasBasicAuthenticationConverter());
             this.patternsToIgnore = patternsToIgnore.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
         }
@@ -316,10 +314,10 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             ReflectionUtils.setField(field, instance, value);
         }
 
-        private static <T> T getField(final String name, final Object instance) {
+        private static <T> T getField(final String name, final Object instance, final Class<T> clazz) {
             val field = ReflectionUtils.findField(instance.getClass(), name);
             Objects.requireNonNull(field).trySetAccessible();
-            return (T) ReflectionUtils.getField(field, instance);
+            return clazz.cast(ReflectionUtils.getField(field, instance));
         }
     }
 }
