@@ -32,6 +32,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,10 +83,21 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     /**
      * Configure web security for spring security.
+     * Ignore requests that might contain Basic Authentication headers that won't bypass default spring security filter chain.
+     * For example, oidcAccessToken might have Basic auth header containing clientid and that
+     * won't authenticate correctly in spring security.
      *
      * @param web web security
      */
     public void configureWebSecurity(final WebSecurity web) {
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
+            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
+            .flatMap(List<String>::stream)
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+        val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
+        web.ignoring().requestMatchers(matchers);
     }
 
     /**
@@ -103,13 +115,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .logout(AbstractHttpConfigurer::disable)
             .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
 
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
 
+        val patterns = new ArrayList<String>();
         patterns.add("/webjars/**");
         patterns.add("/themes/**");
         patterns.add("/js/**");
