@@ -24,15 +24,22 @@ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.ReflectionUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +52,14 @@ import java.util.stream.Collectors;
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter implements DisposableBean {
+
+    private final ObjectPostProcessor<BasicAuthenticationFilter> basicAuthFilterPostProcessor = new ObjectPostProcessor<>() {
+        @Override
+        public <O extends BasicAuthenticationFilter> O postProcess(final O object) {
+            return (O) new CasBasicAuthenticationFilter(object, getAllowedPatternsToIgnore());
+        }
+    };
+
     private final CasConfigurationProperties casProperties;
 
     private final SecurityProperties securityProperties;
@@ -103,30 +118,12 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .logout(AbstractHttpConfigurer::disable)
             .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
 
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
-            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
-            .flatMap(List<String>::stream)
-            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-
-        patterns.add("/webjars/**");
-        patterns.add("/themes/**");
-        patterns.add("/js/**");
-        patterns.add("/css/**");
-        patterns.add("/images/**");
-        patterns.add("/static/**");
-        patterns.add("/error");
-        patterns.add("/favicon.ico");
-        patterns.add("/");
-        patterns.add(webEndpointProperties.getBasePath());
-
+        val patterns = getAllowedPatternsToIgnore();
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         var requests = http.authorizeHttpRequests(customizer -> {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
-            customizer.requestMatchers(matchers).permitAll();
+            customizer.requestMatchers(matchers).anonymous();
         });
-
         protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
@@ -158,6 +155,26 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         return http;
     }
 
+    private List<String> getAllowedPatternsToIgnore() {
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
+            .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
+            .flatMap(List<String>::stream)
+            .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+        patterns.add("/webjars/**");
+        patterns.add("/themes/**");
+        patterns.add("/js/**");
+        patterns.add("/css/**");
+        patterns.add("/images/**");
+        patterns.add("/static/**");
+        patterns.add("/error");
+        patterns.add("/favicon.ico");
+        patterns.add("/");
+        patterns.add(webEndpointProperties.getBasePath());
+        return patterns;
+    }
+
 
     protected void configureEndpointAccessToDenyUndefined(
         final HttpSecurity http) {
@@ -179,15 +196,15 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
         requests.authorizeHttpRequests(customizer -> {
-            customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
+            customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).anonymous();
+            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).anonymous();
+            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).anonymous();
         });
     }
 
     protected void configureEndpointAccessByFormLogin(final HttpSecurity http) throws Exception {
         if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
-            http.formLogin(customize -> customize.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll());
+            http.formLogin(customize -> customize.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN));
         } else {
             http.formLogin(AbstractHttpConfigurer::disable);
         }
@@ -210,7 +227,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     protected void configureEndpointAccessPermitAll(final HttpSecurity requests,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
+        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).anonymous());
     }
 
     protected void configureEndpointAccessToDenyAll(final HttpSecurity requests,
@@ -221,7 +238,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     protected void configureEndpointAccessAnonymously(final HttpSecurity requests,
                                                       final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
 
-        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).permitAll());
+        requests.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).anonymous());
     }
 
     protected void configureEndpointAccessByIpAddress(final HttpSecurity requests,
@@ -234,30 +251,26 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     protected void configureEndpointAccessAuthenticated(
         final HttpSecurity http,
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        http.authorizeHttpRequests(customizer ->
-            customizer.requestMatchers(endpoint).authenticated());
-        http.httpBasic(customizer -> {
-        });
+        http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).authenticated())
+            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByRole(
         final HttpSecurity http,
         final ActuatorEndpointProperties properties,
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        http.authorizeHttpRequests(customizer ->
-            customizer.requestMatchers(endpoint).hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-        http.httpBasic(customizer -> {
-        });
+        http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
+                .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
+            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByAuthority(
         final HttpSecurity http,
         final ActuatorEndpointProperties properties,
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        http.authorizeHttpRequests(customizer ->
-            customizer.requestMatchers(endpoint).hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
-        http.httpBasic(customizer -> {
-        });
+        http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
+                .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
+            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     private boolean isLdapAuthorizationActive() {
@@ -277,6 +290,36 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             this.endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap,
                 securityProperties, connectionFactory, authenticator);
             http.authenticationProvider(endpointLdapAuthenticationProvider);
+        }
+    }
+
+    private static final class CasBasicAuthenticationFilter extends BasicAuthenticationFilter {
+        private final List<RequestMatcher> patternsToIgnore;
+
+        private CasBasicAuthenticationFilter(final BasicAuthenticationFilter delegate, final List<String> patternsToIgnore) {
+            super(getField("authenticationManager", delegate), getField("authenticationEntryPoint", delegate));
+            setField("authenticationConverter", this, new CasBasicAuthenticationConverter());
+            this.patternsToIgnore = patternsToIgnore.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
+        }
+
+        private final class CasBasicAuthenticationConverter extends BasicAuthenticationConverter {
+            @Override
+            public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
+                val requestIsNotIgnored = patternsToIgnore.stream().noneMatch(requestMatcher -> requestMatcher.matches(request));
+                return requestIsNotIgnored ? super.convert(request) : null;
+            }
+        }
+
+        private static void setField(final String name, final Object instance, final Object value) {
+            val field = ReflectionUtils.findField(instance.getClass(), name);
+            Objects.requireNonNull(field).trySetAccessible();
+            ReflectionUtils.setField(field, instance, value);
+        }
+
+        private static <T> T getField(final String name, final Object instance) {
+            val field = ReflectionUtils.findField(instance.getClass(), name);
+            Objects.requireNonNull(field).trySetAccessible();
+            return (T) ReflectionUtils.getField(field, instance);
         }
     }
 }

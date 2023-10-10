@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.endpoint.beans.access=ANONYMOUS",
         "cas.monitor.endpoints.endpoint.info.access=DENY",
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
+        "cas.monitor.endpoints.endpoint.conditions.access=PERMIT",
 
         "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[0]=196.+",
@@ -74,8 +75,17 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @Test
+    void verifyCasLoginBasicAuth() throws Throwable {
+        mvc.perform(post("/cas/login")
+                .with(httpBasic("clientid", "clientsecret")))
+            .andExpect(status().isOk());
+    }
+
+    @Test
     void verifyAccessToEndpoints() throws Throwable {
         mvc.perform(get("/cas/actuator/beans")).andExpect(status().isOk());
+        mvc.perform(get("/cas/actuator/conditions")).andExpect(status().isOk());
+
         mvc.perform(get("/cas/actuator/info")
                 .with(httpBasic("casuser", "Mellon")))
             .andExpect(status().isForbidden());
@@ -96,14 +106,13 @@ class CasWebSecurityConfigurerAdapterWebTests {
             .andExpect(status().isUnauthorized());
 
         mvc.perform(get("/cas/actuator/health")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/cas/custom")).andExpect(status().isUnauthorized());
     }
 
     @TestConfiguration(value = "WebTestConfiguration", proxyBeanMethods = false)
     static class WebTestConfiguration {
 
-        @RestController("TestController")
-        @RequestMapping("/oidc/accessToken")
-        public class TestController {
+        static class BaseController {
             @GetMapping
             public ResponseEntity getMethod() {
                 return ResponseEntity.ok().build();
@@ -113,6 +122,21 @@ class CasWebSecurityConfigurerAdapterWebTests {
             public ResponseEntity postMethod() {
                 return ResponseEntity.ok().build();
             }
+        }
+
+        @RestController("AccessTokenController")
+        @RequestMapping("/oidc/accessToken")
+        static class AccessTokenController extends BaseController {
+        }
+
+        @RestController("LoginController")
+        @RequestMapping("/login")
+        static class LoginController extends BaseController {
+        }
+
+        @RestController("CustomController")
+        @RequestMapping("/custom")
+        static class CustomController extends BaseController {
         }
     }
 }
