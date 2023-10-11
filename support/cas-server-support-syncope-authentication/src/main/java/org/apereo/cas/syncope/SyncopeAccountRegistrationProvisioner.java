@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
@@ -57,7 +58,7 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
                                                       final String domain) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users");
+            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
             val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", domain,
                 "Accept", MediaType.APPLICATION_JSON_VALUE,
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE);

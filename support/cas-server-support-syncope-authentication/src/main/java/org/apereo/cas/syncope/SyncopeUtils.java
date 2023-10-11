@@ -9,6 +9,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
@@ -167,7 +168,7 @@ public class SyncopeUtils {
         try {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
             val fiql = EncodingUtils.urlEncode(filter);
-            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
+            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();

@@ -806,7 +806,8 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCallbackUrlResolver")
         public UrlResolver casCallbackUrlResolver(final CasConfigurationProperties casProperties,
-                                                  @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
+                                                  @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+                                                  final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             return new OAuth20CasCallbackUrlResolver(callbackUrl, oauthRequestParameterResolver);
         }

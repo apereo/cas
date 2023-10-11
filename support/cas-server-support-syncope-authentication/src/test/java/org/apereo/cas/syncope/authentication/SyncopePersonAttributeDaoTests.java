@@ -10,6 +10,8 @@ import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,6 +76,7 @@ class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
         })
     @Nested
+    @Execution(ExecutionMode.SAME_THREAD)
     class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")

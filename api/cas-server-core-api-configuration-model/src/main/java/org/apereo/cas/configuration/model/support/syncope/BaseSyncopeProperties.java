@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -40,6 +41,7 @@ public abstract class BaseSyncopeProperties implements Serializable {
      * Syncope instance URL primary used for REST.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String url;
 
 }

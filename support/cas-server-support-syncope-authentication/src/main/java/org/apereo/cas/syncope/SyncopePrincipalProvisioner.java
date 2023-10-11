@@ -11,6 +11,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +68,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     protected boolean updateUserResource(final Principal principal) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/" + principal.getId());
+            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
             val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
                 "Accept", MediaType.APPLICATION_JSON_VALUE,
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE);
@@ -101,7 +102,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     protected boolean createUserResource(final Principal principal, final Credential credential) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users");
+            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
             val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
                 "Accept", MediaType.APPLICATION_JSON_VALUE,
                 "Content-Type", MediaType.APPLICATION_JSON_VALUE);
