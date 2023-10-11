@@ -53,7 +53,7 @@ class WebUtilsTests {
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(context));
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(context.getHttpServletRequest()));
         assertNull(WebUtils.getAuthenticationResult(context));
-        assertNull(WebUtils.getHttpServletRequestGeoLocationFromRequestContext());
+        assertFalse(WebUtils.getHttpServletRequestGeoLocationFromRequestContext().isValid());
         assertNull(WebUtils.getAcceptableUsagePolicyTermsFromFlowScope(context, Object.class));
         assertFalse(WebUtils.hasSurrogateAuthenticationRequest(context));
 

@@ -21,8 +21,7 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-web")
-
-    implementation libraries.pac4jcore
+    
     implementation libraries.nimbus
     
     testImplementation project(":core:cas-server-core-services")
@@ -39,7 +38,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-logging")
-    testImplementation project(":support:cas-server-support-pac4j")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
     

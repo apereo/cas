@@ -10,11 +10,9 @@ import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.discovery.DefaultCasServerProfileRegistrar;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -26,7 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,14 +48,10 @@ public class CasDiscoveryProfileConfiguration {
         public CasServerProfileRegistrar casServerProfileRegistrar(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("builtClients")
-            final ObjectProvider<Clients> builtClients,
-            @Qualifier("discoveryProfileAvailableAttributes")
-            final BeanContainer<String> discoveryProfileAvailableAttributes,
-            @Qualifier("authenticationEventExecutionPlan")
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
-            return new DefaultCasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
-                discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan, applicationContext);
+            @Qualifier("discoveryProfileAvailableAttributes") final BeanContainer<String> discoveryProfileAvailableAttributes,
+            @Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            return new DefaultCasServerProfileRegistrar(casProperties, discoveryProfileAvailableAttributes.toSet(),
+                authenticationEventExecutionPlan, applicationContext);
         }
     }
 
@@ -70,8 +63,7 @@ public class CasDiscoveryProfileConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
-            final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+            @Qualifier(CasServerProfileRegistrar.BEAN_NAME) final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
             return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
         }
     }
@@ -90,8 +82,7 @@ public class CasDiscoveryProfileConfiguration {
         @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final ObjectProvider<IPersonAttributeDao> attributeRepository) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<IPersonAttributeDao> attributeRepository) {
 
             val attributes = new LinkedHashSet<String>(0);
             attributeRepository.ifAvailable(repository -> {
@@ -100,7 +91,7 @@ public class CasDiscoveryProfileConfiguration {
                     attributes.addAll(possibleUserAttributeNames);
                 }
             });
-            
+
             val ldapProps = casProperties.getAuthn().getLdap();
             if (ldapProps != null) {
                 ldapProps.forEach(ldap -> {
@@ -115,6 +106,4 @@ public class CasDiscoveryProfileConfiguration {
             return BeanContainer.of(attributes);
         }
     }
-
-
 }

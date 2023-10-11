@@ -1,30 +1,27 @@
 package org.apereo.cas.web.flow.authz;
 
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,8 +38,8 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     private DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;
 
     @Autowired
-    @Qualifier("builtClients")
-    private Clients builtClients;
+    @Qualifier("delegatedIdentityProviders")
+    private DelegatedIdentityProviders identityProviders;
 
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
@@ -55,7 +52,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
 
     @Test
     void verifyClientNameFromAuth() throws Throwable {
-        val client = builtClients.findClient("FacebookClient").get();
+        val client = identityProviders.findClient("FacebookClient").get();
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
 
@@ -77,7 +74,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
 
     private void verifyAuthzForService(final HttpServletRequest request,
                                        final RequestContext requestContext) throws Throwable {
-        val client = builtClients.findClient("FacebookClient").get();
+        val client = identityProviders.findClient("FacebookClient").get();
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, null, request));
         assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));

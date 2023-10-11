@@ -8,14 +8,14 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedIdentityProviders;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.oauth.client.FacebookClient;
@@ -27,9 +27,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-
+import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -65,7 +64,8 @@ class DelegatedClientAuthenticationHandlerTests {
             processor, "customDelegatedAuthenticationPreProcessor");
 
         fbClient = new FacebookClient();
-        val clients = new Clients(CALLBACK_URL, fbClient);
+        val clients = new RefreshableDelegatedIdentityProviders(CALLBACK_URL, DelegatedIdentityProviderFactory.withClients(List.of(fbClient)));
+        
         handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
             DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore(), ctx);

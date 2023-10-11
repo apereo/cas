@@ -48,7 +48,7 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
         return BeanSupplier.of(DelegatedAuthenticationDynamicDiscoveryProviderLocator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
-                configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(),
+                configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getIdentityProviders(),
                 defaultPrincipalResolver, casProperties))
             .otherwiseProxy()
             .get();

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 
 import java.util.Comparator;
@@ -39,7 +39,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
 
     private final DelegatedClientIdentityProviderConfigurationProducer providerProducer;
 
-    private final Clients clients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final PrincipalResolver principalResolver;
 
@@ -62,7 +62,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
                 .sorted(Comparator.comparingInt(o -> o.getValue().getOrder()))
                 .map(entry -> getMatchingProvider(principal, entry.getKey(), entry.getValue()))
                 .filter(Objects::nonNull)
-                .map(provider -> clients.findClient(provider.getClientName()))
+                .map(provider -> identityProviders.findClient(provider.getClientName()))
                 .flatMap(Optional::stream)
                 .map(IndirectClient.class::cast)
                 .findFirst();

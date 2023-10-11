@@ -249,7 +249,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected BaseClient findDelegatedClientByName(final String clientName) {
-        val clientResult = configContext.getClients().findClient(clientName);
+        val clientResult = configContext.getIdentityProviders().findClient(clientName);
         if (clientResult.isEmpty()) {
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
             throw UnauthorizedServiceException.denied("Denied: %s".formatted(clientName));
@@ -279,7 +279,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
                                                             final String givenClientName) {
         try {
-            val clientResult = configContext.getClients()
+            val clientResult = configContext.getIdentityProviders()
                 .findClient(givenClientName)
                 .map(BaseClient.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to find client " + givenClientName + " to restore authentication context"));

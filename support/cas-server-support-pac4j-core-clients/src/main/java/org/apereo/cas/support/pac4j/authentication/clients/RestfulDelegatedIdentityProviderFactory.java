@@ -33,21 +33,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link RestfulDelegatedClientFactory}.
+ * This is {@link RestfulDelegatedIdentityProviderFactory}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
-public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
+public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdentityProviderFactory {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    public RestfulDelegatedClientFactory(final Collection<DelegatedClientFactoryCustomizer> customizers,
-                                         final CasSSLContext casSSLContext,
-                                         final CasConfigurationProperties casProperties,
-                                         final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-                                         final Cache<String, Collection<IndirectClient>> clientsCache) {
+    public RestfulDelegatedIdentityProviderFactory(final Collection<DelegatedClientFactoryCustomizer> customizers,
+                                                   final CasSSLContext casSSLContext,
+                                                   final CasConfigurationProperties casProperties,
+                                                   final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
+                                                   final Cache<String, Collection<IndirectClient>> clientsCache) {
         super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache);
     }
 

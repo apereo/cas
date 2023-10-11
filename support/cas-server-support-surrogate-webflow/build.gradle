@@ -49,8 +49,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
-
-    testImplementation project(":support:cas-server-support-pac4j")
+    
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-pac4j-api")
     testImplementation project(":support:cas-server-support-passwordless-api")

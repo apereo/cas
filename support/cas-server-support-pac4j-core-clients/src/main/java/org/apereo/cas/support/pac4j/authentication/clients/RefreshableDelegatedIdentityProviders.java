@@ -1,28 +1,29 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link RefreshableDelegatedClients}.
+ * This is {@link RefreshableDelegatedIdentityProviders}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
  */
 @Slf4j
-public class RefreshableDelegatedClients extends Clients {
-    private final DelegatedClientFactory delegatedClientFactory;
+public class RefreshableDelegatedIdentityProviders extends Clients implements DelegatedIdentityProviders {
+    private final DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
 
-    public RefreshableDelegatedClients(final String callbackUrl,
-                                       final DelegatedClientFactory delegatedClientFactory) {
+    public RefreshableDelegatedIdentityProviders(final String callbackUrl,
+                                                 final DelegatedIdentityProviderFactory delegatedIdentityProviderFactory) {
         setCallbackUrl(callbackUrl);
-        this.delegatedClientFactory = delegatedClientFactory;
+        this.delegatedIdentityProviderFactory = delegatedIdentityProviderFactory;
     }
 
     @Override
@@ -38,9 +39,9 @@ public class RefreshableDelegatedClients extends Clients {
         init();
         return super.findAllClients();
     }
-    
+
     protected List<Client> buildDelegatedClients() {
-        val clients = delegatedClientFactory.build();
+        val clients = delegatedIdentityProviderFactory.build();
         LOGGER.debug("The following clients are built: [{}]", clients);
         return new ArrayList<>(clients);
     }

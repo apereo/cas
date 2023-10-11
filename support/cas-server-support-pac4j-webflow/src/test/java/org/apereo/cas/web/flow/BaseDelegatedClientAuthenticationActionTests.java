@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -15,7 +16,6 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +71,8 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
     protected Action delegatedAuthenticationCreateClientsAction;
 
     @Autowired
-    @Qualifier("builtClients")
-    protected Clients builtClients;
+    @Qualifier("delegatedIdentityProviders")
+    protected DelegatedIdentityProviders identityProviders;
 
     protected String getLogoutResponse() {
         return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
@@ -106,7 +106,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
 
-        val client = builtClients.findClient("SAML2Client").orElseThrow();
+        val client = identityProviders.findClient("SAML2Client").orElseThrow();
         val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
 
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, webContext, client);

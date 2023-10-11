@@ -25,7 +25,7 @@ class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementAction
 
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).withDefaultMessageContext();
         context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
         val result = accountUnlockStatusPrepareAction.execute(context);
         assertEquals(0, context.getMessageContext().getAllMessages().length);

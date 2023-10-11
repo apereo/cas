@@ -1,6 +1,6 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,6 @@ class DelegatedClientsRuntimeHintsTests {
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new DelegatedClientsRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DelegatedClientFactory.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DelegatedIdentityProviderFactory.class).test(hints));
     }
 }
