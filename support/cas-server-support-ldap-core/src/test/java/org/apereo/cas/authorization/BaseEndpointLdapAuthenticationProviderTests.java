@@ -1,4 +1,4 @@
-package org.apereo.cas.web.security.authentication;
+package org.apereo.cas.authorization;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
