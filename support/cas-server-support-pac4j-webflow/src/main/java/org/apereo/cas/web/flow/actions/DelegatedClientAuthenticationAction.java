@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,7 +17,6 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,12 +27,12 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,15 +81,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
         val clientName = retrieveClientName(webContext);
         var service = StringUtils.isNotBlank(clientName) ? restoreAuthenticationRequestInContext(context, clientName) : null;
-        
+
         val clientCredential = extractClientCredential(context, clientName);
         val isLogoutRequest = isLogoutRequest(clientCredential);
         try {
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
             val isSingleSignOnSessionActive = StringUtils.isNotBlank(clientName)
-                                              && !isLogoutRequest
-                                              && !DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
-                                              && ssoEvaluator.singleSignOnSessionExists(context);
+                && !isLogoutRequest
+                && !DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
+                && ssoEvaluator.singleSignOnSessionExists(context);
             if (isSingleSignOnSessionActive) {
                 LOGGER.trace("Found an existing single sign-on session");
                 service = populateContextWithService(context, service);
@@ -136,7 +136,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
-            webContext.setRequestAttribute(HttpAction.class.getName(), e);
+            val content = e instanceof final WithContentAction withContentAction ? withContentAction.getContent() : StringUtils.EMPTY;
+            webContext.setRequestAttribute(SingleLogoutContinuation.class.getName(), new SingleLogoutContinuation(content));
             return isLogoutRequest(clientCredential) ? getLogoutEvent(e) : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);

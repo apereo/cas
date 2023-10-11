@@ -39,8 +39,6 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-logout-api")
 
-    implementation libraries.pac4jcore
-    implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
 

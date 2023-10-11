@@ -1,7 +1,5 @@
-package org.apereo.cas.web.security.authentication;
+package org.apereo.cas.authorization;
 
-import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
-import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;

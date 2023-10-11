@@ -524,6 +524,12 @@ exports.assertPageTitleContains = async (page, value) => {
     assert(title.includes(value))
 };
 
+exports.substring = async (text, word1, word2) => {
+    const regex = new RegExp(`${word1}(.*?)${word2}`);
+    const match = regex.exec(text);
+    return match ? match[1].trim() : null;
+};
+
 exports.recordScreen = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/recording-${index}.mp4`);

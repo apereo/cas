@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;

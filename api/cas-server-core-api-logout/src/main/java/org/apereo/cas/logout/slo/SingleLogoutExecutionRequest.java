@@ -1,4 +1,4 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 

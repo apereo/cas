@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -7,8 +8,6 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.core.exception.http.OkAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setAttribute(HttpAction.class.getName(), new OkAction("Test"));
+        context.getHttpServletRequest().setAttribute(SingleLogoutContinuation.class.getName(), new SingleLogoutContinuation("Testing"));
         val results = logoutViewSetupAction.execute(context);
         assertNull(results);
         assertFalse(WebUtils.isGeoLocationTrackingIntoFlowScope(context));

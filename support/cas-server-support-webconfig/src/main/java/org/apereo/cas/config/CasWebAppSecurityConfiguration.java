@@ -150,9 +150,8 @@ public class CasWebAppSecurityConfiguration {
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
-            final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) {
-            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+            val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, pathMappedEndpoints, configurersList, securityContextRepository);
             return adapter::configureWebSecurity;
         }
@@ -168,7 +167,7 @@ public class CasWebAppSecurityConfiguration {
             final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) throws Exception {
-            val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+            val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, pathMappedEndpoints, configurersList, securityContextRepository);
             return adapter.configureHttpSecurity(http).build();
         }

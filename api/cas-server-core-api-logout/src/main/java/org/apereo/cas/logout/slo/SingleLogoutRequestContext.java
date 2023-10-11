@@ -2,7 +2,6 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 

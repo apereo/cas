@@ -3,7 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-cookie")
 
-    implementation libraries.pac4jcore
     implementation libraries.springsecurityweb
     
     implementation project(":core:cas-server-core-cookie-api")

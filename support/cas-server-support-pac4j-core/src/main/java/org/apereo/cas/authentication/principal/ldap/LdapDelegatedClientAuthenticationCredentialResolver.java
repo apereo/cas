@@ -43,7 +43,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
     @Override
     public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
         return FunctionUtils.doUnchecked(() -> {
-            val profile = resolveUserProfile(context, credentials).get();
+            val profile = resolveUserProfile(context, credentials).orElseThrow();
             val properties = configContext.getCasProperties().getAuthn().getPac4j().getProfileSelection().getLdap();
             try (val factory = new LdapConnectionFactory(connectionFactory)) {
                 val filter = LdapUtils.newLdaptiveSearchFilter(properties.getSearchFilter(),
