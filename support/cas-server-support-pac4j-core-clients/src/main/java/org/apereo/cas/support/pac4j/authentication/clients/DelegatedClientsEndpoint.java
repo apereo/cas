@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -33,10 +34,10 @@ import java.util.TreeMap;
 @Slf4j
 @Endpoint(id = "delegatedClients", enableByDefault = false)
 public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
-    private final DelegatedClientFactory clientFactory;
+    private final DelegatedIdentityProviderFactory clientFactory;
 
     public DelegatedClientsEndpoint(final CasConfigurationProperties casProperties,
-                                    final DelegatedClientFactory clientFactory) {
+                                    final DelegatedIdentityProviderFactory clientFactory) {
         super(casProperties);
         this.clientFactory = clientFactory;
     }

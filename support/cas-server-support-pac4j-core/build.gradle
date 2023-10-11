@@ -11,7 +11,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
-
+    
+    implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-api")
 

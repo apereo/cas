@@ -13,15 +13,10 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.client.Client;
-import org.pac4j.core.client.Clients;
 import org.springframework.context.ApplicationContext;
-
 import java.lang.reflect.Modifier;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -36,8 +31,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistrar {
     private final CasConfigurationProperties casProperties;
-
-    private final Clients clients;
 
     private final Set<String> availableAttributes;
 
@@ -64,7 +57,6 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
         val profile = new CasServerProfile();
         profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
-        profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setAvailableAttributes(this.availableAttributes);
         profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
         profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
@@ -90,14 +82,8 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
             .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
-    private Set<String> locateDelegatedClientTypesSupported() {
-        return clients == null
-            ? new LinkedHashSet<>(0)
-            : clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
-    }
-
     private Set<String> locateAvailableAuthenticationHandlers() {
-        return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.getAuthenticationHandlers()
             .stream()
             .map(AuthenticationHandler::getName)
             .collect(Collectors.toSet());

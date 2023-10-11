@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
@@ -11,7 +12,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
@@ -36,7 +36,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
 
     private final List<SamlIdentityProviderEntityParser> parsers;
 
-    private final Clients clients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final ArgumentExtractor argumentExtractor;
 
@@ -53,7 +53,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
 
     @Override
     public Collection<String> getEntityIds() {
-        return clients.findAllClients()
+        return identityProviders.findAllClients()
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
@@ -71,7 +71,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .filter(entity -> entity.getEntityID().equals(entityID))
             .findFirst()
             .orElseThrow();
-        val samlClient = clients.findAllClients()
+        val samlClient = identityProviders.findAllClients()
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -39,7 +39,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebflowAction {
-    private final Clients clients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final SessionStore sessionStore;
 
@@ -53,7 +53,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
         if (clientName == null) {
             clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
             if (StringUtils.isNotBlank(clientName)) {
-                clients.findClient(clientName)
+                identityProviders.findClient(clientName)
                     .filter(SAML2Client.class::isInstance)
                     .map(SAML2Client.class::cast)
                     .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
@@ -67,7 +67,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
             }
         } else {
             val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
-            clients.findClient(clientName)
+            identityProviders.findClient(clientName)
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {

@@ -14,6 +14,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,6 +59,7 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = "cas.authn.syncope.url=http://localhost:8096")
+    @Execution(ExecutionMode.SAME_THREAD)
     class SyncopeMockDataTests {
 
         @Autowired

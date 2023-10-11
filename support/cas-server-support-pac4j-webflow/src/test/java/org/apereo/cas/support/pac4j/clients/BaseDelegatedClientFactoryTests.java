@@ -1,7 +1,7 @@
 package org.apereo.cas.support.pac4j.clients;
 
 import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,6 @@ public abstract class BaseDelegatedClientFactoryTests {
 
     @Autowired
     @Qualifier("pac4jDelegatedClientFactory")
-    protected DelegatedClientFactory delegatedClientFactory;
+    protected DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
 }
 

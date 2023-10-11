@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
@@ -39,7 +39,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAction {
-    protected final Clients clients;
+    protected final DelegatedIdentityProviders identityProviders;
 
     protected final SessionStore sessionStore;
 
@@ -114,6 +114,6 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
     protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
         return currentProfile == null
                 ? Optional.<Client>empty()
-                : clients.findClient(currentProfile.getClientName());
+                : identityProviders.findClient(currentProfile.getClientName());
     }
 }

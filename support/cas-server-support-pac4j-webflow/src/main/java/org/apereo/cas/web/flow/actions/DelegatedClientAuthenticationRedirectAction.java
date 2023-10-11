@@ -93,7 +93,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
             .ifPresent(Unchecked.consumer(service -> configureWebContextForRegisteredService(webContext, ticket)));
 
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getClients().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName)
             .map(IndirectClient.class::cast)
             .stream()
             .peek(client -> configContext.getDelegatedClientAuthenticationRequestCustomizers()
@@ -146,7 +146,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
 
     protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket) {
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getClients().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName)
             .map(IndirectClient.class::cast)
             .stream()
             .findFirst()

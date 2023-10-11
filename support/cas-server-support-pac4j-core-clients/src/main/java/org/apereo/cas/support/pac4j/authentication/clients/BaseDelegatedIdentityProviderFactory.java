@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -83,14 +84,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link BaseDelegatedClientFactory}.
+ * This is {@link BaseDelegatedIdentityProviderFactory}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseDelegatedClientFactory implements DelegatedClientFactory {
+public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedIdentityProviderFactory {
     private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     protected final CasConfigurationProperties casProperties;

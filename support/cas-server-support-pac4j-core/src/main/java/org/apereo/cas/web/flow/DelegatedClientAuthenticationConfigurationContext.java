@@ -11,6 +11,7 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -24,7 +25,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -47,7 +47,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
      */
     public static final String BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
 
-    private final Clients clients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final DelegatedAuthenticationCredentialExtractor credentialExtractor;
 

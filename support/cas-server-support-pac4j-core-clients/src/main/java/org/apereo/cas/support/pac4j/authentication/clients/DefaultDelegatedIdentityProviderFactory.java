@@ -15,14 +15,14 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * This is {@link DefaultDelegatedClientFactory}.
+ * This is {@link DefaultDelegatedIdentityProviderFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class DefaultDelegatedClientFactory extends BaseDelegatedClientFactory implements DisposableBean {
+public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdentityProviderFactory implements DisposableBean {
 
-    public DefaultDelegatedClientFactory(
+    public DefaultDelegatedIdentityProviderFactory(
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,

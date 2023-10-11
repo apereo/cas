@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -18,7 +19,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.UserProfile;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @Monitorable
 public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAuthenticationHandler {
 
-    private final Clients clients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
 
@@ -49,12 +49,12 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     public DelegatedClientAuthenticationHandler(final Pac4jDelegatedAuthenticationCoreProperties properties,
                                                 final ServicesManager servicesManager,
                                                 final PrincipalFactory principalFactory,
-                                                final Clients clients,
+                                                final DelegatedIdentityProviders identityProviders,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
                                                 final SessionStore sessionStore,
                                                 final ConfigurableApplicationContext applicationContext) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), sessionStore);
-        this.clients = clients;
+        this.identityProviders = identityProviders;
         this.profileProvisioner = profileProvisioner;
         this.applicationContext = applicationContext;
     }
@@ -71,7 +71,7 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
             LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
-            val client = clients.findClient(clientCredentials.getClientName())
+            val client = identityProviders.findClient(clientCredentials.getClientName())
                 .map(BaseClient.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
                     + clientCredentials.getClientName()));

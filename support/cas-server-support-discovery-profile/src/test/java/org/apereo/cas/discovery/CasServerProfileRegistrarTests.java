@@ -22,7 +22,6 @@ import org.apereo.cas.config.CasDiscoveryProfileConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryStubConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.DelegatedAuthenticationEventExecutionPlanConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    DelegatedAuthenticationEventExecutionPlanConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasDiscoveryProfileConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -85,7 +83,6 @@ class CasServerProfileRegistrarTests {
         val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
-        assertNotNull(profile.getDelegatedClientTypesSupported());
         assertNotNull(profile.getMultifactorAuthenticationProviderTypesSupported());
         assertNotNull(profile.getRegisteredServiceTypesSupported());
         assertNotNull(profile.getUserDefinedScopes());

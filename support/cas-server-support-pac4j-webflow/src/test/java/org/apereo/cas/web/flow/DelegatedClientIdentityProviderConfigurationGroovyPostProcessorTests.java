@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -9,7 +10,6 @@ import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,13 +33,13 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
 
     @Autowired
-    @Qualifier("builtClients")
-    private Clients builtClients;
+    @Qualifier("delegatedIdentityProviders")
+    private DelegatedIdentityProviders identityProviders;
 
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create();
-        val client = builtClients.findClient("CasClient").get();
+        val client = identityProviders.findClient("CasClient").get();
         val provider = DelegatedClientIdentityProviderConfiguration.builder().name(client.getName()).build();
         val clientConfig = Set.of(provider);
         delegatedClientIdentityProviderConfigurationPostProcessor.process(context, clientConfig);

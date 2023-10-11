@@ -1,11 +1,11 @@
 package org.apereo.cas.web.saml2;
 
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class DelegatedSaml2ClientMetadataController {
      */
     public static final String BASE_ENDPOINT_SERVICE_PROVIDER = "/sp";
 
-    private final Clients builtClients;
+    private final DelegatedIdentityProviders identityProviders;
 
     private final OpenSamlConfigBean openSamlConfigBean;
 
@@ -55,7 +55,7 @@ public class DelegatedSaml2ClientMetadataController {
      */
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata() {
-        val saml2Client = builtClients.getClients().stream()
+        val saml2Client = identityProviders.findAllClients().stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
         return saml2Client.map(DelegatedSaml2ClientMetadataController::getSaml2ClientServiceProviderMetadataResponseEntity)
@@ -69,7 +69,7 @@ public class DelegatedSaml2ClientMetadataController {
      */
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata")
     public ResponseEntity<String> getFirstIdentityProviderMetadata() {
-        val saml2Client = builtClients.getClients().stream()
+        val saml2Client = identityProviders.findAllClients().stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
         return saml2Client.map(this::getSaml2ClientIdentityProviderMetadataResponseEntity)
@@ -86,7 +86,7 @@ public class DelegatedSaml2ClientMetadataController {
     public ResponseEntity<String> getServiceProviderMetadataByName(
         @PathVariable("client")
         final String client) {
-        val saml2Client = builtClients.findClient(client);
+        val saml2Client = identityProviders.findClient(client);
         return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
@@ -101,7 +101,7 @@ public class DelegatedSaml2ClientMetadataController {
     public ResponseEntity<String> getIdentityProviderMetadataByName(
         @PathVariable("client")
         final String client) {
-        val saml2Client = builtClients.findClient(client);
+        val saml2Client = identityProviders.findClient(client);
         return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }

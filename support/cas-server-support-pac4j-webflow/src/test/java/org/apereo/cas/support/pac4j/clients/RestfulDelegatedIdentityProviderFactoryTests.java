@@ -21,13 +21,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RestfulDelegatedClientFactoryTests}.
+ * This is {@link RestfulDelegatedIdentityProviderFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("RestfulApi")
-class RestfulDelegatedClientFactoryTests {
+class RestfulDelegatedIdentityProviderFactoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -57,7 +57,7 @@ class RestfulDelegatedClientFactoryTests {
         void verifyBadStatusCode() throws Throwable {
             try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
                 webServer.start();
-                val clientsFound = delegatedClientFactory.build();
+                val clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
                 assertTrue(clientsFound.isEmpty());
             }
@@ -81,14 +81,14 @@ class RestfulDelegatedClientFactoryTests {
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
-                var clientsFound = delegatedClientFactory.build();
+                var clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
                 assertEquals(3, clientsFound.size());
 
                 /*
                  * Try the cache once the list is retrieved...
                  */
-                clientsFound = delegatedClientFactory.build();
+                clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
                 assertEquals(3, clientsFound.size());
             }
@@ -121,7 +121,7 @@ class RestfulDelegatedClientFactoryTests {
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
-                var clientsFound = List.copyOf(delegatedClientFactory.build());
+                var clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
                 assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.getFirst().getCallbackUrl());
@@ -129,7 +129,7 @@ class RestfulDelegatedClientFactoryTests {
                 /*
                  * Try the cache once the list is retrieved...
                  */
-                clientsFound = List.copyOf(delegatedClientFactory.build());
+                clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
             }
