@@ -1,26 +1,19 @@
 package org.apereo.cas.authorization;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.ReturnAttributes;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.session.JEESessionStore;
-
 import java.io.Serial;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link LdapUserAttributesToRolesAuthorizationGeneratorTests}.
@@ -48,19 +41,14 @@ class LdapUserAttributesToRolesAuthorizationGeneratorTests {
         ldap.setBindDn("cn=Directory Manager");
         ldap.setBindCredential("password");
 
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casTest");
         List.of(ReturnAttributes.NONE, ReturnAttributes.ALL).forEach(ret -> {
-            var searchOp = LdapUtils.newLdaptiveSearchOperation("ou=people,dc=example,dc=org",
+            val searchOp = LdapUtils.newLdaptiveSearchOperation("ou=people,dc=example,dc=org",
                 "cn={user}", List.of("casTest"), List.of(ret.value()));
             searchOp.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
             val generator = new LdapUserAttributesToRolesAuthorizationGenerator(searchOp, false, "unknown", "ROLE");
-            val profile = new CommonProfile();
-            profile.setId("casTest");
-
-            val callContext = new CallContext(mock(WebContext.class), new JEESessionStore());
-            val result = generator.generate(callContext, profile);
-            assertFalse(result.isEmpty());
-            assertTrue(profile.getAttributes().isEmpty());
-            assertTrue(profile.getRoles().isEmpty());
+            val result = generator.apply(principal);
+            assertTrue(result.isEmpty());
         });
     }
 

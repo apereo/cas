@@ -1,10 +1,11 @@
 package org.apereo.cas.authorization;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,13 +16,6 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
-import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
-import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.authorization.generator.DefaultRolesAuthorizationGenerator;
-import org.pac4j.core.context.CallContext;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,8 +25,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -63,8 +59,8 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
      * Destroy.
      */
     public void destroy() {
-        this.connectionFactory.close();
-        this.authenticator.close();
+        connectionFactory.close();
+        authenticator.close();
     }
 
     @Override
@@ -84,51 +80,37 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.isSuccess()) {
-                val roles = securityProperties.getUser()
+                val requiredRoles = securityProperties
+                    .getUser()
                     .getRoles()
                     .stream()
                     .map(role -> StringUtils.prependIfMissing(role, ldapProperties.getLdapAuthz().getRolePrefix()))
                     .map(String::toUpperCase)
                     .collect(Collectors.toList());
-                LOGGER.debug("Required roles are [{}]", roles);
-                if (roles.isEmpty()) {
+
+                LOGGER.debug("Required roles are [{}]", requiredRoles);
+                if (requiredRoles.isEmpty()) {
                     LOGGER.info("No user security roles are defined to enable authorization. User [{}] is considered authorized", username);
                     return generateAuthenticationToken(authentication, new ArrayList<>(0));
                 }
 
                 val entry = response.getLdapEntry();
-                val profile = new CommonProfile();
-                profile.setId(username);
-                entry.getAttributes().forEach(attribute -> profile.addAttribute(attribute.getName(), attribute.getStringValues()));
-
-                LOGGER.debug("Collected user profile [{}]", profile);
-
-                val context = new JEEContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
-                    HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
+                val attributes = new HashMap<String, List<Object>>();
+                entry.getAttributes().forEach(attribute -> attributes.put(attribute.getName(), new ArrayList<>(attribute.getStringValues())));
+                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username, attributes);
                 val authZGen = buildAuthorizationGenerator();
+                var authorities = authZGen.apply(principal);
 
-                val callContext = new CallContext(context, new JEESessionStore());
-                authZGen.generate(callContext, profile);
-                LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
-
-                val authorities = profile.getRoles()
-                    .stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toCollection(ArrayList::new));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
-                val authorizer = new RequireAnyRoleAuthorizer(roles);
-                LOGGER.debug("Executing authorization for expected roles [{}]", authorizer.getElements());
-
-                if (authorizer.isAllAuthorized(context, new JEESessionStore(), CollectionUtils.wrap(profile))) {
+                if (authorities.stream().anyMatch(authority -> requiredRoles.contains(authority.getAuthority()))) {
                     return generateAuthenticationToken(authentication, authorities);
                 }
-                LOGGER.warn("User [{}] is not authorized to access the requested resource allowed to roles [{}]",
-                    username, authorizer.getElements());
+                LOGGER.warn("User [{}] is not authorized to access the requested resource", username);
             } else {
                 LOGGER.warn("LDAP authentication response produced no results for [{}]", username);
             }
 
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);
         }
@@ -140,54 +122,57 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 
-    @SuppressWarnings("java:S2095")
-    private AuthorizationGenerator buildAuthorizationGenerator() {
-        val ldapAuthz = this.ldapProperties.getLdapAuthz();
+    private Function<Principal, List<SimpleGrantedAuthority>> buildAuthorizationGenerator() {
+        val properties = ldapProperties.getLdapAuthz();
 
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");
             return new LdapUserGroupsToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(this.connectionFactory),
-                ldapAuthz.isAllowMultipleResults(),
-                ldapAuthz.getGroupAttribute(),
-                ldapAuthz.getGroupPrefix(),
+                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                properties.isAllowMultipleResults(),
+                properties.getGroupAttribute(),
+                properties.getGroupPrefix(),
                 ldapAuthorizationGeneratorGroupSearchOperation(connectionFactory));
         }
         if (isUserBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on attributes and roles");
             return new LdapUserAttributesToRolesAuthorizationGenerator(
-                ldapAuthorizationGeneratorUserSearchOperation(this.connectionFactory),
-                ldapAuthz.isAllowMultipleResults(),
-                ldapAuthz.getRoleAttribute(),
-                ldapAuthz.getRolePrefix());
+                ldapAuthorizationGeneratorUserSearchOperation(connectionFactory),
+                properties.isAllowMultipleResults(),
+                properties.getRoleAttribute(),
+                properties.getRolePrefix());
         }
         val roles = securityProperties.getUser().getRoles();
-        LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
-        return new DefaultRolesAuthorizationGenerator(roles);
+        LOGGER.info("Authorization will generate static roles based on [{}]", roles);
+        return principal -> roles.stream()
+            .map(String::toUpperCase)
+            .map(role -> StringUtils.prependIfMissing(role, "ROLE_"))
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
     }
 
     private boolean isGroupBasedAuthorization() {
-        val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        return StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute());
+        val properties = ldapProperties.getLdapAuthz();
+        return StringUtils.isNotBlank(properties.getGroupFilter()) && StringUtils.isNotBlank(properties.getGroupAttribute());
     }
 
     private boolean isUserBasedAuthorization() {
-        val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        return StringUtils.isNotBlank(ldapAuthz.getBaseDn()) && StringUtils.isNotBlank(ldapAuthz.getSearchFilter());
+        val properties = ldapProperties.getLdapAuthz();
+        return StringUtils.isNotBlank(properties.getBaseDn()) && StringUtils.isNotBlank(properties.getSearchFilter());
     }
 
     private SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
-        val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        val searchOperation = LdapUtils.newLdaptiveSearchOperation(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter(),
-            new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getRoleAttribute()));
+        val properties = ldapProperties.getLdapAuthz();
+        val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getBaseDn(), properties.getSearchFilter(),
+            new ArrayList<>(0), CollectionUtils.wrap(properties.getRoleAttribute()));
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }
 
     private SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
-        val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        val searchOperation = LdapUtils.newLdaptiveSearchOperation(ldapAuthz.getGroupBaseDn(), ldapAuthz.getGroupFilter(),
-            new ArrayList<>(0), CollectionUtils.wrap(ldapAuthz.getGroupAttribute()));
+        val properties = ldapProperties.getLdapAuthz();
+        val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getGroupBaseDn(), properties.getGroupFilter(),
+            new ArrayList<>(0), CollectionUtils.wrap(properties.getGroupAttribute()));
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }
