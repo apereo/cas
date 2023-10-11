@@ -10,14 +10,10 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -42,9 +38,7 @@ public class LogoutAction extends AbstractLogoutAction {
     }
 
     @Override
-    protected Event doInternalExecute(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final RequestContext context) {
+    protected Event doInternalExecute(final RequestContext context) {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
         val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,

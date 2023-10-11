@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.logout;
 
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

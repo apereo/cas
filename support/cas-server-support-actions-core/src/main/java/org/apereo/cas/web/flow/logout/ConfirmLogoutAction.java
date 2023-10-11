@@ -8,14 +8,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Confirm logout action once the confirmation view is displayed.
@@ -36,8 +32,7 @@ public class ConfirmLogoutAction extends AbstractLogoutAction {
     }
 
     @Override
-    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-                                      final RequestContext requestContext) {
+    protected Event doInternalExecute(final RequestContext requestContext) {
         val tgtId = getTicketGrantingTicket(requestContext);
         if (StringUtils.isNotBlank(tgtId)) {
             val ticket = ticketRegistry.getTicket(tgtId, TicketGrantingTicket.class);

@@ -3,12 +3,10 @@ package org.apereo.cas.web.security;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
-import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
-import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasWebSecurityConstants;
-import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 import org.apereo.cas.web.security.authentication.IpAddressAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +14,10 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,7 +49,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
-public class CasWebSecurityConfigurerAdapter implements DisposableBean {
+public class CasWebSecurityConfigurerAdapter {
 
     private final ObjectPostProcessor<BasicAuthenticationFilter> basicAuthFilterPostProcessor = new ObjectPostProcessor<>() {
         @Override
@@ -64,17 +60,13 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
     private final CasConfigurationProperties casProperties;
 
-    private final SecurityProperties securityProperties;
-
     private final WebEndpointProperties webEndpointProperties;
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
-    private final List<CasWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
+    private final List<CasWebSecurityConfigurer> webSecurityConfigurers;
 
     private final SecurityContextRepository securityContextRepository;
-
-    private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
         val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
@@ -90,11 +82,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         provider.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
         provider.afterPropertiesSet();
         http.authenticationProvider(provider);
-    }
-
-    @Override
-    public void destroy() {
-        FunctionUtils.doIfNotNull(endpointLdapAuthenticationProvider, EndpointLdapAuthenticationProvider::destroy);
     }
 
     /**
@@ -126,7 +113,10 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).anonymous();
         });
-        protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
+        webSecurityConfigurers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
@@ -141,20 +131,18 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         FunctionUtils.doIfNotNull(jaas.getLoginConfig(), __ -> configureJaasAuthenticationProvider(http, jaas));
 
-        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
-            configureLdapAuthenticationProvider(http, ldap);
-        } else {
-            LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
-        }
-
         http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
-        protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.finish(http)));
+        webSecurityConfigurers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .forEach(Unchecked.consumer(cfg -> cfg.finish(http)));
         return http;
     }
 
     protected List<String> getAllowedPatternsToIgnore() {
-        val patterns = protocolEndpointWebSecurityConfigurers.stream()
+        val patterns = webSecurityConfigurers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(CasWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(CasWebSecurityConfigurerAdapter::prepareProtocolEndpoint)
@@ -168,6 +156,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/static/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
+        patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
         patterns.add(webEndpointProperties.getBasePath());
         return patterns;
@@ -177,18 +166,21 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         final HttpSecurity http) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        pathMappedEndpoints.getObject().forEach(endpoint -> {
-            val rootPath = endpoint.getRootPath();
-            if (endpoints.contains(rootPath)) {
-                LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
-            } else {
-                val defaultAccessRules = endpointDefaults.getAccess();
-                LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
-                val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
-                defaultAccessRules.forEach(Unchecked.consumer(access ->
-                    configureEndpointAccess(http, access, endpointDefaults, endpointRequest)));
-            }
-        });
+        pathMappedEndpoints.getObject()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .forEach(endpoint -> {
+                val rootPath = endpoint.getRootPath();
+                if (endpoints.contains(rootPath)) {
+                    LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
+                } else {
+                    val defaultAccessRules = endpointDefaults.getAccess();
+                    LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
+                    val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
+                    defaultAccessRules.forEach(Unchecked.consumer(access ->
+                        configureEndpointAccess(http, access, endpointDefaults, endpointRequest)));
+                }
+            });
     }
 
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
@@ -268,26 +260,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
             .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
-    }
-
-    private boolean isLdapAuthorizationActive() {
-        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        return StringUtils.isNotBlank(ldap.getBaseDn())
-            && StringUtils.isNotBlank(ldap.getLdapUrl())
-            && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
-            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
-    }
-
-    private void configureLdapAuthenticationProvider(final HttpSecurity http,
-                                                     final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
-        if (isLdapAuthorizationActive()) {
-            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-            val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-            this.endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap,
-                securityProperties, connectionFactory, authenticator);
-            http.authenticationProvider(endpointLdapAuthenticationProvider);
-        }
     }
 
     private static final class CasBasicAuthenticationFilter extends BasicAuthenticationFilter {

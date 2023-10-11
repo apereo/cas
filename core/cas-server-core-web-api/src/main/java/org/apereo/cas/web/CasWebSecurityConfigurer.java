@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public interface CasWebSecurityConfigurer<T> extends Ordered {
+public interface CasWebSecurityConfigurer<T> extends Ordered, DisposableBean {
     /**
      * Endpoint url used for admin-level form-login of endpoints.
      */
@@ -58,4 +59,6 @@ public interface CasWebSecurityConfigurer<T> extends Ordered {
         return this;
     }
 
+    @Override
+    default void destroy() throws Exception {}
 }

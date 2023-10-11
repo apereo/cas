@@ -42,6 +42,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
 

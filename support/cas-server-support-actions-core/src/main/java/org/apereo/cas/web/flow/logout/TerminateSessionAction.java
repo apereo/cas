@@ -3,29 +3,28 @@ package org.apereo.cas.web.flow.logout;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -83,39 +82,9 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
      */
     protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
 
-    /**
-     * Check if the logout must be confirmed.
-     *
-     * @param requestContext the request context
-     * @return if the logout must be confirmed
-     */
     protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
-    }
-
-    /**
-     * Destroy application session.
-     * Also kills all delegated authn profiles via pac4j.
-     *
-     * @param request  the request
-     * @param response the response
-     */
-    @SuppressWarnings("java:S2441")
-    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.trace("Destroying application session");
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, new JEESessionStore());
-        manager.removeProfiles();
-
-        val session = request.getSession(false);
-        if (session != null) {
-            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
-            session.invalidate();
-            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
-                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
-            }
-        }
     }
 
     @Override
@@ -128,65 +97,66 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
         if (terminateSession) {
             return terminate(requestContext);
         }
-        return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
+        return eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
-    /**
-     * Retrieve the TGT identifier.
-     *
-     * @param context the action context
-     * @return the TGT identifier
-     */
     protected String getTicketGrantingTicket(final RequestContext context) {
         val tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            return this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            return ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         return tgtId;
     }
 
-    /**
-     * Terminates the CAS SSO session by destroying the TGT (if any)
-     * and removing cookies related to the SSO session.
-     *
-     * @param context Request context.
-     * @return "success"
-     * @throws Exception the exception
-     */
-    protected Event terminate(final RequestContext context) throws Exception {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+    protected Event terminate(final RequestContext requestContext) throws Exception {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
-        val tgtId = getTicketGrantingTicket(context);
+        val beanFactory = applicationContext.getBeanFactory();
+        val terminationHandlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, SessionTerminationHandler.class)
+            .values()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .toList();
+
+        val tgtId = getTicketGrantingTicket(requestContext);
+
         if (StringUtils.isNotBlank(tgtId)) {
             LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
+            terminationHandlers.forEach(processor -> processor.beforeSingleLogout(tgtId, requestContext));
+
             val logoutRequests = initiateSingleLogout(tgtId, request, response);
-            WebUtils.putLogoutRequests(context, logoutRequests);
+            WebUtils.putLogoutRequests(requestContext, logoutRequests);
         }
         LOGGER.trace("Removing CAS cookies");
-        this.ticketGrantingTicketCookieGenerator.removeCookie(response);
-        this.warnCookieGenerator.removeCookie(response);
-
-        destroyApplicationSession(request, response);
+        ticketGrantingTicketCookieGenerator.removeCookie(response);
+        warnCookieGenerator.removeCookie(response);
+        destroyApplicationContext(terminationHandlers, requestContext);
         LOGGER.debug("Terminated all CAS sessions successfully.");
 
         if (StringUtils.isNotBlank(logoutProperties.getRedirectUrl())) {
-            WebUtils.putLogoutRedirectUrl(context, logoutProperties.getRedirectUrl());
-            return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_REDIRECT);
+            WebUtils.putLogoutRedirectUrl(requestContext, logoutProperties.getRedirectUrl());
+            return eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_REDIRECT);
         }
 
-        return this.eventFactorySupport.success(this);
+        return eventFactorySupport.success(this);
     }
 
-    /**
-     * Initiate single logout.
-     *
-     * @param ticketGrantingTicketId the ticket granting ticket id
-     * @param request                the request
-     * @param response               the response
-     * @return the list
-     */
+    protected void destroyApplicationContext(final List<SessionTerminationHandler> terminationHandlers,
+                                             final RequestContext requestContext) {
+        val terminationResults = terminationHandlers
+            .stream()
+            .map(processor -> processor.beforeSessionTermination(requestContext))
+            .flatMap(List::stream)
+            .toList();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val session = request.getSession(false);
+        FunctionUtils.doIfNull(session, HttpSession::invalidate);
+        terminationHandlers.forEach(processor -> processor.afterSessionTermination(terminationResults, requestContext));
+    }
+
     protected List<SingleLogoutRequestContext> initiateSingleLogout(final String ticketGrantingTicketId,
                                                                     final HttpServletRequest request,
                                                                     final HttpServletResponse response) {

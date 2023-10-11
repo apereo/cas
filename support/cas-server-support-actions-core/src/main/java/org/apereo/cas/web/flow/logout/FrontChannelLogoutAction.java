@@ -12,17 +12,12 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -46,9 +41,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
     }
 
     @Override
-    protected Event doInternalExecute(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final RequestContext context) {
+    protected Event doInternalExecute(final RequestContext context) {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests == null || logoutRequests.isEmpty()) {

@@ -1,7 +1,7 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;

@@ -91,6 +91,11 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public Object getSessionAttribute(final String name) {
+        return Objects.requireNonNull(getHttpServletRequest().getSession(true)).getAttribute(name);
+    }
+
+
     public MockRequestContext setContentType(final String type) {
         getHttpServletRequest().setContentType(type);
         return this;
@@ -100,6 +105,7 @@ public class MockRequestContext extends MockRequestControlContext {
         getHttpServletRequest().setContentType(method.name());
         return this;
     }
+
 
     public static MockRequestContext create() throws Exception {
         val staticContext = new StaticApplicationContext();

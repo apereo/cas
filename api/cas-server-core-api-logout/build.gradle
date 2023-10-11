@@ -3,5 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
 

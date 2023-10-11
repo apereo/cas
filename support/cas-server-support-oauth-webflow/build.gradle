@@ -36,6 +36,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
+    implementation project(":support:cas-server-support-pac4j-core")
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.util.AopUtils;
 
 import lombok.val;

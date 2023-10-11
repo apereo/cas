@@ -8,15 +8,11 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link FinishLogoutAction}.
@@ -36,9 +32,7 @@ public class FinishLogoutAction extends AbstractLogoutAction {
     }
 
     @Override
-    protected Event doInternalExecute(final HttpServletRequest request,
-                                      final HttpServletResponse response,
-                                      final RequestContext context) {
+    protected Event doInternalExecute(final RequestContext context) {
         val logoutRedirect = WebUtils.getLogoutRedirectUrl(context, String.class);
         if (StringUtils.isNotBlank(logoutRedirect)) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);

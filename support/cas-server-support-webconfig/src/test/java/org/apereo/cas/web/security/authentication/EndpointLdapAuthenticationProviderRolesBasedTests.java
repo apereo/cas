@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
+import org.apereo.cas.authorization.EndpointLdapAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
