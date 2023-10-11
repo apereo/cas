@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -21,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockExternalContext;
-import org.apereo.cas.util.MockRequestContext;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;

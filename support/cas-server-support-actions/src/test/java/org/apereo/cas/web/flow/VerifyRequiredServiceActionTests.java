@@ -35,11 +35,7 @@ import static org.mockito.Mockito.*;
 class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;
-
     private MockRequestContext requestContext;
-
-    private MockHttpServletRequest httpRequest;
-
     private TicketRegistrySupport ticketRegistrySupport;
 
     @BeforeEach
@@ -84,7 +80,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
         val tgt = new MockTicketGrantingTicket("casuser");
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         val result = verifyRequiredServiceAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
@@ -101,7 +97,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
             serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         assertThrows(NoSuchFlowExecutionException.class, () -> verifyRequiredServiceAction.execute(this.requestContext));
     }
@@ -117,7 +113,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
             serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         assertDoesNotThrow(() -> verifyRequiredServiceAction.execute(this.requestContext));
     }

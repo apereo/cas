@@ -30,7 +30,7 @@ class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.setAttribute(HttpAction.class.getName(), new OkAction("Test"));
+        context.getHttpServletRequest().setAttribute(HttpAction.class.getName(), new OkAction("Test"));
         val results = logoutViewSetupAction.execute(context);
         assertNull(results);
         assertFalse(WebUtils.isGeoLocationTrackingIntoFlowScope(context));
