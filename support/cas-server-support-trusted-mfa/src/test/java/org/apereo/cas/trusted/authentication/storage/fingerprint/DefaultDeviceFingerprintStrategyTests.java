@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.val;
@@ -9,11 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,28 +25,25 @@ class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthentic
 
     @Test
     void verifyAction() throws Throwable {
-        val context = new MockRequestContext();
-
-        val request = new MockHttpServletRequest();
+        val context = MockRequestContext.create(applicationContext);
+        val request = context.getHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val f1 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
-        request.setCookies(response.getCookies());
-        val f2 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
-        request.setCookies(response.getCookies());
+        
+        val f1 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, context.getHttpServletResponse());
+        request.setCookies(context.getHttpServletResponse().getCookies());
+        val f2 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, context.getHttpServletResponse());
+        request.setCookies(context.getHttpServletResponse().getCookies());
         assertEquals(f1, f2);
 
-        val f3 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
-        assertNotNull(response.getCookies());
-        assertEquals(1, response.getCookies().length);
-        request.setCookies(response.getCookies());
+        val f3 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, context.getHttpServletResponse());
+        assertNotNull(context.getHttpServletResponse().getCookies());
+        assertEquals(1, context.getHttpServletResponse().getCookies().length);
+        request.setCookies(context.getHttpServletResponse().getCookies());
 
-        val f4 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
+        val f4 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, context.getHttpServletResponse());
         assertEquals(f3, f4);
     }
 }

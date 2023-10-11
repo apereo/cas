@@ -1,20 +1,13 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
-
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,15 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class SingleSignOnParticipationRequestTests {
     @Test
     void verifyOperation() throws Throwable {
-        val httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
-        val requestContext = new MockRequestContext();
-        val response = new MockHttpServletResponse();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), httpServletRequest, response));
+        val context = MockRequestContext.create();
+        context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val ssoRequest = SingleSignOnParticipationRequest.builder()
-            .httpServletRequest(httpServletRequest)
-            .httpServletResponse(response)
-            .requestContext(requestContext)
+            .httpServletRequest(context.getHttpServletRequest())
+            .httpServletResponse(context.getHttpServletResponse())
+            .requestContext(context)
             .attributes(new HashMap<>(Map.of("hello", "world")))
             .build()
             .attribute("testkey", List.of("testvalue"));

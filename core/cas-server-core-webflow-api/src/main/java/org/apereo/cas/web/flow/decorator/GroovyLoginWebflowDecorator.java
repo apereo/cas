@@ -5,7 +5,6 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,8 +24,8 @@ public class GroovyLoginWebflowDecorator implements WebflowDecorator {
     }
 
     @Override
-    public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) throws Throwable {
-        val args = new Object[]{requestContext, applicationContext, LOGGER};
+    public void decorate(final RequestContext requestContext) throws Throwable {
+        val args = new Object[]{requestContext, LOGGER};
         watchableScript.execute(args, Void.class);
     }
 }

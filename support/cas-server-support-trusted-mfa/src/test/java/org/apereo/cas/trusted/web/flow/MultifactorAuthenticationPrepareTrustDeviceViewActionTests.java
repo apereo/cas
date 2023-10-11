@@ -4,6 +4,7 @@ import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -18,11 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -49,19 +45,16 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         private MockRequestContext context;
 
         @BeforeEach
-        public void beforeEach() {
-            this.context = new MockRequestContext();
+        public void beforeEach() throws Throwable {
+            context = MockRequestContext.create(applicationContext);
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
-            val request = new MockHttpServletRequest();
+            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            val request = context.getHttpServletRequest();
             request.setRemoteAddr("223.456.789.000");
             request.setLocalAddr("123.456.789.000");
-            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
             val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);
@@ -87,29 +80,26 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         private MockRequestContext context;
         
         @BeforeEach
-        public void beforeEach() {
-            this.context = new MockRequestContext();
+        public void beforeEach() throws Exception {
+            context = MockRequestContext.create(applicationContext);
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
-            val request = new MockHttpServletRequest();
+            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            val request = context.getHttpServletRequest();
             request.setRemoteAddr("123.456.789.000");
             request.setLocalAddr("123.456.789.000");
-            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
             val record = getMultifactorAuthenticationTrustRecord();
             record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
-            val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), request, response);
+            val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), request, context.getHttpServletResponse());
             record.setDeviceFingerprint(deviceFingerprint);
             mfaTrustEngine.save(record);
 
-            assertNotNull(response.getCookies());
-            assertEquals(1, response.getCookies().length);
-            request.setCookies(response.getCookies());
+            assertNotNull(context.getHttpServletResponse().getCookies());
+            assertEquals(1, context.getHttpServletResponse().getCookies().length);
+            request.setCookies(context.getHttpServletResponse().getCookies());
 
             val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
             WebUtils.putAuthentication(authn, context);

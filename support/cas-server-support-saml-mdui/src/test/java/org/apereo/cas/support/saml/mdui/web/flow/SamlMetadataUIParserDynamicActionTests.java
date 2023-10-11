@@ -7,22 +7,16 @@ import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,16 +43,10 @@ class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
 
     @Test
     void verifyEntityIdUIInfoExistsDynamically() throws Throwable {
-        val ctx = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
-
-        val response = new MockHttpServletResponse();
-
-        val sCtx = new MockServletContext();
-        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        samlMetadataUIParserAction.execute(ctx);
-        assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
+        samlMetadataUIParserAction.execute(context);
+        assertNotNull(WebUtils.getServiceUserInterfaceMetadata(context, SamlMetadataUIInfo.class));
     }
 
 

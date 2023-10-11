@@ -3,7 +3,6 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -17,19 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 class InweboMustEnrollActionTests extends BaseInweboActionTests {
-
-    private InweboMustEnrollAction action;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-
-        action = new InweboMustEnrollAction();
-    }
-
+    
     @Test
     void verifySuccess() throws Throwable {
+        val action = new InweboMustEnrollAction();
         val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));

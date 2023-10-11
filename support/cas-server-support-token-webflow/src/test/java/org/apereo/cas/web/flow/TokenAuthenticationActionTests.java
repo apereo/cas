@@ -11,6 +11,7 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.support.WebUtils;
@@ -28,12 +29,7 @@ import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -91,10 +87,9 @@ class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServic
         profile.addAttribute("memberOf", CollectionUtils.wrapSet("system", "cas", "admin"));
         val token = generator.generate(profile);
 
-        val request = new MockHttpServletRequest();
-        request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        context.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
+
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://example.token.org"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }

@@ -1,18 +1,12 @@
 package org.apereo.cas.web.flow.client;
 
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,107 +24,66 @@ class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     void ensureRemoteIpShouldBeChecked() throws Exception {
-        val action =new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
+        val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
             StringUtils.EMPTY, 0);
-
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr("192.158.5.781");
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr("192.158.5.781");
+        val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
     void ensureRemoteIpShouldNotBeChecked() throws Exception {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
-                StringUtils.EMPTY, 0);
-
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr("193.158.5.781");
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+            StringUtils.EMPTY, 0);
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr("193.158.5.781");
+        val ev = action.execute(context);
         assertNotEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
     void ensureAltRemoteIpHeaderShouldBeChecked() throws Exception {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^74\\.125\\..+"),
-                "alternateRemoteIp", 120);
+            "alternateRemoteIp", 120);
 
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr("555.555.555.555");
-        req.addHeader("alternateRemoteIp", ALTERNATE_REMOTE_IP);
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr("555.555.555.555");
+        context.addHeader("alternateRemoteIp", ALTERNATE_REMOTE_IP);
+        val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
     void ensureHostnameShouldDoSpnego() throws Exception {
         val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(".+"),
-                StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
+            StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
     }
 
     @Test
     void ensureHostnameAndIpShouldDoSpnego() throws Exception {
-        val action =
-            new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("74\\..+"),
-                StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
+        val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("74\\..+"),
+            StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        val ev = action.execute(context);
         assertEquals(new EventFactorySupport().yes(this).getId(), ev.getId());
 
     }
 
     @Test
     void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Throwable {
-        val action =
-            new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
-                StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
-
-        val ctx = new MockRequestContext();
-        val req = new MockHttpServletRequest();
-        req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        val extCtx = new ServletExternalContext(
-            new MockServletContext(), req,
-            new MockHttpServletResponse());
-        ctx.setExternalContext(extCtx);
-
-        val ev = action.execute(ctx);
+        val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
+            StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
+        val context = MockRequestContext.create();
+        context.getHttpServletRequest().setRemoteAddr(ALTERNATE_REMOTE_IP);
+        val ev = action.execute(context);
         assertEquals(new EventFactorySupport().no(this).getId(), ev.getId());
 
     }

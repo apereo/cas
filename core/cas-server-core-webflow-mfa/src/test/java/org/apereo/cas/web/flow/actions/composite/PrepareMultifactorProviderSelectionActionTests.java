@@ -9,30 +9,22 @@ import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthentica
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,17 +42,12 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
 
     @Test
     void verifyOperation() throws Throwable {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
         val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
         flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
         val exec = new MockFlowExecutionContext(flowSession);
-        val context = new MockRequestContext(exec);
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(exec);
 
         val chain = new DefaultChainingMultifactorAuthenticationProvider(
             new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
