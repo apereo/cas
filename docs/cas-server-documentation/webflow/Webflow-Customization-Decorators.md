@@ -33,8 +33,7 @@ context by using an external Groovy script that may take on the following form:
 ```groovy
 def run(Object[] args) {
      def requestContext = args[0]
-     def applicationContext = args[1]
-     def logger = args[2]
+     def logger = args[1]
      
      logger.info("Decorating the webflow...")
      requestContext.flowScope.put("decoration", ...)
@@ -46,7 +45,6 @@ The parameters passed are as follows:
 | Parameter            | Description                                                                   |
 |----------------------|-------------------------------------------------------------------------------|
 | `requestContext`     | The `RequestContext` that carries various types of scopes as data containers. |
-| `applicationContext` | The Spring application context.                                               |
 | `logger`             | Logger object used to issue log messages where needed.                        |
 
 {% include_cached casproperties.html properties="cas.webflow.login-decorator.groovy" %}

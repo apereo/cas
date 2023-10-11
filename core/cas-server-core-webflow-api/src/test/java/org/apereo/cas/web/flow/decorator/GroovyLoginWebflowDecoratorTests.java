@@ -1,12 +1,11 @@
 package org.apereo.cas.web.flow.decorator;
 
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,8 +20,9 @@ class GroovyLoginWebflowDecoratorTests {
     @Test
     void verifyOperation() throws Throwable {
         val groovy = new GroovyLoginWebflowDecorator(new ClassPathResource("GroovyLoginWebflowDecorator.groovy"));
-        val requestContext = new MockRequestContext();
-        groovy.decorate(requestContext, mock(ApplicationContext.class));
+        val applicationContext = mock(ApplicationContext.class);
+        val requestContext = MockRequestContext.create(applicationContext);
+        groovy.decorate(requestContext);
         assertTrue(requestContext.getFlowScope().contains("decoration"));
     }
 }

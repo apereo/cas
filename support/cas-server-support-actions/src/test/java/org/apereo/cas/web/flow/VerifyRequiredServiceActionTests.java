@@ -13,7 +13,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;

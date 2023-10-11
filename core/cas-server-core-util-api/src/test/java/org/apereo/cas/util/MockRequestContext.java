@@ -7,6 +7,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
@@ -87,6 +88,16 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setSessionAttribute(final String name, final String value) {
         Objects.requireNonNull(getHttpServletRequest().getSession(true)).setAttribute(name, value);
+        return this;
+    }
+
+    public MockRequestContext setContentType(final String type) {
+        getHttpServletRequest().setContentType(type);
+        return this;
+    }
+
+    public MockRequestContext setMethod(final HttpMethod method) {
+        getHttpServletRequest().setContentType(method.name());
         return this;
     }
 

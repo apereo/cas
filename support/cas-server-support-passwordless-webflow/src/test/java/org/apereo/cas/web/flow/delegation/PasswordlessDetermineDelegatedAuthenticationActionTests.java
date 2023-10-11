@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
@@ -17,16 +18,11 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,8 +50,8 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
         @Test
         void verifyNoClients() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -63,7 +59,6 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
     }
@@ -85,17 +80,16 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
         @Test
         void verifyNoAcct() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
         void verifyAction() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -103,15 +97,14 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
         void verifyCantDetermineIdP() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -119,15 +112,15 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("unknown")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
         void verifyActionByUser() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -136,16 +129,15 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, determineDelegatedAuthenticationAction.execute(context).getId());
-            assertNotNull(request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
+            assertNotNull(context.getHttpServletRequest().getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER));
         }
 
         @Test
         void verifyActionByUserDisallowed() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -155,15 +147,14 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .name("casuser")
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
 
         @Test
         void verifyAuthInactive() throws Throwable {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-            val context = new MockRequestContext(exec);
-            val request = new MockHttpServletRequest();
+            val context = MockRequestContext.create(applicationContext);
+            context.setFlowExecutionContext(exec);
             val account = PasswordlessUserAccount.builder()
                 .email("email")
                 .phone("phone")
@@ -172,7 +163,6 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
                 .delegatedAuthenticationEligible(TriStateBoolean.FALSE)
                 .build();
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineDelegatedAuthenticationAction.execute(context).getId());
         }
     }

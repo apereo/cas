@@ -2,16 +2,13 @@ package org.apereo.cas.web.flow.decorator;
 
 import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
-import org.springframework.webflow.test.MockRequestContext;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,17 +26,13 @@ class RestfulLoginWebflowDecoratorTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val props = new RestfulWebflowLoginDecoratorProperties();
-        props.setUrl("http://localhost:9465");
-
-        val rest = new RestfulLoginWebflowDecorator(props);
-        val requestContext = new MockRequestContext();
-
-        try (val webServer = new MockWebServer(9465,
-            new ByteArrayResource(getJsonData().getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(getJsonData())) {
             webServer.start();
-
-            rest.decorate(requestContext, mock(ApplicationContext.class));
+            val props = new RestfulWebflowLoginDecoratorProperties();
+            props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            val rest = new RestfulLoginWebflowDecorator(props);
+            val requestContext = MockRequestContext.create(mock(ApplicationContext.class));
+            rest.decorate(requestContext);
             assertTrue(requestContext.getFlowScope().contains("decoration"));
         }
     }

@@ -12,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,7 +33,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
     private final RestfulWebflowLoginDecoratorProperties restProperties;
 
     @Override
-    public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
+    public void decorate(final RequestContext requestContext) {
         FunctionUtils.doUnchecked(__ -> {
             HttpResponse response = null;
             try {
