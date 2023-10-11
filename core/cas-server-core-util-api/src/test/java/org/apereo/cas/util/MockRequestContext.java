@@ -102,7 +102,7 @@ public class MockRequestContext extends MockRequestControlContext {
     }
 
     public MockRequestContext setMethod(final HttpMethod method) {
-        getHttpServletRequest().setContentType(method.name());
+        getHttpServletRequest().setMethod(method.name());
         return this;
     }
 
