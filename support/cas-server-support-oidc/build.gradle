@@ -4,7 +4,7 @@ ext {
     projectMetadata = [
             category: "OpenID Connect Protocol",
             title: "OpenID Connect Identity Provider",
-            aliases: ["oidc"]
+            aliases: ["oidc", "openidconnect", "openid"]
     ]
 }
 
@@ -43,6 +43,8 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-tickets-api")
 
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
+
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
 
@@ -74,6 +76,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-jpa-hibernate")
     testImplementation project(":support:cas-server-support-mongo-core")
+    testImplementation project(":support:cas-server-support-discovery-profile-core")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

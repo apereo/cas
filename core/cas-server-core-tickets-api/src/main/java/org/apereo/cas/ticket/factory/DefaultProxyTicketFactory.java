@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,7 +36,8 @@ import java.util.Map;
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    private final ExpirationPolicyBuilder<ProxyTicket> proxyTicketExpirationPolicy;
+    @Getter
+    private final ExpirationPolicyBuilder<ProxyTicket> expirationPolicyBuilder;
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -115,6 +117,6 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                     Beans.newDuration(ttl).getSeconds());
             }
         }
-        return proxyTicketExpirationPolicy.buildTicketExpirationPolicy();
+        return expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

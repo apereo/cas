@@ -11,6 +11,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -27,9 +28,7 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
      */
     protected final UniqueTicketIdGenerator idGenerator;
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
+    @Getter
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
 
     @Override

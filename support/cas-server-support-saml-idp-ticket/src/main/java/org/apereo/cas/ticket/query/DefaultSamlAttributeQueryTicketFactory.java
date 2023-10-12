@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
@@ -27,10 +28,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
-    /**
-     * ExpirationPolicy for tokens.
-     */
-    protected final ExpirationPolicyBuilder expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder expirationPolicyBuilder;
 
     /**
      * The Web application service factory.
@@ -54,7 +53,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
                 service.getAttributes().put(RegisteredService.class.getSimpleName(), CollectionUtils.wrapList(relyingParty));
                 service.getAttributes().put("owner", CollectionUtils.wrapList(getTicketType().getName()));
                 return new SamlAttributeQueryTicketImpl(codeId, service,
-                    expirationPolicy.buildTicketExpirationPolicy(),
+                    expirationPolicyBuilder.buildTicketExpirationPolicy(),
                     relyingParty, w.toString(), Objects.requireNonNull(ticketGrantingTicket).getAuthentication());
             }
         });

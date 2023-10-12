@@ -1,12 +1,14 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,5 +44,19 @@ public class DefaultTicketFactory implements TicketFactory {
                                                  final @NonNull TicketFactory factory) {
         this.factoryMap.put(ticketClass.getCanonicalName(), factory);
         return this;
+    }
+
+    @Override
+    public ExpirationPolicyBuilder getExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder<>() {
+
+            @Serial
+            private static final long serialVersionUID = -8720633582482747264L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return AlwaysExpiresExpirationPolicy.INSTANCE;
+            }
+        };
     }
 }

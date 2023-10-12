@@ -52,7 +52,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     }
 
     @Override
-    protected Collection<IndirectClient> loadClients() {
+    protected Collection<IndirectClient> loadIdentityProviders() {
         val restProperties = casProperties.getAuthn().getPac4j().getRest();
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(restProperties.getBasicAuthPassword())

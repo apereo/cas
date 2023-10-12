@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -22,6 +23,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory<TransientSessionTicket> {
     private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicyBuilder;
 

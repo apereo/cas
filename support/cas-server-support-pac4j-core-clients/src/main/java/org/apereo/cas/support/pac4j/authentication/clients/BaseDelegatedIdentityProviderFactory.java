@@ -106,13 +106,13 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     private final Cache<String, Collection<IndirectClient>> clientsCache;
 
-    protected abstract Collection<IndirectClient> loadClients();
+    protected abstract Collection<IndirectClient> loadIdentityProviders();
 
     @Override
     public final Collection<IndirectClient> build() {
         return lock.tryLock(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
-            val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadClients() : getCachedClients();
+            val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadIdentityProviders() : getCachedClients();
             clientsCache.put(casProperties.getServer().getName(), currentClients);
             return currentClients;
         });

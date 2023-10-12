@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,10 +39,8 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
      */
     protected final UniqueTicketIdGenerator oAuthCodeIdGenerator;
 
-    /**
-     * ExpirationPolicy for tokens.
-     */
-    protected final ExpirationPolicyBuilder<OAuth20Code> expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<OAuth20Code> expirationPolicyBuilder;
 
     /**
      * Services manager.
@@ -100,6 +99,6 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                 return new OAuth20CodeExpirationPolicy(count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicy.buildTicketExpirationPolicy();
+        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

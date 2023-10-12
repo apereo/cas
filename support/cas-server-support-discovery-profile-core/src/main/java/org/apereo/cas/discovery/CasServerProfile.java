@@ -2,7 +2,6 @@ package org.apereo.cas.discovery;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -33,19 +32,9 @@ public class CasServerProfile implements Serializable {
     private Map<String, String> multifactorAuthenticationProviderTypesSupported;
 
     /**
-     * The type of delegated clients that <i>are</i> supported by this CAS instance.
-     */
-    private Set<String> delegatedClientTypesSupported;
-
-    /**
      * The list of available attributes currently active and configured in the CAS application context.
      */
     private Set<String> availableAttributes;
-
-    /**
-     * List of user defined OIDC scopes.
-     */
-    private Set<String> userDefinedScopes;
 
     /**
      * Collection of available authentication handlers.
@@ -56,4 +45,9 @@ public class CasServerProfile implements Serializable {
      * Map of supported tickets from the catalog.
      */
     private Map<String, Map<String, Object>> ticketTypesSupported = new LinkedHashMap<>();
+
+    /**
+     * Profile details that can be augmented by other modules and extensions.
+     */
+    private Map<String, Object> details = new LinkedHashMap<>();
 }

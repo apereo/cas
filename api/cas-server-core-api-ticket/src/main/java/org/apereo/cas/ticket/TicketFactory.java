@@ -9,7 +9,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@FunctionalInterface
 public interface TicketFactory {
 
     /**
@@ -43,4 +42,11 @@ public interface TicketFactory {
      * @return the ticket type
      */
     Class<? extends Ticket> getTicketType();
+
+    /**
+     * Gets expiration policy builder.
+     *
+     * @return the expiration policy builder
+     */
+    ExpirationPolicyBuilder getExpirationPolicyBuilder();
 }

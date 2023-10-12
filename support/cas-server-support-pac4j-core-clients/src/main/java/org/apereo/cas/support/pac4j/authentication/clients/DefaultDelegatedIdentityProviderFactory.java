@@ -32,7 +32,7 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     }
 
     @Override
-    protected Collection<IndirectClient> loadClients() {
+    protected Collection<IndirectClient> loadIdentityProviders() {
         return buildAllIdentityProviders(casProperties);
     }
 

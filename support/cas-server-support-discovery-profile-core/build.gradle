@@ -1,4 +1,13 @@
-description = "Apereo CAS Discovery Core API Support"
+description = "Apereo CAS Discovery Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Reporting",
+            title: "Discovery Profile",
+            aliases: ["discovery"]
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
@@ -8,8 +17,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")
-
-    implementation project(":support:cas-server-support-discovery-profile-core")
 
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
@@ -31,10 +38,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-logging")
-
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
-
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

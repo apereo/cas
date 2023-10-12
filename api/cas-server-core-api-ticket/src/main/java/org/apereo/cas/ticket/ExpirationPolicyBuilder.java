@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
