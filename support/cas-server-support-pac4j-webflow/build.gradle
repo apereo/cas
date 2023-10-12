@@ -52,6 +52,7 @@ dependencies {
     testImplementation libraries.casclient
     testImplementation libraries.mongo
 
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-mongo-core")
@@ -82,6 +83,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-saml-idp-web")
     testImplementation project(":support:cas-server-support-scim-core")
     testImplementation project(":support:cas-server-support-scim")
+    testImplementation project(":support:cas-server-support-discovery-profile-core")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")

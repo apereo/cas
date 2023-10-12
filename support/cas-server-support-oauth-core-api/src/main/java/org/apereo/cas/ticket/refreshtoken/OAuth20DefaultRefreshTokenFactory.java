@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,19 +36,17 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final UniqueTicketIdGenerator refreshTokenIdGenerator;
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
-    protected final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder;
 
     /**
      * Services manager.
      */
     protected final ServicesManager servicesManager;
 
-    public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicy,
+    public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicyBuilder,
                                              final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, servicesManager);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                 return new OAuth20RefreshTokenExpirationPolicy(Beans.newDuration(timeToKill).getSeconds());
             }
         }
-        return this.expirationPolicy.buildTicketExpirationPolicy();
+        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 
     @Override

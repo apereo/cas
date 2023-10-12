@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
@@ -52,6 +53,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -60,6 +62,7 @@ import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -352,6 +355,24 @@ public class DelegatedAuthenticationEventExecutionPlanConfiguration {
                     plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
                 }
             };
+        }
+    }
+
+
+    @Configuration(value = "DelegatedAuthenticationDiscoveryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(CasServerProfileCustomizer.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery)
+    public static class DelegatedAuthenticationDiscoveryConfiguration {
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "delegatedAuthenticationCasServerProfileCustomizer")
+        @Bean
+        public CasServerProfileCustomizer delegatedAuthenticationCasServerProfileCustomizer(
+            @Qualifier("delegatedIdentityProviders") final DelegatedIdentityProviders identityProviders,
+            final CasConfigurationProperties casProperties) {
+            val clients = identityProviders.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
+            return profile -> profile.getDetails().put("delegatedClientTypesSupported", clients);
         }
     }
 }

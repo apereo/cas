@@ -42,7 +42,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     /**
      * ExpirationPolicy for refresh tokens.
      */
-    protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicy;
+    protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
 
     /**
      * JWT builder instance.
@@ -54,10 +54,10 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
      */
     protected final ServicesManager servicesManager;
 
-    public OAuth20DefaultAccessTokenFactory(final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicy,
+    public OAuth20DefaultAccessTokenFactory(final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder,
                                             final JwtBuilder jwtBuilder,
                                             final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, jwtBuilder, servicesManager);
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicyBuilder, jwtBuilder, servicesManager);
     }
 
     @Override
@@ -109,6 +109,6 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
                     Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.expirationPolicy.buildTicketExpirationPolicy();
+        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

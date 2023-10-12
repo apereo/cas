@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -22,10 +23,8 @@ public class OAuth20DefaultDeviceTokenFactory implements OAuth20DeviceTokenFacto
      */
     protected final UniqueTicketIdGenerator deviceTokenIdGenerator;
 
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
-    protected final ExpirationPolicyBuilder<OAuth20DeviceToken> expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<OAuth20DeviceToken> expirationPolicyBuilder;
 
     /**
      * Length of the generated user code.
@@ -40,7 +39,7 @@ public class OAuth20DefaultDeviceTokenFactory implements OAuth20DeviceTokenFacto
     @Override
     public OAuth20DeviceToken createDeviceCode(final Service service) throws Throwable {
         val codeId = deviceTokenIdGenerator.getNewTicketId(OAuth20DeviceToken.PREFIX);
-        val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicy, service);
+        val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicyBuilder, service);
         return new OAuth20DefaultDeviceToken(codeId, service, expirationPolicyToUse);
     }
 

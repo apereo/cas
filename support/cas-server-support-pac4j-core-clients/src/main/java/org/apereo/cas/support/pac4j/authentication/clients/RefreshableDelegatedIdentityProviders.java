@@ -41,8 +41,8 @@ public class RefreshableDelegatedIdentityProviders extends Clients implements De
     }
 
     protected List<Client> buildDelegatedClients() {
-        val clients = delegatedIdentityProviderFactory.build();
-        LOGGER.debug("The following clients are built: [{}]", clients);
-        return new ArrayList<>(clients);
+        val providers = delegatedIdentityProviderFactory.build();
+        LOGGER.debug("The following clients are built: [{}]", providers);
+        return new ArrayList<>(providers);
     }
 }

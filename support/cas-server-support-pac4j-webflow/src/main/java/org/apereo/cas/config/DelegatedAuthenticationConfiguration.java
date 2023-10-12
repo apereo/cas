@@ -14,14 +14,6 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.scribejava.core.model.OAuth1RequestToken;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,8 +22,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.io.Serial;
 
 /**
  * This is {@link DelegatedAuthenticationConfiguration}.
@@ -43,7 +33,6 @@ import java.io.Serial;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
 public class DelegatedAuthenticationConfiguration {
-
     @Configuration(value = "DelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DelegatedAuthenticationBaseConfiguration {
@@ -52,14 +41,6 @@ public class DelegatedAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
         public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
             return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "pac4jJacksonModule")
-        public Module pac4jJacksonModule() {
-            val module = new SimpleModule();
-            module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
-            return module;
         }
     }
 
@@ -111,30 +92,5 @@ public class DelegatedAuthenticationConfiguration {
             final SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy);
         }
-    }
-
-    /**
-     * The type Oauth1 request token mixin.
-     */
-    private abstract static class AbstractOAuth1RequestTokenMixin extends OAuth1RequestToken {
-        @Serial
-        private static final long serialVersionUID = -7839084408338396531L;
-
-        @JsonCreator
-        AbstractOAuth1RequestTokenMixin(
-            @JsonProperty("token")
-            final String token,
-            @JsonProperty("tokenSecret")
-            final String tokenSecret,
-            @JsonProperty("oauthCallbackConfirmed")
-            final boolean oauthCallbackConfirmed,
-            @JsonProperty("rawResponse")
-            final String rawResponse) {
-            super(token, tokenSecret, oauthCallbackConfirmed, rawResponse);
-        }
-
-        @JsonIgnore
-        @Override
-        public abstract boolean isEmpty();
     }
 }

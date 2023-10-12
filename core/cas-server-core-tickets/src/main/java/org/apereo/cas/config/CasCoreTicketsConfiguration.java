@@ -59,6 +59,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -231,12 +232,12 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketCatalog ticketCatalog(
             final CasConfigurationProperties casProperties,
-            final List<TicketCatalogConfigurer> configurers) {
+            final List<TicketCatalogConfigurer> configurers) throws Throwable {
             val plan = new DefaultTicketCatalog();
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring ticket metadata registration plan [{}]", c.getName());
-                c.configureTicketCatalog(plan, casProperties);
-            });
+            configurers.forEach(Unchecked.consumer(cfg -> {
+                LOGGER.trace("Configuring ticket metadata registration plan [{}]", cfg.getName());
+                cfg.configureTicketCatalog(plan, casProperties);
+            }));
             return plan;
         }
     }

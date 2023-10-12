@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.springframework.core.Ordered;
 
@@ -19,10 +20,13 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
         return new DefaultTicketDefinition(impl, api, prefix, order);
     }
 
-    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix, final Class impl, final Class api) {
+    protected TicketDefinition buildTicketDefinition(final TicketCatalog plan, final String prefix,
+                                                     final Class impl, final Class api) throws Throwable {
         if (plan.contains(prefix)) {
             return plan.find(prefix);
         }
+        FunctionUtils.throwIf(!api.isInterface(), () -> new IllegalArgumentException("Ticket API class %s must be an interface".formatted(api.getName())));
+        FunctionUtils.throwIf(impl.isInterface(), () -> new IllegalArgumentException("Ticket implementation class %s must be a concrete class".formatted(api.getName())));
         return new DefaultTicketDefinition(impl, api, prefix, Ordered.LOWEST_PRECEDENCE);
     }
 

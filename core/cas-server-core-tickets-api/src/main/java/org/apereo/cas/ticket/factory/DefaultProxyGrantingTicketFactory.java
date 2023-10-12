@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,19 +36,11 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /**
-     * Expiration policy for ticket granting tickets.
-     */
-    protected final ExpirationPolicyBuilder<ProxyGrantingTicket> ticketGrantingTicketExpirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<ProxyGrantingTicket> expirationPolicyBuilder;
 
-    /**
-     * The ticket cipher.
-     */
     protected final CipherExecutor<String, String> cipherExecutor;
 
-    /**
-     * The service manager.
-     */
     protected final ServicesManager servicesManager;
 
     @Override
@@ -122,7 +115,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
         }
         LOGGER.trace("Using default ticket-granting ticket policy for proxy-granting ticket");
         return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+            this.expirationPolicyBuilder.buildTicketExpirationPolicy());
 
     }
 

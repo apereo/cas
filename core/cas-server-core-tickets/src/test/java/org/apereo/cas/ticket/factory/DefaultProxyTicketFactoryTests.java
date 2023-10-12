@@ -37,13 +37,15 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
 
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("customExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
             RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
-        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
         val ticket = factory.create(pgt, service, ProxyTicket.class);
         assertNotNull(ticket);
         assertEquals(1984, ticket.getExpirationPolicy().getTimeToLive());
+        
+        assertTrue(ticketFactory.getExpirationPolicyBuilder().buildTicketExpirationPolicy().isExpired(ticket));
     }
 
     @Test
@@ -52,10 +54,10 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
             RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
-        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
         val ticket = factory.create(pgt, service, ProxyTicket.class);
         assertNotNull(ticket);
         assertEquals(10, ticket.getExpirationPolicy().getTimeToLive());
@@ -67,10 +69,10 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
             RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
-        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
         assertThrows(ClassCastException.class, () -> factory.create(pgt, service, TransientSessionTicket.class));
     }
 
@@ -80,10 +82,10 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         servicesManager.save(defaultSvc);
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = CoreAuthenticationTestUtils.getService("defaultExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
+        val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
             RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
-        val factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
+        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
         assertNotNull(factory.create(pgt, service, ProxyTicket.class));
     }
 }

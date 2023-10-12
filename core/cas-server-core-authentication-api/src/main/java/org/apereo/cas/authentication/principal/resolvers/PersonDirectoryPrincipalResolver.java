@@ -165,7 +165,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return builder.principalId(principalId).attributes(convertedAttributes).build();
     }
 
-    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId,
+                                                                 final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes,
                                                                  final Optional<Service> givenService) {

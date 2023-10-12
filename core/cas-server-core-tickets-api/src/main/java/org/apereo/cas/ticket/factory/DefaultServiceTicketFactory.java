@@ -36,7 +36,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Getter
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    private final ExpirationPolicyBuilder<ServiceTicket> ticketExpirationPolicy;
+    private final ExpirationPolicyBuilder<ServiceTicket> expirationPolicyBuilder;
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -128,6 +128,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.ticketExpirationPolicy.buildTicketExpirationPolicy();
+        return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }
