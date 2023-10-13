@@ -6,8 +6,9 @@ const cas = require('../../cas.js');
     params.append('username', 'casuser');
     params.append('password', 'Mellon');
     params.append('passcode', '352410');
+    params.append('duration', 'PT15S');
 
-    await cas.doPost("https://localhost:8443/cas/actuator/awsSts?duration=PT15S",
+    await cas.doPost("https://localhost:8443/cas/actuator/awsSts",
         params, {
             'Content-Type': "application/x-www-form-urlencoded"
         }, res => {

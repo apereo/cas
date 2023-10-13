@@ -34,7 +34,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     @Test
     void verifyGoodOtp() throws Throwable {
-        request.addParameter("otp", OTP);
+        requestContext.setParameter("otp", OTP);
         when(service.authenticateExtended(LOGIN, OTP)).thenReturn(deviceResponse(InweboResult.OK));
 
         val event = action.execute(requestContext);
@@ -44,7 +44,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     @Test
     void verifyBadOtp() throws Throwable {
-        request.addParameter("otp", OTP);
+        requestContext.setParameter("otp", OTP);
         when(service.authenticateExtended(LOGIN, OTP)).thenReturn(deviceResponse(InweboResult.NOK));
 
         val event = action.execute(requestContext);

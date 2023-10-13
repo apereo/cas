@@ -26,7 +26,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,8 +44,6 @@ public abstract class BaseInweboActionTests {
     private static final String DEVICE_NAME = "my device";
 
     protected MockRequestContext requestContext;
-
-    protected MockHttpServletRequest request;
 
     protected InweboService service;
 

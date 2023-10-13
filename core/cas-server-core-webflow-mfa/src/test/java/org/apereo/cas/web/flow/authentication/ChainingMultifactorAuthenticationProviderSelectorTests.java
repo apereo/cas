@@ -37,6 +37,6 @@ class ChainingMultifactorAuthenticationProviderSelectorTests {
 
         val result = selector.resolve(List.of(provider1, provider2),
             RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getPrincipal());
-        assertTrue(result instanceof DefaultChainingMultifactorAuthenticationProvider);
+        assertInstanceOf(DefaultChainingMultifactorAuthenticationProvider.class, result);
     }
 }

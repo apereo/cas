@@ -106,7 +106,7 @@ class RedisServerTicketRegistryTests {
             val sessions = getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).toList();
             assertEquals(totalThreads, sessions.size());
             sessions.forEach(Unchecked.consumer(ticket -> {
-                assertTrue(ticket instanceof TicketGrantingTicket);
+                assertInstanceOf(TicketGrantingTicket.class, ticket);
                 getNewTicketRegistry().deleteTicket(ticket);
             }));
             assertEquals(0, getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).count());

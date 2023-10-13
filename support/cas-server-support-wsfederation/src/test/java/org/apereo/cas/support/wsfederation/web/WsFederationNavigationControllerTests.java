@@ -53,7 +53,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         val id = config.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
         val view = wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
     }
 
     @Test

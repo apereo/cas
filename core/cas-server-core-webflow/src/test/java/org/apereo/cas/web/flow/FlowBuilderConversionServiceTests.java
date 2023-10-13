@@ -29,10 +29,10 @@ class FlowBuilderConversionServiceTests extends BaseWebflowConfigurerTests {
         val conversionService = flowBuilderServices.getConversionService();
 
         var result = conversionService.executeConversion("https://github.io", Service.class);
-        assertTrue(result instanceof Service);
+        assertInstanceOf(Service.class, result);
 
         result = conversionService.executeConversion(StringToCharArrayConverter.ID, "Mellon", char[].class);
-        assertTrue(result instanceof char[]);
+        assertInstanceOf(char[].class, result);
 
         assertThrows(ConversionExecutorNotFoundException.class,
             () -> conversionService.executeConversion("unknown", "Mellon", char[].class));

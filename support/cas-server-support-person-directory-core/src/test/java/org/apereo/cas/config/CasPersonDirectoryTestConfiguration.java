@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -51,13 +50,13 @@ public class CasPersonDirectoryTestConfiguration {
 
     @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
-    public AttributeDefinitionStore attributeDefinitionStore(final CasConfigurationProperties casProperties) throws Exception {
+    public AttributeDefinitionStore attributeDefinitionStore(
+        final CasConfigurationProperties casProperties) throws Exception {
         val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
-        if (ResourceUtils.doesResourceExist(resource)) {
-            return new DefaultAttributeDefinitionStore(resource);
-        }
-        return new DefaultAttributeDefinitionStore();
+        val store = new DefaultAttributeDefinitionStore(resource);
+        store.setScope(casProperties.getServer().getScope());
+        return store;
     }
 
     @Bean

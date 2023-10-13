@@ -30,7 +30,7 @@ const fs = require('fs');
     await cas.log("Getting events...");
 
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
+        async res => {
             const count = Object.keys(res.data[1]).length;
             cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
@@ -44,7 +44,7 @@ const fs = require('fs');
             res.data[1].forEach(entry => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
             archive.finalize();
 
-        }, error => {
+        }, async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
@@ -52,7 +52,7 @@ const fs = require('fs');
     await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
     await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => assert(Object.keys(res.data[1]).length === 0), error => {
+        async res => assert(Object.keys(res.data[1]).length === 0), async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 
@@ -67,11 +67,11 @@ const fs = require('fs');
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        res => {
+        async res => {
             const count = Object.keys(res.data[1]).length;
             cas.log(`Total event records found ${count}`);
             assert(count === totalAttempts + 1);
-        }, error => {
+        }, async error => {
             throw error;
         }, {'Content-Type': "application/json"});
 

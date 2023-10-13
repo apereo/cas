@@ -105,7 +105,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertTrue(modelAndView.getView() instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, modelAndView.getView());
         val modelView = (RedirectView) modelAndView.getView();
         assertEquals(REDIRECT_URI, modelView.getUrl());
 
@@ -306,7 +306,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -355,7 +355,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -407,7 +407,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -458,7 +458,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -504,7 +504,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         var redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -551,7 +551,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -597,7 +597,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);
@@ -680,7 +680,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         val view = modelAndView.getView();
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
         val redirectView = (RedirectView) view;
         val redirectUrl = redirectView.getUrl();
         assertNotNull(redirectUrl);

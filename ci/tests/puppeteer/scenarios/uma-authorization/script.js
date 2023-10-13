@@ -99,7 +99,7 @@ const cas = require('../../cas.js');
 
     await cas.log("Checking for UMA JWKS");
     await cas.doGet(`https://localhost:8443/cas/oauth2.0/umaJwks`,
-        res => assert(res.status === 200), error => {
+        async res => assert(res.status === 200), async error => {
             throw error;
         });
 

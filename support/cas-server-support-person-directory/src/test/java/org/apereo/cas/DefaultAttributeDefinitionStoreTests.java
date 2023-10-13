@@ -102,7 +102,7 @@ class DefaultAttributeDefinitionStoreTests {
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
         assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
-        assertTrue(((List) attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
+        assertTrue(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6").contains("cas-user-id@cas.org"));
     }
 
     private Map<String, List<Object>> getAllReleasedAttributesForCasUser() throws Throwable {
@@ -186,7 +186,7 @@ class DefaultAttributeDefinitionStoreTests {
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("interesting-attribute"));
-        assertTrue(((List) attributes.get("interesting-attribute")).contains("cas-given-name@cas.org"));
+        assertTrue(attributes.get("interesting-attribute").contains("cas-given-name@cas.org"));
     }
 
     @Test

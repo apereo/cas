@@ -29,7 +29,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getRememberMe().setEnabled(true);
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof RememberMeDelegatingExpirationPolicy);
+        assertInstanceOf(RememberMeDelegatingExpirationPolicy.class, builder.buildTicketExpirationPolicy());
         assertNotNull(builder.toString());
         assertNotNull(builder.casProperties());
     }
@@ -40,7 +40,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("-1");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("-1");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof NeverExpiresExpirationPolicy);
+        assertInstanceOf(NeverExpiresExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 
     @Test
@@ -49,7 +49,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("10");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("10");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof TicketGrantingTicketExpirationPolicy);
+        assertInstanceOf(TicketGrantingTicketExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 
     @Test
@@ -57,7 +57,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getTimeout().setMaxTimeToLiveInSeconds("10");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof TimeoutExpirationPolicy);
+        assertInstanceOf(TimeoutExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 
     @Test
@@ -65,7 +65,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getHardTimeout().setTimeToKillInSeconds("PT10S");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof HardTimeoutExpirationPolicy);
+        assertInstanceOf(HardTimeoutExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 
     @Test
@@ -74,7 +74,7 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         props.getTicket().getTgt().getThrottledTimeout().setTimeInBetweenUsesInSeconds("10");
         props.getTicket().getTgt().getThrottledTimeout().setTimeToKillInSeconds("10");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof ThrottledUseAndTimeoutExpirationPolicy);
+        assertInstanceOf(ThrottledUseAndTimeoutExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 
     @Test
@@ -83,6 +83,6 @@ class TicketGrantingTicketExpirationPolicyBuilderTests {
         props.getTicket().getTgt().getPrimary().setMaxTimeToLiveInSeconds("0");
         props.getTicket().getTgt().getPrimary().setTimeToKillInSeconds("NEVER");
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(props);
-        assertTrue(builder.buildTicketExpirationPolicy() instanceof AlwaysExpiresExpirationPolicy);
+        assertInstanceOf(AlwaysExpiresExpirationPolicy.class, builder.buildTicketExpirationPolicy());
     }
 }

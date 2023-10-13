@@ -373,7 +373,7 @@ public abstract class BaseTicketRegistryTests {
         val found = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertNotNull(found, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
 
-        assertTrue(found instanceof AuthenticatedServicesAwareTicketGrantingTicket);
+        assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, found);
         var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
@@ -381,7 +381,7 @@ public abstract class BaseTicketRegistryTests {
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertTrue(tgtResult instanceof AuthenticatedServicesAwareTicketGrantingTicket);
+        assertInstanceOf(AuthenticatedServicesAwareTicketGrantingTicket.class, tgtResult);
         services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
         assertEquals(Collections.singleton("ST-1"), services.keySet());
     }

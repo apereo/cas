@@ -588,9 +588,11 @@ public class SamlIdPConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAttributeDefinitionStoreConfigurer")
-        public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer() {
+        public AttributeDefinitionStoreConfigurer samlIdPAttributeDefinitionStoreConfigurer(
+            final CasConfigurationProperties casProperties) {
             return store -> FunctionUtils.doUnchecked(__ -> {
                 try (val samlStore = new DefaultAttributeDefinitionStore(new ClassPathResource("samlidp-attribute-definitions.json"))) {
+                    samlStore.setScope(casProperties.getServer().getScope());
                     store.importStore(samlStore);
                 }
             });

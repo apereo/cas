@@ -23,7 +23,7 @@ class SimplePrincipalFactoryTests {
         map.put("a2", List.of("v3"));
 
         val p = fact.createPrincipal("user", map);
-        assertTrue(p instanceof SimplePrincipal);
+        assertInstanceOf(SimplePrincipal.class, p);
         assertEquals(p.getAttributes(), map);
     }
 
@@ -36,8 +36,8 @@ class SimplePrincipalFactoryTests {
 
         val p = fact.createPrincipal("user", map);
         val p2 = fact.createPrincipal("USER", map);
-        assertTrue(p instanceof SimplePrincipal);
-        assertTrue(p2 instanceof SimplePrincipal);
+        assertInstanceOf(SimplePrincipal.class, p);
+        assertInstanceOf(SimplePrincipal.class, p2);
         assertEquals(p.getAttributes(), map);
         assertEquals(p2.getAttributes(), map);
         assertEquals(p2.getAttributes(), p.getAttributes());
