@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -219,7 +220,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
                     var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-                    return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory,
+                    return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory,
                         attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, jaasPrincipal, personDirectory);
                 })
                 .collect(Collectors.toList()));

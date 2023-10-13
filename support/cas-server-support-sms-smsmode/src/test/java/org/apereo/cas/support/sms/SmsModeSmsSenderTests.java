@@ -23,11 +23,11 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-        SmsModeSmsConfiguration.class
+    SmsModeSmsConfiguration.class
 },
-        properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
+    properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
 @Tag("SMS")
 class SmsModeSmsSenderTests {
     @Autowired

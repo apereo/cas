@@ -16,7 +16,7 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-support-pac4j")
+@RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +113,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     @BeforeEach
     protected void setUp() {
-        this.personDirectoryResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(
+        this.personDirectoryResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
             PrincipalFactoryUtils.newPrincipalFactory(),
             attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),

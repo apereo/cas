@@ -20,6 +20,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-person-directory-core")
 
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")

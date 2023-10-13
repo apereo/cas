@@ -52,7 +52,6 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseWebAuthnWebflowTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         AopAutoConfiguration.class

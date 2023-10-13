@@ -85,7 +85,6 @@ public abstract class AbstractCasEndpointTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

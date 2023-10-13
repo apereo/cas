@@ -754,7 +754,6 @@ public abstract class AbstractOAuth20Tests {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

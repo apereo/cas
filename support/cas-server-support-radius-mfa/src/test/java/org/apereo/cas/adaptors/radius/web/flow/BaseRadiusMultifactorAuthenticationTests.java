@@ -47,7 +47,6 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseRadiusMultifactorAuthenticationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

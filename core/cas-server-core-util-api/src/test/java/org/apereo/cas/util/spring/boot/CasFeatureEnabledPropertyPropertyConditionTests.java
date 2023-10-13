@@ -62,7 +62,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledTests {

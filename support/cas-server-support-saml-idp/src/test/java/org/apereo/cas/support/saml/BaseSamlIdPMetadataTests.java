@@ -56,7 +56,6 @@ public abstract class BaseSamlIdPMetadataTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         ObservationAutoConfiguration.class,

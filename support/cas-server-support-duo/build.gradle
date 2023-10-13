@@ -40,7 +40,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-themes")
-    
     testImplementation project(":support:cas-server-support-surrogate-webflow")
     testImplementation project(":support:cas-server-support-surrogate-authentication")
 
@@ -70,4 +69,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

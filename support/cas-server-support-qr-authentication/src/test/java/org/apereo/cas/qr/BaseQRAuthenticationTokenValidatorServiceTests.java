@@ -43,7 +43,6 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

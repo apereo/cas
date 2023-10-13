@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
@@ -186,7 +187,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             .orElseThrow(() ->
                                 new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
                         val principal = wsfed.getPrincipal();
-                        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory, attributeRepository,
+                        val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                             WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
                             principal, personDirectory);

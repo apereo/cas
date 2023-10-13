@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -8,6 +8,20 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationMonitoringConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMonitorConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -32,14 +46,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CasCoreAuthenticationSupportConfigurationTests}.
+ * This is {@link AuthenticationAttributeReleasePolicyTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    CasCoreAuthenticationSupportConfigurationTests.CasCoreAuthenticationSupportTestConfiguration.class,
-    
+    AuthenticationAttributeReleasePolicyTests.CasCoreAuthenticationSupportTestConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     ObservationAutoConfiguration.class,
@@ -68,7 +81,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
-class CasCoreAuthenticationSupportConfigurationTests {
+class AuthenticationAttributeReleasePolicyTests {
     @Autowired
     @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;

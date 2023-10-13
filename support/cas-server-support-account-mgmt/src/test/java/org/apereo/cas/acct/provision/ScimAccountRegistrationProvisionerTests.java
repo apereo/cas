@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
     classes = {
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         CasAccountManagementWebflowConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class,
         CasCoreHttpConfiguration.class,

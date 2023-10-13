@@ -49,33 +49,30 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    BaseCoreWsSecurityIdentityProviderConfigurationTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
-    "cas.authn.wsfed-idp.idp.realm-name=CAS",
+@SpringBootTest(
+    classes = BaseCoreWsSecurityIdentityProviderConfigurationTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+        "cas.authn.wsfed-idp.idp.realm-name=CAS",
 
-    "cas.authn.wsfed-idp.sts.signing-keystore-file=classpath:ststrust.jks",
-    "cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
+        "cas.authn.wsfed-idp.sts.signing-keystore-file=classpath:ststrust.jks",
+        "cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
 
-    "cas.authn.wsfed-idp.sts.encryption-keystore-file=classpath:stsencrypt.jks",
-    "cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
+        "cas.authn.wsfed-idp.sts.encryption-keystore-file=classpath:stsencrypt.jks",
+        "cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
 
-    "cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
-    "cas.authn.wsfed-idp.sts.encrypt-tokens=true",
+        "cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
+        "cas.authn.wsfed-idp.sts.encrypt-tokens=true",
 
-    "cas.authn.wsfed-idp.sts.realm.keystore-file=stsrealm_a.jks",
-    "cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
-    "cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
-    "cas.authn.wsfed-idp.sts.realm.key-password=realma",
-    "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
-})
+        "cas.authn.wsfed-idp.sts.realm.keystore-file=stsrealm_a.jks",
+        "cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
+        "cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
+        "cas.authn.wsfed-idp.sts.realm.key-password=realma",
+        "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
+    })
 public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class

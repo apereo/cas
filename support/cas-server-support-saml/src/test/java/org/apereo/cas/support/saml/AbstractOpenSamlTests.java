@@ -127,7 +127,6 @@ public abstract class AbstractOpenSamlTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,

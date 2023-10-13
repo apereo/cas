@@ -48,7 +48,6 @@ public abstract class BaseGoogleAuthenticatorTests {
     
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

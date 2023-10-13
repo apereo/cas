@@ -19,7 +19,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsOrNot;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**

@@ -7,6 +7,8 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-notifications")
+
+    implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-ldap-core")
     
     implementation libraries.bouncycastle

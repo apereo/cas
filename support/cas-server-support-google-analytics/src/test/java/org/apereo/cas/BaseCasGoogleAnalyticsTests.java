@@ -42,7 +42,6 @@ public abstract class BaseCasGoogleAnalyticsTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

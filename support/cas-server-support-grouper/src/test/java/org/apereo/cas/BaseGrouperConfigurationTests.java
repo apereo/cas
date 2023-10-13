@@ -52,7 +52,6 @@ import static org.mockito.Mockito.*;
 public abstract class BaseGrouperConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })

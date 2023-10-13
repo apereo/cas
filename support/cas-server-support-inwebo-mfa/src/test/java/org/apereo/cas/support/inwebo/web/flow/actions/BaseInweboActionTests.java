@@ -68,7 +68,7 @@ public abstract class BaseInweboActionTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
 
-        MockRequestContext.create(applicationContext);
+        this.requestContext = MockRequestContext.create(applicationContext);
 
         service = mock(InweboService.class);
 

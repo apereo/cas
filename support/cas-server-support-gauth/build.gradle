@@ -59,4 +59,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-gauth-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

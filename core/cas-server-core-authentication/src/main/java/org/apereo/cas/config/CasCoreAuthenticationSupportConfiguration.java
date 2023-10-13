@@ -61,7 +61,6 @@ public class CasCoreAuthenticationSupportConfiguration {
             return new DefaultPrincipalAttributesRepositoryCache();
         }
     }
-
     @Configuration(value = "CasCoreAuthenticationHandlerResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationHandlerResolverConfiguration {

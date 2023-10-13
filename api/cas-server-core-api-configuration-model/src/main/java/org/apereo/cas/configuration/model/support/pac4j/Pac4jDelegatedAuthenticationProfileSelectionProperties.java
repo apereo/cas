@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@RequiresModule(name = "cas-server-support-pac4j")
+@RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
