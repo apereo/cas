@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -67,6 +68,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    BaseCasCoreTests.SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,

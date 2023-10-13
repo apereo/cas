@@ -13,6 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":support:cas-server-support-person-directory-core")
+
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-validation-core")
 
@@ -42,7 +44,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-validation", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
 }

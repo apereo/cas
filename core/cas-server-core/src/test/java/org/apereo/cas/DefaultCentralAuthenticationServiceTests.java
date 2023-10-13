@@ -398,7 +398,9 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
         val auth = assertion.getPrimaryAuthentication();
-        assertEquals(0, auth.getPrincipal().getAttributes().size());
+        val attributes = auth.getPrincipal().getAttributes();
+        assertEquals(1, attributes.size());
+        assertTrue(attributes.containsKey("binaryAttribute"));
     }
 
     @Test
@@ -410,7 +412,13 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
         val auth = assertion.getPrimaryAuthentication();
-        assertEquals(4, auth.getPrincipal().getAttributes().size());
+        val attributes = auth.getPrincipal().getAttributes();
+        assertEquals(5, attributes.size());
+        assertTrue(attributes.containsKey("uid"));
+        assertTrue(attributes.containsKey("mail"));
+        assertTrue(attributes.containsKey("binaryAttribute"));
+        assertTrue(attributes.containsKey("groupMembership"));
+        assertTrue(attributes.containsKey("eduPersonAffiliation"));
     }
 
     @Test

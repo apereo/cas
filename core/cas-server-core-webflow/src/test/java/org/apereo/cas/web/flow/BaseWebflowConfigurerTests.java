@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -28,21 +29,29 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import java.util.Map;
 
 /**
  * This is {@link BaseWebflowConfigurerTests}.
@@ -86,6 +95,8 @@ public abstract class BaseWebflowConfigurerTests {
     })
     @SpringBootConfiguration
     @Import({
+        SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
+        
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -115,6 +126,21 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
+
     public static class SharedTestConfiguration {
+
+        @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
+        public static class AttributeRepositoryTestConfiguration {
+            @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            @Bean
+            public IPersonAttributeDao attributeRepository() {
+                val attrs = CollectionUtils.wrap(
+                    "uid", CollectionUtils.wrap("uid"),
+                    "mail", CollectionUtils.wrap("cas@apereo.org"),
+                    "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+                    "groupMembership", CollectionUtils.wrap("adopters"));
+                return new StubPersonAttributeDao((Map) attrs);
+            }
+        }
     }
 }

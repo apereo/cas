@@ -37,8 +37,6 @@ class GroovyAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
-
-    
     @Test
     void verifyOperation() throws Throwable {
         MockRequestContext.create();

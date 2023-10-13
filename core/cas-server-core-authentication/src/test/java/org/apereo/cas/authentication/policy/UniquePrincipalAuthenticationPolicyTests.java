@@ -28,6 +28,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -63,30 +64,27 @@ class UniquePrincipalAuthenticationPolicyTests {
 
     @Test
     void verifyPolicyIsGoodUserNotFound() throws Throwable {
-        this.ticketRegistry.deleteAll();
-        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+        val policy = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
             new LinkedHashSet<>(), applicationContext, Optional.empty()).isSuccess());
     }
 
     @Test
     void verifyPolicyWithAssertion() throws Throwable {
-        this.ticketRegistry.deleteAll();
-        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+        val policy = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
             new LinkedHashSet<>(), applicationContext, Optional.of(mock(Assertion.class))).isSuccess());
     }
 
     @Test
     void verifyPolicyFailsUserFoundOnce() throws Throwable {
-        this.ticketRegistry.deleteAll();
-        val ticket = new TicketGrantingTicketImpl("TGT-1",
-            CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            NeverExpiresExpirationPolicy.INSTANCE);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
+            authentication, NeverExpiresExpirationPolicy.INSTANCE);
         this.ticketRegistry.addTicket(ticket);
-        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        val policy = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertThrows(UniquePrincipalRequiredException.class,
-            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            () -> policy.isSatisfiedBy(authentication,
                 new LinkedHashSet<>(), applicationContext, Optional.empty()));
     }
 }

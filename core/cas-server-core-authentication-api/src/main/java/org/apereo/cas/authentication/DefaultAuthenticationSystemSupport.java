@@ -70,9 +70,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResult finalizeAuthenticationTransaction(final Service service, final Credential... credential)
-        throws Throwable {
-
+    public AuthenticationResult finalizeAuthenticationTransaction(final Service service, final Credential... credential) throws Throwable {
         return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);
     }
 }
