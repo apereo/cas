@@ -147,7 +147,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasAcceptableUsagePolicyWebflowConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasWebflowContextConfiguration.class,

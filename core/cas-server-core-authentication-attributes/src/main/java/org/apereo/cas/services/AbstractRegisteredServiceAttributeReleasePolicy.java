@@ -81,6 +81,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (consentPolicy == null) {
             this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
         }
+        canonicalizationMode = StringUtils.defaultIfBlank(canonicalizationMode, CaseCanonicalizationMode.NONE.name());
     }
 
     @Override
@@ -247,7 +248,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease,
                                                                         final RegisteredService service) {
         LOGGER.debug("Final collection of attributes allowed are: [{}]", attributesToRelease);
-        val transform = CaseCanonicalizationMode.valueOf(this.canonicalizationMode);
+        val transform = StringUtils.isBlank(canonicalizationMode)
+            ? CaseCanonicalizationMode.NONE
+            : CaseCanonicalizationMode.valueOf(this.canonicalizationMode);
         if (transform != CaseCanonicalizationMode.NONE) {
             val transformedAttributes = new HashMap<>(attributesToRelease);
             transformedAttributes.forEach((key, value) -> {

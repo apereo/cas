@@ -505,6 +505,7 @@ public class CasOAuth20Configuration {
             @Qualifier("userFormClient") final Client userFormClient,
             @Qualifier("accessTokenClient") final Client accessTokenClient,
             final ObjectProvider<List<OAuth20AuthenticationClientProvider>> providers) {
+            
             val clientProviders = Optional.ofNullable(providers.getIfAvailable()).orElseGet(ArrayList::new);
             AnnotationAwareOrderComparator.sort(clientProviders);
             val clientList = new ArrayList<Client>();

@@ -19,6 +19,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,8 +82,8 @@ public class OidcJwtAuthenticator implements Authenticator {
      */
     protected final ApplicationContext applicationContext;
 
-    protected OidcRegisteredService verifyCredentials(final UsernamePasswordCredentials credentials,
-                                                      final WebContext webContext) throws Throwable {
+    protected JWT verifyCredentials(final UsernamePasswordCredentials credentials,
+                                    final WebContext webContext) throws Throwable {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
@@ -100,35 +101,22 @@ public class OidcJwtAuthenticator implements Authenticator {
                 LOGGER.debug("No assertion is available in the provided credentials");
                 return null;
             }
+            return jwt;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            return null;
         }
-
-        val code = webContext.getRequestParameter(OAuth20Constants.CODE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val oauthCode = FunctionUtils.doAndHandle(() -> {
-            val state = ticketRegistry.getTicket(code, OAuth20Code.class);
-            return state == null || state.isExpired() ? null : state;
-        });
-        val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).get() : oauthCode.getClientId();
-        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
-        val audit = AuditableContext.builder()
-            .registeredService(registeredService)
-            .build();
-        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-        if (accessResult.isExecutionFailure()) {
-            return null;
-        }
-        return registeredService;
+        return null;
     }
+    
 
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
         return FunctionUtils.doUnchecked(() -> {
+            val registeredService = getOidcRegisteredService(callContext);
+            
             val credentials = (UsernamePasswordCredentials) creds;
-            val registeredService = verifyCredentials(credentials, callContext.webContext());
-            if (registeredService == null) {
+            val jwt = verifyCredentials(credentials, callContext.webContext());
+            if (jwt == null) {
                 LOGGER.warn("Unable to verify credentials");
                 return Optional.empty();
             }
@@ -151,10 +139,27 @@ public class OidcJwtAuthenticator implements Authenticator {
             return Optional.of(credentials);
         });
     }
+
+    protected OidcRegisteredService getOidcRegisteredService(final CallContext callContext) throws Throwable {
+        val webContext = callContext.webContext();
+        val code = webContext.getRequestParameter(OAuth20Constants.CODE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val oauthCode = FunctionUtils.doAndHandle(() -> {
+            val givenCode = ticketRegistry.getTicket(code, OAuth20Code.class);
+            return givenCode == null || givenCode.isExpired() ? null : givenCode;
+        });
+        val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow() : oauthCode.getClientId();
+        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        return accessResult.isExecutionFailure() ? null : registeredService;
+    }
     
     protected void determineUserProfile(final UsernamePasswordCredentials credentials,
                                         final JwtConsumer consumer) throws Exception {
-        FunctionUtils.doAndHandle(c -> {
+        FunctionUtils.doAndHandle(__ -> {
             val jwt = consumer.processToClaims(credentials.getPassword());
             val userProfile = new CommonProfile(true);
             userProfile.setId(jwt.getSubject());

@@ -19,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -267,10 +272,11 @@ class ReturnAllowedAttributeReleasePolicyTests {
             assertTrue(attributes.containsKey("mail"));
         }
 
-        @Test
-        void verifyValueCaseTransformation() throws Throwable {
+        @ParameterizedTest
+        @MethodSource("getValueCaseTransformationTestParameters")
+        void verifyValueCaseTransformation(final String canonicalizationMode, final List<String> expectedValues) throws Throwable {
             val policy = new ReturnAllowedAttributeReleasePolicy();
-            policy.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+            policy.setCanonicalizationMode(canonicalizationMode);
             policy.setAllowedAttributes(List.of("uid"));
             policy.postLoad();
             val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("uid", List.of("cas1", "cas2")));
@@ -284,8 +290,16 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val attributes = policy.getAttributes(context);
             assertEquals(1, attributes.size());
             val values = attributes.get("uid");
-            assertTrue(values.contains("CAS1"));
-            assertTrue(values.contains("CAS2"));
+            assertEquals(values, expectedValues);
+        }
+
+        public static Stream<Arguments> getValueCaseTransformationTestParameters() {
+            return Stream.of(
+                arguments(CaseCanonicalizationMode.LOWER.name(), List.of("cas1", "cas2")),
+                arguments(CaseCanonicalizationMode.UPPER.name(), List.of("CAS1", "CAS2")),
+                arguments(CaseCanonicalizationMode.NONE.name(), List.of("cas1", "cas2")),
+                arguments(null, List.of("cas1", "cas2"))
+            );
         }
     }
 
