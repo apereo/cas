@@ -7,16 +7,13 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwt.MalformedClaimException;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
-
 import java.util.Optional;
 
 /**
@@ -44,26 +41,16 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
                                              final CallContext callContext,
                                              final OAuth20AccessToken accessToken) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);
             return profile;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        });
     }
 
-    /**
-     * Validate id token if any.
-     *
-     * @param accessToken the access token
-     * @param profile     the profile
-     * @throws MalformedClaimException the malformed claim exception
-     */
-    protected void validateIdTokenIfAny(final OAuth20AccessToken accessToken, final CommonProfile profile) throws MalformedClaimException {
+    protected void validateIdTokenIfAny(final OAuth20AccessToken accessToken, final CommonProfile profile) throws Exception {
         if (StringUtils.isNotBlank(accessToken.getIdToken())) {
-            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
+            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
             val idTokenResult = idTokenSigningAndEncryptionService.decode(accessToken.getIdToken(), Optional.ofNullable(service));
             profile.setId(idTokenResult.getSubject());
             profile.addAttributes(idTokenResult.getClaimsMap());
