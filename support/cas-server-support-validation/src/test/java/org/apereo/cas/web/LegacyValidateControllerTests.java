@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.BaseCasCoreTests;
-import org.apereo.cas.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,7 +12,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link LegacyValidateControllerTests}.
@@ -21,9 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes = {
-    BaseCasCoreTests.SharedTestConfiguration.class,
-    CasThemesConfiguration.class,
+@Import({
+    CasPersonDirectoryTestConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 })

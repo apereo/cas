@@ -42,6 +42,7 @@ public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
      * which must be returned from the LDAP authentication attempt.
      * LDAP password policy handling will emit a warning for the {@code pwdLastSet}
      * value plus the expiration amount.
+     * A negative value will disable the operations that calculate the expiration period.
      */
     private int passwordExpirationNumberOfDays = 180;
 }

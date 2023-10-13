@@ -5,12 +5,13 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
-
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-
 import java.util.Optional;
 
 /**
@@ -21,7 +22,10 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
+@Getter
 public class EchoingPrincipalResolver implements PrincipalResolver {
+    @Setter(AccessLevel.PROTECTED)
+    private IPersonAttributeDao attributeRepository;
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal,
@@ -33,10 +37,5 @@ public class EchoingPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return StringUtils.isNotBlank(credential.getId());
-    }
-
-    @Override
-    public IPersonAttributeDao getAttributeRepository() {
-        return null;
     }
 }

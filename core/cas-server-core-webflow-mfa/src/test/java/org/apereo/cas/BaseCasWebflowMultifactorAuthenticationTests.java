@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -39,9 +40,12 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,6 +55,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import java.util.Map;
 import static org.mockito.Mockito.*;
 
 /**
@@ -66,6 +71,7 @@ import static org.mockito.Mockito.*;
     AopAutoConfiguration.class,
 
     BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
+    BaseCasWebflowMultifactorAuthenticationTests.AttributeRepositoryTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
@@ -131,6 +137,20 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
             response.addAddress("MSIE");
             when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
             return service;
+        }
+    }
+
+    @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
+    public static class AttributeRepositoryTestConfiguration {
+        @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        @Bean
+        public IPersonAttributeDao attributeRepository() {
+            val attrs = CollectionUtils.wrap(
+                "uid", CollectionUtils.wrap("uid"),
+                "mail", CollectionUtils.wrap("cas@apereo.org"),
+                "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+                "groupMembership", CollectionUtils.wrap("adopters"));
+            return new StubPersonAttributeDao((Map) attrs);
         }
     }
 }

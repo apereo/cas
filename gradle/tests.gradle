@@ -280,7 +280,7 @@ tasks.withType(Test).configureEach {
         showExceptions = verbose
         showCauses = verbose
 
-        if (verbose) {
+        if (verbose && ci) {
             beforeSuite { desc ->
                 if (!desc.parent) {
                     ansi.cyan "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "

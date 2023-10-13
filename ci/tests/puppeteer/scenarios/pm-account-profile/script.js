@@ -36,7 +36,8 @@ const assert = require("assert");
     await cas.click(page, "button#register");
     await page.waitForTimeout(2000);
     await cas.click(page, "#gauthRegistrationLink");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
+    await cas.screenshot(page);
 
     await cas.assertVisibility(page, "button#confirm");
     await cas.assertVisibility(page, "button#print");
