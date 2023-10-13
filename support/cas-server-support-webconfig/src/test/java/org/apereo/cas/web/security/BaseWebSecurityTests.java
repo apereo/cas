@@ -39,7 +39,6 @@ public abstract class BaseWebSecurityTests {
         EnvironmentEndpointAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
         ConditionsReportEndpointAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         WebEndpointAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,

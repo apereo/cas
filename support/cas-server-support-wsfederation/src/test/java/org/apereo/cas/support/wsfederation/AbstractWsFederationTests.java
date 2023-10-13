@@ -90,9 +90,8 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-        SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

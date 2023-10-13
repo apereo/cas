@@ -34,12 +34,6 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         super(context);
     }
 
-    /**
-     * Extracts the principalId.
-     *
-     * @param credentials the credentials
-     * @return the principal id
-     */
     @Override
     protected String extractPrincipalId(final Credential credentials, final Optional<Principal> currentPrincipal) {
         val wsFedCredentials = (WsFederationCredential) credentials;

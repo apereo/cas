@@ -130,12 +130,12 @@ graalvmNative {
             buildArgs.add('--native-image-info')
 
             buildArgs.add('-march=native')
-            buildArgs.add('--pgo-instrument')
-            def profileFile = rootProject.file("default.iprof")
-            if (profileFile.exists()) {
-                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
-                buildArgs.add("--pgo=${profileFile.path}")
-            }
+//            buildArgs.add('--pgo-instrument')
+//            def profileFile = rootProject.file("default.iprof")
+//            if (profileFile.exists()) {
+//                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
+//                buildArgs.add("--pgo=${profileFile.path}")
+//            }
             buildArgs.add('--trace-class-initialization=true')
 
             buildArgs.add('--initialize-at-build-time=java.beans')

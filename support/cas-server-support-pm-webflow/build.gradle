@@ -32,7 +32,7 @@ dependencies {
     implementation project(":support:cas-server-support-pm")
     implementation project(":support:cas-server-support-pm-core")
     implementation project(":support:cas-server-support-token-core-api")
-    1
+    
     implementation libraries.nimbus
     implementation libraries.mail
 
@@ -58,4 +58,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

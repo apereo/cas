@@ -840,7 +840,7 @@ public class CasDocumentationApplication {
         var root = new File(projectRootDirectory, "support/cas-server-support-thymeleaf");
         var parent = new File(root, "src/main/resources/templates");
 
-        var files = FileUtils.listFiles(parent, new String[]{"html"}, true);
+        var files = FileUtils.listFiles(parent, new String[]{"html", "mustache"}, true);
         files
             .stream()
             .sorted()

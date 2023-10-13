@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -27,7 +28,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -105,14 +105,11 @@ public class TrustedAuthenticationConfiguration {
             val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
             val personDirectory = casProperties.getPersonDirectory();
             val trusted = casProperties.getAuthn().getTrusted().getPersonDirectory();
-            val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
-                attributeRepository,
-                CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                PrincipalBearingPrincipalResolver.class, servicesManager, attributeDefinitionStore,
-                trusted,
-                personDirectory);
-            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(),
-                bearingPrincipalResolver));
+            val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            val bearingPrincipalResolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
+                attributeRepository, attributeMerger, PrincipalBearingPrincipalResolver.class,
+                servicesManager, attributeDefinitionStore, trusted, personDirectory);
+            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
             return resolver;
         }
 

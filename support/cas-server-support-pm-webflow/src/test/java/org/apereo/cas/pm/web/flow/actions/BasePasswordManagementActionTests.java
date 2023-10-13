@@ -123,8 +123,6 @@ public abstract class BasePasswordManagementActionTests {
 
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,

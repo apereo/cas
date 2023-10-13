@@ -1,6 +1,8 @@
-package org.apereo.cas.authentication.principal;
+package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -65,7 +67,7 @@ class ChainingPrincipalAttributesRepositoryTests {
     static class ChainingPrincipalAttributesRepositoryTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {
-           return mock(ServicesManager.class);
+            return mock(ServicesManager.class);
         }
     }
 }

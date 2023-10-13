@@ -7,6 +7,7 @@
           <th>Category</th>
           <th>Name</th>
           <th>Full Path</th>
+          <th>Owner</th>
         </tr>
     </thead>
     <tbody>
@@ -17,13 +18,20 @@
                     {% assign words = config.name | remove: "/src/main/resources/templates/" | split: '/' %}
                     <tr>
                         <td>
-                            <code>{{ words | first | remove: ".html" }}</code>
+                            <code>{{ words | first | remove: ".html" | remove: ".mustache" }}</code>
                         </td>
                         <td>
                             <code>{{ words | last }}</code>
                         </td>
                         <td>
                             <code class="text-wrap text-break">{{ config.name }}</code>
+                        </td>
+                        <td>
+                            {% if config.name contains ".mustache" %}
+                            <code class="text-wrap text-break">Mustache</code>
+                            {% else %}
+                            <code class="text-wrap text-break">Thymeleaf</code>
+                            {% endif%}
                         </td>
                     </tr>
                 {% endfor %}

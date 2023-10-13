@@ -27,11 +27,11 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
     implementation project(":support:cas-server-support-surrogate-core")
+    implementation project(":support:cas-server-support-person-directory-core")
 
     compileOnly project(":support:cas-server-support-pac4j-api")
     compileOnly project(":support:cas-server-support-pac4j-core")
     compileOnly project(":support:cas-server-support-pac4j-webflow")
-
     compileOnly project(":support:cas-server-support-passwordless-api")
     compileOnly project(":support:cas-server-support-passwordless-webflow")
 
@@ -62,4 +62,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

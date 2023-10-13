@@ -232,7 +232,7 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketCatalog ticketCatalog(
             final CasConfigurationProperties casProperties,
-            final List<TicketCatalogConfigurer> configurers) throws Throwable {
+            final List<TicketCatalogConfigurer> configurers) {
             val plan = new DefaultTicketCatalog();
             configurers.forEach(Unchecked.consumer(cfg -> {
                 LOGGER.trace("Configuring ticket metadata registration plan [{}]", cfg.getName());

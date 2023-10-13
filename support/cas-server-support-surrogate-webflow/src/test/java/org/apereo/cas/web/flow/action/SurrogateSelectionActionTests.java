@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 class SurrogateSelectionActionTests {
     @Autowired
-    @Qualifier("selectSurrogateAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)
     private Action selectSurrogateAction;
 
     @Autowired
@@ -38,6 +39,7 @@ class SurrogateSelectionActionTests {
     @Test
     void verifyFails() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
+        context.setExternalContext(mock(ServletExternalContext.class));
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, selectSurrogateAction.execute(context).getId());
     }

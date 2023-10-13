@@ -125,12 +125,9 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class
     })
