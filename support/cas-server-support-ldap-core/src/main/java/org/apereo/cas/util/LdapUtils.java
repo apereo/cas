@@ -1029,10 +1029,17 @@ public class LdapUtils {
         switch (passwordPolicy.getType()) {
             case AD:
                 val warningPeriod = Period.ofDays(cfg.getPasswordWarningNumberOfDays());
-                val expirationPeriod = Period.ofDays(passwordPolicy.getPasswordExpirationNumberOfDays());
-                val handler = new ActiveDirectoryAuthenticationResponseHandler(expirationPeriod, warningPeriod);
-                LOGGER.debug("Creating active directory authentication response handler with expiration period [{}] and warning period [{}]", expirationPeriod, warningPeriod);
-                responseHandlers.add(handler);
+                if (passwordPolicy.getPasswordExpirationNumberOfDays() > 0) {
+                    val expirationPeriod = Period.ofDays(passwordPolicy.getPasswordExpirationNumberOfDays());
+                    val handler = new ActiveDirectoryAuthenticationResponseHandler(expirationPeriod, warningPeriod);
+                    LOGGER.debug("Creating active directory authentication response handler with expiration period [{}] and warning period [{}]", expirationPeriod, warningPeriod);
+                    responseHandlers.add(handler);
+                } else {
+                    val handler = new ActiveDirectoryAuthenticationResponseHandler(warningPeriod);
+                    LOGGER.debug("Creating active directory authentication response handler with warning period [{}]", warningPeriod);
+                    responseHandlers.add(handler);
+                }
+
                 Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(attr -> {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", attr);
                     attributes.put(attr, attr);
